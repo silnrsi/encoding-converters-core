@@ -137,7 +137,7 @@ namespace ECFileConverter
         }
 
 
-        private const string sUsage = "Usage:\nECDriver (/n <ConverterName> /r(everse)) {/i|i8|i16} <InputFileName> /{o|o8|o16} <OutputFileName>\n\nwhere:\n  no ConverterFriendlyName parameter means no conversion (except the file encoding)\n  r means run the converter in reverse\n  i causes the the input file to be read as an Ansi encoded file (also for narrow, legacy-encoded, non-Ansi files)\n  i8 causes it to be read as a UTF8 encoded file\n  i16 causes it to be read as a UTF16 encoded file\n  (same details for the 'o' forms for encoding the output file)";
+        private const string sUsage = "Usage:\nECFileConverter (/n <ConverterName> /r(everse)) {/i|i8|i16} <InputFileName> /{o|o8|o16} <OutputFileName>\n\nwhere:\n  no ConverterFriendlyName parameter means no conversion (except the file encoding)\n  r means run the converter in reverse\n  i causes the the input file to be read as an Ansi encoded file (also for narrow, legacy-encoded, non-Ansi files)\n  i8 causes it to be read as a UTF8 encoded file\n  i16 causes it to be read as a UTF16 encoded file\n  (same details for the 'o' forms for encoding the output file)";
         
         protected enum ParamState   
         {
