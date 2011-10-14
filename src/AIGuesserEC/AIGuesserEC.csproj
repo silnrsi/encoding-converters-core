@@ -148,7 +148,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="..\..\..\release\Plugins\IEC3.1.0.0\AI 4.0.0.0 Plugin Details.xml">
+    <Content Include="..\..\redist\EC\Plugins\AI 4.0.0.0 Plugin Details.xml">
       <Link>AI 4.0.0.0 Plugin Details.xml</Link>
     </Content>
     <None Include="Resources\BuilderDialog_movedown.bmp" />
