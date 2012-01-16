@@ -10,6 +10,7 @@ using ECInterfaces;                     // for IEncConverter
 
 namespace SilEncConverters40
 {
+    //[CLSCompliantAttribute(false)]  // because of GeckoWebBrowser
     public partial class CcAutoConfigDialog : SilEncConverters40.AutoConfigDialog
     {
         protected bool m_bInitialized = false;  // set at the end of Initialize (to block certain events until we're ready for them)
@@ -27,7 +28,9 @@ namespace SilEncConverters40
             bool bIsInRepository
             )
         {
+            Console.WriteLine("CcAutoConfigDialog ctor BEGIN");
             InitializeComponent();
+            Console.WriteLine("Initialized CcAutoConfigDialog component.");
 
             base.Initialize
             (
@@ -42,10 +45,12 @@ namespace SilEncConverters40
             lProcessTypeFlags,
             bIsInRepository
             );
+            Console.WriteLine("Initialized base.");
 
             // if we're editing a CC table/spellfixer project, then set the Converter Spec and say it's unmodified
             if (m_bEditMode)
             {
+                Console.WriteLine("Edit mode");
                 System.Diagnostics.Debug.Assert(!String.IsNullOrEmpty(ConverterIdentifier));
                 textBoxFileSpec.Text = ConverterIdentifier;
                 IsModified = false;
@@ -57,10 +62,15 @@ namespace SilEncConverters40
 
             m_bInitialized = true;
 
+            Console.WriteLine("1");
             helpProvider.SetHelpString(textBoxFileSpec, Properties.Resources.ConverterFileSpecHelpString);
+            Console.WriteLine("2");
             helpProvider.SetHelpString(buttonBrowse, Properties.Resources.BrowseFileSpecHelpString);
+            Console.WriteLine("3");
             helpProvider.SetHelpString(groupBoxExpects, Properties.Resources.ConvTypeExpectsHelpString);
+            Console.WriteLine("4");
             helpProvider.SetHelpString(groupBoxReturns, Properties.Resources.ConvTypeReturnsHelpString);
+            Console.WriteLine("CcAutoConfigDialog ctor END");
         }
 
         protected bool IsSpellFixerProject
@@ -70,6 +80,7 @@ namespace SilEncConverters40
 
         protected void UpdateUI(bool bVisible)
         {
+            Console.WriteLine("UpdateUI BEGIN");
             buttonSaveInRepository.Visible =
                 groupBoxExpects.Visible =
                 groupBoxReturns.Visible = bVisible;
@@ -79,6 +90,7 @@ namespace SilEncConverters40
             //  is actually installed.
             buttonAddSpellFixer.Visible = (!m_bEditMode || IsSpellFixerProject) && SpellFixerByReflection.IsSpellFixerAvailable;
             labelSpellFixerInstructions.Visible = (IsSpellFixerProject && SpellFixerByReflection.IsSpellFixerAvailable);
+            Console.WriteLine("UpdateUI END");
         }
 
         protected override void SetConvTypeControls()

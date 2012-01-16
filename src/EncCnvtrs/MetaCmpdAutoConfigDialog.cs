@@ -15,6 +15,7 @@ namespace SilEncConverters40
     /// combination of other (existing) converters, there's probably some code common to both. This class
     /// is the place for that common code. (if there is none, then you can just get rid of this class)
     /// </summary>
+    //[CLSCompliantAttribute(false)]  // because of GeckoWebBrowser
     public partial class MetaCmpdAutoConfigDialog : SilEncConverters40.AutoConfigDialog
     {
         protected string[] m_astrStepFriendlyNames = null;

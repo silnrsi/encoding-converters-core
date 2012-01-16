@@ -1,4 +1,5 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>..\..\output\release\</OutputPath>
@@ -47,8 +48,8 @@
     <SccAuxPath>
     </SccAuxPath>
     <SignAssembly>true</SignAssembly>
-    <OldToolsVersion>2.0</OldToolsVersion>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>true</DebugSymbols>
@@ -66,6 +67,7 @@
   <ItemGroup>
     <Reference Include="ECInterfaces, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485">
       <Private>False</Private>
+      <HintPath>..\..\output\debug\ECInterfaces.dll</HintPath>
     </Reference>
     <Reference Include="System">
       <Name>System</Name>
@@ -117,16 +119,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="CmpdEncConverterConfig.cs" />
-    <Compile Include="CpAutoConfigDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="CpAutoConfigDialog.Designer.cs">
-      <DependentUpon>CpAutoConfigDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="CpEncConverter.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="CpEncConverterConfig.cs" />
     <Compile Include="DirectableEncConverter.cs" />
     <Compile Include="ECNormalizeData.cs">
       <SubType>Code</SubType>
@@ -203,10 +195,6 @@
       <SubType>Designer</SubType>
       <DependentUpon>CmpdAutoConfigDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="CpAutoConfigDialog.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>CpAutoConfigDialog.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="EncCnvtrs.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -235,7 +223,7 @@
       <DependentUpon>TecAutoConfigDialog.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <Content Include="..\..\redist\EC\Plugins\EC 4.0.0.0 Plugin Details.xml">
+    <Content Include="..\..\output\common\EC\Plugins\EC 4.0.0.0 Plugin Details.xml">
       <Link>EC 4.0.0.0 Plugin Details.xml</Link>
     </Content>
     <Content Include="buildinclude.xml" />
@@ -244,6 +232,9 @@
       <Link>EC_40.mm.wxs</Link>
     </None>
     <None Include="app.manifest" />
+    <None Include="ECPlugins.xsc">
+      <DependentUpon>ECPlugins.xsd</DependentUpon>
+    </None>
     <None Include="ECPlugins.xsd">
       <SubType>Designer</SubType>
     </None>

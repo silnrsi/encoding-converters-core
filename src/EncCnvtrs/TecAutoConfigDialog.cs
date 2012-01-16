@@ -10,6 +10,7 @@ using ECInterfaces;                     // for IEncConverter
 
 namespace SilEncConverters40
 {
+    //[CLSCompliantAttribute(false)]  // because of GeckoWebBrowser
     public partial class TecAutoConfigDialog : SilEncConverters40.AutoConfigDialog
     {
         protected bool m_bInitialized = false;
@@ -27,7 +28,9 @@ namespace SilEncConverters40
             bool bIsInRepository
             )
         {
+            System.Diagnostics.Debug.WriteLine("TecAutoConfigDialog ctor1 BEGIN");
             InitializeComponent();
+            System.Diagnostics.Debug.WriteLine("initialized component");
 
             base.Initialize
             (
@@ -42,6 +45,7 @@ namespace SilEncConverters40
             lProcessTypeFlags,
             bIsInRepository
             );
+            System.Diagnostics.Debug.WriteLine("called base.Initalize");
 
             // if we're editing a TECkit map, then set the Converter Spec and say it's unmodified
             if (m_bEditMode)
@@ -53,7 +57,9 @@ namespace SilEncConverters40
 
             m_bInitialized = true;
 
+            System.Diagnostics.Debug.WriteLine("setting help string");
             helpProvider.SetHelpString(textBoxFileSpec, Properties.Resources.ConverterFileSpecHelpString);
+            System.Diagnostics.Debug.WriteLine("TecAutoConfigDialog ctor1 END");
         }
 
         public TecAutoConfigDialog
@@ -65,6 +71,7 @@ namespace SilEncConverters40
             string strTestData
             )
         {
+            System.Diagnostics.Debug.WriteLine("TecAutoConfigDialog ctor2 BEGIN");
             InitializeComponent();
 
             base.Initialize
@@ -75,6 +82,7 @@ namespace SilEncConverters40
             eConversionType,
             strTestData
             );
+            System.Diagnostics.Debug.WriteLine("TecAutoConfigDialog ctor2 END");
         }
 
         // this method is called either when the user clicks the "Apply" or "OK" buttons *OR* if she
@@ -82,6 +90,11 @@ namespace SilEncConverters40
         //  to make sure that the user has correctly configured a legitimate converter.
         protected override bool OnApply()
         {
+            if (textBoxFileSpec == null) System.Diagnostics.Debug.WriteLine("textBoxFileSpec null!!!");
+            if (tabControl == null) System.Diagnostics.Debug.WriteLine("tabControl null!!!");
+            if (EncConverters.cstrCaption == null) System.Diagnostics.Debug.WriteLine("EncConverters.cstrCaption null!!!");
+            System.Diagnostics.Debug.WriteLine("Nothing seems to be null");
+
             // for TECkit, get the converter identifier from the Setup tab controls.
             ConverterIdentifier = textBoxFileSpec.Text;
 

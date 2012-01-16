@@ -164,7 +164,6 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "ViewSourceFormsForm";
             this.Text = "View Knowledge Base";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ViewSourceFormsForm_FormClosing);
             this.tableLayoutPanel.ResumeLayout(false);
             this.tableLayoutPanel.PerformLayout();
             this.contextMenuStrip.ResumeLayout(false);
