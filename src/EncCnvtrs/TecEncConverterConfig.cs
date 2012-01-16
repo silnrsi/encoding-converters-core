@@ -29,10 +29,12 @@ namespace SilEncConverters40
         string strRhsEncodingID
         )
         {
+            Console.WriteLine("TecEncConverterConfig(3).Configure BEGIN");
             TecAutoConfigDialog form = new TecAutoConfigDialog(aECs, m_strDisplayName, m_strFriendlyName,
                 m_strConverterID, m_eConversionType, m_strLhsEncodingID, m_strRhsEncodingID,
                 m_lProcessType, m_bIsInRepository);
 
+            Console.WriteLine("TecEncConverterConfig.Configure END");
             return base.Configure(form);
         }
 
@@ -45,6 +47,7 @@ namespace SilEncConverters40
             string strTestData
             )
         {
+            Console.Error.WriteLine("TecEncConverterConfig.DisplayTestPage() BEGIN");
             InitializeFromThis(ref strFriendlyName, ref strConverterIdentifier,
                 ref eConversionType, ref strTestData);
 

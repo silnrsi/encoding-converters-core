@@ -6,6 +6,13 @@ namespace SilEncConverters40
 {
     public class EcTextBox : System.Windows.Forms.TextBox
     {
+        public EcTextBox()
+        {
+            System.Diagnostics.Debug.WriteLine("Default Font " +
+                this.Font.Name + ", Size " + this.Font.Size.ToString());
+            //this.Font = new System.Drawing.Font("Arial", 11);
+        }
+
         protected override void OnPreviewKeyDown(System.Windows.Forms.PreviewKeyDownEventArgs e)
         {
             System.Diagnostics.Trace.WriteLine(String.Format("PreviewKeyDown: KeyValue: {0}, KeyCode: {1}, KeyData: {2}",

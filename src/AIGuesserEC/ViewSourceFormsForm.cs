@@ -6,7 +6,6 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using System.Xml.Linq;
 
 namespace SilEncConverters40
 {
@@ -25,8 +24,8 @@ namespace SilEncConverters40
             _achTrimSource = achTrimSource;
             _achTrimTarget = achTrimTarget;
 
-            foreach (var strSourceWord in mapOfMaps.ListOfAllSourceWordForms)
-                listBoxSourceWordForms.Items.Add(strSourceWord);
+            foreach (var kvp in mapOfMaps.Values.SelectMany(mapSourceToTarget => mapSourceToTarget))
+                listBoxSourceWordForms.Items.Add(kvp.Key);
             
             targetFormDisplayControl.TargetWordFont = new Font(strTargetWordFont, 12);
             targetFormDisplayControl.CallToSetModified = SetModified;
@@ -42,37 +41,14 @@ namespace SilEncConverters40
             if (buttonOK.Text == CstrButtonLabelSave)
             {
                 System.Diagnostics.Debug.Assert(targetFormDisplayControl.AreAllTargetFormsNonEmpty);
-                string strSelectedWord = SelectedWord;
                 Parent.SaveMapOfMaps(_mapOfMaps);
                 buttonOK.Text = CstrButtonLabelReturn;
-                listBoxSourceWordForms.Enabled = true;
-                listBoxSourceWordForms.SelectedIndex = -1;
-                listBoxSourceWordForms.SelectedItem = strSelectedWord;
                 return;
             }
 
             targetFormDisplayControl.TrimTargetWordForms(_achTrimTarget);
             DialogResult = DialogResult.OK;
             Close();
-        }
-
-        private void ViewSourceFormsForm_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            if (buttonOK.Text != CstrButtonLabelSave)
-                return;
-
-            string strSelectedWord = SelectedWord;
-            if ((_mapSourceWordElements != null) &&
-                (_copyOfSelectedSourceWord != null))
-            {
-                _mapSourceWordElements.ReplaceSourceWordElement(strSelectedWord,
-                                                                _copyOfSelectedSourceWord);
-            }
-            buttonOK.Text = CstrButtonLabelReturn;
-            listBoxSourceWordForms.Enabled = true;
-            listBoxSourceWordForms.SelectedIndex = -1;
-            listBoxSourceWordForms.SelectedItem = strSelectedWord;
-            e.Cancel = true;
         }
 
         public string SelectedWord 
@@ -93,11 +69,9 @@ namespace SilEncConverters40
         {
             buttonOK.Text = CstrButtonLabelSave;
             buttonOK.Enabled = targetFormDisplayControl.AreAllTargetFormsNonEmpty;
-            listBoxSourceWordForms.Enabled = false;
         }
 
         private MapOfSourceWordElements _mapSourceWordElements;
-        private XElement _copyOfSelectedSourceWord;
         private void listBoxSourceWordForms_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (listBoxSourceWordForms.SelectedIndex != -1)
@@ -107,19 +81,12 @@ namespace SilEncConverters40
                 string strSourceWord = listBoxSourceWordForms.SelectedItem.ToString();
                 if (_mapOfMaps.TryGetValue(strSourceWord, out _mapSourceWordElements))
                 {
-                    SourceWordElement sourceWordElement;
-                    if (_mapSourceWordElements.TryGetValue(strSourceWord, out sourceWordElement))
-                    {
-                        _copyOfSelectedSourceWord = new XElement(sourceWordElement.Xml);
-                        targetFormDisplayControl.Initialize(sourceWordElement, DeleteSourceWord);
-                    }
+                    SourceWordElement sourceWordElement = _mapSourceWordElements[strSourceWord];
+                    targetFormDisplayControl.Initialize(sourceWordElement, DeleteSourceWord);
                 }
             }
             else
-            {
                 buttonOK.Enabled = false;
-                targetFormDisplayControl.Reset();
-            }
         }
 
         private void DeleteSourceWord(string strSourceWord)
@@ -130,7 +97,8 @@ namespace SilEncConverters40
             if (res != DialogResult.Yes) 
                 return;
 
-            _mapSourceWordElements.Remove(strSourceWord);
+            if (_mapSourceWordElements.ContainsKey(strSourceWord))
+                _mapSourceWordElements.Remove(strSourceWord);
             RemoveFromForm(strSourceWord);
         }
 
@@ -197,8 +165,6 @@ namespace SilEncConverters40
             if (!listBoxSourceWordForms.Items.Contains(strNewSource))
                 listBoxSourceWordForms.Items.Add(strNewSource);
             listBoxSourceWordForms.SelectedItem = strNewSource;
-
-            SetModified();
         }
 
         private void contextMenuStrip_Opening(object sender, CancelEventArgs e)

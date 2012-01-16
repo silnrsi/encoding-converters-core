@@ -1,3 +1,6 @@
+using System;
+//using Skybound.Gecko;
+
 namespace SilEncConverters40
 {
     partial class AutoConfigDialog
@@ -32,17 +35,17 @@ namespace SilEncConverters40
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AutoConfigDialog));
             this.tabControl = new System.Windows.Forms.TabControl();
             this.tabPageAbout = new System.Windows.Forms.TabPage();
-            this.webBrowserHelp = new System.Windows.Forms.WebBrowser();
+            this.labelHelp = new System.Windows.Forms.LinkLabel();
             this.tabPageSetup = new System.Windows.Forms.TabPage();
             this.tabPageTestArea = new System.Windows.Forms.TabPage();
             this.tableLayoutPanelTestPage = new System.Windows.Forms.TableLayoutPanel();
             this.labelInstructions = new System.Windows.Forms.Label();
             this.labelInput = new System.Windows.Forms.Label();
             this.labelOutput = new System.Windows.Forms.Label();
-            this.buttonTest = new System.Windows.Forms.Button();
             this.checkBoxTestReverse = new System.Windows.Forms.CheckBox();
             this.richTextBoxHexOutput = new System.Windows.Forms.RichTextBox();
             this.richTextBoxHexInput = new System.Windows.Forms.RichTextBox();
+            this.ecTextBoxInput = new SilEncConverters40.EcTextBox();
             this.contextMenuStripTestBoxes = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.changeFontToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
@@ -56,6 +59,9 @@ namespace SilEncConverters40
             this.selectAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.right2LeftToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ecTextBoxOutput = new SilEncConverters40.EcTextBox();
+            this.buttonTest = new System.Windows.Forms.Button();
+            this.comboBoxFont = new System.Windows.Forms.ComboBox();
             this.tabPageAdvanced = new System.Windows.Forms.TabPage();
             this.tableLayoutPanelTransductionTypes = new System.Windows.Forms.TableLayoutPanel();
             this.labelRightEncodingName = new System.Windows.Forms.Label();
@@ -89,8 +95,6 @@ namespace SilEncConverters40
             this.buttonSaveInRepository = new System.Windows.Forms.Button();
             this.helpProvider = new System.Windows.Forms.HelpProvider();
             this.fontDialog = new System.Windows.Forms.FontDialog();
-            this.ecTextBoxInput = new SilEncConverters40.EcTextBox();
-            this.ecTextBoxOutput = new SilEncConverters40.EcTextBox();
             this.tabControl.SuspendLayout();
             this.tabPageAbout.SuspendLayout();
             this.tabPageTestArea.SuspendLayout();
@@ -104,9 +108,9 @@ namespace SilEncConverters40
             // 
             // tabControl
             // 
-            this.tabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.tabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl.Controls.Add(this.tabPageAbout);
             this.tabControl.Controls.Add(this.tabPageSetup);
             this.tabControl.Controls.Add(this.tabPageTestArea);
@@ -120,7 +124,7 @@ namespace SilEncConverters40
             // 
             // tabPageAbout
             // 
-            this.tabPageAbout.Controls.Add(this.webBrowserHelp);
+            this.tabPageAbout.Controls.Add(this.labelHelp);
             this.tabPageAbout.Location = new System.Drawing.Point(4, 22);
             this.tabPageAbout.Name = "tabPageAbout";
             this.tabPageAbout.Padding = new System.Windows.Forms.Padding(3);
@@ -129,15 +133,16 @@ namespace SilEncConverters40
             this.tabPageAbout.Text = "About";
             this.tabPageAbout.UseVisualStyleBackColor = true;
             // 
-            // webBrowserHelp
+            // labelHelp
             // 
-            this.webBrowserHelp.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.webBrowserHelp.Location = new System.Drawing.Point(3, 3);
-            this.webBrowserHelp.MinimumSize = new System.Drawing.Size(20, 20);
-            this.webBrowserHelp.Name = "webBrowserHelp";
-            this.webBrowserHelp.Size = new System.Drawing.Size(596, 394);
-            this.webBrowserHelp.TabIndex = 0;
-            this.webBrowserHelp.Url = new System.Uri("", System.UriKind.Relative);
+            this.labelHelp.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            this.labelHelp.Location = new System.Drawing.Point(5, 20);
+            this.labelHelp.Name = "labelHelp";
+            this.labelHelp.Size = new System.Drawing.Size(301, 50);
+            this.labelHelp.TabIndex = 0;
+            this.labelHelp.TabStop = true;
+            this.labelHelp.Text = "----";
+            this.labelHelp.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
             // 
             // tabPageSetup
             // 
@@ -164,20 +169,22 @@ namespace SilEncConverters40
             // 
             this.tableLayoutPanelTestPage.ColumnCount = 5;
             this.tableLayoutPanelTestPage.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanelTestPage.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 65F));
+            this.tableLayoutPanelTestPage.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 96.77419F));
             this.tableLayoutPanelTestPage.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanelTestPage.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 35F));
+            this.tableLayoutPanelTestPage.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 3.225806F));
             this.tableLayoutPanelTestPage.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanelTestPage.Controls.Add(this.labelInstructions, 0, 0);
             this.tableLayoutPanelTestPage.Controls.Add(this.labelInput, 0, 1);
             this.tableLayoutPanelTestPage.Controls.Add(this.labelOutput, 0, 4);
-            this.tableLayoutPanelTestPage.Controls.Add(this.buttonTest, 2, 3);
             this.tableLayoutPanelTestPage.Controls.Add(this.checkBoxTestReverse, 4, 3);
             this.tableLayoutPanelTestPage.Controls.Add(this.richTextBoxHexOutput, 1, 5);
             this.tableLayoutPanelTestPage.Controls.Add(this.richTextBoxHexInput, 1, 2);
             this.tableLayoutPanelTestPage.Controls.Add(this.ecTextBoxInput, 1, 1);
             this.tableLayoutPanelTestPage.Controls.Add(this.ecTextBoxOutput, 1, 4);
+            this.tableLayoutPanelTestPage.Controls.Add(this.buttonTest, 1, 3);
+            this.tableLayoutPanelTestPage.Controls.Add(this.comboBoxFont, 2, 3);
             this.tableLayoutPanelTestPage.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.helpProvider.SetHelpString(this.tableLayoutPanelTestPage, "(Optional) Specify a font to display input and output.");
             this.tableLayoutPanelTestPage.Location = new System.Drawing.Point(3, 3);
             this.tableLayoutPanelTestPage.Name = "tableLayoutPanelTestPage";
             this.tableLayoutPanelTestPage.RowCount = 6;
@@ -187,6 +194,7 @@ namespace SilEncConverters40
             this.tableLayoutPanelTestPage.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanelTestPage.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
             this.tableLayoutPanelTestPage.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.helpProvider.SetShowHelp(this.tableLayoutPanelTestPage, true);
             this.tableLayoutPanelTestPage.Size = new System.Drawing.Size(596, 394);
             this.tableLayoutPanelTestPage.TabIndex = 0;
             // 
@@ -219,19 +227,6 @@ namespace SilEncConverters40
             this.labelOutput.Size = new System.Drawing.Size(42, 13);
             this.labelOutput.TabIndex = 2;
             this.labelOutput.Text = "Output:";
-            // 
-            // buttonTest
-            // 
-            this.helpProvider.SetHelpString(this.buttonTest, "Click this button to test the configured converter with the data in the Input box" +
-                    "");
-            this.buttonTest.Location = new System.Drawing.Point(278, 192);
-            this.buttonTest.Name = "buttonTest";
-            this.helpProvider.SetShowHelp(this.buttonTest, true);
-            this.buttonTest.Size = new System.Drawing.Size(75, 23);
-            this.buttonTest.TabIndex = 4;
-            this.buttonTest.Text = "&Test";
-            this.buttonTest.UseVisualStyleBackColor = true;
-            this.buttonTest.Click += new System.EventHandler(this.buttonTest_Click);
             // 
             // checkBoxTestReverse
             // 
@@ -267,6 +262,19 @@ namespace SilEncConverters40
             this.richTextBoxHexInput.Size = new System.Drawing.Size(542, 82);
             this.richTextBoxHexInput.TabIndex = 6;
             this.richTextBoxHexInput.Text = "";
+            // 
+            // ecTextBoxInput
+            // 
+            this.tableLayoutPanelTestPage.SetColumnSpan(this.ecTextBoxInput, 4);
+            this.ecTextBoxInput.ContextMenuStrip = this.contextMenuStripTestBoxes;
+            this.ecTextBoxInput.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ecTextBoxInput.Font = new System.Drawing.Font("Arial", 11F);
+            this.ecTextBoxInput.Location = new System.Drawing.Point(51, 16);
+            this.ecTextBoxInput.Name = "ecTextBoxInput";
+            this.ecTextBoxInput.Size = new System.Drawing.Size(542, 82);
+            this.ecTextBoxInput.TabIndex = 3;
+            this.ecTextBoxInput.Text = "";
+            this.ecTextBoxInput.TextChanged += new System.EventHandler(this.ecTextBoxInput_TextChanged);
             // 
             // contextMenuStripTestBoxes
             // 
@@ -364,6 +372,44 @@ namespace SilEncConverters40
             this.right2LeftToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
             this.right2LeftToolStripMenuItem.Text = "&Right to left reading order";
             this.right2LeftToolStripMenuItem.Click += new System.EventHandler(this.right2LeftToolStripMenuItem_Click);
+            // 
+            // ecTextBoxOutput
+            // 
+            this.tableLayoutPanelTestPage.SetColumnSpan(this.ecTextBoxOutput, 4);
+            this.ecTextBoxOutput.ContextMenuStrip = this.contextMenuStripTestBoxes;
+            this.ecTextBoxOutput.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ecTextBoxOutput.Font = new System.Drawing.Font("Arial", 11F);
+            this.ecTextBoxOutput.Location = new System.Drawing.Point(51, 221);
+            this.ecTextBoxOutput.Name = "ecTextBoxOutput";
+            this.ecTextBoxOutput.ReadOnly = true;
+            this.ecTextBoxOutput.Size = new System.Drawing.Size(542, 82);
+            this.ecTextBoxOutput.TabIndex = 3;
+            this.ecTextBoxOutput.Text = "";
+            // 
+            // buttonTest
+            // 
+            this.buttonTest.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.helpProvider.SetHelpString(this.buttonTest, "Click this button to test the configured converter with the data in the Input box" +
+        "");
+            this.buttonTest.Location = new System.Drawing.Point(130, 192);
+            this.buttonTest.Name = "buttonTest";
+            this.helpProvider.SetShowHelp(this.buttonTest, true);
+            this.buttonTest.Size = new System.Drawing.Size(75, 23);
+            this.buttonTest.TabIndex = 4;
+            this.buttonTest.Text = "&Test";
+            this.buttonTest.UseVisualStyleBackColor = true;
+            this.buttonTest.Click += new System.EventHandler(this.buttonTest_Click);
+            // 
+            // comboBoxFont
+            // 
+            this.comboBoxFont.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.comboBoxFont.FormattingEnabled = true;
+            this.comboBoxFont.Location = new System.Drawing.Point(291, 193);
+            this.comboBoxFont.Name = "comboBoxFont";
+            this.comboBoxFont.Size = new System.Drawing.Size(176, 21);
+            this.comboBoxFont.TabIndex = 7;
+            this.comboBoxFont.Sorted = true;
+            this.comboBoxFont.SelectedIndexChanged += new System.EventHandler(this.comboBoxFont_SelectedIndexChanged);
             // 
             // tabPageAdvanced
             // 
@@ -731,35 +777,9 @@ namespace SilEncConverters40
             this.fontDialog.AllowScriptChange = false;
             this.fontDialog.ShowColor = true;
             // 
-            // ecTextBoxInput
-            // 
-            this.tableLayoutPanelTestPage.SetColumnSpan(this.ecTextBoxInput, 4);
-            this.ecTextBoxInput.ContextMenuStrip = this.contextMenuStripTestBoxes;
-            this.ecTextBoxInput.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.ecTextBoxInput.Location = new System.Drawing.Point(51, 16);
-            this.ecTextBoxInput.Multiline = true;
-            this.ecTextBoxInput.Name = "ecTextBoxInput";
-            this.ecTextBoxInput.Size = new System.Drawing.Size(542, 82);
-            this.ecTextBoxInput.TabIndex = 3;
-            this.ecTextBoxInput.TextChanged += new System.EventHandler(this.ecTextBoxInput_TextChanged);
-            // 
-            // ecTextBoxOutput
-            // 
-            this.tableLayoutPanelTestPage.SetColumnSpan(this.ecTextBoxOutput, 4);
-            this.ecTextBoxOutput.ContextMenuStrip = this.contextMenuStripTestBoxes;
-            this.ecTextBoxOutput.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.ecTextBoxOutput.Location = new System.Drawing.Point(51, 221);
-            this.ecTextBoxOutput.Multiline = true;
-            this.ecTextBoxOutput.Name = "ecTextBoxOutput";
-            this.ecTextBoxOutput.ReadOnly = true;
-            this.ecTextBoxOutput.Size = new System.Drawing.Size(542, 82);
-            this.ecTextBoxOutput.TabIndex = 3;
-            // 
             // AutoConfigDialog
             // 
             this.AcceptButton = this.buttonOK;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonCancel;
             this.ClientSize = new System.Drawing.Size(634, 479);
             this.Controls.Add(this.buttonSaveInRepository);
@@ -792,9 +812,24 @@ namespace SilEncConverters40
 
         #endregion
 
+        protected void linkLabel1_LinkClicked(object sender, System.Windows.Forms.LinkLabelLinkClickedEventArgs e)
+        {
+            // Specify that the link was visited.
+            this.labelHelp.LinkVisited = true;
+
+            // Navigate to a URL.
+            //System.Diagnostics.Process.Start("http://www.microsoft.com");
+            string loc = "file://" + e.Link.LinkData.ToString();
+            System.Diagnostics.Debug.WriteLine("going to " + loc);
+            System.Diagnostics.Process.Start(loc);
+        }
+
         public System.Windows.Forms.TabControl tabControl;
         public System.Windows.Forms.TabPage tabPageAbout;
-        public System.Windows.Forms.WebBrowser webBrowserHelp;
+        //[CLSCompliant(false)]
+        //public GeckoWebBrowser webBrowserHelp;
+        //public System.Windows.Forms.Label labelHelp;
+        public System.Windows.Forms.LinkLabel labelHelp;
         public System.Windows.Forms.TabPage tabPageSetup;
         public System.Windows.Forms.TabPage tabPageTestArea;
         public System.Windows.Forms.TableLayoutPanel tableLayoutPanelTestPage;
@@ -853,5 +888,6 @@ namespace SilEncConverters40
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripMenuItem right2LeftToolStripMenuItem;
         protected internal System.Windows.Forms.FontDialog fontDialog;
+        private System.Windows.Forms.ComboBox comboBoxFont;
     }
 }

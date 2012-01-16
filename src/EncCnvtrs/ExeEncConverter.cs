@@ -2,6 +2,7 @@
 
 using System;
 using System.IO;            // for StreamWriter
+using System.Runtime.InteropServices;   // for Marshal
 using Microsoft.Win32;      // for Registry
 using System.Diagnostics;   // for ProcessStartInfo
 using System.Text;          // for ASCIIEncoding
@@ -141,7 +142,7 @@ namespace SilEncConverters40
             {
                 if( m_psi == null )
                 {
-                    m_psi = new ProcessStartInfo(WorkingDir + @"\" + ExeName);
+                    m_psi = new ProcessStartInfo(Path.Combine(WorkingDir, ExeName));
                     m_psi.Arguments = Arguments;
                     m_psi.WorkingDirectory = WorkingDir;
                     m_psi.UseShellExecute = false;
@@ -149,6 +150,8 @@ namespace SilEncConverters40
                     m_psi.RedirectStandardInput = true;
                     m_psi.RedirectStandardOutput = true;
                     m_psi.RedirectStandardError = true;
+                    //m_psi.StandardOutputEncoding = Encoding.UTF8;
+                    m_psi.StandardOutputEncoding = Encoding.Unicode;
                 }
                 return m_psi;
             }
@@ -197,7 +200,8 @@ namespace SilEncConverters40
                     }
                     catch
                     {
-                        enc = Encoding.GetEncoding(EncConverters.cnIso8859_1CodePage);
+                        //enc = Encoding.GetEncoding(EncConverters.cnIso8859_1CodePage);
+                        enc = Encoding.Default;
                     }
                     sr = new StreamReader(P.StandardOutput.BaseStream, enc);
                 }
@@ -227,7 +231,8 @@ namespace SilEncConverters40
             )
         {
             rnOutLen = 0;
-            if( !String.IsNullOrEmpty(WorkingDir) )
+            //if( !String.IsNullOrEmpty(WorkingDir) )
+            if(true)
             {
                 // we need to put it *back* into a string because the StreamWriter that will
                 // ultimately write to the StandardInput uses a string. Use the correct codepg.
@@ -240,12 +245,22 @@ namespace SilEncConverters40
                 }
                 catch
                 {
-                    enc = Encoding.GetEncoding(EncConverters.cnIso8859_1CodePage);
+                    //enc = Encoding.GetEncoding(EncConverters.cnIso8859_1CodePage);
+                    enc = Encoding.Default;
                 }
                 string strInput = enc.GetString(baDst);
                 
                 // call the helper that calls the exe
                 string strOutput = DoExeCall(strInput);
+                Console.Error.WriteLine("Got result from system call: " + strOutput);
+                byte[] baOut2 = System.Text.Encoding.Unicode.GetBytes(strOutput);  // easier to read
+                dispBytes("Output UTF16LE", baOut2);
+
+                System.IO.TextWriter tw = new System.IO.StreamWriter(
+                    "/media/winD/Jim/computing/SEC_on_linux/testing/returning.txt");
+                tw.WriteLine("input: '"  + strInput + "'");
+                tw.WriteLine("output: '" + strOutput + "'");
+                tw.Close();
 
                 // if there's a response...
                 if( !String.IsNullOrEmpty(strOutput) )
@@ -281,7 +296,7 @@ namespace SilEncConverters40
                     else
                     {
                         rnOutLen = strOutput.Length * 2;
-                        ECNormalizeData.StringToByteStar(strOutput,lpOutBuffer,rnOutLen);
+                        rnOutLen = ECNormalizeData.StringToByteStar(strOutput,lpOutBuffer,rnOutLen,false);
                     }
                 }
             }

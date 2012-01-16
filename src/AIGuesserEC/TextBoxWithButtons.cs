@@ -67,11 +67,9 @@ namespace SilEncConverters40
         private void textBox_TextChanged(object sender, EventArgs e)
         {
             // if the user edits the translation, then we have to update the map of maps
+            _targetWordElement.TargetWord = textBox.Text;
             if (!_bBlockSetModified)
-            {
-                TargetWordElement.ChangeTargetWordForm(textBox.Text);
                 _parent.CallToSetModified();
-            }
         }
     }
 }

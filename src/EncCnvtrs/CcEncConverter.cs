@@ -20,15 +20,22 @@ namespace SilEncConverters40
 	public class CcEncConverter : EncConverter
     {
         #region DLLImport Statements
-        [DllImport("Cc32", SetLastError=true)]
+		private const string dllName
+#if !__MonoCS__
+        = "CC32";
+#else // __MonoCS__
+        = "cc";     //libcc.so
+#endif // __MonoCS__
+
+        [DllImport(dllName, SetLastError=true)]
         static extern unsafe int CCLoadTable(byte* lpszCCTableFile,
             Int32* hpLoadHandle,
             Int32 hinstCurrent);
 
-        [DllImport("Cc32", SetLastError=true)]
+        [DllImport(dllName, SetLastError=true)]
         static extern unsafe int CCUnloadTable(Int32 hUnlHandle);
 
-        [DllImport("Cc32", SetLastError=true)]
+        [DllImport(dllName, SetLastError=true)]
         static extern unsafe int CCProcessBuffer(Int32 hProHandle,
             byte* lpInputBuffer, int nInBufLen,
             byte* lpOutputBuffer, int *npOutBufLen);
@@ -60,6 +67,7 @@ namespace SilEncConverters40
 
         public override void Initialize(string converterName, string converterSpec, ref string lhsEncodingID, ref string rhsEncodingID, ref ConvType conversionType, ref Int32 processTypeFlags, Int32 codePageInput, Int32 codePageOutput, bool bAdding)
         {
+            System.Diagnostics.Debug.WriteLine("Cc EC Initialize BEGIN");
             // let the base class have first stab at it
             base.Initialize(converterName, converterSpec, ref lhsEncodingID, ref rhsEncodingID, 
                 ref conversionType, ref processTypeFlags, codePageInput, codePageOutput, bAdding );
@@ -98,6 +106,7 @@ namespace SilEncConverters40
             //  other)
             if( bAdding )
                 m_timeModified = DateTime.MinValue;
+            System.Diagnostics.Debug.WriteLine("Cc EC Initialize END");
         }
 
         #endregion Initialization
@@ -110,6 +119,7 @@ namespace SilEncConverters40
 
         protected void Unload()
         { 
+            System.Diagnostics.Debug.WriteLine("CcEncConverter.Unload");
             if( IsFileLoaded() )
             {
                 CCUnloadTable(m_hTable);
@@ -125,6 +135,8 @@ namespace SilEncConverters40
 
         protected unsafe void Load(string strTablePath)
         {
+            System.Diagnostics.Debug.WriteLine("CcEncConverter.Load BEGIN");
+            System.Diagnostics.Debug.WriteLine("path " + strTablePath);
             // first make sure it's there and get the last time it was modified
             DateTime timeModified = DateTime.Now; // don't care really, but have to initialize it.
             if( !DoesFileExist(strTablePath, ref timeModified) )
@@ -140,17 +152,34 @@ namespace SilEncConverters40
                     Unload();
 
                 Int32 hInstanceHandle = 0;  // don't know what else to use here...
-                byte [] baTablePath = Encoding.ASCII.GetBytes(strTablePath);
+
+                byte [] baTablePathTemp = Encoding.ASCII.GetBytes(strTablePath);
+                byte [] baTablePath     = new byte[baTablePathTemp.Length + 1];
+                for (int i = 0; i < baTablePathTemp.Length; i++)
+                    baTablePath[i] = baTablePathTemp[i];
+                baTablePath[baTablePath.Length - 1] = 0;    // null terminate
+
+                EncConverter.dispBytes("CC Table Name", baTablePath);
                 fixed(byte* pszTablePath = baTablePath)
                     fixed(Int32* phTable = &m_hTable)
                     {
-                        int status = CCLoadTable( pszTablePath, phTable, hInstanceHandle );
+                        System.Diagnostics.Debug.WriteLine("Calling CCLoadTable");
+                        int status = 0;
+                        try {
+                            status = CCLoadTable( pszTablePath, phTable, hInstanceHandle );
+                        } catch (DllNotFoundException exc) {
+                            throw new Exception("Failed to load .so file. Check path.");
+                        } catch (EntryPointNotFoundException exc) {
+                            throw new Exception("Failed to find function in .so file.");
+                        }
                         if( status != 0 )  
                         {
                             TranslateErrStatus(status);
                         }
+                        System.Diagnostics.Debug.WriteLine("Finished calling CCLoadTable");
                     }
             }
+            System.Diagnostics.Debug.WriteLine("CcEncConverter.Load END");
         }
 
         protected void    TranslateErrStatus(int status)
@@ -283,7 +312,6 @@ namespace SilEncConverters40
                     rnOutLen--;                
             }
 #else
-/*
             // otherwise strip out that final space we added (sometimes it goes away by itself!!??, 
             //  so check first...)
             //  also only if the last of the input was *NOT* a space...
@@ -291,7 +319,6 @@ namespace SilEncConverters40
             {
                 rnOutLen--;
             }
-*/
 #endif
         }
 

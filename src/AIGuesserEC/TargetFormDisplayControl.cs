@@ -31,8 +31,7 @@ namespace SilEncConverters40
 
             SourceWordElement = sourceWordElement;
             CallToDeleteSourceWord = functionToDeleteSourceWord;
-            // TODO: sourceWordElement.Descendants() can be null, which is bad
-            foreach (TargetWordElement strTargetForm in sourceWordElement.Descendants())
+            foreach (TargetWordElement strTargetForm in sourceWordElement)
                 AddToPanel(strTargetForm);
             buttonAdd.Enabled = true;
         }
@@ -60,8 +59,8 @@ namespace SilEncConverters40
         public void DeleteTextWithButtons(TextBoxWithButtons textBoxWithButtons)
         {
             flowLayoutPanelTargetWords.Controls.Remove(textBoxWithButtons);
-            SourceWordElement.Remove(textBoxWithButtons.TargetWordElement.TargetWord);
-            
+            SourceWordElement.Remove(textBoxWithButtons.TargetWordElement);
+
             if (flowLayoutPanelTargetWords.Controls.Count == 0)
             {
                 DialogResult res = MessageBox.Show(String.Format(Properties.Resources.IDS_QueryToDeleteSourceWord,
@@ -76,24 +75,16 @@ namespace SilEncConverters40
         public void MoveUpTextWithButtons(TextBoxWithButtons textBoxWithButtons)
         {
             int nIndex = flowLayoutPanelTargetWords.Controls.IndexOf(textBoxWithButtons);
-            if (nIndex <= 0)
-                return;
-
-            int nNewIndex = nIndex - 1;
-            SourceWordElement.ReorderTargetForms(nIndex, nNewIndex);
-            flowLayoutPanelTargetWords.Controls.SetChildIndex(textBoxWithButtons, nNewIndex);
+            nIndex = Math.Max(0, nIndex - 1);
+            flowLayoutPanelTargetWords.Controls.SetChildIndex(textBoxWithButtons, nIndex);
             CallToSetModified();
         }
 
         public void MoveDownTextWithButtons(TextBoxWithButtons textBoxWithButtons)
         {
             int nIndex = flowLayoutPanelTargetWords.Controls.IndexOf(textBoxWithButtons);
-            if (nIndex >= flowLayoutPanelTargetWords.Controls.Count - 1)
-                return;
-
-            int nNewIndex = nIndex + 1;
-            SourceWordElement.ReorderTargetForms(nIndex, nNewIndex);
-            flowLayoutPanelTargetWords.Controls.SetChildIndex(textBoxWithButtons, nNewIndex);
+            nIndex = Math.Max(flowLayoutPanelTargetWords.Controls.Count - 1, nIndex + 1);
+            flowLayoutPanelTargetWords.Controls.SetChildIndex(textBoxWithButtons, nIndex);
             CallToSetModified();
         }
 
@@ -109,7 +100,7 @@ namespace SilEncConverters40
         {
             System.Diagnostics.Debug.Assert(AreAllTargetFormsNonEmpty); // should be called first
             foreach (TextBoxWithButtons ctrl in flowLayoutPanelTargetWords.Controls)
-                ctrl.TargetWordElement.TrimTargetWord(achTrim);
+                ctrl.TargetWordElement.TargetWord = ctrl.TargetWordElement.TargetWord.Trim(achTrim);
         }
 
         private void buttonAdd_Click(object sender, EventArgs e)

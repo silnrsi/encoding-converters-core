@@ -96,7 +96,7 @@ namespace SilEncConverters40
             m_strKnowledgeBaseFileSpec = converterSpec;
 #endif
             string strProjectFolder = Path.GetDirectoryName(m_strKnowledgeBaseFileSpec);
-            m_strProjectFileSpec = String.Format(@"{0}\{1}", strProjectFolder, cstrAdaptItProjectFilename);
+            m_strProjectFileSpec = Path.Combine(strProjectFolder, cstrAdaptItProjectFilename);
 
             if( bAdding )
             {
@@ -110,6 +110,16 @@ namespace SilEncConverters40
         #endregion Initialization
 
         #region Misc helpers
+        protected string XPathToKB
+        {
+            get
+            {
+                if (FileHasNamespace)
+                    return "/aikb:AdaptItKnowledgeBase/aikb:KB";
+                return "//KB";  // use double-slash, because AI would like to keep the AdaptItKnowledgeBase element, but without the ns
+            }
+        }
+
         protected string XPathToMAP
         {
             get
@@ -140,17 +150,6 @@ namespace SilEncConverters40
             }
         }
 
-        /* these are now deprecated since they don't support AI KB v2
-        protected string XPathToKB
-        {
-            get
-            {
-                if (FileHasNamespace)
-                    return "/aikb:AdaptItKnowledgeBase/aikb:KB";
-                return "//KB";  // use double-slash, because AI would like to keep the AdaptItKnowledgeBase element, but without the ns
-            }
-        }
-
         protected string XPathToSpecificMAP(int nMapValue)
         {
             string str = String.Format("MAP[@mn=\"{0}\"]", nMapValue);
@@ -174,10 +173,10 @@ namespace SilEncConverters40
                 str = "aikb:" + str;
             return str;
         }
-        */
 
         protected virtual bool Load(bool bMapOfMaps)
         {
+            System.Diagnostics.Debug.WriteLine("AdaptItKBReader.Load() BEGIN");
             System.Diagnostics.Debug.Assert(!String.IsNullOrEmpty(m_strProjectFileSpec));
             System.Diagnostics.Debug.Assert(!String.IsNullOrEmpty(m_strKnowledgeBaseFileSpec));
 
@@ -211,19 +210,10 @@ namespace SilEncConverters40
                 else    // NonRoman version
                 {
                     int nIndex = strProjectFileContents.IndexOf(cstrAdaptItPunctuationPairsNRSource) + cstrAdaptItPunctuationPairsNRSource.Length;
-
-                    // at some point, I think the project file didn't have \r, so handle that
-                    int nIndexToEol = strProjectFileContents.IndexOf("\r\n", nIndex);
-                    if (nIndexToEol == -1)
-                        nIndexToEol = strProjectFileContents.IndexOf('\n', nIndex); 
-                    int nLength = nIndexToEol - nIndex;
+                    int nLength = strProjectFileContents.IndexOf('\n',nIndex) - nIndex;
                     m_caDelimitersForward = ReturnDelimiters(strProjectFileContents, nIndex, nLength);
                     nIndex = strProjectFileContents.IndexOf(cstrAdaptItPunctuationPairsNRTarget, nIndex) + cstrAdaptItPunctuationPairsNRTarget.Length;
-                    
-                    nIndexToEol = strProjectFileContents.IndexOf("\r\n", nIndex);
-                    if (nIndexToEol == -1)
-                        nIndexToEol = strProjectFileContents.IndexOf('\n', nIndex);
-                    nLength = nIndexToEol - nIndex;
+                    nLength = strProjectFileContents.IndexOf('\n',nIndex) - nIndex;
                     m_caDelimitersReverse = ReturnDelimiters(strProjectFileContents, nIndex, nLength);
                     m_strTargetWordFontName = GetTargetFormFont(strProjectFileContents);
                     m_strSourceWordFontName = GetSourceFormFont(strProjectFileContents);
@@ -313,6 +303,7 @@ namespace SilEncConverters40
                                 string strSourceWord = xpSourceWords.Current.GetAttribute("k", navigator.NamespaceURI);
                                 System.Diagnostics.Debug.Assert(!mapWords.ContainsKey(strSourceWord), String.Format("The Knowledge Base has two different source records which are canonically equivalent! See if you can merge the two KB entries for word that look like, '{0}'", strSourceWord));
                                 mapWords[strSourceWord] = strTargetWordFull;
+                                System.Diagnostics.Debug.WriteLine("mapWords[" + strSourceWord + "] = " + strTargetWordFull);
                             }
                         }
                     }
@@ -371,6 +362,7 @@ namespace SilEncConverters40
                                 }
 
                                 m_mapLookup[aTURow.k] = strValue;
+                                System.Diagnostics.Debug.WriteLine("m_mapLookup[" + aTURow.k +  "] = " + strValue);
                             }
                         }
                     }
@@ -445,6 +437,7 @@ namespace SilEncConverters40
                 }
             }
 
+            System.Diagnostics.Debug.WriteLine("AdaptItKBReader.Load() END");
             return bSomethingChanged;   // indicate whether the data was reinitialized or not
         }
 
@@ -527,6 +520,7 @@ namespace SilEncConverters40
 
         protected void GetXmlDocument(out XmlDocument doc, out XPathNavigator navigator, out XmlNamespaceManager manager)
         {
+            System.Diagnostics.Debug.WriteLine("AdaptItKBReader.cs: Loading " + m_strKnowledgeBaseFileSpec);
             doc = new XmlDocument();
             doc.Load(m_strKnowledgeBaseFileSpec);
             navigator = doc.CreateNavigator();
@@ -536,8 +530,6 @@ namespace SilEncConverters40
                 manager.AddNamespace("aikb", cstrAdaptItXmlNamespace);
         }
 
-        /* this is now deprecated since only the other approach knows about 
-         * AdaptIt KB v2
         /// <summary>
         /// This version will add a lookup pair to the Adapt It knowledge base and
         /// save the result immediately (with the negative point that it doesn't 
@@ -679,7 +671,6 @@ namespace SilEncConverters40
             aikb.WriteXml(m_strKnowledgeBaseFileSpec);
 #endif
         }
-        */
 
         // for a NonRoman AI Project, the punctuation is in adjacent rows e.g.:
         // PunctuationPairsSourceSet(stores space for an empty cell)	?.,;:"!()<>{}[]“”‘’
@@ -743,8 +734,7 @@ namespace SilEncConverters40
         /// <returns>the source word selected in the edit dialog</returns>
         public string EditKnowledgeBase(string strFilter)
         {
-            if (!String.IsNullOrEmpty(strFilter))
-                strFilter = strFilter.Trim(m_caDelimitersForward ?? CaSplitChars);
+            strFilter = strFilter.Trim(m_caDelimitersForward ?? CaSplitChars);
 
             if (Load(true) || (_dlgSourceFormsForm == null))
                 _dlgSourceFormsForm = new ViewSourceFormsForm(MapOfMaps, m_strSourceWordFontName,
@@ -757,9 +747,10 @@ namespace SilEncConverters40
 
             _dlgSourceFormsForm.SelectedWord = strFilter;
 
-            return (_dlgSourceFormsForm.ShowDialog() == DialogResult.OK)
-                       ? _dlgSourceFormsForm.SelectedWord
-                       : null;
+            if (_dlgSourceFormsForm.ShowDialog() == DialogResult.OK)
+                return _dlgSourceFormsForm.SelectedWord;
+
+            return null;
         }
 
         internal void SaveMapOfMaps(MapOfMaps mapOfMaps)
@@ -984,10 +975,11 @@ namespace SilEncConverters40
             // this converter only deals with 'String' flavors, so if it's 
             //  Unicode_to(_from)_Unicode, then we expect UTF-16 and if it's 
             //  Legacy_to(_from)_Legacy, then we expect LegacyString
-            if( m_bLegacy )
+            if( m_bLegacy ) {
                 eInFormEngine = eOutFormEngine = EncodingForm.LegacyString;
-            else
+            } else {
                 eInFormEngine = eOutFormEngine = EncodingForm.UTF16;
+            }
 
             // the bForward that comes here might be different from the IEncConverter->DirectionForward
             //  (if it came in from a call to ConvertEx), so use *this* value to determine the direction

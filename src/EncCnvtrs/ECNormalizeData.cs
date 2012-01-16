@@ -20,6 +20,11 @@ namespace SilEncConverters40
         // this is the helper method that returns the input data normalized
         internal static unsafe byte* GetBytes(string strInput, int cnCountIn, EncodingForm eEncFormIn, int nCodePageIn, EncodingForm eFormEngineIn, byte* pBuf, ref int nBufSize, ref bool bDebugDisplayMode)
         {
+            System.Diagnostics.Debug.WriteLine("ECNormalizeData.GetBytes()");
+            System.Diagnostics.Debug.WriteLine(
+                "eEncFormIn " + eEncFormIn.ToString() + "," +
+                "eFormEngineIn " + eFormEngineIn.ToString());
+
             // if the form the user gave is not what the engine wants (and it isn't legacy
             //  since legacy forms are already handled later)...
             if ((eEncFormIn != eFormEngineIn) && !EncConverter.IsLegacyFormat(eEncFormIn))
@@ -57,7 +62,7 @@ namespace SilEncConverters40
 
                         // these forms are for C++ apps that want to use the BSTR to transfer 
                         //  bytes rather than OLECHARs.
-                        nInLen = StringToByteStar(strInput, pBuf, nInLen);
+                        nInLen = StringToByteStar(strInput, pBuf, nInLen, true);
 
                         if (eEncFormIn == EncodingForm.LegacyBytes)
                             DisplayDebugCharValues(pBuf, nInLen, "Received (LegacyBytes) from client and sending to Converter/DLL...", ref bDebugDisplayMode);
@@ -103,6 +108,7 @@ namespace SilEncConverters40
                             {
                                 Encoding enc = Encoding.GetEncoding(nCodePageIn);
                                 ba = enc.GetBytes(strInput);
+                                System.Diagnostics.Debug.WriteLine("Narrowized by given code page.");
                             }
                             catch
                             {
@@ -111,6 +117,7 @@ namespace SilEncConverters40
                                 // oops: cp8859 won't work for symbol data, so if GetBytes
                                 //  fails, just go back to stripping out the low byte as we had it
                                 //  originally. This'll work for both 8859 and symbol
+                                System.Diagnostics.Debug.WriteLine("Narrowizing by stripping the low byte.");
                                 ba = new byte[nInLen];
                                 for (int i = 0; i < nInLen; i++)
                                     ba[i] = (byte)(strInput[i] & 0xFF);
@@ -120,6 +127,7 @@ namespace SilEncConverters40
                         {
                             // otherwise, simply use CP_ACP (or the default code page) to 
                             //	narrowize it.
+                            System.Diagnostics.Debug.WriteLine("Narrowizing by given code page.");
                             Encoding enc = Encoding.GetEncoding(nCodePageIn);
                             ba = enc.GetBytes(strInput);
                         }
@@ -188,7 +196,7 @@ namespace SilEncConverters40
 
                         // but this should be the count of bytes...
                         nInLen *= 2;
-                        StringToByteStar(strInput, pBuf, nInLen);
+                        StringToByteStar(strInput, pBuf, nInLen, false);
                         break;
                     }
                 case EncodingForm.UTF16BE:
@@ -213,7 +221,7 @@ namespace SilEncConverters40
 
                         // for the byte count, double it (possibly again)
                         nInLen *= 2;
-                        StringToByteStar(strInput, pBuf, nInLen);
+                        StringToByteStar(strInput, pBuf, nInLen, false);
                         break;
                     }
 
@@ -544,18 +552,23 @@ namespace SilEncConverters40
             }
         }
 
-        public static unsafe byte[] StringToByteArr(string strBytesString)
+        public static unsafe byte[] StringToByteArr(string strBytesString, bool bCheckFinalByte)
         {
             int nLengthBytes = strBytesString.Length * 2;
             byte* pBytes = stackalloc byte[nLengthBytes];
-            nLengthBytes = StringToByteStar(strBytesString, pBytes, nLengthBytes);
+            nLengthBytes = StringToByteStar(strBytesString, pBytes, nLengthBytes, bCheckFinalByte);
             byte[] baOut = new byte[nLengthBytes];
             ByteStarToByteArr(pBytes, nLengthBytes, baOut);
             return baOut;
         }
 
+        // Set bCheckFinalByte to true for legacyBytes or utf8Bytes that may
+        // incorrectly contain a final null byte.  For utf-16 or utf-32 it
+        // should be set to false so that it doesn't cause the final character
+        // to be deleted.
         [CLSCompliant(false)]
-        public static unsafe int StringToByteStar(string sSrc, byte* pBuf, int countBytes)
+        public static unsafe int StringToByteStar(
+            string sSrc, byte* pBuf, int countBytes, bool bCheckFinalByte)
         {
             // keep track of the count so we can check the last byte
             int nCount = countBytes;
@@ -591,9 +604,12 @@ namespace SilEncConverters40
                 //	length. otoh, apparently it is possible for this data to have '00' 
                 //	as a legitimate value (don't ask). At the very least check if the 
                 //	last byte is zero and if so, then reduce the count by one...
-                if (((nCount % 2) == 0) && (pBuf[nCount - 2] != 0) && (pBuf[nCount - 1] == 0))
+                if (bCheckFinalByte)
                 {
-                    nCount--;
+                    if (((nCount % 2) == 0) && (pBuf[nCount - 2] != 0) && (pBuf[nCount - 1] == 0))
+                    {
+                        nCount--;
+                    }
                 }
 
                 return nCount;
@@ -648,6 +664,23 @@ namespace SilEncConverters40
             }
         }
         #endregion Misc Unsafe Byte copying helpers
+
+        public static bool IsMono
+        {
+            get { return  (Type.GetType ("Mono.Runtime") != null); }
+        }
+        public static bool IsUnix
+        {
+            get {
+                // Will return false for Windows
+                int p = (int) Environment.OSVersion.Platform;
+                return ((p == 4) || (p == 6) || (p == 128));
+            }
+        }
+        public static bool IsWindows
+        {
+            get { return  (!IsUnix); }
+        }
 
         #region Debug helper
         private unsafe static void DisplayDebugCharValues(byte[] baInputString, string strCaption, ref bool bDebugDisplayMode)

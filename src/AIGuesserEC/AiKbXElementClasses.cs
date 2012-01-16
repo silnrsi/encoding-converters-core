@@ -224,13 +224,8 @@ namespace SilEncConverters40
                 EncConverters.ThrowError(ErrStatus.CantOpenReadMap, strFilename);
 
             var doc = XDocument.Load(strFilename);
-
-            // determine if this is the new or old KB format
-            XElement elemKb = doc.Elements().First();
-            var attr = elemKb.Attribute(CstrdocVersion);
-            bool bKbVersion6 = (attr == null);  // the new format doesn't have 'docVersion'
             var mapOfMaps = new MapOfMaps();
-            mapOfMaps.LoadFromXElement(elemKb);
+            mapOfMaps.LoadFromXElement(doc.Elements().First());
             return mapOfMaps;
         }
 
