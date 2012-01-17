@@ -9,7 +9,8 @@ BUILDDIR=$(PROJDIR)build/Obj/
 OUTDIR  =$(PROJDIR)output/Debug/
 FILE1   =IcuTranslitEC
 FILE2   =IcuRegexEC
-ECHEADER=$(PROJDIR)src/EncCnvtrs/lib/CEncConverter.h
+ECHEADERDIR=$(PROJDIR)src/EncCnvtrs/lib
+ECHEADER=$(ECHEADERDIR)/CEncConverter.h
 
 all: buildIcuTranslit buildIcuRegex
 
@@ -27,11 +28,11 @@ buildIcuRegex:$(BUILDDIR)$(FILE2).o
 
 $(BUILDDIR)$(FILE1).o: $(SRCDIR)$(FILE1).cpp $(SRCDIR)$(FILE1).h $(ECHEADER)
 	g++ -Wall -fPIC -c $(SRCDIR)$(FILE1).cpp -o $(BUILDDIR)$(FILE1).o \
-        -I/usr/local/include/
+        -I/usr/local/include/ -I$(ECHEADERDIR)
 
 $(BUILDDIR)$(FILE2).o: $(SRCDIR)$(FILE2).cpp $(SRCDIR)$(FILE2).h $(ECHEADER)
 	g++ -Wall -fPIC -c $(SRCDIR)$(FILE2).cpp -o $(BUILDDIR)$(FILE2).o \
-        -I/usr/local/include/
+        -I/usr/local/include/ -I$(ECHEADERDIR)
 
 clean:
 	rm -f $(BUILDDIR)*.*
