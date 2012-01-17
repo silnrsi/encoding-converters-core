@@ -6,7 +6,8 @@
                    DisplayName="CC Table"
                    ConfiguratorProgId="SilEncConverters40.CcEncConverterConfig"
                    DefiningExtension=".cct"
-                   AssemblyReference="SilEncConverters40, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" />
+                   AssemblyReference="CcEC, Version=4.0.0.0, Culture=neutral, PublicKeyToken=abcdefghijklmnop"
+/>
   <ECPluginDetails ImplementationName="SIL.comp"
                    ImplementationProgId="SilEncConverters40.CmpdEncConverter"
                    Priority="0"

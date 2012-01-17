@@ -9,19 +9,19 @@
                    AssemblyReference="IcuEC, Version=4.0.0.0, Culture=neutral, PublicKeyToken=abcdefghijklmnop"
 />
   <ECPluginDetails ImplementationName="ICU.trans"
-                   ImplementationProgId="SilEncConverters31.IcuECTransliterator.40"
+                   ImplementationProgId="SilEncConverters40.IcuTranslitEncConverter"
                    Priority="1"
                    DefiningProcessType="4"
                    DisplayName="ICU Transliterator"
-                   ConfiguratorProgId="SilEncConverters31.IcuECTransConfig.40"
+                   ConfiguratorProgId="SilEncConverters40.IcuTranslitConfig"
                    AssemblyReference="IcuEC, Version=4.0.0.0, Culture=neutral, PublicKeyToken=abcdefghijklmnop"
 />
   <ECPluginDetails ImplementationName="ICU.regex"
-                   ImplementationProgId="SilEncConverters31.IcuECRegex.40"
+                   ImplementationProgId="SilEncConverters40.IcuRegexEncConverter"
                    Priority="1"
                    DefiningProcessType="128"
                    DisplayName="Regular Expression Find and Replace (ICU)"
-                   ConfiguratorProgId="SilEncConverters31.IcuECRegexConfig.40"
+                   ConfiguratorProgId="SilEncConverters40.IcuRegexConfig"
                    AssemblyReference="IcuEC, Version=4.0.0.0, Culture=neutral, PublicKeyToken=abcdefghijklmnop"
 />
 </EncConverterPlugins>
