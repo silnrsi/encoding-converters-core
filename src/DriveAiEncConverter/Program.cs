@@ -15,6 +15,22 @@ namespace DriveAiEncConverter
             string strSelectedSourceWord = theEc.EditKnowledgeBase("दुन");
             strSelectedSourceWord = theEc.EditKnowledgeBase(strSelectedSourceWord);
             theEc.EditTargetWords(strSelectedSourceWord);
+            /*
+            int nBufSize = str.Length * 2;
+            var abyInBuffer = new byte[nBufSize];
+            fixed (byte* lpInBuffer = abyInBuffer)
+            {
+                int nInLen = ECNormalizeData.StringToByteStar(str, lpInBuffer, nBufSize);
+                Console.WriteLine("{0}{1}", str, nInLen);
+            }
+    str = EncConverters.ByteArrToBytesString(Encoding.UTF8.GetBytes(str));
+    Console.WriteLine(str);
+            */
+            /*
+            string str = "TEST DATA";
+            var theEc = theECs[0];
+            var strO = theEc.Convert(str);
+            */
         }
     }
 }
