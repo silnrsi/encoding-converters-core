@@ -36,12 +36,12 @@ namespace SilEncConverters40
 
         public void SetModified()
         {
-            buttonOK.Enabled = targetFormDisplayControl.AreAllTargetFormsNonEmpty;
+            buttonOK.Enabled = targetFormDisplayControl.AreAllTargetFormsNonEmpty(_achTrim);
         }
 
         private void buttonOK_Click(object sender, EventArgs e)
         {
-            System.Diagnostics.Debug.Assert(targetFormDisplayControl.AreAllTargetFormsNonEmpty);
+            System.Diagnostics.Debug.Assert(targetFormDisplayControl.AreAllTargetFormsNonEmpty(_achTrim));
             targetFormDisplayControl.TrimTargetWordForms(_achTrim);
             DialogResult = DialogResult.OK;
             Close();

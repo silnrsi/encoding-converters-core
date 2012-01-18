@@ -97,17 +97,15 @@ namespace SilEncConverters40
             CallToSetModified();
         }
 
-        public bool AreAllTargetFormsNonEmpty
+        public bool AreAllTargetFormsNonEmpty(char[] achTrim)
         {
-            get
-            {
-                return flowLayoutPanelTargetWords.Controls.Cast<TextBoxWithButtons>().All(control => !String.IsNullOrEmpty(control.TargetWordElement.TargetWord));
-            }
+            return (from TextBoxWithButtons control in flowLayoutPanelTargetWords.Controls 
+                    select control.TargetWordElement.TargetWord.Trim(achTrim)).All(str => !String.IsNullOrEmpty(str));
         }
 
         public void TrimTargetWordForms(char[] achTrim)
         {
-            System.Diagnostics.Debug.Assert(AreAllTargetFormsNonEmpty); // should be called first
+            System.Diagnostics.Debug.Assert(AreAllTargetFormsNonEmpty(achTrim)); // should be called first
             foreach (TextBoxWithButtons ctrl in flowLayoutPanelTargetWords.Controls)
                 ctrl.TargetWordElement.TrimTargetWord(achTrim);
         }
