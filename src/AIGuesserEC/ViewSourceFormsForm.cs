@@ -41,7 +41,7 @@ namespace SilEncConverters40
         {
             if (buttonOK.Text == CstrButtonLabelSave)
             {
-                System.Diagnostics.Debug.Assert(targetFormDisplayControl.AreAllTargetFormsNonEmpty);
+                System.Diagnostics.Debug.Assert(targetFormDisplayControl.AreAllTargetFormsNonEmpty(_achTrimTarget));
                 string strSelectedWord = SelectedWord;
                 Parent.SaveMapOfMaps(_mapOfMaps);
                 buttonOK.Text = CstrButtonLabelReturn;
@@ -92,7 +92,7 @@ namespace SilEncConverters40
         private void SetModified()
         {
             buttonOK.Text = CstrButtonLabelSave;
-            buttonOK.Enabled = targetFormDisplayControl.AreAllTargetFormsNonEmpty;
+            buttonOK.Enabled = targetFormDisplayControl.AreAllTargetFormsNonEmpty(_achTrimTarget);
             listBoxSourceWordForms.Enabled = false;
         }
 
