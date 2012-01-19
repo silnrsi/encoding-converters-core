@@ -34,7 +34,7 @@ namespace PyScriptEC
     PyObject*   m_pArgs     = 0;
     int         m_nArgCount = 0;
 
-    time_t     m_timeLastModified   = NULL;
+    time_t     m_timeLastModified   = 0;
     char *     m_strFileSpec        = NULL;
     char *     m_strScriptDir       = NULL;
     char *     m_strScriptName      = NULL;
@@ -91,7 +91,7 @@ namespace PyScriptEC
         fprintf(stderr, "Script file exists.\n");
             
         // see if the file has been changed (and reload if so)
-        if (m_timeLastModified != NULL)
+        if (m_timeLastModified != 0)
         {
             if (attrib.st_mtime > m_timeLastModified)
             {
@@ -389,7 +389,7 @@ namespace PyScriptEC
         pValue = PyObject_CallObject(m_pFunc, m_pArgs);
         fprintf(stderr, "finished.\n");
 
-        int nOut;
+        Py_ssize_t nOut;
 
         if( pValue == 0 )
         {
@@ -435,18 +435,18 @@ namespace PyScriptEC
         {
             if( nOut > (int)rnOutLen )
             {
-                fprintf(stderr, "Too long: '%s'\n", lpOutValue);
+                fprintf(stderr, "Too long: '%s'\n", (char *)lpOutValue);
                 hr = -1;
             }
             else
             {
                 rnOutLen = nOut;
-                fprintf(stderr, "copying to length %d\n", nOut);
+                fprintf(stderr, "copying to length %d\n", (int)nOut);
                 if( nOut > 0 )
                     memcpy(lpOutBuffer,lpOutValue,nOut);
-                    fprintf(stderr, "length of outBuffer = %d\n", strlen(lpOutBuffer));
+				fprintf(stderr, "length of outBuffer = %u\n", (unsigned)strlen(lpOutBuffer));
                     lpOutBuffer[nOut] = '\0';   // end the string here
-                    fprintf(stderr, "length of outBuffer = %d\n", strlen(lpOutBuffer));
+                    fprintf(stderr, "length of outBuffer = %u\n", (unsigned)strlen(lpOutBuffer));
                 }
         }
 

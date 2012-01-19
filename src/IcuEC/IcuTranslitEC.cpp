@@ -125,7 +125,7 @@ namespace IcuTranslitEC
             return hr;
 
         UErrorCode status = U_ZERO_ERROR;
-        UParseError parseError = { -1, 0, 0, 0};
+        UParseError parseError = { -1, 0, {0}, {0}};
 
         // it's not so clear what is a "rule-based" converter and what isn't. So just try to create it from 
         //  the normal approach first and if that fails, then try the createFromRules
@@ -347,7 +347,7 @@ namespace IcuTranslitEC
                 fprintf(stderr, "actual nLen %d\n", nLen);
                 rnOutLen = nLen;
                 //lpOutBuffer[rnOutLen] = '\0';   // null terminate in case extract didn't do it
-                fprintf(stderr, "lpOutBuffer length = %d\n", strlen(lpOutBuffer));
+                fprintf(stderr, "lpOutBuffer length = %u\n", (unsigned)strlen(lpOutBuffer));
                 fprintf(stderr, "lpOutBuffer: '%s'\n", lpOutBuffer);
             }
         }
