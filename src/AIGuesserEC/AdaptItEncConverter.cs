@@ -115,7 +115,7 @@ namespace SilEncConverters40
             System.Diagnostics.Debug.WriteLine("Twice-converted input string: '" + strInput + "'");
 
             List<string> lstInputTokens, lstInputInBetweenTokens, lstOutputTokens, lstOutputInBetweenTokens;
-            SplitAndConvert(strInput, out lstInputTokens, out lstInputInBetweenTokens,
+            SplitAndConvertEx(strInput, out lstInputTokens, out lstInputInBetweenTokens,
                 out lstOutputTokens, out lstOutputInBetweenTokens);
 
             // when we're finally done with all the replacements possible, build up a new output string of the 
@@ -132,7 +132,17 @@ namespace SilEncConverters40
             System.Diagnostics.Debug.WriteLine("AdaptItEC.DoConvert END");
         }
 
-        public void SplitAndConvert(string strInput, 
+        // calling from external we need to possibly re-load
+        public void SplitAndConvert(string strInput,
+            out List<string> lstInputTokens, out List<string> lstInputInBetweenTokens,
+            out List<string> lstOutputTokens, out List<string> lstOutputInBetweenTokens)
+        {
+            Load(false);
+            SplitAndConvertEx(strInput, out lstInputTokens, out lstInputInBetweenTokens,
+                              out lstOutputTokens, out lstOutputInBetweenTokens);
+        }
+
+        protected void SplitAndConvertEx(string strInput, 
             out List<string> lstInputTokens, out List<string> lstInputInBetweenTokens, 
             out List<string> lstOutputTokens, out List<string> lstOutputInBetweenTokens)
         {
