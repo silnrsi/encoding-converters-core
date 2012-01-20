@@ -1,6 +1,7 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <OutputPath>..\..\..\release\</OutputPath>
+    <OutputPath>..\..\output\release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Optimize>true</Optimize>
@@ -10,6 +11,7 @@
     <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
     <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
     <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -28,7 +30,9 @@
     </FileUpgradeFlags>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
-    <OldToolsVersion>2.0</OldToolsVersion>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -41,14 +45,12 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>..\..\..\debug\</OutputPath>
+    <OutputPath>..\..\output\debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <RegisterForComInterop>false</RegisterForComInterop>
@@ -57,6 +59,7 @@
     <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
     <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
     <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="ECInterfaces, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86">
@@ -115,7 +118,7 @@
     <Compile Include="AddNewSourceWordForm.Designer.cs">
       <DependentUpon>AddNewSourceWordForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="AiKbXElementClasses.cs" />
+    <Compile Include="AiKbXDocument Classes.cs" />
     <Compile Include="ModifyTargetWordsForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -148,7 +151,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="..\..\..\release\Plugins\IEC3.1.0.0\AI 4.0.0.0 Plugin Details.xml">
+    <Content Include="..\..\redist\EC\Plugins\AI 4.0.0.0 Plugin Details.xml">
       <Link>AI 4.0.0.0 Plugin Details.xml</Link>
     </Content>
     <None Include="Resources\BuilderDialog_movedown.bmp" />
@@ -195,7 +198,7 @@
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
       <Visible>False</Visible>
-      <ProductName>.NET Framework Client Profile</ProductName>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
     <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">

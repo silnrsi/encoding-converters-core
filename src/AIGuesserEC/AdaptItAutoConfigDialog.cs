@@ -135,8 +135,9 @@ namespace SilEncConverters40
             m_bLegacy = bLegacy;
             listBoxProjects.Items.Clear();
 
-            string strPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) +
-                             Path.DirectorySeparatorChar + strWorkingDirectory;
+            string strPath = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+                strWorkingDirectory);
 
             if (Directory.Exists(strPath))
             {
@@ -150,8 +151,8 @@ namespace SilEncConverters40
                     }
 
                     // also check for a glossing knowledgebase
-                    string strGlossingFileSpec = strFolder + Path.DirectorySeparatorChar +
-                                                 cstrAdaptItGlossingKB;
+                    string strGlossingFileSpec = Path.Combine(strFolder,
+                        cstrAdaptItGlossingKB);
                     if( File.Exists(strGlossingFileSpec) )
                         listBoxProjects.Items.Add(Path.GetFileNameWithoutExtension(strFolder) + cstrAdaptItGlossingKBLabel);
                 }
@@ -201,10 +202,11 @@ namespace SilEncConverters40
                 m_strXmlTitle = cstrAdaptItGlossingKB;
             }
 
-            string strKBFileSpec = Path.Combine(
+            // (Prior to .Net 4.0, Path.Combine handled only two arguments.)
+            string strKBFileSpec = Path.Combine(Path.Combine(Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-                (m_bLegacy) ? cstrAdaptItWorkingDirLegacy : CstrAdaptItWorkingDirUnicode,
-                strProjectName,
+                (m_bLegacy) ? cstrAdaptItWorkingDirLegacy : CstrAdaptItWorkingDirUnicode),
+                strProjectName),
                 m_strXmlTitle);
 
             ConverterIdentifier = strKBFileSpec;
