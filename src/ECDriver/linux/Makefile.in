@@ -15,7 +15,11 @@ OUTDIR      = $(ROOTDIR)/output/Debug
 ECHEADERDIR=../EncCnvtrs/lib
 ECHEADER=$(ECHEADERDIR)/CEncConverter.h
 
-all: $(OUTDIR)/libecdriver.so.1.0
+all: $(BUILDDIR) $(OUTDIR)/libecdriver.so.1.0
+
+$(BUILDDIR):
+	mkdir -p $(BUILDDIR)
+	mkdir -p $(OUTDIR)
 
 $(OUTDIR)/libecdriver.so.1.0: $(BUILDDIR)/ECDriver.o
 	g++ -shared -Wl,-soname,libecdriver.so.1 \
