@@ -15,7 +15,11 @@ OUTDIR      = $(ROOTDIR)/output/Debug
 ECHEADERDIR=../EncCnvtrs/lib
 ECHEADER=$(ECHEADERDIR)/CEncConverter.h
 
-all: $(OUTDIR)/libIcuTranslitEC.so.1.0 $(OUTDIR)/libIcuRegexEC.so.1.0
+all: $(BUILDDIR) $(OUTDIR)/libIcuTranslitEC.so.1.0 $(OUTDIR)/libIcuRegexEC.so.1.0
+
+$(BUILDDIR):
+	mkdir -p $(BUILDDIR)
+	mkdir -p $(OUTDIR)
 
 $(OUTDIR)/libIcuTranslitEC.so.1.0: $(BUILDDIR)/IcuTranslitEC.o
 	g++ -shared -Wl,-soname,libIcuTranslitEC.so.1 \

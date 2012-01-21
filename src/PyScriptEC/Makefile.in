@@ -17,7 +17,11 @@ PYTHON_CPPFLAGS=@PYTHON_CPPFLAGS@
 ECHEADERDIR=../EncCnvtrs/lib
 ECHEADER=$(ECHEADERDIR)/CEncConverter.h
 
-all: $(OUTDIR)/libPyScriptEncConverter.so.1.0
+all: $(BUILDDIR) $(OUTDIR)/libPyScriptEncConverter.so.1.0
+
+$(BUILDDIR):
+	mkdir -p $(BUILDDIR)
+	mkdir -p $(OUTDIR)
 
 $(OUTDIR)/libPyScriptEncConverter.so.1.0: $(BUILDDIR)/PyScriptEncConverter.o
 	g++ -shared -Wl,-soname,libPyScriptEncConverter.so.1 \
@@ -27,7 +31,7 @@ $(OUTDIR)/libPyScriptEncConverter.so.1.0: $(BUILDDIR)/PyScriptEncConverter.o
 $(BUILDDIR)/PyScriptEncConverter.o: PyScriptEncConverter.cpp PyScriptEncConverter.h $(ECHEADER)
 	g++ -Wall -fPIC -c PyScriptEncConverter.cpp \
   -o $(BUILDDIR)/PyScriptEncConverter.o \
-  -I$(PYTHON_CPPFLAGS) -I$(ECHEADERDIR)
+  $(PYTHON_CPPFLAGS) -I$(ECHEADERDIR)
 
 distclean clean:
 	rm -f *~
