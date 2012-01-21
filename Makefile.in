@@ -1,0 +1,34 @@
+# Master Makefile for the encConverters package
+# Makefile.in created January 20, 2012 by Stephen McConnel
+
+@SET_MAKE@
+# the next line requires GNU make ...
+MAKEFLAGS=#--no-print-directory
+srcdir = @srcdir@
+VPATH  = @srcdir@
+
+SHELL = /bin/sh
+
+SRCDIRS = src/IcuEC src/PyScriptEC src/ECDriver/linux
+
+all:
+	@(cd build && nant) || true
+	@for subdir in $(SRCDIRS); do \
+	  echo making in $$subdir; \
+	  (cd $$subdir && $(MAKE) all) || true; \
+	done
+
+clean:
+	@(cd build && nant clean) || true
+	@for subdir in $(SRCDIRS); do \
+	  echo making in $$subdir; \
+	  (cd $$subdir && $(MAKE) clean) || true; \
+	done
+	@rm -f *~
+
+distclean: clean
+	@for subdir in $(SRCDIRS); do \
+	  echo making in $$subdir; \
+	  (cd $$subdir && $(MAKE) distclean) || true; \
+	done
+	@rm -f Makefile config.cache src/config.h config.log config.status src/stamp-h1 autogen.err
