@@ -1,0 +1,38 @@
+# Master Makefile for the PyScriptEC converter library
+# Makefile.in created January 20, 2012 by Stephen McConnel
+
+VPATH       = @srcdir@
+CXX         = @CXX@
+CC          = @CC@
+CFLAGS      = @CFLAGS@ @DEFS@ -I. -I..
+INSTALL     = @INSTALL@
+prefix      = @prefix@
+exec_prefix = @exec_prefix@
+ROOTDIR     = @abs_top_srcdir@
+TOPDIR      = @top_srcdir@
+BUILDDIR    = $(ROOTDIR)/build/Obj
+OUTDIR      = $(ROOTDIR)/output/Debug
+PYTHON_LDFLAGS =@PYTHON_LDFLAGS@
+PYTHON_CPPFLAGS=@PYTHON_CPPFLAGS@
+ECHEADERDIR=../EncCnvtrs/lib
+ECHEADER=$(ECHEADERDIR)/CEncConverter.h
+
+all: $(OUTDIR)/libPyScriptEncConverter.so.1.0
+
+$(OUTDIR)/libPyScriptEncConverter.so.1.0: $(BUILDDIR)/PyScriptEncConverter.o
+	g++ -shared -Wl,-soname,libPyScriptEncConverter.so.1 \
+  -o $(OUTDIR)/libPyScriptEncConverter.so.1.0 \
+  $(BUILDDIR)/PyScriptEncConverter.o $(PYTHON_LDFLAGS)
+
+$(BUILDDIR)/PyScriptEncConverter.o: PyScriptEncConverter.cpp PyScriptEncConverter.h $(ECHEADER)
+	g++ -Wall -fPIC -c PyScriptEncConverter.cpp \
+  -o $(BUILDDIR)/PyScriptEncConverter.o \
+  -I$(PYTHON_CPPFLAGS) -I$(ECHEADERDIR)
+
+distclean clean:
+	rm -f *~
+	rm -f $(BUILDDIR)/PyScriptEncConverter.o
+	rm -f $(OUTDIR)/libPyScriptEncConverter.so.1.0
+
+distclean: clean
+	rm -f Makefile
