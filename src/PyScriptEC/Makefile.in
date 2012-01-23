@@ -17,6 +17,8 @@ PYTHON_CPPFLAGS=@PYTHON_CPPFLAGS@
 ECHEADERDIR=../EncCnvtrs/lib
 ECHEADER=$(ECHEADERDIR)/CEncConverter.h
 
+LIBDIR = $(exec_prefix)/lib/encConverters
+
 all: $(BUILDDIR) $(OUTDIR)/libPyScriptEncConverter.so.1.0
 
 $(BUILDDIR):
@@ -40,3 +42,8 @@ clean:
 
 distclean: clean
 	rm -f Makefile
+
+install:
+	$(INSTALL) $(OUTDIR)/libPyScriptEncConverter.so.1.0 $(LIBDIR)
+
+check:
