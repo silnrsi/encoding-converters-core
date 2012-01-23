@@ -13,7 +13,7 @@
     <property name="debug" value="true" overwrite="false"/>
 
     <property name="projroot"
-     value="/media/winD/Jim/computing/SEC_on_linux/ec-main/linux-branch" />
+     value="/media/winD/Jim/computing/SEC_on_linux/ec-main" />
     <if test="${environment::variable-exists('ECROOT')}">
         <property name="projroot" value="${environment::get-variable('ECROOT')}"/>
     </if>

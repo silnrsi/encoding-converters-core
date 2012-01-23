@@ -21,8 +21,13 @@ namespace ECFileConverter
         {
             m_eParamState = ParamState.eParamStart;
 
-            InputEncoding = System.Text.Encoding.UTF8;
-            OutputEncoding = System.Text.Encoding.Unicode;
+            if (ECNormalizeData.IsWindows) {
+                InputEncoding = System.Text.Encoding.UTF8;
+                OutputEncoding = System.Text.Encoding.Unicode;
+            } else {
+                InputEncoding = System.Text.Encoding.Unicode;
+                OutputEncoding = System.Text.Encoding.UTF8;
+            }
 
             DirectionForward = true;
         }
@@ -74,6 +79,12 @@ namespace ECFileConverter
                 {
                     m_eParamState = ParamState.eParamInputFileName;
                     InputEncoding = System.Text.Encoding.Unicode;
+                }
+                else if( arg == "i32" )
+                {
+                    Console.WriteLine("ECFileConv: Setting InputEncoding UTF32");
+                    m_eParamState = ParamState.eParamInputFileName;
+                    InputEncoding = System.Text.Encoding.UTF32;
                 }
                 else if( arg == "i8" )
                 {
@@ -187,27 +198,27 @@ namespace ECFileConverter
                 }
                 catch(NullReferenceException e) 
                 {
-                    Console.WriteLine("program error: Caught exception #1." + e.Message); 
+                    Console.WriteLine("ECFileConv: program error: Caught exception #1." + e.Message); 
                 }
                 catch(ArgumentNullException e)
                 {
-                    Console.WriteLine("File name missing: " + e.Message);
+                    Console.WriteLine("ECFileConv: File name missing: " + e.Message);
                 }
                 catch(FileNotFoundException e)
                 {
-                    Console.WriteLine("File not found: " + e.Message);
+                    Console.WriteLine("ECFileConv: File not found: " + e.Message);
                 }
                 catch(IOException e)
                 {
-                    Console.WriteLine("IO error: " + e.Message);
+                    Console.WriteLine("ECFileConv: IO error: " + e.Message);
                 }
                 catch (ApplicationException e)
                 {
-                    Console.WriteLine("Application Exception: " + e.Message);
+                    Console.WriteLine("ECFileConv: Application Exception: " + e.Message);
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine("program error!" + e.Message);
+                    Console.WriteLine("ECFileConv: program error!" + e.Message);
                     throw;
                 }
             }
@@ -223,6 +234,8 @@ namespace ECFileConverter
             bool                    bDirectionForward
             )
         {
+            Console.WriteLine("ECFileConv: DoFileConvert() BEGIN");
+            Console.WriteLine("ECFileConv: inEnc " + inEnc.ToString());
             // the user *might* not give us a converter name if they simply want to change
             //  the encoding from, say, UTF8 to UTF16.
             bool bIsConverter = !(strConverterName == null);
@@ -230,21 +243,33 @@ namespace ECFileConverter
             IEncConverter aEC = null;
             if( bIsConverter )
             {
+                Console.WriteLine("ECFileConv: Creating EncConverters object.");
                 EncConverters aECs = new EncConverters();
-#if DEBUG
+                Console.WriteLine("ECFileConv: Created EncConverters object.");
+/*
+//#if DEBUG
                 // here's how you'd add the map programmatically (of course,
                 //  update the path here
+                string mapLoc = Path.Combine(GetProjectFolder, "ToUpper.tec");
+                Console.WriteLine("mapLoc " + mapLoc);
                 aECs.AddConversionMap(strConverterName, Path.Combine(GetProjectFolder, "ToUpper.tec"),
                     ConvType.Unicode_to_from_Unicode, EncConverters.strTypeSILtec, 
                     "UNICODE", "UNICODE", ProcessTypeFlags.DontKnow);
-#endif
-                aEC = aECs[strConverterName];    // e.g. "Devanagri<>Latin(ICU)"
+                Console.WriteLine("Added map.");
+//#endif
+//                aEC = aECs[strConverterName];    // e.g. "Devanagri<>Latin(ICU)"
+*/
+
+                Console.WriteLine("ECFileConv: Calling AutoSelect.");
+                aEC = aECs.AutoSelect(ConvType.Unknown);
             }
 
             if (aEC == null)
                 throw new ApplicationException(
                     String.Format("The converter '{0}' wasn't in the repository. Did you forget to add it?",
                                   strConverterName));
+            Console.WriteLine("ECFileConv: Got EncConverter.");
+
             // open the input and output files using the given encoding formats
             StreamReader srReadLine = new StreamReader(strInputFileName, inEnc, true);
             srReadLine.BaseStream.Seek(0, SeekOrigin.Begin);
@@ -270,6 +295,7 @@ namespace ECFileConverter
 
             srReadLine.Close();
             swWriteLine.Close();
+            Console.WriteLine("ECFileConv: DoFileConvert END");
         }
 
         /// <summary>
