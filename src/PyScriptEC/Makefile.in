@@ -33,7 +33,7 @@ $(BUILDDIR)/PyScriptEncConverter.o: PyScriptEncConverter.cpp PyScriptEncConverte
   -o $(BUILDDIR)/PyScriptEncConverter.o \
   $(PYTHON_CPPFLAGS) -I$(ECHEADERDIR)
 
-distclean clean:
+clean:
 	rm -f *~
 	rm -f $(BUILDDIR)/PyScriptEncConverter.o
 	rm -f $(OUTDIR)/libPyScriptEncConverter.so.1.0

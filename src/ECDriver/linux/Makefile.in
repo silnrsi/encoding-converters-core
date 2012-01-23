@@ -12,6 +12,8 @@ ROOTDIR     = @abs_top_srcdir@
 TOPDIR      = @top_srcdir@
 BUILDDIR    = $(ROOTDIR)/build/Obj
 OUTDIR      = $(ROOTDIR)/output/Debug
+MONO_INCLUDE= @MONO_CPPFLAGS@
+MONO_LDFLAGS= @MONO_LDFLAGS@
 ECHEADERDIR=../EncCnvtrs/lib
 ECHEADER=$(ECHEADERDIR)/CEncConverter.h
 
@@ -24,11 +26,11 @@ $(BUILDDIR):
 $(OUTDIR)/libecdriver.so.1.0: $(BUILDDIR)/ECDriver.o
 	g++ -shared -Wl,-soname,libecdriver.so.1 \
   -o $(OUTDIR)/libecdriver.so.1.0 $(BUILDDIR)/ECDriver.o \
-  -L/usr/lib -lmono-2.0 -lpthread
+  -L/usr/lib $(MONO_LDFLAGS) -lmono-2.0 -lpthread
 
 $(BUILDDIR)/ECDriver.o: $(SRCDIR)ECDriver.cpp $(SRCDIR)ecdriver.h
 	g++ -Wall -fPIC -c $(SRCDIR)ECDriver.cpp -o $(BUILDDIR)/ECDriver.o \
-  -I/usr/include/mono-2.0
+  $(MONO_INCLUDE)
 
 $(OUTDIR)/testECDriverDyn: $(SRCDIR)testDynamic.cpp
 	g++ -Wall $(SRCDIR)testDynamic.cpp -ldl -o $(OUTDIR)/testECDriverDyn
