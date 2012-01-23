@@ -1,0 +1,49 @@
+# Master Makefile for the IcuEC converter libraries
+# Makefile.in created January 20, 2012 by Stephen McConnel
+
+VPATH       = @srcdir@
+CXX         = @CXX@
+CC          = @CC@
+CFLAGS      = @CFLAGS@ @DEFS@ -I. -I..
+INSTALL     = @INSTALL@
+prefix      = @prefix@
+exec_prefix = @exec_prefix@
+ROOTDIR     = @abs_top_srcdir@
+TOPDIR      = @top_srcdir@
+BUILDDIR    = $(ROOTDIR)/build/Obj
+OUTDIR      = $(ROOTDIR)/output/Debug
+ECHEADERDIR=../EncCnvtrs/lib
+ECHEADER=$(ECHEADERDIR)/CEncConverter.h
+
+all: $(BUILDDIR) $(OUTDIR)/libIcuTranslitEC.so.1.0 $(OUTDIR)/libIcuRegexEC.so.1.0
+
+$(BUILDDIR):
+	mkdir -p $(BUILDDIR)
+	mkdir -p $(OUTDIR)
+
+$(OUTDIR)/libIcuTranslitEC.so.1.0: $(BUILDDIR)/IcuTranslitEC.o
+	g++ -shared -Wl,-soname,libIcuTranslitEC.so.1 \
+  -o $(OUTDIR)/libIcuTranslitEC.so.1.0 $(BUILDDIR)/IcuTranslitEC.o \
+  -L/usr/local/lib -licuuc -licui18n
+
+$(OUTDIR)/libIcuRegexEC.so.1.0: $(BUILDDIR)/IcuRegexEC.o
+	g++ -shared -Wl,-soname,libIcuRegexEC.so.1 \
+  -o $(OUTDIR)/libIcuRegexEC.so.1.0 $(BUILDDIR)/IcuRegexEC.o \
+  -L/usr/local/lib -licuuc -licui18n
+
+$(BUILDDIR)/IcuTranslitEC.o: IcuTranslitEC.cpp IcuTranslitEC.h $(ECHEADER)
+	g++ -Wall -fPIC -c IcuTranslitEC.cpp -o $(BUILDDIR)/IcuTranslitEC.o \
+  -I/usr/local/include/ -I$(ECHEADERDIR)
+
+$(BUILDDIR)/IcuRegexEC.o: IcuRegexEC.cpp IcuRegexEC.h $(ECHEADER)
+	g++ -Wall -fPIC -c IcuRegexEC.cpp -o $(BUILDDIR)/IcuRegexEC.o \
+  -I/usr/local/include/ -I$(ECHEADERDIR)
+
+clean:
+	rm -f *~
+	rm -f $(BUILDDIR)/IcuTranslitEC.o $(BUILDDIR)/IcuRegexEC.o
+	rm -f $(OUTDIR)/libIcuTranslitEC.so.1.0
+	rm -f $(OUTDIR)/libIcuRegexEC.so.1.0
+
+distclean: clean
+	rm -f Makefile

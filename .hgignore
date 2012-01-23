@@ -1,0 +1,6 @@
+syntax: glob
+output/*
+build/Obj/*
+autom4te.cache/*
+*.orig
+*~

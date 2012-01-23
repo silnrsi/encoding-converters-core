@@ -1,0 +1,55 @@
+# Master Makefile for the ECDriver library
+# Makefile.in created January 20, 2012 by Stephen McConnel
+
+VPATH       = @srcdir@
+CXX         = @CXX@
+CC          = @CC@
+CFLAGS      = @CFLAGS@ @DEFS@ -I. -I../..
+INSTALL     = @INSTALL@
+prefix      = @prefix@
+exec_prefix = @exec_prefix@
+ROOTDIR     = @abs_top_srcdir@
+TOPDIR      = @top_srcdir@
+BUILDDIR    = $(ROOTDIR)/build/Obj
+OUTDIR      = $(ROOTDIR)/output/Debug
+MONO_INCLUDE= @MONO_CPPFLAGS@
+MONO_LDFLAGS= @MONO_LDFLAGS@
+ECHEADERDIR=../EncCnvtrs/lib
+ECHEADER=$(ECHEADERDIR)/CEncConverter.h
+
+all: $(BUILDDIR) $(OUTDIR)/libecdriver.so.1.0
+
+$(BUILDDIR):
+	mkdir -p $(BUILDDIR)
+	mkdir -p $(OUTDIR)
+
+$(OUTDIR)/libecdriver.so.1.0: $(BUILDDIR)/ECDriver.o
+	g++ -shared -Wl,-soname,libecdriver.so.1 \
+  -o $(OUTDIR)/libecdriver.so.1.0 $(BUILDDIR)/ECDriver.o \
+  -L/usr/lib $(MONO_LDFLAGS) -lmono-2.0 -lpthread
+
+$(BUILDDIR)/ECDriver.o: $(SRCDIR)ECDriver.cpp $(SRCDIR)ecdriver.h
+	g++ -Wall -fPIC -c $(SRCDIR)ECDriver.cpp -o $(BUILDDIR)/ECDriver.o \
+  $(MONO_INCLUDE)
+
+$(OUTDIR)/testECDriverDyn: $(SRCDIR)testDynamic.cpp
+	g++ -Wall $(SRCDIR)testDynamic.cpp -ldl -o $(OUTDIR)/testECDriverDyn
+
+$(OUTDIR)/testECDriverShared: $(BUILDDIR)/testShared.o
+	g++ -g -o $(OUTDIR)/testECDriverShared $(BUILDDIR)/testShared.o -L$(OUTDIR) -lecdriver
+
+check: $(OUTDIR)/testECDriverDyn $(OUTDIR)/testECDriverShared
+	$(OUTDIR)/testECDriverDyn
+	$(OUTDIR)/testECDriverShared
+
+$(BUILDDIR)/testShared.o: $(SRCDIR)testShared.cpp
+	g++ -Wall -g -c $(SRCDIR)testShared.cpp -o $(BUILDDIR)/testShared.o
+
+clean:
+	rm -f *~
+	rm -f $(BUILDDIR)/ECDriver.o
+	rm -f $(OUTDIR)/libecdriver.so.1.0
+	rm -f $(OUTDIR)/testECDriver.exe
+
+distclean: clean
+	rm -f Makefile

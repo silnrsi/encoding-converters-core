@@ -1,0 +1,264 @@
+<?xml version="1.0"?>
+<!--
+    Created by Jim Kornelsen on Jan 16 2012
+
+    To run, call nant from the directory of this build file.
+    To deploy: sudo nant deploy
+
+    To show debugging output (Debug.WriteLine) on Linux, enter in terminal:
+    export MONO_TRACE_LISTENER=Console.Out
+-->
+<project name="EC" default="all">
+    <property name="verbose" value="true"/>
+    <property name="debug" value="true" overwrite="false"/>
+
+    <property name="projroot"
+     value="/media/winD/Jim/computing/SEC_on_linux/ec-main/linux-branch" />
+    <if test="${environment::variable-exists('ECROOT')}">
+        <property name="projroot" value="${environment::get-variable('ECROOT')}"/>
+    </if>
+    <property name="config" value="Debug"/> <!-- Debug/Release/Bounds -->
+    <property name="dir.output" value="${projroot}/output/${config}"/>
+
+    <!-- The order of this list is important.  For example AIGuesserEC
+         requires CcEC, so it is built first.  Otherwise this build
+         file doesn't specify this dependency relationship.  -->
+    <target name="all" depends="ECInterfaces,
+                                EncCnvtrs,
+                                CodePageEC,
+                                CcEC,
+                                IcuEC,
+                                PerlExpressionEC,
+                                PyScriptEC,
+                                AIGuesserEC,
+                                ECFileConv" />
+
+    <target name="ECInterfaces">
+        <property name="srcdir" value="${projroot}/src/ECInterfaces" />
+        <property name="namespace" value="ECInterfaces" />
+        <property name="outfile" value="${namespace}.dll" />
+        <property name="unsafe" value="false" />
+        <property name="target.type" value="library" />
+        <patternset id="Reference">
+            <include name="System.dll" />
+            <include name="System.Core.dll" />
+            <include name="System.Data.dll" />
+            <include name="System.Xml.dll" />
+        </patternset>
+        <call target="compile" cascade="false"/>
+    </target>
+
+    <target name="EncCnvtrs">
+        <property name="srcdir" value="${projroot}/src/EncCnvtrs" />
+        <property name="namespace" value="SilEncConverters40" />
+        <property name="outfile" value="${namespace}.dll" />
+        <property name="unsafe" value="true" />
+        <property name="target.type" value="library" />
+        <patternset id="Reference">
+            <include name="ECInterfaces.dll" />
+            <include name="System.dll" />
+            <include name="System.Configuration.Install.dll" />
+            <include name="System.Core.dll" />
+            <include name="System.Data.dll" />
+            <include name="System.Drawing.dll" />
+            <include name="System.Windows.Forms.dll" />
+            <include name="System.Xml.dll" />
+        </patternset>
+        <call target="compile" cascade="false"/>
+    </target>
+
+    <target name="CodePageEC">
+        <property name="srcdir" value="${projroot}/src/CodePageEC/linux" />
+        <property name="namespace" value="SilEncConverters40" />
+        <property name="outfile" value="CodePageEC.dll" />
+        <property name="unsafe" value="true" />
+        <property name="target.type" value="library" />
+        <patternset id="Reference">
+            <include name="ECInterfaces.dll" />
+            <include name="SilEncConverters40.dll" />
+            <include name="System.dll" />
+            <include name="System.Data.dll" />
+            <include name="System.Drawing.dll" />
+            <include name="System.Management.dll" />
+            <include name="System.Windows.Forms.dll" />
+            <include name="System.Xml.dll" />
+            <include name="System.Xml.Linq.dll" />
+        </patternset>
+        <call target="compile" cascade="false"/>
+    </target>
+
+    <target name="CcEC">
+        <property name="srcdir" value="${projroot}/src/CcEC" />
+        <property name="namespace" value="SilEncConverters40" />
+        <property name="outfile" value="CcEC.dll" />
+        <property name="unsafe" value="true" />
+        <property name="target.type" value="library" />
+        <patternset id="Reference">
+            <include name="ECInterfaces.dll" />
+            <include name="SilEncConverters40.dll" />
+            <include name="System.dll" />
+            <include name="System.Data.dll" />
+            <include name="System.Drawing.dll" />
+            <include name="System.Management.dll" />
+            <include name="System.Windows.Forms.dll" />
+            <include name="System.Xml.dll" />
+            <include name="System.Xml.Linq.dll" />
+        </patternset>
+        <call target="compile" cascade="false"/>
+    </target>
+
+    <target name="IcuEC">
+        <property name="srcdir" value="${projroot}/src/IcuEC" />
+        <property name="namespace" value="SilEncConverters40" />
+        <property name="outfile" value="IcuEC.dll" />
+        <property name="unsafe" value="true" />
+        <property name="target.type" value="library" />
+        <patternset id="Reference">
+            <include name="ECInterfaces.dll" />
+            <include name="SilEncConverters40.dll" />
+            <include name="System.dll" />
+            <include name="System.Data.dll" />
+            <include name="System.Drawing.dll" />
+            <include name="System.Management.dll" />
+            <include name="System.Windows.Forms.dll" />
+            <include name="System.Xml.dll" />
+            <include name="System.Xml.Linq.dll" />
+        </patternset>
+        <call target="compile" cascade="false"/>
+    </target>
+
+    <target name="PerlExpressionEC">
+        <property name="srcdir" value="${projroot}/src/PerlExpressionEC" />
+        <property name="namespace" value="SilEncConverters40" />
+        <property name="outfile" value="PerlExpressionEC.dll" />
+        <property name="unsafe" value="true" />
+        <property name="target.type" value="library" />
+        <patternset id="Reference">
+            <include name="ECInterfaces.dll" />
+            <include name="SilEncConverters40.dll" />
+            <include name="System.dll" />
+            <include name="System.Data.dll" />
+            <include name="System.Drawing.dll" />
+            <include name="System.Management.dll" />
+            <include name="System.Windows.Forms.dll" />
+            <include name="System.Xml.dll" />
+            <include name="System.Xml.Linq.dll" />
+        </patternset>
+        <call target="compile" cascade="false"/>
+    </target>
+
+    <target name="PyScriptEC">
+        <property name="srcdir" value="${projroot}/src/PyScriptEC" />
+        <property name="namespace" value="SilEncConverters40" />
+        <property name="outfile" value="PyScriptEC.dll" />
+        <property name="unsafe" value="true" />
+        <property name="target.type" value="library" />
+        <patternset id="Reference">
+            <include name="ECInterfaces.dll" />
+            <include name="SilEncConverters40.dll" />
+            <include name="System.dll" />
+            <include name="System.Data.dll" />
+            <include name="System.Drawing.dll" />
+            <include name="System.Management.dll" />
+            <include name="System.Windows.Forms.dll" />
+            <include name="System.Xml.dll" />
+            <include name="System.Xml.Linq.dll" />
+        </patternset>
+        <call target="compile" cascade="false"/>
+    </target>
+
+    <target name="AIGuesserEC">
+        <property name="srcdir" value="${projroot}/src/AIGuesserEC" />
+        <property name="namespace" value="SilEncConverters40" />
+        <property name="outfile" value="AIGuesserEC.dll" />
+        <property name="unsafe" value="true" />
+        <property name="target.type" value="library" />
+        <patternset id="Reference">
+            <include name="ECInterfaces.dll" />
+            <include name="SilEncConverters40.dll" />
+            <include name="CcEC.dll" />
+            <include name="System.dll" />
+            <include name="System.Data.dll" />
+            <include name="System.Drawing.dll" />
+            <include name="System.Management.dll" />
+            <include name="System.Windows.Forms.dll" />
+            <include name="System.Xml.dll" />
+            <include name="System.Xml.Linq.dll" />
+        </patternset>
+        <call target="compile" cascade="false"/>
+    </target>
+
+    <target name="ECFileConv">
+        <property name="srcdir" value="${projroot}/src/ECFileConverter" />
+        <property name="namespace" value="ECFileConverter" />
+        <property name="outfile" value="${namespace}.exe" />
+        <property name="unsafe" value="false" />
+        <property name="target.type" value="exe" />
+        <patternset id="Reference">
+            <include name="ECInterfaces.dll" />
+            <include name="SilEncConverters40.dll" />
+            <include name="System.dll" />
+            <include name="System.Data.dll" />
+            <include name="System.Xml.dll" />
+        </patternset>
+        <call target="compile" cascade="false"/>
+    </target>
+
+    <target name="compile">
+        <assemblyfileset id="refs" basedir="${projroot}/">
+            <lib>
+                <include name="${dir.output}" />
+            </lib>
+            <patternset refid="Reference" />
+        </assemblyfileset>
+        <csc target="${target.type}" debug="${debug}" output="${dir.output}/${outfile}" unsafe="${unsafe}">
+            <sources basedir="${srcdir}">
+                <include name="*.cs" />
+                <include name="Properties/*.cs" />
+            </sources>
+            <resources basedir="${srcdir}" dynamicprefix="true" prefix="${namespace}">
+                <include name="*.resx" />
+                <include name="Properties/*.resx" />
+            </resources>
+            <references refid="refs" />
+        </csc>
+    </target>
+
+    <target name="clean">
+        <delete verbose="false" failonerror="false">
+            <fileset>
+                <include name="${dir.output}/*.exe"/>
+                <include name="${dir.output}/*.dll"/>
+                <include name="${dir.output}/*.mdb"/>
+            </fileset>
+        </delete>
+    </target>
+
+    <target name="deploy" depends="deployLibs, deployClientApps" />
+    <target name="deployLibs">
+        <copy todir="/usr/lib/encConverters">
+            <fileset>
+                <include name="${dir.output}/ECInterfaces.dll"/>
+                <include name="${dir.output}/SilEncConverters40.dll"/>
+                <include name="${dir.output}/CodePageEC.dll"/>
+                <include name="${dir.output}/CcEC.dll"/>
+                <include name="${dir.output}/IcuEC.dll"/>
+                <include name="${dir.output}/PyScriptEC.dll"/>
+                <include name="${dir.output}/PerlExpressionEC.dll"/>
+                <include name="${dir.output}/AIGuesserEC.dll"/>
+                <include name="${dir.output}/libIcuTranslitEC.so.1.0"/>
+                <include name="${dir.output}/libIcuRegexEC.so.1.0"/>
+                <include name="${dir.output}/libPyScriptEncConverter.so.1.0"/>
+                <include name="${dir.output}/libecdriver.so.1.0"/>
+            </fileset>
+        </copy>
+    </target>
+    <target name="deployClientApps">
+        <copy todir="/usr/lib/encConverters">
+            <fileset>
+                <include name="${dir.output}/ECFileConverter.exe"/>
+            </fileset>
+        </copy>
+    </target>
+</project>
+
