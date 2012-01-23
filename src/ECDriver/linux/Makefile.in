@@ -17,6 +17,8 @@ MONO_LDFLAGS= @MONO_LDFLAGS@
 ECHEADERDIR=../EncCnvtrs/lib
 ECHEADER=$(ECHEADERDIR)/CEncConverter.h
 
+LIBDIR = $(exec_prefix)/lib/encConverters
+
 all: $(BUILDDIR) $(OUTDIR)/libecdriver.so.1.0
 
 $(BUILDDIR):
@@ -36,11 +38,11 @@ $(OUTDIR)/testECDriverDyn: $(SRCDIR)testDynamic.cpp
 	g++ -Wall $(SRCDIR)testDynamic.cpp -ldl -o $(OUTDIR)/testECDriverDyn
 
 $(OUTDIR)/testECDriverShared: $(BUILDDIR)/testShared.o
-	g++ -g -o $(OUTDIR)/testECDriverShared $(BUILDDIR)/testShared.o -L$(OUTDIR) -lecdriver
+	g++ -g -o $(OUTDIR)/testECDriverShared $(BUILDDIR)/testShared.o
 
-check: $(OUTDIR)/testECDriverDyn $(OUTDIR)/testECDriverShared
-	$(OUTDIR)/testECDriverDyn
-	$(OUTDIR)/testECDriverShared
+check: $(OUTDIR)/testECDriverDyn # $(OUTDIR)/testECDriverShared
+	LD_LIBRARY_PATH=$(OUTDIR) $(OUTDIR)/testECDriverDyn
+	LD_LIBRARY_PATH=$(OUTDIR) $(OUTDIR)/testECDriverShared
 
 $(BUILDDIR)/testShared.o: $(SRCDIR)testShared.cpp
 	g++ -Wall -g -c $(SRCDIR)testShared.cpp -o $(BUILDDIR)/testShared.o
@@ -53,3 +55,6 @@ clean:
 
 distclean: clean
 	rm -f Makefile
+
+install:
+	$(INSTALL) $(OUTDIR)/libecdriver.so.1.0 $(LIBDIR)
