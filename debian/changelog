@@ -1,0 +1,6 @@
+enc-converters (4.0-1) unstable; urgency=low
+
+  * Initial release (Closes: FWNX-702, getting encoding converters to run on
+    linux)
+
+ -- Stephen McConnel <stephen_mcconnel@sil.org>  Mon, 23 Jan 2012 15:39:47 -0600
