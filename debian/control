@@ -1,0 +1,17 @@
+Source: enc-converters
+Priority: optional
+Maintainer: Stephen McConnel <stephen_mcconnel@sil.org>
+Build-Depends: debhelper (>= 7.0.50~), autotools-dev, python-dev (>=2.6), mono-devel
+Standards-Version: 3.8.4
+Section: libs
+Homepage: http://hg.palaso.org/ec-main
+#Vcs-Git: git://git.debian.org/collab-maint/enc-converters.git
+#Vcs-Browser: http://git.debian.org/?p=collab-maint/enc-converters.git;a=summary
+
+Package: enc-converters
+Section: libs
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Suggests: fieldworks
+Description: Encoding Converter libraries.
+ This needs a much better description than what I can provide.

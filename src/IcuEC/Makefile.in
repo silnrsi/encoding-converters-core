@@ -50,7 +50,8 @@ distclean: clean
 	rm -f Makefile
 
 install:
-	$(INSTALL) $(OUTDIR)/libIcuTranslitEC.so.1.0 $(LIBDIR)
-	$(INSTALL) $(OUTDIR)/libIcuRegexEC.so.1.0 $(LIBDIR)
+	mkdir -p $(DESTDIR)$(LIBDIR)
+	$(INSTALL) $(OUTDIR)/libIcuTranslitEC.so.1.0 $(DESTDIR)$(LIBDIR)
+	$(INSTALL) $(OUTDIR)/libIcuRegexEC.so.1.0 $(DESTDIR)$(LIBDIR)
 
 check:

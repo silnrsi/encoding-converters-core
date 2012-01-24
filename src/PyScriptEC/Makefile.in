@@ -44,6 +44,7 @@ distclean: clean
 	rm -f Makefile
 
 install:
-	$(INSTALL) $(OUTDIR)/libPyScriptEncConverter.so.1.0 $(LIBDIR)
+	mkdir -p $(DESTDIR)$(LIBDIR)
+	$(INSTALL) $(OUTDIR)/libPyScriptEncConverter.so.1.0 $(DESTDIR)$(LIBDIR)
 
 check:

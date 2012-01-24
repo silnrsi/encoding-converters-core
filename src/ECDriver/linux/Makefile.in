@@ -40,7 +40,7 @@ $(OUTDIR)/testECDriverDyn: $(SRCDIR)testDynamic.cpp
 $(OUTDIR)/testECDriverShared: $(BUILDDIR)/testShared.o
 	g++ -g -o $(OUTDIR)/testECDriverShared $(BUILDDIR)/testShared.o
 
-check: $(OUTDIR)/testECDriverDyn # $(OUTDIR)/testECDriverShared
+test: $(OUTDIR)/testECDriverDyn # $(OUTDIR)/testECDriverShared
 	LD_LIBRARY_PATH=$(OUTDIR) $(OUTDIR)/testECDriverDyn
 	LD_LIBRARY_PATH=$(OUTDIR) $(OUTDIR)/testECDriverShared
 
@@ -57,4 +57,7 @@ distclean: clean
 	rm -f Makefile
 
 install:
-	$(INSTALL) $(OUTDIR)/libecdriver.so.1.0 $(LIBDIR)
+	mkdir -p $(DESTDIR)$(LIBDIR)
+	$(INSTALL) $(OUTDIR)/libecdriver.so.1.0 $(DESTDIR)$(LIBDIR)
+
+check:
