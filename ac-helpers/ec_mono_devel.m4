@@ -19,10 +19,11 @@ AC_DEFUN([EC_MONO_DEVEL],[
 	fi
 	ec_origmono=$MONO
 	if test -n "$MONO"; then
-		if `dpkg-query -S "$MONO"`; then true; else
+		if ec_foo=`dpkg-query -S "$MONO"`; then true; else
 			#
-			# This can happen on developer machines with a custom compiled version of mono in /usr/local/bin...
-			# We need a version of mono that came in a package.
+			# This can happen on developer machines with a custom compiled
+			# version of mono in /usr/local/bin...  We need a version of mono
+			# that came in a package that the user can install.
 			#
 			AC_PATH_PROG([MONO2],[mono],[$MONO],[/usr/bin:/bin:/usr/lib/fieldworks/mono/bin:/opt/mono-2.10/bin])
 			MONO=$MONO2
@@ -31,8 +32,10 @@ AC_DEFUN([EC_MONO_DEVEL],[
 	ec_monobase=`echo $MONO|sed s-/bin/mono--`
 	if test -f $ec_monobase/include/mono-2.0/mono/jit/jit.h -a -f $ec_monobase/lib/libmono-2.0.a; then true; else
 		#
-		# Versions of mono prior to 2.8 don't have the needed include file and library, so look for a newer
-		# version if one has been installed.
+		# Versions of mono prior to 2.8 don't have the needed include file and
+		# library, so look for a newer version if one has been installed.
+		# (I've included a couple of known distributed package locations in the
+		# path provided below.)
 		#
 		AC_PATH_PROG([MONO3],[mono],[$MONO],[/usr/lib/fieldworks/mono/bin:/opt/mono-2.10/bin:/usr/bin:/bin])
 		MONO=$MONO3
