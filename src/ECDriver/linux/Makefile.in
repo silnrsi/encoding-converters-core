@@ -28,7 +28,7 @@ $(BUILDDIR):
 $(OUTDIR)/libecdriver.so.1.0: $(BUILDDIR)/ECDriver.o
 	g++ -shared -Wl,-soname,libecdriver.so.1 \
   -o $(OUTDIR)/libecdriver.so.1.0 $(BUILDDIR)/ECDriver.o \
-  -L/usr/lib $(MONO_LDFLAGS) -lmono-2.0 -lpthread
+  $(MONO_LDFLAGS) -lmono-2.0
 
 $(BUILDDIR)/ECDriver.o: $(SRCDIR)ECDriver.cpp $(SRCDIR)ecdriver.h
 	g++ -Wall -fPIC -c $(SRCDIR)ECDriver.cpp -o $(BUILDDIR)/ECDriver.o \
@@ -41,8 +41,8 @@ $(OUTDIR)/testECDriverShared: $(BUILDDIR)/testShared.o
 	g++ -g -o $(OUTDIR)/testECDriverShared $(BUILDDIR)/testShared.o
 
 test: $(OUTDIR)/testECDriverDyn # $(OUTDIR)/testECDriverShared
-	LD_LIBRARY_PATH=$(OUTDIR) $(OUTDIR)/testECDriverDyn
-	LD_LIBRARY_PATH=$(OUTDIR) $(OUTDIR)/testECDriverShared
+	LD_LIBRARY_PATH=$(OUTDIR):$(LD_LIBRARY_PATH) $(OUTDIR)/testECDriverDyn
+	LD_LIBRARY_PATH=$(OUTDIR):$(LD_LIBRARY_PATH) $(OUTDIR)/testECDriverShared
 
 $(BUILDDIR)/testShared.o: $(SRCDIR)testShared.cpp
 	g++ -Wall -g -c $(SRCDIR)testShared.cpp -o $(BUILDDIR)/testShared.o

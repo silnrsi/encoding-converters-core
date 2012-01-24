@@ -25,20 +25,20 @@ $(BUILDDIR):
 $(OUTDIR)/libIcuTranslitEC.so.1.0: $(BUILDDIR)/IcuTranslitEC.o
 	g++ -shared -Wl,-soname,libIcuTranslitEC.so.1 \
   -o $(OUTDIR)/libIcuTranslitEC.so.1.0 $(BUILDDIR)/IcuTranslitEC.o \
-  -L/usr/local/lib -licuuc -licui18n
+  -licuuc -licui18n
 
 $(OUTDIR)/libIcuRegexEC.so.1.0: $(BUILDDIR)/IcuRegexEC.o
 	g++ -shared -Wl,-soname,libIcuRegexEC.so.1 \
   -o $(OUTDIR)/libIcuRegexEC.so.1.0 $(BUILDDIR)/IcuRegexEC.o \
-  -L/usr/local/lib -licuuc -licui18n
+  -licuuc -licui18n
 
 $(BUILDDIR)/IcuTranslitEC.o: IcuTranslitEC.cpp IcuTranslitEC.h $(ECHEADER)
 	g++ -Wall -fPIC -c IcuTranslitEC.cpp -o $(BUILDDIR)/IcuTranslitEC.o \
-  -I/usr/local/include/ -I$(ECHEADERDIR)
+  -I$(ECHEADERDIR)
 
 $(BUILDDIR)/IcuRegexEC.o: IcuRegexEC.cpp IcuRegexEC.h $(ECHEADER)
 	g++ -Wall -fPIC -c IcuRegexEC.cpp -o $(BUILDDIR)/IcuRegexEC.o \
-  -I/usr/local/include/ -I$(ECHEADERDIR)
+  -I$(ECHEADERDIR)
 
 clean:
 	rm -f *~
