@@ -6,7 +6,7 @@
                    DefiningProcessType="8" 
                    DisplayName="ICU Converter"
                    ConfiguratorProgId="SilEncConverters31.IcuECConvConfig.40"
-                   AssemblyReference="IcuEC, Version=4.0.0.0, Culture=neutral, PublicKeyToken=abcdefghijklmnop"
+                   AssemblyReference="IcuEC, Version=4.0.0.0, Culture=neutral, PublicKeyToken=null"
 />
   <ECPluginDetails ImplementationName="ICU.trans"
                    ImplementationProgId="SilEncConverters40.IcuTranslitEncConverter"
@@ -14,7 +14,7 @@
                    DefiningProcessType="4"
                    DisplayName="ICU Transliterator"
                    ConfiguratorProgId="SilEncConverters40.IcuTranslitConfig"
-                   AssemblyReference="IcuEC, Version=4.0.0.0, Culture=neutral, PublicKeyToken=abcdefghijklmnop"
+                   AssemblyReference="IcuEC, Version=4.0.0.0, Culture=neutral, PublicKeyToken=null"
 />
   <ECPluginDetails ImplementationName="ICU.regex"
                    ImplementationProgId="SilEncConverters40.IcuRegexEncConverter"
@@ -22,6 +22,6 @@
                    DefiningProcessType="128"
                    DisplayName="Regular Expression Find and Replace (ICU)"
                    ConfiguratorProgId="SilEncConverters40.IcuRegexConfig"
-                   AssemblyReference="IcuEC, Version=4.0.0.0, Culture=neutral, PublicKeyToken=abcdefghijklmnop"
+                   AssemblyReference="IcuEC, Version=4.0.0.0, Culture=neutral, PublicKeyToken=null"
 />
 </EncConverterPlugins>

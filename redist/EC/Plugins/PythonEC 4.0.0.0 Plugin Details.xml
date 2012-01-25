@@ -6,7 +6,7 @@
                    DisplayName="Python Script"
                    ConfiguratorProgId="SilEncConverters40.PyScriptEncConverterConfig"
                    DefiningExtension=".py" 
-                   AssemblyReference="PyScriptEC, Version=4.0.0.0, Culture=neutral, PublicKeyToken=abcdefghijklmnop"
+                   AssemblyReference="PyScriptEC, Version=4.0.0.0, Culture=neutral, PublicKeyToken=null"
 />
                    <!--DefiningProcessType="256"-->
 </EncConverterPlugins>
