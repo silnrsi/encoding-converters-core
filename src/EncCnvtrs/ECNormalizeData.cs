@@ -98,6 +98,13 @@ namespace SilEncConverters40
                             nCodePageIn = EncConverters.cnSymbolFontCodePage;
                         }
 
+                        // Narrowizing by code page 0 doesn't seem to be what we want on Linux.
+                        // Treating it as a symbol font or stripping off the low byte works better.
+                        if (IsUnix && (nCodePageIn == 0))
+                        {
+                            nCodePageIn = EncConverters.cnSymbolFontCodePage;
+                        }
+
                         // if it's a symbol or iso-8859 encoding, then we can handle just 
                         //  taking the low byte (i.e. the catch case)
                         if ((nCodePageIn == EncConverters.cnSymbolFontCodePage)

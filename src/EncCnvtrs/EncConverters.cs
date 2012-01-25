@@ -2380,6 +2380,11 @@ namespace SilEncConverters40
                 System.Diagnostics.Debug.WriteLine("Getting from assembly.");
                 ObjectHandle ohndl = Activator.CreateInstance(strAssemblySpec, strProgID);
                 rConverter = (IEncConverter)ohndl.Unwrap();
+                if (rConverter == null) {
+                    System.Diagnostics.Debug.WriteLine("Returning null.");
+                } else {
+                    System.Diagnostics.Debug.WriteLine("Returning not null.");
+                }
             }
             else
             {
