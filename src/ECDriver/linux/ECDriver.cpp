@@ -2,12 +2,15 @@
  * ECDriver.cpp
  * 
  * ECDriver is a shared library of unmanaged code that embeds Mono to call
- * the C# SEC core.
- * This file defines the entry point for the application.
+ * the C# EncConverters core, starting with the EncConverters class in
+ * SilEncConverters40.dll.
  *
  * When building this file, be sure to link with mono-2.0
  *
  * Rewritten for Mono and Linux by Jim Kornelsen 29-Oct-2011.
+ *
+ * 25-Jan-2012 JDK  Specify MONO_PATH to find other assemblies.
+ *
  */
 
 #include "ecdriver.h"
@@ -20,6 +23,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <map>
+
+//const char * ASSEMBLYFILE = "SilEncConverters40.dll";     // located in working directory
+const char * ASSEMBLYFILE  = "/usr/lib/encConverters/SilEncConverters40.dll";
+const char * ASSEMBLIESDIR = "MONO_PATH=/usr/lib/encConverters";  // look for other SEC assemblies here
 
 bool loaded=false;  // true when methods have been loaded
 MonoDomain * domain                  = NULL;
@@ -44,15 +51,14 @@ void LoadClasses(void)
     if (loaded) return;
     fprintf(stderr, "Loading Mono and SEC classes.\n");
 
-    //const char * file = "SilEncConverters40.dll";     // located in working directory
-    const char * file = "/usr/lib/encConverters/SilEncConverters40.dll";
-    domain = mono_jit_init(file);
+    putenv((char *)ASSEMBLIESDIR);
+    domain = mono_jit_init(ASSEMBLYFILE);
     mono_config_parse (NULL);   // This prevents System.Drawing.GDIPlus from throwing an exception.
-    MonoAssembly *assembly = mono_domain_assembly_open (domain, file);
+    MonoAssembly *assembly = mono_domain_assembly_open (domain, ASSEMBLYFILE);
     if (assembly) {
-        fprintf(stderr, "Got assembly %s.\n", file);
+        fprintf(stderr, "Got assembly %s.\n", ASSEMBLYFILE);
     } else {
-        fprintf(stderr, "Could not open assembly %s. Please verify the location.\n", file);
+        fprintf(stderr, "Could not open assembly %s. Please verify the location.\n", ASSEMBLYFILE);
         return;
     }
     MonoImage* image = mono_assembly_get_image(assembly);
