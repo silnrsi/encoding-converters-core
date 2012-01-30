@@ -39,7 +39,7 @@ distclean: clean
 	  (cd $$subdir && $(MAKE) distclean) || true; \
 	done
 	@rm -f Makefile config.cache src/config.h config.log config.status src/stamp-h1 autogen.err
-	@rm -rf autom4te.cache
+	@rm -rf autom4te.cache output build/Obj
 
 install:
 	@for subdir in $(SRCDIRS); do \
