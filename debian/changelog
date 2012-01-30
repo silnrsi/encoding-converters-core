@@ -1,4 +1,4 @@
-enc-converters (4.0-1) unstable; urgency=low
+enc-converters (4.0-1) maverick; urgency=low
 
   * Initial release (Closes: FWNX-702, getting encoding converters to run on
     linux)
