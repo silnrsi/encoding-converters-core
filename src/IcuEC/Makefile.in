@@ -16,7 +16,8 @@ ECHEADERDIR=../EncCnvtrs/lib
 ECHEADER=$(ECHEADERDIR)/CEncConverter.h
 LIBDIR = $(exec_prefix)/lib/encConverters
 
-all: $(BUILDDIR) $(OUTDIR)/libIcuTranslitEC.so.1.0 $(OUTDIR)/libIcuRegexEC.so.1.0
+all: $(BUILDDIR) $(OUTDIR)/libIcuTranslitEC.so.1.0 $(OUTDIR)/libIcuRegexEC.so.1.0 \
+  $(OUTDIR)/libIcuConvEC.so.1.0
 
 $(BUILDDIR):
 	mkdir -p $(BUILDDIR)
@@ -32,6 +33,11 @@ $(OUTDIR)/libIcuRegexEC.so.1.0: $(BUILDDIR)/IcuRegexEC.o
   -o $(OUTDIR)/libIcuRegexEC.so.1.0 $(BUILDDIR)/IcuRegexEC.o \
   -licuuc -licui18n
 
+$(OUTDIR)/libIcuConvEC.so.1.0: $(BUILDDIR)/IcuConvEC.o
+	g++ -shared -Wl,-soname,libIcuConvEC.so.1 \
+  -o $(OUTDIR)/libIcuConvEC.so.1.0 $(BUILDDIR)/IcuConvEC.o \
+  -licuuc -licui18n
+
 $(BUILDDIR)/IcuTranslitEC.o: IcuTranslitEC.cpp IcuTranslitEC.h $(ECHEADER)
 	g++ -Wall -fPIC -c IcuTranslitEC.cpp -o $(BUILDDIR)/IcuTranslitEC.o \
   -I$(ECHEADERDIR)
@@ -40,11 +46,15 @@ $(BUILDDIR)/IcuRegexEC.o: IcuRegexEC.cpp IcuRegexEC.h $(ECHEADER)
 	g++ -Wall -fPIC -c IcuRegexEC.cpp -o $(BUILDDIR)/IcuRegexEC.o \
   -I$(ECHEADERDIR)
 
+$(BUILDDIR)/IcuConvEC.o: IcuConvEC.cpp IcuConvEC.h $(ECHEADER)
+	g++ -Wall -fPIC -c IcuConvEC.cpp -o $(BUILDDIR)/IcuConvEC.o \
+  -I$(ECHEADERDIR)
+
 clean:
 	rm -f *~
-	rm -f $(BUILDDIR)/IcuTranslitEC.o $(BUILDDIR)/IcuRegexEC.o
-	rm -f $(OUTDIR)/libIcuTranslitEC.so.1.0
-	rm -f $(OUTDIR)/libIcuRegexEC.so.1.0
+	rm -f $(BUILDDIR)/IcuTranslitEC.o $(OUTDIR)/libIcuTranslitEC.so.1.0
+	rm -f $(BUILDDIR)/IcuRegexEC.o $(OUTDIR)/libIcuRegexEC.so.1.0
+	rm -f $(BUILDDIR)/IcuConvEC.o $(OUTDIR)/libIcuConvEC.so.1.0
 
 distclean: clean
 	rm -f Makefile
@@ -53,5 +63,6 @@ install:
 	mkdir -p $(DESTDIR)$(LIBDIR)
 	$(INSTALL) $(OUTDIR)/libIcuTranslitEC.so.1.0 $(DESTDIR)$(LIBDIR)
 	$(INSTALL) $(OUTDIR)/libIcuRegexEC.so.1.0 $(DESTDIR)$(LIBDIR)
+	$(INSTALL) $(OUTDIR)/libIcuConvEC.so.1.0 $(DESTDIR)$(LIBDIR)
 
 check:

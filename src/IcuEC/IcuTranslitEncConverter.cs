@@ -168,7 +168,7 @@ namespace SilEncConverters40
                 }
                 else
                 {
-                    eOutFormEngine = EncodingForm.UTF16;
+                    eInFormEngine = EncodingForm.UTF16;
                 }
             }
             else
