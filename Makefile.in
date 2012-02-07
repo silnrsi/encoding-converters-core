@@ -31,12 +31,15 @@ all:
 	@for file in $(PLUGINS); do \
 	  cp src/Plugins/"$$file" $(OUTDIR)/EC/Plugins; \
 	done
+	@cp src/TestEncCnvtrs/TestEncCnvtrs.dll.config $(OUTDIR)
+
 clean:
 	@(cd build && nant clean) || true
 	@for subdir in $(SRCDIRS); do \
 	  echo making in $$subdir; \
 	  (cd $$subdir && $(MAKE) clean) || true; \
 	done
+	@(cd $(OUTDIR) && rm -f *.xml) || true
 	@rm -f *~
 
 distclean: clean
@@ -58,6 +61,13 @@ install:
 	done
 
 check: all
+	# maybe if nunit is in the GAC, we wouldn't need this copying...
+	@if [ ! -f $(OUTDIR)/nunit.framework.dll ]; then \
+	  find /usr -name nunit.framework.dll -exec cp '{}' $(OUTDIR) ';' ; \
+	  find /usr -name nunit.core.dll -exec cp '{}' $(OUTDIR) ';' ; \
+	  find /usr -name nunit.core.interfaces.dll -exec cp '{}' $(OUTDIR) ';' ; \
+	fi
+	@(cd build && nant test) || true
 	@for subdir in $(SRCDIRS); do \
 	  echo checking in $$subdir; \
 	  (cd $$subdir && $(MAKE) check) || true; \
