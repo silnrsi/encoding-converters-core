@@ -17,7 +17,6 @@ namespace SilEncConverters40
 	{
 		#region DLLImport Statements
 		// On Linux looks for libIcuConvEC.so (adds lib- and -.so)
-		//[DllImport("IcuConvEC", SetLastError=true)]
 		[DllImport("IcuConvEC", EntryPoint="IcuConvEC_ConverterNameList_start")]
 		static extern unsafe int CppConverterNameList_start();
 

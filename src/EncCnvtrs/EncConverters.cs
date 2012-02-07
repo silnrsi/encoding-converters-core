@@ -302,24 +302,17 @@ namespace SilEncConverters40
                             //  In any case, don't ever throw from the ctor or it means the 
                             //  repository can never be constructed and therefore never be 
                             //  'clear'd even to start from scratch.
-#if AssemblyChecking
                             catch (Exception e)
                             {
+#if AssemblyChecking
                                 MessageBox.Show("Key = \"" + strConverterKey +
                                     "\", Ident = \"" + strConverterIdentifier + "\": " + e.Message, traceSwitch.DisplayName);
-                            }
-#else
-#if !DEBUG
-                            catch {}
-#else
-                            catch(Exception e)
-                            {
-                                // catch it in Debug mode, so we can check it
+#elif DEBUG
+								// catch it in Debug mode, so we can check it
                                 System.Diagnostics.Debug.WriteLineIf(traceSwitch.TraceError, "Key = \"" + strConverterKey + 
                                     "\", Ident = \"" + strConverterIdentifier + "\": " + e.Message, traceSwitch.DisplayName);
-                            } 
 #endif
-#endif
+                            }
                         }
                     }
 
@@ -367,7 +360,15 @@ namespace SilEncConverters40
 
             // see if the repository stuff has been moved
             bool bRewriteFile = false;  // means we must re-write the XML file because something changed.
-            RegistryKey keyRepositoryMoved = Registry.LocalMachine.OpenSubKey(EncConverters.HKLM_PATH_TO_XML_FILE);
+			RegistryKey keyRepositoryMoved;
+			try
+			{
+            	keyRepositoryMoved = Registry.LocalMachine.OpenSubKey(EncConverters.HKLM_PATH_TO_XML_FILE);
+			}
+			catch (Exception e)
+			{
+				keyRepositoryMoved = null;
+			}
             if (keyRepositoryMoved != null)
             {
                 string strNewRepositoryRoot = (string)keyRepositoryMoved.GetValue(strRegKeyForMovingRepository);
@@ -3841,25 +3842,24 @@ namespace SilEncConverters40
             //System.Diagnostics.Debug.WriteLine("GetRepositoryFileName BEGIN");
             // try the current user key first
             string strRepositoryFile = null;
-            RegistryKey aStoreKey = Registry.CurrentUser.OpenSubKey(EncConverters.HKLM_PATH_TO_XML_FILE);
-            //System.Diagnostics.Debug.WriteLine("Looking at key " + EncConverters.HKLM_PATH_TO_XML_FILE);
-
-            if (aStoreKey == null)
-                aStoreKey = Registry.LocalMachine.OpenSubKey(EncConverters.HKLM_PATH_TO_XML_FILE);
-
-            if (aStoreKey != null) {
-                strRepositoryFile = (string)aStoreKey.GetValue(strRegKeyForStorePath);
-                //System.Diagnostics.Debug.WriteLine("Got value " + strRepositoryFile);
-            }
-
+			try
+			{
+	            RegistryKey aStoreKey = Registry.CurrentUser.OpenSubKey(EncConverters.HKLM_PATH_TO_XML_FILE);
+	            //System.Diagnostics.Debug.WriteLine("Looking at key " + EncConverters.HKLM_PATH_TO_XML_FILE);
+	
+	            if (aStoreKey == null)
+	                aStoreKey = Registry.LocalMachine.OpenSubKey(EncConverters.HKLM_PATH_TO_XML_FILE);
+	
+	            if (aStoreKey != null) {
+	                strRepositoryFile = (string)aStoreKey.GetValue(strRegKeyForStorePath);
+	                //System.Diagnostics.Debug.WriteLine("Got value " + strRepositoryFile);
+	            }
+			}
+			catch {}
             if( String.IsNullOrEmpty(strRepositoryFile) )
             {
                 // by default, put it in the C:\Program Files\Common Files\Enc... folder
-                strRepositoryFile = Util.GetSpecialFolderPath(Environment.SpecialFolder.CommonApplicationData);
-                //System.Diagnostics.Debug.WriteLine("common path is " + strRepositoryFile);
-                strRepositoryFile += strDefXmlPath;
-                VerifyDirectoryExists(strRepositoryFile);
-                strRepositoryFile += strDefXmlFilename;
+				strRepositoryFile = DefaultRepositoryPath;
                 WriteStorePath(strRepositoryFile);
                 //System.Diagnostics.Debug.WriteLine("Using " + strRepositoryFile);
             }
@@ -3873,7 +3873,22 @@ namespace SilEncConverters40
             //System.Diagnostics.Debug.WriteLine("Got " + strRepositoryFile);
             return strRepositoryFile;
         }
-
+		
+		/// <summary>
+		/// Gets the default full path of the repository file.
+		/// </summary>
+		public static string DefaultRepositoryPath
+		{
+			get
+			{
+            	string strRepositoryFile = Util.GetSpecialFolderPath(Environment.SpecialFolder.CommonApplicationData);
+                strRepositoryFile += strDefXmlPath;
+                VerifyDirectoryExists(strRepositoryFile);
+                strRepositoryFile += strDefXmlFilename;
+				return strRepositoryFile;
+			}
+		}
+		
         protected static void VerifyDirectoryExists(string strPath)
         {
             try

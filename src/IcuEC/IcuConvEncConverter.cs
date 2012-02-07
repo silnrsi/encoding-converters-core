@@ -21,7 +21,13 @@ namespace SilEncConverters40
 		[DllImport("IcuConvEC", EntryPoint="IcuConvEC_Initialize")]
 		static extern unsafe int CppInitialize (
 			[MarshalAs(UnmanagedType.LPStr)] string strConverterSpec);
-
+		
+		[DllImport("IcuConvEC", EntryPoint="IcuConvEC_PreConvert")]
+		static extern unsafe int CppPreConvert(
+			int eInEncodingForm, ref int eInFormEngine,
+			int eOutEncodingForm, ref int eOutFormEngine,
+			ref int eNormalizeOutput, bool bForward, int nInactivityWarningTimeOut);
+		
 		[DllImport("IcuConvEC", EntryPoint="IcuConvEC_DoConvert")]
 		static extern unsafe int CppDoConvert(
 			byte* lpInputBuffer, int nInBufLen,
@@ -132,7 +138,7 @@ namespace SilEncConverters40
 		#endregion Misc helpers
 
 		#region Abstract Base Class Overrides
-		protected override void PreConvert(
+		protected override unsafe void PreConvert(
 			EncodingForm       eInEncodingForm,
 			ref EncodingForm   eInFormEngine,
 			EncodingForm       eOutEncodingForm,
@@ -141,9 +147,9 @@ namespace SilEncConverters40
 			bool               bForward)
 		{
 			// let the base class do it's thing first
-			base.PreConvert( eInEncodingForm, ref eInFormEngine,
-							eOutEncodingForm, ref eOutFormEngine,
-							ref eNormalizeOutput, bForward);
+			base.PreConvert(eInEncodingForm, ref eInFormEngine,
+				eOutEncodingForm, ref eOutFormEngine,
+				ref eNormalizeOutput, bForward);
 
 			if (NormalizeLhsConversionType(ConversionType) == NormConversionType.eUnicode)
 			{
@@ -183,6 +189,18 @@ namespace SilEncConverters40
 
 			// do the load at this point.
 			Load(ConverterIdentifier);
+			
+			// Finally, let the C++ code do its thing.
+			int encInForm = (int)eInEncodingForm;
+			int encInEngine = (int)eInFormEngine;
+			int encOutForm = (int)eOutEncodingForm;
+			int encOutEngine = (int)eOutFormEngine;
+			int normOutput = (int)eNormalizeOutput;
+			CppPreConvert(encInForm, ref encInEngine, encOutForm, ref encOutEngine,
+				ref normOutput, bForward, 0);
+			eInFormEngine = (EncodingForm)encInEngine;
+			eOutFormEngine = (EncodingForm)encOutEngine;
+			eNormalizeOutput = (NormalizeFlags)normOutput;
 		}
 
 		[CLSCompliant(false)]
@@ -211,5 +229,10 @@ namespace SilEncConverters40
 		}
 
 		#endregion Abstract Base Class Overrides
+		
+		public override string ToString()
+		{
+			return "IcuConvEncConverter implementation";
+		}
 	}
 }

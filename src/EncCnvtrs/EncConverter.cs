@@ -223,15 +223,24 @@ namespace SilEncConverters40
 
             bool bForward = !(ConversionType == ConvType.Unicode_to_from_Legacy);
 
-            // since 'InternalConvert' is expecting a string, convert the given byte []
+			// since 'InternalConvert' is expecting a string, convert the given byte []
             //  to a string and set the input encoding form as LegacyBytes.
             //  (not as efficent as adding a new InternalConvertToUnicode which takes a 
             //  byte [] instead, but a) that would require a lot of changes which I'm 
             //  afraid would break something, and b) this is far more maintainable).
-			string sInput = ECNormalizeData.ByteArrToString(baInput);
-            EncodingForm uniForm = EncodingForm.UTF16;
-            return InternalConvert(EncodingForm.LegacyBytes, sInput, uniForm,
-                NormalizeOutput, bForward);
+			// EXCEPT THAT C++ BSTR DOES NOT MAP ONTO C# string!  BSTR's can actually
+			// be byte arrays internally without any problem.  C# insists that a string
+			// always contains valid data, eg, surrogate pairs must be matched when you
+			// construct one from a character array.  This obviously cannot be guaranteed
+			// in legacy encoding data!
+//			string sInput = ECNormalizeData.ByteArrToString(baInput);
+//            EncodingForm uniForm = EncodingForm.UTF16;
+//            return InternalConvert(EncodingForm.LegacyBytes, sInput, uniForm,
+//                NormalizeOutput, bForward);
+			int ciOutput;
+			string retval = InternalConvertEx(EncodingForm.LegacyBytes, baInput,
+				EncodingForm.UTF16, NormalizeOutput, out ciOutput, bForward);
+			return retval;
         }
 
         // [DispId(16)]
@@ -246,14 +255,23 @@ namespace SilEncConverters40
             }
 
             bool bForward = !(ConversionType == ConvType.Legacy_to_from_Unicode);
-
+			
             // similarly as above, use the normal 'InternalConvert' which is expecting to
             //  return a string, and then convert it to a byte [].
-            EncodingForm uniForm = EncodingForm.UTF16;
-            string sOutput = InternalConvert(uniForm, sInput, EncodingForm.LegacyBytes,
-                NormalizeOutput, bForward);
-
-            return ECNormalizeData.StringToByteArr(sOutput, false);
+			// EXCEPT THAT C++ BSTR DOES NOT MAP ONTO C# string!  BSTR's can actually
+			// be byte arrays internally without any problem.  C# insists that a string
+			// always contains valid data, eg, surrogate pairs must be matched when you
+			// construct one from a character array.  This obviously cannot be guaranteed
+			// in legacy encoding data!
+//            EncodingForm uniForm = EncodingForm.UTF16;
+//            string sOutput = InternalConvert(uniForm, sInput, EncodingForm.LegacyBytes,
+//                NormalizeOutput, bForward);
+//
+//            return ECNormalizeData.StringToByteArr(sOutput, false);
+			int ciOutput;
+			byte[] retval = InternalConvertEx(EncodingForm.UTF16, sInput,
+				EncodingForm.LegacyBytes, NormalizeOutput, out ciOutput, bForward);
+			return retval;
         }
 
         // [DispId(17)]
@@ -457,7 +475,142 @@ namespace SilEncConverters40
                 bForward
                 );
         }
+		
+		/// legacy data as a byte array as input, we need to treat it as a byte array.
+		/// </summary>
+		protected virtual unsafe string InternalConvertEx(EncodingForm eInEncodingForm,
+			byte[] baInput,
+			EncodingForm eOutEncodingForm,
+			NormalizeFlags eNormalizeOutput,
+			out int rciOutput,
+			bool bForward)
+		{
+			System.Diagnostics.Debug.WriteLine("InternalConvertEx (input bytes) BEGIN");
+			if( baInput == null )
+				EncConverters.ThrowError(ErrStatus.IncompleteChar);
+			if (baInput.Length == 0) {
+				rciOutput = 0;
+				return "";
+			}
+			// if the user hasn't specified, then take the default case for the ConversionType:
+			//  if L/RHS == eLegacy, then LegacyString
+			//  if L/RHS == eUnicode, then UTF16
+			CheckInitEncForms(bForward, ref eInEncodingForm, ref eOutEncodingForm);
 
+			// allow the converter engine's (and/or its COM wrapper) to do some preprocessing.
+			EncodingForm eFormEngineIn = EncodingForm.Unspecified, eFormEngineOut = EncodingForm.Unspecified;
+			PreConvert(
+				eInEncodingForm,		// [in] form in the BSTR
+				ref eFormEngineIn,		// [out] form the conversion engine wants, etc.
+				eOutEncodingForm,
+				ref eFormEngineOut,
+				ref eNormalizeOutput,
+				bForward);
+			int nBufSize = baInput.Length;
+			fixed (byte* lpInBuffer = baInput)
+			{
+				int nOutLen = Math.Max(10000, nBufSize * 6);
+				byte[] abyOutBuffer = new byte[nOutLen];
+				fixed (byte* lpOutBuffer = abyOutBuffer)
+				{
+					lpOutBuffer[0] = lpOutBuffer[1] = lpOutBuffer[2] = lpOutBuffer[3] = 0;
+
+					// call the wrapper sub-classes' DoConvert to let them do it.
+					System.Diagnostics.Debug.WriteLine("Calling DoConvert from EC.InternalConvertEx");
+					DoConvert(lpInBuffer, nBufSize, lpOutBuffer, ref nOutLen);
+					System.Diagnostics.Debug.WriteLine("EC Output length " + nOutLen.ToString());
+
+					byte[] baOut = new byte[nOutLen];
+					ECNormalizeData.ByteStarToByteArr(lpOutBuffer, nOutLen, baOut);
+					dispBytes("Output In Bytes", baOut);
+					System.Diagnostics.Debug.WriteLine("EC Got val '" +
+													   System.Text.Encoding.Unicode.GetString(baOut) + "'");
+					string result = ECNormalizeData.GetString(lpOutBuffer, nOutLen, eOutEncodingForm,
+						((bForward) ? CodePageOutput : CodePageInput), eFormEngineOut, eNormalizeOutput,
+						out rciOutput, ref m_bDebugDisplayMode);
+#if DEBUG
+					System.Diagnostics.Debug.WriteLine("EC normalized result '" + result + "'");
+					byte[] baResult = System.Text.Encoding.BigEndianUnicode.GetBytes(result);
+					dispBytes("Normalized Output in UTF16BE", baResult);
+					baResult = System.Text.Encoding.Unicode.GetBytes(result);
+					dispBytes("Normalized Output in UTF16LE", baResult);
+					baResult = System.Text.Encoding.UTF8.GetBytes(result);
+					dispBytes("Normalized Output In UTF8", baResult);
+					System.Diagnostics.Debug.WriteLine("EC Returning.");
+#endif
+					return result;
+				}
+			}
+		}
+		
+		/// <summary>
+		/// If we're returning legacy data as a byte array, we need to return it as a byte array.
+		/// </summary>
+		/// <returns>
+		protected virtual unsafe byte[] InternalConvertEx(EncodingForm eInEncodingForm,
+			string sInput,
+			EncodingForm eOutEncodingForm,
+			NormalizeFlags eNormalizeOutput,
+			out int rciOutput,
+			bool bForward)
+		{
+            System.Diagnostics.Debug.WriteLine("InternalConvertEx (output bytes) BEGIN");
+            if( sInput == null )
+                EncConverters.ThrowError(ErrStatus.IncompleteChar);
+            if (sInput.Length == 0) {
+                // this section added 11/10/2011 by Jim K
+                rciOutput = 0;
+                return new byte[0];
+            }
+			            // if the user hasn't specified, then take the default case for the ConversionType:
+            //  if L/RHS == eLegacy, then LegacyString
+            //  if L/RHS == eUnicode, then UTF16
+            CheckInitEncForms(bForward, ref eInEncodingForm, ref eOutEncodingForm);
+
+            // allow the converter engine's (and/or its COM wrapper) to do some preprocessing.
+            EncodingForm eFormEngineIn = EncodingForm.Unspecified, eFormEngineOut = EncodingForm.Unspecified;
+            PreConvert(
+                eInEncodingForm,	// [in] form in the BSTR
+                ref eFormEngineIn,		// [out] form the conversion engine wants, etc.
+                eOutEncodingForm,
+                ref eFormEngineOut,
+                ref eNormalizeOutput,
+                bForward);
+            // get enough space for us to normalize the input data (6x ought to be enough)
+            int nBufSize = sInput.Length * 6;
+            byte[] abyInBuffer = new byte[nBufSize];
+            fixed (byte* lpInBuffer = abyInBuffer)
+            {
+                // use a helper class to normalize the data to the format needed by the engine
+                System.Diagnostics.Debug.WriteLine("Calling GetBytes");
+                ECNormalizeData.GetBytes(sInput, sInput.Length, eInEncodingForm,
+                    ((bForward) ? CodePageInput : CodePageOutput), eFormEngineIn, lpInBuffer,
+                    ref nBufSize, ref m_bDebugDisplayMode);
+
+                // get some space for the converter to fill with, but since this is allocated 
+                //  on the stack, don't muck around; get 10000 bytes for it.
+                int nOutLen = Math.Max(10000, nBufSize * 6);
+                byte[] abyOutBuffer = new byte[nOutLen];
+                fixed (byte* lpOutBuffer = abyOutBuffer)
+                {
+                    lpOutBuffer[0] = lpOutBuffer[1] = lpOutBuffer[2] = lpOutBuffer[3] = 0;
+
+                    // call the wrapper sub-classes' DoConvert to let them do it.
+                    System.Diagnostics.Debug.WriteLine("Calling DoConvert from EC.InternalConvertEx");
+                    DoConvert(lpInBuffer, nBufSize, lpOutBuffer, ref nOutLen);
+                    byte[] baOut = new byte[nOutLen];
+                    ECNormalizeData.ByteStarToByteArr(lpOutBuffer, nOutLen, baOut);
+#if DEBUG
+                    System.Diagnostics.Debug.WriteLine("EC Output length " + nOutLen.ToString());
+                    dispBytes("Output In Bytes", baOut);
+                    System.Diagnostics.Debug.WriteLine("EC Returning.");
+#endif
+					rciOutput = nOutLen;
+                    return baOut;
+                }
+            }
+		}
+		
         // This function is the meat of the conversion process. It is really long, which 
         //	normally wouldn't be a virtue (especially as an "in-line" function), but in an 
         //	effort to save memory fragmentation by using stack memory to buffer the input
