@@ -48,14 +48,14 @@ namespace IcuConvEC
 		// Production code should be aware of what encoding is required,
 		// and use a UConverter or at least a charset name explicitly.
 		out[s.extract(0, 99, out)]=0;
-		printf("%s'%s' {", announce, out);
+		fprintf(stderr, "%s'%s' {", announce, out);
 
 		// output the code units (not code points)
 		length=s.length();
 		for(i=0; i<length; ++i) {
-			printf(" %04x", s.charAt(i));
+			fprintf(stderr, " %04x", s.charAt(i));
 		}
-		printf(" }\n");
+		fprintf(stderr, " }\n");
 	}
 #endif
 
@@ -239,7 +239,10 @@ namespace IcuConvEC
 	{
 		fprintf(stderr, "+");
 		if (m_iConvName >= m_cConvNames)
+		{
+			fprintf(stderr, "\n");
 			return NULL;
+		}
 		const char *convName = ucnv_getAvailableName(m_iConvName++);
 		return strdup(convName);
 	}
@@ -256,21 +259,29 @@ namespace IcuConvEC
 	//
 	char * GetDisplayName(char * strID)
 	{
+		fprintf(stderr, "IcuConvEC::GetDisplayName(\"%s\") BEGIN\n", strID);
 		UErrorCode err = U_ZERO_ERROR;
 		const char * locale = uloc_getDefault();
 		UConverter * conv = m_pConverter;
-		if (ucnv_compareNames(strID, m_strConverterSpec) != 0)
+		if (m_pConverter == NULL || ucnv_compareNames(strID, m_strConverterSpec) != 0)
 			conv = ucnv_open(strID, &err);
-		int32_t length = ucnv_getDisplayName(conv, locale, NULL, 0, &err);
-		UChar * displayU = (UChar *)malloc((length + 1) * sizeof(UChar));
-		length = ucnv_getDisplayName(conv, locale, displayU, length, &err);
+		UChar buffer[1000];
+		int32_t length = ucnv_getDisplayName(conv, locale, buffer, 1000, &err);
+		if (length >= 1000)
+			length = 999;
+		buffer[length] = 0;
 		if (sizeof(UChar) == sizeof(char))
-			return (char*)displayU;
-		UnicodeString * strDisplayName = new UnicodeString(displayU, length);
-		free(displayU);
+		{
+			char * res = strdup((char *)buffer);
+			fprintf(stderr, "IcuConvEC::GetDisplayName() => \"%s\" END\n", res);
+			return res;
+		}
+		UnicodeString strDisplayName(buffer, length);
+		char * res = UniStr_to_CharStar(strDisplayName);
 		if (conv != m_pConverter)
 			ucnv_close(conv);
-		return UniStr_to_CharStar(*strDisplayName);
+		fprintf(stderr, "IcuConvEC::GetDisplayName() => \"%s\" END\n", res);
+		return res;
 	}
 
 	///////////////////////////////////////////////////////////////////////////
@@ -283,7 +294,7 @@ namespace IcuConvEC
 	//
 	int Initialize(char * strConverterSpec)
 	{
-		fprintf(stderr, "IcuConvEC.CppInitialize() BEGIN\n");
+		fprintf(stderr, "IcuConvEC::Initialize() BEGIN\n");
 		fprintf(stderr, "strConverterSpec '%s'\n", strConverterSpec);
 
 		if (IsFileLoaded())
@@ -294,6 +305,7 @@ namespace IcuConvEC
 		// do the load at this point; not that we need it, but for checking
 		// that everything is okay.
 		int hr = Load();
+		fprintf(stderr, "IcuConvEC::Initialize() END\n");
 		return hr;
 	}
 
@@ -314,6 +326,7 @@ namespace IcuConvEC
 		bool bForward,
 		int  nInactivityWarningTimeOut)
 	{
+		fprintf(stderr, "IcuConvEC::PreConvert(): BEGIN\n");
 		int hr = 0;
 		// load the converter if it isn't already
 		if (!IsFileLoaded())
@@ -321,7 +334,8 @@ namespace IcuConvEC
 		if (hr == 0)
 		{
             // we need to know whether to go *to* wide or *from* wide for "DoConvert"
-			m_bToUtf16 = bForward;
+			m_bToUtf16 = (eOutEncodingForm == EncodingForm_UTF16);
+			fprintf(stderr, "IcuConvEC::PreConvert(): m_bToUtf16=%d\n", (int)m_bToUtf16);
 			if (m_bToUtf16)
 			{
 				// going "to wide" means the output form required by the engine is UTF16.
@@ -345,6 +359,11 @@ namespace IcuConvEC
 					eOutFormEngine = EncodingForm_UTF8Bytes;
 			}
 		}
+		else
+		{
+			fprintf(stderr, "IcuConvEC::DoConvert(): Load() failed!\n");
+		}
+		fprintf(stderr, "IcuConvEC::PreConvert(): END\n");
 		return hr;
 	}
 
@@ -364,11 +383,13 @@ namespace IcuConvEC
 		char* lpOutBuffer,
 		int&  rnOutLen)
 	{
-		fprintf(stderr, "IcuConvEC.CppDoConvert() BEGIN\n");
+		fprintf(stderr, "IcuConvEC::DoConvert() BEGIN\n");
 		int hr = 0;
 		UErrorCode status = U_ZERO_ERROR;
 		int32_t len;
 
+		fprintf(stderr, "IcuConEC::DoConvert(): m_bToUtf16=%d, nInLen=%d, lpInBuffer[0]=%d\n",
+			(int)m_bToUtf16, nInLen, (int)lpInBuffer[0]);
 		if (m_bToUtf16)
 		{
 			// Convert from ??? to Unicode
@@ -382,12 +403,17 @@ namespace IcuConvEC
 			// Convert from Unicode to ???
 			// ICU is expecting the # of items
 			nInLen /= sizeof(UChar);
+			fprintf(stderr, "IcuConvEC::DoConvert(): adjusted nInLen=%d, rnOutLen=%d\n",
+				nInLen, rnOutLen);
 			len = ucnv_fromUChars(m_pConverter, (char*)lpOutBuffer, rnOutLen, 
 				(const UChar*)lpInBuffer, nInLen, &status);
 			rnOutLen = len;
+			fprintf(stderr, "IcuConvEC::DoConvert(): after conversion, rnOutLen=%d\n",
+				rnOutLen);
 		}
 		if (U_FAILURE(status))
 			hr = status;
+		fprintf(stderr, "IcuConvEC::DoConvert() END\n");
 		return hr;
 	}
 }
@@ -428,41 +454,3 @@ int IcuConvEC_DoConvert (char* lpInBuffer, int nInLen, char* lpOutBuffer, int& r
 {
 	return IcuConvEC::DoConvert (lpInBuffer, nInLen, lpOutBuffer, rnOutLen);
 }
-
-//
-// Example driver for testing.
-//
-/*
-int main()
-{
-	fprintf(stderr, "main() BEGIN\n");
-
-	int count = IcuConvEC_ConverterNameList_start();
-	fprintf(stderr, "Got count %d\n", count);
-	for (int i = 0; i < count; i++)
-	{
-		char * name = IcuConvEC_ConverterNameList_next();
-		fprintf(stderr, "Got name '%s'\n", name);
-		free(name);
-	}
-
-	char strName[100] = "ISO-8859:1";
-	char * displayName = IcuConvEC_getDisplayName(strName);
-	fprintf(stderr, "Display name '%s'\n", displayName);
-	free(displayName);
-
-	IcuConvEC_Initialize(strName);
-
-	char strIn[] = "abcde";
-	int szOut    = 1000;
-	char strOut[szOut];
-	int err = IcuConvEC_DoConvert(strIn, strlen(strIn), strOut, szOut);
-	if (err != 0) {
-		return err;
-	}
-	fprintf(stderr, "Got %s\n", strOut);
-
-	fprintf(stderr, "main() END\n");
-	return 0;
-}
-*/

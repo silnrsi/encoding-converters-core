@@ -16,7 +16,10 @@ SRCDIRS = src/IcuEC src/PyScriptEC src/ECDriver/linux
 DLLS    = ECInterfaces.dll SilEncConverters40.dll CodePageEC.dll CcEC.dll \
   IcuEC.dll PyScriptEC.dll PerlExpressionEC.dll AIGuesserEC.dll
 LIBDIR  = $(exec_prefix)/lib/encConverters
-
+PLUGINS = "AI 4.0.0.0 Plugin Details.xml" "CC 4.0.0.0 Plugin Details.xml" \
+    "CP 4.0.0.0 Plugin Details.xml" "EC 4.0.0.0 Plugin Details.xml" \
+    "IcuEC 4.0.0.0 Plugin Details.xml" "PerlEC 4.0.0.0 Plugin Details.xml" \
+    "PythonEC 4.0.0.0 Plugin Details.xml"
 
 all:
 	@(cd build && nant) || true
@@ -24,7 +27,10 @@ all:
 	  echo making in $$subdir; \
 	  (cd $$subdir && $(MAKE) all) || true; \
 	done
-
+	@mkdir -p $(OUTDIR)/EC/Plugins
+	@for file in $(PLUGINS); do \
+	  cp src/Plugins/"$$file" $(OUTDIR)/EC/Plugins; \
+	done
 clean:
 	@(cd build && nant clean) || true
 	@for subdir in $(SRCDIRS); do \
