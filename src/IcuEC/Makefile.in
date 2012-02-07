@@ -27,16 +27,22 @@ $(OUTDIR)/libIcuTranslitEC.so.1.0: $(BUILDDIR)/IcuTranslitEC.o
 	g++ -shared -Wl,-soname,libIcuTranslitEC.so.1 \
   -o $(OUTDIR)/libIcuTranslitEC.so.1.0 $(BUILDDIR)/IcuTranslitEC.o \
   -licuuc -licui18n
+	ln -s $(OUTDIR)/libIcuTranslitEC.so.1.0 $(OUTDIR)/libIcuTranslitEC.so.1
+	ln -s $(OUTDIR)/libIcuTranslitEC.so.1.0 $(OUTDIR)/libIcuTranslitEC.so
 
 $(OUTDIR)/libIcuRegexEC.so.1.0: $(BUILDDIR)/IcuRegexEC.o
 	g++ -shared -Wl,-soname,libIcuRegexEC.so.1 \
   -o $(OUTDIR)/libIcuRegexEC.so.1.0 $(BUILDDIR)/IcuRegexEC.o \
   -licuuc -licui18n
+	ln -s $(OUTDIR)/libIcuRegexEC.so.1.0 $(OUTDIR)/libIcuRegexEC.so.1
+	ln -s $(OUTDIR)/libIcuRegexEC.so.1.0 $(OUTDIR)/libIcuRegexEC.so
 
 $(OUTDIR)/libIcuConvEC.so.1.0: $(BUILDDIR)/IcuConvEC.o
 	g++ -shared -Wl,-soname,libIcuConvEC.so.1 \
   -o $(OUTDIR)/libIcuConvEC.so.1.0 $(BUILDDIR)/IcuConvEC.o \
   -licuuc -licui18n
+	ln -s $(OUTDIR)/libIcuConvEC.so.1.0 $(OUTDIR)/libIcuConvEC.so.1
+	ln -s $(OUTDIR)/libIcuConvEC.so.1.0 $(OUTDIR)/libIcuConvEC.so
 
 $(BUILDDIR)/IcuTranslitEC.o: IcuTranslitEC.cpp IcuTranslitEC.h $(ECHEADER)
 	g++ -Wall -fPIC -c IcuTranslitEC.cpp -o $(BUILDDIR)/IcuTranslitEC.o \
@@ -52,9 +58,9 @@ $(BUILDDIR)/IcuConvEC.o: IcuConvEC.cpp IcuConvEC.h $(ECHEADER)
 
 clean:
 	rm -f *~
-	rm -f $(BUILDDIR)/IcuTranslitEC.o $(OUTDIR)/libIcuTranslitEC.so.1.0
-	rm -f $(BUILDDIR)/IcuRegexEC.o $(OUTDIR)/libIcuRegexEC.so.1.0
-	rm -f $(BUILDDIR)/IcuConvEC.o $(OUTDIR)/libIcuConvEC.so.1.0
+	rm -f $(BUILDDIR)/IcuTranslitEC.o $(OUTDIR)/libIcuTranslitEC.so*
+	rm -f $(BUILDDIR)/IcuRegexEC.o $(OUTDIR)/libIcuRegexEC.so*
+	rm -f $(BUILDDIR)/IcuConvEC.o $(OUTDIR)/libIcuConvEC.so*
 
 distclean: clean
 	rm -f Makefile

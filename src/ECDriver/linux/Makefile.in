@@ -29,6 +29,8 @@ $(OUTDIR)/libecdriver.so.1.0: $(BUILDDIR)/ECDriver.o
 	g++ -shared -Wl,-soname,libecdriver.so.1 \
   -o $(OUTDIR)/libecdriver.so.1.0 $(BUILDDIR)/ECDriver.o \
   $(MONO_LDFLAGS) -lmono-2.0
+	ln -s $(OUTDIR)/libecdriver.so.1.0 $(OUTDIR)/libecdriver.so.1
+	ln -s $(OUTDIR)/libecdriver.so.1.0 $(OUTDIR)/libecdriver.so
 
 $(BUILDDIR)/ECDriver.o: $(SRCDIR)ECDriver.cpp $(SRCDIR)ecdriver.h
 	g++ -Wall -fPIC -c $(SRCDIR)ECDriver.cpp -o $(BUILDDIR)/ECDriver.o \
@@ -50,7 +52,7 @@ $(BUILDDIR)/testShared.o: $(SRCDIR)testShared.cpp
 clean:
 	rm -f *~
 	rm -f $(BUILDDIR)/ECDriver.o
-	rm -f $(OUTDIR)/libecdriver.so.1.0
+	rm -f $(OUTDIR)/libecdriver.so*
 	rm -f $(OUTDIR)/testECDriver.exe
 
 distclean: clean

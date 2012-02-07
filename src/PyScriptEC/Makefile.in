@@ -29,6 +29,8 @@ $(OUTDIR)/libPyScriptEncConverter.so.1.0: $(BUILDDIR)/PyScriptEncConverter.o
 	g++ -shared -Wl,-soname,libPyScriptEncConverter.so.1 \
   -o $(OUTDIR)/libPyScriptEncConverter.so.1.0 \
   $(BUILDDIR)/PyScriptEncConverter.o $(PYTHON_LDFLAGS)
+	ln -s $(OUTDIR)/libPyScriptEncConverter.so.1.0 $(OUTDIR)/libPyScriptEncConverter.so.1
+	ln -s $(OUTDIR)/libPyScriptEncConverter.so.1.0 $(OUTDIR)/libPyScriptEncConverter.so
 
 $(BUILDDIR)/PyScriptEncConverter.o: PyScriptEncConverter.cpp PyScriptEncConverter.h $(ECHEADER)
 	g++ -Wall -fPIC -c PyScriptEncConverter.cpp \
@@ -38,7 +40,7 @@ $(BUILDDIR)/PyScriptEncConverter.o: PyScriptEncConverter.cpp PyScriptEncConverte
 clean:
 	rm -f *~
 	rm -f $(BUILDDIR)/PyScriptEncConverter.o
-	rm -f $(OUTDIR)/libPyScriptEncConverter.so.1.0
+	rm -f $(OUTDIR)/libPyScriptEncConverter.so*
 
 distclean: clean
 	rm -f Makefile

@@ -31,7 +31,8 @@
                                 PerlExpressionEC,
                                 PyScriptEC,
                                 AIGuesserEC,
-                                ECFileConv" />
+                                ECFileConv,
+                                TestEncCnvtrs" />
 
     <target name="ECInterfaces">
         <property name="srcdir" value="${projroot}/src/ECInterfaces" />
@@ -204,6 +205,39 @@
         <call target="compile" cascade="false"/>
     </target>
 
+    <target name="TestEncCnvtrs"
+			depends="ECInterfaces,EncCnvtrs,IcuEC">
+        <property name="srcdir" value="${projroot}/src/TestEncCnvtrs" />
+        <property name="namespace" value="SilEncConvertersTests" />
+        <property name="outfile" value="TestEncCnvtrs.dll" />
+        <property name="unsafe" value="true" />
+        <property name="target.type" value="library" />
+        <patternset id="Reference">
+            <include name="System.dll" />
+            <include name="nunit.framework.dll" />
+            <include name="ECInterfaces.dll" />
+            <include name="SilEncConverters40.dll" />
+            <include name="IcuEC.dll" />
+        </patternset>
+        <call target="compile" cascade="false"/>
+    </target>
+
+	<target name="test" depends="TestEncCnvtrs">
+		<nunit2>
+		    <formatter type="Plain" />
+		    <test assemblyname="${dir.output}/TestEncCnvtrs.dll" appconfig="${dir.output}/TestEncCnvtrs.dll.config">
+				<assemblies>
+					<lib>
+						<include name="${dir.output}" />
+					</lib>
+					<include name="ECInterfaces.dll" />
+					<include name="SilEncConverters40.dll" />
+					<include name="IcuEC.dll" />
+				</assemblies>
+		</test>
+		</nunit2>
+	</target>
+
     <target name="compile">
         <assemblyfileset id="refs" basedir="${projroot}/">
             <lib>
@@ -230,6 +264,8 @@
                 <include name="${dir.output}/*.exe"/>
                 <include name="${dir.output}/*.dll"/>
                 <include name="${dir.output}/*.mdb"/>
+                <include name="${dir.output}/*.dll.config"/>
+                <include name="${dir.output}/EC/Plugins/*.xml"/>
             </fileset>
         </delete>
     </target>
