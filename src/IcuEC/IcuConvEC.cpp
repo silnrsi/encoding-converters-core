@@ -5,13 +5,16 @@
 #include <stdlib.h>
 #include <string.h>
 
-// This file is from the ICU library. If you don't have it, you may have to
+// These headers are from the ICU library. If you don't have it, you may have to
 // download it or get it from a package such as FieldWorks.
 #include "unicode/ucnv.h"
 #include "unicode/uloc.h"
 
 #include "CEncConverter.h"
 #include "IcuConvEC.h"
+
+// Uncomment the following line if you want verbose debugging output
+//#define VERBOSITY
 
 // Keep this in a namespace so that it doesn't get confused with functions that
 // have the same name in other converters, for example Load().
@@ -26,7 +29,7 @@ namespace IcuConvEC
 	int     m_cConvNames = -1;	// number of converters
 	int     m_iConvName = 0;	// which converter will be next
 
-#if 0
+#ifdef VERBOSITY
 	///////////////////////////////////////////////////////////////////////////
 	// NAME
 	//    printUnicodeString
@@ -147,8 +150,10 @@ namespace IcuConvEC
 		if (IsFileLoaded())
 			return 0;		// don't bother if it's already loaded.
 
+#ifdef VERBOSITY
 		fprintf(stderr, "IcuConvEC::Load() BEGIN\n");
 		fprintf(stderr, "m_strConverterSpec = '%s'\n", m_strConverterSpec);
+#endif
 
 		UErrorCode status = U_ZERO_ERROR;
 
@@ -171,16 +176,22 @@ namespace IcuConvEC
 		}
 		if (m_pConverter)
 		{
+#ifdef VERBOSITY
 			fprintf(stderr, "Successfully created ICU converter '%s'.\n", m_strConverterSpec);
+#endif
 		}
 		else
 		{
+#ifdef VERBOSITY
 			fprintf(stderr, "Failed to create ICU converter '%s'\n", m_strConverterSpec);
+#endif
 			return -1;
 		}
 		if( U_FAILURE(status) )
 		{
+#ifdef VERBOSITY
 			fprintf(stderr, "... but failure status %d: %s\n", status, u_errorName(status));
+#endif
 			return status;
 		}
 		else
@@ -191,7 +202,9 @@ namespace IcuConvEC
 			const char* pszName = ucnv_getName(m_pConverter, &status);
 			m_strStandardName = strdup(pszName);
 		}
+#ifdef VERBOSITY
 		fprintf(stderr, "IcuConvEC::Load() END\n");
+#endif
 		return 0;
 	}
 
@@ -205,7 +218,9 @@ namespace IcuConvEC
 	//
 	void InactivityWarning()
 	{
+#ifdef VERBOSITY
 		fprintf(stderr, "IcuConvEC::InactivityWarning\n");
+#endif
 		FinalRelease();
 	}
 
@@ -222,7 +237,9 @@ namespace IcuConvEC
 	int ConverterNameList_start()
 	{
 		m_cConvNames = ucnv_countAvailable();
+#ifdef VERBOSITY
 		fprintf(stderr, "%d converter IDs available.\n", m_cConvNames);
+#endif
 		m_iConvName = 0;
 		return m_cConvNames;
 	}
@@ -237,10 +254,14 @@ namespace IcuConvEC
 	//
 	char * ConverterNameList_next(void)
 	{
+#ifdef VERBOSITY
 		fprintf(stderr, "+");
+#endif
 		if (m_iConvName >= m_cConvNames)
 		{
+#ifdef VERBOSITY
 			fprintf(stderr, "\n");
+#endif
 			return NULL;
 		}
 		const char *convName = ucnv_getAvailableName(m_iConvName++);
@@ -259,7 +280,9 @@ namespace IcuConvEC
 	//
 	char * GetDisplayName(char * strID)
 	{
+#ifdef VERBOSITY
 		fprintf(stderr, "IcuConvEC::GetDisplayName(\"%s\") BEGIN\n", strID);
+#endif
 		UErrorCode err = U_ZERO_ERROR;
 		const char * locale = uloc_getDefault();
 		UConverter * conv = m_pConverter;
@@ -273,14 +296,18 @@ namespace IcuConvEC
 		if (sizeof(UChar) == sizeof(char))
 		{
 			char * res = strdup((char *)buffer);
+#ifdef VERBOSITY
 			fprintf(stderr, "IcuConvEC::GetDisplayName() => \"%s\" END\n", res);
+#endif
 			return res;
 		}
 		UnicodeString strDisplayName(buffer, length);
 		char * res = UniStr_to_CharStar(strDisplayName);
 		if (conv != m_pConverter)
 			ucnv_close(conv);
+#ifdef VERBOSITY
 		fprintf(stderr, "IcuConvEC::GetDisplayName() => \"%s\" END\n", res);
+#endif
 		return res;
 	}
 
@@ -294,8 +321,10 @@ namespace IcuConvEC
 	//
 	int Initialize(char * strConverterSpec)
 	{
+#ifdef VERBOSITY
 		fprintf(stderr, "IcuConvEC::Initialize() BEGIN\n");
 		fprintf(stderr, "strConverterSpec '%s'\n", strConverterSpec);
+#endif
 
 		if (IsFileLoaded())
 			FinalRelease();
@@ -305,7 +334,9 @@ namespace IcuConvEC
 		// do the load at this point; not that we need it, but for checking
 		// that everything is okay.
 		int hr = Load();
+#ifdef VERBOSITY
 		fprintf(stderr, "IcuConvEC::Initialize() END\n");
+#endif
 		return hr;
 	}
 
@@ -326,7 +357,9 @@ namespace IcuConvEC
 		bool bForward,
 		int  nInactivityWarningTimeOut)
 	{
+#ifdef VERBOSITY
 		fprintf(stderr, "IcuConvEC::PreConvert(): BEGIN\n");
+#endif
 		int hr = 0;
 		// load the converter if it isn't already
 		if (!IsFileLoaded())
@@ -335,7 +368,9 @@ namespace IcuConvEC
 		{
             // we need to know whether to go *to* wide or *from* wide for "DoConvert"
 			m_bToUtf16 = (eOutEncodingForm == EncodingForm_UTF16);
+#ifdef VERBOSITY
 			fprintf(stderr, "IcuConvEC::PreConvert(): m_bToUtf16=%d\n", (int)m_bToUtf16);
+#endif
 			if (m_bToUtf16)
 			{
 				// going "to wide" means the output form required by the engine is UTF16.
@@ -361,9 +396,13 @@ namespace IcuConvEC
 		}
 		else
 		{
+#ifdef VERBOSITY
 			fprintf(stderr, "IcuConvEC::DoConvert(): Load() failed!\n");
+#endif
 		}
+#ifdef VERBOSITY
 		fprintf(stderr, "IcuConvEC::PreConvert(): END\n");
+#endif
 		return hr;
 	}
 
@@ -383,13 +422,17 @@ namespace IcuConvEC
 		char* lpOutBuffer,
 		int&  rnOutLen)
 	{
+#ifdef VERBOSITY
 		fprintf(stderr, "IcuConvEC::DoConvert() BEGIN\n");
+#endif
 		int hr = 0;
 		UErrorCode status = U_ZERO_ERROR;
 		int32_t len;
 
+#ifdef VERBOSITY
 		fprintf(stderr, "IcuConEC::DoConvert(): m_bToUtf16=%d, nInLen=%d, lpInBuffer[0]=%d\n",
 			(int)m_bToUtf16, nInLen, (int)lpInBuffer[0]);
+#endif
 		if (m_bToUtf16)
 		{
 			// Convert from ??? to Unicode
@@ -403,17 +446,23 @@ namespace IcuConvEC
 			// Convert from Unicode to ???
 			// ICU is expecting the # of items
 			nInLen /= sizeof(UChar);
+#ifdef VERBOSITY
 			fprintf(stderr, "IcuConvEC::DoConvert(): adjusted nInLen=%d, rnOutLen=%d\n",
 				nInLen, rnOutLen);
+#endif
 			len = ucnv_fromUChars(m_pConverter, (char*)lpOutBuffer, rnOutLen, 
 				(const UChar*)lpInBuffer, nInLen, &status);
 			rnOutLen = len;
+#ifdef VERBOSITY
 			fprintf(stderr, "IcuConvEC::DoConvert(): after conversion, rnOutLen=%d\n",
 				rnOutLen);
+#endif
 		}
 		if (U_FAILURE(status))
 			hr = status;
+#ifdef VERBOSITY
 		fprintf(stderr, "IcuConvEC::DoConvert() END\n");
+#endif
 		return hr;
 	}
 }
