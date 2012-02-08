@@ -40,6 +40,7 @@ clean:
 	  (cd $$subdir && $(MAKE) clean) || true; \
 	done
 	@(cd $(OUTDIR) && rm -f *.xml) || true
+	@(cd $(OUTDIR) && rm -rf EC) || true
 	@rm -f *~
 
 distclean: clean
@@ -60,14 +61,15 @@ install:
 	  $(INSTALL) $(OUTDIR)/$$file $(DESTDIR)$(LIBDIR); \
 	done
 
+NUNITROOT=`which nunit-console | sed s=/bin/nunit-console==`
 check: all
-	# maybe if nunit is in the GAC, we wouldn't need this copying...
 	@if [ ! -f $(OUTDIR)/nunit.framework.dll ]; then \
-	  find /usr -name nunit.framework.dll -exec cp '{}' $(OUTDIR) ';' ; \
-	  find /usr -name nunit.core.dll -exec cp '{}' $(OUTDIR) ';' ; \
-	  find /usr -name nunit.core.interfaces.dll -exec cp '{}' $(OUTDIR) ';' ; \
+	  echo '#' even with nunit in the GAC, we seem to need need this copying...; \
+	  find $(NUNITROOT) -name nunit.framework.dll -exec cp -p '{}' $(OUTDIR) ';' -print ; \
+	  find $(NUNITROOT) -name nunit.core.dll -exec cp -p '{}' $(OUTDIR) ';' -print ; \
+	  find $(NUNITROOT) -name nunit.core.interfaces.dll -exec cp -p '{}' $(OUTDIR) ';' -print ; \
 	fi
-	@(cd build && nant test) || true
+	@(cd build && LD_LIBRARY_PATH="$(OUTDIR)" nant test) || true
 	@for subdir in $(SRCDIRS); do \
 	  echo checking in $$subdir; \
 	  (cd $$subdir && $(MAKE) check) || true; \
