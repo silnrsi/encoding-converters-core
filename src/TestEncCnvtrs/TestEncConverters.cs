@@ -37,9 +37,11 @@ namespace SilEncConvertersTests
 			if (machine_store == null)
 			{
 				Console.WriteLine("First, make sure that /var/lib/fieldworks exists and is writeable by everyone.");
+				Console.WriteLine("eg, sudo mkdir -p /var/lib/fieldworks && sudo chmod +wt /var/lib/fieldworks");
 				Console.WriteLine("Then add the following line to ~/.profile, logout, and login again.");
 				Console.WriteLine("MONO_REGISTRY_PATH=/var/lib/fieldworks/registry; export MONO_REGISTRY_PATH");
-				Environment.SetEnvironmentVariable("MONO_REGISTRY_PATH", "/var/lib/fieldworks/registry");	// hasn't worked yet, but...
+				// doesn't work on Maverick, but try it anyway...
+				Environment.SetEnvironmentVariable("MONO_REGISTRY_PATH", "/var/lib/fieldworks/registry");
 			}
 			m_repoFile = null;
 			RegistryKey key = Registry.CurrentUser.OpenSubKey(EncConverters.HKLM_PATH_TO_XML_FILE, true);
@@ -53,7 +55,7 @@ namespace SilEncConvertersTests
 				key.SetValue(EncConverters.strRegKeyForStorePath, m_repoFile);
 				key.Flush();
 				// Now we need to write a good file to that location.
-				// TODO: use EncConverters.strTypeSILtec etc. to fill in the type values in the strings below?
+				// REVIEW: use EncConverters.strTypeSILtec etc. to fill in the type values in the strings below?
 				StreamWriter writer = new StreamWriter(m_repoFile);
 				writer.WriteLine("<?xml version=\"1.0\" standalone=\"yes\"?>");
 				writer.WriteLine("<mappingRegistry xmlns=\"http://www.sil.org/computing/schemas/SILMappingRegistry.xsd\">");
