@@ -61,7 +61,7 @@ install:
 	  $(INSTALL) $(OUTDIR)/$$file $(DESTDIR)$(LIBDIR); \
 	done
 
-NUNITROOT=`which nunit-console | sed s=/bin/nunit-console==`
+NUNITROOT=`which nunit-console | sed s=/bin/nunit-console=/lib/mono=`
 check: all
 	@if [ ! -f $(OUTDIR)/nunit.framework.dll ]; then \
 	  echo '#' even with nunit in the GAC, we seem to need need this copying...; \

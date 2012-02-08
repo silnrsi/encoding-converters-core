@@ -223,11 +223,11 @@
     </target>
 
     <target name="test" depends="TestEncCnvtrs">
-        <!-- setting the environment variable should work, but doesn't -->
+        <!-- setting the environment variable should work, but doesn't for some older nant/nunit setups -->
         <setenv>
             <variable name="LD_LIBRARY_PATH" path="${dir.output}"/>
         </setenv>
-        <echo message="'nant test' seems to fail some tests unless LD_LIBRARY_PATH is set to include ${dir.output} before running nant"/>
+        <echo message="'nant test' may fail some tests unless LD_LIBRARY_PATH is set to include ${dir.output} before running nant"/>
         <echo message="LD_LIBRARY_PATH=${environment::get-variable('LD_LIBRARY_PATH')} nant test"/>
         <nunit2>
             <formatter type="Plain" />
