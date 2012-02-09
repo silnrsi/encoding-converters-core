@@ -147,6 +147,10 @@ namespace TestEncCnvtrs
 				m_encConverters.Remove ("UnitTesting-Latin-Hebrew");
 			if (m_encConverters["UnitTesting-Hebrew-Latin"] != null)
 				m_encConverters.Remove ("UnitTesting-Hebrew-Latin");
+			if (m_encConverters["UnitTesting-Consonants->C"] != null)
+				m_encConverters.Remove("UnitTesting-Consonants->C");
+			if (m_encConverters["UnitTesting-Vowels->V"] != null)
+				m_encConverters.Remove("UnitTesting-Vowels->V");
 		}
 		
 		/// --------------------------------------------------------------------
@@ -316,6 +320,52 @@ namespace TestEncCnvtrs
 
 			m_encConverters.Remove("UnitTesting-Latin-Hebrew");
 			m_encConverters.Remove("UnitTesting-Hebrew-Latin");
+			int countAfter = m_encConverters.Count;
+			Assert.AreEqual(countOrig, countAfter, "Should have the original number of converters now.");
+		}
+		
+		[Test]
+		public void AddIcuRegexConverters()
+		{
+			int countOrig = m_encConverters.Count;
+			m_encConverters.Add("UnitTesting-Consonants->C", "[bcdfghjklmnpqrstvwxyz]->C /i", ConvType.Unicode_to_from_Unicode,
+				"UNICODE", "UNICODE", ProcessTypeFlags.ICURegularExpression);
+			int countNew = m_encConverters.Count;
+			Assert.AreEqual(countOrig+1, countNew, "Should have one new converter (ICU regex) now");
+			string[] encodings = m_encConverters.Encodings;
+			Assert.LessOrEqual(1, encodings.Length, "Should have at least 1 encoding now.");
+			string[] mappings = m_encConverters.Mappings;
+			Assert.LessOrEqual(1, mappings.Length, "Should have at least 1 mapping now.");
+			int countKeys = m_encConverters.Keys.Count;
+			int countValues = m_encConverters.Values.Count;
+			Assert.AreEqual(countKeys, countValues, "Should have same number of keys and values!");
+			Assert.LessOrEqual(1, countKeys, "Should have at least one key now.");
+			IEncConverter ec = m_encConverters["UnitTesting-Consonants->C"];
+			Assert.IsNotNull(ec);
+			string output = ec.Convert("This is a test.  This is only a test!");
+			Assert.AreEqual("CCiC iC a CeCC.  CCiC iC oCCC a CeCC!", output,
+				"Instantiated ICU.reg converter should work properly!");
+
+			m_encConverters.Add("UnitTesting-Vowels->V", "[aeiou]->V /i", ConvType.Unicode_to_from_Unicode,
+				"UNICODE", "UNICODE", ProcessTypeFlags.ICURegularExpression);
+			countNew = m_encConverters.Count;
+			Assert.AreEqual(countOrig+2, countNew, "Should have two new converters (ICU regex) now");
+			encodings = m_encConverters.Encodings;
+			Assert.LessOrEqual(1, encodings.Length, "Should have at least 1 encoding now.");
+			mappings = m_encConverters.Mappings;
+			Assert.LessOrEqual(2, mappings.Length, "Should have at least 2 mappings now.");
+			countKeys = m_encConverters.Keys.Count;
+			countValues = m_encConverters.Values.Count;
+			Assert.AreEqual(countKeys, countValues, "Should have same number of keys and values!");
+			Assert.LessOrEqual(2, countKeys, "Should have at least two keys now.");
+			IEncConverter ecV = m_encConverters["UnitTesting-Vowels->V"];
+			Assert.IsNotNull(ecV);
+			string outputCV = ecV.Convert(output);
+			Assert.AreEqual("CCVC VC V CVCC.  CCVC VC VCCC V CVCC!", outputCV,
+				"Second instantiated ICU.reg converter should work properly!");
+
+			m_encConverters.Remove("UnitTesting-Consonants->C");
+			m_encConverters.Remove("UnitTesting-Vowels->V");
 			int countAfter = m_encConverters.Count;
 			Assert.AreEqual(countOrig, countAfter, "Should have the original number of converters now.");
 		}
