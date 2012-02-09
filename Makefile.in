@@ -29,7 +29,7 @@ all:
 	done
 	@mkdir -p $(OUTDIR)/EC/Plugins
 	@for file in $(PLUGINS); do \
-	  cp src/Plugins/"$$file" $(OUTDIR)/EC/Plugins; \
+	  cp -p redist/EC/Plugins/"$$file" $(OUTDIR)/EC/Plugins; \
 	done
 	@cp src/TestEncCnvtrs/TestEncCnvtrs.dll.config $(OUTDIR)
 
@@ -49,7 +49,7 @@ distclean: clean
 	  (cd $$subdir && $(MAKE) distclean) || true; \
 	done
 	@rm -f Makefile config.cache src/config.h config.log config.status src/stamp-h1
-	@rm -f autogen.err TestResult.xml
+	@rm -f autogen.err TestResult.xml src/TestEncCnvtrs/TestEncCnvtrs.pidb
 	@rm -rf autom4te.cache output build/Obj src/TestEncCnvtrs/test-results
 
 install:
@@ -57,9 +57,12 @@ install:
 	  echo installing in $$subdir; \
 	  (cd $$subdir && $(MAKE) install) || true; \
 	done
-	@mkdir -p $(DESTDIR)$(LIBDIR)
+	@mkdir -p $(DESTDIR)$(LIBDIR)/EC/Plugins
 	@for file in $(DLLS); do \
 	  $(INSTALL) $(OUTDIR)/$$file $(DESTDIR)$(LIBDIR); \
+	done
+	@for file in $(PLUGINS); do \
+	  cp -p redist/EC/Plugins/"$$file" $(DESTDIR)$(LIBDIR)/EC/Plugins; \
 	done
 
 NUNITROOT=`which nunit-console | sed s=/bin/nunit-console=/lib/mono=`
