@@ -1,6 +1,7 @@
 // created by Steve McConnel, Feb 3, 2012.
 
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -9,11 +10,11 @@ using NUnit.Framework;
 using ECInterfaces;
 using SilEncConverters40;
 
-namespace SilEncConvertersTests
+namespace TestEncCnvtrs
 {
 	/// ------------------------------------------------------------------------
 	/// <summary>
-	/// Set of tests to excercise the methods in the IcuConvEncConverter class.
+	/// Set of tests to exercise the methods in the IcuConvEncConverter class.
 	/// These use the converters that are part of the ICU code.
 	/// </summary>
 	/// ------------------------------------------------------------------------
@@ -43,19 +44,20 @@ namespace SilEncConvertersTests
 		{
 			int count = CppConverterNameList_start();
 			Assert.Less(100, count, "There should be at least one hundred ICU converters available!");
-			StringBuilder sb = new StringBuilder();
+			List<string> converters = new List<string>();
 			for (int i = 0; i < count; ++i)
 			{
 				var name = CppConverterNameList_next();
 				Assert.IsNotNull(name, "The returned ICU converter name should not be null!");
-				sb.AppendLine(name);
+				converters.Add(name);
 			}
+			var noname = CppConverterNameList_next();
+			Assert.IsNull(noname, "Excess converter names should be null.");
 			// Check for the specific converters used in the following tests.
-			string converterNames = sb.ToString();
-			Assert.IsTrue(converterNames.Contains("ISO-8859-1"), "The set of ICU converters should contain 'ISO-8859-1'.");
-			Assert.IsTrue(converterNames.Contains("iso-8859_10-1998"), "The set of ICU converters should contain 'iso-8859_10-1998'.");
-			Assert.IsTrue(converterNames.Contains("iso-8859_11-2001"), "The set of ICU converters should contain 'iso-8859_11-2001'.");
-			Assert.IsTrue(converterNames.Contains("iso-8859_14-1998"), "The set of ICU converters should contain 'iso-8859_14-1998'.");
+			Assert.Contains("ISO-8859-1", converters, "The set of ICU converters should contain 'ISO-8859-1'.");
+			Assert.Contains("iso-8859_10-1998", converters, "The set of ICU converters should contain 'iso-8859_10-1998'.");
+			Assert.Contains("iso-8859_11-2001", converters, "The set of ICU converters should contain 'iso-8859_11-2001'.");
+			Assert.Contains("iso-8859_14-1998", converters, "The set of ICU converters should contain 'iso-8859_14-1998'.");
 			string display1 = CppGetDisplayName("ISO-8859-1");
 			Assert.IsNotNull(display1);
 			string display10 = CppGetDisplayName ("iso-8859_10-1998");
@@ -290,6 +292,5 @@ namespace SilEncConvertersTests
 			byte[] output = icuConv.ConvertFromUnicode(m_convertedIso8859_1);
 			Assert.AreEqual(m_bytesIso8859, output);
 		}
-
 	}
 }

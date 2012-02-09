@@ -40,11 +40,11 @@
   <ItemGroup>
     <Compile Include="TestIcuConvEncConverter.cs" />
     <Compile Include="TestEncConverters.cs" />
+    <Compile Include="TestIcuTranslit.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="nunit.framework">
       <Private>False</Private>
-      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\usr\lib\mono\gac\nunit.framework\2.5.10.0__96d09a1eb7f44a77\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
