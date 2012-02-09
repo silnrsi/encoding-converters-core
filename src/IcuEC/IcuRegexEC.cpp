@@ -18,6 +18,9 @@
 #include "CEncConverter.h"
 #include "IcuRegexEC.h"
 
+// Uncomment the following line if you want verbose debugging output
+//#define VERBOSE_DEBUGGING
+
 // Keep this in a namespace so that it doesn't get confused with functions that
 // have the same name in other converters, for example Load().
 namespace IcuRegexEC
@@ -31,6 +34,7 @@ namespace IcuRegexEC
     static void
     printUnicodeString(const char *announce, const UnicodeString &s)
     {
+#ifdef VERBOSE_DEBUGGING
         static char out[200];
         int32_t i, length;
 
@@ -52,6 +56,7 @@ namespace IcuRegexEC
             printf(" %04x", s.charAt(i));
         }
         printf(" }\n");
+#endif
     }
 
     // Allocates a utf-8 (on Linux) char * from a UnicodeString.
@@ -150,7 +155,9 @@ namespace IcuRegexEC
     // them inside a C++ class or namespace.
     int Load(void)
     {
+#ifdef VERBOSE_DEBUGGING
         fprintf(stderr, "IcuRegexEC.CppLoad() BEGIN\n");
+#endif
         int hr = 0;
 
         // but not if it's already loaded.
@@ -173,39 +180,51 @@ namespace IcuRegexEC
             UErrorCode status = U_ZERO_ERROR;
             printUnicodeString("Creating matcher with: ", m_strFind);
             m_pMatcher = new RegexMatcher(m_strFind, flags, status);
+#ifdef VERBOSE_DEBUGGING
             fprintf(stderr, "Created matcher.\n");
+#endif
 
             if( U_FAILURE(status) )
             {
                 // the base class does ReturnError and if we do it also, then it inverts the error
                 //  code twice
+#ifdef VERBOSE_DEBUGGING
                 fprintf(stderr, "Failure status %d: %s\n",
                         status, u_errorName(status));
+#endif
                 hr = status;
             }
         }
         else
         {
+#ifdef VERBOSE_DEBUGGING
             fprintf(stderr,
                 "IcuRegex: The converter identifier '%s' is invalid!\n\nUsage: <Find>-><Replace> (<Flags>)*\n\n\twhere <Flags> can be '/i'",
                 m_strConverterSpec);
+#endif
             return -1;
         }
+#ifdef VERBOSE_DEBUGGING
         fprintf(stderr, "Load() END\n");
+#endif
         return hr;
     }
 
     // call to clean up resources when we've been inactive for some time.
     void InactivityWarning()
     {
+#ifdef VERBOSE_DEBUGGING
         fprintf(stderr, "IcuTransEC::InactivityWarning\n");
+#endif
         FinalRelease();
     }
 
     int Initialize(char * strConverterSpec)
     {
+#ifdef VERBOSE_DEBUGGING
         fprintf(stderr, "IcuRegexEC.CppInitialize() BEGIN\n");
         fprintf(stderr, "strConverterSpec '%s'\n", strConverterSpec);
+#endif
 
         if( IsMatcherLoaded() )
             FinalRelease();
@@ -248,7 +267,9 @@ namespace IcuRegexEC
         int&    rnOutLen
     )
     {
+#ifdef VERBOSE_DEBUGGING
         fprintf(stderr, "IcuRegexEC.CppDoConvert() BEGIN\n");
+#endif
         int hr = 0;
         UnicodeString sInput;
         //sInput.setTo(lpInBuffer, nInLen / 2); // needed for Windows?
@@ -259,14 +280,18 @@ namespace IcuRegexEC
         UErrorCode status = U_ZERO_ERROR;
         printUnicodeString("Calling replaceAll with: ", m_strReplace);
         UnicodeString sOutput = m_pMatcher->replaceAll(m_strReplace, status);
+#ifdef VERBOSE_DEBUGGING
         fprintf(stderr, "Called replaceAll.\n");
+#endif
 
         if( U_FAILURE(status) )
         {
             // the base class does ReturnError and if we do it also, then it
             // inverts the error code twice
+#ifdef VERBOSE_DEBUGGING
             fprintf(stderr, "Failure status %d: %s\n",
                     status, u_errorName(status));
+#endif
             hr = status;
         }
         else
@@ -274,22 +299,30 @@ namespace IcuRegexEC
             //int nLen = sOutput.length() * sizeof(char); // needed for Windows?
             printUnicodeString("Result of regex: ", sOutput);
             int nLen = sOutput.extract(0, sOutput.length(), (char *)NULL);   // "preflight" to get size
+#ifdef VERBOSE_DEBUGGING
             fprintf(stderr, "preflight nLen %d, rnOutLen %d\n", nLen, rnOutLen);
+#endif
             if( nLen >= (int)rnOutLen )
             {
+#ifdef VERBOSE_DEBUGGING
                 fprintf(stderr, "Length %d more than output buffer size %d\n",
                         nLen, rnOutLen);
+#endif
                 hr = -1;
             }
             else
             {
                 //memcpy(lpOutBuffer,sOutput.getBuffer(),rnOutLen);  // works on Windows???
                 nLen = sOutput.extract(0, sOutput.length(), lpOutBuffer);
+#ifdef VERBOSE_DEBUGGING
                 fprintf(stderr, "actual nLen %d\n", nLen);
+#endif
                 rnOutLen = nLen;
                 //lpOutBuffer[rnOutLen] = '\0';   // null terminate in case extract didn't do it
+#ifdef VERBOSE_DEBUGGING
                 fprintf(stderr, "lpOutBuffer length = %u\n", (unsigned)strlen(lpOutBuffer));
                 fprintf(stderr, "lpOutBuffer: '%s'\n", lpOutBuffer);
+#endif
             }
         }
         return hr;

@@ -41,6 +41,7 @@
     <Compile Include="TestIcuConvEncConverter.cs" />
     <Compile Include="TestEncConverters.cs" />
     <Compile Include="TestIcuTranslit.cs" />
+    <Compile Include="TestIcuRegex.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="nunit.framework">
