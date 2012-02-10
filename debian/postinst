@@ -25,13 +25,18 @@ fi
 case "$1" in
     configure)
         echo /usr/lib/encConverters>$CONFFILE
+        cd /usr/lib/encConverters
+        for f in libecdriver.so libIcuConvEC.so libIcuRegexEC.so \
+                 libIcuTranslitEC.so libPyScriptEncConverter.so; do
+            if [ ! -e $f ]; then ln -s $f.1.0 $f; fi
+        done
     ;;
 
     abort-upgrade|abort-remove|abort-deconfigure)
         if [ -f $CONFFILE.OLD ]; then
             mv $CONFFILE.OLD $CONFFILE;
         else
-            rm $CONFFILE;
+            rm -f $CONFFILE;
         fi
     ;;
 

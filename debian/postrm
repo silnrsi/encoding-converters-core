@@ -25,10 +25,13 @@ case "$1" in
         if [ -f $CONFFILE.OLD ]; then
             mv $CONFFILE.OLD $CONFFILE;
         else
-            rm $CONFFILE;
+            rm -f $CONFFILE;
         fi
         if [ -d /usr/lib/encConverters ]; then
-            rmdir --ignore-fail-on-non-empty /usr/lib/encConverters;
+            for f in /usr/lib/encConverters/lib*.so*; do
+                if [ -L $f ]; then rm -f $f; fi
+            done
+            rmdir --ignore-fail-on-non-empty /usr/lib/encConverters
         fi
     ;;
 
