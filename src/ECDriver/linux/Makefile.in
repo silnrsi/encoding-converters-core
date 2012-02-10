@@ -29,6 +29,7 @@ $(OUTDIR)/libecdriver.so.1.0: $(BUILDDIR)/ECDriver.o
 	g++ -shared -Wl,-soname,libecdriver.so.1 \
   -o $(OUTDIR)/libecdriver.so.1.0 $(BUILDDIR)/ECDriver.o \
   $(MONO_LDFLAGS) -lmono-2.0
+	rm -f  $(OUTDIR)/libecdriver.so $(OUTDIR)/libecdriver.so.1
 	ln -s libecdriver.so.1.0 $(OUTDIR)/libecdriver.so.1
 	ln -s libecdriver.so.1.0 $(OUTDIR)/libecdriver.so
 

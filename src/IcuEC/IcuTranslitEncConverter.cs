@@ -1,6 +1,7 @@
 // Created by Jim Kornelsen on Dec 3 2011
 //
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -32,6 +33,15 @@ namespace SilEncConverters40
         static extern unsafe int CppDoConvert(
             byte* lpInputBuffer, int nInBufLen,
             byte* lpOutputBuffer, int *npOutBufLen);
+
+		[DllImport("IcuTranslitEC", EntryPoint="IcuTranslitEC_ConverterNameList_start")]
+		static extern unsafe int CppConverterNameList_start();
+
+		[DllImport("IcuTranslitEC", EntryPoint="IcuTranslitEC_ConverterNameList_next")]
+		static extern unsafe string CppConverterNameList_next();
+
+		[DllImport("IcuTranslitEC", EntryPoint="IcuTranslitEC_GetDisplayName")]
+		static extern unsafe string CppGetDisplayName(string strID);
         #endregion DLLImport Statements
 
         #region Member Variable Definitions
@@ -227,5 +237,27 @@ namespace SilEncConverters40
         }
 
         #endregion Abstract Base Class Overrides
+		
+		#region Additional public methods to access the C++ DLL.
+		/// <summary>
+		/// Gets the available ICU transliterator specifications.
+		/// </summary>
+		public static unsafe List<string> GetAvailableConverterSpecs()
+		{
+			int count = CppConverterNameList_start();
+			List<string> specs = new List<string>(count);
+			for (int i = 0; i < count; ++i)
+				specs.Add( CppConverterNameList_next() );
+			return specs;
+		}
+		
+		/// <summary>
+		/// Gets the display name of the given ICU transliterator specification.
+		/// </summary>
+		public static unsafe string GetDisplayName(string spec)
+		{
+			return CppGetDisplayName(spec);
+		}
+		#endregion
     }
 }
