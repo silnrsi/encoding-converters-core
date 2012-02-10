@@ -28,24 +28,24 @@ $(OUTDIR)/libIcuTranslitEC.so.1.0: $(BUILDDIR)/IcuTranslitEC.o $(OUTDIR)/IcuEC.d
   -o $(OUTDIR)/libIcuTranslitEC.so.1.0 $(BUILDDIR)/IcuTranslitEC.o \
   -licuuc -licui18n
 	rm -f $(OUTDIR)/libIcuTranslitEC.so.1 $(OUTDIR)/libIcuTranslitEC.so
-	ln -s $(OUTDIR)/libIcuTranslitEC.so.1.0 $(OUTDIR)/libIcuTranslitEC.so.1
-	ln -s $(OUTDIR)/libIcuTranslitEC.so.1.0 $(OUTDIR)/libIcuTranslitEC.so
+	ln -s libIcuTranslitEC.so.1.0 $(OUTDIR)/libIcuTranslitEC.so.1
+	ln -s libIcuTranslitEC.so.1.0 $(OUTDIR)/libIcuTranslitEC.so
 
 $(OUTDIR)/libIcuRegexEC.so.1.0: $(BUILDDIR)/IcuRegexEC.o $(OUTDIR)/IcuEC.dll.config
 	g++ -shared -Wl,-soname,libIcuRegexEC.so.1 \
   -o $(OUTDIR)/libIcuRegexEC.so.1.0 $(BUILDDIR)/IcuRegexEC.o \
   -licuuc -licui18n
 	rm -f $(OUTDIR)/libIcuRegexEC.so.1 $(OUTDIR)/libIcuRegexEC.so
-	ln -s $(OUTDIR)/libIcuRegexEC.so.1.0 $(OUTDIR)/libIcuRegexEC.so.1
-	ln -s $(OUTDIR)/libIcuRegexEC.so.1.0 $(OUTDIR)/libIcuRegexEC.so
+	ln -s libIcuRegexEC.so.1.0 $(OUTDIR)/libIcuRegexEC.so.1
+	ln -s libIcuRegexEC.so.1.0 $(OUTDIR)/libIcuRegexEC.so
 
 $(OUTDIR)/libIcuConvEC.so.1.0: $(BUILDDIR)/IcuConvEC.o $(OUTDIR)/IcuEC.dll.config
 	g++ -shared -Wl,-soname,libIcuConvEC.so.1 \
   -o $(OUTDIR)/libIcuConvEC.so.1.0 $(BUILDDIR)/IcuConvEC.o \
   -licuuc -licui18n
 	rm -f $(OUTDIR)/libIcuConvEC.so.1 $(OUTDIR)/libIcuConvEC.so
-	ln -s $(OUTDIR)/libIcuConvEC.so.1.0 $(OUTDIR)/libIcuConvEC.so.1
-	ln -s $(OUTDIR)/libIcuConvEC.so.1.0 $(OUTDIR)/libIcuConvEC.so
+	ln -s libIcuConvEC.so.1.0 $(OUTDIR)/libIcuConvEC.so.1
+	ln -s libIcuConvEC.so.1.0 $(OUTDIR)/libIcuConvEC.so
 
 $(OUTDIR)/IcuEC.dll.config: IcuEC.dll.config
 	cp -p IcuEC.dll.config $(OUTDIR)

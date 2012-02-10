@@ -25,17 +25,20 @@ $(BUILDDIR):
 	mkdir -p $(BUILDDIR)
 	mkdir -p $(OUTDIR)
 
-$(OUTDIR)/libPyScriptEncConverter.so.1.0: $(BUILDDIR)/PyScriptEncConverter.o
+$(OUTDIR)/libPyScriptEncConverter.so.1.0: $(BUILDDIR)/PyScriptEncConverter.o $(OUTDIR)/PyScriptEncConverter.dll.config
 	g++ -shared -Wl,-soname,libPyScriptEncConverter.so.1 \
   -o $(OUTDIR)/libPyScriptEncConverter.so.1.0 \
   $(BUILDDIR)/PyScriptEncConverter.o $(PYTHON_LDFLAGS)
-	ln -s $(OUTDIR)/libPyScriptEncConverter.so.1.0 $(OUTDIR)/libPyScriptEncConverter.so.1
-	ln -s $(OUTDIR)/libPyScriptEncConverter.so.1.0 $(OUTDIR)/libPyScriptEncConverter.so
+	ln -s libPyScriptEncConverter.so.1.0 $(OUTDIR)/libPyScriptEncConverter.so.1
+	ln -s libPyScriptEncConverter.so.1.0 $(OUTDIR)/libPyScriptEncConverter.so
 
 $(BUILDDIR)/PyScriptEncConverter.o: PyScriptEncConverter.cpp PyScriptEncConverter.h $(ECHEADER)
 	g++ -Wall -fPIC -c PyScriptEncConverter.cpp \
   -o $(BUILDDIR)/PyScriptEncConverter.o \
   $(PYTHON_CPPFLAGS) -I$(ECHEADERDIR)
+
+$(OUTDIR)/PyScriptEncConverter.dll.config: PyScriptEncConverter.dll.config
+	cp -p PyScriptEncConverter.dll.config $(OUTDIR)
 
 clean:
 	rm -f *~
@@ -48,5 +51,6 @@ distclean: clean
 install:
 	mkdir -p $(DESTDIR)$(LIBDIR)
 	$(INSTALL) $(OUTDIR)/libPyScriptEncConverter.so.1.0 $(DESTDIR)$(LIBDIR)
+	$(INSTALL) $(OUTDIR)/PyScriptEncConverter.dll.config $(DESTDIR)$(LIBDIR)
 
 check:
