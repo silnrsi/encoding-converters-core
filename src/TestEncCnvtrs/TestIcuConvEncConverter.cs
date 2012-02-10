@@ -21,47 +21,30 @@ namespace TestEncCnvtrs
 	[TestFixture]
 	public class TestIcuConvEncConverter
 	{
-		// Access the C++ methods that aren't exposed otherwise.
-		#region DLLImport Statements
-		[DllImport("IcuConvEC", EntryPoint="IcuConvEC_ConverterNameList_start")]
-		static extern unsafe int CppConverterNameList_start();
-
-		[DllImport("IcuConvEC", EntryPoint="IcuConvEC_ConverterNameList_next")]
-		static extern unsafe string CppConverterNameList_next();
-
-		[DllImport("IcuConvEC", EntryPoint="IcuConvEC_GetDisplayName")]
-		static extern unsafe string CppGetDisplayName(string strID);
-		#endregion DLLImport Statements
-
 		/// --------------------------------------------------------------------
 		/// <summary>
 		/// Check that ICU converters exist, and verify that reading their names
-		/// iteratively works.
+		/// works.
 		/// </summary>
 		/// --------------------------------------------------------------------
 		[Test]
 		public void CheckForIcuConverters()
 		{
-			int count = CppConverterNameList_start();
-			Assert.Less(100, count, "There should be at least one hundred ICU converters available!");
-			List<string> converters = new List<string>();
-			for (int i = 0; i < count; ++i)
+			List<string> converters = IcuConvEncConverter.GetAvailableConverterSpecs();
+			Assert.Less(100, converters.Count, "There should be at least one hundred ICU converters available!");
+			for (int i = 0; i < converters.Count; ++i)
 			{
-				var name = CppConverterNameList_next();
-				Assert.IsNotNull(name, "The returned ICU converter name should not be null!");
-				converters.Add(name);
+				Assert.IsNotNull(converters[i], "The returned ICU converter name should not be null!");
 			}
-			var noname = CppConverterNameList_next();
-			Assert.IsNull(noname, "Excess converter names should be null.");
 			// Check for the specific converters used in the following tests.
 			Assert.Contains("ISO-8859-1", converters, "The set of ICU converters should contain 'ISO-8859-1'.");
 			Assert.Contains("iso-8859_10-1998", converters, "The set of ICU converters should contain 'iso-8859_10-1998'.");
 			Assert.Contains("iso-8859_11-2001", converters, "The set of ICU converters should contain 'iso-8859_11-2001'.");
 			Assert.Contains("iso-8859_14-1998", converters, "The set of ICU converters should contain 'iso-8859_14-1998'.");
-			string display1 = CppGetDisplayName("ISO-8859-1");
+			string display1 = IcuConvEncConverter.GetDisplayName("ISO-8859-1");
 			Assert.IsNotNull(display1);
-			string display10 = CppGetDisplayName ("iso-8859_10-1998");
-			Assert.IsNotNull(display10);
+			string display2 = IcuConvEncConverter.GetDisplayName ("iso-8859_10-1998");
+			Assert.IsNotNull(display2);
 		}
 		
 		byte[] m_bytesIso8859 = new byte[191] {

@@ -21,18 +21,6 @@ namespace TestEncCnvtrs
 	[TestFixture]
 	public class TestIcuTranslit
 	{
-		// Access the C++ methods that aren't exposed otherwise.
-		#region DLLImport Statements
-		[DllImport("IcuTranslitEC", EntryPoint="IcuTranslitEC_ConverterNameList_start")]
-		static extern unsafe int CppConverterNameList_start();
-
-		[DllImport("IcuTranslitEC", EntryPoint="IcuTranslitEC_ConverterNameList_next")]
-		static extern unsafe string CppConverterNameList_next();
-
-		[DllImport("IcuTranslitEC", EntryPoint="IcuTranslitEC_GetDisplayName")]
-		static extern unsafe string CppGetDisplayName(string strID);
-		#endregion DLLImport Statements
-
 		/// --------------------------------------------------------------------
 		/// <summary>
 		/// Check that ICU transliterators exist, and verify that reading their
@@ -42,24 +30,19 @@ namespace TestEncCnvtrs
 		[Test]
 		public void CheckForIcuTransliterators()
 		{
-			int count = CppConverterNameList_start();
-			Assert.Less(100, count, "There should be at least one hundred ICU transliterators available!");
-			List<string> transliterators = new List<string>();
-			for (int i = 0; i < count; ++i)
+			List<string> transliterators = IcuTranslitEncConverter.GetAvailableConverterSpecs();
+			Assert.Less(100, transliterators.Count, "There should be at least one hundred ICU transliterators available!");
+			for (int i = 0; i < transliterators.Count; ++i)
 			{
-				var name = CppConverterNameList_next();
-				Assert.IsNotNull(name, "The returned ICU converter name should not be null!");
-				transliterators.Add(name);
+				Assert.IsNotNull(transliterators[i], "The returned ICU converter name should not be null!");
 			}
-			var noname = CppConverterNameList_next();
-			Assert.IsNull(noname, "Excess transliterator names should be null.");
 			Assert.Contains("Latin-Hebrew", transliterators, "ICU transliterators should include 'Latin-Hebrew'");
 			Assert.Contains("Hebrew-Latin", transliterators, "ICU transliterators should include 'Hebrew-Latin'");
 			Assert.Contains("Latin-Greek", transliterators, "ICU transliterators should include 'Latin-Greek'");
 			Assert.Contains("Greek-Latin", transliterators, "ICU transliterators should include 'Greek-Latin'");
-			string display1 = CppGetDisplayName("Latin-Hebrew");
+			string display1 = IcuTranslitEncConverter.GetDisplayName("Latin-Hebrew");
 			Assert.IsNotNull(display1);
-			string display2 = CppGetDisplayName ("Greek-Latin");
+			string display2 = IcuTranslitEncConverter.GetDisplayName ("Greek-Latin");
 			Assert.IsNotNull(display2);
 		}
 		

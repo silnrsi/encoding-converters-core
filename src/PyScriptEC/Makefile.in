@@ -29,6 +29,7 @@ $(OUTDIR)/libPyScriptEncConverter.so.1.0: $(BUILDDIR)/PyScriptEncConverter.o $(O
 	g++ -shared -Wl,-soname,libPyScriptEncConverter.so.1 \
   -o $(OUTDIR)/libPyScriptEncConverter.so.1.0 \
   $(BUILDDIR)/PyScriptEncConverter.o $(PYTHON_LDFLAGS)
+	rm -f $(OUTDIR)/libPyScriptEncConverter.so $(OUTDIR)/libPyScriptEncConverter.so.1
 	ln -s libPyScriptEncConverter.so.1.0 $(OUTDIR)/libPyScriptEncConverter.so.1
 	ln -s libPyScriptEncConverter.so.1.0 $(OUTDIR)/libPyScriptEncConverter.so
 

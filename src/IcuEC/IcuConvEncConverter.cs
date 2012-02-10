@@ -1,12 +1,15 @@
 // Created by Steve McConnel Feb 2, 2012 by copying and editing IcuTranslitEncConverter.cs
 
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
-using System.Diagnostics;
 using System.Text;
 using System.Text.RegularExpressions;
+
 using Microsoft.Win32;                  // for RegistryKey
+
 using ECInterfaces;                     // for IEncConverter
 
 namespace SilEncConverters40
@@ -32,6 +35,15 @@ namespace SilEncConverters40
 		static extern unsafe int CppDoConvert(
 			byte* lpInputBuffer, int nInBufLen,
 			byte* lpOutputBuffer, int *npOutBufLen);
+
+		[DllImport("IcuConvEC", EntryPoint="IcuConvEC_ConverterNameList_start")]
+		static extern unsafe int CppConverterNameList_start();
+
+		[DllImport("IcuConvEC", EntryPoint="IcuConvEC_ConverterNameList_next")]
+		static extern unsafe string CppConverterNameList_next();
+
+		[DllImport("IcuConvEC", EntryPoint="IcuConvEC_GetDisplayName")]
+		static extern unsafe string CppGetDisplayName(string strID);
 		#endregion DLLImport Statements
 
 		#region Member Variable Definitions
@@ -230,9 +242,27 @@ namespace SilEncConverters40
 
 		#endregion Abstract Base Class Overrides
 		
-		public override string ToString()
+		#region Additional public methods to access the C++ DLL.
+		/// <summary>
+		/// Gets the available ICU converter specifications.
+		/// </summary>
+		public static unsafe List<string> GetAvailableConverterSpecs()
 		{
-			return "IcuConvEncConverter implementation";
+			int count = CppConverterNameList_start();
+			List<string> specs = new List<string>(count);
+			for (int i = 0; i < count; ++i)
+				specs.Add( CppConverterNameList_next() );
+			return specs;
 		}
+		
+		/// <summary>
+		/// Gets the display name of the given ICU converter specification.
+		/// In practice, the output may be the same as the input.
+		/// </summary>
+		public static unsafe string GetDisplayName(string spec)
+		{
+			return CppGetDisplayName(spec);
+		}
+		#endregion
 	}
 }
