@@ -671,13 +671,15 @@ namespace SilEncConverters40
                         if (!aDetailsRow.IsAssemblyReferenceNull())
                         {
                             string strAssemblyVersion = aDetailsRow.AssemblyReference;
-                            m_mapProgIdsToAssemblyName.Add(strProgId, strAssemblyVersion);
+							if (!m_mapProgIdsToAssemblyName.ContainsKey(strProgId))
+                            	m_mapProgIdsToAssemblyName.Add(strProgId, strAssemblyVersion);
 
                             // for the *Config classes, these also need to come from the proper assembly
                             if (!aDetailsRow.IsConfiguratorProgIdNull())
                             {
                                 string strConfigProgId = aDetailsRow.ConfiguratorProgId;
-                                m_mapProgIdsToAssemblyName.Add(strConfigProgId, strAssemblyVersion);
+								if (!m_mapProgIdsToAssemblyName.ContainsKey(strConfigProgId))
+	                                m_mapProgIdsToAssemblyName.Add(strConfigProgId, strAssemblyVersion);
                             }
                         }
                     }
