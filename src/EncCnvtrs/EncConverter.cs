@@ -8,6 +8,7 @@ using System.IO;
 using System.ComponentModel;
 using System.Diagnostics;               // for Debug.Assert
 using System.Runtime.Remoting;
+using System.Text;
 using ECInterfaces;                     // for IEncConverter
 
 // This file contains the definitions of all the things used by the EncConverter interface
@@ -367,70 +368,72 @@ namespace SilEncConverters40
         public override string ToString()
         {
             // give something useful, for example, for a tooltip.
-            string str = "Converter Details:";
+			StringBuilder sb = new StringBuilder();
+            sb.AppendLine("Converter Details:");
 
             // indicate whether it's temporary or not
             if( !this.IsInRepository )
-                str = "Temporary " + str;
+                sb.Insert(0, "Temporary ");
 
-            str += FormatTabbedTip("Name: '{0}'", Name);
-            str += FormatTabbedTip("Identifier: '{0}'", ConverterIdentifier);
-            str += FormatTabbedTip("Implementation Type: '{0}'", ImplementType);
-            str += FormatTabbedTip("Conversion Type: '{0}'", ConversionType.ToString());
+            sb.AppendLine(String.Format("    Name: '{0}'", Name));
+			sb.AppendLine(String.Format("    Identifier: '{0}'", ConverterIdentifier));
+            sb.AppendLine(String.Format("    Implementation Type: '{0}'", ImplementType));
+            sb.AppendLine(String.Format("    Conversion Type: '{0}'", ConversionType));
             if( (ProcessTypeFlags)ProcessType != ProcessTypeFlags.DontKnow )
-                str += FormatTabbedTip("Process Type: '{0}'", strProcessType(ProcessType));
+                sb.AppendLine(String.Format("    Process Type: '{0}'", strProcessType(ProcessType)));
             if( !String.IsNullOrEmpty(LeftEncodingID) )
-                str += FormatTabbedTip("Left side Encoding ID: '{0}'", LeftEncodingID);
+                sb.AppendLine(String.Format("    Left side Encoding ID: '{0}'", LeftEncodingID));
             if( !String.IsNullOrEmpty(RightEncodingID) )
-                str += FormatTabbedTip("Right side Encoding ID: '{0}'", RightEncodingID);
+                sb.AppendLine(String.Format("    Right side Encoding ID: '{0}'", RightEncodingID));
             
             // also include the current conversion option values
-            str += String.Format("{0}{0}Current Conversion Options:", Environment.NewLine);
-            str += FormatTabbedTip("Direction: '{0}'", (this.DirectionForward) ? "Forward" : "Reverse");
-            str += FormatTabbedTip("Normalize Output: '{0}'", this.NormalizeOutput.ToString());
-            str += FormatTabbedTip("Debug: '{0}'", this.Debug.ToString());
-
-            DirectableEncConverter aDEC = new DirectableEncConverter(this);
+            sb.AppendLine(String.Format("    {0}{0}Current Conversion Options:", Environment.NewLine));
+            sb.AppendLine(String.Format("    Direction: '{0}'", (this.DirectionForward) ? "Forward" : "Reverse"));
+            sb.AppendLine(String.Format("    Normalize Output: '{0}'", this.NormalizeOutput.ToString()));
+            sb.Append(String.Format("    Debug: '{0}'", this.Debug.ToString()));
+#if !__MonoCS__ // this seems to hang in the MonoDevelop debugger for some reason...
+           DirectableEncConverter aDEC = new DirectableEncConverter(this);
             if (aDEC.IsLhsLegacy)
-                str += FormatTabbedTip("Input Code Page: '{0}'", aDEC.CodePageInput.ToString());
+                sb.Append(String.Format("{1}    Input Code Page: '{0}'", aDEC.CodePageInput, Environment.NewLine));
             if (aDEC.IsRhsLegacy)
-                str += FormatTabbedTip("Output Code Page: '{0}'", aDEC.CodePageOutput.ToString());
-            return str;
+                sb.Append(String.Format("{1}    Output Code Page: '{0}'", aDEC.CodePageOutput, Environment.NewLine));
+#endif
+			return sb.ToString();
         } 
 
         protected string strProcessType(long lProcessType)
         {
-            string str = null;
+            StringBuilder sb = new StringBuilder();
             if( (lProcessType & (long)ProcessTypeFlags.UnicodeEncodingConversion) != 0 )
-                str += "UnicodeEncodingConversion, ";
+                sb.Append("UnicodeEncodingConversion, ");
             if( (lProcessType & (long)ProcessTypeFlags.Transliteration) != 0 )
-                str += "Transliteration, ";
+                sb.Append("Transliteration, ");
             if( (lProcessType & (long)ProcessTypeFlags.ICUTransliteration) != 0 )
-                str += "ICUTransliteration, ";
+                sb.Append("ICUTransliteration, ");
             if( (lProcessType & (long)ProcessTypeFlags.ICUConverter) != 0 )
-                str += "ICUConverter, ";
+                sb.Append("ICUConverter, ");
             if( (lProcessType & (long)ProcessTypeFlags.ICURegularExpression) != 0 )
-                str += "ICURegularExpression, ";
+                sb.Append("ICURegularExpression, ");
             if( (lProcessType & (long)ProcessTypeFlags.CodePageConversion) != 0 )
-                str += "CodePageConversion, ";
+                sb.Append("CodePageConversion, ");
             if( (lProcessType & (long)ProcessTypeFlags.NonUnicodeEncodingConversion) != 0 )
-                str += "NonUnicodeEncodingConversion, ";
+                sb.Append("NonUnicodeEncodingConversion, ");
             if( (lProcessType & (long)ProcessTypeFlags.SpellingFixerProject) != 0 )
-                str += "SpellingFixerProject, ";
+                sb.Append("SpellingFixerProject, ");
             if( (lProcessType & (long)ProcessTypeFlags.PythonScript) != 0 )
-                str += "PythonScript, ";
+                sb.Append("PythonScript, ");
             if( (lProcessType & (long)ProcessTypeFlags.PerlExpression) != 0 )
-                str += "PerlExpression, ";
+                sb.Append("PerlExpression, ");
             if( (lProcessType & (long)ProcessTypeFlags.UserDefinedSpare1) != 0 )
-                str += "UserDefinedSpare #1, ";
+                sb.Append("UserDefinedSpare #1, ");
             if( (lProcessType & (long)ProcessTypeFlags.UserDefinedSpare2) != 0 )
-                str += "UserDefinedSpare #2, ";
-            
+                sb.Append("UserDefinedSpare #2, ");
+
             // strip off the final ", "
-            if( !String.IsNullOrEmpty(str) )
-                str = str.Substring(0, str.Length - 2);
+			if (sb.Length > 0)
+				sb.Remove(sb.Length - 2, 2);
         
-            return str;
+            return sb.ToString();
         }
 
         protected string FormatTabbedTip(string strFormat, string strValue)

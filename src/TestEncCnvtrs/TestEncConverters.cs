@@ -22,6 +22,7 @@ namespace TestEncCnvtrs
 	{
 		EncConverters m_encConverters;
 		bool m_fWroteRepoFile;
+		bool m_fSetRegistryValue;
 		string m_repoFile;
 		
 		/// --------------------------------------------------------------------
@@ -55,46 +56,15 @@ namespace TestEncCnvtrs
 				m_repoFile = EncConverters.DefaultRepositoryPath;
 				key.SetValue(EncConverters.strRegKeyForStorePath, m_repoFile);
 				key.Flush();
-				// Now we need to write a good file to that location.
-				// REVIEW: use EncConverters.strTypeSILtec etc. to fill in the type values in the strings below?
-				StreamWriter writer = new StreamWriter(m_repoFile);
-				writer.WriteLine("<?xml version=\"1.0\" standalone=\"yes\"?>");
-				writer.WriteLine("<mappingRegistry xmlns=\"http://www.sil.org/computing/schemas/SILMappingRegistry.xsd\">");
-				writer.WriteLine("  <mappings />");
-				writer.WriteLine("  <fonts />");
-				writer.WriteLine("  <implementations>");
-				writer.WriteLine("    <platform name=\"COM\">");
-				writer.WriteLine("      <implement type=\"SIL.AdaptItKB\" use=\"SilEncConverters40.AdaptItEncConverter\" priority=\"0\" />");
-				writer.WriteLine("      <implement type=\"SIL.AdaptItKBGuesser\" use=\"SilEncConverters40.AdaptItGuesserEncConverter\" priority=\"0\" />");
-				writer.WriteLine("      <implement type=\"SIL.cc\" use=\"SilEncConverters40.CcEncConverter\" priority=\"2\" />");
-				writer.WriteLine("      <implement type=\"cp\" use=\"SilEncConverters40.CpEncConverter\" priority=\"6\" />");
-				writer.WriteLine("      <implement type=\"SIL.comp\" use=\"SilEncConverters40.CmpdEncConverter\" priority=\"0\" />");
-				writer.WriteLine("      <implement type=\"SIL.tec\" use=\"SilEncConverters40.TecEncConverter\" priority=\"3\" />");
-				writer.WriteLine("      <implement type=\"SIL.map\" use=\"SilEncConverters40.TecEncConverter\" priority=\"4\" />");
-				writer.WriteLine("      <implement type=\"ICU.conv\" use=\"SilEncConverters40.IcuConvEncConverter\" priority=\"1\" />");
-				writer.WriteLine("      <implement type=\"ICU.regex\" use=\"SilEncConverters40.IcuRegexEncConverter\" priority=\"1\" />");
-				writer.WriteLine("      <implement type=\"ICU.trans\" use=\"SilEncConverters40.IcuTranslitEncConverter\" priority=\"1\" />");
-				writer.WriteLine("      <implement type=\"SIL.PerlExpression\" use=\"SilEncConverters40.PerlExpressionEncConverter\" priority=\"3\" />");
-				writer.WriteLine("      <implement type=\"SIL.PyScript\" use=\"SilEncConverters40.PyScriptEncConverter\" priority=\"3\" />");
-				//TechHindiSiteEncConverter
-				//ITransEncConverter
-				//UTransEncConverter
-				//TecFormEncConverter
-				//FallbackEncConverter
-				//TechHindiSiteEncConverter
-				writer.WriteLine("    </platform>");
-				writer.WriteLine("  </implementations>");
-				writer.WriteLine("</mappingRegistry>");
-				writer.Close();
-				writer.Dispose();
-				writer = null;
-				m_fWroteRepoFile = true;
+				m_fSetRegistryValue = true;
 			}
 			if (key != null)
 			{
 				key.Close();
 				key = null;
 			}
+			if (!File.Exists(m_repoFile))
+				m_fWroteRepoFile = true;
 			try
 			{
 				m_encConverters = new EncConverters();
@@ -166,11 +136,15 @@ namespace TestEncCnvtrs
 			if (m_fWroteRepoFile)
 			{
 				File.Delete(m_repoFile);
+				m_fWroteRepoFile = false;
+			}
+			if (m_fSetRegistryValue)
+			{
 				RegistryKey key = Registry.CurrentUser.OpenSubKey(EncConverters.HKLM_PATH_TO_XML_FILE, true);
 				key.DeleteValue(EncConverters.strRegKeyForStorePath);
 				key.Flush();
 				key.Close();
-				m_fWroteRepoFile = false;
+				m_fSetRegistryValue = false;
 			}
 			m_repoFile = null;
 		}
@@ -220,9 +194,9 @@ namespace TestEncCnvtrs
 			Assert.LessOrEqual(1, countKeys, "Should have at least one key now.");
 			IEncConverter ec = m_encConverters["UnitTesting-ISO-8859-1"];
 			Assert.IsNotNull(ec);
-			string output = ec.ConvertToUnicode(new byte[] { 65, 66, 67, 0xA1, 0xB0, 0xC0, 0xD0 });
+			string output = ec.Convert("ABC\u00A1\u00B0\u00C0\u00D0");
 			Assert.AreEqual("ABC\u00A1\u00B0\u00C0\u00D0", output, "Instantiated ICU.conv converter should work properly!");
-			
+
 			m_encConverters.Add("UnitTesting-To-ISO-8859-1", "ISO-8859-1", ConvType.Unicode_to_from_Legacy,
 				"UNICODE", "LEGACY", ProcessTypeFlags.ICUConverter);
 			countNew = m_encConverters.Count;
@@ -235,8 +209,8 @@ namespace TestEncCnvtrs
 			Assert.LessOrEqual(2, countKeys, "Should have at least one key now.");
 			IEncConverter ecRev = m_encConverters["UnitTesting-To-ISO-8859-1"];
 			Assert.IsNotNull(ecRev);
-			byte[] outputBytes = ecRev.ConvertFromUnicode("abc\u00AF\u00BF\u00CF\u00DF\u00EF\u00FF");
-			Assert.AreEqual(new byte[] { 97, 98, 99, 0xAF, 0xBF, 0xCF, 0xDF, 0xEF, 0xFF }, outputBytes,
+			string outputRev = ecRev.Convert("abc\u00AF\u00BF\u00CF\u00DF\u00EF\u00FF");
+			Assert.AreEqual("abc\u00AF\u00BF\u00CF\u00DF\u00EF\u00FF", outputRev,
 				"Second instantiated ICU.conv converter should work properly!");
 			
 			m_encConverters.Remove("UnitTesting-ISO-8859-1");

@@ -64,12 +64,12 @@ namespace TestEncCnvtrs
 
 		string m_convertedIso8859_1 = " !\"#$%&'()*+,-./0123456789:;<=>?" +
 				"@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~" +
-				"\xA0\xA1\xA2\xA3\xA4\xA5\xA6\xA7\xA8\xA9\xAA\xAB\xAC\xAD\xAE\xAF" +
-				"\xB0\xB1\xB2\xB3\xB4\xB5\xB6\xB7\xB8\xB9\xBA\xBB\xBC\xBD\xBE\xBF" +
-				"\xC0\xC1\xC2\xC3\xC4\xC5\xC6\xC7\xC8\xC9\xCA\xCB\xCC\xCD\xCE\xCF" +
-				"\xD0\xD1\xD2\xD3\xD4\xD5\xD6\xD7\xD8\xD9\xDA\xDB\xDC\xDD\xDE\xDF" +
-				"\xE0\xE1\xE2\xE3\xE4\xE5\xE6\xE7\xE8\xE9\xEA\xEB\xEC\xED\xEE\xEF" +
-				"\xF0\xF1\xF2\xF3\xF4\xF5\xF6\xF7\xF8\xF9\xFA\xFB\xFC\xFD\xFE\xFF";
+				"\u00A0\u00A1\u00A2\u00A3\u00A4\u00A5\u00A6\u00A7\u00A8\u00A9\u00AA\u00AB\u00AC\u00AD\u00AE\u00AF" +
+				"\u00B0\u00B1\u00B2\u00B3\u00B4\u00B5\u00B6\u00B7\u00B8\u00B9\u00BA\u00BB\u00BC\u00BD\u00BE\u00BF" +
+				"\u00C0\u00C1\u00C2\u00C3\u00C4\u00C5\u00C6\u00C7\u00C8\u00C9\u00CA\u00CB\u00CC\u00CD\u00CE\u00CF" +
+				"\u00D0\u00D1\u00D2\u00D3\u00D4\u00D5\u00D6\u00D7\u00D8\u00D9\u00DA\u00DB\u00DC\u00DD\u00DE\u00DF" +
+				"\u00E0\u00E1\u00E2\u00E3\u00E4\u00E5\u00E6\u00E7\u00E8\u00E9\u00EA\u00EB\u00EC\u00ED\u00EE\u00EF" +
+				"\u00F0\u00F1\u00F2\u00F3\u00F4\u00F5\u00F6\u00F7\u00F8\u00F9\u00FA\u00FB\u00FC\u00FD\u00FE\u00FF";
 		
 		[Test]
 		public void VerifyFromIso8859_1()
@@ -83,8 +83,17 @@ namespace TestEncCnvtrs
 			int codePageOutput = 0;
 			icuConv.Initialize("ISO-8859-1", "ISO-8859-1", ref lhsEncodingId, ref rhsEncodingId,
 				ref conversionType, ref processTypeFlags, codePageInput, codePageOutput, false);
-			string output = icuConv.ConvertToUnicode(m_bytesIso8859);
+			string input = ConvertBytesToPseudoString(m_bytesIso8859);
+			string output = icuConv.Convert(input);
 			Assert.AreEqual(m_convertedIso8859_1, output);
+		}
+		
+		string ConvertBytesToPseudoString(byte[] bytes)
+		{
+			char[] rgch = new char[bytes.Length];
+			for (int i = 0; i < bytes.Length; ++i)
+				rgch[i] = (char)bytes[i];
+			return new string(rgch);
 		}
 		
 		[Test]
@@ -99,8 +108,17 @@ namespace TestEncCnvtrs
 			int codePageOutput = 0;
 			icuConv.Initialize("ISO-8859-1", "ISO-8859-1", ref lhsEncodingId, ref rhsEncodingId,
 				ref conversionType, ref processTypeFlags, codePageInput, codePageOutput, false);
-			byte[] output = icuConv.ConvertFromUnicode(m_convertedIso8859_1);
+			string outputRaw = icuConv.Convert(m_convertedIso8859_1);
+			byte[] output = ConvertPseudoStringToBytes(outputRaw);
 			Assert.AreEqual(m_bytesIso8859, output);
+		}
+		
+		byte[] ConvertPseudoStringToBytes(string str)
+		{
+			byte[] bytes = new byte[str.Length];
+			for (int i = 0; i < str.Length; ++i)
+				bytes[i] = (byte)(str[i] & 0xFF);
+			return bytes;
 		}
 		
 		string m_convertedIso8859_10 = " !\"#$%&'()*+,-./0123456789:;<=>?" +

@@ -198,6 +198,9 @@ namespace SilEncConverters40
                 {
                     aEC = DirectableEncConverter.EncConverters[m_strConverterName];
 
+					if (!checkBoxDebug.Visible)
+						return aEC;
+					
                     // set the options too
                     aEC.DirectionForward = !this.checkBoxReverse.Checked;
                     aEC.Debug = this.checkBoxDebug.Checked;
