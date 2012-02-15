@@ -31,7 +31,10 @@ all:
 	@for file in $(PLUGINS); do \
 	  cp -p redist/EC/Plugins/"$$file" $(OUTDIR)/EC/Plugins; \
 	done
-	@cp src/TestEncCnvtrs/TestEncCnvtrs.dll.config $(OUTDIR)
+	@cp -pR redist/Help $(OUTDIR)
+	@cp -p redist/libTECkit*.so $(OUTDIR)
+	@cp -p src/EncCnvtrs/SilEncConverters40.dll.config $(OUTDIR)
+	@cp -p src/TestEncCnvtrs/TestEncCnvtrs.dll.config $(OUTDIR)
 
 clean:
 	@(cd build && nant clean) || true
@@ -64,6 +67,11 @@ install:
 	@for file in $(PLUGINS); do \
 	  cp -p redist/EC/Plugins/"$$file" $(DESTDIR)$(LIBDIR)/EC/Plugins; \
 	done
+	@cp -pR redist/Help $(DESTDIR)$(LIBDIR)
+	@for file in redist/libTECkit*.so; do \
+	  $(INSTALL) $$file $(DESTDIR)$(LIBDIR); \
+	done
+	@cp -p src/EncCnvtrs/SilEncConverters40.dll.config $(DESTDIR)$(LIBDIR)
 
 NUNITROOT=`which nunit-console | sed s=/bin/nunit-console=/lib/mono=`
 check: all

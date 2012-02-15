@@ -194,8 +194,10 @@ namespace TestEncCnvtrs
 			Assert.LessOrEqual(1, countKeys, "Should have at least one key now.");
 			IEncConverter ec = m_encConverters["UnitTesting-ISO-8859-1"];
 			Assert.IsNotNull(ec);
-			string output = ec.Convert("ABC\u00A1\u00B0\u00C0\u00D0");
-			Assert.AreEqual("ABC\u00A1\u00B0\u00C0\u00D0", output, "Instantiated ICU.conv converter should work properly!");
+			// Note that converting from ISO-8859.1 should result in the same "string".
+			const string first = "ABC\u00A1\u00B0\u00C0\u00D0";
+			string output = ec.Convert(first);
+			Assert.AreEqual(first, output, "Instantiated ICU.conv converter should work properly!");
 
 			m_encConverters.Add("UnitTesting-To-ISO-8859-1", "ISO-8859-1", ConvType.Unicode_to_from_Legacy,
 				"UNICODE", "LEGACY", ProcessTypeFlags.ICUConverter);
@@ -209,8 +211,10 @@ namespace TestEncCnvtrs
 			Assert.LessOrEqual(2, countKeys, "Should have at least one key now.");
 			IEncConverter ecRev = m_encConverters["UnitTesting-To-ISO-8859-1"];
 			Assert.IsNotNull(ecRev);
-			string outputRev = ecRev.Convert("abc\u00AF\u00BF\u00CF\u00DF\u00EF\u00FF");
-			Assert.AreEqual("abc\u00AF\u00BF\u00CF\u00DF\u00EF\u00FF", outputRev,
+			// Note that converting to ISO-8859.1 should result in the same "string".
+			const string second = "abc\u00AF\u00BF\u00CF\u00DF\u00EF\u00FF";
+			string outputRev = ecRev.Convert(second);
+			Assert.AreEqual(second, outputRev,
 				"Second instantiated ICU.conv converter should work properly!");
 			
 			m_encConverters.Remove("UnitTesting-ISO-8859-1");
@@ -342,6 +346,35 @@ namespace TestEncCnvtrs
 			m_encConverters.Remove("UnitTesting-Vowels->V");
 			int countAfter = m_encConverters.Count;
 			Assert.AreEqual(countOrig, countAfter, "Should have the original number of converters now.");
+		}
+	}
+
+	/// <summary>
+	/// Utility methods useful for testing encoding converters.
+	/// </summary>
+	public static class TestUtil
+	{
+		/// <summary>
+		/// Convert a byte array to a string by zero-padding all the bytes in the array.
+		/// </summary>
+		public static string GetPseudoStringFromBytes(byte[] bytes)
+		{
+			char[] rgch = new char[bytes.Length];
+			for (int i = 0; i < bytes.Length; ++i)
+				rgch[i] = (char)bytes[i];
+			return new string(rgch);
+		}
+		
+		/// <summary>
+		/// Convert the string to a byte array by stripping the top byte from each character in
+		/// the string.
+		/// </summary>
+		public static byte[] GetBytesFromPseudoString(string str)
+		{
+			byte[] bytes = new byte[str.Length];
+			for (int i = 0; i < str.Length; ++i)
+				bytes[i] = (byte)(str[i] & 0xFF);
+			return bytes;
 		}
 	}
 }
