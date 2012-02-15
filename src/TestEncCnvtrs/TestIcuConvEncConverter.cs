@@ -83,17 +83,9 @@ namespace TestEncCnvtrs
 			int codePageOutput = 0;
 			icuConv.Initialize("ISO-8859-1", "ISO-8859-1", ref lhsEncodingId, ref rhsEncodingId,
 				ref conversionType, ref processTypeFlags, codePageInput, codePageOutput, false);
-			string input = ConvertBytesToPseudoString(m_bytesIso8859);
+			string input = TestUtil.GetPseudoStringFromBytes(m_bytesIso8859);
 			string output = icuConv.Convert(input);
 			Assert.AreEqual(m_convertedIso8859_1, output);
-		}
-		
-		string ConvertBytesToPseudoString(byte[] bytes)
-		{
-			char[] rgch = new char[bytes.Length];
-			for (int i = 0; i < bytes.Length; ++i)
-				rgch[i] = (char)bytes[i];
-			return new string(rgch);
 		}
 		
 		[Test]
@@ -109,16 +101,8 @@ namespace TestEncCnvtrs
 			icuConv.Initialize("ISO-8859-1", "ISO-8859-1", ref lhsEncodingId, ref rhsEncodingId,
 				ref conversionType, ref processTypeFlags, codePageInput, codePageOutput, false);
 			string outputRaw = icuConv.Convert(m_convertedIso8859_1);
-			byte[] output = ConvertPseudoStringToBytes(outputRaw);
+			byte[] output = TestUtil.GetBytesFromPseudoString(outputRaw);
 			Assert.AreEqual(m_bytesIso8859, output);
-		}
-		
-		byte[] ConvertPseudoStringToBytes(string str)
-		{
-			byte[] bytes = new byte[str.Length];
-			for (int i = 0; i < str.Length; ++i)
-				bytes[i] = (byte)(str[i] & 0xFF);
-			return bytes;
 		}
 		
 		string m_convertedIso8859_10 = " !\"#$%&'()*+,-./0123456789:;<=>?" +
@@ -148,7 +132,8 @@ namespace TestEncCnvtrs
 			int codePageOutput = 0;
 			icuConv.Initialize("ISO-8859-10", "iso-8859_10-1998", ref lhsEncodingId, ref rhsEncodingId,
 				ref conversionType, ref processTypeFlags, codePageInput, codePageOutput, false);
-			string output = icuConv.ConvertToUnicode(m_bytesIso8859);
+			string input = TestUtil.GetPseudoStringFromBytes(m_bytesIso8859);
+			string output = icuConv.Convert(input);
 			Assert.AreEqual(m_convertedIso8859_10, output);
 		}
 		
@@ -164,7 +149,8 @@ namespace TestEncCnvtrs
 			int codePageOutput = 0;
 			icuConv.Initialize("ISO-8859-1", "ISO-8859-1", ref lhsEncodingId, ref rhsEncodingId,
 				ref conversionType, ref processTypeFlags, codePageInput, codePageOutput, false);
-			byte[] output = icuConv.ConvertFromUnicode(m_convertedIso8859_1);
+			string outputRaw = icuConv.Convert(m_convertedIso8859_1);
+			byte[] output = TestUtil.GetBytesFromPseudoString(outputRaw);
 			Assert.AreEqual(m_bytesIso8859, output);
 		}
 
@@ -225,9 +211,11 @@ namespace TestEncCnvtrs
 			int codePageOutput = 0;
 			icuConv.Initialize("ISO-8859-11", "iso-8859_11-2001", ref lhsEncodingId, ref rhsEncodingId,
 				ref conversionType, ref processTypeFlags, codePageInput, codePageOutput, false);
-			string output = icuConv.ConvertToUnicode(m_bytesIso8859);
+			string input = TestUtil.GetPseudoStringFromBytes(m_bytesIso8859);
+			string output = icuConv.Convert(input);
 			Assert.AreEqual(m_convertedIso8859_11, output);
-			string output2 = icuConv.ConvertToUnicode(m_bytesValidIso8859_11);
+			string input2 = TestUtil.GetPseudoStringFromBytes(m_bytesValidIso8859_11);
+			string output2 = icuConv.Convert(input2);
 			Assert.AreEqual(m_validIso8859_11, output2);
 		}
 		
@@ -243,7 +231,8 @@ namespace TestEncCnvtrs
 			int codePageOutput = 0;
 			icuConv.Initialize("ISO-8859-11", "iso-8859_11-2001", ref lhsEncodingId, ref rhsEncodingId,
 				ref conversionType, ref processTypeFlags, codePageInput, codePageOutput, false);
-			byte[] output = icuConv.ConvertFromUnicode(m_validIso8859_11);
+			string outputRaw = icuConv.Convert(m_validIso8859_11);
+			byte[] output = TestUtil.GetBytesFromPseudoString(outputRaw);
 			Assert.AreEqual(m_bytesValidIso8859_11, output);
 		}
 		
@@ -274,7 +263,8 @@ namespace TestEncCnvtrs
 			int codePageOutput = 0;
 			icuConv.Initialize("ISO-8859-14", "iso-8859_14-1998", ref lhsEncodingId, ref rhsEncodingId,
 				ref conversionType, ref processTypeFlags, codePageInput, codePageOutput, false);
-			string output = icuConv.ConvertToUnicode(m_bytesIso8859);
+			string input = TestUtil.GetPseudoStringFromBytes(m_bytesIso8859);
+			string output = icuConv.Convert(input);
 			Assert.AreEqual(m_convertedIso8859_14, output);
 		}
 		
@@ -290,7 +280,8 @@ namespace TestEncCnvtrs
 			int codePageOutput = 0;
 			icuConv.Initialize("ISO-8859-1", "ISO-8859-1", ref lhsEncodingId, ref rhsEncodingId,
 				ref conversionType, ref processTypeFlags, codePageInput, codePageOutput, false);
-			byte[] output = icuConv.ConvertFromUnicode(m_convertedIso8859_1);
+			string outputRaw = icuConv.Convert(m_convertedIso8859_1);
+			byte[] output = TestUtil.GetBytesFromPseudoString(outputRaw);
 			Assert.AreEqual(m_bytesIso8859, output);
 		}
 	}

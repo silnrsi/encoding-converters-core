@@ -32,7 +32,7 @@
                                 PyScriptEC,
                                 AIGuesserEC,
                                 ECFileConv,
-                                TestEncCnvtrs" />
+                                TestEncCnvtrs,TestRunner" />
 
     <target name="ECInterfaces">
         <property name="srcdir" value="${projroot}/src/ECInterfaces" />
@@ -218,6 +218,22 @@
             <include name="ECInterfaces.dll" />
             <include name="SilEncConverters40.dll" />
             <include name="IcuEC.dll" />
+        </patternset>
+        <call target="compile" cascade="false"/>
+    </target>
+
+    <!-- This target is rather useless except for debugging tests/code in MonoDevelop. -->
+    <!-- MonoDevelop doesn't run NUnit tests reliably in my experience.  :-( -->
+    <target name="TestRunner"
+            depends="TestEncCnvtrs">
+        <property name="srcdir" value="${projroot}/src/TestEncCnvtrs" />
+        <property name="namespace" value="SilEncConvertersTests" />
+        <property name="outfile" value="TestEncCnvtrs.dll" />
+        <property name="unsafe" value="true" />
+        <property name="target.type" value="exe" />
+        <patternset id="Reference">
+            <include name="System.dll" />
+	    <include name="TestEncCnvtrs.dll" />
         </patternset>
         <call target="compile" cascade="false"/>
     </target>
