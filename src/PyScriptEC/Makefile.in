@@ -12,6 +12,8 @@ ROOTDIR     = @abs_top_srcdir@
 TOPDIR      = @top_srcdir@
 BUILDDIR    = $(ROOTDIR)/build/Obj
 OUTDIR      = $(ROOTDIR)/output/Debug
+RELEASEBLD  = $(ROOTDIR)/build/Obj/Release
+RELEASEOUT  = $(ROOTDIR)/output/Release
 PYTHON_LDFLAGS =@PYTHON_LDFLAGS@
 PYTHON_CPPFLAGS=@PYTHON_CPPFLAGS@
 ECHEADERDIR=../EncCnvtrs/lib
@@ -39,19 +41,46 @@ $(BUILDDIR)/PyScriptEncConverter.o: PyScriptEncConverter.cpp PyScriptEncConverte
   $(PYTHON_CPPFLAGS) -I$(ECHEADERDIR)
 
 $(OUTDIR)/PyScriptEC.dll.config: PyScriptEC.dll.config
-	cp -p PyScriptEC.dll.config $(OUTDIR)
+	cp PyScriptEC.dll.config $(OUTDIR)
+
+release: $(RELEASEBLD) $(RELEASEOUT)/libPyScriptEncConverter.so.1.0
+
+$(RELEASEBLD):
+	mkdir -p $(RELEASEBLD)
+	mkdir -p $(RELEASEOUT)
+
+$(RELEASEOUT)/libPyScriptEncConverter.so.1.0: \
+  $(RELEASEBLD)/PyScriptEncConverter.o $(RELEASEOUT)/PyScriptEC.dll.config
+	g++ -shared -Wl,-soname,libPyScriptEncConverter.so.1 \
+  -o $(RELEASEOUT)/libPyScriptEncConverter.so.1.0 \
+  $(RELEASEBLD)/PyScriptEncConverter.o $(PYTHON_LDFLAGS)
+	rm -f $(RELEASEOUT)/libPyScriptEncConverter.so
+	rm -f $(RELEASEOUT)/libPyScriptEncConverter.so.1
+	ln -s libPyScriptEncConverter.so.1.0 $(RELEASEOUT)/libPyScriptEncConverter.so.1
+	ln -s libPyScriptEncConverter.so.1.0 $(RELEASEOUT)/libPyScriptEncConverter.so
+
+$(RELEASEBLD)/PyScriptEncConverter.o: PyScriptEncConverter.cpp \
+  PyScriptEncConverter.h $(ECHEADER)
+	g++ -Wall -fPIC -O -c PyScriptEncConverter.cpp \
+  -o $(RELEASEBLD)/PyScriptEncConverter.o \
+  $(PYTHON_CPPFLAGS) -I$(ECHEADERDIR)
+
+$(RELEASEOUT)/PyScriptEC.dll.config: PyScriptEC.dll.config
+	cp PyScriptEC.dll.config $(RELEASEOUT)
 
 clean:
 	rm -f *~
 	rm -f $(BUILDDIR)/PyScriptEncConverter.o
 	rm -f $(OUTDIR)/libPyScriptEncConverter.so*
+	rm -f $(RELEASEBLD)/PyScriptEncConverter.o
+	rm -f $(RELEASEOUT)/libPyScriptEncConverter.so*
 
 distclean: clean
 	rm -f Makefile
 
-install:
+install: release PyScriptEC.dll.config
 	mkdir -p $(DESTDIR)$(LIBDIR)
-	$(INSTALL) $(OUTDIR)/libPyScriptEncConverter.so.1.0 $(DESTDIR)$(LIBDIR)
-	$(INSTALL) $(OUTDIR)/PyScriptEC.dll.config $(DESTDIR)$(LIBDIR)
+	$(INSTALL) -s $(RELEASEOUT)/libPyScriptEncConverter.so.1.0 $(DESTDIR)$(LIBDIR)
+	$(INSTALL) PyScriptEC.dll.config $(DESTDIR)$(LIBDIR)
 
 check:
