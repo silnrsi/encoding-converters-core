@@ -47,6 +47,18 @@ namespace RunTests
 				catch(Exception e) {Console.WriteLine("AddIcuRegexConverters failed: {0}", e.Message); ++m_cfail;}
 				++m_crun;
 				test.CleanupAfterTest();
+				
+				test.InitBeforeTest();
+				try { test.AddTecKitConverters(); }
+				catch(Exception e) {Console.WriteLine("AddTecKitConverters failed: {0}", e.Message); ++m_cfail;}
+				++m_crun;
+				test.CleanupAfterTest();
+				
+				test.InitBeforeTest();
+				try { test.AddTecKitMapConverters(); }
+				catch(Exception e) {Console.WriteLine("AddTecKitMapConverters failed: {0}", e.Message); ++m_cfail;}
+				++m_crun;
+				test.CleanupAfterTest();
 			}
 			catch(Exception e) { Console.WriteLine("Exception caught during TestEncConverters setup or teardown: {0}", e.Message); }
 			test.CleanupForClass();
