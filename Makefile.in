@@ -11,6 +11,7 @@ prefix      = @prefix@
 exec_prefix = @exec_prefix@
 ROOTDIR     = @abs_top_srcdir@
 OUTDIR      = $(ROOTDIR)/output/Debug
+RELEASEOUT  = $(ROOTDIR)/output/Release
 
 SRCDIRS = src/IcuEC src/PyScriptEC src/ECDriver/linux
 DLLS    = ECInterfaces.dll SilEncConverters40.dll CodePageEC.dll CcEC.dll \
@@ -36,6 +37,21 @@ all:
 	@cp -p src/EncCnvtrs/SilEncConverters40.dll.config $(OUTDIR)
 	@cp -p src/TestEncCnvtrs/TestEncCnvtrs.dll.config $(OUTDIR)
 
+release:
+	@(cd build && nant release all) || true
+	@for subdir in $(SRCDIRS); do \
+	  echo making in $$subdir; \
+	  (cd $$subdir && $(MAKE) release) || true; \
+	done
+	@mkdir -p $(RELEASEOUT)/EC/Plugins
+	@for file in $(PLUGINS); do \
+	  cp -p redist/EC/Plugins/"$$file" $(RELEASEOUT)/EC/Plugins; \
+	done
+	@cp -pR redist/Help $(RELEASEOUT)
+	@cp -p redist/libTECkit*.so $(RELEASEOUT)
+	@cp -p src/EncCnvtrs/SilEncConverters40.dll.config $(RELEASEOUT)
+	@cp -p src/TestEncCnvtrs/TestEncCnvtrs.dll.config $(RELEASEOUT)
+
 clean:
 	@(cd build && nant clean) || true
 	@for subdir in $(SRCDIRS); do \
@@ -44,6 +60,8 @@ clean:
 	done
 	@(cd $(OUTDIR) && rm -f *.xml) || true
 	@(cd $(OUTDIR) && rm -rf EC) || true
+	@(cd $(RELEASEOUT) && rm -f *.xml) || true
+	@(cd $(RELEASEOUT) && rm -rf EC) || true
 	@rm -f *~
 
 distclean: clean
@@ -51,18 +69,19 @@ distclean: clean
 	  echo making in $$subdir; \
 	  (cd $$subdir && $(MAKE) distclean) || true; \
 	done
-	@rm -f Makefile config.cache src/config.h config.log config.status src/stamp-h1
+	@rm -f Makefile config.cache src/config.h config.log config.status
+	@rm -f src/stamp-h1
 	@rm -f autogen.err TestResult.xml src/TestEncCnvtrs/TestEncCnvtrs.pidb
 	@rm -rf autom4te.cache output build/Obj src/TestEncCnvtrs/test-results
 
-install:
+install: release
 	@for subdir in $(SRCDIRS); do \
 	  echo installing in $$subdir; \
 	  (cd $$subdir && $(MAKE) install) || true; \
 	done
 	@mkdir -p $(DESTDIR)$(LIBDIR)/EC/Plugins
 	@for file in $(DLLS); do \
-	  $(INSTALL) $(OUTDIR)/$$file $(DESTDIR)$(LIBDIR); \
+	  $(INSTALL) $(RELEASEOUT)/$$file $(DESTDIR)$(LIBDIR); \
 	done
 	@for file in $(PLUGINS); do \
 	  cp -p redist/EC/Plugins/"$$file" $(DESTDIR)$(LIBDIR)/EC/Plugins; \

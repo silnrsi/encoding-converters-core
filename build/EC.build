@@ -10,15 +10,11 @@
 -->
 <project name="EC" default="all">
     <property name="verbose" value="true"/>
-    <property name="debug" value="true" overwrite="false"/>
-
     <property name="projroot"
-     value="/media/winD/Jim/computing/SEC_on_linux/ec-main" />
+              value="/media/winD/Jim/computing/SEC_on_linux/ec-main" />
     <if test="${environment::variable-exists('ECROOT')}">
         <property name="projroot" value="${environment::get-variable('ECROOT')}"/>
     </if>
-    <property name="config" value="Debug"/> <!-- Debug/Release/Bounds -->
-    <property name="dir.output" value="${projroot}/output/${config}"/>
 
     <!-- The order of this list is important.  For example AIGuesserEC
          requires CcEC, so it is built first.  Otherwise this build
@@ -34,7 +30,31 @@
                                 ECFileConv,
                                 TestEncCnvtrs,TestRunner" />
 
-    <target name="ECInterfaces">
+    <target name="Setup">
+        <if test="${not property::exists('debug')}">
+            <property name="debug" value="true"/>
+        </if>
+        <if test="${not property::exists('config')}">
+            <property name="config" value="Debug"/>
+        </if>
+        <property name="dir.output" value="${projroot}/output/${config}"/>
+    </target>
+
+    <target name="Debug" depends="debug"
+            description="This corresponds to the configuration in VS"/>
+    <target name="debug">
+        <property name="debug" value="true"/>
+        <property name="config" value="Debug"/>
+    </target>
+
+    <target name="Release" depends="release"
+            description="This corresponds to the configuration in VS"/>
+    <target name="release">
+        <property name="debug" value="false"/>
+        <property name="config" value="Release"/>
+    </target>
+
+    <target name="ECInterfaces" depends="Setup">
         <property name="srcdir" value="${projroot}/src/ECInterfaces" />
         <property name="namespace" value="ECInterfaces" />
         <property name="outfile" value="${namespace}.dll" />
@@ -49,7 +69,7 @@
         <call target="compile" cascade="false"/>
     </target>
 
-    <target name="EncCnvtrs">
+    <target name="EncCnvtrs" depends="Setup">
         <property name="srcdir" value="${projroot}/src/EncCnvtrs" />
         <property name="namespace" value="SilEncConverters40" />
         <property name="outfile" value="${namespace}.dll" />
@@ -68,7 +88,7 @@
         <call target="compile" cascade="false"/>
     </target>
 
-    <target name="CodePageEC">
+    <target name="CodePageEC" depends="Setup">
         <property name="srcdir" value="${projroot}/src/CodePageEC/linux" />
         <property name="namespace" value="SilEncConverters40" />
         <property name="outfile" value="CodePageEC.dll" />
@@ -88,7 +108,7 @@
         <call target="compile" cascade="false"/>
     </target>
 
-    <target name="CcEC">
+    <target name="CcEC" depends="Setup">
         <property name="srcdir" value="${projroot}/src/CcEC" />
         <property name="namespace" value="SilEncConverters40" />
         <property name="outfile" value="CcEC.dll" />
@@ -108,7 +128,7 @@
         <call target="compile" cascade="false"/>
     </target>
 
-    <target name="IcuEC">
+    <target name="IcuEC" depends="Setup">
         <property name="srcdir" value="${projroot}/src/IcuEC" />
         <property name="namespace" value="SilEncConverters40" />
         <property name="outfile" value="IcuEC.dll" />
@@ -128,7 +148,7 @@
         <call target="compile" cascade="false"/>
     </target>
 
-    <target name="PerlExpressionEC">
+    <target name="PerlExpressionEC" depends="Setup">
         <property name="srcdir" value="${projroot}/src/PerlExpressionEC" />
         <property name="namespace" value="SilEncConverters40" />
         <property name="outfile" value="PerlExpressionEC.dll" />
@@ -148,7 +168,7 @@
         <call target="compile" cascade="false"/>
     </target>
 
-    <target name="PyScriptEC">
+    <target name="PyScriptEC" depends="Setup">
         <property name="srcdir" value="${projroot}/src/PyScriptEC" />
         <property name="namespace" value="SilEncConverters40" />
         <property name="outfile" value="PyScriptEC.dll" />
@@ -168,7 +188,7 @@
         <call target="compile" cascade="false"/>
     </target>
 
-    <target name="AIGuesserEC">
+    <target name="AIGuesserEC" depends="Setup">
         <property name="srcdir" value="${projroot}/src/AIGuesserEC" />
         <property name="namespace" value="SilEncConverters40" />
         <property name="outfile" value="AIGuesserEC.dll" />
@@ -189,7 +209,7 @@
         <call target="compile" cascade="false"/>
     </target>
 
-    <target name="ECFileConv">
+    <target name="ECFileConv" depends="Setup">
         <property name="srcdir" value="${projroot}/src/ECFileConverter" />
         <property name="namespace" value="ECFileConverter" />
         <property name="outfile" value="${namespace}.exe" />
@@ -227,13 +247,13 @@
     <target name="TestRunner"
             depends="TestEncCnvtrs">
         <property name="srcdir" value="${projroot}/src/RunTests" />
-        <property name="namespace" value="SilEncConvertersTests" />
+        <property name="namespace" value="RunTests" />
         <property name="outfile" value="RunTests.exe" />
         <property name="unsafe" value="true" />
         <property name="target.type" value="exe" />
         <patternset id="Reference">
             <include name="System.dll" />
-	    <include name="TestEncCnvtrs.dll" />
+        <include name="TestEncCnvtrs.dll" />
         </patternset>
         <call target="compile" cascade="false"/>
     </target>
@@ -272,7 +292,7 @@
         </csc>
     </target>
 
-    <target name="clean">
+    <target name="clean" depends="Setup">
         <delete verbose="false" failonerror="false">
             <fileset>
                 <include name="${dir.output}/*.exe"/>
@@ -284,8 +304,8 @@
         </delete>
     </target>
 
-    <target name="deploy" depends="deployLibs, deployClientApps" />
-    <target name="deployLibs">
+    <target name="deploy" depends="deployLibs,deployClientApps" />
+    <target name="deployLibs" depends="Setup">
         <copy todir="/usr/lib/encConverters">
             <fileset>
                 <include name="${dir.output}/ECInterfaces.dll"/>
@@ -303,7 +323,7 @@
             </fileset>
         </copy>
     </target>
-    <target name="deployClientApps">
+    <target name="deployClientApps" depends="Setup">
         <copy todir="/usr/lib/encConverters">
             <fileset>
                 <include name="${dir.output}/ECFileConverter.exe"/>
