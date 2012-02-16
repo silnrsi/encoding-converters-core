@@ -226,9 +226,9 @@
     <!-- MonoDevelop doesn't run NUnit tests reliably in my experience.  :-( -->
     <target name="TestRunner"
             depends="TestEncCnvtrs">
-        <property name="srcdir" value="${projroot}/src/TestEncCnvtrs" />
+        <property name="srcdir" value="${projroot}/src/RunTests" />
         <property name="namespace" value="SilEncConvertersTests" />
-        <property name="outfile" value="TestEncCnvtrs.dll" />
+        <property name="outfile" value="RunTests.exe" />
         <property name="unsafe" value="true" />
         <property name="target.type" value="exe" />
         <patternset id="Reference">
