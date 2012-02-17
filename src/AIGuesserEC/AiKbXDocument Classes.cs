@@ -219,7 +219,7 @@ namespace SilEncConverters40
 
         private XElement GetDecendent(string strTargetWord)
         {
-            var strXPath = String.Format("{0}[@{1} = '{2}']",
+            var strXPath = String.Format("{0}[@{1} = \"{2}\"]",
                                          TargetWordElement.CstrElementNameTargetWord,
                                          TargetWordElement.CstrAttributeNameTargetWord,
                                          strTargetWord);
