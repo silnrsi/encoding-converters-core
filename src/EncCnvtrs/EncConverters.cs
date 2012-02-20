@@ -308,7 +308,7 @@ namespace SilEncConverters40
                                 MessageBox.Show("Key = \"" + strConverterKey +
                                     "\", Ident = \"" + strConverterIdentifier + "\": " + e.Message, traceSwitch.DisplayName);
 #elif DEBUG
-								// catch it in Debug mode, so we can check it
+                                // catch it in Debug mode, so we can check it
                                 System.Diagnostics.Debug.WriteLineIf(traceSwitch.TraceError, "Key = \"" + strConverterKey + 
                                     "\", Ident = \"" + strConverterIdentifier + "\": " + e.Message, traceSwitch.DisplayName);
 #endif
@@ -360,15 +360,15 @@ namespace SilEncConverters40
 
             // see if the repository stuff has been moved
             bool bRewriteFile = false;  // means we must re-write the XML file because something changed.
-			RegistryKey keyRepositoryMoved;
-			try
-			{
-            	keyRepositoryMoved = Registry.LocalMachine.OpenSubKey(EncConverters.HKLM_PATH_TO_XML_FILE);
-			}
-			catch (Exception e)
-			{
-				keyRepositoryMoved = null;
-			}
+            RegistryKey keyRepositoryMoved;
+            try
+            {
+                keyRepositoryMoved = Registry.LocalMachine.OpenSubKey(EncConverters.HKLM_PATH_TO_XML_FILE);
+            }
+            catch (Exception e)
+            {
+                keyRepositoryMoved = null;
+            }
             if (keyRepositoryMoved != null)
             {
                 string strNewRepositoryRoot = (string)keyRepositoryMoved.GetValue(strRegKeyForMovingRepository);
@@ -671,15 +671,15 @@ namespace SilEncConverters40
                         if (!aDetailsRow.IsAssemblyReferenceNull())
                         {
                             string strAssemblyVersion = aDetailsRow.AssemblyReference;
-							if (!m_mapProgIdsToAssemblyName.ContainsKey(strProgId))
-                            	m_mapProgIdsToAssemblyName.Add(strProgId, strAssemblyVersion);
+                            if (!m_mapProgIdsToAssemblyName.ContainsKey(strProgId))
+                                m_mapProgIdsToAssemblyName.Add(strProgId, strAssemblyVersion);
 
                             // for the *Config classes, these also need to come from the proper assembly
                             if (!aDetailsRow.IsConfiguratorProgIdNull())
                             {
                                 string strConfigProgId = aDetailsRow.ConfiguratorProgId;
-								if (!m_mapProgIdsToAssemblyName.ContainsKey(strConfigProgId))
-	                                m_mapProgIdsToAssemblyName.Add(strConfigProgId, strAssemblyVersion);
+                                if (!m_mapProgIdsToAssemblyName.ContainsKey(strConfigProgId))
+                                    m_mapProgIdsToAssemblyName.Add(strConfigProgId, strAssemblyVersion);
                             }
                         }
                     }
@@ -3844,24 +3844,24 @@ namespace SilEncConverters40
             //System.Diagnostics.Debug.WriteLine("GetRepositoryFileName BEGIN");
             // try the current user key first
             string strRepositoryFile = null;
-			try
-			{
-	            RegistryKey aStoreKey = Registry.CurrentUser.OpenSubKey(EncConverters.HKLM_PATH_TO_XML_FILE);
-	            //System.Diagnostics.Debug.WriteLine("Looking at key " + EncConverters.HKLM_PATH_TO_XML_FILE);
-	
-	            if (aStoreKey == null)
-	                aStoreKey = Registry.LocalMachine.OpenSubKey(EncConverters.HKLM_PATH_TO_XML_FILE);
-	
-	            if (aStoreKey != null) {
-	                strRepositoryFile = (string)aStoreKey.GetValue(strRegKeyForStorePath);
-	                //System.Diagnostics.Debug.WriteLine("Got value " + strRepositoryFile);
-	            }
-			}
-			catch {}
+            try
+            {
+                RegistryKey aStoreKey = Registry.CurrentUser.OpenSubKey(EncConverters.HKLM_PATH_TO_XML_FILE);
+                //System.Diagnostics.Debug.WriteLine("Looking at key " + EncConverters.HKLM_PATH_TO_XML_FILE);
+    
+                if (aStoreKey == null)
+                    aStoreKey = Registry.LocalMachine.OpenSubKey(EncConverters.HKLM_PATH_TO_XML_FILE);
+    
+                if (aStoreKey != null) {
+                    strRepositoryFile = (string)aStoreKey.GetValue(strRegKeyForStorePath);
+                    //System.Diagnostics.Debug.WriteLine("Got value " + strRepositoryFile);
+                }
+            }
+            catch {}
             if( String.IsNullOrEmpty(strRepositoryFile) )
             {
                 // by default, put it in the C:\Program Files\Common Files\Enc... folder
-				strRepositoryFile = DefaultRepositoryPath;
+                strRepositoryFile = DefaultRepositoryPath;
                 WriteStorePath(strRepositoryFile);
                 //System.Diagnostics.Debug.WriteLine("Using " + strRepositoryFile);
             }
@@ -3875,22 +3875,22 @@ namespace SilEncConverters40
             //System.Diagnostics.Debug.WriteLine("Got " + strRepositoryFile);
             return strRepositoryFile;
         }
-		
-		/// <summary>
-		/// Gets the default full path of the repository file.
-		/// </summary>
-		public static string DefaultRepositoryPath
-		{
-			get
-			{
-            	string strRepositoryFile = Util.GetSpecialFolderPath(Environment.SpecialFolder.CommonApplicationData);
+        
+        /// <summary>
+        /// Gets the default full path of the repository file.
+        /// </summary>
+        public static string DefaultRepositoryPath
+        {
+            get
+            {
+                string strRepositoryFile = Util.GetSpecialFolderPath(Environment.SpecialFolder.CommonApplicationData);
                 strRepositoryFile += strDefXmlPath;
                 VerifyDirectoryExists(strRepositoryFile);
                 strRepositoryFile += strDefXmlFilename;
-				return strRepositoryFile;
-			}
-		}
-		
+                return strRepositoryFile;
+            }
+        }
+        
         protected static void VerifyDirectoryExists(string strPath)
         {
             try
@@ -4308,7 +4308,37 @@ namespace SilEncConverters40
 
             WriteRepositoryFile(file);  // save changes.
         }
-
+        
+        /// <summary>
+        /// Removes the mapping, and all its content.  On Windows .Net, the last line is
+        /// all that's needed.
+        /// </summary>
+        private void  RemoveMapping(mappingRegistry.mappingRow aMapRow, mappingRegistry file)
+        {
+            var aMapDT = file.mapping;
+            var aSpecsDT = file.specs;
+            var aSpecDT = file.spec;
+            var aSpecPropertiesDT = file.specProperties;
+            var aSpecPropertyDT = file.specProperty;
+            foreach (var specsRow in aMapRow.GetspecsRows())
+            {
+                foreach (var spec in specsRow.GetspecRows())
+                {
+                    foreach (var props in spec.GetspecPropertiesRows())
+                    {
+                        foreach (var prop in props.GetspecPropertyRows())
+                        {
+                            aSpecPropertyDT.RemovespecPropertyRow(prop);
+                        }
+                        aSpecPropertiesDT.RemovespecPropertiesRow(props);
+                    }
+                    aSpecDT.RemovespecRow(spec);
+                }
+                aSpecsDT.RemovespecsRow(specsRow);
+            }
+            aMapDT.RemovemappingRow(aMapRow);
+        }
+        
         internal void RemoveEncodingInfo(mappingRegistry file, bool bRemoveMap, 
             mappingRegistry.mappingRow aMapRow, mappingRegistry.mappingDataTable aMapDT)
         {
@@ -4328,7 +4358,7 @@ namespace SilEncConverters40
 
             // now remove the mapping entry... if requested
             if( bRemoveMap )
-                aMapDT.RemovemappingRow(aMapRow);
+                RemoveMapping(aMapRow, file);
 
             // ... and then remove the stranded Encoding rows if they are now empty (they
             //  don't hurt anything, but it looks less cluttered)

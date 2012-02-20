@@ -35,6 +35,7 @@ namespace TestEncCnvtrs
 			for (int i = 0; i < converters.Count; ++i)
 			{
 				Assert.IsNotNull(converters[i], "The returned ICU converter name should not be null!");
+				//Console.WriteLine(converters[i]);
 			}
 			// Check for the specific converters used in the following tests.
 			Assert.Contains("ISO-8859-1", converters, "The set of ICU converters should contain 'ISO-8859-1'.");
