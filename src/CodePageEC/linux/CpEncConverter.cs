@@ -103,18 +103,18 @@ namespace SilEncConverters40
         // libiconv.so (preferred)
         // or libc.so, iconv_open iconv_close iconv
         [DllImport("iconv")]
-        static extern unsafe int iconv_open(string enc1, string enc2);
+        static extern unsafe IntPtr iconv_open(string enc1, string enc2);
 
         [DllImport("iconv", SetLastError=true)]
         static extern unsafe int iconv(
-            int cd,
+            IntPtr cd,
             char * inbuf,
-            int inbytesleft,
+            ref int inbytesleft,
             char * outbuf,
-            int howMany);
+            ref int howMany);
 
         [DllImport("iconv")]
-        static extern unsafe int iconv_close(int cd);
+        static extern unsafe int iconv_close(IntPtr cd);
         #endregion DLLImport Statements
 
         #region Abstract Base Class Overrides
