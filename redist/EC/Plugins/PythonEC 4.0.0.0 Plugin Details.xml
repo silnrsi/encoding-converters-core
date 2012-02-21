@@ -5,7 +5,7 @@
                    Priority="3"
                    DisplayName="Python Script"
                    ConfiguratorProgId="SilEncConverters40.PyScriptEncConverterConfig"
-                   DefiningExtension=".py" 
+                   DefiningExtension=".py"
                    AssemblyReference="PyScriptEC, Version=4.0.0.0, Culture=neutral, PublicKeyToken=null"
 />
                    <!--DefiningProcessType="256"-->
