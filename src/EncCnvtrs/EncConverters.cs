@@ -4320,6 +4320,8 @@ namespace SilEncConverters40
             var aSpecDT = file.spec;
             var aSpecPropertiesDT = file.specProperties;
             var aSpecPropertyDT = file.specProperty;
+			var aStepsDT = file.steps;
+			var aStepDT = file.step;
             foreach (var specsRow in aMapRow.GetspecsRows())
             {
                 foreach (var spec in specsRow.GetspecRows())
@@ -4332,6 +4334,14 @@ namespace SilEncConverters40
                         }
                         aSpecPropertiesDT.RemovespecPropertiesRow(props);
                     }
+					foreach (var steps in spec.GetstepsRows())
+					{
+						foreach (var step in steps.GetstepRows())
+						{
+							aStepDT.RemovestepRow(step);
+						}
+						aStepsDT.RemovestepsRow(steps);
+					}
                     aSpecDT.RemovespecRow(spec);
                 }
                 aSpecsDT.RemovespecsRow(specsRow);
