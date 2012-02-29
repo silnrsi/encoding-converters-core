@@ -35,16 +35,19 @@ namespace TestEncCnvtrs
 		[TestFixtureSetUp]
 		public void InitForClass()
 		{
-			// Make sure we get set up to be able to access Registry.LocalMachine.
-			string machine_store = Environment.GetEnvironmentVariable("MONO_REGISTRY_PATH");
-			if (machine_store == null)
+			if (Util.IsUnix)
 			{
-				Console.WriteLine("First, make sure that /var/lib/fieldworks exists and is writeable by everyone.");
-				Console.WriteLine("eg, sudo mkdir -p /var/lib/fieldworks && sudo chmod +wt /var/lib/fieldworks");
-				Console.WriteLine("Then add the following line to ~/.profile, logout, and login again.");
-				Console.WriteLine("MONO_REGISTRY_PATH=/var/lib/fieldworks/registry; export MONO_REGISTRY_PATH");
-				// doesn't work on Maverick, but try it anyway...
-				Environment.SetEnvironmentVariable("MONO_REGISTRY_PATH", "/var/lib/fieldworks/registry");
+				// Make sure we get set up to be able to access Registry.LocalMachine.
+				string machine_store = Environment.GetEnvironmentVariable("MONO_REGISTRY_PATH");
+				if (machine_store == null)
+				{
+					Console.WriteLine("First, make sure that /var/lib/fieldworks exists and is writeable by everyone.");
+					Console.WriteLine("eg, sudo mkdir -p /var/lib/fieldworks && sudo chmod +wt /var/lib/fieldworks");
+					Console.WriteLine("Then add the following line to ~/.profile, logout, and login again.");
+					Console.WriteLine("MONO_REGISTRY_PATH=/var/lib/fieldworks/registry; export MONO_REGISTRY_PATH");
+					// doesn't work on Maverick, but try it anyway...
+					Environment.SetEnvironmentVariable("MONO_REGISTRY_PATH", "/var/lib/fieldworks/registry");
+				}
 			}
 			m_repoFile = null;
 			RegistryKey key = Registry.CurrentUser.OpenSubKey(EncConverters.HKLM_PATH_TO_XML_FILE, true);
@@ -63,6 +66,11 @@ namespace TestEncCnvtrs
 			{
 				key.Close();
 				key = null;
+			}
+			if (!String.IsNullOrEmpty(m_repoFile) && File.Exists(m_repoFile) &&
+				!File.Exists(m_repoFile + "-RESTOREME"))
+			{
+				File.Move(m_repoFile, m_repoFile + "-RESTOREME");
 			}
 			if (!File.Exists(m_repoFile))
 				m_fWroteRepoFile = true;
@@ -142,6 +150,10 @@ namespace TestEncCnvtrs
 			{
 				File.Delete(m_repoFile);
 				m_fWroteRepoFile = false;
+			}
+			if (!String.IsNullOrEmpty(m_repoFile) && File.Exists(m_repoFile + "-RESTOREME"))
+			{
+				File.Move(m_repoFile + "-RESTOREME", m_repoFile);
 			}
 			if (m_fSetRegistryValue)
 			{
@@ -423,8 +435,7 @@ namespace TestEncCnvtrs
 		public void AddTecKitConverters()
 		{
 			int countOrig = m_encConverters.Count;
-			var loc = Assembly.GetExecutingAssembly().Location;
-			var dir = loc.Replace("file:///", "/").Replace("output/Debug/TestEncCnvtrs.dll","src/TestEncCnvtrs");
+			var dir = GetTestSourceFolder();
 			string filename1 = Path.Combine(dir, "Senufo.tec");
 			m_encConverters.Add("UnitTesting-Senufo-To-Unicode", filename1, ConvType.Legacy_to_from_Unicode,
 				"LEGACY", "UNICODE", ProcessTypeFlags.UnicodeEncodingConversion);
@@ -469,12 +480,32 @@ namespace TestEncCnvtrs
 			Assert.AreEqual(countOrig, countAfter, "Should have the original number of converters now.");
 		}
 
+		private static string GetTestSourceFolder()
+		{
+			var codeBase = Assembly.GetExecutingAssembly().CodeBase;
+			string filepath;
+			if (codeBase[0] == '/')
+			{
+				filepath = Path.GetDirectoryName(codeBase);
+			}
+			else
+			{
+				var uri = new Uri(Assembly.GetExecutingAssembly().CodeBase);
+				filepath = uri.GetComponents(UriComponents.Path, UriFormat.Unescaped);
+			}
+			var configDir = Path.GetDirectoryName(filepath);
+			var outDir = Path.GetDirectoryName(configDir);
+			var dir = Path.GetDirectoryName(outDir);
+			if (dir != null)
+				dir = Path.Combine(Path.Combine(dir, "src"), "TestEncCnvtrs");
+			return dir;
+		}
+
 		[Test]
 		public void AddTecKitMapConverters()
 		{
 			int countOrig = m_encConverters.Count;
-			var loc = Assembly.GetExecutingAssembly().Location;
-			var dir = loc.Replace("file:///", "/").Replace("output/Debug/TestEncCnvtrs.dll","src/TestEncCnvtrs");
+			var dir = GetTestSourceFolder();
 			string filename1 = Path.Combine(dir, "Senufo.map");
 			m_encConverters.Add("UnitTesting-Senufo-To-Unicode", filename1, ConvType.Legacy_to_from_Unicode,
 				"LEGACY", "UNICODE", ProcessTypeFlags.UnicodeEncodingConversion);

@@ -2,12 +2,8 @@
 // 28-Nov-11 JDK  Wrap Perl expression and write in temp file, rather than requiring input file.
 //
 using System;
-using System.IO;
 using System.Runtime.InteropServices;
-using System.Diagnostics;
-using System.Text;
-using System.Text.RegularExpressions;
-using Microsoft.Win32;                  // for RegistryKey
+
 using ECInterfaces;                     // for IEncConverter
 
 namespace SilEncConverters40
@@ -28,7 +24,7 @@ namespace SilEncConverters40
         #region DLLImport Statements
         // On Linux looks for libIcuRegexEC.so (adds lib- and -.so)
         [DllImport("IcuRegexEC", EntryPoint="IcuRegexEC_Initialize")]
-        static extern unsafe int CppInitialize (
+        static extern int CppInitialize (
             [MarshalAs(UnmanagedType.LPStr)] string strConverterSpec);
 
         [DllImport("IcuRegexEC", EntryPoint="IcuRegexEC_DoConvert")]

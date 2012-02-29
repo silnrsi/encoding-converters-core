@@ -456,7 +456,6 @@ namespace SilEncConverters40
             if (keyPluginFolder != null)
                 strPluginXmlFilesFolder = (string)keyPluginFolder.GetValue(CstrRegKeyPluginFolder);
 
-            if (String.IsNullOrEmpty(strPluginXmlFilesFolder))
 #if !PluginsInEachFolder
             {
                 // Argh...
@@ -471,13 +470,14 @@ namespace SilEncConverters40
                                                        CstrDefPluginFolderPlugins);
             }
 #else
+            if (String.IsNullOrEmpty(strPluginXmlFilesFolder))
             {
                 strPluginXmlFilesFolder = Util.GetSpecialFolderPath(Environment.SpecialFolder.CommonApplicationData) + strDefPluginFolder;
             }
 
             strPluginXmlFilesFolder += strDefPluginFolderVersionPrefix + typeof(IEncConverter).Assembly.GetName().Version.ToString();
 #endif
-            Debug.Assert(Directory.Exists(strPluginXmlFilesFolder), String.Format("Can't find the plug-in folder, '{0}'", strPluginXmlFilesFolder));
+			Debug.Assert(Directory.Exists(strPluginXmlFilesFolder), String.Format("Can't find the plug-in folder, '{0}'", strPluginXmlFilesFolder));
             string[] astrPluginXmlFiles = Directory.GetFiles(strPluginXmlFilesFolder, "*.xml");
             Debug.Assert(astrPluginXmlFiles.Length > 0, String.Format(@"You don't have any plug-ins installed (e.g. {0}\SilEncConverters40 Plugin Details.xml)", strPluginXmlFilesFolder));
 
@@ -703,12 +703,19 @@ namespace SilEncConverters40
                 WriteRepositoryFile(file);
         }
 
+		/// <summary>
+		/// Get the folder the executing assembly comes from.  On Windows .Net, Location
+		/// will likely point to a "shadow copy".  We want the original location, so we use
+		/// CodeBase instead (even though the URI must be dealt with).
+		/// </summary>
         protected static string GetRunningFolder
         {
             get
             {
-                string strCurrentFolder = Assembly.GetExecutingAssembly().Location;
-                return Path.GetDirectoryName(strCurrentFolder);
+            	var codeBase = Assembly.GetExecutingAssembly().CodeBase;
+				var uri = new Uri(codeBase);
+            	var filepath = uri.GetComponents(UriComponents.Path, UriFormat.Unescaped);
+				return Path.GetDirectoryName(filepath);
             }
         }
 
@@ -3860,7 +3867,7 @@ namespace SilEncConverters40
             catch {}
             if( String.IsNullOrEmpty(strRepositoryFile) )
             {
-                // by default, put it in the C:\Program Files\Common Files\Enc... folder
+                // by default, put it in the C:\ProgramData\SIL\Repository folder
                 strRepositoryFile = DefaultRepositoryPath;
                 WriteStorePath(strRepositoryFile);
                 //System.Diagnostics.Debug.WriteLine("Using " + strRepositoryFile);

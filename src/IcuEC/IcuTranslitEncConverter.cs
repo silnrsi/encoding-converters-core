@@ -26,7 +26,7 @@ namespace SilEncConverters40
         #region DLLImport Statements
         // On Linux looks for libIcuTranslitEC.so (adds lib- and -.so)
         [DllImport("IcuTranslitEC", EntryPoint="IcuTranslitEC_Initialize")]
-        static extern unsafe int CppInitialize (
+        static extern int CppInitialize (
             [MarshalAs(UnmanagedType.LPStr)] string strConverterID);
 
         [DllImport("IcuTranslitEC", EntryPoint="IcuTranslitEC_DoConvert")]
@@ -35,13 +35,16 @@ namespace SilEncConverters40
             byte* lpOutputBuffer, int *npOutBufLen);
 
 		[DllImport("IcuTranslitEC", EntryPoint="IcuTranslitEC_ConverterNameList_start")]
-		static extern unsafe int CppConverterNameList_start();
+		static extern int CppConverterNameList_start();
 
 		[DllImport("IcuTranslitEC", EntryPoint="IcuTranslitEC_ConverterNameList_next")]
-		static extern unsafe string CppConverterNameList_next();
+		[return: MarshalAs(UnmanagedType.LPStr)]
+		static extern string CppConverterNameList_next();
 
 		[DllImport("IcuTranslitEC", EntryPoint="IcuTranslitEC_GetDisplayName")]
-		static extern unsafe string CppGetDisplayName(string strID);
+		[return: MarshalAs(UnmanagedType.LPStr)]
+		static extern string CppGetDisplayName(
+			[MarshalAs(UnmanagedType.LPStr)] string strID);
         #endregion DLLImport Statements
 
         #region Member Variable Definitions
@@ -140,9 +143,9 @@ namespace SilEncConverters40
             try {
                 status = CppInitialize(strTranslitID);
             } catch (DllNotFoundException exc) {
-                throw new Exception("Failed to load .so file. Check path.");
+                throw new Exception("Failed to load DLL (.dll/.so) file. Check path.");
             } catch (EntryPointNotFoundException exc) {
-                throw new Exception("Failed to find function in .so file.");
+                throw new Exception("Failed to find function in DLL (.dll/.so) file.");
             }
             if( status != 0 )  
             {
@@ -242,7 +245,7 @@ namespace SilEncConverters40
 		/// <summary>
 		/// Gets the available ICU transliterator specifications.
 		/// </summary>
-		public static unsafe List<string> GetAvailableConverterSpecs()
+		public static List<string> GetAvailableConverterSpecs()
 		{
 			int count = CppConverterNameList_start();
 			List<string> specs = new List<string>(count);
@@ -254,7 +257,7 @@ namespace SilEncConverters40
 		/// <summary>
 		/// Gets the display name of the given ICU transliterator specification.
 		/// </summary>
-		public static unsafe string GetDisplayName(string spec)
+		public static string GetDisplayName(string spec)
 		{
 			return CppGetDisplayName(spec);
 		}

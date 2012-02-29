@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="3.5" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -45,8 +45,8 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="nunit.framework">
-      <Private>False</Private>
-      <HintPath>..\..\..\..\..\..\usr\lib\mono\gac\nunit.framework\2.5.10.0__96d09a1eb7f44a77\nunit.framework.dll</HintPath>
+      <Private>True</Private>
+      <HintPath>C:\WW\Bin\NUnit\bin\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="SilEncConverters40">
@@ -56,8 +56,10 @@
       <HintPath>..\..\output\Debug\ECInterfaces.dll</HintPath>
     </Reference>
     <Reference Include="IcuEC">
-      <HintPath>..\..\output\Debug\IcuEC.dll</HintPath>
+      <HintPath>..\IcuEC\bin\Debug\IcuEC.dll</HintPath>
     </Reference>
+    <Reference Include="System.Data" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.XML" />
   </ItemGroup>
 </Project>

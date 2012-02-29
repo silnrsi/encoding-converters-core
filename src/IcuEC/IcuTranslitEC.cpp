@@ -23,14 +23,16 @@
 #include "IcuTranslitEC.h"
 
 // Uncomment the following line if you want verbose debugging output
-//#define VERBOSE_DEBUGGING
+#define VERBOSE_DEBUGGING
+
+#define MAXNAMESIZE 300
 
 // Keep this in a namespace so that it doesn't get confused with functions that
 // have the same name in other converters, for example Load().
 namespace IcuTranslitEC
 {
     char * m_strConverterSpec = NULL;
-    char   m_strFriendlyName[1000];
+    char   m_strFriendlyName[MAXNAMESIZE];
 
     bool            m_bLTR        = true; // if true, then use m_pTForwards
     Transliterator* m_pTForwards  = 0;
@@ -56,14 +58,15 @@ namespace IcuTranslitEC
         // Production code should be aware of what encoding is required,
         // and use a UConverter or at least a charset name explicitly.
         out[s.extract(0, 99, out)]=0;
-        printf("%s'%s' {", announce, out);
+        fprintf(stdout, "%s'%s' {", announce, out);
 
         // output the code units (not code points)
         length=s.length();
         for(i=0; i<length; ++i) {
-            printf(" %04x", s.charAt(i));
+			UChar ch = s.charAt(i);
+            fprintf(stdout, " %04x", ch);
         }
-        printf(" }\n");
+        fprintf(stdout, " }\n");
 #endif
     }
 
@@ -123,8 +126,8 @@ namespace IcuTranslitEC
     int Load(void)
     {
 #ifdef VERBOSE_DEBUGGING
-        fprintf(stderr, "IcuTranslitEC.CppLoad() BEGIN\n");
-        fprintf(stderr, "m_strConverterSpec '%s'\n", m_strConverterSpec);
+        fprintf(stdout, "IcuTranslitEC.CppLoad() BEGIN\n");
+        fprintf(stdout, "m_strConverterSpec '%s'\n", m_strConverterSpec);
 #endif
         int hr = 0;
 
@@ -153,7 +156,7 @@ namespace IcuTranslitEC
         if( m_pTForwards )
         {
 #ifdef VERBOSE_DEBUGGING
-            fprintf(stderr, "Successfully created forward direction.\n");
+            fprintf(stdout, "Successfully created forward direction.\n");
 #endif
             // use a different status variable since we don't *really* care if the reverse is possible 
             //  (i.e. even if it fails, we wouldn't want to return an error).
@@ -163,7 +166,7 @@ namespace IcuTranslitEC
             if( m_pTBackwards )
             {
 #ifdef VERBOSE_DEBUGGING
-                fprintf(stderr, "Successfully created backward direction.\n");
+                fprintf(stdout, "Successfully created backward direction.\n");
 #endif
                 //m_eConversionType = ConvType_Unicode_to_from_Unicode;
             }
@@ -171,7 +174,7 @@ namespace IcuTranslitEC
         else
         {
 #ifdef VERBOSE_DEBUGGING
-            fprintf(stderr, "Failed to create ICU converter spec '%s'\n",
+            fprintf(stdout, "Failed to create ICU converter spec '%s'\n",
                     m_strConverterSpec);
 #endif
             return -1;
@@ -180,14 +183,14 @@ namespace IcuTranslitEC
         if( U_FAILURE(status) )
         {
 #ifdef VERBOSE_DEBUGGING
-            fprintf(stderr, "Failure status %d: %s\n",
+            fprintf(stdout, "Failure status %d: %s\n",
                     status, u_errorName(status));
 #endif
             hr = status;
         }
 
 #ifdef VERBOSE_DEBUGGING
-        fprintf(stderr, "Load() END\n");
+        fprintf(stdout, "Load() END\n");
 #endif
         return hr;
     }
@@ -196,86 +199,68 @@ namespace IcuTranslitEC
     void InactivityWarning()
     {
 #ifdef VERBOSE_DEBUGGING
-        fprintf(stderr, "IcuTransEC::InactivityWarning\n");
+        fprintf(stdout, "IcuTransEC::InactivityWarning\n");
 #endif
         FinalRelease();
     }
 
     // Call this method once, and then keep calling ConverterNameList_next() until the end of
     // the list.
-    // This method will create the list and store it in memory.
     // Returns the number of items in the list.
     //
     int ConverterNameList_start()
     {
-        if (m_iConvNameCount >= 0)
-        {
-            // The list has already been created
-            return m_iConvNameCount;
-        }
-        m_iConvNameCount = Transliterator::countAvailableIDs();
+		if (m_iConvNameCount < 0)
+			m_iConvNameCount = Transliterator::countAvailableIDs();
 #ifdef VERBOSE_DEBUGGING
-        fprintf(stderr, "%d converter IDs available.\n", m_iConvNameCount);
+        fprintf(stdout, "%d converter IDs available.\n", m_iConvNameCount);
 #endif
-        m_convNameList   = (char**)malloc(m_iConvNameCount * sizeof (char *));
-
-        for(int i = 0; i < m_iConvNameCount; i++ )
-        {
-            UnicodeString strID = Transliterator::getAvailableID(i);
-            printUnicodeString("Got ", strID);
-            m_convNameList[i] = UniStr_to_CharStar(strID);
-        }
-#ifdef VERBOSE_DEBUGGING
-        fprintf(stderr, "Finished making list.\n");
-#endif
+		m_iConvNameIndex = 0;
         return m_iConvNameCount;
     }
 
-    // This method will free the list from memory after the last element is
-    // retrieved.
-    char * ConverterNameList_next(void)
+    const char * ConverterNameList_next(void)
     {
+		if (m_iConvNameIndex >= m_iConvNameCount)
+			return NULL;
+		UnicodeString strID = Transliterator::getAvailableID(m_iConvNameIndex);
+		++m_iConvNameIndex;
+        char * name = UniStr_to_CharStar(strID);
 #ifdef VERBOSE_DEBUGGING
-        fprintf(stderr, "+");
+        fprintf(stdout, "+");
 #endif
-        if (m_iConvNameIndex >= m_iConvNameCount)
-        {
-            return NULL;
-        }
-        if (m_iConvNameIndex == m_iConvNameCount - 1)
-        {
-            // This is the last element in the list
-            char * strLastItem = strdup(m_convNameList[m_iConvNameIndex]);
-#ifdef VERBOSE_DEBUGGING
-            fprintf(stderr, "Freeing list.\n");
-#endif
-            for (int i = 0; i < m_iConvNameCount; i++)
-                free(m_convNameList[i]);
-            free(m_convNameList);
-#ifdef VERBOSE_DEBUGGING
-            fprintf(stderr, "Freed list.\n");
-#endif
-            m_iConvNameCount = -1;
-            m_iConvNameIndex = 0;
-            return strLastItem;
-        }
-        return strdup(m_convNameList[m_iConvNameIndex++]);
+		static char chbuf[MAXNAMESIZE];
+		size_t len = strlen(name);
+		if (len >= MAXNAMESIZE)
+			len = MAXNAMESIZE - 1;
+		strncpy(chbuf, name, len);
+		chbuf[len] = 0;
+		free((void *)name);
+		return (const char *)chbuf;
     }
 
     // The ID is a string like "Any-Latin", and the display name is "Any to Latin".
     // Be sure to free the result when finished (C# marshalling will free it).
-    char * GetDisplayName(char * strID)
+    const char * GetDisplayName(char * strID)
     {
         UnicodeString strDisplayName;
         Transliterator::getDisplayName(strID, strDisplayName);
-        return UniStr_to_CharStar(strDisplayName);
+		char * name = UniStr_to_CharStar(strDisplayName);
+		static char chbuf[MAXNAMESIZE];
+		size_t len = strlen(name);
+		if (len >= MAXNAMESIZE)
+			len = MAXNAMESIZE - 1;
+		strncpy(chbuf, name, len);
+		chbuf[len] = 0;
+		free((void *)name);
+		return (const char *)chbuf;
     }
 
     int Initialize(char * strConverterSpec)
     {
 #ifdef VERBOSE_DEBUGGING
-        fprintf(stderr, "IcuTranslitEC.CppInitialize() BEGIN\n");
-        fprintf(stderr, "strConverterSpec '%s'\n", strConverterSpec);
+        fprintf(stdout, "IcuTranslitEC.CppInitialize() BEGIN\n");
+        fprintf(stdout, "strConverterSpec '%s'\n", strConverterSpec);
 #endif
 
         if( IsFileLoaded() )
@@ -324,12 +309,15 @@ namespace IcuTranslitEC
     )
     {
 #ifdef VERBOSE_DEBUGGING
-        fprintf(stderr, "IcuTranslitEC.CppDoConvert() BEGIN\n");
+        fprintf(stdout, "IcuTranslitEC.CppDoConvert() BEGIN\n");
 #endif
         int hr = 0;
         UnicodeString sInOut;
-        //sInOut.setTo(lpInBuffer, nInLen / 2); // needed for Windows?
-        sInOut.setTo(lpInBuffer);
+#ifdef _MSC_VER
+			sInOut.setTo((UChar *)lpInBuffer, nInLen / 2);
+#else
+			sInOut.setTo(lpInBuffer);
+#endif
         printUnicodeString("Will transliterate: ", sInOut);
 
         if( m_bLTR )
@@ -337,17 +325,17 @@ namespace IcuTranslitEC
             if( m_pTForwards )
             {
 #ifdef VERBOSE_DEBUGGING
-                fprintf(stderr, "Doing forwards transliteration...\n");
+                fprintf(stdout, "Doing forwards transliteration...\n");
 #endif
                 m_pTForwards->transliterate(sInOut);
 #ifdef VERBOSE_DEBUGGING
-                fprintf(stderr, "Did forwards transliteration.\n");
+                fprintf(stdout, "Did forwards transliteration.\n");
 #endif
             }
             else
             {
 #ifdef VERBOSE_DEBUGGING
-                fprintf(stderr, "There is no forward transliterator.\n");
+                fprintf(stdout, "There is no forward transliterator.\n");
 #endif
                 hr = -1;
             }
@@ -357,17 +345,17 @@ namespace IcuTranslitEC
             if( m_pTBackwards )
             {
 #ifdef VERBOSE_DEBUGGING
-                fprintf(stderr, "Doing backwards transliteration...\n");
+                fprintf(stdout, "Doing backwards transliteration...\n");
 #endif
                 m_pTBackwards->transliterate(sInOut);
 #ifdef VERBOSE_DEBUGGING
-                fprintf(stderr, "Did backwards transliteration.\n");
+                fprintf(stdout, "Did backwards transliteration.\n");
 #endif
             }
             else
             {
 #ifdef VERBOSE_DEBUGGING
-                fprintf(stderr, "There is no backwards transliterator.\n");
+                fprintf(stdout, "There is no backwards transliterator.\n");
 #endif
                 hr = -1;
             }
@@ -377,33 +365,29 @@ namespace IcuTranslitEC
         {
             printUnicodeString("Result of transliteration: ", sInOut);
 #ifdef VERBOSE_DEBUGGING
-            fprintf(stderr, "sInOut.length %d\n", sInOut.length());
+            fprintf(stdout, "sInOut.length %d\n", sInOut.length());
 #endif
-            //int nLen = sInOut.length() * 2;   // for Windows?
-            int nLen = sInOut.extract(0, sInOut.length(), (char *)NULL);   // "preflight" to get size
-#ifdef VERBOSE_DEBUGGING
-            fprintf(stderr, "preflight nLen %d, rnOutLen %d\n", nLen, rnOutLen);
-#endif
-            if( nLen >= (int)rnOutLen )
+			UErrorCode err;
+            int nLen = sInOut.extract((UChar *)lpOutBuffer, rnOutLen, err);
+            if(nLen >= (int)rnOutLen || U_FAILURE(err))
             {
 #ifdef VERBOSE_DEBUGGING
-                fprintf(stderr, "Length %d more than output buffer size %d\n",
+                fprintf(stdout, "Length %d more than output buffer size %d\n",
                         nLen, rnOutLen);
 #endif
                 hr = -1;
             }
             else
             {
-                //memcpy(lpOutBuffer,sInOut.getBuffer(),rnOutLen);  // works on Windows???
-                nLen = sInOut.extract(0, sInOut.length(), lpOutBuffer);
 #ifdef VERBOSE_DEBUGGING
-                fprintf(stderr, "actual nLen %d\n", nLen);
+            fprintf(stdout, "nLen %d, rnOutLen %d\n", nLen, rnOutLen);
 #endif
-                rnOutLen = nLen;
+                rnOutLen = nLen * sizeof(UChar);
                 //lpOutBuffer[rnOutLen] = '\0';   // null terminate in case extract didn't do it
 #ifdef VERBOSE_DEBUGGING
-                fprintf(stderr, "lpOutBuffer length = %u\n", (unsigned)strlen(lpOutBuffer));
-                fprintf(stderr, "lpOutBuffer: '%s'\n", lpOutBuffer);
+                fprintf(stdout, "lpOutBuffer length = %u (should be %d)\n",
+					(unsigned)strlen(lpOutBuffer), rnOutLen);
+                fprintf(stdout, "lpOutBuffer: '%s'\n", lpOutBuffer);
 #endif
             }
         }
@@ -419,11 +403,11 @@ int IcuTranslitEC_ConverterNameList_start(void)
 {
     return IcuTranslitEC::ConverterNameList_start();
 }
-char * IcuTranslitEC_ConverterNameList_next(void)
+const char * IcuTranslitEC_ConverterNameList_next(void)
 {
     return IcuTranslitEC::ConverterNameList_next();
 }
-char * IcuTranslitEC_GetDisplayName(char * strID)
+const char * IcuTranslitEC_GetDisplayName(char * strID)
 {
     return IcuTranslitEC::GetDisplayName(strID);
 }
@@ -454,14 +438,14 @@ int IcuTranslitEC_DoConvert (char * lpInBuffer, int nInLen,
 /*
 int main()
 {
-    fprintf(stderr, "main() BEGIN\n");
+    fprintf(stdout, "main() BEGIN\n");
 
     int count = get_ConverterNameList_start();
-    fprintf(stderr, "Got count %d\n", count);
+    fprintf(stdout, "Got count %d\n", count);
     for (int i = 0; i < count; i++)
     {
         char * name = get_ConverterNameList_next();
-        fprintf(stderr, "Got name '%s'\n", name);
+        fprintf(stdout, "Got name '%s'\n", name);
         free(name);
     }
 
@@ -469,21 +453,21 @@ int main()
     //char strName[100] = "Any-Remove";
     char strName[100] = "Any-Upper";
     char * displayName = getDisplayName(strName);
-    fprintf(stderr, "Display name '%s'\n", displayName);
+    fprintf(stdout, "Display name '%s'\n", displayName);
     free(displayName);
 
     Initialize(strName);
     
     char strIn[] = "abcde";
-    int szOut    = 1000;
+    int szOut    = MAXNAMESIZE;
     char strOut[szOut];
     int err = DoConvert(strIn, strlen(strIn), strOut, szOut);
     if (err != 0) {
         return err;
     }
-    fprintf(stderr, "Got %s\n", strOut);
+    fprintf(stdout, "Got %s\n", strOut);
 
-    fprintf(stderr, "main() END\n");
+    fprintf(stdout, "main() END\n");
     return 0;
 }
 */

@@ -15,11 +15,14 @@
 extern "C" {
 #endif
 
+	__declspec(dllexport)
     int IcuRegexEC_Initialize(char * strConverterID);
+	__declspec(dllexport)
     int IcuRegexEC_PreConvert (int eInEncodingForm, int& eInFormEngine,
                         int eOutEncodingForm, int& eOutFormEngine,
                         int& eNormalizeOutput, bool bForward,
                         int nInactivityWarningTimeOut);
+	__declspec(dllexport)
     int IcuRegexEC_DoConvert (char * lpInBuffer, int nInLen,
                         char * lpOutBuffer, int& rnOutLen);
 

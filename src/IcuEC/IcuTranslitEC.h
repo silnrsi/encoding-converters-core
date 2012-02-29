@@ -15,15 +15,21 @@
 extern "C" {
 #endif
 
+	__declspec(dllexport)
     int IcuTranslitEC_ConverterNameList_start(void);
-    char * IcuTranslitEC_ConverterNameList_next(void);
-    char * IcuTranslitEC_GetDisplayName(char * strID);
+	__declspec(dllexport)
+    const char * IcuTranslitEC_ConverterNameList_next(void);
+	__declspec(dllexport)
+    const char * IcuTranslitEC_GetDisplayName(char * strID);
 
+	__declspec(dllexport)
     int IcuTranslitEC_Initialize(char * strConverterID);
+	__declspec(dllexport)
     int IcuTranslitEC_PreConvert (int eInEncodingForm, int& eInFormEngine,
                         int eOutEncodingForm, int& eOutFormEngine,
                         int& eNormalizeOutput, bool bForward,
                         int nInactivityWarningTimeOut);
+	__declspec(dllexport)
     int IcuTranslitEC_DoConvert (char * lpInBuffer, int nInLen,
                         char * lpOutBuffer, int& rnOutLen);
 

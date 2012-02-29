@@ -77,6 +77,22 @@ namespace PyScriptEC
         fprintf(stderr, "ResetPython() END\n");
     }
 
+#ifdef _MSC_VER
+	// Copy the first len characters of src into a dynamically allocated string.
+	char * strndup(const char * src, size_t len)
+	{
+		if (src == NULL)
+			return NULL;
+		if (len < 0)
+			len = 0;
+		else if (len > strlen(src))
+			len = strlen(src);
+		char * dst = (char *)malloc(len + 1);
+		strncpy_s(dst, len + 1, src, len);
+		return dst;
+	}
+#endif
+
     int Load(void)
     {
         fprintf(stderr, "PyScript.CppLoad() BEGIN\n");
@@ -107,7 +123,7 @@ namespace PyScriptEC
             return hr;
 
         // put the rest of the arguments into an array for later processing
-        char * astrArgs[0]; 
+        char ** astrArgs = NULL; 
         int nAstrArgs = 0;
 
         // hook up to the Python DLL
