@@ -2,13 +2,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Text.RegularExpressions;
-
-using Microsoft.Win32;                  // for RegistryKey
 
 using ECInterfaces;                     // for IEncConverter
 
@@ -21,29 +15,32 @@ namespace SilEncConverters40
 	{
 		#region DLLImport Statements
 		// On Linux looks for libIcuConvEC.so (adds lib- and -.so)
-		[DllImport("IcuConvEC", EntryPoint="IcuConvEC_Initialize")]
-		static extern unsafe int CppInitialize (
+		[DllImport("IcuConvEC.dll", EntryPoint="IcuConvEC_Initialize")]
+		static extern int CppInitialize (
 			[MarshalAs(UnmanagedType.LPStr)] string strConverterSpec);
 		
-		[DllImport("IcuConvEC", EntryPoint="IcuConvEC_PreConvert")]
-		static extern unsafe int CppPreConvert(
+		[DllImport("IcuConvEC.dll", EntryPoint="IcuConvEC_PreConvert")]
+		static extern int CppPreconvert(
 			int eInEncodingForm, ref int eInFormEngine,
 			int eOutEncodingForm, ref int eOutFormEngine,
 			ref int eNormalizeOutput, bool bForward, int nInactivityWarningTimeOut);
 		
-		[DllImport("IcuConvEC", EntryPoint="IcuConvEC_DoConvert")]
+		[DllImport("IcuConvEC.dll", EntryPoint="IcuConvEC_DoConvert")]
 		static extern unsafe int CppDoConvert(
 			byte* lpInputBuffer, int nInBufLen,
 			byte* lpOutputBuffer, int *npOutBufLen);
 
-		[DllImport("IcuConvEC", EntryPoint="IcuConvEC_ConverterNameList_start")]
-		static extern unsafe int CppConverterNameList_start();
+		[DllImport("IcuConvEC.dll", EntryPoint="IcuConvEC_ConverterNameList_start")]
+		static extern int CppConverterNameList_start();
 
-		[DllImport("IcuConvEC", EntryPoint="IcuConvEC_ConverterNameList_next")]
-		static extern unsafe string CppConverterNameList_next();
+		[DllImport("IcuConvEC.dll", EntryPoint="IcuConvEC_ConverterNameList_next")]
+		[return : MarshalAs(UnmanagedType.LPStr)]
+		static extern string CppConverterNameList_next();
 
-		[DllImport("IcuConvEC", EntryPoint="IcuConvEC_GetDisplayName")]
-		static extern unsafe string CppGetDisplayName(string strID);
+		[DllImport("IcuConvEC.dll", EntryPoint="IcuConvEC_GetDisplayName")]
+		[return: MarshalAs(UnmanagedType.LPStr)]
+		static extern string CppGetDisplayName(
+			[MarshalAs(UnmanagedType.LPStr)] string strID);
 		#endregion DLLImport Statements
 
 		#region Member Variable Definitions
@@ -208,7 +205,7 @@ namespace SilEncConverters40
 			int encOutForm = (int)eOutEncodingForm;
 			int encOutEngine = (int)eOutFormEngine;
 			int normOutput = (int)eNormalizeOutput;
-			CppPreConvert(encInForm, ref encInEngine, encOutForm, ref encOutEngine,
+			CppPreconvert(encInForm, ref encInEngine, encOutForm, ref encOutEngine,
 				ref normOutput, bForward, 0);
 			eInFormEngine = (EncodingForm)encInEngine;
 			eOutFormEngine = (EncodingForm)encOutEngine;
@@ -246,12 +243,15 @@ namespace SilEncConverters40
 		/// <summary>
 		/// Gets the available ICU converter specifications.
 		/// </summary>
-		public static unsafe List<string> GetAvailableConverterSpecs()
+		public static List<string> GetAvailableConverterSpecs()
 		{
-			int count = CppConverterNameList_start();
-			List<string> specs = new List<string>(count);
-			for (int i = 0; i < count; ++i)
-				specs.Add( CppConverterNameList_next() );
+			var count = CppConverterNameList_start();
+			var specs = new List<string>(count);
+			for (var i = 0; i < count; ++i)
+			{
+				var name = CppConverterNameList_next();
+				specs.Add(name);
+			}
 			return specs;
 		}
 		
@@ -259,9 +259,21 @@ namespace SilEncConverters40
 		/// Gets the display name of the given ICU converter specification.
 		/// In practice, the output may be the same as the input.
 		/// </summary>
-		public static unsafe string GetDisplayName(string spec)
+		public static string GetDisplayName(string spec)
 		{
-			return CppGetDisplayName(spec);
+			try
+			{
+			var name = CppGetDisplayName(spec);
+			return name;
+			}
+			catch (Exception e)
+			{
+				// ReSharper disable LocalizableElement
+				Console.WriteLine("Exception caught: message = '{0}'", e.Message);
+				Console.WriteLine("Exception stack:\n{0}", e.StackTrace);
+				// ReSharper restore LocalizableElement
+				throw;
+			}
 		}
 		#endregion
 	}

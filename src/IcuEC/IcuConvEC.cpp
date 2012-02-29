@@ -9,12 +9,15 @@
 // download it or get it from a package such as FieldWorks.
 #include "unicode/ucnv.h"
 #include "unicode/uloc.h"
+#include "unicode/unistr.h"
 
 #include "CEncConverter.h"
 #include "IcuConvEC.h"
 
 // Uncomment the following line if you want verbose debugging output
 //#define VERBOSE_DEBUGGING
+
+#define MAXNAMESIZE 300
 
 // Keep this in a namespace so that it doesn't get confused with functions that
 // have the same name in other converters, for example Load().
@@ -252,7 +255,7 @@ namespace IcuConvEC
 	// RETURN VALUE
 	//    dynamically allocated copy of the converter's name, or NULL if no more
 	//
-	char * ConverterNameList_next(void)
+	const char * ConverterNameList_next(void)
 	{
 #ifdef VERBOSE_DEBUGGING
 		fprintf(stderr, "+");
@@ -265,7 +268,8 @@ namespace IcuConvEC
 			return NULL;
 		}
 		const char *convName = ucnv_getAvailableName(m_iConvName++);
-		return strdup(convName);
+		return convName;
+		//return strdup(convName);
 	}
 
 	///////////////////////////////////////////////////////////////////////////
@@ -278,7 +282,7 @@ namespace IcuConvEC
 	// RETURN VALUE
 	//    dynamically allocated copy of the display name of the given converter
 	//
-	char * GetDisplayName(char * strID)
+	const char * GetDisplayName(char * strID)
 	{
 #ifdef VERBOSE_DEBUGGING
 		fprintf(stderr, "IcuConvEC::GetDisplayName(\"%s\") BEGIN\n", strID);
@@ -288,10 +292,10 @@ namespace IcuConvEC
 		UConverter * conv = m_pConverter;
 		if (m_pConverter == NULL || ucnv_compareNames(strID, m_strConverterSpec) != 0)
 			conv = ucnv_open(strID, &err);
-		UChar buffer[1000];
-		int32_t length = ucnv_getDisplayName(conv, locale, buffer, 1000, &err);
-		if (length >= 1000)
-			length = 999;
+		UChar buffer[MAXNAMESIZE];
+		int32_t length = ucnv_getDisplayName(conv, locale, buffer, MAXNAMESIZE, &err);
+		if (length >= MAXNAMESIZE)
+			length = MAXNAMESIZE - 1;
 		buffer[length] = 0;
 		if (sizeof(UChar) == sizeof(char))
 		{
@@ -302,13 +306,20 @@ namespace IcuConvEC
 			return res;
 		}
 		UnicodeString strDisplayName(buffer, length);
-		char * res = UniStr_to_CharStar(strDisplayName);
+		const char * res = UniStr_to_CharStar(strDisplayName);
 		if (conv != m_pConverter)
 			ucnv_close(conv);
+		static char chbuf[MAXNAMESIZE];
+		size_t len = strlen(res);
+		if (len >= MAXNAMESIZE)
+			len = MAXNAMESIZE - 1;
+		strncpy(chbuf, res, len);
+		chbuf[len] = 0;
+		free((void *)res);
 #ifdef VERBOSE_DEBUGGING
-		fprintf(stderr, "IcuConvEC::GetDisplayName() => \"%s\" END\n", res);
+		fprintf(stderr, "IcuConvEC::GetDisplayName() => \"%s\" END\n", chbuf);
 #endif
-		return res;
+		return (const char *)chbuf;
 	}
 
 	///////////////////////////////////////////////////////////////////////////
@@ -475,12 +486,12 @@ int IcuConvEC_ConverterNameList_start(void)
 	return IcuConvEC::ConverterNameList_start();
 }
 //*****************************************************************************
-char * IcuConvEC_ConverterNameList_next(void)
+const char * IcuConvEC_ConverterNameList_next(void)
 {
 	return IcuConvEC::ConverterNameList_next();
 }
 //*****************************************************************************
-char * IcuConvEC_GetDisplayName(char * strID)
+const char * IcuConvEC_GetDisplayName(char * strID)
 {
 	return IcuConvEC::GetDisplayName(strID);
 }

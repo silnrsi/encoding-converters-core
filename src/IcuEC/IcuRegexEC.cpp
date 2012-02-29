@@ -59,7 +59,24 @@ namespace IcuRegexEC
 #endif
     }
 
-    // Allocates a utf-8 (on Linux) char * from a UnicodeString.
+
+#ifdef _MSC_VER
+	// Copy the first len characters of src into a dynamically allocated string.
+	char * strndup(const char * src, size_t len)
+	{
+		if (src == NULL)
+			return NULL;
+		if (len < 0)
+			len = 0;
+		else if (len > strlen(src))
+			len = strlen(src);
+		char * dst = (char *)malloc(len + 1);
+		strncpy_s(dst, len + 1, src, len);
+		return dst;
+	}
+#endif
+
+	// Allocates a utf-8 (on Linux) char * from a UnicodeString.
     // After calling this function, be sure to free the result.
     char * UniStr_to_CharStar(UnicodeString uniStr, int & len)
     {

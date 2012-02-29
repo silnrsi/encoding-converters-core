@@ -12,3 +12,12 @@ All*Files.lst
 cp2fw.sh
 *.pidb
 Makefile
+src/*/bin
+src/*/obj
+*.user
+src/*/windows/bin
+src/*/windows/obj
+src/*/windows/Debug
+*.suo
+*.ncb
+_ReSharper.EncConverters 2008

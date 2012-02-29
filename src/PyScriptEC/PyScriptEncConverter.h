@@ -44,11 +44,14 @@ typedef enum PyStringDataType
 extern "C" {
 #endif
 
+	__declspec(dllexport)
     int PyScriptEC_Initialize(char * strScript, char * strDir);
+	__declspec(dllexport)
     int PyScriptEC_PreConvert (int eInEncodingForm, int& eInFormEngine,
                         int eOutEncodingForm, int& eOutFormEngine,
                         int& eNormalizeOutput, bool bForward,
                         int nInactivityWarningTimeOut);
+	__declspec(dllexport)
     int PyScriptEC_DoConvert (char * lpInBuffer, int nInLen, char * lpOutBuffer,
                         int& rnOutLen);
 

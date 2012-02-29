@@ -16,7 +16,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
-    <ProductVersion>9.0.30729</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{3E4B908A-4F96-43C5-981B-1AA4B73CCC26}</ProjectGuid>
     <SccProjectName>
@@ -49,7 +49,7 @@
     </SccAuxPath>
     <SignAssembly>true</SignAssembly>
     <OldToolsVersion>3.5</OldToolsVersion>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>true</DebugSymbols>
@@ -99,16 +99,6 @@
     <Compile Include="AutoConfigDialog.Designer.cs">
       <DependentUpon>AutoConfigDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="CcAutoConfigDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="CcAutoConfigDialog.designer.cs">
-      <DependentUpon>CcAutoConfigDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="CcEncConverter.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="CcEncConverterConfig.cs" />
     <Compile Include="CmpdAutoConfigDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -187,10 +177,6 @@
       <DependentUpon>AutoConfigDialog.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="CcAutoConfigDialog.resx">
-      <DependentUpon>CcAutoConfigDialog.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="CmpdAutoConfigDialog.resx">
       <SubType>Designer</SubType>
       <DependentUpon>CmpdAutoConfigDialog.cs</DependentUpon>
@@ -223,9 +209,6 @@
       <DependentUpon>TecAutoConfigDialog.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <Content Include="..\..\output\common\EC\Plugins\EC 4.0.0.0 Plugin Details.xml">
-      <Link>EC 4.0.0.0 Plugin Details.xml</Link>
-    </Content>
     <Content Include="buildinclude.xml" />
     <Content Include="TRFFC17.ICO" />
     <None Include="..\..\installer\EC_40.mm.wxs">
@@ -241,8 +224,8 @@
     <None Include="ECPlugins.xsx">
       <DependentUpon>ECPlugins.xsd</DependentUpon>
     </None>
+    <None Include="encConv.snk" />
     <None Include="FieldWorks.snk" />
-    <None Include="SEC_EC_40.mm.wxs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="lib\" />

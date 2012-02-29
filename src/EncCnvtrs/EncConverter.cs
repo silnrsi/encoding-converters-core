@@ -723,8 +723,7 @@ namespace SilEncConverters40
                     System.Diagnostics.Debug.WriteLine("Calling DoConvert from EC.InternalConvertEx");
                     DoConvert(lpInBuffer, nBufSize, lpOutBuffer, ref nOutLen);
                     System.Diagnostics.Debug.WriteLine("EC Output length " + nOutLen.ToString());
-
-                    byte[] baOut = new byte[nOutLen];
+                	byte[] baOut = new byte[nOutLen];
                     ECNormalizeData.ByteStarToByteArr(lpOutBuffer, nOutLen, baOut);
                     dispBytes("Output In Bytes", baOut);
                     System.Diagnostics.Debug.WriteLine("EC Got val '" +
