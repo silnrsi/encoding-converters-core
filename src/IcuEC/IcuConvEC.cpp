@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 
 // These headers are from the ICU library. If you don't have it, you may have to
 // download it or get it from a package such as FieldWorks.
@@ -268,8 +269,11 @@ namespace IcuConvEC
 			return NULL;
 		}
 		const char *convName = ucnv_getAvailableName(m_iConvName++);
+#ifdef _MSC_VER
 		return convName;
-		//return strdup(convName);
+#else
+		return strdup(convName);
+#endif
 	}
 
 	///////////////////////////////////////////////////////////////////////////
@@ -297,29 +301,25 @@ namespace IcuConvEC
 		if (length >= MAXNAMESIZE)
 			length = MAXNAMESIZE - 1;
 		buffer[length] = 0;
-		if (sizeof(UChar) == sizeof(char))
-		{
-			char * res = strdup((char *)buffer);
 #ifdef VERBOSE_DEBUGGING
-			fprintf(stderr, "IcuConvEC::GetDisplayName() => \"%s\" END\n", res);
+		fprintf(stderr, "IcuConvEC::GetDisplayName() => \"%s\" END\n", buffer);
 #endif
-			return res;
-		}
 		UnicodeString strDisplayName(buffer, length);
-		const char * res = UniStr_to_CharStar(strDisplayName);
+		const char * name = UniStr_to_CharStar(strDisplayName);
 		if (conv != m_pConverter)
 			ucnv_close(conv);
+#ifdef _MSC_VER
 		static char chbuf[MAXNAMESIZE];
-		size_t len = strlen(res);
+		size_t len = strlen(name);
 		if (len >= MAXNAMESIZE)
 			len = MAXNAMESIZE - 1;
-		strncpy(chbuf, res, len);
+		strncpy(chbuf, name, len);
 		chbuf[len] = 0;
-		free((void *)res);
-#ifdef VERBOSE_DEBUGGING
-		fprintf(stderr, "IcuConvEC::GetDisplayName() => \"%s\" END\n", chbuf);
-#endif
+		free((void *)name);
 		return (const char *)chbuf;
+#else
+		return name;
+#endif
 	}
 
 	///////////////////////////////////////////////////////////////////////////

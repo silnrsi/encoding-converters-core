@@ -715,6 +715,8 @@ namespace SilEncConverters40
             	var codeBase = Assembly.GetExecutingAssembly().CodeBase;
 				var uri = new Uri(codeBase);
             	var filepath = uri.GetComponents(UriComponents.Path, UriFormat.Unescaped);
+				if (Util.IsUnix && codeBase.StartsWith("file:///") && !filepath.StartsWith("/"))
+					return Path.GetDirectoryName("/" + filepath);
 				return Path.GetDirectoryName(filepath);
             }
         }
