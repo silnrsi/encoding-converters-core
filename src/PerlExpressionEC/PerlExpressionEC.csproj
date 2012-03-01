@@ -50,6 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="PerlExpressionAutoConfigDialog.cs">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="PerlExpressionEncConverter.cs" />
     <Compile Include="PerlExpressionEncConverterConfig.cs" />

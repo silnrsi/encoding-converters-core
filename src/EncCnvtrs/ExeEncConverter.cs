@@ -142,8 +142,11 @@ namespace SilEncConverters40
             {
                 if( m_psi == null )
                 {
-                    m_psi = new ProcessStartInfo(Path.Combine(WorkingDir, ExeName));
-                    m_psi.Arguments = Arguments;
+                	var progpath = Path.Combine(WorkingDir, ExeName);
+					if (!File.Exists(progpath))
+						progpath = ExeName;		// assume program is in the user's path.
+					m_psi = new ProcessStartInfo(progpath);
+					m_psi.Arguments = Arguments;
                     m_psi.WorkingDirectory = WorkingDir;
                     m_psi.UseShellExecute = false;
                     m_psi.CreateNoWindow = true;
@@ -252,16 +255,17 @@ namespace SilEncConverters40
                 
                 // call the helper that calls the exe
                 string strOutput = DoExeCall(strInput);
-                Console.Error.WriteLine("Got result from system call: " + strOutput);
-                byte[] baOut2 = System.Text.Encoding.Unicode.GetBytes(strOutput);  // easier to read
+#if DEBUG
+				Console.Error.WriteLine("Got result from system call: " + strOutput);
+                byte[] baOut2 = Encoding.Unicode.GetBytes(strOutput);  // easier to read
                 dispBytes("Output UTF16LE", baOut2);
 
-                System.IO.TextWriter tw = new System.IO.StreamWriter(
-                    "/media/winD/Jim/computing/SEC_on_linux/testing/returning.txt");
+				TextWriter tw = new StreamWriter(
+					Path.Combine(Path.GetTempPath(), "returning.txt"));
                 tw.WriteLine("input: '"  + strInput + "'");
                 tw.WriteLine("output: '" + strOutput + "'");
                 tw.Close();
-
+#endif
                 // if there's a response...
                 if( !String.IsNullOrEmpty(strOutput) )
                 {
