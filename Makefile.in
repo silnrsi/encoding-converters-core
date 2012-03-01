@@ -35,6 +35,7 @@ all:
 	@cp -pR redist/Help $(OUTDIR)
 	@cp -p redist/libTECkit*.so $(OUTDIR)
 	@cp -p src/EncCnvtrs/SilEncConverters40.dll.config $(OUTDIR)
+	@cp -p src/CcEC/CcEC.dll.config $(OUTDIR)
 	@cp -p src/TestEncCnvtrs/TestEncCnvtrs.dll.config $(OUTDIR)
 
 release:
@@ -50,6 +51,7 @@ release:
 	@cp -pR redist/Help $(RELEASEOUT)
 	@cp -p redist/libTECkit*.so $(RELEASEOUT)
 	@cp -p src/EncCnvtrs/SilEncConverters40.dll.config $(RELEASEOUT)
+	@cp -p src/CcEC/CcEC.dll.config $(RELEASEOUT)
 	@cp -p src/TestEncCnvtrs/TestEncCnvtrs.dll.config $(RELEASEOUT)
 
 clean:
@@ -58,10 +60,10 @@ clean:
 	  echo making in $$subdir; \
 	  (cd $$subdir && $(MAKE) clean) || true; \
 	done
-	@(cd $(OUTDIR) && rm -f *.xml) || true
-	@(cd $(OUTDIR) && rm -rf EC) || true
-	@(cd $(RELEASEOUT) && rm -f *.xml) || true
-	@(cd $(RELEASEOUT) && rm -rf EC) || true
+	@if [ -d $(OUTDIR) ]; then (cd $(OUTDIR) && rm -f *.xml); fi || true
+	@if [ -d $(OUTDIR) ]; then (cd $(OUTDIR) && rm -rf EC); fi || true
+	@if [ -d $(RELEASEOUT) ]; then (cd $(RELEASEOUT) && rm -f *.xml); fi || true
+	@if [ -d $(RELEASEOUT) ]; then (cd $(RELEASEOUT) && rm -rf EC); fi || true
 	@rm -f *~
 
 distclean: clean
@@ -73,6 +75,7 @@ distclean: clean
 	@rm -f src/stamp-h1
 	@rm -f autogen.err TestResult.xml src/TestEncCnvtrs/TestEncCnvtrs.pidb
 	@rm -rf autom4te.cache output build/Obj src/TestEncCnvtrs/test-results
+	@rm -rf $(OUTDIR) $(RELEASEDIR)
 
 install: release
 	@for subdir in $(SRCDIRS); do \
