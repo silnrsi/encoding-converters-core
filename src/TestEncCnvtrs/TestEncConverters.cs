@@ -67,7 +67,8 @@ namespace TestEncCnvtrs
 				key.Close();
 				key = null;
 			}
-			if (!String.IsNullOrEmpty(m_repoFile) && File.Exists(m_repoFile) &&
+			if (!String.IsNullOrEmpty(m_repoFile) &&
+				File.Exists(m_repoFile) &&
 				!File.Exists(m_repoFile + "-RESTOREME"))
 			{
 				File.Move(m_repoFile, m_repoFile + "-RESTOREME");
@@ -134,6 +135,12 @@ namespace TestEncCnvtrs
 				m_encConverters.Remove("UnitTesting-Senufo-To-Unicode");
 			if (m_encConverters["UnitTesting-Unicode-To-Senufo"] != null)
 				m_encConverters.Remove("UnitTesting-Unicode-To-Senufo");
+			if (m_encConverters["UnitTesting-Ann-To-Unicode"] != null)
+				m_encConverters.Remove("UnitTesting-Ann-To-Unicode");
+			if (m_encConverters["UnitTesting-Unicode-To-Ann"] != null)
+				m_encConverters.Remove("UnitTesting-Unicode-To-Ann");
+			if (m_encConverters["UnitTesting-ReverseString"] != null)
+				m_encConverters.Remove("UnitTesting-ReverseString");
 		}
 		
 		/// --------------------------------------------------------------------
@@ -151,7 +158,8 @@ namespace TestEncCnvtrs
 				File.Delete(m_repoFile);
 				m_fWroteRepoFile = false;
 			}
-			if (!String.IsNullOrEmpty(m_repoFile) && File.Exists(m_repoFile + "-RESTOREME"))
+			if (!String.IsNullOrEmpty(m_repoFile) &&
+				File.Exists(m_repoFile + "-RESTOREME"))
 			{
 				File.Move(m_repoFile + "-RESTOREME", m_repoFile);
 			}
@@ -283,19 +291,6 @@ namespace TestEncCnvtrs
 			Assert.LessOrEqual(1, countKeys, "Should have at least one key now.");
 			IEncConverter ec = m_encConverters["UnitTesting-Latin-Hebrew"];
 			Assert.IsNotNull(ec);
-//TestLatin_GreekTranslit failed:   Latin-Greek transliterator should work properly!
-//  Expected string length 52 but was 104. Strings differ at index 0.
-//  Expected: "·;ἈΒΚΔΕΦΓἹΙΚΛΜΝΟΠΚΡΣΤΥΥΥΞΥΖαβκδεφγἱικλμνοπκρστυυυξυζ"
-//  But was:  "�������9���������������������..."
-//  -----------^
-//
-//TestGreek_LatinTranslit failed:   Latin-Greek transliterator should work properly!
-//  Expected string length 84 but was 168. Strings differ at index 1.
-//  Expected: "i?Á:ÉḖÍÓÝṒḯABGDEZĒTHIKLMN'XOPRSTYPHCHPSŌÏŸáéḗíÿ́abgdezēthiklm..."
-//  But was:  "i?�:����R/ABGDEZTHIKLMN'XOPRS..."
-//  ------------^
-//
-//19 Tests Run; 3 Tests Failed
 			string output = ec.Convert(m_inputLatin);
 			Assert.AreEqual(m_transToHebrew, output, "Instantiated ICU.trans converter should work properly!");
 
@@ -314,16 +309,6 @@ namespace TestEncCnvtrs
 			IEncConverter ecRev = m_encConverters["UnitTesting-Hebrew-Latin"];
 			Assert.IsNotNull(ecRev);
 			string outputRev = ecRev.Convert(m_inputHebrew);
-//			var xxx = outputRev.ToCharArray();
-//			if (xxx != null)
-//			{
-//				Console.WriteLine("Hebrew-Latin output characters");
-//				for (int i = 0; i < xxx.Length; ++i)
-//				{
-//					char ch = xxx[i];
-//					Console.WriteLine("Latin[{0:d2}] = '{1}' = {2:d5} = \\u{2:x4}", i, ch, (int)ch);
-//				}
-//			}
 			Assert.AreEqual(m_transToLatin, outputRev, "Second instantiated ICU.trans converter should work properly!");
 
 			m_encConverters.Remove("UnitTesting-Latin-Hebrew");
@@ -554,6 +539,86 @@ namespace TestEncCnvtrs
 			
 			m_encConverters.Remove("UnitTesting-Senufo-To-Unicode");
 			m_encConverters.Remove("UnitTesting-Unicode-To-Senufo");
+			int countAfter = m_encConverters.Count;
+			Assert.AreEqual(countOrig, countAfter, "Should have the original number of converters now.");
+		}
+
+		private readonly byte[] m_bytesAnn = new byte[] {0xE9, 0x4C, 0x83, 0xE7, 0xA2 };
+		private const string m_utf16Ann = "\u0915\u093F\u0924\u093E\u092C";
+
+		[Test]
+		public void AddCcEncConverters()
+		{
+			int countOrig = m_encConverters.Count;
+			var dir = GetTestSourceFolder();
+			string filename1 = Path.Combine(dir, "ann2unicode.cct");
+			m_encConverters.Add("UnitTesting-Ann-To-Unicode", filename1,
+				ConvType.Legacy_to_from_Unicode,
+				"LEGACY", "UNICODE", ProcessTypeFlags.UnicodeEncodingConversion);
+			int countNew = m_encConverters.Count;
+			Assert.AreEqual(countOrig + 1, countNew, "Should have one new converter (CC) now");
+			string[] encodings = m_encConverters.Encodings;
+			Assert.LessOrEqual(2, encodings.Length, "Should have at least 2 encodings now.");
+			string[] mappings = m_encConverters.Mappings;
+			Assert.LessOrEqual(1, mappings.Length, "Should have at least 1 mapping now.");
+			int countKeys = m_encConverters.Keys.Count;
+			int countValues = m_encConverters.Values.Count;
+			Assert.AreEqual(countKeys, countValues, "Should have same number of keys and values!");
+			Assert.LessOrEqual(1, countKeys, "Should have at least one key now.");
+			IEncConverter ec = m_encConverters["UnitTesting-Ann-To-Unicode"];
+			Assert.IsNotNull(ec, "Added converter UnitTesting-Ann-To-Unicode should exist!");
+			string input = TestUtil.GetPseudoStringFromBytes(m_bytesAnn);
+			string output = ec.Convert(input);
+			Assert.AreEqual(m_utf16Ann, output, "ann2unicode.cct should convert data properly!");
+
+			string filename2 = Path.Combine(dir, "unicode2ann.cct");
+			m_encConverters.Add("UnitTesting-Unicode-To-Ann", filename2,
+				ConvType.Unicode_to_from_Legacy,
+				"UNICODE", "LEGACY", ProcessTypeFlags.UnicodeEncodingConversion);
+			countNew = m_encConverters.Count;
+			Assert.AreEqual(countOrig + 2, countNew, "Should have two new converters now.");
+			mappings = m_encConverters.Mappings;
+			Assert.LessOrEqual(2, mappings.Length, "Should have at least two mappings now.");
+			countKeys = m_encConverters.Keys.Count;
+			countValues = m_encConverters.Values.Count;
+			Assert.AreEqual(countKeys, countValues, "Should have same number of keys and values!");
+			Assert.LessOrEqual(2, countKeys, "Should have at least two keys now.");
+			IEncConverter ecRev = m_encConverters["UnitTesting-Unicode-To-Ann"];
+			Assert.IsNotNull(ecRev);
+			string outputRaw = ecRev.Convert(m_utf16Ann);
+			byte[] output2 = TestUtil.GetBytesFromPseudoString(outputRaw);
+			Assert.AreEqual(m_bytesAnn, output2, "unicode2ann.cct should convert data properly!");
+
+			m_encConverters.Remove("UnitTesting-Ann-To-Unicode");
+			m_encConverters.Remove("UnitTesting-Unicode-To-Ann");
+			int countAfter = m_encConverters.Count;
+			Assert.AreEqual(countOrig, countAfter, "Should have the original number of converters now.");
+		}
+
+		[Test]
+		public void AddPerlEncConverter()
+		{
+			int countOrig = m_encConverters.Count;
+			m_encConverters.Add("UnitTesting-ReverseString", "$strOut = reverse($strIn);",
+				ConvType.Unicode_to_from_Unicode,
+				"UNICODE", "UNICODE", ProcessTypeFlags.PerlExpression);
+			int countNew = m_encConverters.Count;
+			Assert.AreEqual(countOrig + 1, countNew, "Should have one new converter (ICU regex) now");
+			string[] encodings = m_encConverters.Encodings;
+			Assert.LessOrEqual(1, encodings.Length, "Should have at least 1 encoding now.");
+			string[] mappings = m_encConverters.Mappings;
+			Assert.LessOrEqual(1, mappings.Length, "Should have at least 1 mapping now.");
+			int countKeys = m_encConverters.Keys.Count;
+			int countValues = m_encConverters.Values.Count;
+			Assert.AreEqual(countKeys, countValues, "Should have same number of keys and values!");
+			Assert.LessOrEqual(1, countKeys, "Should have at least one key now.");
+			IEncConverter ec = m_encConverters["UnitTesting-ReverseString"];
+			Assert.IsNotNull(ec);
+			string output = ec.Convert("This is a test.  This is only a test!");
+			Assert.AreEqual("!tset a ylno si sihT  .tset a si sihT", output,
+				"Instantiated SIL.perl converter should work properly!");
+
+			m_encConverters.Remove("UnitTesting-ReverseString");
 			int countAfter = m_encConverters.Count;
 			Assert.AreEqual(countOrig, countAfter, "Should have the original number of converters now.");
 		}

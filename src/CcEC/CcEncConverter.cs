@@ -20,22 +20,15 @@ namespace SilEncConverters40
 	public class CcEncConverter : EncConverter
     {
         #region DLLImport Statements
-		private const string dllName
-#if !__MonoCS__
-        = "CC32";
-#else // __MonoCS__
-        = "cc";     //libcc.so
-#endif // __MonoCS__
-
-        [DllImport(dllName, SetLastError=true)]
+        [DllImport("CC32.dll", SetLastError=true)]
         static extern unsafe int CCLoadTable(byte* lpszCCTableFile,
             Int32* hpLoadHandle,
             Int32 hinstCurrent);
 
-        [DllImport(dllName, SetLastError=true)]
+        [DllImport("CC32.dll", SetLastError=true)]
         static extern unsafe int CCUnloadTable(Int32 hUnlHandle);
 
-        [DllImport(dllName, SetLastError=true)]
+        [DllImport("CC32.dll", SetLastError=true)]
         static extern unsafe int CCProcessBuffer(Int32 hProHandle,
             byte* lpInputBuffer, int nInBufLen,
             byte* lpOutputBuffer, int *npOutBufLen);
