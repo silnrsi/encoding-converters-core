@@ -283,6 +283,19 @@ namespace TestEncCnvtrs
 			Assert.LessOrEqual(1, countKeys, "Should have at least one key now.");
 			IEncConverter ec = m_encConverters["UnitTesting-Latin-Hebrew"];
 			Assert.IsNotNull(ec);
+//TestLatin_GreekTranslit failed:   Latin-Greek transliterator should work properly!
+//  Expected string length 52 but was 104. Strings differ at index 0.
+//  Expected: "·;ἈΒΚΔΕΦΓἹΙΚΛΜΝΟΠΚΡΣΤΥΥΥΞΥΖαβκδεφγἱικλμνοπκρστυυυξυζ"
+//  But was:  "�������9���������������������..."
+//  -----------^
+//
+//TestGreek_LatinTranslit failed:   Latin-Greek transliterator should work properly!
+//  Expected string length 84 but was 168. Strings differ at index 1.
+//  Expected: "i?Á:ÉḖÍÓÝṒḯABGDEZĒTHIKLMN'XOPRSTYPHCHPSŌÏŸáéḗíÿ́abgdezēthiklm..."
+//  But was:  "i?�:����R/ABGDEZTHIKLMN'XOPRS..."
+//  ------------^
+//
+//19 Tests Run; 3 Tests Failed
 			string output = ec.Convert(m_inputLatin);
 			Assert.AreEqual(m_transToHebrew, output, "Instantiated ICU.trans converter should work properly!");
 
@@ -484,15 +497,10 @@ namespace TestEncCnvtrs
 		{
 			var codeBase = Assembly.GetExecutingAssembly().CodeBase;
 			string filepath;
-			if (codeBase[0] == '/')
-			{
-				filepath = Path.GetDirectoryName(codeBase);
-			}
-			else
-			{
-				var uri = new Uri(Assembly.GetExecutingAssembly().CodeBase);
-				filepath = uri.GetComponents(UriComponents.Path, UriFormat.Unescaped);
-			}
+			var uri = new Uri(Assembly.GetExecutingAssembly().CodeBase);
+			filepath = uri.GetComponents(UriComponents.Path, UriFormat.Unescaped);
+			if (Util.IsUnix && codeBase.StartsWith("file:///") && !filepath.StartsWith("/"))
+				filepath = "/" + filepath;
 			var configDir = Path.GetDirectoryName(filepath);
 			var outDir = Path.GetDirectoryName(configDir);
 			var dir = Path.GetDirectoryName(outDir);

@@ -14,21 +14,22 @@
 extern "C"
 {
 #endif
-	__declspec(dllexport)
-    int IcuConvEC_ConverterNameList_start(void);
-	__declspec(dllexport)
-    const char * IcuConvEC_ConverterNameList_next(void);
-	__declspec(dllexport)
-    const char * IcuConvEC_GetDisplayName(char * strID);
 
-	__declspec(dllexport)
-    int IcuConvEC_Initialize(char * strConverterID);
-	__declspec(dllexport)
-    int IcuConvEC_PreConvert(int eInEncodingForm, int & eInFormEngine,
+#ifdef _MSC_VER
+#define DLLEXPORT __declspec(dllexport)
+#else
+#define DLLEXPORT
+#endif
+
+    DLLEXPORT int IcuConvEC_ConverterNameList_start(void);
+    DLLEXPORT const char * IcuConvEC_ConverterNameList_next(void);
+    DLLEXPORT const char * IcuConvEC_GetDisplayName(char * strID);
+
+    DLLEXPORT int IcuConvEC_Initialize(char * strConverterID);
+    DLLEXPORT int IcuConvEC_PreConvert(int eInEncodingForm, int & eInFormEngine,
 		int eOutEncodingForm, int & eOutFormEngine,
 		int & eNormalizeOutput, bool bForward, int nInactivityWarningTimeOut);
-	__declspec(dllexport)
-    int IcuConvEC_DoConvert(char * lpInBuffer, int nInLen, char * lpOutBuffer, int & rnOutLen);
+    DLLEXPORT int IcuConvEC_DoConvert(char * lpInBuffer, int nInLen, char * lpOutBuffer, int & rnOutLen);
 
 #ifdef __cplusplus
 }   // Close the extern C.

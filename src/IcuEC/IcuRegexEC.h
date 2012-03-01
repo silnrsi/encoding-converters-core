@@ -15,15 +15,18 @@
 extern "C" {
 #endif
 
-	__declspec(dllexport)
-    int IcuRegexEC_Initialize(char * strConverterID);
-	__declspec(dllexport)
-    int IcuRegexEC_PreConvert (int eInEncodingForm, int& eInFormEngine,
+#ifdef _MSC_VER
+#define DLLEXPORT __declspec(dllexport)
+#else
+#define DLLEXPORT
+#endif
+
+    DLLEXPORT int IcuRegexEC_Initialize(char * strConverterID);
+    DLLEXPORT int IcuRegexEC_PreConvert (int eInEncodingForm, int& eInFormEngine,
                         int eOutEncodingForm, int& eOutFormEngine,
                         int& eNormalizeOutput, bool bForward,
                         int nInactivityWarningTimeOut);
-	__declspec(dllexport)
-    int IcuRegexEC_DoConvert (char * lpInBuffer, int nInLen,
+    DLLEXPORT int IcuRegexEC_DoConvert (char * lpInBuffer, int nInLen,
                         char * lpOutBuffer, int& rnOutLen);
 
 #ifdef __cplusplus
