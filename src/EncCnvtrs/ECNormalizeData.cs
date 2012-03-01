@@ -113,9 +113,9 @@ namespace SilEncConverters40
                             nCodePageIn = EncConverters.cnSymbolFontCodePage;
                         }
 
-                        // Narrowizing by code page 0 doesn't seem to be what we want on Linux.
-                        // Treating it as a symbol font or stripping off the low byte works better.
-                        if (IsUnix && (nCodePageIn == 0))
+                        // Narrowizing by code page 0 doesn't seem to be what we want.
+                        // Stripping off the high byte of each char works better.
+                        if (nCodePageIn == 0)
                         {
                             ba = BruteForceNarrowize (strInput, nInLen);
                         }
@@ -344,9 +344,9 @@ namespace SilEncConverters40
 
                         nCharsLen = nItems = nOutLen;
 
-                        // Narrowizing by code page 0 doesn't seem to be what we want on Linux.
-                        // Treating it as a symbol font or stripping off the low byte works better.
-                        if (IsUnix && (nCodePageOut == 0))
+                        // Widening by code page 0 doesn't seem to be what we want.
+                        // Copying the byte to each char, leaving the upper half all zero, works better.
+                        if (nCodePageOut == 0)
                         {
                             caOut = BruteForceWiden (nCodePageOut, baOut, nCharsLen);
                         }

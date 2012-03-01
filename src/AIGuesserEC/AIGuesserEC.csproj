@@ -168,7 +168,6 @@
       <DependentUpon>AdaptIt KB.xsd</DependentUpon>
     </None>
     <None Include="app.manifest" />
-    <None Include="encConv.snk" />
     <None Include="FieldWorks.snk" />
   </ItemGroup>
   <ItemGroup>

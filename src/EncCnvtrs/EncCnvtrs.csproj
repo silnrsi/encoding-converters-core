@@ -224,7 +224,6 @@
     <None Include="ECPlugins.xsx">
       <DependentUpon>ECPlugins.xsd</DependentUpon>
     </None>
-    <None Include="encConv.snk" />
     <None Include="FieldWorks.snk" />
   </ItemGroup>
   <ItemGroup>
