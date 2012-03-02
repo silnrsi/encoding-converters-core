@@ -157,7 +157,7 @@
     <value>couldn't find the requested name: '{0}'</value>
   </data>
   <data name="IDS_kStatus_Exception" xml:space="preserve">
-    <value>an internal error has occurred in the TECkit DLL</value>
+    <value>an internal error has occurred in one of the converter DLLs</value>
   </data>
   <data name="IDS_kStatus_BadMappingVersion" xml:space="preserve">
     <value>compiled mapping is not a version we can handle</value>
@@ -193,7 +193,7 @@
     <value>This converter is a plug-in and must be uninstalled rather than removed;</value>
   </data>
   <data name="IDS_Exception" xml:space="preserve">
-    <value>an internal error has occurred in EncConverters and/or the converter DLLs (TECkit or CC)</value>
+    <value>an internal error has occurred in EncConverters and/or the one of the converter DLLs</value>
   </data>
   <data name="IDS_InvalidCharFound" xml:space="preserve">
     <value>No mapping was found from the source to the target encoding</value>

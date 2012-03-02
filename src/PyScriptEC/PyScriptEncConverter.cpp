@@ -23,6 +23,9 @@
 #include "CEncConverter.h"
 #include "PyScriptEncConverter.h"
 
+// Uncomment the following line if you want verbose debugging output
+#define VERBOSE_DEBUGGING
+
 // Keep this in a namespace so that it doesn't get confused with functions that
 // have the same name in other converters, for example Load().
 namespace PyScriptEC
@@ -37,22 +40,20 @@ namespace PyScriptEC
     time_t     m_timeLastModified   = 0;
     char *     m_strFileSpec        = NULL;
     char *     m_strScriptDir       = NULL;
+    char *     m_strScriptFile      = NULL;
     char *     m_strScriptName      = NULL;
     char *     m_strFuncName        = NULL;
 
     PyStringDataType    m_eStringDataTypeIn;
     PyStringDataType    m_eStringDataTypeOut;
 
-    const char * clpszPyScriptDefFuncName = ("Convert");
-
     bool IsModuleLoaded() { return (m_pModule != 0); };
     void ResetPython()
     {
+#ifdef VERBOSE_DEBUGGING
         fprintf(stderr, "ResetPython() BEGIN\n");
-        //m_strScriptName = NULL;
-        //m_strFuncName   = NULL;
-
-        if( m_pArgs != 0 )
+#endif
+         if( m_pArgs != 0 )
         {
             Py_DecRef(m_pArgs);
             m_pArgs = 0;
@@ -62,7 +63,9 @@ namespace PyScriptEC
         {
             // this means we *were* doing something, so release everything (not the 
             //  func itself, but the module and then Finalize)
+#ifdef VERBOSE_DEBUGGING
             fprintf(stderr, "releasing what we were doing...\n");
+#endif
             Py_DecRef(m_pModule);
             m_pModule = 0;
 
@@ -74,7 +77,9 @@ namespace PyScriptEC
             
             Py_Finalize();
         }
+#ifdef VERBOSE_DEBUGGING
         fprintf(stderr, "ResetPython() END\n");
+#endif
     }
 
 #ifdef _MSC_VER
@@ -95,16 +100,25 @@ namespace PyScriptEC
 
     int Load(void)
     {
+#ifdef VERBOSE_DEBUGGING
         fprintf(stderr, "PyScript.CppLoad() BEGIN\n");
+#endif
         int hr = 0;
 
         struct stat attrib;
+#ifdef VERBOSE_DEBUGGING
         fprintf(stderr, "Checking for file '%s'\n", m_strFileSpec);
-        if(stat(m_strFileSpec, &attrib) != 0 || !S_ISREG(attrib.st_mode)) {
+#endif
+        if(stat(m_strFileSpec, &attrib) != 0 || !S_ISREG(attrib.st_mode))
+		{
+#ifdef VERBOSE_DEBUGGING
             fprintf(stderr, "PyScript: Invalid script path");
+#endif
             return -1;
         }
+#ifdef VERBOSE_DEBUGGING
         fprintf(stderr, "Script file exists.\n");
+#endif
             
         // see if the file has been changed (and reload if so)
         if (m_timeLastModified != 0)
@@ -115,7 +129,9 @@ namespace PyScriptEC
                 ResetPython();
             }
         }
+#ifdef VERBOSE_DEBUGGING
         fprintf(stderr, "Setting time last modified.\n");
+#endif
         m_timeLastModified = attrib.st_mtime;
 
         // if we've already initialized Python, then we're done.
@@ -127,29 +143,44 @@ namespace PyScriptEC
         int nAstrArgs = 0;
 
         // hook up to the Python DLL
+#ifdef VERBOSE_DEBUGGING
         fprintf(stderr, "Initializing python...\n");
+#endif
         Py_Initialize();
+#ifdef VERBOSE_DEBUGGING
         fprintf(stderr, "Initialized.\n");
+#endif
 
         // next add the path to the sys.path
         if (m_strScriptDir != NULL)
         {
             char strCmd[1000];
+#ifdef VERBOSE_DEBUGGING
             sprintf(strCmd, "import sys\nsys.path.append('%s')", m_strScriptDir);
             fprintf(stderr, "Running this python command:\n%s\n", strCmd);
+#endif
             PyRun_SimpleString(strCmd);
+#ifdef VERBOSE_DEBUGGING
             fprintf(stderr, "Finished python command.\n");
+#endif
         }
 
         // turn the filename into a Python object (Python import doesn't like .py extension)
-        fprintf(stderr, "ScriptName '%s'\n", m_strScriptName);
-        if(!strcmp(m_strScriptName + strlen(m_strScriptName) - 3, ".py")) {
-            m_strScriptName = strndup(m_strScriptName, strlen(m_strScriptName) - 3);
+#ifdef VERBOSE_DEBUGGING
+        fprintf(stderr, "ScriptFile '%s'\n", m_strScriptFile);
+#endif
+        char * pszExtension = strrchr(m_strScriptFile, '.');
+        if (!strcmp(pszExtension, ".py"))
+        {
+            m_strScriptName = strndup(m_strScriptFile, strlen(m_strScriptFile) - 3);
         }
-        m_strScriptName = "testcnv";
+        else
+        	m_strScriptName = strdup(m_strScriptFile);
 
         // get the module point by the name
+#ifdef VERBOSE_DEBUGGING
         fprintf(stderr, "ScriptName '%s'\n", m_strScriptName);
+#endif
         m_pModule = PyImport_ImportModule(m_strScriptName);
         if( m_pModule == 0 )
         {
@@ -158,7 +189,9 @@ namespace PyScriptEC
                 PyErr_Clear();  // without this, the Finalize normally throws a fatal exception.
             Py_Finalize();
 
+#ifdef VERBOSE_DEBUGGING
             fprintf(stderr, "PyScript: Unable to import script module '%s'! Is it locked? Does it have a syntax error? Is a Python distribution installed?", m_strScriptName);
+#endif
             return -1;
         }
 
@@ -166,17 +199,23 @@ namespace PyScriptEC
 
         // if the user didn't give us a function name, then use the
         //  default function name, 'Convert'
-        m_strFuncName = strdup(clpszPyScriptDefFuncName);
         if(nAstrArgs > 1)
+		{
             m_strFuncName = strdup(astrArgs[1]);
-
+		}
+		else
+		{
+			m_strFuncName = strdup("Convert");
+		}
         m_pFunc = PyDict_GetItemString(pDict, m_strFuncName);
         
         if(!MyPyCallable_Check(m_pFunc))
         {
             // gracefully disconnect from Python
+#ifdef VERBOSE_DEBUGGING
             fprintf(stderr, "PyScript: no callable function named '%s' in script module '%s'!",
                     m_strFuncName, m_strScriptName);
+#endif
             ResetPython();
             return -1;
         }
@@ -198,7 +237,9 @@ namespace PyScriptEC
                 {
                     // gracefully disconnect from Python
                     ResetPython();
+#ifdef VERBOSE_DEBUGGING
                     fprintf(stderr, "PyScript: Can't convert optional fixed parameter '%s' to a Python unicode string", strArg);
+#endif
                     return -1;
                 }
 
@@ -212,24 +253,49 @@ namespace PyScriptEC
             m_nArgCount = 1;
             m_pArgs = PyTuple_New(m_nArgCount);
         }
+#ifdef VERBOSE_DEBUGGING
+		fprintf(stderr, "m_nArgCount = %d", m_nArgCount);
         fprintf(stderr, "Load() END\n");
+#endif
         return hr;
     }
 
     int Initialize(char * strScript, char * strDir)
     {
+#ifdef VERBOSE_DEBUGGING
         fprintf(stderr, "PyScript.CppInitialize() BEGIN\n");
         fprintf(stderr, "strScript '%s'\n", strScript);
         fprintf(stderr, "strDir '%s'\n", strDir);
-        if (initialized) return 0;
-
+#endif
+        if (initialized)
+		{
+			if (!strcmp(strDir, m_strScriptDir) && !strcmp(strScript, m_strScriptFile))
+				return 0;
+			ResetPython();
+		}
         m_timeLastModified = time(NULL);
         m_eStringDataTypeIn = m_eStringDataTypeOut = eBytes;
 
-        m_strScriptName = strdup(strScript);
-        m_strScriptDir  = strdup(strDir);
-        int stringSize = sizeof(char) * (strlen(strDir) + strlen(strScript) + 1);
-        m_strFileSpec = (char *)malloc(stringSize);
+		if (m_strScriptFile != NULL && strcmp(strScript, m_strScriptFile))
+		{
+			free((void *)m_strScriptFile);
+			m_strScriptFile = NULL;
+		}
+		if (m_strScriptFile == NULL)
+			m_strScriptFile = strdup(strScript);
+
+		if (m_strScriptDir != NULL && strcmp(strDir, m_strScriptDir))
+		{
+			free((void *)m_strScriptDir);
+			m_strScriptDir = NULL;
+		}
+		if (m_strScriptDir == NULL)
+			m_strScriptDir  = strdup(strDir);
+
+		if (m_strFileSpec != NULL)
+			free((void *)m_strFileSpec);
+		int stringSize = sizeof(char) * (strlen(strDir) + strlen(strScript) + 1);
+		m_strFileSpec = (char *)malloc(stringSize);
         snprintf(m_strFileSpec, stringSize, "%s%s", strDir, strScript);
 
         // do the load at this point; not that we need it, but for checking that everything's okay.
@@ -240,7 +306,9 @@ namespace PyScriptEC
     // call to clean up resources when we've been inactive for some time.
     void InactivityWarning()
     {
+#ifdef VERBOSE_DEBUGGING
         fprintf(stderr, "CPyScriptEncConverter::InactivityWarning\n");
+#endif
         ResetPython();
     }
 
@@ -318,8 +386,9 @@ namespace PyScriptEC
     {
         if( PyErr_Occurred() )
         {
+#ifdef VERBOSE_DEBUGGING
             bool printedErr = false;
-            fprintf(stderr, "While executing the function, '%s', in the python script, '%s', the following error occurred:",
+            fprintf(stderr, "While executing the function, '%s', in the python script, '%s', the following error occurred:\n",
                     m_strFuncName, m_strScriptName );
             PyObject *err_type, *err_value, *err_traceback;
             PyErr_Fetch(&err_type, &err_value, &err_traceback);
@@ -334,7 +403,6 @@ namespace PyScriptEC
 
             if( MyPyInstance_Check(err_value) )
             {
-                //fprintf(stderr, "%s; ", EnumerateDictionary(((PyInstanceObject*)err_value)->in_dict));
                 fprintf(stderr, "Instance error; ");
                 printedErr = true;
             }
@@ -352,10 +420,9 @@ namespace PyScriptEC
                 printedErr = true;
             }
             if (!printedErr)
-                fprintf(stderr, "\n\n\tPyScript: No data return from Python! Perhaps there's a syntax error in the Python function");
-
+                fprintf(stderr, "\n\n\tPyScript: No data return from Python! Perhaps there's a syntax error in the Python function\n");
+#endif
             PyErr_Clear();
-
         }
 
         // reset python before we go
@@ -372,7 +439,9 @@ namespace PyScriptEC
         int&    rnOutLen
     )
     {
+#ifdef VERBOSE_DEBUGGING
         fprintf(stderr, "PyScript.CppDoConvert() BEGIN\n");
+#endif
         PyObject* pValue = 0;
         switch(m_eStringDataTypeIn)
         {
@@ -392,18 +461,27 @@ namespace PyScriptEC
         if( pValue == 0 )
         {
             ResetPython();
-            fprintf(stderr, "PyScript: Can't convert input data '%s' to a form that Python can read!?", 
+#ifdef VERBOSE_DEBUGGING
+            fprintf(stderr, "PyScript: Can't convert input data '%s' to a form that Python can read!?\n", 
+#endif
                     lpInBuffer);
             return -1;
         }
-        
+
+#ifdef VERBOSE_DEBUGGING
+		fprintf(stderr, "nInLen = %d, rnOutLen = %d\n", nInLen, rnOutLen);
+#endif
         // put the value to convert into the last argument slot
         PyTuple_SetItem(m_pArgs, m_nArgCount - 1, pValue);
 
         // do the call
+#ifdef VERBOSE_DEBUGGING
         fprintf(stderr, "Calling...");
+#endif
         pValue = PyObject_CallObject(m_pFunc, m_pArgs);
+#ifdef VERBOSE_DEBUGGING
         fprintf(stderr, "finished.\n");
+#endif
 
         Py_ssize_t nOut;
 
@@ -417,13 +495,17 @@ namespace PyScriptEC
         switch(m_eStringDataTypeOut)
         {
             case eBytes:
+#ifdef VERBOSE_DEBUGGING
                 fprintf(stderr, "getting eBytes of pValue\n");
+#endif
                 PyString_AsStringAndSize(pValue,(char **)&lpOutValue,&nOut);
                 if( nOut < 0 )
                 {
                     // at least, this is what happens if the python function returns a string, but the ConvType is
                     //  incorrectly configured as returning Unicode. ErrStatus
+#ifdef VERBOSE_DEBUGGING
                     fprintf(stderr, "PyScript: Are you sure that the Python function returns non-Unicode-encoded (bytes) data?");
+#endif
                     hr = -1;
                 }
                 break;
@@ -433,7 +515,9 @@ namespace PyScriptEC
                 {
                     // at least, this is what happens if the python function returns a string, but the ConvType is
                     //  incorrectly configured as returning Unicode. ErrStatus
+#ifdef VERBOSE_DEBUGGING
                     fprintf(stderr, "PyScript: Are you sure that the Python function returns Unicode-encoded (wide) data?");
+#endif
                     hr = -1;
                 }
                 lpOutValue = PyUnicode_AsUnicode(pValue);   // PyUnicodeUCS2_AsUnicode(pValue);
@@ -451,18 +535,26 @@ namespace PyScriptEC
         {
             if( nOut > (int)rnOutLen )
             {
+#ifdef VERBOSE_DEBUGGING
                 fprintf(stderr, "Too long: '%s'\n", (char *)lpOutValue);
+#endif
                 hr = -1;
             }
             else
             {
                 rnOutLen = nOut;
+#ifdef VERBOSE_DEBUGGING
                 fprintf(stderr, "copying to length %d\n", (int)nOut);
+#endif
                 if( nOut > 0 )
                     memcpy(lpOutBuffer,lpOutValue,nOut);
+#ifdef VERBOSE_DEBUGGING
 				fprintf(stderr, "length of outBuffer = %u\n", (unsigned)strlen(lpOutBuffer));
+#endif
                     lpOutBuffer[nOut] = '\0';   // end the string here
+#ifdef VERBOSE_DEBUGGING
                     fprintf(stderr, "length of outBuffer = %u\n", (unsigned)strlen(lpOutBuffer));
+#endif
                 }
         }
 
@@ -519,4 +611,3 @@ int PyScriptEC_DoConvert (char * lpInBuffer, int nInLen, char * lpOutBuffer,
 {
     return PyScriptEC::DoConvert (lpInBuffer, nInLen, lpOutBuffer, rnOutLen);
 }
-
