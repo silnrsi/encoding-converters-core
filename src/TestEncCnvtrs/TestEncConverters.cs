@@ -175,7 +175,7 @@ namespace TestEncCnvtrs
 		}
 		
 		[Test]
-		public void TestDiscovery()
+		public void TestBasics()
 		{
 			int count = m_encConverters.Count;
 			Assert.LessOrEqual(0, count, "The number of converters shouldn't be negative!");
@@ -202,7 +202,7 @@ namespace TestEncCnvtrs
 		}
 		
 		[Test]
-		public void AddIcuConvEncConverters()
+		public void TestIcuConvEncConverters()
 		{
 			int countOrig = m_encConverters.Count;
 			m_encConverters.Add("UnitTesting-ISO-8859-1", "ISO-8859-1", ConvType.Legacy_to_from_Unicode,
@@ -274,7 +274,7 @@ namespace TestEncCnvtrs
 			"\u02bcbgdhwz\u1e96tykklmmnns\u02bbpp\u1e95\u1e95qr\u015f\u0163wwwyyy";
 		
 		[Test]
-		public void AddIcuTransliterators()
+		public void TestIcuTransliterators()
 		{
 			int countOrig = m_encConverters.Count;
 			m_encConverters.Add("UnitTesting-Latin-Hebrew", "Latin-Hebrew", ConvType.Unicode_to_from_Unicode,
@@ -318,7 +318,7 @@ namespace TestEncCnvtrs
 		}
 		
 		[Test]
-		public void AddIcuRegexConverters()
+		public void TestIcuRegexConverters()
 		{
 			int countOrig = m_encConverters.Count;
 			m_encConverters.Add("UnitTesting-Consonants->C", "[bcdfghjklmnpqrstvwxyz]->C /i", ConvType.Unicode_to_from_Unicode,
@@ -430,7 +430,7 @@ namespace TestEncCnvtrs
 			};
 		
 		[Test]
-		public void AddTecKitConverters()
+		public void TestTecKitConverters()
 		{
 			int countOrig = m_encConverters.Count;
 			var dir = GetTestSourceFolder();
@@ -495,7 +495,7 @@ namespace TestEncCnvtrs
 		}
 
 		[Test]
-		public void AddTecKitMapConverters()
+		public void TestTecKitMapConverters()
 		{
 			int countOrig = m_encConverters.Count;
 			var dir = GetTestSourceFolder();
@@ -547,7 +547,7 @@ namespace TestEncCnvtrs
 		private const string m_utf16Ann = "\u0915\u093F\u0924\u093E\u092C";
 
 		[Test]
-		public void AddCcEncConverters()
+		public void TestCcEncConverters()
 		{
 			int countOrig = m_encConverters.Count;
 			var dir = GetTestSourceFolder();
@@ -596,7 +596,7 @@ namespace TestEncCnvtrs
 		}
 
 		[Test]
-		public void AddPerlEncConverter()
+		public void TestPerlEncConverter()
 		{
 			int countOrig = m_encConverters.Count;
 			m_encConverters.Add("UnitTesting-ReverseString", "$strOut = reverse($strIn);",
@@ -619,6 +619,84 @@ namespace TestEncCnvtrs
 				"Instantiated SIL.perl converter should work properly!");
 
 			m_encConverters.Remove("UnitTesting-ReverseString");
+			int countAfter = m_encConverters.Count;
+			Assert.AreEqual(countOrig, countAfter, "Should have the original number of converters now.");
+		}
+		
+		// 0x81, 0x8D, 0x8F, 0x90, and 0x9D are undefined according to the Python cp1252 codec.
+		// And Python codecs appear to bail on undefined characters...
+		byte[] m_1252bytes = new byte[] {
+			 32,  33,  34,  35,  36,  37,  38,  39,  40,  41,  42,  43,  44,  45,  46,  47,
+			 48,  49,  50,  51,  52,  53,  54,  55,  56,  57,  58,  59,  60,  61,  62,  63,
+			 64,  65,  66,  67,  68,  69,  70,  71,  72,  73,  74,  75,  76,  77,  78,  79,
+			 80,  81,  82,  83,  84,  85,  86,  87,  88,  89,  90,  91,  92,  93,  94,  95,
+			 96,  97,  98,  99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111,
+			112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127,
+			128,      130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140,      142,
+			     145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156,      158, 159,
+			160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175,
+			176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191,
+			192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207,
+			208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223,
+			224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239,
+			240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255
+			};
+		string m_1252Converted = " !\"#$%&'()*+,-./0123456789:;<=>?" +
+				"@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\u007F" +
+				"\u20ac\u201a\u0192\u201e\u2026\u2020\u2021\u02c6\u2030\u0160\u2039\u0152\u017d" +
+				"\u2018\u2019\u201c\u201d\u2022\u2013\u2014\u02dc\u2122\u0161\u203a\u0153\u017e\u0178" +
+				"\u00A0\u00A1\u00A2\u00A3\u00A4\u00A5\u00A6\u00A7\u00A8\u00A9\u00AA\u00AB\u00AC\u00AD\u00AE\u00AF" +
+				"\u00B0\u00B1\u00B2\u00B3\u00B4\u00B5\u00B6\u00B7\u00B8\u00B9\u00BA\u00BB\u00BC\u00BD\u00BE\u00BF" +
+				"\u00C0\u00C1\u00C2\u00C3\u00C4\u00C5\u00C6\u00C7\u00C8\u00C9\u00CA\u00CB\u00CC\u00CD\u00CE\u00CF" +
+				"\u00D0\u00D1\u00D2\u00D3\u00D4\u00D5\u00D6\u00D7\u00D8\u00D9\u00DA\u00DB\u00DC\u00DD\u00DE\u00DF" +
+				"\u00E0\u00E1\u00E2\u00E3\u00E4\u00E5\u00E6\u00E7\u00E8\u00E9\u00EA\u00EB\u00EC\u00ED\u00EE\u00EF" +
+				"\u00F0\u00F1\u00F2\u00F3\u00F4\u00F5\u00F6\u00F7\u00F8\u00F9\u00FA\u00FB\u00FC\u00FD\u00FE\u00FF";
+
+		[Test]
+		public void TestPyScriptEncConverters()
+		{
+			int countOrig = m_encConverters.Count;
+			var dir = GetTestSourceFolder();
+			string filename1 = Path.Combine(dir, "From1252.py");
+			m_encConverters.Add("UnitTesting-1252-To-Unicode", filename1,
+				ConvType.Legacy_to_from_Unicode,
+				"LEGACY", "UNICODE", ProcessTypeFlags.UnicodeEncodingConversion);
+			int countNew = m_encConverters.Count;
+			Assert.AreEqual(countOrig + 1, countNew, "Should have one new converter (CC) now");
+			string[] encodings = m_encConverters.Encodings;
+			Assert.LessOrEqual(2, encodings.Length, "Should have at least 2 encodings now.");
+			string[] mappings = m_encConverters.Mappings;
+			Assert.LessOrEqual(1, mappings.Length, "Should have at least 1 mapping now.");
+			int countKeys = m_encConverters.Keys.Count;
+			int countValues = m_encConverters.Values.Count;
+			Assert.AreEqual(countKeys, countValues, "Should have same number of keys and values!");
+			Assert.LessOrEqual(1, countKeys, "Should have at least one key now.");
+			IEncConverter ec = m_encConverters["UnitTesting-1252-To-Unicode"];
+			Assert.IsNotNull(ec, "Added converter UnitTesting-1252-To-Unicode should exist!");
+			string input = TestUtil.GetPseudoStringFromBytes(m_1252bytes);
+			string output = ec.Convert(input);
+			Assert.AreEqual(m_1252Converted, output, "From1252.py should convert data properly!");
+
+			string filename2 = Path.Combine(dir, "To1252.py");
+			m_encConverters.Add("UnitTesting-Unicode-To-1252", filename2,
+				ConvType.Unicode_to_from_Legacy,
+				"UNICODE", "LEGACY", ProcessTypeFlags.UnicodeEncodingConversion);
+			countNew = m_encConverters.Count;
+			Assert.AreEqual(countOrig + 2, countNew, "Should have two new converters now.");
+			mappings = m_encConverters.Mappings;
+			Assert.LessOrEqual(2, mappings.Length, "Should have at least two mappings now.");
+			countKeys = m_encConverters.Keys.Count;
+			countValues = m_encConverters.Values.Count;
+			Assert.AreEqual(countKeys, countValues, "Should have same number of keys and values!");
+			Assert.LessOrEqual(2, countKeys, "Should have at least two keys now.");
+			IEncConverter ecRev = m_encConverters["UnitTesting-Unicode-To-1252"];
+			Assert.IsNotNull(ecRev);
+ 			string outputRaw = ecRev.Convert(m_1252Converted);
+			byte[] output2 = TestUtil.GetBytesFromPseudoString(outputRaw);
+			Assert.AreEqual(m_1252bytes, output2, "To1252.py should convert data properly!");
+
+			m_encConverters.Remove("UnitTesting-1252-To-Unicode");
+			m_encConverters.Remove("UnitTesting-Unicode-To-1252");
 			int countAfter = m_encConverters.Count;
 			Assert.AreEqual(countOrig, countAfter, "Should have the original number of converters now.");
 		}

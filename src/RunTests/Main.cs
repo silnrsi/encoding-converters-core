@@ -25,38 +25,56 @@ namespace RunTests
 			try
 			{
 				test.InitBeforeTest();
-				try { test.TestDiscovery(); }
-				catch(Exception e) {Console.WriteLine("TestDiscovery failed: {0}", e.Message); ++m_cfail;}
+				try { test.TestBasics(); }
+				catch(Exception e) {Console.WriteLine("TestBasics failed: {0}", e.Message); ++m_cfail;}
 				++m_crun;
 				test.CleanupAfterTest();
 	
 				test.InitBeforeTest();
-				try { test.AddIcuConvEncConverters(); }
-				catch(Exception e) {Console.WriteLine("AddIcuConvEncConverters failed: {0}", e.Message); ++m_cfail;}
+				try { test.TestIcuConvEncConverters(); }
+				catch(Exception e) {Console.WriteLine("TestIcuConvEncConverters failed: {0}", e.Message); ++m_cfail;}
 				++m_crun;
 				test.CleanupAfterTest();
 	
 				test.InitBeforeTest();
-				try { test.AddIcuTransliterators(); }
-				catch(Exception e) {Console.WriteLine("AddIcuTransliterators failed: {0}", e.Message); ++m_cfail;}
+				try { test.TestIcuTransliterators(); }
+				catch(Exception e) {Console.WriteLine("TestIcuTransliterators failed: {0}", e.Message); ++m_cfail;}
 				++m_crun;
 				test.CleanupAfterTest();
 	
 				test.InitBeforeTest();
-				try { test.AddIcuRegexConverters(); }
-				catch(Exception e) {Console.WriteLine("AddIcuRegexConverters failed: {0}", e.Message); ++m_cfail;}
+				try { test.TestIcuRegexConverters(); }
+				catch(Exception e) {Console.WriteLine("TestIcuRegexConverters failed: {0}", e.Message); ++m_cfail;}
 				++m_crun;
 				test.CleanupAfterTest();
 				
 				test.InitBeforeTest();
-				try { test.AddTecKitConverters(); }
-				catch(Exception e) {Console.WriteLine("AddTecKitConverters failed: {0}", e.Message); ++m_cfail;}
+				try { test.TestTecKitConverters(); }
+				catch(Exception e) {Console.WriteLine("TestTecKitConverters failed: {0}", e.Message); ++m_cfail;}
 				++m_crun;
 				test.CleanupAfterTest();
 				
 				test.InitBeforeTest();
-				try { test.AddTecKitMapConverters(); }
-				catch(Exception e) {Console.WriteLine("AddTecKitMapConverters failed: {0}", e.Message); ++m_cfail;}
+				try { test.TestTecKitMapConverters(); }
+				catch(Exception e) {Console.WriteLine("TestTecKitMapConverters failed: {0}", e.Message); ++m_cfail;}
+				++m_crun;
+				test.CleanupAfterTest();
+				
+				test.InitBeforeTest();
+				try { test.TestCcEncConverters(); }
+				catch(Exception e) {Console.WriteLine("TestCcEncConverters failed: {0}", e.Message); ++m_cfail;}
+				++m_crun;
+				test.CleanupAfterTest();
+				
+				test.InitBeforeTest();
+				try { test.TestPerlEncConverter(); }
+				catch(Exception e) {Console.WriteLine("TestPerlEncConverter failed: {0}", e.Message); ++m_cfail;}
+				++m_crun;
+				test.CleanupAfterTest();
+				
+				test.InitBeforeTest();
+				try { test.TestPyScriptEncConverters(); }
+				catch(Exception e) {Console.WriteLine("TestPyScriptEncConverters failed: {0}", e.Message); ++m_cfail;}
 				++m_crun;
 				test.CleanupAfterTest();
 			}
