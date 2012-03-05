@@ -149,9 +149,8 @@ namespace SilEncConverters40
                     Unload();
 
                 System.Diagnostics.Debug.WriteLine("Calling CppInitialize");
-                // do we need to make these parameters fixed?
                 string strScriptName = Path.GetFileName(strScriptPath);
-                string strScriptDir  = Path.GetDirectoryName(strScriptPath) + Path.DirectorySeparatorChar;
+                string strScriptDir = Path.GetDirectoryName(strScriptPath);
                 int status = 0;
                 try {
                     status = CppInitialize(strScriptName, strScriptDir);
