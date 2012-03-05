@@ -47,6 +47,8 @@ namespace PyScriptEC
     PyStringDataType    m_eStringDataTypeIn;
     PyStringDataType    m_eStringDataTypeOut;
 
+    int ErrorOccurred();    // defined later
+
     bool IsModuleLoaded() { return (m_pModule != 0); };
     void ResetPython()
     {
@@ -83,19 +85,20 @@ namespace PyScriptEC
     }
 
 #ifdef _MSC_VER
-	// Copy the first len characters of src into a dynamically allocated string.
-	char * strndup(const char * src, size_t len)
-	{
-		if (src == NULL)
-			return NULL;
-		if (len < 0)
-			len = 0;
-		else if (len > strlen(src))
-			len = strlen(src);
-		char * dst = (char *)malloc(len + 1);
-		strncpy_s(dst, len + 1, src, len);
-		return dst;
-	}
+    // Copy the first len characters of src into a dynamically allocated string.
+    char * strndup(const char * src, size_t len)
+    {
+        if (src == NULL)
+            return NULL;
+        if (len < 0)
+            len = 0;
+        else if (len > strlen(src))
+            len = strlen(src);
+        char * dst = (char *)malloc(len + 1);
+        strncpy(dst, src, len);
+        dst[len] = 0;
+        return dst;
+    }
 #endif
 
     int Load(void)
@@ -110,7 +113,7 @@ namespace PyScriptEC
         fprintf(stderr, "Checking for file '%s'\n", m_strFileSpec);
 #endif
         if(stat(m_strFileSpec, &attrib) != 0 || !S_ISREG(attrib.st_mode))
-		{
+        {
 #ifdef VERBOSE_DEBUGGING
             fprintf(stderr, "PyScript: Invalid script path");
 #endif
@@ -155,8 +158,9 @@ namespace PyScriptEC
         if (m_strScriptDir != NULL)
         {
             char strCmd[1000];
+            snprintf(strCmd, 1000, "import sys\nsys.path.append('%s')", m_strScriptDir);
+            strCmd[999] = 0;    // just in case...
 #ifdef VERBOSE_DEBUGGING
-            sprintf(strCmd, "import sys\nsys.path.append('%s')", m_strScriptDir);
             fprintf(stderr, "Running this python command:\n%s\n", strCmd);
 #endif
             PyRun_SimpleString(strCmd);
@@ -171,11 +175,9 @@ namespace PyScriptEC
 #endif
         char * pszExtension = strrchr(m_strScriptFile, '.');
         if (!strcmp(pszExtension, ".py"))
-        {
             m_strScriptName = strndup(m_strScriptFile, strlen(m_strScriptFile) - 3);
-        }
         else
-        	m_strScriptName = strdup(m_strScriptFile);
+            m_strScriptName = strdup(m_strScriptFile);
 
         // get the module point by the name
 #ifdef VERBOSE_DEBUGGING
@@ -185,8 +187,9 @@ namespace PyScriptEC
         if( m_pModule == 0 )
         {
             // gracefully disconnect from Python
-            if( PyErr_Occurred() )
-                PyErr_Clear();  // without this, the Finalize normally throws a fatal exception.
+            // This calls PyErr_Clear() if needed, without which Py_Finalize()
+            // throws a fatal exception.
+            ErrorOccurred();
             Py_Finalize();
 
 #ifdef VERBOSE_DEBUGGING
@@ -200,13 +203,13 @@ namespace PyScriptEC
         // if the user didn't give us a function name, then use the
         //  default function name, 'Convert'
         if(nAstrArgs > 1)
-		{
+        {
             m_strFuncName = strdup(astrArgs[1]);
-		}
-		else
-		{
-			m_strFuncName = strdup("Convert");
-		}
+        }
+        else
+        {
+            m_strFuncName = strdup("Convert");
+        }
         m_pFunc = PyDict_GetItemString(pDict, m_strFuncName);
         
         if(!MyPyCallable_Check(m_pFunc))
@@ -254,7 +257,7 @@ namespace PyScriptEC
             m_pArgs = PyTuple_New(m_nArgCount);
         }
 #ifdef VERBOSE_DEBUGGING
-		fprintf(stderr, "m_nArgCount = %d", m_nArgCount);
+        fprintf(stderr, "m_nArgCount = %d", m_nArgCount);
         fprintf(stderr, "Load() END\n");
 #endif
         return hr;
@@ -268,35 +271,40 @@ namespace PyScriptEC
         fprintf(stderr, "strDir '%s'\n", strDir);
 #endif
         if (initialized)
-		{
-			if (!strcmp(strDir, m_strScriptDir) && !strcmp(strScript, m_strScriptFile))
-				return 0;
-			ResetPython();
-		}
+        {
+            if (!strcmp(strDir, m_strScriptDir) && !strcmp(strScript, m_strScriptFile))
+                return 0;
+            ResetPython();
+        }
         m_timeLastModified = time(NULL);
         m_eStringDataTypeIn = m_eStringDataTypeOut = eBytes;
 
-		if (m_strScriptFile != NULL && strcmp(strScript, m_strScriptFile))
-		{
-			free((void *)m_strScriptFile);
-			m_strScriptFile = NULL;
-		}
-		if (m_strScriptFile == NULL)
-			m_strScriptFile = strdup(strScript);
+        if (m_strScriptFile != NULL && strcmp(strScript, m_strScriptFile))
+        {
+            free((void *)m_strScriptFile);
+            m_strScriptFile = NULL;
+        }
+        if (m_strScriptFile == NULL)
+            m_strScriptFile = strdup(strScript);
 
-		if (m_strScriptDir != NULL && strcmp(strDir, m_strScriptDir))
-		{
-			free((void *)m_strScriptDir);
-			m_strScriptDir = NULL;
-		}
-		if (m_strScriptDir == NULL)
-			m_strScriptDir  = strdup(strDir);
+        if (m_strScriptDir != NULL && strcmp(strDir, m_strScriptDir))
+        {
+            free((void *)m_strScriptDir);
+            m_strScriptDir = NULL;
+        }
+        if (m_strScriptDir == NULL)
+            m_strScriptDir  = strdup(strDir);
 
-		if (m_strFileSpec != NULL)
-			free((void *)m_strFileSpec);
-		int stringSize = sizeof(char) * (strlen(strDir) + strlen(strScript) + 1);
-		m_strFileSpec = (char *)malloc(stringSize);
-        snprintf(m_strFileSpec, stringSize, "%s%s", strDir, strScript);
+        if (m_strFileSpec != NULL)
+            free((void *)m_strFileSpec);
+        int stringSize = sizeof(char) * (strlen(strDir) + strlen(strScript) + 2);
+        m_strFileSpec = (char *)malloc(stringSize);
+#ifdef _MSC_VER
+        snprintf(m_strFileSpec, stringSize, "%s\\%s", strDir, strScript);
+#else
+        snprintf(m_strFileSpec, stringSize, "%s/%s", strDir, strScript);
+#endif
+        m_strFileSpec[stringSize - 1] = 0;
 
         // do the load at this point; not that we need it, but for checking that everything's okay.
         initialized = true;
@@ -315,9 +323,9 @@ namespace PyScriptEC
     int PreConvert
     (
         int     eInEncodingForm,
-        int&	eInFormEngine,
+        int&    eInFormEngine,
         int     eOutEncodingForm,
-        int&	eOutFormEngine,
+        int&    eOutFormEngine,
         int&    eNormalizeOutput,
         bool    bForward,
         int     nInactivityWarningTimeOut
@@ -397,7 +405,10 @@ namespace PyScriptEC
             {
                 PyObject *pName = ((PyClassObject*)err_type)->cl_name;
                 if( pName != 0 )
-                    fprintf(stderr, "%s; ", PyString_AsString(pName));
+                {
+                    char * name = PyString_AsString(pName);
+                    fprintf(stderr, "%s; ", name);
+                }
                 printedErr = true;
             }
 
@@ -408,7 +419,8 @@ namespace PyScriptEC
             }
             else if( MyPyString_Check(err_value) )
             {
-                fprintf(stderr, "%s; ", PyString_AsString(err_value));
+                char * value = PyString_AsString(err_value);
+                fprintf(stderr, "%s; ", value);
                 printedErr = true;
             }
 
@@ -416,7 +428,8 @@ namespace PyScriptEC
             {
                 PyTracebackObject* pTb = (PyTracebackObject*)err_traceback;
                 // if( PyTraceBack_Print(err_traceback,pTb) )
-                fprintf(stderr, "%s; ", PyString_AsString(err_traceback));
+                char * trace = PyString_AsString(err_traceback);
+                fprintf(stderr, "%s; ", trace);
                 printedErr = true;
             }
             if (!printedErr)
@@ -469,7 +482,7 @@ namespace PyScriptEC
         }
 
 #ifdef VERBOSE_DEBUGGING
-		fprintf(stderr, "nInLen = %d, rnOutLen = %d\n", nInLen, rnOutLen);
+        fprintf(stderr, "nInLen = %d, rnOutLen = %d\n", nInLen, rnOutLen);
 #endif
         // put the value to convert into the last argument slot
         PyTuple_SetItem(m_pArgs, m_nArgCount - 1, pValue);
@@ -549,7 +562,7 @@ namespace PyScriptEC
                 if( nOut > 0 )
                     memcpy(lpOutBuffer,lpOutValue,nOut);
 #ifdef VERBOSE_DEBUGGING
-				fprintf(stderr, "length of outBuffer = %u\n", (unsigned)strlen(lpOutBuffer));
+                fprintf(stderr, "length of outBuffer = %u\n", (unsigned)strlen(lpOutBuffer));
 #endif
                     lpOutBuffer[nOut] = '\0';   // end the string here
 #ifdef VERBOSE_DEBUGGING
