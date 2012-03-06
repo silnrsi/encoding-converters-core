@@ -754,6 +754,14 @@ namespace TestEncCnvtrs
 			int countAfter = m_encConverters.Count;
 			Assert.AreEqual(countOrig, countAfter, "Should have the original number of converters now.");
 		}
+		
+		[Test]
+		[Platform(Include="Linux")]
+		public void TestListingCodePageConverters()
+		{
+			var converters = SilEncConverters40.CpEncConverter.GetAvailableConverterSpecs();
+			Assert.Less(10, converters.Count, "There should be at least ten CodePage converters available!");
+		}
 	}
 
 	/// <summary>
@@ -837,7 +845,7 @@ namespace TestEncCnvtrs
             get
 			{
 				return Environment.OSVersion.Platform == PlatformID.Unix ||
-						Environment.OSVersion.Platform == PlatformID.MacOSX;
+						Environment.OSVersion.Platform == PlatformID.MacOSX;	// MacOSX is built on top of BSD.
 			}
         }
 

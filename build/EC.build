@@ -226,7 +226,7 @@
     </target>
 
     <target name="TestEncCnvtrs"
-            depends="ECInterfaces,EncCnvtrs,IcuEC">
+            depends="ECInterfaces,EncCnvtrs,IcuEC,CodePageEC">
         <property name="srcdir" value="${projroot}/src/TestEncCnvtrs" />
         <property name="namespace" value="SilEncConvertersTests" />
         <property name="outfile" value="TestEncCnvtrs.dll" />
@@ -238,6 +238,7 @@
             <include name="ECInterfaces.dll" />
             <include name="SilEncConverters40.dll" />
             <include name="IcuEC.dll" />
+            <include name="CodePageEC.dll" />
         </patternset>
         <call target="compile" cascade="false"/>
     </target>
