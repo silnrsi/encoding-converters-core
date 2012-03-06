@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -172,5 +173,40 @@ namespace SilEncConverters40
         }
 
         #endregion Abstract Base Class Overrides
-    }
+
+		#region Additional public methods to access the C++ DLL.
+		static Dictionary<string, EncodingInfo> m_mapNameEncoding = new Dictionary<string, EncodingInfo>();
+
+		/// <summary>
+		/// Gets the available CodePage converter specifications.
+		/// </summary>
+		public static List<string> GetAvailableConverterSpecs()
+		{
+			var encodings = Encoding.GetEncodings();
+			m_mapNameEncoding.Clear();
+			var count = encodings.Length;
+			var specs = new List<string>(count);
+			for (var i = 0; i < count; ++i)
+			{
+				var name = encodings[i].CodePage.ToString();
+				specs.Add(name);
+				m_mapNameEncoding.Add(name, encodings[i]);
+				//Console.WriteLine("Converter[{0}]: name = '{1}', displayname = '{2}', codepage = {3}",
+				//	i, encodings[i].Name, encodings[i].DisplayName, encodings[i].CodePage);
+			}
+			return specs;
+		}
+		
+		/// <summary>
+		/// Gets the display name of the given CodePage converter.
+		/// </summary>
+		public static string GetDisplayName(string spec)
+		{
+			EncodingInfo encoding;
+			if (m_mapNameEncoding.TryGetValue(spec, out encoding))
+				return encoding.DisplayName;
+			return null;
+		}
+		#endregion
+	}
 }
