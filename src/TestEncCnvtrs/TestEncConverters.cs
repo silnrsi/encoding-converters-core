@@ -710,7 +710,6 @@ namespace TestEncCnvtrs
 		}
 
 		[Test]
-		[Platform(Include="Win", Reason="CodePage conversion is native to Microsoft Windows")]
 		public void TestCodePageConverters()
 		{
 			int countOrig = m_encConverters.Count;
@@ -731,7 +730,7 @@ namespace TestEncCnvtrs
 			Assert.IsNotNull(ec, "Added converter UnitTesting-From-CP_1252 should exist!");
 			string input = TestUtil.GetPseudoStringFromBytes(m_1252bytes);
 			string output = ec.Convert(input);
-			Assert.AreEqual(m_1252Converted, output, "CP_1252 should convert data properly!");
+			Assert.AreEqual(m_1252Converted, output, "CP_1252 should convert data to Unicode properly!");
 
 			m_encConverters.Add("UnitTesting-To-CP_1252", "1252",
 				ConvType.Unicode_to_from_Legacy,
@@ -746,9 +745,9 @@ namespace TestEncCnvtrs
 			Assert.LessOrEqual(2, countKeys, "Should have at least two keys now.");
 			IEncConverter ecRev = m_encConverters["UnitTesting-To-CP_1252"];
 			Assert.IsNotNull(ecRev, "Added converter UnitTesting-To-CP_1252 should exist!");
-			string outputRaw = ecRev.Convert(m_1252Converted);
+ 			string outputRaw = ecRev.Convert(m_1252Converted);
 			byte[] output2 = TestUtil.GetBytesFromPseudoString(outputRaw);
-			Assert.AreEqual(m_1252bytes, output2, "CP_1252 should convert data properly!");
+			Assert.AreEqual(m_1252bytes, output2, "CP_1252 should convert data from Unicode properly!");
 
 			m_encConverters.Remove("UnitTesting-From-CP_1252");
 			m_encConverters.Remove("UnitTesting-To-CP_1252");
@@ -832,5 +831,25 @@ namespace TestEncCnvtrs
 			}
 			Console.WriteLine();
 		}
+		
+        public static bool IsUnix
+        {
+            get
+			{
+				return Environment.OSVersion.Platform == PlatformID.Unix ||
+						Environment.OSVersion.Platform == PlatformID.MacOSX;
+			}
+        }
+
+		public static bool IsWindows
+        {
+            get
+			{
+				return Environment.OSVersion.Platform == PlatformID.Win32S ||
+					Environment.OSVersion.Platform == PlatformID.Win32Windows ||
+					Environment.OSVersion.Platform == PlatformID.Win32NT ||
+					Environment.OSVersion.Platform == PlatformID.WinCE;
+			}
+        }
 	}
 }

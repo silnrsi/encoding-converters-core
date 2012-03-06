@@ -77,6 +77,15 @@ namespace RunTests
 				catch(Exception e) {Console.WriteLine("TestPyScriptEncConverters failed: {0}", e.Message); ++m_cfail;}
 				++m_crun;
 				test.CleanupAfterTest();
+				
+//				if (TestUtil.IsWindows)
+//				{
+					test.InitBeforeTest();
+					try { test.TestCodePageConverters(); }
+					catch(Exception e) {Console.WriteLine("TestCodePageConverters failed: {0}", e.Message); ++m_cfail;}
+					++m_crun;
+					test.CleanupAfterTest();
+//				}
 			}
 			catch(Exception e) { Console.WriteLine("Exception caught during TestEncConverters setup or teardown: {0}", e.Message); }
 			test.CleanupForClass();

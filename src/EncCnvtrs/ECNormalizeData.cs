@@ -703,15 +703,22 @@ namespace SilEncConverters40
         }
         public static bool IsUnix
         {
-            get {
+            get
+			{
                 // Will return false for Windows
-                int p = (int) Environment.OSVersion.Platform;
-                return ((p == 4) || (p == 6) || (p == 128));
+				return Environment.OSVersion.Platform == PlatformID.Unix ||
+					Environment.OSVersion.Platform == PlatformID.MacOSX;	// MacOSX is built on top of BSD.
             }
         }
         public static bool IsWindows
         {
-            get { return  (!IsUnix); }
+            get
+			{
+				return Environment.OSVersion.Platform == PlatformID.Win32S ||
+					Environment.OSVersion.Platform == PlatformID.Win32Windows ||
+					Environment.OSVersion.Platform == PlatformID.Win32NT ||
+					Environment.OSVersion.Platform == PlatformID.WinCE;
+			}
         }
 
         #region Debug helper
