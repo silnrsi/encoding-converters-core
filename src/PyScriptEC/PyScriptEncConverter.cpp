@@ -24,7 +24,7 @@
 #include "PyScriptEncConverter.h"
 
 // Uncomment the following line if you want verbose debugging output
-#define VERBOSE_DEBUGGING
+//#define VERBOSE_DEBUGGING
 
 // Keep this in a namespace so that it doesn't get confused with functions that
 // have the same name in other converters, for example Load().
@@ -297,7 +297,7 @@ namespace PyScriptEC
 
         if (m_strFileSpec != NULL)
             free((void *)m_strFileSpec);
-        int stringSize = sizeof(char) * (strlen(strDir) + strlen(strScript) + 2);
+        size_t stringSize = sizeof(char) * (strlen(strDir) + strlen(strScript) + 2);
         m_strFileSpec = (char *)malloc(stringSize);
 #ifdef _MSC_VER
         snprintf(m_strFileSpec, stringSize, "%s\\%s", strDir, strScript);
@@ -476,8 +476,8 @@ namespace PyScriptEC
             ResetPython();
 #ifdef VERBOSE_DEBUGGING
             fprintf(stderr, "PyScript: Can't convert input data '%s' to a form that Python can read!?\n", 
-#endif
                     lpInBuffer);
+#endif
             return -1;
         }
 

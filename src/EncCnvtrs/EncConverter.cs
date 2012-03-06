@@ -692,7 +692,7 @@ namespace SilEncConverters40
                 );
 
             // get enough space for us to normalize the input data (6x ought to be enough)
-            int nBufSize = sInput.Length * 6;
+             int nBufSize = sInput.Length * 6;
             byte[] abyInBuffer = new byte[nBufSize];
             fixed (byte* lpInBuffer = abyInBuffer)
             {
