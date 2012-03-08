@@ -3,6 +3,9 @@ using System.IO;
 using ECInterfaces;
 using SilEncConverters40;
 
+//uncomment the following line for verbose debugging output using Console.WriteLine
+//#define VERBOSE_DEBUGGING
+
 namespace ECFileConverter
 {
     /// <summary>
@@ -82,8 +85,10 @@ namespace ECFileConverter
                 }
                 else if( arg == "i32" )
                 {
+#if VERBOSE_DEBUGGING
                     Console.WriteLine("ECFileConv: Setting InputEncoding UTF32");
-                    m_eParamState = ParamState.eParamInputFileName;
+#endif
+					m_eParamState = ParamState.eParamInputFileName;
                     InputEncoding = System.Text.Encoding.UTF32;
                 }
                 else if( arg == "i8" )
@@ -234,42 +239,47 @@ namespace ECFileConverter
             bool                    bDirectionForward
             )
         {
+#if VERBOSE_DEBUGGING
             Console.WriteLine("ECFileConv: DoFileConvert() BEGIN");
             Console.WriteLine("ECFileConv: inEnc " + inEnc.ToString());
-            // the user *might* not give us a converter name if they simply want to change
+#endif
+			// the user *might* not give us a converter name if they simply want to change
             //  the encoding from, say, UTF8 to UTF16.
             bool bIsConverter = !(strConverterName == null);
 
             IEncConverter aEC = null;
             if( bIsConverter )
             {
+#if VERBOSE_DEBUGGING
                 Console.WriteLine("ECFileConv: Creating EncConverters object.");
-                EncConverters aECs = new EncConverters();
+#endif
+				EncConverters aECs = new EncConverters();
+#if VERBOSE_DEBUGGING
                 Console.WriteLine("ECFileConv: Created EncConverters object.");
-/*
-//#if DEBUG
-                // here's how you'd add the map programmatically (of course,
-                //  update the path here
-                string mapLoc = Path.Combine(GetProjectFolder, "ToUpper.tec");
-                Console.WriteLine("mapLoc " + mapLoc);
-                aECs.AddConversionMap(strConverterName, Path.Combine(GetProjectFolder, "ToUpper.tec"),
-                    ConvType.Unicode_to_from_Unicode, EncConverters.strTypeSILtec, 
-                    "UNICODE", "UNICODE", ProcessTypeFlags.DontKnow);
-                Console.WriteLine("Added map.");
-//#endif
-//                aEC = aECs[strConverterName];    // e.g. "Devanagri<>Latin(ICU)"
-*/
+				//// here's how you'd add the map programmatically (of course,
+				////  update the path here
+				//string mapLoc = Path.Combine(GetProjectFolder, "ToUpper.tec");
+				//Console.WriteLine("mapLoc " + mapLoc);
+				//aECs.AddConversionMap(strConverterName, Path.Combine(GetProjectFolder, "ToUpper.tec"),
+				//    ConvType.Unicode_to_from_Unicode, EncConverters.strTypeSILtec, 
+				//    "UNICODE", "UNICODE", ProcessTypeFlags.DontKnow);
+				//Console.WriteLine("Added map.");
+#endif
+				//aEC = aECs[strConverterName];    // e.g. "Devanagri<>Latin(ICU)"
 
+#if VERBOSE_DEBUGGING
                 Console.WriteLine("ECFileConv: Calling AutoSelect.");
-                aEC = aECs.AutoSelect(ConvType.Unknown);
+#endif
+				aEC = aECs.AutoSelect(ConvType.Unknown);
             }
 
             if (aEC == null)
                 throw new ApplicationException(
                     String.Format("The converter '{0}' wasn't in the repository. Did you forget to add it?",
                                   strConverterName));
-            Console.WriteLine("ECFileConv: Got EncConverter.");
-
+#if VERBOSE_DEBUGGING
+			Console.WriteLine("ECFileConv: Got EncConverter.");
+#endif
             // open the input and output files using the given encoding formats
             StreamReader srReadLine = new StreamReader(strInputFileName, inEnc, true);
             srReadLine.BaseStream.Seek(0, SeekOrigin.Begin);
@@ -295,8 +305,10 @@ namespace ECFileConverter
 
             srReadLine.Close();
             swWriteLine.Close();
+#if VERBOSE_DEBUGGING
             Console.WriteLine("ECFileConv: DoFileConvert END");
-        }
+#endif
+		}
 
         /// <summary>
         /// e.g. C:\src\EC\output\debug

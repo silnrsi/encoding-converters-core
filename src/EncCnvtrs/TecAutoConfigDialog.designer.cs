@@ -1,5 +1,8 @@
 using System;
 
+//uncomment the following line for verbose debugging output using Console.WriteLine
+//#define VERBOSE_DEBUGGING
+
 namespace SilEncConverters40
 {
     partial class TecAutoConfigDialog
@@ -30,8 +33,10 @@ namespace SilEncConverters40
         /// </summary>
         private void InitializeComponent()
         {
+#if VERBOSE_DEBUGGING
             Console.WriteLine("TecAutoConfigDialog.designer.InitComp BEGIN");
-            this.labelTECkitFile = new System.Windows.Forms.Label();
+#endif
+			this.labelTECkitFile = new System.Windows.Forms.Label();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.textBoxFileSpec = new System.Windows.Forms.TextBox();
             this.buttonBrowse = new System.Windows.Forms.Button();
@@ -113,8 +118,9 @@ namespace SilEncConverters40
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             this.ResumeLayout(false);
-
+#if VERBOSE_DEBUGGING
             Console.WriteLine("TecAutoConfigDialog.designer.InitComp END");
+#endif
         }
 
         #endregion

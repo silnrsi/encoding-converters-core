@@ -109,6 +109,14 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="CmpdEncConverterConfig.cs" />
+    <Compile Include="CpAutoConfigDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CpAutoConfigDialog.Designer.cs">
+      <DependentUpon>CpAutoConfigDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CpEncConverter.cs" />
+    <Compile Include="CpEncConverterConfig.cs" />
     <Compile Include="DirectableEncConverter.cs" />
     <Compile Include="ECNormalizeData.cs">
       <SubType>Code</SubType>
@@ -180,6 +188,9 @@
     <EmbeddedResource Include="CmpdAutoConfigDialog.resx">
       <SubType>Designer</SubType>
       <DependentUpon>CmpdAutoConfigDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CpAutoConfigDialog.resx">
+      <DependentUpon>CpAutoConfigDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="EncCnvtrs.resx">
       <SubType>Designer</SubType>

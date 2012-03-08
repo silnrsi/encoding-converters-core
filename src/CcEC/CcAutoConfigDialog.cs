@@ -8,6 +8,9 @@ using System.Windows.Forms;
 using System.IO;
 using ECInterfaces;                     // for IEncConverter
 
+//uncomment the following line for verbose debugging output using Console.WriteLine
+//#define VERBOSE_DEBUGGING
+
 namespace SilEncConverters40
 {
     //[CLSCompliantAttribute(false)]  // because of GeckoWebBrowser
@@ -28,10 +31,13 @@ namespace SilEncConverters40
             bool bIsInRepository
             )
         {
+#if VERBOSE_DEBUGGING
             Console.WriteLine("CcAutoConfigDialog ctor BEGIN");
-            InitializeComponent();
+#endif
+			InitializeComponent();
+#if VERBOSE_DEBUGGING
             Console.WriteLine("Initialized CcAutoConfigDialog component.");
-
+#endif
             base.Initialize
             (
             aECs,
@@ -45,13 +51,16 @@ namespace SilEncConverters40
             lProcessTypeFlags,
             bIsInRepository
             );
+#if VERBOSE_DEBUGGING
             Console.WriteLine("Initialized base.");
-
+#endif
             // if we're editing a CC table/spellfixer project, then set the Converter Spec and say it's unmodified
             if (m_bEditMode)
             {
+#if VERBOSE_DEBUGGING
                 Console.WriteLine("Edit mode");
-                System.Diagnostics.Debug.Assert(!String.IsNullOrEmpty(ConverterIdentifier));
+#endif
+				System.Diagnostics.Debug.Assert(!String.IsNullOrEmpty(ConverterIdentifier));
                 textBoxFileSpec.Text = ConverterIdentifier;
                 IsModified = false;
             }
@@ -62,16 +71,26 @@ namespace SilEncConverters40
 
             m_bInitialized = true;
 
+#if VERBOSE_DEBUGGING
             Console.WriteLine("1");
-            helpProvider.SetHelpString(textBoxFileSpec, Properties.Resources.ConverterFileSpecHelpString);
+#endif
+			helpProvider.SetHelpString(textBoxFileSpec, Properties.Resources.ConverterFileSpecHelpString);
+#if VERBOSE_DEBUGGING
             Console.WriteLine("2");
-            helpProvider.SetHelpString(buttonBrowse, Properties.Resources.BrowseFileSpecHelpString);
+#endif
+			helpProvider.SetHelpString(buttonBrowse, Properties.Resources.BrowseFileSpecHelpString);
+#if VERBOSE_DEBUGGING
             Console.WriteLine("3");
-            helpProvider.SetHelpString(groupBoxExpects, Properties.Resources.ConvTypeExpectsHelpString);
+#endif
+			helpProvider.SetHelpString(groupBoxExpects, Properties.Resources.ConvTypeExpectsHelpString);
+#if VERBOSE_DEBUGGING
             Console.WriteLine("4");
-            helpProvider.SetHelpString(groupBoxReturns, Properties.Resources.ConvTypeReturnsHelpString);
+#endif
+			helpProvider.SetHelpString(groupBoxReturns, Properties.Resources.ConvTypeReturnsHelpString);
+#if VERBOSE_DEBUGGING
             Console.WriteLine("CcAutoConfigDialog ctor END");
-        }
+#endif
+		}
 
         protected bool IsSpellFixerProject
         {
@@ -80,8 +99,10 @@ namespace SilEncConverters40
 
         protected void UpdateUI(bool bVisible)
         {
+#if VERBOSE_DEBUGGING
             Console.WriteLine("UpdateUI BEGIN");
-            buttonSaveInRepository.Visible =
+#endif
+			buttonSaveInRepository.Visible =
                 groupBoxExpects.Visible =
                 groupBoxReturns.Visible = bVisible;
 
@@ -90,8 +111,10 @@ namespace SilEncConverters40
             //  is actually installed.
             buttonAddSpellFixer.Visible = (!m_bEditMode || IsSpellFixerProject) && SpellFixerByReflection.IsSpellFixerAvailable;
             labelSpellFixerInstructions.Visible = (IsSpellFixerProject && SpellFixerByReflection.IsSpellFixerAvailable);
+#if VERBOSE_DEBUGGING
             Console.WriteLine("UpdateUI END");
-        }
+#endif
+		}
 
         protected override void SetConvTypeControls()
         {

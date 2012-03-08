@@ -3,6 +3,7 @@
 using System;
 using System.Collections;
 using System.IO;
+using System.Text;
 using Microsoft.Win32;
 
 using NUnit.Framework;
@@ -756,10 +757,9 @@ namespace TestEncCnvtrs
 		}
 		
 		[Test]
-		[Platform(Include="Linux")]
 		public void TestListingCodePageConverters()
 		{
-			var converters = SilEncConverters40.CpEncConverter.GetAvailableConverterSpecs();
+			var converters = CpEncConverter.GetAvailableConverterSpecs();
 			Assert.Less(10, converters.Count, "There should be at least ten CodePage converters available!");
 		}
 	}

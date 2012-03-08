@@ -10,6 +10,9 @@ using System.Windows.Forms;
 using System.IO;
 using ECInterfaces;                     // for IEncConverter
 
+//uncomment the following line for verbose debugging output using Console.WriteLine
+//#define VERBOSE_DEBUGGING
+
 namespace SilEncConverters40
 {
     public class PerlExpressionAutoConfigDialog : SilEncConverters40.AutoConfigDialog
@@ -27,10 +30,14 @@ namespace SilEncConverters40
             int lProcessTypeFlags,
             bool bIsInRepository)
         {
+#if VERBOSE_DEBUGGING
             Console.WriteLine("PerlExpressionAutoConfigDialog ctor BEGIN");
-            InitializeComponent();
+#endif
+			InitializeComponent();
+#if VERBOSE_DEBUGGING
             Console.WriteLine("Initialized PerlExpressionAutoConfigDialog component.");
-            base.Initialize (
+#endif
+			base.Initialize (
                 aECs,
                 PerlExpressionEncConverter.strHtmlFilename,
                 strDisplayName,
@@ -41,20 +48,25 @@ namespace SilEncConverters40
                 strRhsEncodingId,
                 lProcessTypeFlags,
                 bIsInRepository);
+#if VERBOSE_DEBUGGING
             Console.WriteLine("Initialized base.");
-
+#endif
             // if we're editing a CC table/spellfixer project, then set the Converter Spec and say it's unmodified
             if (m_bEditMode)
             {
+#if VERBOSE_DEBUGGING
                 Console.WriteLine("Edit mode");
-                System.Diagnostics.Debug.Assert(!String.IsNullOrEmpty(ConverterIdentifier));
+#endif
+				System.Diagnostics.Debug.Assert(!String.IsNullOrEmpty(ConverterIdentifier));
                 textBoxExpression.Text = ConverterIdentifier;
                 IsModified = false;
             }
 
             m_bInitialized = true;
+#if VERBOSE_DEBUGGING
             Console.WriteLine("PerlExpressionAutoConfigDialog ctor END");
-        }
+#endif
+		}
 
         public PerlExpressionAutoConfigDialog (
             IEncConverters aECs,
@@ -141,15 +153,18 @@ namespace SilEncConverters40
 
         protected void UpdateUI(bool bVisible)
         {
+#if VERBOSE_DEBUGGING
             Console.WriteLine("UpdateUI BEGIN");
+#endif
 /*
             buttonSaveInRepository.Visible =
                 groupBoxExpects.Visible =
                 groupBoxReturns.Visible = bVisible;
 */
-
+#if VERBOSE_DEBUGGING
             Console.WriteLine("UpdateUI END");
-        }
+#endif
+		}
 
         protected override void SetConvTypeControls()
         {
