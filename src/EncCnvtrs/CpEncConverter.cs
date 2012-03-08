@@ -5,6 +5,9 @@ using System.Text;
 
 using ECInterfaces;                     // for IEncConverter
 
+//uncomment the following line for verbose debugging output using Console.WriteLine
+//#define VERBOSE_DEBUGGING
+
 namespace SilEncConverters40
 {
     /// <summary>
@@ -40,8 +43,10 @@ namespace SilEncConverters40
             ref string lhsEncodingID, ref string rhsEncodingID, ref ConvType conversionType, 
             ref Int32 processTypeFlags, Int32 codePageInput, Int32 codePageOutput, bool bAdding)
         {
-            //Console.WriteLine("Cp EC Initialize BEGIN");
-            base.Initialize(converterName, converterSpec, ref lhsEncodingID, ref rhsEncodingID, ref conversionType, ref processTypeFlags, codePageInput, codePageOutput, bAdding );
+#if VERBOSE_DEBUGGING
+            Console.WriteLine("Cp EC Initialize BEGIN");
+#endif
+			base.Initialize(converterName, converterSpec, ref lhsEncodingID, ref rhsEncodingID, ref conversionType, ref processTypeFlags, codePageInput, codePageOutput, bAdding );
             m_nCodePage = System.Convert.ToInt32(ConverterIdentifier);
             
             // the UTF16 code page is a special case: ConvType must be Uni <> Uni
@@ -75,8 +80,10 @@ namespace SilEncConverters40
 
             // finally, it is also a "Code Page" conversion process type
             processTypeFlags = m_lProcessType |= (int)ProcessTypeFlags.CodePageConversion;
-            //Console.WriteLine("Cp EC Initialize END");
-        }
+#if VERBOSE_DEBUGGING
+            Console.WriteLine("Cp EC Initialize END");
+#endif
+		}
 
         protected override EncodingForm DefaultUnicodeEncForm(bool bForward, bool bLHS)
         { 
@@ -191,8 +198,10 @@ namespace SilEncConverters40
 				var name = encodings[i].CodePage.ToString();
 				specs.Add(name);
 				m_mapNameEncoding.Add(name, encodings[i]);
-				//Console.WriteLine("Converter[{0}]: name = '{1}', displayname = '{2}', codepage = {3}",
-				//	i, encodings[i].Name, encodings[i].DisplayName, encodings[i].CodePage);
+#if VERBOSE_DEBUGGING
+				Console.WriteLine("Converter[{0}]: name = '{1}', displayname = '{2}', codepage = {3}",
+					i, encodings[i].Name, encodings[i].DisplayName, encodings[i].CodePage);
+#endif
 			}
 			return specs;
 		}

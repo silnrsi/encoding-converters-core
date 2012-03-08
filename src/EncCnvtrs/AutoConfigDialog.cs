@@ -9,6 +9,9 @@ using System.Text;                      // for Encoding
 using ECInterfaces;                     // for IEncConverter
 //using Skybound.Gecko;
 
+//uncomment the following line for verbose debugging output using Console.WriteLine
+//#define VERBOSE_DEBUGGING
+
 namespace SilEncConverters40
 {
     //[CLSCompliantAttribute(false)]  // because of GeckoWebBrowser
@@ -38,7 +41,9 @@ namespace SilEncConverters40
 
         public AutoConfigDialog()
         {
+#if VERBOSE_DEBUGGING
             Console.WriteLine("AutoConfigDialog ctor");
+#endif
             System.Diagnostics.Debug.WriteLine("AutoConfigDialog ctor BEGIN");
             InitializeComponent();
             System.Diagnostics.Debug.WriteLine("finished InitializeComponent.");
@@ -76,8 +81,10 @@ namespace SilEncConverters40
             bool bIsInRepository
             )
         {
-            Console.WriteLine("AutoConfigDialog initialize");
-            System.Diagnostics.Debug.WriteLine("AutoConfigDialog.Initialize BEGIN");
+#if VERBOSE_DEBUGGING
+			Console.WriteLine("AutoConfigDialog initialize");
+#endif
+			System.Diagnostics.Debug.WriteLine("AutoConfigDialog.Initialize BEGIN");
             htmlfilename = strHtmlFileName;
             m_strOriginalFriendlyName = FriendlyName = strFriendlyName;
             ConverterIdentifier = strConverterIdentifier;

@@ -4,6 +4,9 @@ using System.Text;
 using Microsoft.Win32;                  // for RegistryKey
 using ECInterfaces;                     // for IEncConverter
 
+//uncomment the following line for verbose debugging output using Console.WriteLine
+//#define VERBOSE_DEBUGGING
+
 namespace SilEncConverters40
 {
     /// <summary>
@@ -32,15 +35,19 @@ namespace SilEncConverters40
         #region Initialization
         public CpEncConverter() : base(typeof(CpEncConverter).FullName,EncConverters.strTypeSILcp)
         {
+#if VERBOSE_DEBUGGING
             Console.WriteLine("Cp EC Initialize");
-        }
+#endif
+		}
 
         public override void Initialize(string converterName, string converterSpec,
             ref string lhsEncodingID, ref string rhsEncodingID, ref ConvType conversionType,
             ref Int32 processTypeFlags, Int32 codePageInput, Int32 codePageOutput, bool bAdding)
         {
+#if VERBOSE_DEBUGGING
             Console.WriteLine("Cp EC Initialize BEGIN");
-            base.Initialize(converterName, converterSpec, ref lhsEncodingID, ref rhsEncodingID, ref conversionType, ref processTypeFlags, codePageInput, codePageOutput, bAdding );
+#endif
+			base.Initialize(converterName, converterSpec, ref lhsEncodingID, ref rhsEncodingID, ref conversionType, ref processTypeFlags, codePageInput, codePageOutput, bAdding );
             m_nCodePage = System.Convert.ToInt32(ConverterIdentifier);
 
             // the UTF8 code page is a special case: ConvType must be Uni <> Uni
@@ -74,8 +81,10 @@ namespace SilEncConverters40
 
             // finally, it is also a "Code Page" conversion process type
             processTypeFlags = m_lProcessType |= (int)ProcessTypeFlags.CodePageConversion;
+#if VERBOSE_DEBUGGING
             Console.WriteLine("Cp EC Initialize END");
-        }
+#endif
+		}
 
         protected override EncodingForm  DefaultUnicodeEncForm(bool bForward, bool bLHS)
         {
