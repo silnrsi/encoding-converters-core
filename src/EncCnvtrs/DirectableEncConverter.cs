@@ -128,6 +128,18 @@ namespace SilEncConverters40
                 throw NoConverterException;
         }
 
+        public string SafeConvert(string sInput)
+        {
+            try
+            {
+                return Convert(sInput);
+            }
+            catch
+            {
+            }
+            return sInput;
+        }
+
         protected ApplicationException NoConverterException
         {
             get

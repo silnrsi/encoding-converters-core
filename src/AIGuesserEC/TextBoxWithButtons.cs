@@ -49,6 +49,14 @@ namespace SilEncConverters40
             set { textBox.Font = value; }
         }
 
+        public override RightToLeft RightToLeft
+        {
+            set
+            {
+                tableLayoutPanel.RightToLeft = textBox.RightToLeft = value;
+            }
+        }
+
         private void buttonDelete_Click(object sender, EventArgs e)
         {
             _parent.DeleteTextWithButtons(this);

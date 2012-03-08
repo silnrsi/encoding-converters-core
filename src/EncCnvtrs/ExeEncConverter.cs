@@ -141,7 +141,7 @@ namespace SilEncConverters40
             {
                 if( m_psi == null )
                 {
-                    m_psi = new ProcessStartInfo(WorkingDir + @"\" + ExeName);
+                    m_psi = new ProcessStartInfo(Path.Combine(WorkingDir, ExeName));
                     m_psi.Arguments = Arguments;
                     m_psi.WorkingDirectory = WorkingDir;
                     m_psi.UseShellExecute = false;
@@ -281,7 +281,7 @@ namespace SilEncConverters40
                     else
                     {
                         rnOutLen = strOutput.Length * 2;
-                        ECNormalizeData.StringToByteStar(strOutput,lpOutBuffer,rnOutLen);
+                        ECNormalizeData.StringToByteStar(strOutput,lpOutBuffer,rnOutLen, false);
                     }
                 }
             }
