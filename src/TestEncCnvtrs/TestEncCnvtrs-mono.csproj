@@ -62,8 +62,5 @@
       <SpecificVersion>False</SpecificVersion>
       <Package>nunit</Package>
     </Reference>
-    <Reference Include="CodePageEC">
-      <HintPath>..\..\output\Debug\CodePageEC.dll</HintPath>
-    </Reference>
   </ItemGroup>
 </Project>
