@@ -2988,21 +2988,20 @@ namespace SilEncConverters40
         [Description("Launch a dialog to Configure a converter"),Category("Data")]
         public bool AutoConfigure(ConvType eConversionTypeFilter, ref string strFriendlyName)
         {
-            ImplTypeList dlg = new ImplTypeList(m_mapDisplayNameToProgID.Keys);
+            var dlg = new ImplTypeList(m_mapDisplayNameToProgID.Keys);
             if( dlg.ShowDialog() == DialogResult.OK )
             {
-                string strProgID = (string)m_mapDisplayNameToProgID[dlg.SelectedDisplayName];
-
+                var strProgId = (string)m_mapDisplayNameToProgID[dlg.SelectedDisplayName];
                 try
                 {
                     // we create the EncConverter objects based on the prog id from the registry.
                     //  (see comments near "Item" for why we're dealing with the interface rather
                     //  than the coclass; i.e. IEncConverter rather than EncConverter).
 #if !DontCheckAssemVersion
-                    IEncConverter rConverter = InstantiateIEncConverter(strProgID, null);
+                    IEncConverter rConverter = InstantiateIEncConverter(strProgId, null);
 
                     if (rConverter == null)
-                        throw new ApplicationException(String.Format("Unable to create an object of type '{0}'", strProgID));
+                        throw new ApplicationException(String.Format("Unable to create an object of type '{0}'", strProgId));
 #else
                     Type typeEncConverter = Type.GetTypeFromProgID(strProgID);
                     IEncConverter rIEncConverter = (IEncConverter) Activator.CreateInstance(typeEncConverter);
@@ -3070,9 +3069,7 @@ namespace SilEncConverters40
             }
             catch 
             {
-#if DEBUG
                 throw;
-#endif
             }
 
             return false;
@@ -3746,10 +3743,7 @@ namespace SilEncConverters40
             if( String.IsNullOrEmpty(strRepositoryFile) )
             {
                 // by default, put it in the C:\Program Files\Common Files\Enc... folder
-                strRepositoryFile = Util.GetSpecialFolderPath(Environment.SpecialFolder.CommonApplicationData);
-                strRepositoryFile += strDefXmlPath;
-                VerifyDirectoryExists(strRepositoryFile);
-                strRepositoryFile += strDefXmlFilename;
+				strRepositoryFile = DefaultRepositoryPath;
                 WriteStorePath(strRepositoryFile);
             }
             else 
@@ -3759,6 +3753,21 @@ namespace SilEncConverters40
             }
 
             return strRepositoryFile;
+        }
+		
+		/// <summary>
+		/// Gets the default full path of the repository file.
+		/// </summary>
+		public static string DefaultRepositoryPath
+		{
+			get
+			{
+            	string strRepositoryFile = Util.GetSpecialFolderPath(Environment.SpecialFolder.CommonApplicationData);
+                strRepositoryFile += strDefXmlPath;
+                VerifyDirectoryExists(strRepositoryFile);
+                strRepositoryFile += strDefXmlFilename;
+				return strRepositoryFile;
+			}
         }
 
         protected static void VerifyDirectoryExists(string strPath)
@@ -4506,7 +4515,7 @@ namespace SilEncConverters40
 		[Description("Turn a .Net 'string' used with the LegacyBytes or UTF8Bytes encoding form into a 'byte []'"),Category("Data")] 
 		public static byte [] BytesStringToByteArr(string strBytesString)
 		{
-			return ECNormalizeData.StringToByteArr(strBytesString);
+            return ECNormalizeData.StringToByteArr(strBytesString, true);
 		}
 		#endregion StringBytes Helpers
 

@@ -74,7 +74,6 @@ namespace SilEncConverters40
             // if we're editing, then it starts out clean
             IsModified = !m_bEditMode;
 
-            // if we're editing, then we already have this converter in the collection (even if it's
             //  temporary)
             if (m_bEditMode)
             {
@@ -101,7 +100,9 @@ namespace SilEncConverters40
             RegistryKey keyRoot = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\SIL\SilEncConverters40", false);
             if (keyRoot != null)
             {
-                string strXmlFilePath = (string)keyRoot.GetValue("RootDir");
+                var strXmlFilePath = (string)keyRoot.GetValue("RootDir");
+                if (String.IsNullOrEmpty(strXmlFilePath))
+                    throw new ApplicationException("The 'RootDir' registry key is not define!? Perhaps it needs to be re-installed. Ask the developer.");
                 if (strXmlFilePath[strXmlFilePath.Length - 1] != '\\')
                     strXmlFilePath += '\\';
                 strXmlFilePath += @"help\" + strHtmlFileName;

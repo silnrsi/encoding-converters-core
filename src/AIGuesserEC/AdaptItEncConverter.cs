@@ -429,7 +429,7 @@ namespace SilEncConverters40
                 if( nLen > (int)rnOutLen )
                     EncConverters.ThrowError(ErrStatus.OutputBufferFull);
                 rnOutLen = nLen;
-                ECNormalizeData.StringToByteStar(strOutput,lpOutBuffer,rnOutLen);
+                ECNormalizeData.StringToByteStar(strOutput,lpOutBuffer,rnOutLen, false);
             }
         }
         #endregion Abstract Base Class Overrides

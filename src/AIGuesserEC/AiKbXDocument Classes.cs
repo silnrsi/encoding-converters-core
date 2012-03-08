@@ -383,6 +383,13 @@ namespace SilEncConverters40
             _elem = elem;
         }
 
+        public MapOfMaps(string strSrcLangName, string strTgtLangName)
+        {
+            _elem = CreateMapOfMapsElement(strSrcLangName, strTgtLangName);
+            XDocument = NewAiXdocument;
+            XDocument.Add(_elem);
+        }
+
         public XElement Xml
         {
             get { return _elem; }
@@ -398,11 +405,20 @@ namespace SilEncConverters40
             // determine if this is the new or old KB format (old: {docVersion}; 
             //  new: {kbVersion})
             var elemKb = doc.Elements().First();
-            var attr = elemKb.Attribute(CstrAttributeNameDocVersion);
+            XAttribute attr;
+            var strSrcLanguage = ((attr = elemKb.Attribute(CstrAttributeNameSourceLanguageName)) != null)
+                                     ? attr.Value
+                                     : null;
+            var strTgtLanguage = ((attr = elemKb.Attribute(CstrAttributeNameTargetLanguageName)) != null)
+                                     ? attr.Value
+                                     : null;
+            attr = elemKb.Attribute(CstrAttributeNameDocVersion);
             var mapOfMaps = new MapOfMaps(elemKb)
                                 {
                                     XDocument = doc, 
-                                    IsKbV2 = (attr == null)
+                                    IsKbV2 = (attr == null),
+                                    SrcLangName = strSrcLanguage,
+                                    TgtLangName = strTgtLanguage
                                 };
 
             return mapOfMaps;
@@ -471,7 +487,7 @@ namespace SilEncConverters40
 
         private static void SaveFile(string strFilename, XDocument xDocument)
         {
-            Debug.Assert(!String.IsNullOrEmpty(strFilename));
+            Debug.Assert(!String.IsNullOrEmpty(strFilename) && (xDocument != null));
 
             // first make a backup
             if (!Directory.Exists(Path.GetDirectoryName(strFilename)))
@@ -488,9 +504,7 @@ namespace SilEncConverters40
 
             // create the root portions of the XML document and sort the running fragment 
             //  into it.
-            var doc = new XDocument(
-                new XDeclaration("1.0", "utf-8", "yes"),
-                new XComment(Properties.Resources.AdaptItKbDescription));
+            var doc = NewAiXdocument;
 
             var xslt = new XslCompiledTransform();
             xslt.Load(XmlReader.Create(new StringReader(Properties.Resources.SortAIKB)));
@@ -513,6 +527,16 @@ namespace SilEncConverters40
             File.Delete(strFilename);
             File.Copy(strTempFilename, strFilename, true);
             File.Delete(strTempFilename);
+        }
+
+        private static XDocument NewAiXdocument
+        {
+            get
+            {
+                return new XDocument(
+                    new XDeclaration("1.0", "utf-8", "yes"),
+                    new XComment(Properties.Resources.AdaptItKbDescription));
+            }
         }
 
         private static void CleanUpDocument(ref XDocument doc)
@@ -557,6 +581,9 @@ namespace SilEncConverters40
                 </MAP>
               </KB>
             */
+            SrcLangName = strSrcLangName;
+            TgtLangName = strTgtLangName;
+            Max = "1";
             var elem = new XElement(CstrElementNameKnowledgeBase,
                                     (IsKbV2)
                                         ? new XAttribute(CstrAttributeNameKbVersion, 2)

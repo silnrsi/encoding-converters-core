@@ -37,9 +37,13 @@
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.textBoxFilter = new System.Windows.Forms.TextBox();
             this.buttonAddNewSourceWord = new System.Windows.Forms.Button();
-            this.targetFormDisplayControl = new SilEncConverters40.TargetFormDisplayControl();
             this.buttonOK = new System.Windows.Forms.Button();
             this.buttonCancel = new System.Windows.Forms.Button();
+            this.toolTip = new System.Windows.Forms.ToolTip(this.components);
+            this.progressBar = new System.Windows.Forms.ProgressBar();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.createReversalProjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.targetFormDisplayControl = new SilEncConverters40.TargetFormDisplayControl();
             this.tableLayoutPanel.SuspendLayout();
             this.contextMenuStrip.SuspendLayout();
             this.SuspendLayout();
@@ -69,7 +73,7 @@
             this.listBoxSourceWordForms.FormattingEnabled = true;
             this.listBoxSourceWordForms.Location = new System.Drawing.Point(3, 29);
             this.listBoxSourceWordForms.Name = "listBoxSourceWordForms";
-            this.listBoxSourceWordForms.Size = new System.Drawing.Size(204, 264);
+            this.listBoxSourceWordForms.Size = new System.Drawing.Size(204, 273);
             this.listBoxSourceWordForms.Sorted = true;
             this.listBoxSourceWordForms.TabIndex = 1;
             this.listBoxSourceWordForms.SelectedIndexChanged += new System.EventHandler(this.listBoxSourceWordForms_SelectedIndexChanged);
@@ -78,15 +82,17 @@
             // 
             this.contextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.deleteToolStripMenuItem,
-            this.editToolStripMenuItem});
+            this.editToolStripMenuItem,
+            this.toolStripSeparator1,
+            this.createReversalProjectToolStripMenuItem});
             this.contextMenuStrip.Name = "contextMenuStrip";
-            this.contextMenuStrip.Size = new System.Drawing.Size(108, 48);
+            this.contextMenuStrip.Size = new System.Drawing.Size(195, 98);
             this.contextMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip_Opening);
             // 
             // deleteToolStripMenuItem
             // 
             this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
-            this.deleteToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
+            this.deleteToolStripMenuItem.Size = new System.Drawing.Size(194, 22);
             this.deleteToolStripMenuItem.Text = "&Delete";
             this.deleteToolStripMenuItem.ToolTipText = "Click to delete the selected word";
             this.deleteToolStripMenuItem.Click += new System.EventHandler(this.deleteToolStripMenuItem_Click);
@@ -94,7 +100,7 @@
             // editToolStripMenuItem
             // 
             this.editToolStripMenuItem.Name = "editToolStripMenuItem";
-            this.editToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
+            this.editToolStripMenuItem.Size = new System.Drawing.Size(194, 22);
             this.editToolStripMenuItem.Text = "&Edit";
             this.editToolStripMenuItem.ToolTipText = "Click to edit the selected word";
             this.editToolStripMenuItem.Click += new System.EventHandler(this.editToolStripMenuItem_Click);
@@ -118,18 +124,6 @@
             this.buttonAddNewSourceWord.UseVisualStyleBackColor = true;
             this.buttonAddNewSourceWord.Click += new System.EventHandler(this.buttonAddNewSourceWord_Click);
             // 
-            // targetFormDisplayControl
-            // 
-            this.targetFormDisplayControl.CallToDeleteSourceWord = null;
-            this.targetFormDisplayControl.CallToSetModified = null;
-            this.targetFormDisplayControl.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.targetFormDisplayControl.Location = new System.Drawing.Point(213, 3);
-            this.targetFormDisplayControl.Name = "targetFormDisplayControl";
-            this.tableLayoutPanel.SetRowSpan(this.targetFormDisplayControl, 3);
-            this.targetFormDisplayControl.Size = new System.Drawing.Size(356, 328);
-            this.targetFormDisplayControl.TabIndex = 2;
-            this.targetFormDisplayControl.TargetWordFont = null;
-            // 
             // buttonOK
             // 
             this.buttonOK.Enabled = false;
@@ -151,13 +145,47 @@
             this.buttonCancel.Text = "Cancel";
             this.buttonCancel.UseVisualStyleBackColor = true;
             // 
+            // progressBar
+            // 
+            this.progressBar.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.progressBar.Location = new System.Drawing.Point(0, 383);
+            this.progressBar.Name = "progressBar";
+            this.progressBar.Size = new System.Drawing.Size(597, 23);
+            this.progressBar.TabIndex = 3;
+            this.progressBar.Visible = false;
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(191, 6);
+            // 
+            // createReversalProjectToolStripMenuItem
+            // 
+            this.createReversalProjectToolStripMenuItem.Name = "createReversalProjectToolStripMenuItem";
+            this.createReversalProjectToolStripMenuItem.Size = new System.Drawing.Size(194, 22);
+            this.createReversalProjectToolStripMenuItem.Text = "&Create Reversal Project";
+            this.createReversalProjectToolStripMenuItem.Click += new System.EventHandler(this.CreateReversalProjectToolStripMenuItemClick);
+            // 
+            // targetFormDisplayControl
+            // 
+            this.targetFormDisplayControl.CallToDeleteSourceWord = null;
+            this.targetFormDisplayControl.CallToSetModified = null;
+            this.targetFormDisplayControl.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.targetFormDisplayControl.Location = new System.Drawing.Point(213, 3);
+            this.targetFormDisplayControl.Name = "targetFormDisplayControl";
+            this.tableLayoutPanel.SetRowSpan(this.targetFormDisplayControl, 3);
+            this.targetFormDisplayControl.Size = new System.Drawing.Size(356, 328);
+            this.targetFormDisplayControl.TabIndex = 2;
+            this.targetFormDisplayControl.TargetWordFont = null;
+            // 
             // ViewSourceFormsForm
             // 
             this.AcceptButton = this.buttonOK;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonCancel;
-            this.ClientSize = new System.Drawing.Size(597, 386);
+            this.ClientSize = new System.Drawing.Size(597, 406);
+            this.Controls.Add(this.progressBar);
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.buttonOK);
             this.Controls.Add(this.tableLayoutPanel);
@@ -184,5 +212,9 @@
         private System.Windows.Forms.TextBox textBoxFilter;
         private System.Windows.Forms.Button buttonAddNewSourceWord;
         private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;
+        private System.Windows.Forms.ToolTip toolTip;
+        private System.Windows.Forms.ProgressBar progressBar;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripMenuItem createReversalProjectToolStripMenuItem;
     }
 }

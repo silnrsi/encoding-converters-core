@@ -39,7 +39,7 @@ typedef CAdapt<PtrIEncConverter>        APtrIEncConverter;
 #define COR_E_SAFEARRAYTYPEMISMATCH 0x80131533  // from MSDN
 
 template <class T, const IID* piid = &__uuidof(T), const GUID* plibid = &CAtlModule::m_libid, 
-    WORD wMajor = 3, WORD wMinor = 1>
+    WORD wMajor = 4, WORD wMinor = 0>
 class CECEncConverter : 
 	public CComObjectRootEx<CComSingleThreadModel>
   , public ISupportErrorInfo

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -39,18 +40,31 @@ namespace SilEncConverters40
         protected bool        m_bLegacy;
         protected bool        m_bReverseLookup;   // we have to keep track of the direction since it might be different than m_bForward
         protected bool m_bHasNamespace = true;
-        protected string m_strTargetWordFontName;
-        protected string m_strSourceWordFontName;
         internal MapOfMaps MapOfMaps;   // this is a special XElement implementation used to edit the KB
 
-        public string cstrAdaptItXmlNamespace = "http://www.sil.org/computing/schemas/AdaptIt KB.xsd";
-        public string cstrAdaptItProjectFilename = "AI-ProjectConfiguration.aic";
-        public string cstrAdaptItPunctuationPairsNRSource = "PunctuationPairsSourceSet(stores space for an empty cell)	";
-        public string cstrAdaptItPunctuationPairsNRTarget = "PunctuationPairsTargetSet(stores space for an empty cell)	";
-        public string cstrAdaptItPunctuationPairsLegacy = "PunctuationPairs(stores space for an empty cell)	";
+        private LanguageInfo _liSourceLang, _liTargetLang, _liNavigationLang;
+
+        public const string cstrAdaptItXmlNamespace = "http://www.sil.org/computing/schemas/AdaptIt KB.xsd";
+        public const string cstrAdaptItProjectFilename = "AI-ProjectConfiguration.aic";
+        public const string cstrAdaptItPunctuationPairsNRSource = "PunctuationPairsSourceSet(stores space for an empty cell)	";
+        public const string cstrAdaptItPunctuationPairsNRTarget = "PunctuationPairsTargetSet(stores space for an empty cell)	";
+        public const string cstrAdaptItPunctuationPairsLegacy = "PunctuationPairs(stores space for an empty cell)	";
+        public const string CstrAdaptItPunct = "?.,;:\"'!()<>{}[]“”‘’…-";
+
         private const string CstrSourceFont = "SourceFont";
         private const string CstrTargetFont = "TargetFont";
+        private const string CstrNavTextFont = "NavTextFont";
+
+        private const string CstrRtlSource = "SourceIsRTL";
+        private const string CstrRtlTarget = "TargetIsRTL";
+        private const string CstrRtlNavText = "NavTextIsRTL";
+
+        private const string CstrSourceLanguageName	= "SourceLanguageName";
+        private const string CstrTargetLanguageName = "TargetLanguageName";
+
         private const string CstrFaceName = "FaceName";
+        private const string cstrDefaultFont = "Arial Unicode MS";
+
         public static char[] CaSplitChars = new [] { '\r', '\n', '\t', ' ' };
 
         protected IEncConverter theNormalizerEc;
@@ -205,28 +219,14 @@ namespace SilEncConverters40
 					int nLength = strProjectFileContents.IndexOfAny(CaSplitChars, nIndex) - nIndex;
                     string strPunctuation = strProjectFileContents.Substring(nIndex, nLength);
                     InitializeDelimitersLegacy(strPunctuation, out m_caDelimitersForward, out m_caDelimitersReverse);
-                    m_strTargetWordFontName = GetTargetFormFont(strProjectFileContents);
-                    m_strSourceWordFontName = GetSourceFormFont(strProjectFileContents);
                 }
                 else    // NonRoman version
                 {
-                    int nIndex = strProjectFileContents.IndexOf(cstrAdaptItPunctuationPairsNRSource) + cstrAdaptItPunctuationPairsNRSource.Length;
-
-                    // at some point, I think the project file didn't have \r, so handle that
-                    int nIndexToEol = strProjectFileContents.IndexOf("\r\n", nIndex);
-                    if (nIndexToEol == -1)
-                        nIndexToEol = strProjectFileContents.IndexOf('\n', nIndex); 
-                    int nLength = nIndexToEol - nIndex;
-                    m_caDelimitersForward = ReturnDelimiters(strProjectFileContents, nIndex, nLength);
-                    nIndex = strProjectFileContents.IndexOf(cstrAdaptItPunctuationPairsNRTarget, nIndex) + cstrAdaptItPunctuationPairsNRTarget.Length;
-                    
-                    nIndexToEol = strProjectFileContents.IndexOf("\r\n", nIndex);
-                    if (nIndexToEol == -1)
-                        nIndexToEol = strProjectFileContents.IndexOf('\n', nIndex);
-                    nLength = nIndexToEol - nIndex;
-                    m_caDelimitersReverse = ReturnDelimiters(strProjectFileContents, nIndex, nLength);
-                    m_strTargetWordFontName = GetTargetFormFont(strProjectFileContents);
-                    m_strSourceWordFontName = GetSourceFormFont(strProjectFileContents);
+                    _liSourceLang = new LanguageInfo(strProjectFileContents, cstrAdaptItPunctuationPairsNRSource, CstrSourceFont, CstrRtlSource, CstrSourceLanguageName);
+                    m_caDelimitersForward = (_liSourceLang.Punctuation + " ").ToCharArray();
+                    _liTargetLang = new LanguageInfo(strProjectFileContents, cstrAdaptItPunctuationPairsNRTarget, CstrTargetFont, CstrRtlTarget, CstrTargetLanguageName);
+                    m_caDelimitersReverse = (_liTargetLang.Punctuation + " ").ToCharArray();
+                    _liNavigationLang = new LanguageInfo(strProjectFileContents, null, CstrNavTextFont, CstrRtlNavText, null);
                 }
 
 				m_timeModifiedProj = timeModified;
@@ -501,28 +501,17 @@ namespace SilEncConverters40
             return null;
         }
 
-        private string GetSourceFormFont(string strProjectFileContents)
+        private static string GetLanguageElement(string strProjectFileContents, string strLanguageType, 
+            string strEntryName, string strDefaultValue)
         {
-            int nIndex = strProjectFileContents.IndexOf(CstrSourceFont);
+            int nIndex = strProjectFileContents.IndexOf(strLanguageType);
             if (nIndex != -1)
             {
-                nIndex = strProjectFileContents.IndexOf(CstrFaceName, nIndex) + CstrFaceName.Length + 1;
+                nIndex = strProjectFileContents.IndexOf(strEntryName, nIndex) + strEntryName.Length + 1;
                 int nLength = strProjectFileContents.IndexOf('\n', nIndex) - nIndex - 1;
                 return strProjectFileContents.Substring(nIndex, nLength);
             }
-            return "Arial Unicode MS";
-        }
-
-        private string GetTargetFormFont(string strProjectFileContents)
-        {
-            int nIndex = strProjectFileContents.IndexOf(CstrTargetFont);
-            if (nIndex != -1)
-            {
-                nIndex = strProjectFileContents.IndexOf(CstrFaceName, nIndex) + CstrFaceName.Length + 1;
-                int nLength = strProjectFileContents.IndexOf('\n', nIndex) - nIndex - 1;
-                return strProjectFileContents.Substring(nIndex, nLength);
-            }
-            return "Arial Unicode MS";
+            return strDefaultValue;
         }
 
         protected void GetXmlDocument(out XmlDocument doc, out XPathNavigator navigator, out XmlNamespaceManager manager)
@@ -684,7 +673,7 @@ namespace SilEncConverters40
         // for a NonRoman AI Project, the punctuation is in adjacent rows e.g.:
         // PunctuationPairsSourceSet(stores space for an empty cell)	?.,;:"!()<>{}[]“”‘’
         // PunctuationPairsTargetSet(stores space for an empty cell)	?.,;:"!()<>{}[]“”‘’
-        protected char[] ReturnDelimiters(string s, int nIndex, int nLength)
+        protected static char[] ReturnDelimiters(string s, int nIndex, int nLength)
         {
             string strPunctuation = s.Substring(nIndex, nLength);
 
@@ -747,8 +736,8 @@ namespace SilEncConverters40
                 strFilter = strFilter.Trim(m_caDelimitersForward ?? CaSplitChars);
 
             if (Load(true) || (_dlgSourceFormsForm == null))
-                _dlgSourceFormsForm = new ViewSourceFormsForm(MapOfMaps, m_strSourceWordFontName,
-                                                              m_strTargetWordFontName,
+                _dlgSourceFormsForm = new ViewSourceFormsForm(MapOfMaps, _liSourceLang,
+                                                              _liTargetLang,
                                                               m_caDelimitersForward ?? CaSplitChars,
                                                               m_caDelimitersReverse ?? CaSplitChars)
                                           {
@@ -770,6 +759,56 @@ namespace SilEncConverters40
             //  so capture it's new timestamp as though we had read it in
             if (!DoesFileExist(m_strKnowledgeBaseFileSpec, ref m_timeModifiedKbMapOfMaps))
                 EncConverters.ThrowError(ErrStatus.CantOpenReadMap, m_strKnowledgeBaseFileSpec);
+        }
+
+        public void KbReversal(ProgressBar progressBar)
+        {
+            Load(true); // load MapOfMaps if needed
+
+            var strReversalFileName = AdaptItLookupFileSpec(null, MapOfMaps.TgtLangName, MapOfMaps.SrcLangName);
+            var mapOfMapsReverse = File.Exists(strReversalFileName)
+                                       ? MapOfMaps.LoadXml(strReversalFileName)
+                                       : new MapOfMaps(MapOfMaps.TgtLangName, MapOfMaps.SrcLangName);
+
+            // it's sort of complicated to iterate the data, because the MapOfMaps class is geared
+            //  around *not* unpacking everything into the object
+            // first, get all the source words in the file
+            var lstSourceWords = MapOfMaps.ListOfAllSourceWordForms;
+            if (progressBar != null)
+            {
+                progressBar.Value = 0;
+                progressBar.Maximum = lstSourceWords.Count;
+            }
+
+            foreach (var sourceWordForm in lstSourceWords)
+            {
+                if (progressBar != null)
+                    progressBar.Value++;
+
+                // get the map that this source word is in
+                MapOfSourceWordElements mapOfSourceWordElements;
+                if (!MapOfMaps.TryGetValue(sourceWordForm, out mapOfSourceWordElements))
+                    continue;
+
+                // get the associated source word element
+                SourceWordElement sourceWordElement;
+                if (!mapOfSourceWordElements.TryGetValue(sourceWordForm, out sourceWordElement))
+                    continue;
+
+                // iterate through all the target word forms in that
+                foreach (var targetWordElement in sourceWordElement.Descendants())
+                    mapOfMapsReverse.AddCouplet(targetWordElement.TargetWord, sourceWordElement.SourceWord);
+            }
+
+            var strProjectFolderName = AdaptItProjectFolderName(null, MapOfMaps.SrcLangName, MapOfMaps.TgtLangName);
+            LanguageInfo liSource, liTarget, liNavigation;
+            ReadLanguageInfo(strProjectFolderName, MapOfMaps.SrcLangName, MapOfMaps.TgtLangName,
+                out liSource, out liTarget, out liNavigation);
+
+            // create the reversal project (swap the source and target)
+            WriteAdaptItProjectFiles(liTarget, liSource, liNavigation);
+
+            mapOfMapsReverse.SaveFile(strReversalFileName);
         }
 
         /// <summary>
@@ -823,7 +862,7 @@ namespace SilEncConverters40
             if (MapOfMaps.TryGetValue(strSourceWord, out mapOfSourceWordElements))
             {
                 var dlg = new ModifyTargetWordsForm(strSourceWord, mapOfSourceWordElements,
-                    m_strTargetWordFontName, m_caDelimitersReverse ?? CaSplitChars);
+                    _liTargetLang, m_caDelimitersReverse ?? CaSplitChars);
                 if (dlg.ShowDialog() == DialogResult.OK)
                 {
                     SaveMapOfMaps(MapOfMaps);
@@ -1019,6 +1058,218 @@ namespace SilEncConverters40
                 return nValue;
             }
             return nDefaultValue;
+        }
+
+        protected static string AdaptItGlossingLookupFileSpec(string strProjectFolderName,
+            string strSourceLangName, string strTargetLangName)
+        {
+            return Path.Combine(AdaptItProjectFolder(strProjectFolderName, strSourceLangName, strTargetLangName),
+                "Glossing.xml");
+        }
+
+        public static string AdaptItProjectFolderName(string strProjectFolderName,
+                                                      string strSourceLangName, 
+                                                      string strTargetLangName)
+        {
+            return String.IsNullOrEmpty(strProjectFolderName)
+                       ? String.Format(@"{0} to {1} adaptations", strSourceLangName, strTargetLangName)
+                       : strProjectFolderName;
+        }
+
+        protected static string AdaptationFileName(string strProjectFolderName,
+            string strSourceLangName, string strTargetLangName)
+        {
+            return String.Format(@"{0}.xml",
+                                 AdaptItProjectFolderName(strProjectFolderName, strSourceLangName, strTargetLangName));
+        }
+
+        public static string AdaptItLookupFileSpec(string strProjectFolderName,
+            string strSourceLangName, string strTargetLangName)
+        {
+            return Path.Combine(AdaptItProjectFolder(strProjectFolderName, strSourceLangName, strTargetLangName),
+                                AdaptationFileName(strProjectFolderName, strSourceLangName, strTargetLangName));
+        }
+
+        protected static string AdaptItProjectFileSpec(string strProjectFolderName,
+            string strSourceLangName, string strTargetLangName)
+        {
+            return Path.Combine(AdaptItProjectFolder(strProjectFolderName, strSourceLangName, strTargetLangName),
+                                "AI-ProjectConfiguration.aic");
+        }
+
+        /// <summary>
+        /// returns something like: <My Documents>\Adapt It Unicode Work
+        /// which is the root folder in the user's my documents folder for all adapt it projects
+        /// </summary>
+        public static string AdaptItWorkFolder
+        {
+            get
+            {
+                return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+                    "Adapt It Unicode Work");
+            }
+        }
+
+        /// <summary>
+        /// returns something like: <My Documents>\Adapt It Unicode Work\Bundelkhandi to English adaptations
+        /// which is the project folder for the Adapt It project
+        /// </summary>
+        /// <param name="strSourceLangName"></param>
+        /// <param name="strTargetLangName"></param>
+        /// <returns></returns>
+        public static string AdaptItProjectFolder(string strProjectFolderName,
+            string strSourceLangName, string strTargetLangName)
+        {
+            return Path.Combine(AdaptItWorkFolder,
+                                AdaptItProjectFolderName(strProjectFolderName, strSourceLangName, strTargetLangName));
+        }
+
+        /// <summary>
+        /// returns something like, <My Documents>\Adapt It Unicode Work\Bundelkhandi to English adaptations\Adaptations
+        /// which contains the adaptations done in Adapt It (only used if the user has called to AI to
+        /// do glossing; not in the OSE glossing tool)
+        /// </summary>
+        /// <param name="strSourceLangName"></param>
+        /// <param name="strTargetLangName"></param>
+        /// <returns></returns>
+        public static string AdaptItProjectAdaptationsFolder(string strProjectFolderName,
+            string strSourceLangName, string strTargetLangName)
+        {
+            return Path.Combine(AdaptItProjectFolder(strProjectFolderName, strSourceLangName, strTargetLangName),
+                                "Adaptations");
+        }
+
+        /// <summary>
+        /// returns something like: "Lookup in {0} to {1} adaptations", which is the EncConverter friendly name for the project
+        /// </summary>
+        /// <param name="strSourceLangName"></param>
+        /// <param name="strTargetLangName"></param>
+        /// <returns></returns>
+        public static string AdaptItLookupConverterName(string strSourceLangName, string strTargetLangName)
+        {
+            return String.Format(@"Lookup in {0} to {1} adaptations",
+                strSourceLangName, strTargetLangName);
+        }
+
+        public class LanguageInfo
+        {
+            public LanguageInfo() { }
+
+            public LanguageInfo(string strProjectFileContents, string strPunctuationPairs,
+                                string strFontName, string strRtl, string strLanguageName)
+            {
+                Punctuation = (!String.IsNullOrEmpty(strPunctuationPairs))
+                                      ? GetProjectFileElement(strProjectFileContents, strPunctuationPairs)
+                                      : null;
+                FontName = GetLanguageElement(strProjectFileContents, strFontName, CstrFaceName, cstrDefaultFont);
+                RightToLeft = (GetProjectFileElement(strProjectFileContents, strRtl) == "1")
+                                  ? RightToLeft.Yes
+                                  : RightToLeft.No;
+                LangName = (!String.IsNullOrEmpty(strLanguageName))
+                               ? GetProjectFileElement(strProjectFileContents, strLanguageName)
+                               : null;
+            }
+
+            private static string GetProjectFileElement(string strProjectFileContents, string strElementName)
+            {
+                int nIndex = strProjectFileContents.IndexOf(strElementName, StringComparison.Ordinal);
+                if (nIndex != -1)
+                {
+                    nIndex += strElementName.Length + 1;
+                    int nLength = strProjectFileContents.IndexOf('\n', nIndex) - nIndex - 1;
+                    return strProjectFileContents.Substring(nIndex, nLength);
+                }
+                return null;
+            }
+
+            public string LangName { get; set; }
+            public string Punctuation { get; set; }
+            public Font FontToUse
+            {
+                get
+                {
+                    return new Font(FontName, 12);
+                }
+            }
+
+            public string FontName { get; set; }
+            public RightToLeft RightToLeft { get; set; }
+        }
+
+        private static void ReadLanguageInfo(string strProjectFolderName, string strLangNameSource, string strLangNameTarget,
+            out LanguageInfo liSourceLang, out LanguageInfo liTargetLang, out LanguageInfo liNavigationLang)
+        {
+            // read the Project file
+            var strProjectFilespec = AdaptItProjectFileSpec(strProjectFolderName,
+                                                            strLangNameSource,
+                                                            strLangNameTarget);
+            System.Diagnostics.Debug.Assert(File.Exists(strProjectFilespec));
+
+            // get the punctuation out of the project file.
+            string strProjectFileContents = null;
+            using (StreamReader sr = File.OpenText(strProjectFilespec))
+            {
+                strProjectFileContents = sr.ReadToEnd();
+            }
+
+            liSourceLang = new LanguageInfo(strProjectFileContents, cstrAdaptItPunctuationPairsNRSource, CstrSourceFont, CstrRtlSource, CstrSourceLanguageName);
+            liTargetLang = new LanguageInfo(strProjectFileContents, cstrAdaptItPunctuationPairsNRTarget, CstrTargetFont, CstrRtlTarget, CstrTargetLanguageName);
+            liNavigationLang = new LanguageInfo(strProjectFileContents, null, CstrNavTextFont, CstrRtlNavText, null);
+        }
+
+        public static void WriteAdaptItProjectFiles(LanguageInfo liSourceLang,
+                                                    LanguageInfo liTargetLang,
+                                                    LanguageInfo liNavigation)
+        {
+            var strProjectFolderName = AdaptItProjectFolderName(null, liSourceLang.LangName, liTargetLang.LangName);
+
+            // create folders...
+            EnsureAiFoldersExist(strProjectFolderName, liSourceLang.LangName, liTargetLang.LangName);
+
+            // create Project file
+            var strProjectFilespec = AdaptItProjectFileSpec(strProjectFolderName,
+                                                            liSourceLang.LangName,
+                                                            liTargetLang.LangName);
+            if (!File.Exists(strProjectFilespec))
+            {
+                string strFormat = Properties.Settings.Default.DefaultAIProjectFile;
+                string strProjectFileContents = String.Format(strFormat,
+                    liSourceLang.FontToUse,
+                    liTargetLang.FontToUse,
+                    liNavigation.FontToUse,
+                    liSourceLang.LangName,
+                    liTargetLang.LangName,
+                    Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+                    liSourceLang.Punctuation,
+                    liTargetLang.Punctuation,
+                    (liSourceLang.RightToLeft == RightToLeft.Yes) ? "1" : "0",
+                    (liTargetLang.RightToLeft == RightToLeft.Yes) ? "1" : "0");
+                File.WriteAllText(strProjectFilespec, strProjectFileContents);
+            }
+
+            // create main KB
+            if (!File.Exists(AdaptItLookupFileSpec(strProjectFolderName, liSourceLang.LangName, liTargetLang.LangName)))
+            {
+                string strFormat = Properties.Settings.Default.DefaultAIKBFile;
+                string strKBContents = String.Format(strFormat, liSourceLang.LangName, liTargetLang.LangName);
+                File.WriteAllText(AdaptItLookupFileSpec(strProjectFolderName, liSourceLang.LangName, liTargetLang.LangName), strKBContents);
+            }
+
+            if (!File.Exists(AdaptItGlossingLookupFileSpec(strProjectFolderName, liSourceLang.LangName, liTargetLang.LangName)))
+            {
+                string strFormat = Properties.Settings.Default.DefaultAIKBFile;
+                string strKBContents = String.Format(strFormat, liSourceLang.LangName, liTargetLang.LangName);
+                File.WriteAllText(AdaptItGlossingLookupFileSpec(strProjectFolderName, liSourceLang.LangName, liTargetLang.LangName), strKBContents);
+            }
+        }
+
+        public static void EnsureAiFoldersExist(string strProjectFolderName, string strSourceLang, string strTargetLang)
+        {
+            var strAdaptationsFolder = AdaptItProjectAdaptationsFolder(strProjectFolderName,
+                                                                       strSourceLang,
+                                                                       strTargetLang);
+            if (!Directory.Exists(strAdaptationsFolder))
+                Directory.CreateDirectory(strAdaptationsFolder);
         }
     }
 }
