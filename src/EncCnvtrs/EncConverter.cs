@@ -278,9 +278,6 @@ namespace SilEncConverters40
         // [DispId(17)]
         public virtual string Convert(string sInput)
         {
-            System.Diagnostics.Debug.WriteLine("sInput.Length() is " + sInput.Length.ToString() + ".");
-            System.Diagnostics.Debug.WriteLine("sInput is " + sInput + ".");
-
             return InternalConvert(EncodingIn, sInput, EncodingOut, NormalizeOutput, DirectionForward);
         }
 
@@ -495,6 +492,7 @@ namespace SilEncConverters40
 				rciOutput = 0;
 				return "";
 			}
+
 			// if the user hasn't specified, then take the default case for the ConversionType:
 			//  if L/RHS == eLegacy, then LegacyString
 			//  if L/RHS == eUnicode, then UTF16
@@ -560,12 +558,15 @@ namespace SilEncConverters40
             System.Diagnostics.Debug.WriteLine("InternalConvertEx (output bytes) BEGIN");
             if( sInput == null )
                 EncConverters.ThrowError(ErrStatus.IncompleteChar);
+            System.Diagnostics.Debug.WriteLine("sInput.Length() is " + sInput.Length.ToString() + ".");
             if (sInput.Length == 0) {
                 // this section added 11/10/2011 by Jim K
                 rciOutput = 0;
                 return new byte[0];
             }
-			            // if the user hasn't specified, then take the default case for the ConversionType:
+            System.Diagnostics.Debug.WriteLine("sInput is " + sInput + ".");
+
+			// if the user hasn't specified, then take the default case for the ConversionType:
             //  if L/RHS == eLegacy, then LegacyString
             //  if L/RHS == eUnicode, then UTF16
             CheckInitEncForms(bForward, ref eInEncodingForm, ref eOutEncodingForm);
