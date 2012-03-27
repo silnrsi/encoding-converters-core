@@ -28,4 +28,11 @@
                    ImplementationProgId="SilEncConverters40.TecFormEncConverter"
                    Priority="5"
                    AssemblyReference="SilEncConverters40, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" />
+  <ECPluginDetails ImplementationName="cp"
+                   ImplementationProgId="SilEncConverters40.CpEncConverter"
+                   Priority="6"
+                   DisplayName="Code Page Converter"
+                   DefiningProcessType="16"
+                   ConfiguratorProgId="SilEncConverters40.CpEncConverterConfig"
+                   AssemblyReference="SilEncConverters40, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" />
 </EncConverterPlugins>

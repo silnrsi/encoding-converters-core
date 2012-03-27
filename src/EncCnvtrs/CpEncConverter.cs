@@ -1,15 +1,19 @@
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
-using Microsoft.Win32;                  // for RegistryKey
+
 using ECInterfaces;                     // for IEncConverter
+
+//uncomment the following line for verbose debugging output using Console.WriteLine
+//#define VERBOSE_DEBUGGING
 
 namespace SilEncConverters40
 {
     /// <summary>
     /// Managed Code Page EncConverter
     /// </summary>
-    [GuidAttribute("F91EBC49-1019-4ff3-B143-A84E6081A472")]
+    //[GuidAttribute("F91EBC49-1019-4ff3-B143-A84E6081A472")]
     // normally these subclasses are treated as the base class (i.e. the 
     //  client can use them orthogonally as IEncConverter interface pointers
     //  so normally these individual subclasses would be invisible), but if 
@@ -17,10 +21,11 @@ namespace SilEncConverters40
     //  'HKEY_CLASSES_ROOT\SilEncConverters40.TecEncConverter' which is the basis of 
     //  how it is started (see EncConverters.AddEx).
     // [ComVisible(false)] 
-	public class CpEncConverter : EncConverter
+    public class CpEncConverter : EncConverter
     {
         #region Member Variable Definitions
-        private const int   CP_UTF8 = 65001;
+        private const int   CP_UTF8  = 65001;
+        private const int   CP_UTF16 = 1200;
 
         private int     m_nCodePage;    // the code page to convert with
         private bool    m_bToWide;      // we have to keep track of the direction since it might be different than m_bForward
@@ -35,21 +40,24 @@ namespace SilEncConverters40
         }
 
         public override void Initialize(string converterName, string converterSpec, 
-			ref string lhsEncodingID, ref string rhsEncodingID, ref ConvType conversionType, 
+            ref string lhsEncodingID, ref string rhsEncodingID, ref ConvType conversionType, 
             ref Int32 processTypeFlags, Int32 codePageInput, Int32 codePageOutput, bool bAdding)
         {
-            base.Initialize(converterName, converterSpec, ref lhsEncodingID, ref rhsEncodingID, ref conversionType, ref processTypeFlags, codePageInput, codePageOutput, bAdding );
+#if VERBOSE_DEBUGGING
+            Console.WriteLine("Cp EC Initialize BEGIN");
+#endif
+			base.Initialize(converterName, converterSpec, ref lhsEncodingID, ref rhsEncodingID, ref conversionType, ref processTypeFlags, codePageInput, codePageOutput, bAdding );
             m_nCodePage = System.Convert.ToInt32(ConverterIdentifier);
             
-            // the UTF8 code page is a special case: ConvType must be Uni <> Uni
-            if( m_nCodePage == CP_UTF8 )
+            // the UTF16 code page is a special case: ConvType must be Uni <> Uni
+            if( m_nCodePage == CP_UTF16 )
             {
                 if( String.IsNullOrEmpty(LeftEncodingID) )
-                    lhsEncodingID = m_strLhsEncodingID = "utf-8";
+                    lhsEncodingID = m_strLhsEncodingID = "utf-16";
                 if( String.IsNullOrEmpty(RightEncodingID) )
                     rhsEncodingID = m_strRhsEncodingID = EncConverters.strDefUnicodeEncoding;
                 
-                // This only works if we consider UTF8 to be unicode; not legacy
+                // This only works if we consider UTF16 to be unicode; not legacy
                 conversionType = m_eConversionType = ConvType.Unicode_to_from_Unicode;
             }
 
@@ -72,51 +80,17 @@ namespace SilEncConverters40
 
             // finally, it is also a "Code Page" conversion process type
             processTypeFlags = m_lProcessType |= (int)ProcessTypeFlags.CodePageConversion;
-        }
+#if VERBOSE_DEBUGGING
+            Console.WriteLine("Cp EC Initialize END");
+#endif
+		}
 
-        protected override EncodingForm  DefaultUnicodeEncForm(bool bForward, bool bLHS)
+        protected override EncodingForm DefaultUnicodeEncForm(bool bForward, bool bLHS)
         { 
-            // the only left-hand-side for forwarding conversion unicode possible is UTF8.
-            if( bLHS )
-            {
-                if( bForward )
-                    return EncodingForm.UTF8String;
-                else
-                    return EncodingForm.UTF16; 
-            }
-            else    // wrt. rhs
-            {
-                if( bForward )
-                    return EncodingForm.UTF16; 
-                else
-                    return EncodingForm.UTF8String;
-            }
+            // C# wants UTF-16, generally speaking.
+            return EncodingForm.UTF16; 
         }
         #endregion Initialization
-
-        #region DLLImport Statements
-        [DllImport("kernel32", SetLastError=true)]
-        static extern unsafe int MultiByteToWideChar(
-            int CodePage,         // code page
-            uint dwFlags,         // character-type options
-            byte* lpMultiByteStr, // string to map
-            int cbMultiByte,       // number of bytes in string
-            char* lpWideCharStr,  // wide-character buffer
-            int cchWideChar        // size of buffer
-            );
-
-        [DllImport("kernel32", SetLastError=true)]
-        static extern unsafe int WideCharToMultiByte(
-            int CodePage,               // code page
-            uint dwFlags,               // performance and mapping flags
-            char* lpWideCharStr,        // wide-character string
-            int cchWideChar,            // number of chars in string
-            byte* lpMultiByteStr,       // buffer for new string
-            int cbMultiByte,            // size of buffer
-            int lpDefaultChar,       // default for unmappable chars
-            int lpUsedDefaultChar    // set when default char used
-            );
-        #endregion DLLImport Statements
 
         #region Abstract Base Class Overrides
         protected override void PreConvert
@@ -135,27 +109,33 @@ namespace SilEncConverters40
                 ref eNormalizeOutput, bForward);
 
             // we have to know what the forward flag state is (and we can't use m_bForward because
-            //	that might be different (e.g. if this was called from ConvertEx).
+            //  that might be different (e.g. if this was called from ConvertEx).
             m_bToWide = bForward;
+            if (!IsLegacyFormat(eInEncodingForm) && IsLegacyFormat(eOutEncodingForm))
+                m_bToWide = !bForward;
 
             // check if this is the special UTF8 code page, and if so, request that the engine
-            //	form be UTF8Bytes (this is the one code page converter where both sides are 
-            //	Unicode.
+            //  form be UTF8Bytes (this is the one code page converter where both sides are 
+            //  Unicode.
             if( m_bToWide )
             {
                 // going "to wide" means the output form required by the engine is UTF16.
                 eOutFormEngine = EncodingForm.UTF16;
 
-                if( m_nCodePage == CP_UTF8 )
+                if (m_nCodePage == CP_UTF8 && !IsLegacyFormat(eInEncodingForm))
                     eInFormEngine = EncodingForm.UTF8Bytes;
+                else
+                    eInFormEngine = EncodingForm.LegacyBytes;
             }
             else
             {
                 // going "from wide" means the input form required by the engine is UTF16.
                 eInFormEngine = EncodingForm.UTF16;
 
-                if( m_nCodePage == CP_UTF8 )
+                if (m_nCodePage == CP_UTF8 && !IsLegacyFormat(eOutEncodingForm))
                     eOutFormEngine = EncodingForm.UTF8Bytes;
+                else if (IsLegacyFormat(eOutEncodingForm))
+                    eOutFormEngine = EncodingForm.LegacyBytes;
             }
         }
 
@@ -168,15 +148,30 @@ namespace SilEncConverters40
             ref int     rnOutLen
             )
         {
-            if( m_bToWide )
-            {
-                rnOutLen = MultiByteToWideChar(m_nCodePage, 0, lpInBuffer, nInLen, (char*)lpOutBuffer, rnOutLen/2);
-                rnOutLen *= 2;  // sizeof(WCHAR);	// size in bytes
-            }
-            else
-            {
-                rnOutLen = WideCharToMultiByte(m_nCodePage, 0, (char*)lpInBuffer, nInLen / 2, lpOutBuffer, rnOutLen, 0, 0);
-            }
+			byte[] baIn = new byte[nInLen];
+			ECNormalizeData.ByteStarToByteArr(lpInBuffer, nInLen, baIn);
+			System.Diagnostics.Debug.WriteLine(String.Format("Starting with {0} bytes.", baIn.Length));
+			byte[] baOut;
+			if (m_bToWide)
+			{
+				// Perform the conversion from one encoding to the other.
+				Encoding encFrom = Encoding.GetEncoding(m_nCodePage);
+				Encoding encTo   = Encoding.Unicode;
+				baOut = Encoding.Convert(encFrom, encTo, baIn);
+			}
+			else
+			{
+				Encoding encFrom = Encoding.Unicode;
+				Encoding encTo   = Encoding.GetEncoding(m_nCodePage);
+				baOut = Encoding.Convert(encFrom, encTo, baIn);
+			}
+			System.Diagnostics.Debug.WriteLine(String.Format("Converted to {0} bytes.", baOut.Length));
+			if (baOut.Length > 0)
+				rnOutLen = Marshal.SizeOf(baOut[0]) * baOut.Length;
+			else
+				rnOutLen = 0;
+			Marshal.Copy(baOut, 0, (IntPtr)lpOutBuffer, baOut.Length);
+			Marshal.WriteByte((IntPtr)lpOutBuffer, rnOutLen, 0); // nul terminate
         }
 
         protected override string   GetConfigTypeName
@@ -185,5 +180,42 @@ namespace SilEncConverters40
         }
 
         #endregion Abstract Base Class Overrides
-    }
+
+		#region Additional public methods to access the C++ DLL.
+		static Dictionary<string, EncodingInfo> m_mapNameEncoding = new Dictionary<string, EncodingInfo>();
+
+		/// <summary>
+		/// Gets the available CodePage converter specifications.
+		/// </summary>
+		public static List<string> GetAvailableConverterSpecs()
+		{
+			var encodings = Encoding.GetEncodings();
+			m_mapNameEncoding.Clear();
+			var count = encodings.Length;
+			var specs = new List<string>(count);
+			for (var i = 0; i < count; ++i)
+			{
+				var name = encodings[i].CodePage.ToString();
+				specs.Add(name);
+				m_mapNameEncoding.Add(name, encodings[i]);
+#if VERBOSE_DEBUGGING
+				Console.WriteLine("Converter[{0}]: name = '{1}', displayname = '{2}', codepage = {3}",
+					i, encodings[i].Name, encodings[i].DisplayName, encodings[i].CodePage);
+#endif
+			}
+			return specs;
+		}
+		
+		/// <summary>
+		/// Gets the display name of the given CodePage converter.
+		/// </summary>
+		public static string GetDisplayName(string spec)
+		{
+			EncodingInfo encoding;
+			if (m_mapNameEncoding.TryGetValue(spec, out encoding))
+				return encoding.DisplayName;
+			return null;
+		}
+		#endregion
+	}
 }

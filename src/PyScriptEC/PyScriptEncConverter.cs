@@ -127,7 +127,7 @@ namespace SilEncConverters40
 
         protected override EncodingForm  DefaultUnicodeEncForm(bool bForward, bool bLHS)
         {
-            // if it's unspecified, then we want UTF-16 on Windows.
+            // if it's unspecified, then we want UTF-16 in C#.
             return EncodingForm.UTF16;
         }
 
@@ -149,9 +149,8 @@ namespace SilEncConverters40
                     Unload();
 
                 System.Diagnostics.Debug.WriteLine("Calling CppInitialize");
-                // do we need to make these parameters fixed?
                 string strScriptName = Path.GetFileName(strScriptPath);
-                string strScriptDir  = Path.GetDirectoryName(strScriptPath) + Path.DirectorySeparatorChar;
+                string strScriptDir = Path.GetDirectoryName(strScriptPath);
                 int status = 0;
                 try {
                     status = CppInitialize(strScriptName, strScriptDir);

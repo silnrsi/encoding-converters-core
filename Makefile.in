@@ -18,9 +18,8 @@ DLLS    = ECInterfaces.dll SilEncConverters40.dll CodePageEC.dll CcEC.dll \
   IcuEC.dll PyScriptEC.dll PerlExpressionEC.dll AIGuesserEC.dll
 LIBDIR  = $(exec_prefix)/lib/encConverters
 PLUGINS = "AI 4.0.0.0 Plugin Details.xml" "CC 4.0.0.0 Plugin Details.xml" \
-    "CP 4.0.0.0 Plugin Details.xml" "EC 4.0.0.0 Plugin Details.xml" \
-    "IcuEC 4.0.0.0 Plugin Details.xml" "PerlEC 4.0.0.0 Plugin Details.xml" \
-    "PythonEC 4.0.0.0 Plugin Details.xml"
+    "EC 4.0.0.0 Plugin Details.xml" "IcuEC 4.0.0.0 Plugin Details.xml" \
+    "PerlEC 4.0.0.0 Plugin Details.xml" "PythonEC 4.0.0.0 Plugin Details.xml"
 
 all:
 	@(cd build && nant) || true
