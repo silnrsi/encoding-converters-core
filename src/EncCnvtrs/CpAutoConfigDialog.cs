@@ -10,9 +10,11 @@ using System.Runtime.InteropServices;   // for DllImport
 
 namespace SilEncConverters40
 {
+    //[CLSCompliantAttribute(false)]  // because of GeckoWebBrowser
     public partial class CpAutoConfigDialog : SilEncConverters40.AutoConfigDialog
     {
-        const string cstrDefaultCodePageToSelect = "65001"; // make it UTF-8 by default (the most likely choice)
+        //const string cstrDefaultCodePageToSelect = "65001"; // make it UTF-8 by default (the most likely choice)
+        const string cstrDefaultCodePageToSelect = "1200"; // make it UTF-16 by default (the most likely choice)
 
         EncodingInfo[] m_encInfos = Encoding.GetEncodings();
 
@@ -179,13 +181,6 @@ namespace SilEncConverters40
             public short[] CodePageName;
         }
 
-        [DllImport("Kernel32", SetLastError = true)]
-        static extern int GetCPInfoExW
-            (
-            Int32 nCodePage,
-            Int32 dwFlags,
-            ref CPINFOEX lpCPInfo);
-
         private void comboBoxCodePageList_SelectedIndexChanged(object sender, EventArgs e)
         {
             IsModified = true;
@@ -204,56 +199,12 @@ namespace SilEncConverters40
             EncodingInfo encInfo = m_encInfos[comboBoxCodePageList.SelectedIndex];
             System.Diagnostics.Debug.Assert(nCodePage == encInfo.CodePage);
 
-            CPINFOEX cpInfo = new CPINFOEX();
-            if (GetCPInfoExW(nCodePage, 0, ref cpInfo) != 0)
-            {
-                string strInfo = String.Format("Code Page: {1}{0}Display Name: {2}{0}Registered Name: {3}{0}\tMax bytes/character: {4}",
-                    Environment.NewLine,
-                    encInfo.CodePage,
-                    encInfo.DisplayName,
-                    encInfo.Name,
-                    (int)(cpInfo.MaxCharSize & 0xFFFF));
-
-                // do these a little more carefully, because Format doesn't like nulls.
-                if (cpInfo.DefaultChar[0] != 0)
-                {
-                    string str = Encoding.Default.GetString(cpInfo.DefaultChar, 0, StringLengthFromByteArray(cpInfo.DefaultChar));
-                    strInfo += String.Format("{0}\tDefault legacy character: {1} (d{2:d3})",
-                        Environment.NewLine, str, (int)cpInfo.DefaultChar[0]);
-                }
-
-                if (cpInfo.UnicodeDefaultChar != 0)
-                {
-                    strInfo += String.Format("{0}\tDefault Unicode character: {1} (u{2:x4})",
-                        Environment.NewLine, (char)cpInfo.UnicodeDefaultChar, (int)cpInfo.UnicodeDefaultChar);
-                }
-
-                string strLeadByteString = null;
-                int i = 0;
-                while (cpInfo.LeadByte[i] != 0)
-                {
-                    byte by = cpInfo.LeadByte[i++];
-                    string strValue = String.Format("d{0:d3}, ", by);
-                    strLeadByteString += strValue;
-                }
-
-                if (!String.IsNullOrEmpty(strLeadByteString))
-                {
-                    strInfo += String.Format("{0}\tLead Byte ranges: {1})",
-                        Environment.NewLine, strLeadByteString.Substring(0, strLeadByteString.Length - 2));
-                }
-
-                textBoxCodePageDetails.Text = strInfo;
-            }
-            else
-            {
-                string strInfo = String.Format("Code Page: {1}{0}Display Name: {2}{0}Registered Name: {3}",
-                    Environment.NewLine,
-                    encInfo.CodePage,
-                    encInfo.DisplayName,
-                    encInfo.Name);
-                textBoxCodePageDetails.Text = strInfo;
-            }
+            string strInfo = String.Format("Code Page: {1}{0}Display Name: {2}{0}Registered Name: {3}",
+                Environment.NewLine,
+                encInfo.CodePage,
+                encInfo.DisplayName,
+                encInfo.Name);
+            textBoxCodePageDetails.Text = strInfo;
         }
 
         protected string ShortArrayToString(short[] ash)
