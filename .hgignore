@@ -1,0 +1,23 @@
+syntax: glob
+output/*
+build/Obj/*
+autom4te.cache/*
+.pc/*
+*.orig
+*~
+*.log
+debian/enc-converters/*
+src/TestEncCnvtrs/test-results/*
+All*Files.lst
+cp2fw.sh
+*.pidb
+Makefile
+src/*/bin
+src/*/obj
+*.user
+src/*/windows/bin
+src/*/windows/obj
+src/*/windows/Debug
+*.suo
+*.ncb
+_ReSharper.EncConverters 2008

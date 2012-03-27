@@ -1,0 +1,5 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <StartArguments>/n ToUpper /i8 ..\..\src\ECFileConverter\inputlc.txt /o8 ..\..\src\ECFileConverter\outputuc.txt</StartArguments>
+  </PropertyGroup>
+</Project>
