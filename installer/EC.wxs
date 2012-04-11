@@ -1,0 +1,121 @@
+<?xml version='1.0'?>
+<Wix xmlns='http://schemas.microsoft.com/wix/2003/01/wi'>
+	<Product UpgradeCode="8A50226C-84D0-4CAF-AF8F-B0284643C415" Id="F28612B2-B73F-4561-9B9F-1DA1F538020B" Name="SIL Encoding Converters 4.0" Manufacturer="SIL International" Language="1033" Version="4.0.0">
+		<Package Id='????????-????-????-????-????????????' InstallerVersion='200' Compressed='yes' />
+		<Condition Message="You need to be an administrator to install this product.">Privileged</Condition>
+		<Condition Message="[ProductName] will only run on Windows 2000 or better. You cannot intall it on this machine.">
+			<![CDATA[(NOT Version9X) OR (NOT VersionNT OR (VersionNT >= 500))]]>
+		</Condition>
+
+		<Media Id='1' Cabinet='EC1.cab' EmbedCab='yes' CompressionLevel='high'/>
+
+    <Property Id="PUBLISHER_2010_PIA_EXISTS">
+      <DirectorySearch Id="AppFile7" Path="[WindowsFolder]assembly\GAC_MSIL\Microsoft.Office.Interop.Publisher\14.0.0.0__71e9bce111e9429c" Depth="0">
+        <FileSearch Id="AppFile7" LongName="Microsoft.Office.Interop.Publisher.dll" />
+      </DirectorySearch>
+    </Property>
+    <Property Id="PUBLISHER_2007_PIA_EXISTS">
+			<DirectorySearch Id="AppFile5" Path="[WindowsFolder]assembly\GAC\Microsoft.Office.Interop.Publisher\12.0.0.0__71e9bce111e9429c" Depth="0">
+				<FileSearch Id="AppFile5" LongName="Microsoft.Office.Interop.Publisher.dll" />
+			</DirectorySearch>
+		</Property>
+		<Property Id="PUBLISHER_2003_PIA_EXISTS">
+			<DirectorySearch Id="AppFile4" Path="[WindowsFolder]assembly\GAC\Microsoft.Office.Interop.Publisher\11.0.0.0__71e9bce111e9429c" Depth="0">
+				<FileSearch Id="AppFile4" LongName="Microsoft.Office.Interop.Publisher.dll" />
+			</DirectorySearch>
+		</Property>
+    <Property Id="ACCESS_2010_PIA_EXISTS">
+      <DirectorySearch Id="AppFile6" Path="[WindowsFolder]assembly\GAC_MSIL\Microsoft.Office.Interop.Access\14.0.0.0__71e9bce111e9429c" Depth="0">
+        <FileSearch Id="AppFile6" LongName="Microsoft.Office.Interop.Access.dll" />
+      </DirectorySearch>
+    </Property>
+    <Property Id="ACCESS_2007_PIA_EXISTS">
+			<DirectorySearch Id="AppFile3" Path="[WindowsFolder]assembly\GAC\Microsoft.Office.Interop.Access\12.0.0.0__71e9bce111e9429c" Depth="0">
+				<FileSearch Id="AppFile3" LongName="Microsoft.Office.Interop.Access.dll" />
+			</DirectorySearch>
+		</Property>
+		<Property Id="ACCESS_2003_PIA_EXISTS">
+			<DirectorySearch Id="AppFile2" Path="[WindowsFolder]assembly\GAC\Microsoft.Office.Interop.Access\11.0.0.0__71e9bce111e9429c" Depth="0">
+				<FileSearch Id="AppFile2" LongName="Microsoft.Office.Interop.Access.dll" />
+			</DirectorySearch>
+		</Property>
+		<Property Id="WORD_DOT_FOLDER_REG_11">
+			<RegistrySearch Id="AppReg" Root="HKCU" Key="Software\Microsoft\Office\11.0\Common\General" Name="UserTemplates" Type="directory" />
+		</Property>
+    <Property Id="WORD_DOT_FOLDER_REG_12">
+      <RegistrySearch Id="AppReg2" Root="HKCU" Key="Software\Microsoft\Office\12.0\Common\General" Name="UserTemplates" Type="directory" />
+    </Property>
+    <Property Id="WORD_DOT_FOLDER_REG_14">
+      <RegistrySearch Id="AppReg3" Root="HKCU" Key="Software\Microsoft\Office\14.0\Common\General" Name="UserTemplates" Type="directory" />
+    </Property>
+    <Property Id="COMPONENTEXISTS_EXCEL_10_PIA">
+      <DirectorySearch Id="AppFileExcel10" Path="[WindowsFolder]assembly\GAC_MSIL\Microsoft.Office.Interop.Excel\14.0.0.0__71e9bce111e9429c" Depth="0">
+        <FileSearch Id="AppFileExcel10" LongName="Microsoft.Office.Interop.Excel.dll" />
+      </DirectorySearch>
+    </Property>
+    <Property Id="COMPONENTEXISTS_EXCEL_07_PIA">
+      <DirectorySearch Id="AppFileExcel07" Path="[WindowsFolder]assembly\GAC\Microsoft.Office.Interop.Excel\12.0.0.0__71e9bce111e9429c" Depth="0">
+        <FileSearch Id="AppFileExcel07" LongName="Microsoft.Office.Interop.Excel.dll" />
+      </DirectorySearch>
+		</Property>
+		<Property Id="COMPONENTEXISTS_EXCEL_03_PIA">
+      <DirectorySearch Id="AppFileExcel03" Path="[WindowsFolder]assembly\GAC\Microsoft.Office.Interop.Excel\11.0.0.0__71e9bce111e9429c" Depth="0">
+        <FileSearch Id="AppFileExcel03" LongName="Microsoft.Office.Interop.Excel.dll" />
+      </DirectorySearch>
+		</Property>
+    <Property Id="COMPONENTEXISTS_WORD_10_PIA">
+      <DirectorySearch Id="AppFileWord10" Path="[WindowsFolder]assembly\GAC_MSIL\Microsoft.Office.Interop.Word\14.0.0.0__71e9bce111e9429c" Depth="0">
+        <FileSearch Id="AppFileWord10" LongName="Microsoft.Office.Interop.Word.dll" />
+      </DirectorySearch>
+    </Property>
+    <Property Id="COMPONENTEXISTS_WORD_07_PIA">
+      <DirectorySearch Id="AppFileWord07" Path="[WindowsFolder]assembly\GAC\Microsoft.Office.Interop.Word\12.0.0.0__71e9bce111e9429c" Depth="0">
+        <FileSearch Id="AppFileWord07" LongName="Microsoft.Office.Interop.Word.dll" />
+      </DirectorySearch>
+		</Property>
+		<Property Id="COMPONENTEXISTS_WORD_03_PIA">
+      <DirectorySearch Id="AppFileWord03" Path="[WindowsFolder]assembly\GAC\Microsoft.Office.Interop.Word\11.0.0.0__71e9bce111e9429c" Depth="0">
+        <FileSearch Id="AppFileWord03" LongName="Microsoft.Office.Interop.Word.dll" />
+      </DirectorySearch>
+		</Property>
+    <Property Id="WORD_DOT_STARTUP_FOLDER">
+      <DirectorySearch Id="AppDirSigFile1" Path="[AppDataFolder]Microsoft\Word\STARTUP" Depth="0">
+        <DirectorySearch Id="AppDir" Depth="0" />
+      </DirectorySearch>
+    </Property>
+    <Property Id="WORD_DOT_FOLDER_FOLDER">
+      <DirectorySearch Id="AppDirSigFile" Path="[AppDataFolder]Microsoft\Templates" Depth="0">
+        <DirectorySearch Id="AppDir" Depth="0" />
+      </DirectorySearch>
+    </Property>
+    <Property Id="SIL_PYTHON_FOUND">
+			<RegistrySearch Id="AppReg1" Root="HKLM" Key="SOFTWARE\Python\PythonCore\2.5\InstallPath" Type="raw" />
+		</Property>
+		<Property Id="SIL_PERL_FOUND">
+			<DirectorySearch Id="AppFile" Path="C:\Perl\bin" Depth="0">
+				<FileSearch Id="AppFile" Name="perl510.dll" />
+			</DirectorySearch>
+		</Property>
+    <Property Id="SIL_ADAPTIT_LEGACY_FOUND">
+        <DirectorySearch Id="AIProjectFolder" Path="[PersonalFolder]" Depth="0">
+          <DirectorySearch Id="AIProjectFolder" Path="Adapt It Work" Depth="0" />
+        </DirectorySearch>
+    </Property>
+    <Property Id="SIL_ADAPTIT_UNICODE_FOUND">
+        <DirectorySearch Id="AIUProjectFolder" Path="[PersonalFolder]" Depth="0">
+          <DirectorySearch Id="AIUProjectFolder" Path="Adapt It Unicode Work" Depth="0" />
+        </DirectorySearch>
+    </Property>
+
+    <Property Id="ALLUSERS"><![CDATA[1]]></Property>
+		<Property Id="OfficePIAWarningWord"><![CDATA[The "Bulk Word Document Converter" add-in requires the Microsoft Office Primary Interop Assemblies (PIAs).]]></Property>
+		<Property Id="OfficePIAWarningOffice"><![CDATA[The "SILConverters for Office" add-in requires the Microsoft Office Primary Interop Assemblies (PIAs).]]></Property>
+		<Property Id="OfficePIAWarning"><![CDATA[The web page that shows how they can be installed either from your Office 2003/2007/2010 CD/DVD or via a (4MB) download is: http://msdn2.microsoft.com/en-us/library/aa159923(office.11).aspx]]></Property>
+
+		<FragmentRef Id='EcUI'/>
+		<FragmentRef Id='EcFilesFragment'/>
+		<FragmentRef Id='EcFeaturesFragment'/>
+		<FragmentRef Id='EcMergeModulesFragment'/>
+		<FragmentRef Id='EcActionsFragment'/>
+	</Product>
+</Wix>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2003/01/wi">
+	<Module Id="EC40" Guid="A3BA73F6-CE16-4a98-B96B-C8B938174C8B" Language="1033" Version="4.0.0.0">
+		<Package Id="????????-????-????-????-????????????" Keywords="SIL; Encoding Conversion; Transliteration; EncConverters" Description="EncConverter core 4.0 Merge Module -- Include in any client application deployment project which uses the EncConverters objects" Comments="Common installer module for SIL's version 4.0 of the EncConverter's core" Manufacturer="SIL International" InstallerVersion="200" Platforms="Intel" Languages="1033" SummaryCodepage="1252" />
+		<Directory Id="TARGETDIR" Name="SourceDir">
+      <Component Id="RegisterECFolders" Guid="57C5A4F8-AAEA-47d1-B802-07950BC8B116">
+				<Registry Id="regECRootDir" Root="HKLM" Key="Software\SIL\SilEncConverters40" Name="RootDir" Type="string" KeyPath="yes" Value="[CommonFilesFolder]SIL\"/>
+			</Component>
+      <Directory Id="CommonFilesFolder" Name="Common">
+				<Directory Id="CfSIL" Name="SIL">
+          <Component Id="ECDriver.dll" Guid="B888AEC2-8F56-4237-B5AC-9BFAC54A86B4">
+            <File Id="ECDriver.dll" Name="ECDRIV~1.dll" LongName="ECDriver.dll" IgnoreRegistration="true" ReadOnly="yes" KeyPath="yes" Source="Lib\${config}\ECDriver.dll"/>
+          </Component>
+					<Directory Id="Help" Name="Help">
+						<Component Id="CCTableHelp" Guid="1A2209DA-3C80-47a1-A673-614B8AE2E694">
+							<File Id="CCTableHelp" Name="CCTabl~1.mht" LongName="CC Table Plug-in About box.mht" ReadOnly="yes" KeyPath="yes" Source="Lib\${Config}\Help\CC Table Plug-in About box.mht"/>
+						</Component>
+            <Component Id="CPHelp" Guid="1C7AE6E2-8147-4062-87E2-2285E97345CA">
+              <File Id="CPHelp" Name="CodePa~1.mht" LongName="Code Page Converter Plug-in About box.mht" ReadOnly="yes" KeyPath="yes" Source="Lib\${Config}\Help\Code Page Converter Plug-in About box.mht"/>
+            </Component>
+            <Component Id="CmpdHelp" Guid="0EB390F2-B7CE-40cb-8D1E-2EB43B196EB4">
+              <File Id="CmpdHelp" Name="Compou~1.mht" LongName="Compound Converter Plug-in About box.mht" ReadOnly="yes" KeyPath="yes" Source="Lib\${Config}\Help\Compound Converter Plug-in About box.mht"/>
+            </Component>
+            <Component Id="FallBackHelp" Guid="8C984ED5-779D-4b96-BBAB-E7A1F80B8588">
+              <File Id="FallBackHelp" Name="Fallba~1.mht" LongName="Fallback Converter Plug-in About box.mht" ReadOnly="yes" KeyPath="yes" Source="Lib\${Config}\Help\Fallback Converter Plug-in About box.mht"/>
+            </Component>
+            <Component Id="TECkitHelp" Guid="3A81B42A-C4EA-4a27-9089-FE6F89E30F01">
+							<File Id="TECkitHelp" Name="TECkit~1.mht" LongName="TECkit Map Plug-in About box.mht" ReadOnly="yes" KeyPath="yes" Source="Lib\${Config}\Help\TECkit Map Plug-in About box.mht"/>
+						</Component>
+					</Directory>
+				</Directory>
+			</Directory>
+      <!--This is still needed to open authentication for the repository file folder-->
+			<Directory Id="CommonAppDataFolder" SourceName="AppData">
+				<Directory Id="AppDataSIL" Name="SIL">
+					<Directory Id="ECFolder" Name="EC">
+						<Component Id="CreateEcFolder" Guid="9CFB2B50-4B79-4366-9034-2030623CD810">
+							<CreateFolder>
+								<Permission Extended="yes" User="AuthenticatedUser" GenericAll="yes" />
+							</CreateFolder>
+						</Component>
+					</Directory>
+        </Directory>
+			</Directory>
+			<Directory Id="ProgramMenuFolder" Name="Program">
+				<Directory Id="SIL_Converters" Name="SILCON~1" LongName="SIL Converters">
+          <Directory Id="SILConvHelp" Name="Help">
+						<Component Id="HelpShortcuts" Guid="0DC2E3A4-FCCA-4b3b-BBA2-FB28EB8D4FD1" KeyPath="yes">
+							<Shortcut Id="CCTablePluginHelp" Directory="SILConvHelp" Name="CCTabl~1" LongName="CC Table Plug-in Help" Target="[#CCTableHelp]" Hotkey="0" IconIndex="0" Show="normal" WorkingDirectory="Help"/>
+              <Shortcut Id="CPPluginHelp" Directory="SILConvHelp" Name="CODEPA~1" LongName="Code Page Plug-in Help" Target="[#CPHelp]" Hotkey="0" IconIndex="0" Show="normal" WorkingDirectory="Help"/>
+              <Shortcut Id="CmpdPluginHelp" Directory="SILConvHelp" Name="COMPOU~1" LongName="Compound Converter Plug-in Help" Target="[#CmpdHelp]" Hotkey="0" IconIndex="0" Show="normal" WorkingDirectory="Help"/>
+              <Shortcut Id="FallbackPluginHelp" Directory="SILConvHelp" Name="PRIMAR~1" LongName="Primary-Fallback Converter Plug-in Help" Target="[#FallBackHelp]" Hotkey="0" IconIndex="0" Show="normal" WorkingDirectory="Help"/>
+              <Shortcut Id="TECkitPluginHelp" Directory="SILConvHelp" Name="TECKIT~1" LongName="TECkit Converter Plug-in Help" Target="[#TECkitHelp]" Hotkey="0" IconIndex="0" Show="normal" WorkingDirectory="Help"/>
+							<!-- The next item is junk to make validation pass on ICE18 -->
+							<CreateFolder />
+						</Component>
+					</Directory>
+				</Directory>
+			</Directory>
+		</Directory>
+	</Module>
+</Wix>
