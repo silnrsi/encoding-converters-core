@@ -33,6 +33,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -52,7 +53,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CcAutoConfigDialog.cs">
-      <SubType>Form</SubType>
     </Compile>
     <Compile Include="CcAutoConfigDialog.designer.cs">
       <DependentUpon>CcAutoConfigDialog.cs</DependentUpon>
