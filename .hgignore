@@ -4,6 +4,7 @@ build/Obj/*
 autom4te.cache/*
 .pc/*
 *.orig
+*.old
 *~
 *.log
 debian/enc-converters/*
@@ -21,3 +22,5 @@ src/*/windows/Debug
 *.suo
 *.ncb
 _ReSharper.EncConverters 2008
+Debug
+Release
