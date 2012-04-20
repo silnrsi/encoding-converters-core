@@ -53,6 +53,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CcAutoConfigDialog.cs">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="CcAutoConfigDialog.designer.cs">
       <DependentUpon>CcAutoConfigDialog.cs</DependentUpon>

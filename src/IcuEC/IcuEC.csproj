@@ -51,14 +51,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IcuConvAutoConfigDialog.cs">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="IcuConvConfig.cs" />
     <Compile Include="IcuConvEncConverter.cs" />
     <Compile Include="IcuRegexAutoConfigDialog.cs">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="IcuRegexConfig.cs" />
     <Compile Include="IcuRegexEncConverter.cs" />
     <Compile Include="IcuTranslitAutoConfigDialog.cs">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="IcuTranslitConfig.cs" />
     <Compile Include="IcuTranslitEncConverter.cs" />
