@@ -12,7 +12,11 @@ namespace ECInterfaces
 	{
 		public static bool IsUnix
 		{
-			get { return Environment.OSVersion.Platform == PlatformID.Unix; }
+			get
+			{
+				return Environment.OSVersion.Platform == PlatformID.Unix ||
+					Environment.OSVersion.Platform == PlatformID.MacOSX;	// MacOSX is built on top of BSD.
+			}
 		}
 
 		private static string s_CommonAppDataFolder;

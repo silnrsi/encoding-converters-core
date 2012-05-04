@@ -110,7 +110,7 @@ namespace SilEncConverters40
             m_strKnowledgeBaseFileSpec = converterSpec;
 #endif
             string strProjectFolder = Path.GetDirectoryName(m_strKnowledgeBaseFileSpec);
-            m_strProjectFileSpec = String.Format(@"{0}\{1}", strProjectFolder, cstrAdaptItProjectFilename);
+            m_strProjectFileSpec = Path.Combine(strProjectFolder, cstrAdaptItProjectFilename);
 
             if( bAdding )
             {
@@ -154,7 +154,7 @@ namespace SilEncConverters40
             }
         }
 
-        /* these are now deprecated since they don't support AI KB v2
+         /* these are now deprecated since they don't support AI KB v2
         protected string XPathToKB
         {
             get
@@ -189,9 +189,9 @@ namespace SilEncConverters40
             return str;
         }
         */
-
         protected virtual bool Load(bool bMapOfMaps)
         {
+            System.Diagnostics.Debug.WriteLine("AdaptItKBReader.Load() BEGIN");
             System.Diagnostics.Debug.Assert(!String.IsNullOrEmpty(m_strProjectFileSpec));
             System.Diagnostics.Debug.Assert(!String.IsNullOrEmpty(m_strKnowledgeBaseFileSpec));
 
@@ -216,7 +216,7 @@ namespace SilEncConverters40
                 if( m_bLegacy ) // legacy project file does it differently
                 {
                     int nIndex = strProjectFileContents.IndexOf(cstrAdaptItPunctuationPairsLegacy) + cstrAdaptItPunctuationPairsLegacy.Length;
-					int nLength = strProjectFileContents.IndexOfAny(CaSplitChars, nIndex) - nIndex;
+                    int nLength = strProjectFileContents.IndexOfAny(CaSplitChars, nIndex) - nIndex;
                     string strPunctuation = strProjectFileContents.Substring(nIndex, nLength);
                     InitializeDelimitersLegacy(strPunctuation, out m_caDelimitersForward, out m_caDelimitersReverse);
                 }
@@ -229,7 +229,7 @@ namespace SilEncConverters40
                     _liNavigationLang = new LanguageInfo(strProjectFileContents, null, CstrNavTextFont, CstrRtlNavText, null);
                 }
 
-				m_timeModifiedProj = timeModified;
+                m_timeModifiedProj = timeModified;
                 bSomethingChanged = true;
             }
 
@@ -313,6 +313,7 @@ namespace SilEncConverters40
                                 string strSourceWord = xpSourceWords.Current.GetAttribute("k", navigator.NamespaceURI);
                                 System.Diagnostics.Debug.Assert(!mapWords.ContainsKey(strSourceWord), String.Format("The Knowledge Base has two different source records which are canonically equivalent! See if you can merge the two KB entries for word that look like, '{0}'", strSourceWord));
                                 mapWords[strSourceWord] = strTargetWordFull;
+                                System.Diagnostics.Debug.WriteLine("mapWords[" + strSourceWord + "] = " + strTargetWordFull);
                             }
                         }
                     }
@@ -371,6 +372,7 @@ namespace SilEncConverters40
                                 }
 
                                 m_mapLookup[aTURow.k] = strValue;
+                                System.Diagnostics.Debug.WriteLine("m_mapLookup[" + aTURow.k +  "] = " + strValue);
                             }
                         }
                     }
@@ -445,6 +447,7 @@ namespace SilEncConverters40
                 }
             }
 
+            System.Diagnostics.Debug.WriteLine("AdaptItKBReader.Load() END");
             return bSomethingChanged;   // indicate whether the data was reinitialized or not
         }
 
@@ -516,6 +519,7 @@ namespace SilEncConverters40
 
         protected void GetXmlDocument(out XmlDocument doc, out XPathNavigator navigator, out XmlNamespaceManager manager)
         {
+            System.Diagnostics.Debug.WriteLine("AdaptItKBReader.cs: Loading " + m_strKnowledgeBaseFileSpec);
             doc = new XmlDocument();
             doc.Load(m_strKnowledgeBaseFileSpec);
             navigator = doc.CreateNavigator();
@@ -525,8 +529,8 @@ namespace SilEncConverters40
                 manager.AddNamespace("aikb", cstrAdaptItXmlNamespace);
         }
 
-        /* this is now deprecated since only the other approach knows about 
-         * AdaptIt KB v2
+         /* this is now deprecated since only the other approach knows about 
+          * AdaptIt KB v2
         /// <summary>
         /// This version will add a lookup pair to the Adapt It knowledge base and
         /// save the result immediately (with the negative point that it doesn't 
@@ -746,9 +750,10 @@ namespace SilEncConverters40
 
             _dlgSourceFormsForm.SelectedWord = strFilter;
 
-            return (_dlgSourceFormsForm.ShowDialog() == DialogResult.OK)
-                       ? _dlgSourceFormsForm.SelectedWord
-                       : null;
+            if (_dlgSourceFormsForm.ShowDialog() == DialogResult.OK)
+                return _dlgSourceFormsForm.SelectedWord;
+
+            return null;
         }
 
         internal void SaveMapOfMaps(MapOfMaps mapOfMaps)

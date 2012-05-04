@@ -9,6 +9,7 @@ using ECInterfaces;                     // for IEncConverter
 
 namespace SilEncConverters40
 {
+    //[CLSCompliantAttribute(false)]  // because of GeckoWebBrowser
     public partial class CmpdAutoConfigDialog : SilEncConverters40.MetaCmpdAutoConfigDialog
     {
         protected const int cnStepNameColumn = 0;

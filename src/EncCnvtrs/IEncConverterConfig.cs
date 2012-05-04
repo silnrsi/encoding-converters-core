@@ -5,6 +5,7 @@ using ECInterfaces;                     // for IEncConverterConfig
 
 namespace SilEncConverters40
 {
+    //[CLSCompliantAttribute(false)]  // because of GeckoWebBrowser
     public abstract class EncConverterConfig : IEncConverterConfig
 	{
         #region Member Variable Definitions

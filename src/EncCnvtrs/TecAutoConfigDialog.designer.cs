@@ -1,3 +1,8 @@
+using System;
+
+//uncomment the following line for verbose debugging output using Console.WriteLine
+//#define VERBOSE_DEBUGGING
+
 namespace SilEncConverters40
 {
     partial class TecAutoConfigDialog
@@ -28,7 +33,10 @@ namespace SilEncConverters40
         /// </summary>
         private void InitializeComponent()
         {
-            this.labelTECkitFile = new System.Windows.Forms.Label();
+#if VERBOSE_DEBUGGING
+            Console.WriteLine("TecAutoConfigDialog.designer.InitComp BEGIN");
+#endif
+			this.labelTECkitFile = new System.Windows.Forms.Label();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.textBoxFileSpec = new System.Windows.Forms.TextBox();
             this.buttonBrowse = new System.Windows.Forms.Button();
@@ -76,18 +84,22 @@ namespace SilEncConverters40
             this.textBoxFileSpec.Location = new System.Drawing.Point(67, 4);
             this.textBoxFileSpec.Name = "textBoxFileSpec";
             this.textBoxFileSpec.Size = new System.Drawing.Size(496, 20);
+            //this.textBoxFileSpec.Size = new System.Drawing.Size(400, 20);
             this.textBoxFileSpec.TabIndex = 1;
             this.textBoxFileSpec.TextChanged += new System.EventHandler(this.textBoxFileSpec_TextChanged);
             // 
             // buttonBrowse
             // 
-            this.buttonBrowse.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.buttonBrowse.Location = new System.Drawing.Point(569, 3);
+            //this.buttonBrowse.Dock = System.Windows.Forms.DockStyle.Fill;
+            //this.buttonBrowse.Location = new System.Drawing.Point(569, 3);
+            //this.buttonBrowse.Location = new System.Drawing.Point(468, 50);
             this.buttonBrowse.Name = "buttonBrowse";
             this.buttonBrowse.Size = new System.Drawing.Size(24, 23);
+            //this.buttonBrowse.Size = new System.Drawing.Size(150, 23);
             this.buttonBrowse.TabIndex = 2;
             this.buttonBrowse.Text = "...";
-            this.buttonBrowse.UseVisualStyleBackColor = true;
+            //this.buttonBrowse.Text = "Browse...";
+            //this.buttonBrowse.UseVisualStyleBackColor = true;
             this.buttonBrowse.Click += new System.EventHandler(this.buttonBrowse_Click);
             // 
             // openFileDialogBrowse
@@ -106,7 +118,9 @@ namespace SilEncConverters40
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             this.ResumeLayout(false);
-
+#if VERBOSE_DEBUGGING
+            Console.WriteLine("TecAutoConfigDialog.designer.InitComp END");
+#endif
         }
 
         #endregion

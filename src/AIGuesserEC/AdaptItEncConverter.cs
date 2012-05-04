@@ -83,6 +83,7 @@ namespace SilEncConverters40
             ref int rnOutLen
             )
         {
+            System.Diagnostics.Debug.WriteLine("AdaptItEC.DoConvert BEGIN");
             // we need to put it *back* into a string for the lookup
             // [aside: I should probably override base.InternalConvertEx so I can avoid having the base 
             //  class version turn the input string into a byte* for this call just so we can turn around 
@@ -103,12 +104,15 @@ namespace SilEncConverters40
                 }
             }
             else
+            {
                 enc = Encoding.Unicode;
+            }
 
             char[] caIn = enc.GetChars(baIn);
 
             // here's our input string
             string strInput = new string(caIn);
+            System.Diagnostics.Debug.WriteLine("Twice-converted input string: '" + strInput + "'");
 
             List<string> lstInputTokens, lstInputInBetweenTokens, lstOutputTokens, lstOutputInBetweenTokens;
             SplitAndConvertEx(strInput, out lstInputTokens, out lstInputInBetweenTokens,
@@ -121,8 +125,11 @@ namespace SilEncConverters40
             for (i = 0; i < lstOutputTokens.Count; i++)
                 strOutput += lstOutputInBetweenTokens[i] + lstOutputTokens[i];
             strOutput += lstOutputInBetweenTokens[i];
+            System.Diagnostics.Debug.WriteLine("Output string: '" + strOutput + "'");
 
             StringToProperByteStar(strOutput, lpOutBuffer, ref rnOutLen);
+            System.Diagnostics.Debug.WriteLine("Result len " + rnOutLen.ToString());
+            System.Diagnostics.Debug.WriteLine("AdaptItEC.DoConvert END");
         }
 
         // calling from external we need to possibly re-load
@@ -139,6 +146,7 @@ namespace SilEncConverters40
             out List<string> lstInputTokens, out List<string> lstInputInBetweenTokens, 
             out List<string> lstOutputTokens, out List<string> lstOutputInBetweenTokens)
         {
+            System.Diagnostics.Debug.WriteLine("SplitAndConvert BEGIN");
             // Here's a problem: if the user wants to go reverse, the AdaptIt KB file doesn't have a multi-word 
             //  phrase maps for the reverse direction. So although this is kind of "brute force", I'm at a loss 
             //  for a better way to do this. So, if this is reverse, then go thru all of the maps and create a 
@@ -333,6 +341,11 @@ namespace SilEncConverters40
 
                     // now see if we have a replacement
                     System.Diagnostics.Debug.Assert(!String.IsNullOrEmpty(strSearchToken));
+                    System.Diagnostics.Debug.WriteLine("Looking for '" + strSearchToken + "'");
+                    foreach(string key in mapLookup.Keys) {
+                        System.Diagnostics.Debug.WriteLine("A dict elem is '" + key + "'");
+                        break;  // stop after first time
+                    }
                     string strLookedup;
                     if (mapLookup.TryGetValue(strSearchToken, out strLookedup))
                     {
@@ -349,6 +362,7 @@ namespace SilEncConverters40
             // finally, before we return, let's remove the "never used" character from the output strings
             for (nWordIndex = 0; nWordIndex < lstOutputTokens.Count; nWordIndex++)
                 lstOutputTokens[nWordIndex] = lstOutputTokens[nWordIndex].Replace(chNeverUsedChar, null);
+            System.Diagnostics.Debug.WriteLine("SplitAndConvert END");
         }
 
         // if we've replaced multiple words as a phrase, then we need to collapse the lists
@@ -429,7 +443,7 @@ namespace SilEncConverters40
                 if( nLen > (int)rnOutLen )
                     EncConverters.ThrowError(ErrStatus.OutputBufferFull);
                 rnOutLen = nLen;
-                ECNormalizeData.StringToByteStar(strOutput,lpOutBuffer,rnOutLen, false);
+                rnOutLen = ECNormalizeData.StringToByteStar(strOutput,lpOutBuffer,rnOutLen,false);
             }
         }
         #endregion Abstract Base Class Overrides
