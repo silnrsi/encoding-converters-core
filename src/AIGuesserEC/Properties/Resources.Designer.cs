@@ -93,6 +93,15 @@ namespace SilEncConverters40.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot have a double-quote within the word/phrase!.
+        /// </summary>
+        internal static string IDS_CantHaveEmptySouIDS_CantHaveDoubleQuotes {
+            get {
+                return ResourceManager.GetString("IDS_CantHaveEmptySouIDS_CantHaveDoubleQuotes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cannot have an empty source word/phrase!.
         /// </summary>
         internal static string IDS_CantHaveEmptySourceWord {

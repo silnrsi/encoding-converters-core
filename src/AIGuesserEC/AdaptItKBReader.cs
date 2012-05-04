@@ -811,6 +811,7 @@ namespace SilEncConverters40
             mapOfMapsReverse.SaveFile(strReversalFileName);
         }
 
+        const char CchNoNoChar = '\"';
         /// <summary>
         /// This version of AddEntryPair allows an option parameter to indicate whether
         /// you want the KB saved after the pair is added (primarily in case you want
@@ -827,10 +828,14 @@ namespace SilEncConverters40
             strSourceWord = strSourceWord.Trim(m_caDelimitersForward ?? CaSplitChars);
             if (String.IsNullOrEmpty(strSourceWord))
                 throw new ApplicationException(Properties.Resources.IDS_CantHaveEmptySourceWord);
+            if (strSourceWord.IndexOf(CchNoNoChar) != -1)
+                throw new ApplicationException(Properties.Resources.IDS_CantHaveEmptySouIDS_CantHaveDoubleQuotes);
 
             strTargetWord = strTargetWord.Trim(m_caDelimitersReverse ?? CaSplitChars);
             if (String.IsNullOrEmpty(strTargetWord))
                 throw new ApplicationException(Properties.Resources.IDS_CantHaveEmptyTargetWord);
+            if (strTargetWord.IndexOf(CchNoNoChar) != -1)
+                throw new ApplicationException(Properties.Resources.IDS_CantHaveEmptySouIDS_CantHaveDoubleQuotes);
 
             Load(true); // load MapOfMaps if needed
 
