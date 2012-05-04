@@ -26,7 +26,7 @@ namespace SilEncConverters40
 
             foreach (var strSourceWord in mapOfMaps.ListOfAllSourceWordForms)
                 listBoxSourceWordForms.Items.Add(strSourceWord);
-            
+
             targetFormDisplayControl.TargetWordFont = liTargetLang.FontToUse;
             targetFormDisplayControl.TargetWordRightToLeft = liTargetLang.RightToLeft;
             targetFormDisplayControl.CallToSetModified = SetModified;

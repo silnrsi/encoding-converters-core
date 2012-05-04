@@ -122,6 +122,7 @@ namespace SilEncConverters40
         {
             get
             {
+                //Console.WriteLine("Looking for key " + cstrSpellFixerProgID);
                 RegistryKey keySF = Registry.ClassesRoot.OpenSubKey(cstrSpellFixerProgID, false);
                 if (keySF != null)
                 {

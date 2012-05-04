@@ -63,7 +63,7 @@ namespace SilEncConverters40
         {
             flowLayoutPanelTargetWords.Controls.Remove(textBoxWithButtons);
             SourceWordElement.Remove(textBoxWithButtons.TargetWordElement.TargetWord);
-            
+
             if (flowLayoutPanelTargetWords.Controls.Count == 0)
             {
                 DialogResult res = MessageBox.Show(String.Format(Properties.Resources.IDS_QueryToDeleteSourceWord,

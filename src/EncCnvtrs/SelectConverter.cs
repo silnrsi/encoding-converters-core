@@ -78,6 +78,7 @@ namespace SilEncConverters40
             // hide the preview box until requested
             textBoxDataPreview.Hide();
             tableLayoutPanel1.RowCount = 4;
+            System.Diagnostics.Debug.WriteLine("SelectConverter ctor1 FINISHED");
         }
 
         public SelectConverter(EncConverters aECs, ConvType eConversionTypeFilter,
@@ -93,6 +94,7 @@ namespace SilEncConverters40
             // hide the preview box until requested
             textBoxDataPreview.Hide();
             tableLayoutPanel1.RowCount = 4;
+            System.Diagnostics.Debug.WriteLine("SelectConverter ctor2 FINISHED");
         }
 
         public void InitSelectConverter(EncConverters aECs, ConvType eConversionTypeFilter,
@@ -137,6 +139,7 @@ namespace SilEncConverters40
             helpProvider.SetHelpString(textBoxCodePageInput, Properties.Resources.CodePageHelpString);
             helpProvider.SetHelpString(textBoxCodePageOutput, Properties.Resources.CodePageHelpString);
             helpProvider.SetHelpString(textBoxDataPreview, Properties.Resources.PreviewBoxHelpString);
+            System.Diagnostics.Debug.WriteLine("InitSelectConverter FINISHED");
 		}
 
         // the creation of a Font can throw an exception if, for example, you try to construct one with
@@ -145,6 +148,7 @@ namespace SilEncConverters40
         protected int cnDefaultFontSize = 14;
         protected Font CreateFontSafe(string strFontName)
         {
+            System.Diagnostics.Debug.WriteLine("CreateFontSafe BEGIN");
             Font font = null;
             try
             {
@@ -159,6 +163,7 @@ namespace SilEncConverters40
 
         void InitializeConverterList()
         {
+            System.Diagnostics.Debug.WriteLine("InitializeConverterList BEGIN");
             // clear previous contents (if any)
             listBoxExistingConverters.Items.Clear();
 
@@ -187,11 +192,15 @@ namespace SilEncConverters40
         {
             get 
             { 
+                System.Diagnostics.Debug.WriteLine("getIEncConverter BEGIN");
                 IEncConverter aEC = null;
                 if( !String.IsNullOrEmpty(m_strConverterName) )
                 {
                     aEC = DirectableEncConverter.EncConverters[m_strConverterName];
 
+					if (!checkBoxDebug.Visible)
+						return aEC;
+					
                     // set the options too
                     aEC.DirectionForward = !this.checkBoxReverse.Checked;
                     aEC.Debug = this.checkBoxDebug.Checked;
@@ -224,12 +233,14 @@ namespace SilEncConverters40
                     }
                 }
 
+                System.Diagnostics.Debug.WriteLine("getIEncConverter END");
                 return aEC;
             }
         }
 
         protected int ProcessCodePage(string strCodePageValue)
         {
+            System.Diagnostics.Debug.WriteLine("ProcessCodePage BEGIN");
             int nCodePage = 0;
             try
             {
@@ -249,14 +260,17 @@ namespace SilEncConverters40
 		/// </summary>
 		protected override void Dispose( bool disposing )
 		{
+            System.Diagnostics.Debug.WriteLine("SelectConverter.Dispose BEGIN");
 			if( disposing )
 			{
+                System.Diagnostics.Debug.WriteLine("Disposing.");
 				if(components != null)
 				{
 					components.Dispose();
 				}
 			}
 			base.Dispose( disposing );
+            System.Diagnostics.Debug.WriteLine("SelectConverter.Dispose END");
 		}
 
 		#region Windows Form Designer generated code
@@ -266,6 +280,7 @@ namespace SilEncConverters40
 		/// </summary>
 		private void InitializeComponent()
 		{
+            System.Diagnostics.Debug.WriteLine("InitializeComponent BEGIN");
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SelectConverter));
             this.labelInstruction = new System.Windows.Forms.Label();
@@ -752,11 +767,13 @@ namespace SilEncConverters40
             this.contextMenuStripPreview.ResumeLayout(false);
             this.ResumeLayout(false);
 
+            System.Diagnostics.Debug.WriteLine("InitializeComponent END");
         }
 		#endregion
 
         private void buttonCreateNew_Click(object sender, System.EventArgs e)
         {
+            System.Diagnostics.Debug.WriteLine("buttonCreateNew_Click BEGIN");
             // in case the user cancels, we don't want to remember "past glory"
             m_strConverterName = null;
 
@@ -781,24 +798,30 @@ namespace SilEncConverters40
                 m_mapLbItems2Tooltips[aEC.Name] = aEC.ToString();
             }
             toolTips.Active = bTooltipActive;
+            System.Diagnostics.Debug.WriteLine("buttonCreateNew_Click END");
         }
 
         private void buttonOK_Click(object sender, System.EventArgs e)
         {
+            System.Diagnostics.Debug.WriteLine("buttonOK_Click BEGIN");
             Debug.Assert(this.listBoxExistingConverters.SelectedIndex >= 0);
             this.DialogResult = DialogResult.OK;
             this.Close();
+            System.Diagnostics.Debug.WriteLine("buttonOK_Click END");
         }
 
         private void buttonCancel_Click(object sender, System.EventArgs e)
         {
+            System.Diagnostics.Debug.WriteLine("buttonCancel_Click BEGIN");
             m_strConverterName = null;  // if they cancel, then we don't have one!
             this.DialogResult = DialogResult.Cancel;
             this.Close();
+            System.Diagnostics.Debug.WriteLine("buttonCancel_Click END");
         }
 
         protected void RevaluateButtonState()
         {
+            System.Diagnostics.Debug.WriteLine("RevaluateButtonState BEGIN");
             int nIndex = this.listBoxExistingConverters.SelectedIndex;
             this.buttonPreview.Enabled = this.buttonOK.Enabled = (nIndex >= 0);
             
@@ -861,6 +884,7 @@ namespace SilEncConverters40
 
         protected void UpdateCodePageDetails(DirectableEncConverter aDEC)
         {
+            System.Diagnostics.Debug.WriteLine("UpdateCodePageDetails BEGIN");
             // indicate the code pages we're going to use for legacy encodings so that the 
             //  user can change it if needed.
             m_bTurnOffTextChangedEvents = true;
@@ -921,6 +945,7 @@ namespace SilEncConverters40
 
         private void buttonLaunchOptionsInstaller_Click(object sender, System.EventArgs e)
         {
+            System.Diagnostics.Debug.WriteLine("buttonLaunchOptionsInstaller_Click BEGIN");
             // launch the Setup program (short-cut to add new converters)
             RegistryKey keyInstallLocation = Registry.LocalMachine.OpenSubKey(strInstallerLocationRegKey, false);
             if( keyInstallLocation != null )
@@ -942,6 +967,7 @@ namespace SilEncConverters40
 
         static protected void LaunchProgram(string strProgram, string strArguments)
         {
+            System.Diagnostics.Debug.WriteLine("LaunchProgram BEGIN");
             try
             {
                 Process myProcess = new Process();
@@ -964,6 +990,7 @@ namespace SilEncConverters40
 
         private void menuItemEdit_Click(object sender, System.EventArgs e)
         {
+            System.Diagnostics.Debug.WriteLine("menuItemEdit_Click BEGIN");
             int nIndex = listBoxExistingConverters.IndexFromPoint(m_ptRightClicked);
             if( nIndex >= 0 )
             {
@@ -1012,10 +1039,12 @@ namespace SilEncConverters40
                     toolTips.Active = bTooltipActive;
                 }
             }
+            System.Diagnostics.Debug.WriteLine("menuItemEdit_Click END");
         }
 
         private void menuItemDelete_Click(object sender, System.EventArgs e)
         {
+            System.Diagnostics.Debug.WriteLine("menuItemDelete_Click END");
             int nIndex = listBoxExistingConverters.IndexFromPoint(m_ptRightClicked);
             if( nIndex >= 0 )
             {
@@ -1067,6 +1096,8 @@ namespace SilEncConverters40
 
         private void dlgSelectConverter_FormClosing(object sender, FormClosingEventArgs e)
         {
+            System.Diagnostics.Debug.WriteLine("FormClosing BEGIN");
+/*
             // before going away, set the CodePage values (so the caller will have them to use)
             IEncConverter aEC = IEncConverter;
             if (aEC != null)
@@ -1082,6 +1113,8 @@ namespace SilEncConverters40
                     e.Cancel = true;
                 }
             }
+*/
+            System.Diagnostics.Debug.WriteLine("FormClosing END");
         }
 
         protected void UpdateDataPreview(DirectableEncConverter aDEC)
@@ -1128,6 +1161,7 @@ namespace SilEncConverters40
 
         protected string CallSafeConvert(DirectableEncConverter aDEC, string strPreviewData)
         {
+            System.Diagnostics.Debug.WriteLine("CallSafeConvert BEGIN");
             string strOutput = null;
             try
             {
@@ -1138,6 +1172,7 @@ namespace SilEncConverters40
             {
                 MessageBox.Show(String.Format("Unable to convert data for preview because: '{0}'", ex.Message), EncConverters.cstrCaption);
             }
+            System.Diagnostics.Debug.WriteLine("CallSafeConvert END");
             return strOutput;
         }
 
@@ -1229,6 +1264,7 @@ namespace SilEncConverters40
 
         private void menuItemTest_Click(object sender, EventArgs e)
         {
+            System.Diagnostics.Debug.WriteLine("menuItemTest_Click BEGIN");
             int nIndex = listBoxExistingConverters.IndexFromPoint(m_ptRightClicked);
             if (nIndex >= 0)
             {
