@@ -122,7 +122,6 @@
     <Compile Include="TechHindiSiteEncConverter.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="encConv.snk" />
     <None Include="FieldWorks.snk" />
   </ItemGroup>
   <ItemGroup>
