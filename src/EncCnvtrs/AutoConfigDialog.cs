@@ -3,12 +3,18 @@ using System.ComponentModel;
 using System.Collections;               // for Hashtable (ECAttributes)
 using System.Windows.Forms;
 using System.Drawing;                   // for Font
+using System.IO;                        // for Path.DirectorySeparatorChar
 using Microsoft.Win32;                  // for RegistryKey
 using System.Text;                      // for Encoding
 using ECInterfaces;                     // for IEncConverter
+//using Skybound.Gecko;
+
+//uncomment the following line for verbose debugging output using Console.WriteLine
+//#define VERBOSE_DEBUGGING
 
 namespace SilEncConverters40
 {
+    //[CLSCompliantAttribute(false)]  // because of GeckoWebBrowser
     public partial class AutoConfigDialog : Form
     {
         public string FriendlyName;
@@ -31,15 +37,34 @@ namespace SilEncConverters40
         protected int m_nRhsReturns;
         protected IEncConverter m_aEC = null;
 
+        private string htmlfilename = null;
+
         public AutoConfigDialog()
         {
+#if VERBOSE_DEBUGGING
+            Console.WriteLine("AutoConfigDialog ctor");
+#endif
+            System.Diagnostics.Debug.WriteLine("AutoConfigDialog ctor BEGIN");
             InitializeComponent();
+            System.Diagnostics.Debug.WriteLine("finished InitializeComponent.");
+            //System.Diagnostics.Debug.WriteLine("LD_LIBRARY_PATH=" +
+            //    Environment.GetEnvironmentVariable("LD_LIBRARY_PATH"));
+            //System.Diagnostics.Debug.WriteLine("loc=" + XULRunnerLocator.GetXULRunnerLocation());
+            //Xpcom.Initialize(XULRunnerLocator.GetXULRunnerLocation());
 
             helpProvider.SetHelpString(buttonSaveInRepository, Properties.Resources.SaveInRepositoryHelpString);
+            System.Diagnostics.Debug.WriteLine("finished first SetHelpString.");
             helpProvider.SetHelpString(ecTextBoxInput, Properties.Resources.TestInputBoxHelpString);
             helpProvider.SetHelpString(ecTextBoxOutput, Properties.Resources.TestOutputBoxHelpString);
             helpProvider.SetHelpString(richTextBoxHexInput, Properties.Resources.TestHexDecOutputBoxesHelpString);
             helpProvider.SetHelpString(richTextBoxHexOutput, Properties.Resources.TestHexDecOutputBoxesHelpString);
+
+            System.Drawing.Text.InstalledFontCollection fonts = new System.Drawing.Text.InstalledFontCollection();
+            FontFamily [] families = fonts.Families;
+            foreach (FontFamily family in fonts.Families)
+                this.comboBoxFont.Items.Add(family.Name);
+
+            System.Diagnostics.Debug.WriteLine("AutoConfigDialog ctor END");
         }
 
         public virtual void Initialize
@@ -56,6 +81,11 @@ namespace SilEncConverters40
             bool bIsInRepository
             )
         {
+#if VERBOSE_DEBUGGING
+			Console.WriteLine("AutoConfigDialog initialize");
+#endif
+			System.Diagnostics.Debug.WriteLine("AutoConfigDialog.Initialize BEGIN");
+            htmlfilename = strHtmlFileName;
             m_strOriginalFriendlyName = FriendlyName = strFriendlyName;
             ConverterIdentifier = strConverterIdentifier;
             LhsEncodingId = strLhsEncodingId;
@@ -102,11 +132,22 @@ namespace SilEncConverters40
             if (keyRoot != null)
             {
                 string strXmlFilePath = (string)keyRoot.GetValue("RootDir");
-                if (strXmlFilePath[strXmlFilePath.Length - 1] != '\\')
-                    strXmlFilePath += '\\';
-                strXmlFilePath += @"help\" + strHtmlFileName;
+                if (strXmlFilePath != null && strXmlFilePath.Length > 0 && 
+                    strXmlFilePath[strXmlFilePath.Length - 1] != Path.DirectorySeparatorChar)
+                {
+                    strXmlFilePath += Path.DirectorySeparatorChar;
+                }
+                // This line has been changed in order to work on more than just Windows
+                strXmlFilePath += @"Help" + Path.DirectorySeparatorChar + strHtmlFileName;
                 System.Diagnostics.Debug.Assert(System.IO.File.Exists(strXmlFilePath), String.Format("Can find '{0}'. If this is a development machine, you need to add the following reg key to see the About help files: HLKM\\SOFTWARE\\SIL\\SilEncConverters40\\[RootDir] = '<parent folder where the 'help' sub-folder exists>' along with a trailing slash (e.g. \"C:\\fw\\lib\\release\\\")", strHtmlFileName));
-                this.webBrowserHelp.Url = new Uri(strXmlFilePath);
+                //this.webBrowserHelp.Url = new Uri(strXmlFilePath);
+                //this.webBrowserHelp.Navigate(strXmlFilePath);
+                string preamble = "Help for this converter is available at ";
+                strXmlFilePath = strXmlFilePath.Replace(".mht", ".htm");
+                this.labelHelp.Text = preamble + strXmlFilePath;
+                string strXmlFileLink = strXmlFilePath.Replace(" ", "%20");
+                this.labelHelp.Links.Add (
+                    preamble.Length, strXmlFilePath.Length, strXmlFileLink);
             }
 #if DEBUG
             else
@@ -114,6 +155,9 @@ namespace SilEncConverters40
 #endif
 
             ecTextBoxInput.Text = "Test Data";
+            //char[] chinese = {'\u6B22','\u8FCE','\u4F7F','\u7528','\u0020'};
+            //ecTextBoxInput.Text = new string(chinese);
+            System.Diagnostics.Debug.WriteLine("Initialize END");
         }
 
         protected virtual void SetConvTypeControls()
@@ -130,6 +174,7 @@ namespace SilEncConverters40
             string strTestData
             )
         {
+            System.Diagnostics.Debug.WriteLine("Initialize2 BEGIN");
             FriendlyName = strFriendlyName;
             ConverterIdentifier = strConverterIdentifier;
             ConversionType = eConversionType;
@@ -290,6 +335,7 @@ namespace SilEncConverters40
 
         private void buttonApply_Click(object sender, EventArgs e)
         {
+            System.Diagnostics.Debug.WriteLine("buttonApply_Click");
             OnApply();
         }
 
@@ -492,7 +538,24 @@ namespace SilEncConverters40
 
         private void buttonSaveInRepository_Click(object sender, EventArgs e)
         {
+            System.Diagnostics.Debug.WriteLine("buttonSaveInRepository_Click()");
             buttonSaveInRepositoryEx();
+
+            // get the help for the about tab
+            RegistryKey keyRoot = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\SIL\SilEncConverters40", false);
+            if (keyRoot != null)
+            {
+                string strXmlFilePath = (string)keyRoot.GetValue("RootDir");
+                if (strXmlFilePath[strXmlFilePath.Length - 1] != '\\')
+                    strXmlFilePath += '\\';
+                strXmlFilePath += @"help\" + htmlfilename;
+                System.Diagnostics.Debug.Assert(System.IO.File.Exists(strXmlFilePath), String.Format("Can find '{0}'. If this is a development machine, you need to add the following reg key to see the About help files: HLKM\\SOFTWARE\\SIL\\SilEncConverters40\\[RootDir] = '<parent folder where the 'help' sub-folder exists>' along with a trailing slash (e.g. \"C:\\fw\\lib\\release\\\")", htmlfilename));
+                //this.webBrowserHelp.Url = new Uri(strXmlFilePath);
+                //this.webBrowserHelp.Navigate(strXmlFilePath);
+                this.labelHelp.Text = "Help for this converter is available at " + strXmlFilePath;
+            }
+            else
+                throw new ApplicationException(@"Can't read the HLKM\SOFTWARE\SIL\SilEncConverters40\[RootDir] registry key!");
         }
 
         protected int ProcessTypesChecked
@@ -537,6 +600,7 @@ namespace SilEncConverters40
 
         private void tabControl_Selected(object sender, TabControlEventArgs e)
         {
+            System.Diagnostics.Debug.WriteLine("tabControl_Selected()");
             if (e.TabPage == tabPageSetup)
             {
                 buttonSaveInRepository.Visible = SetupTabSelected_MakeSaveInRepositoryVisible;
@@ -677,6 +741,7 @@ namespace SilEncConverters40
 
         private void richTextBoxInput_TextChanged(object sender, EventArgs e)
         {
+            System.Diagnostics.Debug.WriteLine("richTextBoxInput_TextChanged()");
             TestTabInputChanged();
         }
 
@@ -710,13 +775,18 @@ namespace SilEncConverters40
 
         private void buttonTest_Click(object sender, EventArgs e)
         {
+            System.Diagnostics.Debug.WriteLine("buttonTest_Click()");
             IEncConverter aEC = InitializeEncConverter;
             if (aEC != null)
             {
                 try
                 {
                     aEC.DirectionForward = !checkBoxTestReverse.Checked;
-                    ecTextBoxOutput.Text = aEC.Convert(ecTextBoxInput.Text);
+                    //ecTextBoxOutput.Text = aEC.Convert(ecTextBoxInput.Text);
+                    string result = aEC.Convert(ecTextBoxInput.Text);
+                    System.Diagnostics.Debug.WriteLine("Putting in text box: '" + result + "'");
+                    ecTextBoxOutput.Text = result;
+                    //ecTextBoxOutput.Text = "Hello there!";
                 }
                 catch (Exception ex)
                 {
@@ -746,6 +816,7 @@ namespace SilEncConverters40
 
         private void buttonOK_Click(object sender, EventArgs e)
         {
+            System.Diagnostics.Debug.WriteLine("buttonOK_Click()");
             if (OnApply())
             {
                 // see if the user has *not* added the converter to the repository (i.e. it's currently
@@ -767,19 +838,35 @@ namespace SilEncConverters40
 
         private void ecTextBoxInput_TextChanged(object sender, EventArgs e)
         {
+            System.Diagnostics.Debug.WriteLine("ecTextBoxInput_TextChanged()");
             TestTabInputChanged();
         }
 
         protected TextBox m_tbLastClicked = null;
         private void contextMenuStrip_Opening(object sender, CancelEventArgs e)
         {
-            ContextMenuStrip aCMS = (ContextMenuStrip)sender;
+            ContextMenuStrip aCMS;
+            try {
+            aCMS = (ContextMenuStrip)sender;
+            } catch (System.InvalidCastException) {
+                System.Diagnostics.Debug.WriteLine("InvalidCastExc 1");
+                return;
+            }
+            if (aCMS.SourceControl != null) {
+                System.Diagnostics.Debug.WriteLine("Name: " + aCMS.SourceControl.Name);
+            }
+            try {
             m_tbLastClicked = (TextBox)aCMS.SourceControl;
+            } catch (System.InvalidCastException) {
+                System.Diagnostics.Debug.WriteLine("InvalidCastExc 2");
+                return;
+            }
             right2LeftToolStripMenuItem.Checked = (m_tbLastClicked.RightToLeft == RightToLeft.Yes);
         }
 
         private void changeFontToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            System.Diagnostics.Debug.WriteLine("changeFontToolStripMenuItem_Click()");
             if (m_tbLastClicked != null)
             {
                 fontDialog.Font = m_tbLastClicked.Font;
@@ -849,6 +936,18 @@ namespace SilEncConverters40
                 ToolStripMenuItem aMenuItem = (ToolStripMenuItem)sender;
                 m_tbLastClicked.RightToLeft = (aMenuItem.Checked) ? RightToLeft.Yes : RightToLeft.No;
             }
+        }
+
+        private void comboBoxFont_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            System.Diagnostics.Debug.WriteLine("comboBoxFont_SelectedIndexChanged()");
+            if (comboBoxFont.SelectedIndex == -1) return;
+            string newVal  = comboBoxFont.SelectedItem.ToString();
+            float  newSize = 12;
+            if (this.ecTextBoxInput.Font != null)
+                newSize = this.ecTextBoxInput.Font.Size;
+            this.ecTextBoxInput.Font = new Font(newVal, newSize);
+            this.ecTextBoxOutput.Font = new Font(newVal, newSize);
         }
     }
 }
