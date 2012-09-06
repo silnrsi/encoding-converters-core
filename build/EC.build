@@ -2,6 +2,8 @@
 <!--
     Created by Jim Kornelsen on Jan 16 2012
 
+    29-May-2012 JDK  Do not compile files with "Win" in the name.
+
     To run, call nant from the directory of this build file.
     To deploy: sudo nant deploy
 
@@ -17,8 +19,7 @@
     </if>
 
     <!-- The order of this list is important.  For example AIGuesserEC
-         requires CcEC, so it is built first.  Otherwise this build
-         file doesn't specify this dependency relationship.  -->
+         requires CcEC, so it is built first. -->
     <target name="all" depends="ECInterfaces,
                                 EncCnvtrs,
                                 CcEC,
@@ -261,10 +262,12 @@
         <csc target="${target.type}" debug="${debug}" output="${dir.output}/${outfile}" unsafe="${unsafe}">
             <sources basedir="${srcdir}">
                 <include name="*.cs" />
+                <exclude name="*Win*.cs" />
                 <include name="Properties/*.cs" />
             </sources>
             <resources basedir="${srcdir}" dynamicprefix="true" prefix="${namespace}">
                 <include name="*.resx" />
+                <exclude name="*Win*.resx" />
                 <include name="Properties/*.resx" />
             </resources>
             <references refid="refs" />
