@@ -390,7 +390,8 @@ namespace SilEncConverters40
 
         protected string ReplacePunctuation(string strInput, char[] achInput, char[] achOutput)
         {
-            for (int i = 0; i < achInput.Length; i++)
+            var nMaxLen = Math.Min(achInput.Length, achOutput.Length);
+            for (int i = 0; i < nMaxLen; i++)
             {
                 char chIn = achInput[i];
                 char chOut = achOutput[i];
