@@ -164,6 +164,20 @@ namespace SilEncConverters40
                 throw NoConverterException;
         }
 
+        // convert in the opposite direction (if it started as "reverse", then this 
+        //  means forward
+        public string SafeConvertDirectionOpposite(string sInput)
+        {
+            try
+            {
+                return ConvertDirectionOpposite(sInput);
+            }
+            catch
+            {
+            }
+            return sInput;
+        }
+
         public override string ToString()
         {
             IEncConverter aEC = GetEncConverter;

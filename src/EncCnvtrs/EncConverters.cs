@@ -365,7 +365,7 @@ namespace SilEncConverters40
             {
                 keyRepositoryMoved = Registry.LocalMachine.OpenSubKey(EncConverters.HKLM_PATH_TO_XML_FILE);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 keyRepositoryMoved = null;
             }

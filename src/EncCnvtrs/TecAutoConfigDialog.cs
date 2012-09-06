@@ -90,11 +90,13 @@ namespace SilEncConverters40
         //  to make sure that the user has correctly configured a legitimate converter.
         protected override bool OnApply()
         {
-            if (textBoxFileSpec == null) System.Diagnostics.Debug.WriteLine("textBoxFileSpec null!!!");
-            if (tabControl == null) System.Diagnostics.Debug.WriteLine("tabControl null!!!");
-            if (EncConverters.cstrCaption == null) System.Diagnostics.Debug.WriteLine("EncConverters.cstrCaption null!!!");
+#if DEBUG
+            if (textBoxFileSpec == null) 
+                System.Diagnostics.Debug.WriteLine("textBoxFileSpec null!!!");
+            if (tabControl == null) 
+                System.Diagnostics.Debug.WriteLine("tabControl null!!!");
             System.Diagnostics.Debug.WriteLine("Nothing seems to be null");
-
+#endif
             // for TECkit, get the converter identifier from the Setup tab controls.
             ConverterIdentifier = textBoxFileSpec.Text;
 
