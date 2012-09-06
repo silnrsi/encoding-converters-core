@@ -16,9 +16,8 @@ namespace SilEncConverters40
         private MapOfMaps _mapOfMaps;
         private char[] _achTrimSource, _achTrimTarget;
 
-        internal ViewSourceFormsForm(MapOfMaps mapOfMaps, 
-            string strSourceWordFont, string strTargetWordFont, 
-            char[] achTrimSource, char[] achTrimTarget)
+        internal ViewSourceFormsForm(MapOfMaps mapOfMaps, AdaptItKBReader.LanguageInfo liSourceWordLang, 
+            AdaptItKBReader.LanguageInfo liTargetLang, char[] achTrimSource, char[] achTrimTarget)
         {
             InitializeComponent();
             _mapOfMaps = mapOfMaps;
@@ -27,11 +26,13 @@ namespace SilEncConverters40
 
             foreach (var strSourceWord in mapOfMaps.ListOfAllSourceWordForms)
                 listBoxSourceWordForms.Items.Add(strSourceWord);
-            
-            targetFormDisplayControl.TargetWordFont = new Font(strTargetWordFont, 12);
+
+            targetFormDisplayControl.TargetWordFont = liTargetLang.FontToUse;
+            targetFormDisplayControl.TargetWordRightToLeft = liTargetLang.RightToLeft;
             targetFormDisplayControl.CallToSetModified = SetModified;
-            textBoxFilter.Font = listBoxSourceWordForms.Font 
-                = new Font(strSourceWordFont, 12);
+            textBoxFilter.Font = listBoxSourceWordForms.Font = liSourceWordLang.FontToUse;
+            textBoxFilter.RightToLeft =
+                listBoxSourceWordForms.RightToLeft = liSourceWordLang.RightToLeft;
         }
 
         private const string CstrButtonLabelSave = "&Save";
@@ -206,6 +207,17 @@ namespace SilEncConverters40
             editToolStripMenuItem.Enabled 
                 = deleteToolStripMenuItem.Enabled 
                 = (listBoxSourceWordForms.SelectedIndex != -1);
+
+            createReversalProjectToolStripMenuItem.ToolTipText =
+                String.Format("Click to create a project to adapt from {0} to {1}",
+                              _mapOfMaps.TgtLangName, _mapOfMaps.SrcLangName);
+        }
+
+        private void CreateReversalProjectToolStripMenuItemClick(object sender, EventArgs e)
+        {
+            progressBar.Visible = true;
+            Parent.KbReversal(progressBar);
+            progressBar.Visible = false;
         }
     }
 }

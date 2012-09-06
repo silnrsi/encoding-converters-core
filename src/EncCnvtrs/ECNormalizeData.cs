@@ -3,7 +3,7 @@
 using System;
 using System.Text;
 using System.Windows.Forms;             // for MessageBox (for showing compiler errors)
-using System.Runtime.InteropServices;	// for ProgIdAttribute
+using System.Runtime.InteropServices;   // for ProgIdAttribute
 using ECInterfaces;                     // for IEncConverter
 
 namespace SilEncConverters40
@@ -17,15 +17,35 @@ namespace SilEncConverters40
         public const int CCUnicode8 = 30;
 
         #region Interface
+
+        static byte[] BruteForceNarrowize (string strInput, int nInLen)
+        {
+            // for some reason, symbol fonts don't appear to be supported in
+            //  .Net... Use cpIso8859 as the fallback
+            // oops: cp8859 won't work for symbol data, so if GetBytes
+            //  fails, just go back to stripping out the low byte as we had it
+            //  originally. This'll work for both 8859 and symbol
+            System.Diagnostics.Debug.WriteLine("Narrowizing by stripping the low byte.");
+            var ba = new byte[nInLen];
+            for (int i = 0; i < nInLen; i++)
+                ba[i] = (byte)(strInput[i] & 0xFF);
+            return ba;
+        }
+
         // this is the helper method that returns the input data normalized
         internal static unsafe byte* GetBytes(string strInput, int cnCountIn, EncodingForm eEncFormIn, int nCodePageIn, EncodingForm eFormEngineIn, byte* pBuf, ref int nBufSize, ref bool bDebugDisplayMode)
         {
+            System.Diagnostics.Debug.WriteLine("ECNormalizeData.GetBytes()");
+            System.Diagnostics.Debug.WriteLine(
+                "eEncFormIn " + eEncFormIn.ToString() + "," +
+                "eFormEngineIn " + eFormEngineIn.ToString());
+
             // if the form the user gave is not what the engine wants (and it isn't legacy
             //  since legacy forms are already handled later)...
             if ((eEncFormIn != eFormEngineIn) && !EncConverter.IsLegacyFormat(eEncFormIn))
             {
                 // we can do some of the conversions ourself. For example, if the input form
-                //	is UTF16 and the desired form is UTF8, then simply use CCUnicode8 below
+                //  is UTF16 and the desired form is UTF8, then simply use CCUnicode8 below
                 if ((eEncFormIn == EncodingForm.UTF16) && (eFormEngineIn == EncodingForm.UTF8Bytes))
                 {
                     eEncFormIn = (EncodingForm)CCUnicode8;
@@ -52,12 +72,12 @@ namespace SilEncConverters40
                             nInLen = cnCountIn; // item count should be the number of bytes directly.
                         else
                             // if the user didn't give the length (i.e. via ConvertEx), then get it
-                            //	from the BSTR length. nInLen will be the # of bytes.
+                            //  from the BSTR length. nInLen will be the # of bytes.
                             nInLen = strInput.Length * 2;
 
                         // these forms are for C++ apps that want to use the BSTR to transfer 
                         //  bytes rather than OLECHARs.
-                        nInLen = StringToByteStar(strInput, pBuf, nInLen);
+                        nInLen = StringToByteStar(strInput, pBuf, nInLen, true);
 
                         if (eEncFormIn == EncodingForm.LegacyBytes)
                             DisplayDebugCharValues(pBuf, nInLen, "Received (LegacyBytes) from client and sending to Converter/DLL...", ref bDebugDisplayMode);
@@ -76,12 +96,12 @@ namespace SilEncConverters40
 
                         // use a code page converter to narrowize using the input string
                         // (but the 'easier' Add method will send 0; if so, then 
-                        //	fallback to the original method.
+                        //  fallback to the original method.
                         byte[] ba = null;
 
                         // first check if it's a symbol font (sometimes the user 
-                        //	incorrectly sends a few spaces first, so check the 
-                        //	first couple of bytes. If it is (and the code page is 0), then
+                        //  incorrectly sends a few spaces first, so check the 
+                        //  first couple of bytes. If it is (and the code page is 0), then
                         //  change the code page to be CP_SYMBOL
                         if ((nCodePageIn == 0)
                             && (((strInput[0] & 0xF000) == 0xF000)
@@ -93,36 +113,41 @@ namespace SilEncConverters40
                             nCodePageIn = EncConverters.cnSymbolFontCodePage;
                         }
 
-                        // if it's a symbol or iso-8859 encoding, then we can handle just 
-                        //  taking the low byte (i.e. the catch case)
-                        if ((nCodePageIn == EncConverters.cnSymbolFontCodePage)
-                            || (nCodePageIn == EncConverters.cnIso8859_1CodePage)
-                        )
+                        // Narrowizing by code page 0 doesn't seem to be what we want on Linux.
+                        // Treating it as a symbol font or stripping off the low byte works better.
+                        if (IsUnix && (nCodePageIn == 0))
                         {
-                            try
+                            ba = BruteForceNarrowize (strInput, nInLen);
+                        }
+                        else 
+                        {
+                            // if it's a symbol or iso-8859 encoding, then we can handle just 
+                            //  taking the low byte (i.e. the catch case)
+                            if ((nCodePageIn == EncConverters.cnSymbolFontCodePage)
+                                || (nCodePageIn == EncConverters.cnIso8859_1CodePage)
+                            )
                             {
+                                try
+                                {
+                                    Encoding enc = Encoding.GetEncoding(nCodePageIn);
+                                    ba = enc.GetBytes(strInput);
+                                    System.Diagnostics.Debug.WriteLine("Narrowized by given code page.");
+                                }
+                                catch
+                                {
+                                    ba = BruteForceNarrowize (strInput, nInLen);
+                                }
+                            }
+                            else
+                            {
+                                // otherwise, simply use CP_ACP (or the default code page) to 
+                                //  narrowize it.
+                                System.Diagnostics.Debug.WriteLine("Narrowizing by given code page.");
                                 Encoding enc = Encoding.GetEncoding(nCodePageIn);
                                 ba = enc.GetBytes(strInput);
                             }
-                            catch
-                            {
-                                // for some reason, symbol fonts don't appear to be supported in
-                                //	.Net... Use cpIso8859 as the fallback
-                                // oops: cp8859 won't work for symbol data, so if GetBytes
-                                //  fails, just go back to stripping out the low byte as we had it
-                                //  originally. This'll work for both 8859 and symbol
-                                ba = new byte[nInLen];
-                                for (int i = 0; i < nInLen; i++)
-                                    ba[i] = (byte)(strInput[i] & 0xFF);
-                            }
                         }
-                        else
-                        {
-                            // otherwise, simply use CP_ACP (or the default code page) to 
-                            //	narrowize it.
-                            Encoding enc = Encoding.GetEncoding(nCodePageIn);
-                            ba = enc.GetBytes(strInput);
-                        }
+
 
                         // turn that byte array into a byte array...
                         ByteArrToByteStar(ba, pBuf);
@@ -131,7 +156,7 @@ namespace SilEncConverters40
                             nInLen = cnCountIn; // item count should be the number of bytes directly.
                         else
                             // if the user didn't give the length (i.e. via ConvertEx), then get it
-                            //	from the BSTR length. nInLen will be the # of bytes.
+                            //  from the BSTR length. nInLen will be the # of bytes.
                             nInLen = ba.Length;
 
                         DisplayDebugCharValues(pBuf, nInLen, "Sending (LegacyBytes) to Converter/DLL...", ref bDebugDisplayMode);
@@ -153,14 +178,14 @@ namespace SilEncConverters40
                             nInLen = cnCountIn; // item count should be the number of bytes directly.
                         else
                             // if the user didn't give the length (i.e. via ConvertEx), then get it
-                            //	from the BSTR length. nInLen will be the # of bytes.
+                            //  from the BSTR length. nInLen will be the # of bytes.
                             nInLen = ba.Length;
 
                         DisplayDebugUCharValuesFromUTF8(pBuf, nInLen, "Sending (UTF8Bytes) to Converter/DLL...", ref bDebugDisplayMode);
                         break;
                     }
                 // this is a special case for CC where the input was actually UTF16, but the
-                //	CC DLL is expecting (usually) UTF8, so convert from UTF16->UTF8 narrow
+                //  CC DLL is expecting (usually) UTF8, so convert from UTF16->UTF8 narrow
                 case (EncodingForm)CCUnicode8:
                     {
                         DisplayDebugUCharValues(strInput, "Received (UTF16) from client...", ref bDebugDisplayMode);
@@ -188,7 +213,7 @@ namespace SilEncConverters40
 
                         // but this should be the count of bytes...
                         nInLen *= 2;
-                        StringToByteStar(strInput, pBuf, nInLen);
+                        StringToByteStar(strInput, pBuf, nInLen, false);
                         break;
                     }
                 case EncodingForm.UTF16BE:
@@ -200,7 +225,7 @@ namespace SilEncConverters40
                             nInLen = cnCountIn; // item count is the number of Uni chars
 
                             // for UTF32, the converter's actually expecting the length to be twice 
-                            //	this much again.
+                            //  this much again.
                             if (eEncFormIn != EncodingForm.UTF16BE)
                                 nInLen *= 2;
                         }
@@ -213,7 +238,7 @@ namespace SilEncConverters40
 
                         // for the byte count, double it (possibly again)
                         nInLen *= 2;
-                        StringToByteStar(strInput, pBuf, nInLen);
+                        StringToByteStar(strInput, pBuf, nInLen, false);
                         break;
                     }
 
@@ -228,6 +253,19 @@ namespace SilEncConverters40
             return pBuf;
         }
 
+        static char[] BruteForceWiden (int nCodePageOut, byte[] baOut, int nCharsLen)
+        {
+            char chMask = (char)0;
+            if (nCodePageOut == EncConverters.cnSymbolFontCodePage)
+                chMask = (char)0xF000;
+            
+            // do it the 'hard way'
+            var caOut = new char[nCharsLen];
+            for (int i = 0; i < nCharsLen; i++)
+                caOut[i] = (char)(baOut[i] | chMask);
+            return caOut;
+        }
+
         internal static unsafe string GetString(byte* lpOutBuffer, int nOutLen, EncodingForm eOutEncodingForm, int nCodePageOut, EncodingForm eFormEngineOut, NormalizeFlags eNormalizeOutput, out int rciOutput, ref bool bDebugDisplayMode)
         {
             // null terminate the output and turn it into a (real) array of bytes
@@ -236,9 +274,9 @@ namespace SilEncConverters40
             ByteStarToByteArr(lpOutBuffer, nOutLen, baOut);
 
             // check to see if the engine handled the given output form. If not, then see
-            //	if it's a conversion we can easily do (otherwise we'll ask TEC to do the 
-            //	conversion for us (later) so that all engines can handle all possible
-            //	output encoding forms.
+            //  if it's a conversion we can easily do (otherwise we'll ask TEC to do the 
+            //  conversion for us (later) so that all engines can handle all possible
+            //  output encoding forms.
             if (eOutEncodingForm != eFormEngineOut)
             {
                 if (EncConverter.IsLegacyFormat(eOutEncodingForm))
@@ -293,7 +331,7 @@ namespace SilEncConverters40
                             DisplayDebugUCharValuesFromUTF8(baOut, "Received (UTF8Bytes) back from Converter/DLL (returning as UTF8Bytes)...", ref bDebugDisplayMode);
 
                         // stuff the returned 'bytes' into the BSTR as narrow characters rather than 
-                        //	converting to wide
+                        //  converting to wide
                         nItems = nOutLen;
                         nCharsLen = (nOutLen + 1) / 2;
                         caOut = new char[nCharsLen];
@@ -306,27 +344,29 @@ namespace SilEncConverters40
 
                         nCharsLen = nItems = nOutLen;
 
-                        try
+                        // Narrowizing by code page 0 doesn't seem to be what we want on Linux.
+                        // Treating it as a symbol font or stripping off the low byte works better.
+                        if (IsUnix && (nCodePageOut == 0))
                         {
-                            // this will throw (for some reason) when doing symbol fonts
-                            //  (apparently, CP_SYMBOL is no longer supported).
-                            caOut = Encoding.GetEncoding(nCodePageOut).GetChars(baOut);
+                            caOut = BruteForceWiden (nCodePageOut, baOut, nCharsLen);
                         }
-                        catch
+                        else 
                         {
-                            if ((nCodePageOut == EncConverters.cnSymbolFontCodePage) || (nCodePageOut == EncConverters.cnIso8859_1CodePage))
+                            try
                             {
-                                char chMask = (char)0;
-                                if (nCodePageOut == EncConverters.cnSymbolFontCodePage)
-                                    chMask = (char)0xF000;
-
-                                // do it the 'hard way'
-                                caOut = new char[nCharsLen];
-                                for (int i = 0; i < nCharsLen; i++)
-                                    caOut[i] = (char)(baOut[i] | chMask);
+                                // this will throw (for some reason) when doing symbol fonts
+                                //  (apparently, CP_SYMBOL is no longer supported).
+                                caOut = Encoding.GetEncoding(nCodePageOut).GetChars(baOut);
                             }
-                            else
-                                throw;
+                            catch
+                            {
+                                if ((nCodePageOut == EncConverters.cnSymbolFontCodePage) || (nCodePageOut == EncConverters.cnIso8859_1CodePage))
+                                {
+                                    caOut = BruteForceWiden (nCodePageOut, baOut, nCharsLen);
+                                }
+                                else
+                                    throw;
+                            }
                         }
 
                         break;
@@ -383,7 +423,7 @@ namespace SilEncConverters40
 #if !v22_AllowEmptyReturn
             if ((nCharsLen <= 0)
 #if DEBUG
-				|| (nCharsLen != caOut.Length)
+                || (nCharsLen != caOut.Length)
 #endif
 )
             {
@@ -392,8 +432,8 @@ namespace SilEncConverters40
 #endif
 
             // check to see if the engine handled the given output form. If not, then ask
-            //	TEC to do the conversion for us so that all engines can handle all possible
-            //	output encoding forms (e.g. caller requested utf32, but above CC could only
+            //  TEC to do the conversion for us so that all engines can handle all possible
+            //  output encoding forms (e.g. caller requested utf32, but above CC could only
             //  give us utf16/8)
             // Also, if the caller wanted something other than "None" for the eNormalizeOutput,
             //  then we also have to call TEC for that as well (but I think this only makes
@@ -511,8 +551,8 @@ namespace SilEncConverters40
             return baDst;
         }
 
-		[CLSCompliant(false)]
-		public static unsafe void ByteArrToByteStar(byte[] baSrc, byte* pBuf)
+        [CLSCompliant(false)]
+        public static unsafe void ByteArrToByteStar(byte[] baSrc, byte* pBuf)
         {
             int count = baSrc.Length;
             if (count == 0)
@@ -544,18 +584,23 @@ namespace SilEncConverters40
             }
         }
 
-        public static unsafe byte[] StringToByteArr(string strBytesString)
+        public static unsafe byte[] StringToByteArr(string strBytesString, bool bCheckFinalByte)
         {
             int nLengthBytes = strBytesString.Length * 2;
             byte* pBytes = stackalloc byte[nLengthBytes];
-            nLengthBytes = StringToByteStar(strBytesString, pBytes, nLengthBytes);
+            nLengthBytes = StringToByteStar(strBytesString, pBytes, nLengthBytes, bCheckFinalByte);
             byte[] baOut = new byte[nLengthBytes];
             ByteStarToByteArr(pBytes, nLengthBytes, baOut);
             return baOut;
         }
 
+        // Set bCheckFinalByte to true for legacyBytes or utf8Bytes that may
+        // incorrectly contain a final null byte.  For utf-16 or utf-32 it
+        // should be set to false so that it doesn't cause the final character
+        // to be deleted.
         [CLSCompliant(false)]
-        public static unsafe int StringToByteStar(string sSrc, byte* pBuf, int countBytes)
+        public static unsafe int StringToByteStar(
+            string sSrc, byte* pBuf, int countBytes, bool bCheckFinalByte)
         {
             // keep track of the count so we can check the last byte
             int nCount = countBytes;
@@ -587,13 +632,16 @@ namespace SilEncConverters40
                 }
 
                 // dilemma: it's possible that the user didn't make it an even number of 
-                //	bytes, in which case, this is actually one more than the actual 
-                //	length. otoh, apparently it is possible for this data to have '00' 
-                //	as a legitimate value (don't ask). At the very least check if the 
-                //	last byte is zero and if so, then reduce the count by one...
-                if (((nCount % 2) == 0) && (pBuf[nCount - 2] != 0) && (pBuf[nCount - 1] == 0))
+                //  bytes, in which case, this is actually one more than the actual 
+                //  length. otoh, apparently it is possible for this data to have '00' 
+                //  as a legitimate value (don't ask). At the very least check if the 
+                //  last byte is zero and if so, then reduce the count by one...
+                if (bCheckFinalByte)
                 {
-                    nCount--;
+                    if (((nCount % 2) == 0) && (pBuf[nCount - 2] != 0) && (pBuf[nCount - 1] == 0))
+                    {
+                        nCount--;
+                    }
                 }
 
                 return nCount;
@@ -648,6 +696,31 @@ namespace SilEncConverters40
             }
         }
         #endregion Misc Unsafe Byte copying helpers
+
+        public static bool IsMono
+        {
+            get { return  (Type.GetType ("Mono.Runtime") != null); }
+        }
+        public static bool IsUnix
+        {
+            get
+			{
+                // Will return false for Windows
+				return Environment.OSVersion.Platform == PlatformID.Unix ||
+					Environment.OSVersion.Platform == PlatformID.MacOSX;	// MacOSX is built on top of BSD.
+            }
+        }
+        public static bool IsWindows
+        {
+            get
+			{
+				return Environment.OSVersion.Platform == PlatformID.Win32S ||
+					Environment.OSVersion.Platform == PlatformID.Win32Windows ||
+					Environment.OSVersion.Platform == PlatformID.Win32NT ||
+					Environment.OSVersion.Platform == PlatformID.WinCE;
+			}
+        }
+
 
         #region Debug helper
         private unsafe static void DisplayDebugCharValues(byte[] baInputString, string strCaption, ref bool bDebugDisplayMode)

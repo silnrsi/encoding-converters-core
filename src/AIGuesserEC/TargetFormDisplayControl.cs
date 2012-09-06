@@ -12,6 +12,7 @@ namespace SilEncConverters40
     public partial class TargetFormDisplayControl : UserControl
     {
         public Font TargetWordFont { get; set; }
+        public RightToLeft TargetWordRightToLeft { get; set; }
 
         public TargetFormDisplayControl()
         {
@@ -48,7 +49,8 @@ namespace SilEncConverters40
             var textBox = new TextBoxWithButtons(this)
             {
                 TargetWordElement = targetWordElement,
-                Font = TargetWordFont
+                Font = TargetWordFont,
+                RightToLeft = TargetWordRightToLeft
             };
 
             flowLayoutPanelTargetWords.Controls.Add(textBox);
@@ -61,7 +63,7 @@ namespace SilEncConverters40
         {
             flowLayoutPanelTargetWords.Controls.Remove(textBoxWithButtons);
             SourceWordElement.Remove(textBoxWithButtons.TargetWordElement.TargetWord);
-            
+
             if (flowLayoutPanelTargetWords.Controls.Count == 0)
             {
                 DialogResult res = MessageBox.Show(String.Format(Properties.Resources.IDS_QueryToDeleteSourceWord,
