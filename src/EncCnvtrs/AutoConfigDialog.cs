@@ -132,8 +132,11 @@ namespace SilEncConverters40
             if (keyRoot != null)
             {
                 string strXmlFilePath = (string)keyRoot.GetValue("RootDir");
-                if (strXmlFilePath[strXmlFilePath.Length - 1] != Path.DirectorySeparatorChar)
+                if (strXmlFilePath != null && strXmlFilePath.Length > 0 && 
+                    strXmlFilePath[strXmlFilePath.Length - 1] != Path.DirectorySeparatorChar)
+                {
                     strXmlFilePath += Path.DirectorySeparatorChar;
+                }
                 // This line has been changed in order to work on more than just Windows
                 strXmlFilePath += @"Help" + Path.DirectorySeparatorChar + strHtmlFileName;
                 System.Diagnostics.Debug.Assert(System.IO.File.Exists(strXmlFilePath), String.Format("Can find '{0}'. If this is a development machine, you need to add the following reg key to see the About help files: HLKM\\SOFTWARE\\SIL\\SilEncConverters40\\[RootDir] = '<parent folder where the 'help' sub-folder exists>' along with a trailing slash (e.g. \"C:\\fw\\lib\\release\\\")", strHtmlFileName));
