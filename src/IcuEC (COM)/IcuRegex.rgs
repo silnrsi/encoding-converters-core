@@ -1,0 +1,72 @@
+HKCR
+{
+	SilEncConverters40.IcuECRegex.48 = s 'Icu Regex Class'
+	{
+		CLSID = s '{D8D1254E-F585-424D-9B46-7E050A1F097C}'
+	}
+	NoRemove CLSID
+	{
+		ForceRemove {D8D1254E-F585-424D-9B46-7E050A1F097C} = s 'Icu Regex Class'
+		{
+			ProgID = s 'SilEncConverters40.IcuECRegex.48'
+			ForceRemove 'Programmable'
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Apartment'
+			}
+			val AppID = s '%APPID%'
+			TypeLib = s '{1E74D903-AD86-43F8-B39F-96653D7E170D}'
+		}
+	}
+}
+
+HKCU
+{
+    NoRemove Software
+    {
+        NoRemove SIL
+        {
+            NoRemove SilEncConverters40
+            {
+                NoRemove ConvertersSupported
+                {
+                    ForceRemove 'ICU.regex' = s 'SilEncConverters40.IcuECRegex.48'
+                    {
+                        RecentlyUsed
+                        {
+                            val '[aeiou]->V /i' = s ''
+                            val '[^aeiou]->C /i' = s ''
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+HKEY_USERS
+{
+	NoRemove .DEFAULT
+	{
+		NoRemove Software
+		{
+			NoRemove SIL
+			{
+				NoRemove SilEncConverters40
+				{
+					NoRemove ConvertersSupported
+					{
+						ForceRemove 'ICU.regex' = s 'SilEncConverters40.IcuECRegex.48'
+						{
+							RecentlyUsed
+							{
+								val '[aeiou]->V /i' = s ''
+								val '[^aeiou]->C /i' = s ''
+							}
+						}
+					}
+				}
+			}
+		}
+    }
+}
