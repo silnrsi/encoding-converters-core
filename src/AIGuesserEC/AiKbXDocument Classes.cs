@@ -10,6 +10,7 @@ using System.Xml.Linq;
 using System.Xml.XPath;
 using System.Xml.Xsl;
 using ECInterfaces;
+using SilEncConverters40.Properties;
 
 namespace SilEncConverters40
 {
@@ -219,10 +220,7 @@ namespace SilEncConverters40
 
         private XElement GetDecendent(string strTargetWord)
         {
-            var strXPath = String.Format("{0}[@{1} = \"{2}\"]",
-                                         TargetWordElement.CstrElementNameTargetWord,
-                                         TargetWordElement.CstrAttributeNameTargetWord,
-                                         strTargetWord);
+            var strXPath = MapOfMaps.FormatXpath(TargetWordElement.CstrElementNameTargetWord, TargetWordElement.CstrAttributeNameTargetWord, strTargetWord);
             return Xml.XPathSelectElement(strXPath);
         }
 
@@ -335,10 +333,9 @@ namespace SilEncConverters40
 
         private XElement GetDecendent(string strSourceWord)
         {
-            var strXPath = String.Format("{0}[@{1} = '{2}']",
-                                         SourceWordElement.CstrElementNameSourceWord,
-                                         SourceWordElement.CstrAttributeNameSourceWord,
-                                         strSourceWord);
+            var strXPath = MapOfMaps.FormatXpath(SourceWordElement.CstrElementNameSourceWord,
+                                                 SourceWordElement.CstrAttributeNameSourceWord,
+                                                 strSourceWord);
             return Xml.XPathSelectElement(strXPath);
         }
 
@@ -429,7 +426,7 @@ namespace SilEncConverters40
             Debug.Assert(!String.IsNullOrEmpty(strLhs) && !String.IsNullOrEmpty(strRhs));
             string[] astrLhsWords = strLhs.Split(AdaptItKBReader.CaSplitChars, StringSplitOptions.RemoveEmptyEntries);
             if (astrLhsWords.Length == 0)
-                throw new ApplicationException(Properties.Resources.IDS_CantHaveEmptySourceWord);
+                throw new ApplicationException(Resources.IDS_CantHaveEmptySourceWord);
 
             MapOfSourceWordElements mapOfSourceWordElements;
             if (!TryGetValue(astrLhsWords.Length, out mapOfSourceWordElements))
@@ -459,10 +456,9 @@ namespace SilEncConverters40
 
         private bool TryGetValue(int nMapValue, out MapOfSourceWordElements mapOfSourceWordElements)
         {
-            var strXPath = String.Format("{0}[@{1} = '{2}']",
-                                         MapOfSourceWordElements.CstrElementNameNumOfWordsPerPhraseMap,
-                                         MapOfSourceWordElements.CstrAttributeNameNumOfWordsPerPhrase,
-                                         nMapValue);
+            var strXPath = FormatXpath(MapOfSourceWordElements.CstrElementNameNumOfWordsPerPhraseMap,
+                                       MapOfSourceWordElements.CstrAttributeNameNumOfWordsPerPhrase,
+                                       nMapValue.ToString());
             var elem = Xml.XPathSelectElement(strXPath);
             if (elem == null)
             {
@@ -471,6 +467,14 @@ namespace SilEncConverters40
             }
             mapOfSourceWordElements = new MapOfSourceWordElements(elem, nMapValue, this);
             return true;
+        }
+
+        internal static string FormatXpath(string strElementName, string strAttributeName, string strTargetValue)
+        {
+            return String.Format("{0}[@{1} = \"{2}\"]",
+                                 strElementName,
+                                 strAttributeName,
+                                 strTargetValue);
         }
 
         public static void SortAiKb(string strFilename)
@@ -507,7 +511,7 @@ namespace SilEncConverters40
             var doc = NewAiXdocument;
 
             var xslt = new XslCompiledTransform();
-            xslt.Load(XmlReader.Create(new StringReader(Properties.Resources.SortAIKB)));
+            xslt.Load(XmlReader.Create(new StringReader(Resources.SortAIKB)));
 
             using (XmlWriter writer = doc.CreateWriter())
             {
@@ -535,22 +539,22 @@ namespace SilEncConverters40
             {
                 return new XDocument(
                     new XDeclaration("1.0", "utf-8", "yes"),
-                    new XComment(Properties.Resources.AdaptItKbDescription));
+                    new XComment(Resources.AdaptItKbDescription));
             }
         }
 
         private static void CleanUpDocument(ref XDocument doc)
         {
             // get rid of the TU[@k = ""]
-            var strXPath = String.Format("//{0}[@{1} = \"\"]",
-                                         SourceWordElement.CstrElementNameSourceWord,
-                                         SourceWordElement.CstrAttributeNameSourceWord);
+            var strXPath = FormatXpath(SourceWordElement.CstrElementNameSourceWord,
+                                       SourceWordElement.CstrAttributeNameSourceWord,
+                                       String.Empty);
             PergeXPath(ref doc, strXPath);
 
             // get rid of the RS[@a = ""]
-            strXPath = String.Format("//{0}[@{1} = \"\"]",
-                                     TargetWordElement.CstrElementNameTargetWord,
-                                     TargetWordElement.CstrAttributeNameTargetWord);
+            strXPath = FormatXpath(TargetWordElement.CstrElementNameTargetWord,
+                                   TargetWordElement.CstrAttributeNameTargetWord,
+                                   String.Empty);
             PergeXPath(ref doc, strXPath);
         }
 
