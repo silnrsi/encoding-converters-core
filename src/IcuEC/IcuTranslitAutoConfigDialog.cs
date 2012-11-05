@@ -18,13 +18,13 @@ namespace SilEncConverters40
         #region DLLImport Statements
         // On Linux looks for libIcuTranslitEC.so (adds lib- and -.so)
         //[DllImport("IcuTranslitEC", SetLastError=true)]
-        [DllImport("IcuTranslitEC", EntryPoint="IcuTranslitEC_ConverterNameList_start")]
+		[DllImport("IcuTranslitEC", EntryPoint = "IcuTranslitEC_ConverterNameList_start", CallingConvention = CallingConvention.Cdecl)]
         static extern unsafe int CppConverterNameList_start();
 
-        [DllImport("IcuTranslitEC", EntryPoint="IcuTranslitEC_ConverterNameList_next")]
+		[DllImport("IcuTranslitEC", EntryPoint = "IcuTranslitEC_ConverterNameList_next", CallingConvention = CallingConvention.Cdecl)]
         static extern unsafe string CppConverterNameList_next();
 
-        [DllImport("IcuTranslitEC", EntryPoint="IcuTranslitEC_GetDisplayName")]
+		[DllImport("IcuTranslitEC", EntryPoint = "IcuTranslitEC_GetDisplayName", CallingConvention = CallingConvention.Cdecl)]
         static extern unsafe string CppGetDisplayName(string strID);
         #endregion DLLImport Statements
 

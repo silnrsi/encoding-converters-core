@@ -17,6 +17,12 @@ Release
 .user
 .ncb
 .suo
+_ReSharper*/
+*.sdf
+*.opensdf
+*.ipch
+From1252.pyc
+To1252.pyc
 
 src/TestEncCnvtrs/test-results/*
 All*Files.lst

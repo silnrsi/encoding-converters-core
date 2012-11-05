@@ -23,11 +23,11 @@ namespace SilEncConverters40
     {
         #region DLLImport Statements
         // On Linux looks for libIcuRegexEC.so (adds lib- and -.so)
-        [DllImport("IcuRegexEC", EntryPoint="IcuRegexEC_Initialize")]
+		[DllImport("IcuRegexEC", EntryPoint = "IcuRegexEC_Initialize", CallingConvention = CallingConvention.Cdecl)]
         static extern int CppInitialize (
             [MarshalAs(UnmanagedType.LPStr)] string strConverterSpec);
 
-        [DllImport("IcuRegexEC", EntryPoint="IcuRegexEC_DoConvert")]
+		[DllImport("IcuRegexEC", EntryPoint = "IcuRegexEC_DoConvert", CallingConvention = CallingConvention.Cdecl)]
         static extern unsafe int CppDoConvert(
             byte* lpInputBuffer, int nInBufLen,
             byte* lpOutputBuffer, int *npOutBufLen);
