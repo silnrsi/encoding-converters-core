@@ -1,6 +1,6 @@
 /*
 ********************************************************************************
-*   Copyright (C) 1997-2011, International Business Machines
+*   Copyright (C) 1997-2012, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 ********************************************************************************
 *
@@ -584,6 +584,7 @@ public:
      */
     static UClassID U_EXPORT2 getStaticClassID();
 
+#ifndef U_HIDE_DEPRECATED_API
     /**
      * Deprecated variant of getLong(UErrorCode&).
      * @param status the error code
@@ -591,7 +592,9 @@ public:
      * @deprecated ICU 3.0 use getLong(UErrorCode&) instead
      */ 
     inline int32_t getLong(UErrorCode* status) const;
+#endif  /* U_HIDE_DEPRECATED_API */
 
+#ifndef U_HIDE_INTERNAL_API
     /**
      * Internal function, do not use.
      * TODO:  figure out how to make this be non-public.
@@ -603,12 +606,18 @@ public:
     DigitList *getDigitList() const { return fDecimalNum;}
 
     /**
+     *  @internal
+     */
+    DigitList *getInternalDigitList();
+
+    /**
      *  Adopt, and set value from, a DigitList
      *     Internal Function, do not use.
      *  @param dl the Digit List to be adopted
      *  @internal
      */
     void adoptDigitList(DigitList *dl);
+#endif  /* U_HIDE_INTERNAL_API */
 
 private:
     /**
@@ -637,7 +646,10 @@ private:
     } fValue;
 
     CharString           *fDecimalStr;
+
     DigitList            *fDecimalNum;
+
+    char                fStackData[128]; // must be big enough for DigitList
 
     Type                fType;
     UnicodeString       fBogus; // Bogus string when it's needed.
@@ -661,9 +673,12 @@ inline UnicodeString& Formattable::getString(void) {
     return *fValue.fString;
 }
 
+#ifndef U_HIDE_DEPRECATED_API
 inline int32_t Formattable::getLong(UErrorCode* status) const {
     return getLong(*status);
 }
+#endif
+
 
 U_NAMESPACE_END
 
