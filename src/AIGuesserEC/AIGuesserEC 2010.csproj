@@ -105,26 +105,20 @@
     <Compile Include="AdaptIt KB.cs">
       <DependentUpon>AdaptIt KB.xsd</DependentUpon>
     </Compile>
-    <Compile Include="AdaptItAutoConfigDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="AdaptItAutoConfigDialog.cs" />
     <Compile Include="AdaptItAutoConfigDialog.Designer.cs">
       <DependentUpon>AdaptItAutoConfigDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="AdaptItEncConverter.cs" />
     <Compile Include="AdaptItEncConverterConfig.cs" />
-    <Compile Include="AdaptItGuesserAutoConfigDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="AdaptItGuesserAutoConfigDialog.cs" />
     <Compile Include="AdaptItGuesserAutoConfigDialog.Designer.cs">
       <DependentUpon>AdaptItGuesserAutoConfigDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="AdaptItGuesserEncConverter.cs" />
     <Compile Include="AdaptItGuesserEncConverterConfig.cs" />
     <Compile Include="AdaptItKBReader.cs" />
-    <Compile Include="AdaptItLookupAutoConfigDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="AdaptItLookupAutoConfigDialog.cs" />
     <Compile Include="AdaptItLookupAutoConfigDialog.Designer.cs">
       <DependentUpon>AdaptItLookupAutoConfigDialog.cs</DependentUpon>
     </Compile>
@@ -249,6 +243,12 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ECInterfaces\ECInterfaces 2010.csproj">
+      <Project>{2935E02F-43ED-4670-9A00-A91B0AD3D66C}</Project>
+      <Name>ECInterfaces 2010</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
