@@ -14,8 +14,9 @@ OUTDIR      = $(ROOTDIR)/output/Debug
 RELEASEOUT  = $(ROOTDIR)/output/Release
 
 SRCDIRS = src/IcuEC src/PyScriptEC src/ECDriver/linux
-DLLS    = ECInterfaces.dll SilEncConverters40.dll CodePageEC.dll CcEC.dll \
+DLLS    = ECInterfaces.dll SilEncConverters40.dll CcEC.dll \
   IcuEC.dll PyScriptEC.dll PerlExpressionEC.dll AIGuesserEC.dll
+# CodePageEC.dll
 LIBDIR  = $(exec_prefix)/lib/encConverters
 PLUGINS = "AI 4.0.0.0 Plugin Details.xml" "CC 4.0.0.0 Plugin Details.xml" \
     "EC 4.0.0.0 Plugin Details.xml" "IcuEC 4.0.0.0 Plugin Details.xml" \
@@ -89,9 +90,15 @@ install: release
 	  cp -p redist/EC/Plugins/"$$file" $(DESTDIR)$(LIBDIR)/EC/Plugins; \
 	done
 	@cp -pR redist/Help $(DESTDIR)$(LIBDIR)
-	@for file in redist/libTECkit*.so; do \
+	@if [ `uname -m` = "x86_64" ]; then \
+	for file in redist/libTECkit*x86_64.so; do \
 	  $(INSTALL) $$file $(DESTDIR)$(LIBDIR); \
-	done
+	done; \
+	else \
+	for file in redist/libTECkit*x86.so; do \
+	  $(INSTALL) $$file $(DESTDIR)$(LIBDIR); \
+	done; \
+	fi
 	@cp -p src/EncCnvtrs/SilEncConverters40.dll.config $(DESTDIR)$(LIBDIR)
 
 NUNITROOT=`which nunit-console | sed s=/bin/nunit-console=/lib/mono=`
