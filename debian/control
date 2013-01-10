@@ -1,8 +1,10 @@
 Source: enc-converters
 Priority: optional
 Maintainer: Stephen McConnel <stephen_mcconnel@sil.org>
-Build-Depends: debhelper (>= 7.0.50~), autotools-dev, python-dev (>=2.6), mono-devel, libicu-dev
-Standards-Version: 3.8.4
+Build-Depends: debhelper (>= 7.0.50~), autotools-dev, python-dev (>=2.6),
+ fieldworks-mono, fieldworks-libgdiplus, mono-devel, nant, libicu-dev,
+ lsb-release, devscripts
+Standards-Version: 3.9.1
 Section: libs
 Homepage: http://hg.palaso.org/ec-main
 
