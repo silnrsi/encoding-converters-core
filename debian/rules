@@ -12,3 +12,10 @@ export DH_OPTIONS=-v
 
 %:
 	dh $@ 
+
+override_dh_shlibdeps:
+	if grep -e -L/usr/lib/fieldworks/mono/lib Makefile; then \
+		LD_LIBRARY_PATH=/usr/lib/fieldworks/mono/lib:$$LD_LIBRARY_PATH dh_shlibdeps; \
+	else \
+		dh_shlibdeps; \
+	fi
