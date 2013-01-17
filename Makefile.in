@@ -12,6 +12,8 @@ exec_prefix = @exec_prefix@
 ROOTDIR     = @abs_top_srcdir@
 OUTDIR      = $(ROOTDIR)/output/Debug
 RELEASEOUT  = $(ROOTDIR)/output/Release
+MONO        = @MONO@
+MONO_LDFLAGS= @MONO_LDFLAGS@
 
 SRCDIRS = src/IcuEC src/PyScriptEC src/ECDriver/linux
 DLLS    = ECInterfaces.dll SilEncConverters40.dll CcEC.dll \
@@ -23,7 +25,7 @@ PLUGINS = "AI 4.0.0.0 Plugin Details.xml" "CC 4.0.0.0 Plugin Details.xml" \
     "PerlEC 4.0.0.0 Plugin Details.xml" "PythonEC 4.0.0.0 Plugin Details.xml"
 
 all:
-	@(cd build && nant) || true
+	@(cd build && ./xbuild.sh $(MONO) $(MONO_LDFLAGS)) || true
 	@for subdir in $(SRCDIRS); do \
 	  echo making in $$subdir; \
 	  (cd $$subdir && $(MAKE) all) || true; \
@@ -39,7 +41,7 @@ all:
 	@cp -p src/TestEncCnvtrs/TestEncCnvtrs.dll.config $(OUTDIR)
 
 release:
-	@(cd build && nant release all) || true
+	@(cd build && ./xbuild.sh $(MONO) $(MONO_LDFLAGS) /property:config=Release) || true
 	@for subdir in $(SRCDIRS); do \
 	  echo making in $$subdir; \
 	  (cd $$subdir && $(MAKE) release) || true; \
@@ -55,7 +57,7 @@ release:
 	@cp -p src/TestEncCnvtrs/TestEncCnvtrs.dll.config $(RELEASEOUT)
 
 clean:
-	@(cd build && nant clean) || true
+	@(cd build && ./xbuild.sh $(MONO) $(MONO_LDFLAGS) /target:clean) || true
 	@for subdir in $(SRCDIRS); do \
 	  echo making in $$subdir; \
 	  (cd $$subdir && $(MAKE) clean) || true; \
@@ -109,7 +111,7 @@ check: all
 	  find $(NUNITROOT) -name nunit.core.dll -exec cp -p '{}' $(OUTDIR) ';' -print ; \
 	  find $(NUNITROOT) -name nunit.core.interfaces.dll -exec cp -p '{}' $(OUTDIR) ';' -print ; \
 	fi
-	@(cd build && LD_LIBRARY_PATH="$(OUTDIR)" nant test) || true
+	@(cd build && LD_LIBRARY_PATH="$(OUTDIR)" ./xbuild.sh $(MONO) $(MONO_LDFLAGS) /target:test) || true
 	@for subdir in $(SRCDIRS); do \
 	  echo checking in $$subdir; \
 	  (cd $$subdir && $(MAKE) check) || true; \
