@@ -51,6 +51,7 @@ namespace SilEncConverters40
             //    Environment.GetEnvironmentVariable("LD_LIBRARY_PATH"));
             //System.Diagnostics.Debug.WriteLine("loc=" + XULRunnerLocator.GetXULRunnerLocation());
             //Xpcom.Initialize(XULRunnerLocator.GetXULRunnerLocation());
+			this.tabControl.Selecting += new System.Windows.Forms.TabControlCancelEventHandler(tabControl_Selecting);
 
             helpProvider.SetHelpString(buttonSaveInRepository, Properties.Resources.SaveInRepositoryHelpString);
             System.Diagnostics.Debug.WriteLine("finished first SetHelpString.");
@@ -594,6 +595,28 @@ namespace SilEncConverters40
         {
             get { return true; }
         }
+
+		/// <summary>
+		/// Cancel the tab selection if it's premature.
+		/// </summary>
+		/// <remarks>
+		/// For Mono, waiting until tabControl_Selected and trying to change the selection
+		/// doesn't work: the tab selection in the header is changed, but the tab contents
+		/// are not, leading to mass confusion and possible crashes.
+		/// </remarks>
+		private void tabControl_Selecting(object sender, TabControlCancelEventArgs e)
+		{
+			if (e.TabPage != tabPageAbout && e.TabPage != tabPageSetup)
+            {
+                // Test or Advanced tab. 
+                // If the configuration was modified, then make the user go back
+                if (IsModified && !OnApply())
+                {
+                    MessageBox.Show("You must first configure the conversion process on the Setup tab", EncConverters.cstrCaption);
+					e.Cancel = true;
+				}
+			}
+		}
 
         private void tabControl_Selected(object sender, TabControlEventArgs e)
         {
