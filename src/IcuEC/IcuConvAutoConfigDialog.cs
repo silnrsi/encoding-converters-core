@@ -17,13 +17,13 @@ namespace SilEncConverters40
 	{
 		#region DLLImport Statements
 		// On Linux looks for libIcuConvEC.so (adds lib- and -.so)
-		[DllImport("IcuConvEC", EntryPoint="IcuConvEC_ConverterNameList_start")]
+		[DllImport("IcuConvEC", EntryPoint = "IcuConvEC_ConverterNameList_start", CallingConvention = CallingConvention.Cdecl)]
 		static extern unsafe int CppConverterNameList_start();
 
-		[DllImport("IcuConvEC", EntryPoint="IcuConvEC_ConverterNameList_next")]
+		[DllImport("IcuConvEC", EntryPoint = "IcuConvEC_ConverterNameList_next", CallingConvention = CallingConvention.Cdecl)]
 		static extern unsafe string CppConverterNameList_next();
 
-		[DllImport("IcuConvEC", EntryPoint="IcuConvEC_GetDisplayName")]
+		[DllImport("IcuConvEC", EntryPoint = "IcuConvEC_GetDisplayName", CallingConvention = CallingConvention.Cdecl)]
 		static extern unsafe string CppGetDisplayName(string strID);
 		#endregion DLLImport Statements
 

@@ -18,7 +18,7 @@
     <ProjectGuid>{9A5D6A7B-3176-4856-8B4F-72A36CFE1394}</ProjectGuid>
     <RootNamespace>IcuEc</RootNamespace>
     <SccProjectName>Perforce Project</SccProjectName>
-    <SccLocalPath>..\..\..\..</SccLocalPath>
+    <SccLocalPath>..\..\..</SccLocalPath>
     <SccProvider>MSSCCI:Perforce SCM</SccProvider>
     <Keyword>AtlProj</Keyword>
   </PropertyGroup>

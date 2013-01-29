@@ -374,8 +374,8 @@ namespace IcuTranslitEC
             fprintf(stderr, "sInOut.length %d\n", sInOut.length());
 #endif
 #ifdef _MSC_VER
-			UErrorCode err;
-            int nLen = sInOut.extract((UChar *)lpOutBuffer, rnOutLen, err);
+			UErrorCode err = U_ZERO_ERROR;
+            int nLen = sInOut.extract((UChar *)lpOutBuffer, rnOutLen/sizeof(UChar) , err);
             if (nLen >= (int)rnOutLen || U_FAILURE(err))
 #else
 			int nLen = sInOut.extract(0, sInOut.length(), (char *)NULL);   // "preflight" to get size

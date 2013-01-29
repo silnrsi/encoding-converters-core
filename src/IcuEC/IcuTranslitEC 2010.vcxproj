@@ -70,9 +70,9 @@
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>copy $(SolutionDir)DistFiles\icu\bin\icuuc48.dll $(OutDir)
-copy $(SolutionDir)DistFiles\icu\bin\icuin48.dll $(OutDir)
-copy $(SolutionDir)DistFiles\icu\bin\icudt48.dll $(OutDir)
+      <Command>copy $(SolutionDir)DistFiles\icu\bin\icuuc50.dll $(OutDir)
+copy $(SolutionDir)DistFiles\icu\bin\icuin50.dll $(OutDir)
+copy $(SolutionDir)DistFiles\icu\bin\icudt50.dll $(OutDir)
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -96,9 +96,9 @@ copy $(SolutionDir)DistFiles\icu\bin\icudt48.dll $(OutDir)
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>copy $(SolutionDir)DistFiles\icu\bin\icuuc48.dll $(OutDir)
-copy $(SolutionDir)DistFiles\icu\bin\icuin48.dll $(OutDir)
-copy $(SolutionDir)DistFiles\icu\bin\icudt48.dll $(OutDir)
+      <Command>copy $(SolutionDir)DistFiles\icu\bin\icuuc50.dll $(OutDir)
+copy $(SolutionDir)DistFiles\icu\bin\icuin50.dll $(OutDir)
+copy $(SolutionDir)DistFiles\icu\bin\icudt50.dll $(OutDir)
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>

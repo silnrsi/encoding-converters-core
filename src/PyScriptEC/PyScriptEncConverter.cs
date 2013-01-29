@@ -25,12 +25,12 @@ namespace SilEncConverters40
         #region DLLImport Statements
         // On Linux looks for libPyScriptEncConverter.so (adds lib- and -.so)
         //[DllImport("PyScriptEncConverter", SetLastError=true)]
-        [DllImport("PyScriptEncConverter", EntryPoint="PyScriptEC_Initialize")]
+		[DllImport("PyScriptEncConverter", EntryPoint = "PyScriptEC_Initialize", CallingConvention = CallingConvention.Cdecl)]
         static extern unsafe int CppInitialize (
             [MarshalAs(UnmanagedType.LPStr)] string strScript,
             [MarshalAs(UnmanagedType.LPStr)] string strDir);
 
-        [DllImport("PyScriptEncConverter", EntryPoint="PyScriptEC_DoConvert")]
+		[DllImport("PyScriptEncConverter", EntryPoint = "PyScriptEC_DoConvert", CallingConvention = CallingConvention.Cdecl)]
         static extern unsafe int CppDoConvert(
             byte* lpInputBuffer, int nInBufLen,
             byte* lpOutputBuffer, int *npOutBufLen);
