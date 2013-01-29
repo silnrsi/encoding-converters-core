@@ -250,6 +250,12 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ECInterfaces\ECInterfaces 2010.csproj">
+      <Project>{2935E02F-43ED-4670-9A00-A91B0AD3D66C}</Project>
+      <Name>ECInterfaces 2010</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

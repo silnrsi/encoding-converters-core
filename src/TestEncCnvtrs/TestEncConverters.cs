@@ -458,6 +458,7 @@ namespace TestEncCnvtrs
 			Assert.LessOrEqual(1, countKeys, "Should have at least one key now.");
 			IEncConverter ec = m_encConverters["UnitTesting-Senufo-To-Unicode"];
 			Assert.IsNotNull(ec, "Added converter UnitTesting-Senufo-To-Unicode should exist!");
+			ec.CodePageInput = EncConverters.cnIso8859_1CodePage;
 			string input = TestUtil.GetPseudoStringFromBytes(m_bytesSenufo);
 			string output = ec.Convert(input);
 			Assert.AreEqual(m_outputSenufo, output, "Senufo.tec should convert data properly!");
@@ -475,6 +476,7 @@ namespace TestEncCnvtrs
 			Assert.AreEqual(countKeys, countValues, "Should have same number of keys and values!");
 			Assert.LessOrEqual(2, countKeys, "Should have at least two keys now.");
 			IEncConverter ecRev = m_encConverters["UnitTesting-Unicode-To-Senufo"];
+			ecRev.CodePageInput = EncConverters.cnIso8859_1CodePage;
 			ecRev.DirectionForward = false;		// shouldn't it be able to set this automatically?
 			Assert.IsNotNull(ecRev);
 			string outputRaw = ecRev.Convert(m_outputSenufo);
@@ -523,6 +525,7 @@ namespace TestEncCnvtrs
 			Assert.LessOrEqual(1, countKeys, "Should have at least one key now.");
 			IEncConverter ec = m_encConverters["UnitTesting-Senufo-To-Unicode"];
 			Assert.IsNotNull(ec, "Added converter UnitTesting-Senufo-To-Unicode should exist!");
+			ec.CodePageInput = EncConverters.cnIso8859_1CodePage;
 			string input = TestUtil.GetPseudoStringFromBytes(m_bytesSenufo);
 			string output = ec.Convert(input);
 			Assert.AreEqual(m_outputSenufo, output, "Senufo.tec should convert data properly!");
@@ -540,6 +543,7 @@ namespace TestEncCnvtrs
 			Assert.AreEqual(countKeys, countValues, "Should have same number of keys and values!");
 			Assert.LessOrEqual(2, countKeys, "Should have at least two keys now.");
 			IEncConverter ecRev = m_encConverters["UnitTesting-Unicode-To-Senufo"];
+			ecRev.CodePageInput = EncConverters.cnIso8859_1CodePage;
 			ecRev.DirectionForward = false;		// shouldn't it be able to set this automatically?
 			Assert.IsNotNull(ecRev);
 			string outputRaw = ecRev.Convert(m_outputSenufo);
@@ -576,6 +580,7 @@ namespace TestEncCnvtrs
 			Assert.LessOrEqual(1, countKeys, "Should have at least one key now.");
 			IEncConverter ec = m_encConverters["UnitTesting-Ann-To-Unicode"];
 			Assert.IsNotNull(ec, "Added converter UnitTesting-Ann-To-Unicode should exist!");
+			ec.CodePageInput = EncConverters.cnIso8859_1CodePage;
 			string input = TestUtil.GetPseudoStringFromBytes(m_bytesAnn);
 			string output = ec.Convert(input);
 			Assert.AreEqual(m_utf16Ann, output, "ann2unicode.cct should convert data properly!");
@@ -594,6 +599,7 @@ namespace TestEncCnvtrs
 			Assert.LessOrEqual(2, countKeys, "Should have at least two keys now.");
 			IEncConverter ecRev = m_encConverters["UnitTesting-Unicode-To-Ann"];
 			Assert.IsNotNull(ecRev);
+			ecRev.CodePageOutput = EncConverters.cnIso8859_1CodePage;
 			string outputRaw = ecRev.Convert(m_utf16Ann);
 			byte[] output2 = TestUtil.GetBytesFromPseudoString(outputRaw);
 			Assert.AreEqual(m_bytesAnn, output2, "unicode2ann.cct should convert data properly!");
@@ -623,6 +629,7 @@ namespace TestEncCnvtrs
 			Assert.LessOrEqual(1, countKeys, "Should have at least one key now.");
 			IEncConverter ec = m_encConverters["UnitTesting-ReverseString"];
 			Assert.IsNotNull(ec);
+			ec.CodePageInput = EncConverters.cnIso8859_1CodePage;
 			string output = ec.Convert("This is a test.  This is only a test!");
 			Assert.AreEqual("!tset a ylno si sihT  .tset a si sihT", output,
 				"Instantiated SIL.perl converter should work properly!");
@@ -682,6 +689,7 @@ namespace TestEncCnvtrs
 			Assert.LessOrEqual(1, countKeys, "Should have at least one key now.");
 			IEncConverter ec = m_encConverters["UnitTesting-Python-1252-To-Unicode"];
 			Assert.IsNotNull(ec, "Added converter UnitTesting-1252-To-Unicode should exist!");
+			ec.CodePageInput = EncConverters.cnIso8859_1CodePage;
 			string input = TestUtil.GetPseudoStringFromBytes(m_1252bytes);
 			string output = ec.Convert(input);
 			Assert.AreEqual(m_1252Converted, output, "From1252.py should convert data properly!");
@@ -700,7 +708,8 @@ namespace TestEncCnvtrs
 			Assert.LessOrEqual(2, countKeys, "Should have at least two keys now.");
 			IEncConverter ecRev = m_encConverters["UnitTesting-Python-Unicode-To-1252"];
 			Assert.IsNotNull(ecRev, "Added converter UnitTesting-Python-Unicode-To-1252 should exist!");
- 			string outputRaw = ecRev.Convert(m_1252Converted);
+			ecRev.CodePageOutput = EncConverters.cnIso8859_1CodePage;
+			string outputRaw = ecRev.Convert(m_1252Converted);
 			byte[] output2 = TestUtil.GetBytesFromPseudoString(outputRaw);
 			Assert.AreEqual(m_1252bytes, output2, "To1252.py should convert data properly!");
 
@@ -708,6 +717,21 @@ namespace TestEncCnvtrs
 			m_encConverters.Remove("UnitTesting-Python-Unicode-To-1252");
 			int countAfter = m_encConverters.Count;
 			Assert.AreEqual(countOrig, countAfter, "Should have the original number of converters now.");
+		}
+
+		[Test]
+		public void Cp1252ShouldConvertHex80()
+		{
+			m_encConverters.Add("UnitTesting-From-CP_1252", "1252",
+				ConvType.Legacy_to_from_Unicode,
+				"LEGACY", "UNICODE", ProcessTypeFlags.CodePageConversion);
+			IEncConverter ec = m_encConverters["UnitTesting-From-CP_1252"];
+			var bytes = new byte[] {0x80};
+			string input = TestUtil.GetPseudoStringFromBytes(bytes);
+			ec.CodePageInput = EncConverters.cnIso8859_1CodePage;
+			string output = ec.Convert(input);
+			Assert.AreEqual("\u20ac", output, "CP_1252 should convert 0x80 to Unicode properly!");
+			m_encConverters.Remove("UnitTesting-From-CP_1252");
 		}
 
 		[Test]
@@ -728,11 +752,12 @@ namespace TestEncCnvtrs
 			Assert.AreEqual(countKeys, countValues, "Should have same number of keys and values!");
 			Assert.LessOrEqual(1, countKeys, "Should have at least one key now.");
 			IEncConverter ec = m_encConverters["UnitTesting-From-CP_1252"];
+
 			Assert.IsNotNull(ec, "Added converter UnitTesting-From-CP_1252 should exist!");
+			ec.CodePageInput = EncConverters.cnIso8859_1CodePage;
 			string input = TestUtil.GetPseudoStringFromBytes(m_1252bytes);
 			string output = ec.Convert(input);
 			Assert.AreEqual(m_1252Converted, output, "CP_1252 should convert data to Unicode properly!");
-
 			m_encConverters.Add("UnitTesting-To-CP_1252", "1252",
 				ConvType.Unicode_to_from_Legacy,
 				"UNICODE", "LEGACY", ProcessTypeFlags.CodePageConversion);
@@ -745,6 +770,7 @@ namespace TestEncCnvtrs
 			Assert.AreEqual(countKeys, countValues, "Should have same number of keys and values!");
 			Assert.LessOrEqual(2, countKeys, "Should have at least two keys now.");
 			IEncConverter ecRev = m_encConverters["UnitTesting-To-CP_1252"];
+			ecRev.CodePageOutput = EncConverters.cnIso8859_1CodePage;
 			Assert.IsNotNull(ecRev, "Added converter UnitTesting-To-CP_1252 should exist!");
  			string outputRaw = ecRev.Convert(m_1252Converted);
 			byte[] output2 = TestUtil.GetBytesFromPseudoString(outputRaw);

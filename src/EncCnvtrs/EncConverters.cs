@@ -456,6 +456,7 @@ namespace SilEncConverters40
             if (keyPluginFolder != null)
                 strPluginXmlFilesFolder = (string)keyPluginFolder.GetValue(CstrRegKeyPluginFolder);
 
+			if (String.IsNullOrEmpty(strPluginXmlFilesFolder))
 #if !PluginsInEachFolder
             {
                 // Argh...
@@ -470,7 +471,6 @@ namespace SilEncConverters40
                                                        CstrDefPluginFolderPlugins);
             }
 #else
-            if (String.IsNullOrEmpty(strPluginXmlFilesFolder))
             {
                 strPluginXmlFilesFolder = Util.GetSpecialFolderPath(Environment.SpecialFolder.CommonApplicationData) + strDefPluginFolder;
             }
@@ -2390,6 +2390,7 @@ namespace SilEncConverters40
                 m_mapProgIdsToAssemblyName.TryGetValue(strProgID, out strAssemblySpec))
             {
                 System.Diagnostics.Debug.WriteLine("Getting from assembly.");
+
                 ObjectHandle ohndl = Activator.CreateInstance(strAssemblySpec, strProgID);
                 rConverter = (IEncConverter)ohndl.Unwrap();
                 if (rConverter == null) {
