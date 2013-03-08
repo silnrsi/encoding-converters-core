@@ -1074,7 +1074,7 @@ namespace SilEncConverters40
             string strSourceLangName, string strTargetLangName)
         {
             return Path.Combine(AdaptItProjectFolder(strProjectFolderName, strSourceLangName, strTargetLangName),
-                "Glossing.xml");
+                                AdaptItAutoConfigDialog.CstrAdaptItGlossingKb);
         }
 
         public static string AdaptItProjectFolderName(string strProjectFolderName,
@@ -1116,12 +1116,12 @@ namespace SilEncConverters40
             get
             {
                 return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-                    "Adapt It Unicode Work");
+                                    AdaptItAutoConfigDialog.CstrAdaptItWorkingDirUnicode);
             }
         }
 
         /// <summary>
-        /// returns something like: <My Documents>\Adapt It Unicode Work\Bundelkhandi to English adaptations
+        /// returns something like: ...My Documents\Adapt It Unicode Work\Bundelkhandi to English adaptations
         /// which is the project folder for the Adapt It project
         /// </summary>
         /// <param name="strSourceLangName"></param>
@@ -1163,7 +1163,12 @@ namespace SilEncConverters40
 
         public class LanguageInfo
         {
-            public LanguageInfo() { }
+            public LanguageInfo()
+            {
+                Punctuation = CstrAdaptItPunct;
+                RightToLeft = RightToLeft.No;
+                FontName = cstrDefaultFont;
+            }
 
             public LanguageInfo(string strProjectFileContents, string strPunctuationPairs,
                                 string strFontName, string strRtl, string strLanguageName)
@@ -1244,9 +1249,9 @@ namespace SilEncConverters40
             {
                 string strFormat = Properties.Settings.Default.DefaultAIProjectFile;
                 string strProjectFileContents = String.Format(strFormat,
-                    liSourceLang.FontToUse,
-                    liTargetLang.FontToUse,
-                    liNavigation.FontToUse,
+                    liSourceLang.FontName,
+                    liTargetLang.FontName,
+                    liNavigation.FontName,
                     liSourceLang.LangName,
                     liTargetLang.LangName,
                     Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
@@ -1258,18 +1263,22 @@ namespace SilEncConverters40
             }
 
             // create main KB
-            if (!File.Exists(AdaptItLookupFileSpec(strProjectFolderName, liSourceLang.LangName, liTargetLang.LangName)))
-            {
-                string strFormat = Properties.Settings.Default.DefaultAIKBFile;
-                string strKBContents = String.Format(strFormat, liSourceLang.LangName, liTargetLang.LangName);
-                File.WriteAllText(AdaptItLookupFileSpec(strProjectFolderName, liSourceLang.LangName, liTargetLang.LangName), strKBContents);
-            }
+            WriteKbFile(AdaptItLookupFileSpec(strProjectFolderName, liSourceLang.LangName, liTargetLang.LangName),
+                        liSourceLang,
+                        liTargetLang);
 
-            if (!File.Exists(AdaptItGlossingLookupFileSpec(strProjectFolderName, liSourceLang.LangName, liTargetLang.LangName)))
+            WriteKbFile(AdaptItGlossingLookupFileSpec(strProjectFolderName, liSourceLang.LangName, liTargetLang.LangName),
+                        liSourceLang, 
+                        liTargetLang);
+        }
+
+        private static void WriteKbFile(string strFileSpec, LanguageInfo liSourceLang, LanguageInfo liTargetLang)
+        {
+            if (!File.Exists(strFileSpec))
             {
                 string strFormat = Properties.Settings.Default.DefaultAIKBFile;
-                string strKBContents = String.Format(strFormat, liSourceLang.LangName, liTargetLang.LangName);
-                File.WriteAllText(AdaptItGlossingLookupFileSpec(strProjectFolderName, liSourceLang.LangName, liTargetLang.LangName), strKBContents);
+                string strKbContents = String.Format(strFormat, liSourceLang.LangName, liTargetLang.LangName);
+                File.WriteAllText(strFileSpec, strKbContents);
             }
         }
 

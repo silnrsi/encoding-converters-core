@@ -95,7 +95,12 @@ namespace PyScriptEC
         else if (len > strlen(src))
             len = strlen(src);
         char * dst = (char *)malloc(len + 1);
+#if !be106
+		// use the safe version
+        strncpy_s(dst, len, src, len);
+#else
         strncpy(dst, src, len);
+#endif
         dst[len] = 0;
         return dst;
     }
@@ -158,7 +163,11 @@ namespace PyScriptEC
         if (m_strScriptDir != NULL)
         {
             char strCmd[1000];
+#if !be106
+			_snprintf_s(strCmd, 1000, "import sys\nsys.path.append('%s')", m_strScriptDir);
+#else
             snprintf(strCmd, 1000, "import sys\nsys.path.append('%s')", m_strScriptDir);
+#endif
             strCmd[999] = 0;    // just in case...
 #ifdef VERBOSE_DEBUGGING
             fprintf(stderr, "Running this python command:\n%s\n", strCmd);
@@ -177,7 +186,7 @@ namespace PyScriptEC
         if (!strcmp(pszExtension, ".py"))
             m_strScriptName = strndup(m_strScriptFile, strlen(m_strScriptFile) - 3);
         else
-            m_strScriptName = strdup(m_strScriptFile);
+            m_strScriptName = _strdup(m_strScriptFile);
 
         // get the module point by the name
 #ifdef VERBOSE_DEBUGGING
@@ -204,11 +213,11 @@ namespace PyScriptEC
         //  default function name, 'Convert'
         if(nAstrArgs > 1)
         {
-            m_strFuncName = strdup(astrArgs[1]);
+            m_strFuncName = _strdup(astrArgs[1]);
         }
         else
         {
-            m_strFuncName = strdup("Convert");
+            m_strFuncName = _strdup("Convert");
         }
         m_pFunc = PyDict_GetItemString(pDict, m_strFuncName);
         
@@ -285,7 +294,7 @@ namespace PyScriptEC
             m_strScriptFile = NULL;
         }
         if (m_strScriptFile == NULL)
-            m_strScriptFile = strdup(strScript);
+            m_strScriptFile = _strdup(strScript);
 
         if (m_strScriptDir != NULL && strcmp(strDir, m_strScriptDir))
         {
@@ -293,14 +302,14 @@ namespace PyScriptEC
             m_strScriptDir = NULL;
         }
         if (m_strScriptDir == NULL)
-            m_strScriptDir  = strdup(strDir);
+            m_strScriptDir  = _strdup(strDir);
 
         if (m_strFileSpec != NULL)
             free((void *)m_strFileSpec);
         size_t stringSize = sizeof(char) * (strlen(strDir) + strlen(strScript) + 2);
         m_strFileSpec = (char *)malloc(stringSize);
 #ifdef _MSC_VER
-        snprintf(m_strFileSpec, stringSize, "%s\\%s", strDir, strScript);
+        _snprintf_s(m_strFileSpec, stringSize, stringSize, "%s\\%s", strDir, strScript);
 #else
         snprintf(m_strFileSpec, stringSize, "%s/%s", strDir, strScript);
 #endif

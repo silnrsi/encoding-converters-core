@@ -10,8 +10,12 @@ namespace DriveAiEncConverter
 {
     class Program
     {
+        [STAThread]
         static void Main(string[] args)
         {
+            var theEcs = new EncConverters();
+            theEcs.AutoSelect(ConvType.Unicode_to_from_Unicode);
+            /*
             const string cstrFriendlyName = "Lookup in Hindi to Urdu adaptations";
             var theEcs = new EncConverters();
             theEcs.AddConversionMap(cstrFriendlyName, @"C:\Users\Bob\Documents\Adapt It Unicode Work\Hindi to Urdu adaptations\Hindi to Urdu adaptations.xml", ConvType.Unicode_to_from_Unicode,
@@ -19,8 +23,11 @@ namespace DriveAiEncConverter
                         ProcessTypeFlags.DontKnow);
             var theEc = (AdaptItEncConverter)theEcs[cstrFriendlyName];
             string strSelectedSourceWord = theEc.EditKnowledgeBase("दुन");
-            /*
-            const string cstrFriendlyName = "Any-Latin";
+
+             * 
+             * 
+             * 
+             * const string cstrFriendlyName = "Any-Latin";
             var theEcs = DirectableEncConverter.EncConverters;
             var assm = Assembly.LoadFile(@"C:\src\EC\output\debug\IcuECLib.dll");
             foreach (var type in assm.GetTypes())

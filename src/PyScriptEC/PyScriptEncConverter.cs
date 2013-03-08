@@ -37,7 +37,6 @@ namespace SilEncConverters40
         #endregion DLLImport Statements
 
         #region Member Variable Definitions
-        private Int32       m_hTable = 0;
         private DateTime    m_timeModified = DateTime.MinValue;
         private bool        m_bUseDelimiters = false;
 
@@ -154,9 +153,9 @@ namespace SilEncConverters40
                 int status = 0;
                 try {
                     status = CppInitialize(strScriptName, strScriptDir);
-                } catch (DllNotFoundException exc) {
+                } catch (DllNotFoundException) {
                     throw new Exception("Failed to load .so file. Check path.");
-                } catch (EntryPointNotFoundException exc) {
+                } catch (EntryPointNotFoundException) {
                     throw new Exception("Failed to find function in .so file.");
                 }
                 if( status != 0 )  
@@ -211,7 +210,6 @@ namespace SilEncConverters40
             Load(ConverterIdentifier);
         }
 
-        [CLSCompliant(false)]
         protected override unsafe void DoConvert
             (
             byte*       lpInBuffer,

@@ -78,7 +78,7 @@ namespace IcuTranslitEC
         char * newStr = (char *)malloc(size * sizeof(char));
         len = uniStr.extract(0, uniStr.length(), newStr);
         //newStr[len] = '\0'; // null terminate in case extract didn't do it
-        //m_convNameList[i] = strdup((char*)strID.getTerminatedBuffer());
+        //m_convNameList[i] = _strdup((char*)strID.getTerminatedBuffer());
         //LPCTSTR lpszValue = strDisplayName.getTerminatedBuffer();
         //if( _tcslen(lpszValue) == 0 )
         //    lpszValue = strID.getTerminatedBuffer();
@@ -232,7 +232,7 @@ namespace IcuTranslitEC
 		size_t len = strlen(name);
 		if (len >= MAXNAMESIZE)
 			len = MAXNAMESIZE - 1;
-		strncpy(chbuf, name, len);
+		strncpy_s(chbuf, name, len);
 		chbuf[len] = 0;
 		free((void *)name);
 		return (const char *)chbuf;
@@ -253,7 +253,7 @@ namespace IcuTranslitEC
 		size_t len = strlen(name);
 		if (len >= MAXNAMESIZE)
 			len = MAXNAMESIZE - 1;
-		strncpy(chbuf, name, len);
+		strncpy_s(chbuf, name, len);
 		chbuf[len] = 0;
 		free((void *)name);
 		return (const char *)chbuf;
@@ -272,7 +272,7 @@ namespace IcuTranslitEC
         if( IsFileLoaded() )
             FinalRelease();
 
-        m_strConverterSpec = strdup(strConverterSpec);
+        m_strConverterSpec = _strdup(strConverterSpec);
 
         // do the load at this point; not that we need it, but for checking that everything's okay.
         return Load();

@@ -142,9 +142,9 @@ namespace SilEncConverters40
             int status = 0;
             try {
                 status = CppInitialize(strTranslitID);
-            } catch (DllNotFoundException exc) {
+            } catch (DllNotFoundException) {
                 throw new Exception("Failed to load DLL (.dll/.so) file. Check path.");
-            } catch (EntryPointNotFoundException exc) {
+            } catch (EntryPointNotFoundException) {
                 throw new Exception("Failed to find function in DLL (.dll/.so) file.");
             }
             if( status != 0 )  
@@ -212,7 +212,6 @@ namespace SilEncConverters40
             Load(ConverterIdentifier);
         }
 
-        [CLSCompliant(false)]
         protected override unsafe void DoConvert
             (
             byte*       lpInBuffer,

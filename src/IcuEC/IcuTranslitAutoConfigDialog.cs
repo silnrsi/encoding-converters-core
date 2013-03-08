@@ -170,9 +170,9 @@ namespace SilEncConverters40
             int count = 0;
             try {
                 count = CppConverterNameList_start();
-            } catch (DllNotFoundException exc) {
+            } catch (DllNotFoundException) {
                 throw new Exception("Failed to load .so file. Check path.");
-            } catch (EntryPointNotFoundException exc) {
+            } catch (EntryPointNotFoundException) {
                 throw new Exception("Failed to find function in .so file.");
             }
 

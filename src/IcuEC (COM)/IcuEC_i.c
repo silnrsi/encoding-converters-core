@@ -6,7 +6,7 @@
 
 
  /* File created by MIDL compiler version 7.00.0555 */
-/* at Thu Sep 06 14:09:56 2012
+/* at Tue Jan 29 16:50:08 2013
  */
 /* Compiler settings for IcuEC.idl:
     Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 7.00.0555 

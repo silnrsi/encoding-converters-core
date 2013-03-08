@@ -37,6 +37,8 @@ namespace SilEncConverters40
             this.radioButtonUnicode = new System.Windows.Forms.RadioButton();
             this.textBoxNormalizationPath = new System.Windows.Forms.TextBox();
             this.buttonBrowseNormalizationMap = new System.Windows.Forms.Button();
+            this.buttonCreateNewProject = new System.Windows.Forms.Button();
+            this.buttonViewKb = new System.Windows.Forms.Button();
             this.openFileDialogBrowse = new System.Windows.Forms.OpenFileDialog();
             this.tabControl.SuspendLayout();
             this.tabPageSetup.SuspendLayout();
@@ -76,17 +78,20 @@ namespace SilEncConverters40
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel1.Controls.Add(this.label1, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this.listBoxProjects, 0, 2);
-            this.tableLayoutPanel1.Controls.Add(this.labelNormalizationConverter, 0, 3);
+            this.tableLayoutPanel1.Controls.Add(this.labelNormalizationConverter, 0, 4);
             this.tableLayoutPanel1.Controls.Add(this.groupBox1, 0, 0);
-            this.tableLayoutPanel1.Controls.Add(this.textBoxNormalizationPath, 1, 3);
-            this.tableLayoutPanel1.Controls.Add(this.buttonBrowseNormalizationMap, 2, 3);
+            this.tableLayoutPanel1.Controls.Add(this.textBoxNormalizationPath, 1, 4);
+            this.tableLayoutPanel1.Controls.Add(this.buttonBrowseNormalizationMap, 2, 4);
+            this.tableLayoutPanel1.Controls.Add(this.buttonCreateNewProject, 1, 3);
+            this.tableLayoutPanel1.Controls.Add(this.buttonViewKb, 0, 3);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(3, 3);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 4;
+            this.tableLayoutPanel1.RowCount = 5;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.Size = new System.Drawing.Size(596, 394);
             this.tableLayoutPanel1.TabIndex = 0;
@@ -107,7 +112,7 @@ namespace SilEncConverters40
             this.listBoxProjects.FormattingEnabled = true;
             this.listBoxProjects.Location = new System.Drawing.Point(3, 75);
             this.listBoxProjects.Name = "listBoxProjects";
-            this.listBoxProjects.Size = new System.Drawing.Size(590, 277);
+            this.listBoxProjects.Size = new System.Drawing.Size(590, 258);
             this.listBoxProjects.TabIndex = 2;
             this.listBoxProjects.SelectedIndexChanged += new System.EventHandler(this.listBoxProjects_SelectedIndexChanged);
             // 
@@ -115,7 +120,7 @@ namespace SilEncConverters40
             // 
             this.labelNormalizationConverter.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.labelNormalizationConverter.AutoSize = true;
-            this.labelNormalizationConverter.Location = new System.Drawing.Point(3, 373);
+            this.labelNormalizationConverter.Location = new System.Drawing.Point(23, 373);
             this.labelNormalizationConverter.Name = "labelNormalizationConverter";
             this.labelNormalizationConverter.Size = new System.Drawing.Size(117, 13);
             this.labelNormalizationConverter.TabIndex = 3;
@@ -165,9 +170,9 @@ namespace SilEncConverters40
             // textBoxNormalizationPath
             // 
             this.textBoxNormalizationPath.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textBoxNormalizationPath.Location = new System.Drawing.Point(126, 368);
+            this.textBoxNormalizationPath.Location = new System.Drawing.Point(146, 368);
             this.textBoxNormalizationPath.Name = "textBoxNormalizationPath";
-            this.textBoxNormalizationPath.Size = new System.Drawing.Size(437, 20);
+            this.textBoxNormalizationPath.Size = new System.Drawing.Size(417, 20);
             this.textBoxNormalizationPath.TabIndex = 4;
             // 
             // buttonBrowseNormalizationMap
@@ -179,6 +184,27 @@ namespace SilEncConverters40
             this.buttonBrowseNormalizationMap.Text = "...";
             this.buttonBrowseNormalizationMap.UseVisualStyleBackColor = true;
             this.buttonBrowseNormalizationMap.Click += new System.EventHandler(this.buttonBrowseNormalizationMap_Click);
+            // 
+            // buttonCreateNewProject
+            // 
+            this.buttonCreateNewProject.Location = new System.Drawing.Point(146, 339);
+            this.buttonCreateNewProject.Name = "buttonCreateNewProject";
+            this.buttonCreateNewProject.Size = new System.Drawing.Size(148, 23);
+            this.buttonCreateNewProject.TabIndex = 6;
+            this.buttonCreateNewProject.Text = "Create New Project";
+            this.buttonCreateNewProject.UseVisualStyleBackColor = true;
+            this.buttonCreateNewProject.Click += new System.EventHandler(this.ButtonCreateNewProjectClick);
+            // 
+            // buttonViewKb
+            // 
+            this.buttonViewKb.Enabled = false;
+            this.buttonViewKb.Location = new System.Drawing.Point(3, 339);
+            this.buttonViewKb.Name = "buttonViewKb";
+            this.buttonViewKb.Size = new System.Drawing.Size(137, 23);
+            this.buttonViewKb.TabIndex = 7;
+            this.buttonViewKb.Text = "View Knowledgebase";
+            this.buttonViewKb.UseVisualStyleBackColor = true;
+            this.buttonViewKb.Click += new System.EventHandler(this.ButtonViewKbClick);
             // 
             // openFileDialogBrowse
             // 
@@ -218,5 +244,7 @@ namespace SilEncConverters40
         private System.Windows.Forms.TextBox textBoxNormalizationPath;
         private System.Windows.Forms.Button buttonBrowseNormalizationMap;
         private System.Windows.Forms.OpenFileDialog openFileDialogBrowse;
+        private System.Windows.Forms.Button buttonCreateNewProject;
+        private System.Windows.Forms.Button buttonViewKb;
     }
 }

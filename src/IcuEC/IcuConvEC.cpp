@@ -168,7 +168,12 @@ namespace IcuConvEC
 		if (cnvNameInPkg != NULL)
 		{
 			size_t nIndex = m_strConverterSpec - cnvNameInPkg;
+#if _MSC_VER
+			char* pkgFile = (char *)malloc(nIndex + 1);
+			strncpy_s(pkgFile, nIndex, m_strConverterSpec, nIndex);
+#else
 			char* pkgFile = strncpy((char *)malloc(nIndex + 1), m_strConverterSpec, nIndex);
+#endif
 			pkgFile[nIndex] = '\0';		// NUL-terminate the string since strncpy doesn't.
 			++cnvNameInPkg;			// advance past the ':'
 			m_pConverter = ucnv_openPackage(pkgFile, cnvNameInPkg, &status);
@@ -204,7 +209,7 @@ namespace IcuConvEC
 			// DefaultUnicodeEncForm (just in case the user used one of the
 			// aliases for the converter identifier)
 			const char* pszName = ucnv_getName(m_pConverter, &status);
-			m_strStandardName = strdup(pszName);
+			m_strStandardName = _strdup(pszName);
 		}
 #ifdef VERBOSE_DEBUGGING
 		fprintf(stderr, "IcuConvEC::Load() END\n");
@@ -313,7 +318,7 @@ namespace IcuConvEC
 		size_t len = strlen(name);
 		if (len >= MAXNAMESIZE)
 			len = MAXNAMESIZE - 1;
-		strncpy(chbuf, name, len);
+		strncpy_s(chbuf, name, len);
 		chbuf[len] = 0;
 		free((void *)name);
 		return (const char *)chbuf;
@@ -340,7 +345,7 @@ namespace IcuConvEC
 		if (IsFileLoaded())
 			FinalRelease();
 
-		m_strConverterSpec = strdup(strConverterSpec);
+		m_strConverterSpec = _strdup(strConverterSpec);
 
 		// do the load at this point; not that we need it, but for checking
 		// that everything is okay.
