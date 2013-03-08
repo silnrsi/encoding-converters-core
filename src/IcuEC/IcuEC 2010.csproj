@@ -107,10 +107,12 @@
     <ProjectReference Include="..\ECInterfaces\ECInterfaces.csproj">
       <Project>{2935E02F-43ED-4670-9A00-A91B0AD3D66C}</Project>
       <Name>ECInterfaces</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\EncCnvtrs\EncCnvtrs.csproj">
       <Project>{3E4B908A-4F96-43C5-981B-1AA4B73CCC26}</Project>
       <Name>EncCnvtrs</Name>
+      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

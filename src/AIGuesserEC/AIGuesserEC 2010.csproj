@@ -77,6 +77,7 @@
   <ItemGroup>
     <Reference Include="CcEC">
       <HintPath>..\..\output\release\CcEC.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="ECInterfaces, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86">
       <HintPath>..\..\..\release\ECInterfaces.dll</HintPath>
@@ -263,6 +264,7 @@
     <ProjectReference Include="..\ECInterfaces\ECInterfaces 2010.csproj">
       <Project>{2935E02F-43ED-4670-9A00-A91B0AD3D66C}</Project>
       <Name>ECInterfaces 2010</Name>
+      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
