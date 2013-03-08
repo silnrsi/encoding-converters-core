@@ -172,10 +172,22 @@ namespace SilEncConverters40
 			int count = 0;
 			try {
 				count = CppConverterNameList_start();
-			} catch (DllNotFoundException) {
+			} 
+            catch (DllNotFoundException) 
+            {
+#if __MonoCS__
 				throw new Exception("Failed to load .so file. Check path.");
-			} catch (EntryPointNotFoundException) {
+#else
+                throw new Exception("Failed to load .dll file. Check path.");
+#endif
+			} 
+            catch (EntryPointNotFoundException) 
+            {
+#if __MonoCS__
 				throw new Exception("Failed to find function in .so file.");
+#else
+                throw new Exception("Failed to find function in .so file.");
+#endif
 			}
 
 			// Store the IDs in an array, and put the display names in the
