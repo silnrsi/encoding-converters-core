@@ -151,7 +151,7 @@ namespace IcuRegexEC
         // and strReplace to everything after the delimiter.
         strFind = strndup(strConverterSpec,
                      strlen(strConverterSpec) - strlen(found));
-        strReplace = strdup(found + strlen(clpszFindReplaceDelimiter));
+        strReplace = _strdup(found + strlen(clpszFindReplaceDelimiter));
 
         found = strstr(strConverterSpec, clpszCaseInsensitiveFlag);
         if (found != NULL)
@@ -246,7 +246,7 @@ namespace IcuRegexEC
         if( IsMatcherLoaded() )
             FinalRelease();
 
-        m_strConverterSpec = strdup(strConverterSpec);
+        m_strConverterSpec = _strdup(strConverterSpec);
 
         // do the load at this point; not that we need it, but for checking that everything's okay.
         return Load();

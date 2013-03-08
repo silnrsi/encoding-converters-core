@@ -130,11 +130,11 @@ namespace SilEncConverters40
 			{
 				status = CppInitialize(strConvID);
 			}
-			catch (DllNotFoundException exc)
+			catch (DllNotFoundException)
 			{
 				throw new Exception("Failed to load .so file. Check path.");
 			}
-			catch (EntryPointNotFoundException exc)
+			catch (EntryPointNotFoundException)
 			{
 				throw new Exception("Failed to find function in .so file.");
 			}
@@ -212,7 +212,6 @@ namespace SilEncConverters40
 			eNormalizeOutput = (NormalizeFlags)normOutput;
 		}
 
-		[CLSCompliant(false)]
 		protected override unsafe void DoConvert(
 			byte*   lpInBuffer,
 			int     nInLen,
