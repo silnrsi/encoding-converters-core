@@ -126,9 +126,14 @@ namespace SilEncConverters40
 			System.Diagnostics.Debug.WriteLine("IcuConv Load BEGIN");
 			System.Diagnostics.Debug.WriteLine("Calling CppInitialize");
 			int status = 0;
+
+#if __MonoCS__  // this isn't needed for Windows/.Net (and sending a message about .so files is confusing)
 			try
 			{
+#endif
 				status = CppInitialize(strConvID);
+
+#if __MonoCS__  // this isn't needed for Windows/.Net (and sending a message about .so files is confusing)
 			}
 			catch (DllNotFoundException)
 			{
@@ -138,6 +143,7 @@ namespace SilEncConverters40
 			{
 				throw new Exception("Failed to find function in .so file.");
 			}
+#endif
 			if (status != 0)
 			{
 				throw new Exception("CppInitialize failed.");
