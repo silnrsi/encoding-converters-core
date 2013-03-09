@@ -592,7 +592,7 @@ namespace SilEncConverters40
                 System.Diagnostics.Debug.WriteLine("LD_LIBRARY_PATH=" +
                 Environment.GetEnvironmentVariable("LD_LIBRARY_PATH"));
 
-#if __MonoCS__
+#if __MonoCS__  // this isn't needed for Windows/.Net (and sending a message about .so files is confusing)
                 try 
                 {
 #endif
@@ -601,7 +601,7 @@ namespace SilEncConverters40
                         m_nMapSize,
                         pLhsFlags,
                         pRhsFlags);
-#if __MonoCS__
+#if __MonoCS__  // this isn't needed for Windows/.Net (and sending a message about .so files is confusing)
                 }
                 catch (DllNotFoundException) 
                 {

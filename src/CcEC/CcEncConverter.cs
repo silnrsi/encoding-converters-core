@@ -158,13 +158,19 @@ namespace SilEncConverters40
                     {
                         System.Diagnostics.Debug.WriteLine("Calling CCLoadTable");
                         int status = 0;
+
+#if __MonoCS__  // this isn't needed for Windows/.Net (and sending a message about .so files is confusing)
                         try {
+#endif
                             status = CCLoadTable( pszTablePath, phTable, hInstanceHandle );
+
+#if __MonoCS__  // this isn't needed for Windows/.Net (and sending a message about .so files is confusing)
                         } catch (DllNotFoundException) {
                             throw new Exception("Failed to load .so file. Check path.");
                         } catch (EntryPointNotFoundException) {
                             throw new Exception("Failed to find function in .so file.");
                         }
+#endif
                         if( status != 0 )  
                         {
                             TranslateErrStatus(status);
