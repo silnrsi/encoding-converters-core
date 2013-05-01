@@ -1,3 +1,10 @@
+enc-converters (4.0.1) precise; urgency=low
+
+  * Fix Mono related bug in AutoConfigDialog.
+  * Tailor the build for FieldWorks 7.0 on Linux.
+
+ -- Stephen McConnel <stephen_mcconnel@sil.org>  Mon, 23 Jan 2012 15:39:47 -0600
+
 enc-converters (4.0-1) maverick; urgency=low
 
   * Initial release (Closes: FWNX-702, getting encoding converters to run on

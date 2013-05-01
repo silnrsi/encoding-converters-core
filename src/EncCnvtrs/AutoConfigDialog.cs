@@ -606,13 +606,14 @@ namespace SilEncConverters40
 		/// </remarks>
 		private void tabControl_Selecting(object sender, TabControlCancelEventArgs e)
 		{
+            System.Diagnostics.Debug.WriteLine("tabControl_Selecting()");
 			if (e.TabPage != tabPageAbout && e.TabPage != tabPageSetup)
             {
                 // Test or Advanced tab. 
                 // If the configuration was modified, then make the user go back
                 if (IsModified && !OnApply())
                 {
-                    MessageBox.Show("You must first configure the conversion process on the Setup tab", EncConverters.cstrCaption);
+                    MessageBox.Show("You must first configure the conversion process on the Setup tab.", EncConverters.cstrCaption);
 					e.Cancel = true;
 				}
 			}
@@ -634,7 +635,7 @@ namespace SilEncConverters40
                 // If the configuration was modified, then make the user go back
                 if (IsModified && !OnApply())
                 {
-                    MessageBox.Show("You must first configure the conversion process on the Setup tab", EncConverters.cstrCaption);
+                    MessageBox.Show("You must configure the conversion process on the Setup tab first", EncConverters.cstrCaption);
                     tabControl.SelectTab(tabPageSetup);
                 }
                 else

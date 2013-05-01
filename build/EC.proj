@@ -8,7 +8,7 @@
     To show debugging output (Debug.WriteLine) on Linux, enter in terminal:
     export MONO_TRACE_LISTENER=Console.Out
 -->
-<Project DefaultTargets="all" InitialTargets="Setup" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+<Project DefaultTargets="all" InitialTargets="Setup" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
 
 	<PropertyGroup>
 		<projroot>$(MSBuildProjectDirectory)/..</projroot>
@@ -40,7 +40,7 @@
         </Otherwise>
 	</Choose>
 
-	<Target Name="all" DependsOnTargets="ECInterfaces;EncCnvtrs;CcEC;IcuEC;PerlExpressionEC;PyScriptEC;AIGuesserEC;ECFileConverter;TestEncCnvtrs;RunTests"/>
+	<Target Name="all" DependsOnTargets="ECInterfaces;EncCnvtrs;CcEC;IcuEC;PerlExpressionEC;PyScriptEC;AIGuesserEC;ECFileConverter"/>
 
 	<Target Name="Setup">
         <CreateProperty Value="Configuration=$(config);ReferencePath=$(dir-output)">
@@ -51,75 +51,75 @@
 	</Target>
 
 	<Target Name="ECInterfaces">
-		<MSBuild Projects="$(projroot)/src/ECInterfaces/ECInterfaces 2010.csproj"
+		<MSBuild Projects="$(projroot)/src/ECInterfaces/ECInterfaces.csproj"
 				 Targets="$(msbuild-target)"
 				 Properties="$(msbuild-props)"
-				 ToolsVersion="4.0"/>
+				 ToolsVersion="3.5"/>
 	</Target>
 
 	<Target Name="EncCnvtrs" DependsOnTargets="ECInterfaces">
-		<MSBuild Projects="$(projroot)/src/EncCnvtrs/EncCnvtrs 2010.csproj"
+		<MSBuild Projects="$(projroot)/src/EncCnvtrs/EncCnvtrs.csproj"
 				 Targets="$(msbuild-target)"
 				 Properties="$(msbuild-props)"
-				 ToolsVersion="4.0"/>
+				 ToolsVersion="3.5"/>
 	</Target>
 
 	<Target Name="CcEC" DependsOnTargets="ECInterfaces;EncCnvtrs">
-		<MSBuild Projects="$(projroot)/src/CcEC/CcEC 2010.csproj"
+		<MSBuild Projects="$(projroot)/src/CcEC/CcEC.csproj"
 				 Targets="$(msbuild-target)"
 				 Properties="$(msbuild-props)"
-				 ToolsVersion="4.0"/>
+				 ToolsVersion="3.5"/>
 	</Target>
 
 	<Target Name="IcuEC" DependsOnTargets="ECInterfaces;EncCnvtrs">
-		<MSBuild Projects="$(projroot)/src/IcuEC/IcuEC 2010.csproj"
+		<MSBuild Projects="$(projroot)/src/IcuEC/IcuEC.csproj"
 				 Targets="$(msbuild-target)"
 				 Properties="$(msbuild-props)"
-				 ToolsVersion="4.0"/>
+				 ToolsVersion="3.5"/>
 	</Target>
 
 	<Target Name="PerlExpressionEC" DependsOnTargets="ECInterfaces;EncCnvtrs">
-		<MSBuild Projects="$(projroot)/src/PerlExpressionEC/PerlExpressionEC 2010.csproj"
+		<MSBuild Projects="$(projroot)/src/PerlExpressionEC/PerlExpressionEC.csproj"
 				 Targets="$(msbuild-target)"
 				 Properties="$(msbuild-props)"
-				 ToolsVersion="4.0"/>
+				 ToolsVersion="3.5"/>
 	</Target>
 
 	<Target Name="PyScriptEC" DependsOnTargets="ECInterfaces;EncCnvtrs">
-		<MSBuild Projects="$(projroot)/src/PyScriptEC/PyScriptEC 2010.csproj"
+		<MSBuild Projects="$(projroot)/src/PyScriptEC/PyScriptEC.csproj"
 				 Targets="$(msbuild-target)"
 				 Properties="$(msbuild-props)"
-				 ToolsVersion="4.0"/>
+				 ToolsVersion="3.5"/>
 	</Target>
 
 	<Target Name="AIGuesserEC" DependsOnTargets="ECInterfaces;CcEC">
-		<MSBuild Projects="$(projroot)/src/AIGuesserEC/AIGuesserEC 2010.csproj"
+		<MSBuild Projects="$(projroot)/src/AIGuesserEC/AIGuesserEC.csproj"
 				 Targets="$(msbuild-target)"
 				 Properties="$(msbuild-props)"
-				 ToolsVersion="4.0"/>
+				 ToolsVersion="3.5"/>
 	</Target>
 
 	<Target Name="ECFileConverter" DependsOnTargets="ECInterfaces">
-		<MSBuild Projects="$(projroot)/src/ECFileConverter/ECFileConverter 2010.csproj"
+		<MSBuild Projects="$(projroot)/src/ECFileConverter/ECFileConverter.csproj"
 				 Targets="$(msbuild-target)"
 				 Properties="$(msbuild-props)"
-				 ToolsVersion="4.0"/>
+				 ToolsVersion="3.5"/>
 	</Target>
 
 	<Target Name="TestEncCnvtrs" DependsOnTargets="ECInterfaces;IcuEC">
-		<MSBuild Projects="$(projroot)/src/TestEncCnvtrs/TestEncCnvtrs 2010.csproj"
+		<MSBuild Projects="$(projroot)/src/TestEncCnvtrs/TestEncCnvtrs.csproj"
 				 Targets="$(msbuild-target)"
 				 Properties="$(msbuild-props)"
-				 ToolsVersion="4.0"/>
+				 ToolsVersion="3.5"/>
 	</Target>
 
     <!-- This target is rather useless except for debugging tests/code in MonoDevelop. -->
     <!-- MonoDevelop doesn't run NUnit tests reliably in my experience.  :-( -->
 	<Target Name="RunTests" DependsOnTargets="TestEncCnvtrs">
-		<MSBuild Projects="$(projroot)/src/RunTests/RunTests 2010.csproj"
+		<MSBuild Projects="$(projroot)/src/RunTests/RunTests.csproj"
 				 Targets="$(msbuild-target)"
 				 Properties="$(msbuild-props)"
-				 ToolsVersion="4.0"/>
+				 ToolsVersion="3.5"/>
 	</Target>
 
 	<PropertyGroup>
