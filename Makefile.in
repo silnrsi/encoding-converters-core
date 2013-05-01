@@ -102,6 +102,8 @@ install: release
 	done; \
 	fi
 	@cp -p src/EncCnvtrs/SilEncConverters40.dll.config $(DESTDIR)$(LIBDIR)
+	@$(INSTALL) -d $(DESTDIR)/usr/share/encConverters
+	@$(INSTALL) values.xml $(DESTDIR)/usr/share/encConverters
 
 NUNITROOT=`which nunit-console | sed s=/bin/nunit-console=/lib/mono=`
 check: all
