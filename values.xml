@@ -1,0 +1,6 @@
+<values>
+<value name="PluginDir"
+type="string">/usr/lib/encConverters/EC/Plugins</value>
+<value name="RootDir"
+type="string">/usr/lib/encConverters</value>
+</values>

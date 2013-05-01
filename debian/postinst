@@ -21,6 +21,10 @@ CONFFILE=/etc/ld.so.conf.d/encConverters.conf
 if [ -f $CONFFILE ]; then
     mv $CONFFILE $CONFFILE.OLD
 fi
+GLOBALREGFILE=/etc/mono/registry/LocalMachine/software/sil/silencconverters40/values.xml
+if [ -f $GLOBALREGFILE ]; then
+    mv $GLOBALREGFILE $GLOBALREGFILE.OLD
+fi
 
 case "$1" in
     configure)
@@ -30,6 +34,9 @@ case "$1" in
                  libIcuTranslitEC.so libPyScriptEncConverter.so; do
             if [ ! -e $f ]; then ln -s $f.1.0 $f; fi
         done
+        # set up the registry for the general case
+        mkdir -p $(dirname $GLOBALREGFILE)
+        cp /usr/share/encConverters/values.xml $GLOBALREGFILE
     ;;
 
     abort-upgrade|abort-remove|abort-deconfigure)
@@ -37,6 +44,11 @@ case "$1" in
             mv $CONFFILE.OLD $CONFFILE;
         else
             rm -f $CONFFILE;
+        fi
+        if [ -f $GLOBALREGFILE.OLD ]; then
+            mv $GLOBALREGFILE.OLD $GLOBALREGFILE;
+        else
+            rm -f $GLOBALREGFILE;
         fi
     ;;
 
