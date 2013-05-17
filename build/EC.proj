@@ -2,6 +2,8 @@
 <!--
 	Created by Steve McConnel on Jan 11, 2013.
 
+    17-May-13 JDK  Clean deployed files as well.
+
 	To compile, invoke msbuild (xbuild for Mono) in the directory of this project file.
 	To deploy on Linux: sudo xbuild /t:deploy
 
@@ -40,7 +42,7 @@
         </Otherwise>
 	</Choose>
 
-	<Target Name="all" DependsOnTargets="ECInterfaces;EncCnvtrs;CcEC;IcuEC;PerlExpressionEC;PyScriptEC;AIGuesserEC;ECFileConverter"/>
+	<Target Name="all" DependsOnTargets="ECInterfaces;EncCnvtrs;CcEC;IcuEC;PerlExpressionEC;PyScriptEC;AIGuesserEC;ECFileConverter;RunTests"/>
 
 	<Target Name="Setup">
         <CreateProperty Value="Configuration=$(config);ReferencePath=$(dir-output)">
@@ -151,7 +153,16 @@
 	<ItemGroup>
 		<BuildFiles Include="$(projroot)/output/**/*"/>
 	</ItemGroup>
+	<ItemGroup>
+		<DeployedFiles Include="$(DeployDir)/*EC.*"/>
+		<DeployedFiles Include="$(DeployDir)/EC*"/>
+		<DeployedFiles Include="$(DeployDir)/*.exe"/>
+		<DeployedFiles Include="$(DeployDir)/libecdriver*"/>
+		<DeployedFiles Include="$(DeployDir)/libPyScript*"/>
+		<DeployedFiles Include="$(DeployDir)/SilEncConverters*.dll"/>
+	</ItemGroup>
 	<Target Name="clean">
 		<Delete Files="@(BuildFiles)" TreatErrorsAsWarnings="true"/>
+		<Delete Files="@(DeployedFiles)" TreatErrorsAsWarnings="true"/>
 	</Target>
 </Project>
