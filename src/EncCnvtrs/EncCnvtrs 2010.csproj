@@ -87,6 +87,12 @@
       <Private>False</Private>
       <HintPath>..\..\output\debug\ECInterfaces.dll</HintPath>
     </Reference>
+    <Reference Include="geckofx-core-18">
+      <HintPath>..\..\DistFiles\geckofx-core-18.dll</HintPath>
+    </Reference>
+    <Reference Include="Geckofx-Winforms-18">
+      <HintPath>..\..\DistFiles\Geckofx-Winforms-18.dll</HintPath>
+    </Reference>
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
@@ -111,11 +117,11 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="AutoConfigDialogWin.cs">
+    <Compile Include="AutoConfigDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="AutoConfigDialogWin.Designer.cs">
-      <DependentUpon>AutoConfigDialogWin.cs</DependentUpon>
+    <Compile Include="AutoConfigDialog.Designer.cs">
+      <DependentUpon>AutoConfigDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="CmpdAutoConfigDialog.cs">
       <SubType>Form</SubType>
@@ -162,6 +168,7 @@
     </Compile>
     <Compile Include="FallbackEncConverter.cs" />
     <Compile Include="FallbackEncConverterConfig.cs" />
+    <Compile Include="GeckoFxInitializer.cs" />
     <Compile Include="IEncConverterConfig.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -199,8 +206,14 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="TecEncConverterConfig.cs" />
-    <EmbeddedResource Include="AutoConfigDialogWin.resx">
-      <DependentUpon>AutoConfigDialogWin.cs</DependentUpon>
+    <Compile Include="WebBrowserAdaptor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="WebBrowserAdaptor.Designer.cs">
+      <DependentUpon>WebBrowserAdaptor.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="AutoConfigDialog.resx">
+      <DependentUpon>AutoConfigDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="CmpdAutoConfigDialog.resx">
       <SubType>Designer</SubType>
@@ -239,8 +252,12 @@
     </EmbeddedResource>
     <Content Include="buildinclude.xml" />
     <Content Include="TRFFC17.ICO" />
+    <EmbeddedResource Include="WebBrowserAdaptor.resx">
+      <DependentUpon>WebBrowserAdaptor.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="..\..\installer\EC_40.mm.wxs">
       <Link>EC_40.mm.wxs</Link>
+      <SubType>Designer</SubType>
     </None>
     <None Include="app.manifest" />
     <None Include="ECPlugins.xsc">

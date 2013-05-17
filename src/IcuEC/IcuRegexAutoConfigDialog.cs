@@ -93,59 +93,90 @@ namespace SilEncConverters40
         // So feel free to modify it as needed.
         private void InitializeComponent()
         {
+            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.labelExpression = new System.Windows.Forms.Label();
+            this.textBoxExpression = new System.Windows.Forms.TextBox();
             this.tabControl.SuspendLayout();
             this.tabPageSetup.SuspendLayout();
-            this.SuspendLayout();
-
-            // 
-            // Script file
-            // 
-
-            this.labelExpression = new System.Windows.Forms.Label();
-            this.labelExpression.Text = "ICU regular expression:";
-            this.labelExpression.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.labelExpression.AutoSize = true;
-            this.labelExpression.Name = "labelExpression";
-            this.labelExpression.TabIndex = 0;
-
-            this.textBoxExpression = new System.Windows.Forms.TextBox();
-            this.textBoxExpression.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.textBoxExpression.Location = new System.Drawing.Point(88, 14);
-            this.textBoxExpression.Name = "textBoxExpression";
-            this.textBoxExpression.TabIndex = 1;
-            this.textBoxExpression.Size = new System.Drawing.Size(400, 50);
-            this.textBoxExpression.TextChanged += new System.EventHandler(
-                                                  this.textBoxExpression_TextChanged);
-
-            // 
-            // Panel and Dialog Window
-            // 
-
-            this.tableLayoutPanel1 =
-                new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel1.SuspendLayout();
+            this.SuspendLayout();
+            // 
+            // tabPageSetup
+            // 
+            this.tabPageSetup.Controls.Add(this.tableLayoutPanel1);
+            // 
+            // buttonApply
+            // 
+            this.helpProvider.SetHelpString(this.buttonApply, "Click this button to apply the configured values for this converter");
+            this.helpProvider.SetShowHelp(this.buttonApply, true);
+            // 
+            // buttonCancel
+            // 
+            this.helpProvider.SetHelpString(this.buttonCancel, "Click this button to cancel this dialog");
+            this.helpProvider.SetShowHelp(this.buttonCancel, true);
+            // 
+            // buttonOK
+            // 
+            this.helpProvider.SetHelpString(this.buttonOK, "Click this button to accept the configured values for this converter");
+            this.helpProvider.SetShowHelp(this.buttonOK, true);
+            // 
+            // buttonSaveInRepository
+            // 
+            this.helpProvider.SetHelpString(this.buttonSaveInRepository, "\r\nClick to add this converter to the system repository permanently.\r\n    ");
+            this.helpProvider.SetShowHelp(this.buttonSaveInRepository, true);
+            // 
+            // tableLayoutPanel1
+            // 
             this.tableLayoutPanel1.ColumnCount = 3;
-            this.tableLayoutPanel1.RowCount    = 2;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel1.Controls.Add(this.labelExpression, 0, 0);
+            this.tableLayoutPanel1.Controls.Add(this.textBoxExpression, 1, 0);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(3, 3);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(620, 394);
+            this.tableLayoutPanel1.RowCount = 2;
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(596, 394);
             this.tableLayoutPanel1.TabIndex = 1;
-            this.tableLayoutPanel1.Controls.Add(this.labelExpression,      0, 0);
-            this.tableLayoutPanel1.Controls.Add(this.textBoxExpression,    1, 0);
-
-            this.tabPageSetup.Controls.Add(this.tableLayoutPanel1);
-
+            // 
+            // labelExpression
+            // 
+            this.labelExpression.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.labelExpression.AutoSize = true;
+            this.labelExpression.Location = new System.Drawing.Point(3, 6);
+            this.labelExpression.Name = "labelExpression";
+            this.labelExpression.Size = new System.Drawing.Size(116, 13);
+            this.labelExpression.TabIndex = 0;
+            this.labelExpression.Text = "ICU regular expression:";
+            // 
+            // textBoxExpression
+            // 
+            this.textBoxExpression.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.textBoxExpression.Location = new System.Drawing.Point(125, 3);
+            this.textBoxExpression.Name = "textBoxExpression";
+            this.textBoxExpression.Size = new System.Drawing.Size(400, 20);
+            this.textBoxExpression.TabIndex = 1;
+            this.textBoxExpression.TextChanged += new System.EventHandler(this.textBoxExpression_TextChanged);
+            // 
+            // IcuRegexAutoConfigDialog
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.ClientSize = new System.Drawing.Size(634, 479);
             this.Name = "IcuRegexAutoConfigDialog";
+            this.Controls.SetChildIndex(this.tabControl, 0);
+            this.Controls.SetChildIndex(this.buttonApply, 0);
+            this.Controls.SetChildIndex(this.buttonCancel, 0);
+            this.Controls.SetChildIndex(this.buttonOK, 0);
+            this.Controls.SetChildIndex(this.buttonSaveInRepository, 0);
             this.tabControl.ResumeLayout(false);
             this.tabPageSetup.ResumeLayout(false);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             this.ResumeLayout(false);
+
         }
 
         protected void UpdateUI(bool bVisible)
