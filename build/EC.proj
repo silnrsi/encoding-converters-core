@@ -3,6 +3,7 @@
 	Created by Steve McConnel on Jan 11, 2013.
 
     17-May-13 JDK  Clean deployed files as well.
+    18-May-13 JDK  Updated csproj references to 2010 files.
 
 	To compile, invoke msbuild (xbuild for Mono) in the directory of this project file.
 	To deploy on Linux: sudo xbuild /t:deploy
@@ -53,63 +54,63 @@
 	</Target>
 
 	<Target Name="ECInterfaces">
-		<MSBuild Projects="$(projroot)/src/ECInterfaces/ECInterfaces.csproj"
+		<MSBuild Projects="$(projroot)/src/ECInterfaces/ECInterfaces 2010.csproj"
 				 Targets="$(msbuild-target)"
 				 Properties="$(msbuild-props)"
 				 ToolsVersion="3.5"/>
 	</Target>
 
 	<Target Name="EncCnvtrs" DependsOnTargets="ECInterfaces">
-		<MSBuild Projects="$(projroot)/src/EncCnvtrs/EncCnvtrs.csproj"
+		<MSBuild Projects="$(projroot)/src/EncCnvtrs/EncCnvtrs 2010.csproj"
 				 Targets="$(msbuild-target)"
 				 Properties="$(msbuild-props)"
 				 ToolsVersion="3.5"/>
 	</Target>
 
 	<Target Name="CcEC" DependsOnTargets="ECInterfaces;EncCnvtrs">
-		<MSBuild Projects="$(projroot)/src/CcEC/CcEC.csproj"
+		<MSBuild Projects="$(projroot)/src/CcEC/CcEC 2010.csproj"
 				 Targets="$(msbuild-target)"
 				 Properties="$(msbuild-props)"
 				 ToolsVersion="3.5"/>
 	</Target>
 
 	<Target Name="IcuEC" DependsOnTargets="ECInterfaces;EncCnvtrs">
-		<MSBuild Projects="$(projroot)/src/IcuEC/IcuEC.csproj"
+		<MSBuild Projects="$(projroot)/src/IcuEC/IcuEC 2010.csproj"
 				 Targets="$(msbuild-target)"
 				 Properties="$(msbuild-props)"
 				 ToolsVersion="3.5"/>
 	</Target>
 
 	<Target Name="PerlExpressionEC" DependsOnTargets="ECInterfaces;EncCnvtrs">
-		<MSBuild Projects="$(projroot)/src/PerlExpressionEC/PerlExpressionEC.csproj"
+		<MSBuild Projects="$(projroot)/src/PerlExpressionEC/PerlExpressionEC 2010.csproj"
 				 Targets="$(msbuild-target)"
 				 Properties="$(msbuild-props)"
 				 ToolsVersion="3.5"/>
 	</Target>
 
 	<Target Name="PyScriptEC" DependsOnTargets="ECInterfaces;EncCnvtrs">
-		<MSBuild Projects="$(projroot)/src/PyScriptEC/PyScriptEC.csproj"
+		<MSBuild Projects="$(projroot)/src/PyScriptEC/PyScriptEC 2010.csproj"
 				 Targets="$(msbuild-target)"
 				 Properties="$(msbuild-props)"
 				 ToolsVersion="3.5"/>
 	</Target>
 
 	<Target Name="AIGuesserEC" DependsOnTargets="ECInterfaces;CcEC">
-		<MSBuild Projects="$(projroot)/src/AIGuesserEC/AIGuesserEC.csproj"
+		<MSBuild Projects="$(projroot)/src/AIGuesserEC/AIGuesserEC 2010.csproj"
 				 Targets="$(msbuild-target)"
 				 Properties="$(msbuild-props)"
 				 ToolsVersion="3.5"/>
 	</Target>
 
 	<Target Name="ECFileConverter" DependsOnTargets="ECInterfaces">
-		<MSBuild Projects="$(projroot)/src/ECFileConverter/ECFileConverter.csproj"
+		<MSBuild Projects="$(projroot)/src/ECFileConverter/ECFileConverter 2010.csproj"
 				 Targets="$(msbuild-target)"
 				 Properties="$(msbuild-props)"
 				 ToolsVersion="3.5"/>
 	</Target>
 
 	<Target Name="TestEncCnvtrs" DependsOnTargets="ECInterfaces;IcuEC">
-		<MSBuild Projects="$(projroot)/src/TestEncCnvtrs/TestEncCnvtrs.csproj"
+		<MSBuild Projects="$(projroot)/src/TestEncCnvtrs/TestEncCnvtrs 2010.csproj"
 				 Targets="$(msbuild-target)"
 				 Properties="$(msbuild-props)"
 				 ToolsVersion="3.5"/>
@@ -118,7 +119,7 @@
     <!-- This target is rather useless except for debugging tests/code in MonoDevelop. -->
     <!-- MonoDevelop doesn't run NUnit tests reliably in my experience.  :-( -->
 	<Target Name="RunTests" DependsOnTargets="TestEncCnvtrs">
-		<MSBuild Projects="$(projroot)/src/RunTests/RunTests.csproj"
+		<MSBuild Projects="$(projroot)/src/RunTests/RunTests-mono.csproj"
 				 Targets="$(msbuild-target)"
 				 Properties="$(msbuild-props)"
 				 ToolsVersion="3.5"/>
