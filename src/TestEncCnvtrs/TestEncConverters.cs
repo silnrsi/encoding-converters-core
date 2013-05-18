@@ -1,4 +1,5 @@
 // created by Steve McConnel, Feb 7, 2012.
+// 18-May-13 JDK  Overwrite repo file if it exists.
 
 using System;
 using System.Collections;
@@ -170,6 +171,10 @@ namespace TestEncCnvtrs
 			if (!String.IsNullOrEmpty(m_repoFile) &&
 				File.Exists(m_repoFile + "-RESTOREME"))
 			{
+                if (File.Exists(m_repoFile))
+                {
+                    File.Delete(m_repoFile); // to overwrite file
+                }
 				File.Move(m_repoFile + "-RESTOREME", m_repoFile);
 			}
 			if (m_fSetRegistryValue)
