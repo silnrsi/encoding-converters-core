@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
 using Gecko;
+using Microsoft.Win32;
 
 namespace SilEncConverters40
 {
@@ -28,13 +30,11 @@ namespace SilEncConverters40
 
             // on linux, only Gecko works (on Windows, either Gecko or IE will work, but using IE saves us from having to redistribute too much)
             //  so on Linux, prefer Gecko, but on Windows, prefer IE.
-            if (ECNormalizeData.IsUnix)
+            if (ShouldUseGecko)
             {
-                // try to initialize GeckoFx 
-                GeckoFxInitializer.SetUpXulRunner();
-
-                // if that was successful, then stick with it
-                if (GeckoFxInitializer.IsGeckoInitialized)
+                // try to initialize 
+                // if GeckoFx was successfully initialized, then use it
+                if (GeckoFxInitializer.SetUpXulRunner())
                 {
                     _whichBrowser = WhichBrowser.GeckoFx;
                     GeckoWebBrowser = new GeckoWebBrowser
@@ -48,6 +48,10 @@ namespace SilEncConverters40
                     };
 
                     Controls.Add(GeckoWebBrowser);
+                }
+                else
+                {
+                    Controls.Add(GeckoFxInitializer.InstructionsLinkLabel);
                 }
             }
             else
@@ -67,6 +71,27 @@ namespace SilEncConverters40
             }
         }
 
+        private static bool ShouldUseGecko
+        {
+            get
+            {
+                return ECNormalizeData.IsUnix || WindowsUserWantsToUseGecko;
+            }
+        }
+
+        /// <summary>
+        /// this will return true if the user has set the 'UseGeckoFx' registry key to 'True' AND put the xulRunner folder 
+        /// in the target installation dir
+        /// </summary>
+        private  static bool WindowsUserWantsToUseGecko
+        {
+            get
+            {
+                var regKeySecRoot = Registry.LocalMachine.OpenSubKey(EncConverters.SEC_ROOT_KEY);
+                return (regKeySecRoot != null) &&
+                       (regKeySecRoot.GetValue(EncConverters.CstrUseGeckoRegKey, "False") as string == "True");
+            }
+        }
         private bool IsGecko
         {
             get { return (_whichBrowser == WhichBrowser.GeckoFx); }
@@ -74,14 +99,27 @@ namespace SilEncConverters40
 
         internal void Navigate(string strXmlFilePath)
         {
-            if (IsGecko)
+            if (IsGecko && (GeckoWebBrowser != null))
             {
-                System.Diagnostics.Debug.Assert(strXmlFilePath.Substring(strXmlFilePath.Length - 3, 3) != "mht", "Oops, if you're going to use Mozilla to view the help file, then you need to use *.htm for the help file");
+                if (Path.GetExtension(strXmlFilePath) == ".mht")
+                {
+                    var strHtm = Path.Combine(Path.GetDirectoryName(strXmlFilePath),
+                                              Path.GetFileNameWithoutExtension(strXmlFilePath) + ".htm");
+                    if (File.Exists(strHtm))
+                        strXmlFilePath = strHtm;
+                    else
+                    {
+                        const string cstrFileNameToEditSaveAsHtml = "CantReadMhtFiles.htm";
+                        strXmlFilePath = Path.Combine(Path.GetDirectoryName(strXmlFilePath),
+                                                      cstrFileNameToEditSaveAsHtml);
+                        System.Diagnostics.Debug.Assert(File.Exists(strXmlFilePath));
+                    }
+                }
+
                 GeckoWebBrowser.Navigate("file://" + strXmlFilePath);
             }
-            else
+            else if (IeWebBrowser != null)
                 IeWebBrowser.Url = new Uri(strXmlFilePath);
-            Application.DoEvents();
         }
     }
 }
