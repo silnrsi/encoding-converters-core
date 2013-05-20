@@ -304,8 +304,10 @@ namespace SilEncConverters40
                     }
                 }
             }
+/*
             else
                 EncConverters.ThrowError(ErrStatus.RegistryCorrupt);
+*/
         }
         #endregion Abstract Base Class Overrides
     }

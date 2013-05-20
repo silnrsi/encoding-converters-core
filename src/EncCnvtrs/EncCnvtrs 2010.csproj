@@ -87,6 +87,12 @@
       <Private>False</Private>
       <HintPath>..\..\output\Debug\ECInterfaces.dll</HintPath>
     </Reference>
+    <Reference Include="geckofx-core-18">
+      <HintPath>..\..\DistFiles\geckofx-core-18.dll</HintPath>
+    </Reference>
+    <Reference Include="Geckofx-Winforms-18">
+      <HintPath>..\..\DistFiles\Geckofx-Winforms-18.dll</HintPath>
+    </Reference>
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
@@ -161,6 +167,7 @@
     </Compile>
     <Compile Include="FallbackEncConverter.cs" />
     <Compile Include="FallbackEncConverterConfig.cs" />
+    <Compile Include="GeckoFxInitializer.cs" />
     <Compile Include="IEncConverterConfig.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -198,9 +205,14 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="TecEncConverterConfig.cs" />
+    <Compile Include="WebBrowserAdaptor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="WebBrowserAdaptor.Designer.cs">
+      <DependentUpon>WebBrowserAdaptor.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="AutoConfigDialog.resx">
       <DependentUpon>AutoConfigDialog.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="CmpdAutoConfigDialog.resx">
       <SubType>Designer</SubType>
@@ -239,8 +251,12 @@
     </EmbeddedResource>
     <Content Include="buildinclude.xml" />
     <Content Include="TRFFC17.ICO" />
+    <EmbeddedResource Include="WebBrowserAdaptor.resx">
+      <DependentUpon>WebBrowserAdaptor.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="..\..\installer\EC_40.mm.wxs">
       <Link>EC_40.mm.wxs</Link>
+      <SubType>Designer</SubType>
     </None>
     <None Include="app.manifest" />
     <None Include="ECPlugins.xsc">

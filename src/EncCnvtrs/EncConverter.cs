@@ -255,6 +255,7 @@ namespace SilEncConverters40
 
             // similarly as above, use the normal 'InternalConvert' which is expecting to
             //  return a string, and then convert it to a byte [].
+#if __MonoCS__
             // EXCEPT THAT C++ BSTR DOES NOT MAP ONTO C# string!  BSTR's can actually
             // be byte arrays internally without any problem.  C# insists that a string
             // always contains valid data, eg, surrogate pairs must be matched when you
@@ -264,6 +265,12 @@ namespace SilEncConverters40
             byte[] retval = InternalConvertEx(EncodingForm.UTF16, sInput,
                 EncodingForm.LegacyBytes, NormalizeOutput, out ciOutput, bForward);
             return retval;
+#else
+            string sOutput = InternalConvert(EncodingForm.UTF16, sInput, EncodingForm.LegacyBytes,
+                NormalizeOutput, bForward);
+
+            return ECNormalizeData.StringToByteArr(sOutput, false);
+#endif
         }
 
         // [DispId(17)]

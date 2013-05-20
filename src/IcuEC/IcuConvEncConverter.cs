@@ -15,29 +15,29 @@ namespace SilEncConverters40
 	{
 		#region DLLImport Statements
 		// On Linux looks for libIcuConvEC.so (adds lib- and -.so)
-		[DllImport("IcuConvEC.dll", EntryPoint="IcuConvEC_Initialize")]
+		[DllImport("IcuConvEC.dll", EntryPoint = "IcuConvEC_Initialize", CallingConvention = CallingConvention.Cdecl)]
 		static extern int CppInitialize (
 			[MarshalAs(UnmanagedType.LPStr)] string strConverterSpec);
-		
-		[DllImport("IcuConvEC.dll", EntryPoint="IcuConvEC_PreConvert")]
+
+		[DllImport("IcuConvEC.dll", EntryPoint = "IcuConvEC_PreConvert", CallingConvention = CallingConvention.Cdecl)]
 		static extern int CppPreconvert(
 			int eInEncodingForm, ref int eInFormEngine,
 			int eOutEncodingForm, ref int eOutFormEngine,
 			ref int eNormalizeOutput, bool bForward, int nInactivityWarningTimeOut);
-		
-		[DllImport("IcuConvEC.dll", EntryPoint="IcuConvEC_DoConvert")]
+
+		[DllImport("IcuConvEC.dll", EntryPoint = "IcuConvEC_DoConvert", CallingConvention = CallingConvention.Cdecl)]
 		static extern unsafe int CppDoConvert(
 			byte* lpInputBuffer, int nInBufLen,
 			byte* lpOutputBuffer, int *npOutBufLen);
 
-		[DllImport("IcuConvEC.dll", EntryPoint="IcuConvEC_ConverterNameList_start")]
+		[DllImport("IcuConvEC.dll", EntryPoint = "IcuConvEC_ConverterNameList_start", CallingConvention = CallingConvention.Cdecl)]
 		static extern int CppConverterNameList_start();
 
-		[DllImport("IcuConvEC.dll", EntryPoint="IcuConvEC_ConverterNameList_next")]
+		[DllImport("IcuConvEC.dll", EntryPoint = "IcuConvEC_ConverterNameList_next", CallingConvention = CallingConvention.Cdecl)]
 		[return : MarshalAs(UnmanagedType.LPStr)]
 		static extern string CppConverterNameList_next();
 
-		[DllImport("IcuConvEC.dll", EntryPoint="IcuConvEC_GetDisplayName")]
+		[DllImport("IcuConvEC.dll", EntryPoint = "IcuConvEC_GetDisplayName", CallingConvention = CallingConvention.Cdecl)]
 		[return: MarshalAs(UnmanagedType.LPStr)]
 		static extern string CppGetDisplayName(
 			[MarshalAs(UnmanagedType.LPStr)] string strID);
@@ -126,18 +126,24 @@ namespace SilEncConverters40
 			System.Diagnostics.Debug.WriteLine("IcuConv Load BEGIN");
 			System.Diagnostics.Debug.WriteLine("Calling CppInitialize");
 			int status = 0;
+
+#if __MonoCS__  // this isn't needed for Windows/.Net (and sending a message about .so files is confusing)
 			try
 			{
+#endif
 				status = CppInitialize(strConvID);
+
+#if __MonoCS__  // this isn't needed for Windows/.Net (and sending a message about .so files is confusing)
 			}
-			catch (DllNotFoundException exc)
+			catch (DllNotFoundException)
 			{
 				throw new Exception("Failed to load .so file. Check path.");
 			}
-			catch (EntryPointNotFoundException exc)
+			catch (EntryPointNotFoundException)
 			{
 				throw new Exception("Failed to find function in .so file.");
 			}
+#endif
 			if (status != 0)
 			{
 				throw new Exception("CppInitialize failed.");
@@ -212,7 +218,6 @@ namespace SilEncConverters40
 			eNormalizeOutput = (NormalizeFlags)normOutput;
 		}
 
-		[CLSCompliant(false)]
 		protected override unsafe void DoConvert(
 			byte*   lpInBuffer,
 			int     nInLen,

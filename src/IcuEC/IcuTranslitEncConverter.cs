@@ -25,23 +25,23 @@ namespace SilEncConverters40
     {
         #region DLLImport Statements
         // On Linux looks for libIcuTranslitEC.so (adds lib- and -.so)
-        [DllImport("IcuTranslitEC", EntryPoint="IcuTranslitEC_Initialize")]
+        [DllImport("IcuTranslitEC", EntryPoint="IcuTranslitEC_Initialize", CallingConvention = CallingConvention.Cdecl)]
         static extern int CppInitialize (
             [MarshalAs(UnmanagedType.LPStr)] string strConverterID);
 
-        [DllImport("IcuTranslitEC", EntryPoint="IcuTranslitEC_DoConvert")]
+        [DllImport("IcuTranslitEC", EntryPoint="IcuTranslitEC_DoConvert", CallingConvention = CallingConvention.Cdecl)]
         static extern unsafe int CppDoConvert(
             byte* lpInputBuffer, int nInBufLen,
             byte* lpOutputBuffer, int *npOutBufLen);
 
-		[DllImport("IcuTranslitEC", EntryPoint="IcuTranslitEC_ConverterNameList_start")]
+		[DllImport("IcuTranslitEC", EntryPoint="IcuTranslitEC_ConverterNameList_start", CallingConvention = CallingConvention.Cdecl)]
 		static extern int CppConverterNameList_start();
 
-		[DllImport("IcuTranslitEC", EntryPoint="IcuTranslitEC_ConverterNameList_next")]
+		[DllImport("IcuTranslitEC", EntryPoint="IcuTranslitEC_ConverterNameList_next", CallingConvention = CallingConvention.Cdecl)]
 		[return: MarshalAs(UnmanagedType.LPStr)]
 		static extern string CppConverterNameList_next();
 
-		[DllImport("IcuTranslitEC", EntryPoint="IcuTranslitEC_GetDisplayName")]
+		[DllImport("IcuTranslitEC", EntryPoint="IcuTranslitEC_GetDisplayName", CallingConvention = CallingConvention.Cdecl)]
 		[return: MarshalAs(UnmanagedType.LPStr)]
 		static extern string CppGetDisplayName(
 			[MarshalAs(UnmanagedType.LPStr)] string strID);
@@ -140,13 +140,19 @@ namespace SilEncConverters40
 
             System.Diagnostics.Debug.WriteLine("Calling CppInitialize");
             int status = 0;
+
+#if __MonoCS__  // this isn't needed for Windows/.Net (and sending a message about .so files is confusing)
             try {
+#endif
                 status = CppInitialize(strTranslitID);
-            } catch (DllNotFoundException exc) {
+
+#if __MonoCS__  // this isn't needed for Windows/.Net (and sending a message about .so files is confusing)
+            } catch (DllNotFoundException) {
                 throw new Exception("Failed to load DLL (.dll/.so) file. Check path.");
-            } catch (EntryPointNotFoundException exc) {
+            } catch (EntryPointNotFoundException) {
                 throw new Exception("Failed to find function in DLL (.dll/.so) file.");
             }
+#endif
             if( status != 0 )  
             {
                 throw new Exception("CppInitialize failed.");
@@ -212,7 +218,6 @@ namespace SilEncConverters40
             Load(ConverterIdentifier);
         }
 
-        [CLSCompliant(false)]
         protected override unsafe void DoConvert
             (
             byte*       lpInBuffer,

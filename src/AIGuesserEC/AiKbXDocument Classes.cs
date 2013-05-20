@@ -10,6 +10,7 @@ using System.Xml.Linq;
 using System.Xml.XPath;
 using System.Xml.Xsl;
 using ECInterfaces;
+using SilEncConverters40.Properties;
 
 namespace SilEncConverters40
 {
@@ -219,10 +220,7 @@ namespace SilEncConverters40
 
         private XElement GetDecendent(string strTargetWord)
         {
-            var strXPath = String.Format("{0}[@{1} = '{2}']",
-                                         TargetWordElement.CstrElementNameTargetWord,
-                                         TargetWordElement.CstrAttributeNameTargetWord,
-                                         strTargetWord);
+            var strXPath = MapOfMaps.FormatXpath(TargetWordElement.CstrElementNameTargetWord, TargetWordElement.CstrAttributeNameTargetWord, strTargetWord);
             return Xml.XPathSelectElement(strXPath);
         }
 
@@ -335,10 +333,9 @@ namespace SilEncConverters40
 
         private XElement GetDecendent(string strSourceWord)
         {
-            var strXPath = String.Format("{0}[@{1} = '{2}']",
-                                         SourceWordElement.CstrElementNameSourceWord,
-                                         SourceWordElement.CstrAttributeNameSourceWord,
-                                         strSourceWord);
+            var strXPath = MapOfMaps.FormatXpath(SourceWordElement.CstrElementNameSourceWord,
+                                                 SourceWordElement.CstrAttributeNameSourceWord,
+                                                 strSourceWord);
             return Xml.XPathSelectElement(strXPath);
         }
 
@@ -383,6 +380,13 @@ namespace SilEncConverters40
             _elem = elem;
         }
 
+        public MapOfMaps(string strSrcLangName, string strTgtLangName)
+        {
+            _elem = CreateMapOfMapsElement(strSrcLangName, strTgtLangName);
+            XDocument = NewAiXdocument;
+            XDocument.Add(_elem);
+        }
+
         public XElement Xml
         {
             get { return _elem; }
@@ -398,11 +402,20 @@ namespace SilEncConverters40
             // determine if this is the new or old KB format (old: {docVersion}; 
             //  new: {kbVersion})
             var elemKb = doc.Elements().First();
-            var attr = elemKb.Attribute(CstrAttributeNameDocVersion);
+            XAttribute attr;
+            var strSrcLanguage = ((attr = elemKb.Attribute(CstrAttributeNameSourceLanguageName)) != null)
+                                     ? attr.Value
+                                     : null;
+            var strTgtLanguage = ((attr = elemKb.Attribute(CstrAttributeNameTargetLanguageName)) != null)
+                                     ? attr.Value
+                                     : null;
+            attr = elemKb.Attribute(CstrAttributeNameDocVersion);
             var mapOfMaps = new MapOfMaps(elemKb)
                                 {
                                     XDocument = doc, 
-                                    IsKbV2 = (attr == null)
+                                    IsKbV2 = (attr == null),
+                                    SrcLangName = strSrcLanguage,
+                                    TgtLangName = strTgtLanguage
                                 };
 
             return mapOfMaps;
@@ -413,7 +426,7 @@ namespace SilEncConverters40
             Debug.Assert(!String.IsNullOrEmpty(strLhs) && !String.IsNullOrEmpty(strRhs));
             string[] astrLhsWords = strLhs.Split(AdaptItKBReader.CaSplitChars, StringSplitOptions.RemoveEmptyEntries);
             if (astrLhsWords.Length == 0)
-                throw new ApplicationException(Properties.Resources.IDS_CantHaveEmptySourceWord);
+                throw new ApplicationException(Resources.IDS_CantHaveEmptySourceWord);
 
             MapOfSourceWordElements mapOfSourceWordElements;
             if (!TryGetValue(astrLhsWords.Length, out mapOfSourceWordElements))
@@ -443,10 +456,9 @@ namespace SilEncConverters40
 
         private bool TryGetValue(int nMapValue, out MapOfSourceWordElements mapOfSourceWordElements)
         {
-            var strXPath = String.Format("{0}[@{1} = '{2}']",
-                                         MapOfSourceWordElements.CstrElementNameNumOfWordsPerPhraseMap,
-                                         MapOfSourceWordElements.CstrAttributeNameNumOfWordsPerPhrase,
-                                         nMapValue);
+            var strXPath = FormatXpath(MapOfSourceWordElements.CstrElementNameNumOfWordsPerPhraseMap,
+                                       MapOfSourceWordElements.CstrAttributeNameNumOfWordsPerPhrase,
+                                       nMapValue.ToString());
             var elem = Xml.XPathSelectElement(strXPath);
             if (elem == null)
             {
@@ -455,6 +467,14 @@ namespace SilEncConverters40
             }
             mapOfSourceWordElements = new MapOfSourceWordElements(elem, nMapValue, this);
             return true;
+        }
+
+        internal static string FormatXpath(string strElementName, string strAttributeName, string strTargetValue)
+        {
+            return String.Format("{0}[@{1} = \"{2}\"]",
+                                 strElementName,
+                                 strAttributeName,
+                                 strTargetValue);
         }
 
         public static void SortAiKb(string strFilename)
@@ -471,7 +491,7 @@ namespace SilEncConverters40
 
         private static void SaveFile(string strFilename, XDocument xDocument)
         {
-            Debug.Assert(!String.IsNullOrEmpty(strFilename));
+            Debug.Assert(!String.IsNullOrEmpty(strFilename) && (xDocument != null));
 
             // first make a backup
             if (!Directory.Exists(Path.GetDirectoryName(strFilename)))
@@ -488,12 +508,10 @@ namespace SilEncConverters40
 
             // create the root portions of the XML document and sort the running fragment 
             //  into it.
-            var doc = new XDocument(
-                new XDeclaration("1.0", "utf-8", "yes"),
-                new XComment(Properties.Resources.AdaptItKbDescription));
+            var doc = NewAiXdocument;
 
             var xslt = new XslCompiledTransform();
-            xslt.Load(XmlReader.Create(new StringReader(Properties.Resources.SortAIKB)));
+            xslt.Load(XmlReader.Create(new StringReader(Resources.SortAIKB)));
 
             using (XmlWriter writer = doc.CreateWriter())
             {
@@ -515,18 +533,28 @@ namespace SilEncConverters40
             File.Delete(strTempFilename);
         }
 
+        private static XDocument NewAiXdocument
+        {
+            get
+            {
+                return new XDocument(
+                    new XDeclaration("1.0", "utf-8", "yes"),
+                    new XComment(Resources.AdaptItKbDescription));
+            }
+        }
+
         private static void CleanUpDocument(ref XDocument doc)
         {
             // get rid of the TU[@k = ""]
-            var strXPath = String.Format("//{0}[@{1} = \"\"]",
-                                         SourceWordElement.CstrElementNameSourceWord,
-                                         SourceWordElement.CstrAttributeNameSourceWord);
+            var strXPath = FormatXpath(SourceWordElement.CstrElementNameSourceWord,
+                                       SourceWordElement.CstrAttributeNameSourceWord,
+                                       String.Empty);
             PergeXPath(ref doc, strXPath);
 
             // get rid of the RS[@a = ""]
-            strXPath = String.Format("//{0}[@{1} = \"\"]",
-                                     TargetWordElement.CstrElementNameTargetWord,
-                                     TargetWordElement.CstrAttributeNameTargetWord);
+            strXPath = FormatXpath(TargetWordElement.CstrElementNameTargetWord,
+                                   TargetWordElement.CstrAttributeNameTargetWord,
+                                   String.Empty);
             PergeXPath(ref doc, strXPath);
         }
 
@@ -557,6 +585,9 @@ namespace SilEncConverters40
                 </MAP>
               </KB>
             */
+            SrcLangName = strSrcLangName;
+            TgtLangName = strTgtLangName;
+            Max = "1";
             var elem = new XElement(CstrElementNameKnowledgeBase,
                                     (IsKbV2)
                                         ? new XAttribute(CstrAttributeNameKbVersion, 2)

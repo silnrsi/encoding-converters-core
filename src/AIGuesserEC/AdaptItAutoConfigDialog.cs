@@ -14,7 +14,7 @@ namespace SilEncConverters40
     {
         protected const string cstrAdaptItWorkingDirLegacy = "Adapt It Work";
         public const string CstrAdaptItWorkingDirUnicode = "Adapt It Unicode Work";
-        protected const string cstrAdaptItGlossingKB = "Glossing.xml";
+        public const string CstrAdaptItGlossingKb = "Glossing.xml";
         protected const string cstrAdaptItGlossingKBLabel = " (Glossing Knowledge Base)";
 
         protected bool m_bLegacy = false;
@@ -114,7 +114,7 @@ namespace SilEncConverters40
                     return null;
 
                 string strKbFileSpec = astrParts[0];
-                int nIndex = strKbFileSpec.IndexOf(cstrAdaptItGlossingKB);
+                int nIndex = strKbFileSpec.IndexOf(CstrAdaptItGlossingKb);
                 string strProjectName;
                 if (nIndex != -1)
                 {
@@ -152,7 +152,7 @@ namespace SilEncConverters40
 
                     // also check for a glossing knowledgebase
                     string strGlossingFileSpec = Path.Combine(strFolder,
-                        cstrAdaptItGlossingKB);
+                        CstrAdaptItGlossingKb);
                     if( File.Exists(strGlossingFileSpec) )
                         listBoxProjects.Items.Add(Path.GetFileNameWithoutExtension(strFolder) + cstrAdaptItGlossingKBLabel);
                 }
@@ -199,7 +199,7 @@ namespace SilEncConverters40
             if (strProjectName.IndexOf(cstrAdaptItGlossingKBLabel) != -1)
             {
                 strProjectName = strProjectName.Substring(0, strProjectName.Length - cstrAdaptItGlossingKBLabel.Length);
-                m_strXmlTitle = cstrAdaptItGlossingKB;
+                m_strXmlTitle = CstrAdaptItGlossingKb;
             }
 
             // (Prior to .Net 4.0, Path.Combine handled only two arguments.)
@@ -245,6 +245,7 @@ namespace SilEncConverters40
         private void listBoxProjects_SelectedIndexChanged(object sender, EventArgs e)
         {
             IsModified = true;
+            buttonViewKb.Enabled = true;
         }
 
         private void buttonBrowseNormalizationMap_Click(object sender, EventArgs e)
@@ -253,6 +254,34 @@ namespace SilEncConverters40
             {
                 textBoxNormalizationPath.Text = openFileDialogBrowse.FileName;
             }
+        }
+
+        private void ButtonCreateNewProjectClick(object sender, EventArgs e)
+        {
+            var dlg = new AddNewProjectForm();
+            if (dlg.ShowDialog() != DialogResult.OK)
+                return;
+
+            AdaptItKBReader.WriteAdaptItProjectFiles(dlg.SourceLanguage, dlg.TargetLanguage,
+                                                     new AdaptItKBReader.LanguageInfo
+                                                         {
+                                                             FontName = "Times New Roman",
+                                                             LangName = "Navigation Language"
+                                                         });
+                
+            InitProjectNames(CstrAdaptItWorkingDirUnicode, false);
+        }
+
+        private void ButtonViewKbClick(object sender, EventArgs e)
+        {
+            Cursor = Cursors.WaitCursor;
+            if (!OnApply())
+                return;
+
+            var theEc = m_aEC as AdaptItEncConverter;
+            if (theEc != null) 
+                theEc.EditKnowledgeBase(null);
+            Cursor = Cursors.Default;
         }
     }
 }

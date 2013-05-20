@@ -15,13 +15,14 @@ namespace SilEncConverters40
         private char[] _achTrim;
 
         internal ModifyTargetWordsForm(string strSourceWord,
-            MapOfSourceWordElements mapOfSourceWordElements, string strTargetWordFont,
+            MapOfSourceWordElements mapOfSourceWordElements, AdaptItKBReader.LanguageInfo liTargetLang,
             char[] achTrim)
         {
             InitializeComponent();
             _mapOfSourceWordElements = mapOfSourceWordElements;
             _achTrim = achTrim;
-            targetFormDisplayControl.TargetWordFont = new Font(strTargetWordFont, 12);
+            targetFormDisplayControl.TargetWordFont = liTargetLang.FontToUse;
+            targetFormDisplayControl.TargetWordRightToLeft = liTargetLang.RightToLeft;
             targetFormDisplayControl.CallToSetModified = SetModified;
 
             SourceWordElement sourceWordElement;
