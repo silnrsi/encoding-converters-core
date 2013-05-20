@@ -59,6 +59,7 @@ namespace SilEncConverters40
 #endif
         public const string strRegKeyForSelfRegistering = "RegisterSelf";
         internal const string strShowToolTipsStateKey   = "ShowToolTips";
+        internal const string CstrUseGeckoRegKey = "UseMozilla";
 
         // implement types define in EncCnvtrs.dll (public so users can use them in .Net 
         //  code rather than hard-coding the strings)
@@ -365,7 +366,7 @@ namespace SilEncConverters40
             {
                 keyRepositoryMoved = Registry.LocalMachine.OpenSubKey(EncConverters.HKLM_PATH_TO_XML_FILE);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 keyRepositoryMoved = null;
             }
@@ -456,6 +457,7 @@ namespace SilEncConverters40
             if (keyPluginFolder != null)
                 strPluginXmlFilesFolder = (string)keyPluginFolder.GetValue(CstrRegKeyPluginFolder);
 
+			if (String.IsNullOrEmpty(strPluginXmlFilesFolder))
 #if !PluginsInEachFolder
             {
                 // Argh...
@@ -470,7 +472,6 @@ namespace SilEncConverters40
                                                        CstrDefPluginFolderPlugins);
             }
 #else
-            if (String.IsNullOrEmpty(strPluginXmlFilesFolder))
             {
                 strPluginXmlFilesFolder = Util.GetSpecialFolderPath(Environment.SpecialFolder.CommonApplicationData) + strDefPluginFolder;
             }
@@ -2390,6 +2391,7 @@ namespace SilEncConverters40
                 m_mapProgIdsToAssemblyName.TryGetValue(strProgID, out strAssemblySpec))
             {
                 System.Diagnostics.Debug.WriteLine("Getting from assembly.");
+
                 ObjectHandle ohndl = Activator.CreateInstance(strAssemblySpec, strProgID);
                 rConverter = (IEncConverter)ohndl.Unwrap();
                 if (rConverter == null) {
@@ -3054,21 +3056,20 @@ namespace SilEncConverters40
         [Description("Launch a dialog to Configure a converter"),Category("Data")]
         public bool AutoConfigure(ConvType eConversionTypeFilter, ref string strFriendlyName)
         {
-            ImplTypeList dlg = new ImplTypeList(m_mapDisplayNameToProgID.Keys);
+            var dlg = new ImplTypeList(m_mapDisplayNameToProgID.Keys);
             if( dlg.ShowDialog() == DialogResult.OK )
             {
-                string strProgID = (string)m_mapDisplayNameToProgID[dlg.SelectedDisplayName];
-
+                var strProgId = (string)m_mapDisplayNameToProgID[dlg.SelectedDisplayName];
                 try
                 {
                     // we create the EncConverter objects based on the prog id from the registry.
                     //  (see comments near "Item" for why we're dealing with the interface rather
                     //  than the coclass; i.e. IEncConverter rather than EncConverter).
 #if !DontCheckAssemVersion
-                    IEncConverter rConverter = InstantiateIEncConverter(strProgID, null);
+                    IEncConverter rConverter = InstantiateIEncConverter(strProgId, null);
 
                     if (rConverter == null)
-                        throw new ApplicationException(String.Format("Unable to create an object of type '{0}'", strProgID));
+                        throw new ApplicationException(String.Format("Unable to create an object of type '{0}'", strProgId));
 #else
                     Type typeEncConverter = Type.GetTypeFromProgID(strProgID);
                     IEncConverter rIEncConverter = (IEncConverter) Activator.CreateInstance(typeEncConverter);
@@ -3144,9 +3145,7 @@ namespace SilEncConverters40
             catch 
             {
                 System.Diagnostics.Debug.WriteLine("Caught error.");
-#if DEBUG
                 throw;
-#endif
             }
 
             System.Diagnostics.Debug.WriteLine("AutoConfigureEx END");

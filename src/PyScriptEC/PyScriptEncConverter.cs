@@ -25,19 +25,18 @@ namespace SilEncConverters40
         #region DLLImport Statements
         // On Linux looks for libPyScriptEncConverter.so (adds lib- and -.so)
         //[DllImport("PyScriptEncConverter", SetLastError=true)]
-        [DllImport("PyScriptEncConverter", EntryPoint="PyScriptEC_Initialize")]
+		[DllImport("PyScriptEncConverter", EntryPoint = "PyScriptEC_Initialize", CallingConvention = CallingConvention.Cdecl)]
         static extern unsafe int CppInitialize (
             [MarshalAs(UnmanagedType.LPStr)] string strScript,
             [MarshalAs(UnmanagedType.LPStr)] string strDir);
 
-        [DllImport("PyScriptEncConverter", EntryPoint="PyScriptEC_DoConvert")]
+		[DllImport("PyScriptEncConverter", EntryPoint = "PyScriptEC_DoConvert", CallingConvention = CallingConvention.Cdecl)]
         static extern unsafe int CppDoConvert(
             byte* lpInputBuffer, int nInBufLen,
             byte* lpOutputBuffer, int *npOutBufLen);
         #endregion DLLImport Statements
 
         #region Member Variable Definitions
-        private Int32       m_hTable = 0;
         private DateTime    m_timeModified = DateTime.MinValue;
         private bool        m_bUseDelimiters = false;
 
@@ -152,13 +151,19 @@ namespace SilEncConverters40
                 string strScriptName = Path.GetFileName(strScriptPath);
                 string strScriptDir = Path.GetDirectoryName(strScriptPath);
                 int status = 0;
+
+#if __MonoCS__  // this isn't needed for Windows/.Net (and sending a message about .so files is confusing)
                 try {
+#endif
                     status = CppInitialize(strScriptName, strScriptDir);
-                } catch (DllNotFoundException exc) {
+
+#if __MonoCS__  // this isn't needed for Windows/.Net (and sending a message about .so files is confusing)
+                } catch (DllNotFoundException) {
                     throw new Exception("Failed to load .so file. Check path.");
-                } catch (EntryPointNotFoundException exc) {
+                } catch (EntryPointNotFoundException) {
                     throw new Exception("Failed to find function in .so file.");
                 }
+#endif
                 if( status != 0 )  
                 {
                     throw new Exception("CppInitialize failed.");
@@ -211,7 +216,6 @@ namespace SilEncConverters40
             Load(ConverterIdentifier);
         }
 
-        [CLSCompliant(false)]
         protected override unsafe void DoConvert
             (
             byte*       lpInBuffer,

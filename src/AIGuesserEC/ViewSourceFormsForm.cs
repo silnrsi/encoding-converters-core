@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml.Linq;
+using SilEncConverters40.Properties;
 
 namespace SilEncConverters40
 {
@@ -16,9 +17,8 @@ namespace SilEncConverters40
         private MapOfMaps _mapOfMaps;
         private char[] _achTrimSource, _achTrimTarget;
 
-        internal ViewSourceFormsForm(MapOfMaps mapOfMaps, 
-            string strSourceWordFont, string strTargetWordFont, 
-            char[] achTrimSource, char[] achTrimTarget)
+        internal ViewSourceFormsForm(MapOfMaps mapOfMaps, AdaptItKBReader.LanguageInfo liSourceWordLang, 
+            AdaptItKBReader.LanguageInfo liTargetLang, char[] achTrimSource, char[] achTrimTarget)
         {
             InitializeComponent();
             _mapOfMaps = mapOfMaps;
@@ -28,14 +28,17 @@ namespace SilEncConverters40
             foreach (var strSourceWord in mapOfMaps.ListOfAllSourceWordForms)
                 listBoxSourceWordForms.Items.Add(strSourceWord);
 
-            targetFormDisplayControl.TargetWordFont = new Font(strTargetWordFont, 12);
+            targetFormDisplayControl.TargetWordFont = liTargetLang.FontToUse;
+            targetFormDisplayControl.TargetWordRightToLeft = liTargetLang.RightToLeft;
             targetFormDisplayControl.CallToSetModified = SetModified;
-            textBoxFilter.Font = listBoxSourceWordForms.Font 
-                = new Font(strSourceWordFont, 12);
+            textBoxFilter.Font = listBoxSourceWordForms.Font = liSourceWordLang.FontToUse;
+            textBoxFilter.RightToLeft =
+                listBoxSourceWordForms.RightToLeft = liSourceWordLang.RightToLeft;
         }
 
         private const string CstrButtonLabelSave = "&Save";
         private const string CstrButtonLabelReturn = "&Return";
+        private const string CstrFrameTitle = "View Knowledge Base";
 
         private void buttonOK_Click(object sender, EventArgs e)
         {
@@ -44,7 +47,7 @@ namespace SilEncConverters40
                 System.Diagnostics.Debug.Assert(targetFormDisplayControl.AreAllTargetFormsNonEmpty(_achTrimTarget));
                 string strSelectedWord = SelectedWord;
                 Parent.SaveMapOfMaps(_mapOfMaps);
-                buttonOK.Text = CstrButtonLabelReturn;
+                SetCleanUi();
                 listBoxSourceWordForms.Enabled = true;
                 listBoxSourceWordForms.SelectedIndex = -1;
                 listBoxSourceWordForms.SelectedItem = strSelectedWord;
@@ -54,6 +57,12 @@ namespace SilEncConverters40
             targetFormDisplayControl.TrimTargetWordForms(_achTrimTarget);
             DialogResult = DialogResult.OK;
             Close();
+        }
+
+        private void SetCleanUi()
+        {
+            buttonOK.Text = CstrButtonLabelReturn;
+            Text = CstrFrameTitle;
         }
 
         private void ViewSourceFormsForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -68,7 +77,7 @@ namespace SilEncConverters40
                 _mapSourceWordElements.ReplaceSourceWordElement(strSelectedWord,
                                                                 _copyOfSelectedSourceWord);
             }
-            buttonOK.Text = CstrButtonLabelReturn;
+            SetCleanUi();
             listBoxSourceWordForms.Enabled = true;
             listBoxSourceWordForms.SelectedIndex = -1;
             listBoxSourceWordForms.SelectedItem = strSelectedWord;
@@ -91,9 +100,15 @@ namespace SilEncConverters40
 
         private void SetModified()
         {
-            buttonOK.Text = CstrButtonLabelSave;
+            SetDirtyUi();
             buttonOK.Enabled = targetFormDisplayControl.AreAllTargetFormsNonEmpty(_achTrimTarget);
             listBoxSourceWordForms.Enabled = false;
+        }
+
+        private void SetDirtyUi()
+        {
+            buttonOK.Text = CstrButtonLabelSave;
+            Text = CstrFrameTitle + Resources.IDS_ClickSaveToContinue;
         }
 
         private MapOfSourceWordElements _mapSourceWordElements;
@@ -206,6 +221,17 @@ namespace SilEncConverters40
             editToolStripMenuItem.Enabled 
                 = deleteToolStripMenuItem.Enabled 
                 = (listBoxSourceWordForms.SelectedIndex != -1);
+
+            createReversalProjectToolStripMenuItem.ToolTipText =
+                String.Format("Click to create a project to adapt from {0} to {1}",
+                              _mapOfMaps.TgtLangName, _mapOfMaps.SrcLangName);
+        }
+
+        private void CreateReversalProjectToolStripMenuItemClick(object sender, EventArgs e)
+        {
+            progressBar.Visible = true;
+            Parent.KbReversal(progressBar);
+            progressBar.Visible = false;
         }
     }
 }

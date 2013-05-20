@@ -5,9 +5,7 @@ using System.Windows.Forms;
 using System.Drawing;                   // for Font
 using System.IO;                        // for Path.DirectorySeparatorChar
 using Microsoft.Win32;                  // for RegistryKey
-using System.Text;                      // for Encoding
 using ECInterfaces;                     // for IEncConverter
-//using Skybound.Gecko;
 
 //uncomment the following line for verbose debugging output using Console.WriteLine
 //#define VERBOSE_DEBUGGING
@@ -132,20 +130,14 @@ namespace SilEncConverters40
             RegistryKey keyRoot = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\SIL\SilEncConverters40", false);
             if (keyRoot != null)
             {
-                string strXmlFilePath = (string)keyRoot.GetValue("RootDir");
-                if (strXmlFilePath[strXmlFilePath.Length - 1] != Path.DirectorySeparatorChar)
-                    strXmlFilePath += Path.DirectorySeparatorChar;
-                // This line has been changed in order to work on more than just Windows
-                strXmlFilePath += @"Help" + Path.DirectorySeparatorChar + strHtmlFileName;
+                var strXmlFilePath = (string)keyRoot.GetValue("RootDir");
+                if (String.IsNullOrEmpty(strXmlFilePath))
+                    throw new ApplicationException("The 'RootDir' registry key is not define!? Perhaps it needs to be re-installed. Ask the developer.");
+                if (strXmlFilePath[strXmlFilePath.Length - 1] != '\\')
+                    strXmlFilePath += '\\';
+                strXmlFilePath += @"help\" + strHtmlFileName;
                 System.Diagnostics.Debug.Assert(System.IO.File.Exists(strXmlFilePath), String.Format("Can find '{0}'. If this is a development machine, you need to add the following reg key to see the About help files: HLKM\\SOFTWARE\\SIL\\SilEncConverters40\\[RootDir] = '<parent folder where the 'help' sub-folder exists>' along with a trailing slash (e.g. \"C:\\fw\\lib\\release\\\")", strHtmlFileName));
-                //this.webBrowserHelp.Url = new Uri(strXmlFilePath);
-                //this.webBrowserHelp.Navigate(strXmlFilePath);
-                string preamble = "Help for this converter is available at ";
-                strXmlFilePath = strXmlFilePath.Replace(".mht", ".htm");
-                this.labelHelp.Text = preamble + strXmlFilePath;
-                string strXmlFileLink = strXmlFilePath.Replace(" ", "%20");
-                this.labelHelp.Links.Add (
-                    preamble.Length, strXmlFilePath.Length, strXmlFileLink);
+                this.webBrowser.Navigate(strXmlFilePath);
             }
 #if DEBUG
             else
@@ -536,24 +528,7 @@ namespace SilEncConverters40
 
         private void buttonSaveInRepository_Click(object sender, EventArgs e)
         {
-            System.Diagnostics.Debug.WriteLine("buttonSaveInRepository_Click()");
             buttonSaveInRepositoryEx();
-
-            // get the help for the about tab
-            RegistryKey keyRoot = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\SIL\SilEncConverters40", false);
-            if (keyRoot != null)
-            {
-                string strXmlFilePath = (string)keyRoot.GetValue("RootDir");
-                if (strXmlFilePath[strXmlFilePath.Length - 1] != '\\')
-                    strXmlFilePath += '\\';
-                strXmlFilePath += @"help\" + htmlfilename;
-                System.Diagnostics.Debug.Assert(System.IO.File.Exists(strXmlFilePath), String.Format("Can find '{0}'. If this is a development machine, you need to add the following reg key to see the About help files: HLKM\\SOFTWARE\\SIL\\SilEncConverters40\\[RootDir] = '<parent folder where the 'help' sub-folder exists>' along with a trailing slash (e.g. \"C:\\fw\\lib\\release\\\")", htmlfilename));
-                //this.webBrowserHelp.Url = new Uri(strXmlFilePath);
-                //this.webBrowserHelp.Navigate(strXmlFilePath);
-                this.labelHelp.Text = "Help for this converter is available at " + strXmlFilePath;
-            }
-            else
-                throw new ApplicationException(@"Can't read the HLKM\SOFTWARE\SIL\SilEncConverters40\[RootDir] registry key!");
         }
 
         protected int ProcessTypesChecked

@@ -35,7 +35,6 @@ namespace SilEncConverters40
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AutoConfigDialog));
             this.tabControl = new System.Windows.Forms.TabControl();
             this.tabPageAbout = new System.Windows.Forms.TabPage();
-            this.labelHelp = new System.Windows.Forms.LinkLabel();
             this.tabPageSetup = new System.Windows.Forms.TabPage();
             this.tabPageTestArea = new System.Windows.Forms.TabPage();
             this.tableLayoutPanelTestPage = new System.Windows.Forms.TableLayoutPanel();
@@ -95,6 +94,7 @@ namespace SilEncConverters40
             this.buttonSaveInRepository = new System.Windows.Forms.Button();
             this.helpProvider = new System.Windows.Forms.HelpProvider();
             this.fontDialog = new System.Windows.Forms.FontDialog();
+            this.webBrowser = new SilEncConverters40.WebBrowserAdaptor();
             this.tabControl.SuspendLayout();
             this.tabPageAbout.SuspendLayout();
             this.tabPageTestArea.SuspendLayout();
@@ -124,7 +124,7 @@ namespace SilEncConverters40
             // 
             // tabPageAbout
             // 
-            this.tabPageAbout.Controls.Add(this.labelHelp);
+            this.tabPageAbout.Controls.Add(this.webBrowser);
             this.tabPageAbout.Location = new System.Drawing.Point(4, 22);
             this.tabPageAbout.Name = "tabPageAbout";
             this.tabPageAbout.Padding = new System.Windows.Forms.Padding(3);
@@ -132,17 +132,6 @@ namespace SilEncConverters40
             this.tabPageAbout.TabIndex = 0;
             this.tabPageAbout.Text = "About";
             this.tabPageAbout.UseVisualStyleBackColor = true;
-            // 
-            // labelHelp
-            // 
-            this.labelHelp.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
-            this.labelHelp.Location = new System.Drawing.Point(5, 20);
-            this.labelHelp.Name = "labelHelp";
-            this.labelHelp.Size = new System.Drawing.Size(301, 50);
-            this.labelHelp.TabIndex = 0;
-            this.labelHelp.TabStop = true;
-            this.labelHelp.Text = "----";
-            this.labelHelp.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
             // 
             // tabPageSetup
             // 
@@ -271,9 +260,8 @@ namespace SilEncConverters40
             this.ecTextBoxInput.Font = new System.Drawing.Font("Arial", 11F);
             this.ecTextBoxInput.Location = new System.Drawing.Point(51, 16);
             this.ecTextBoxInput.Name = "ecTextBoxInput";
-            this.ecTextBoxInput.Size = new System.Drawing.Size(542, 82);
+            this.ecTextBoxInput.Size = new System.Drawing.Size(542, 24);
             this.ecTextBoxInput.TabIndex = 3;
-            this.ecTextBoxInput.Text = "";
             this.ecTextBoxInput.TextChanged += new System.EventHandler(this.ecTextBoxInput_TextChanged);
             // 
             // contextMenuStripTestBoxes
@@ -292,13 +280,13 @@ namespace SilEncConverters40
             this.toolStripSeparator3,
             this.right2LeftToolStripMenuItem});
             this.contextMenuStripTestBoxes.Name = "contextMenuStrip";
-            this.contextMenuStripTestBoxes.Size = new System.Drawing.Size(200, 204);
+            this.contextMenuStripTestBoxes.Size = new System.Drawing.Size(211, 204);
             this.contextMenuStripTestBoxes.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip_Opening);
             // 
             // changeFontToolStripMenuItem
             // 
             this.changeFontToolStripMenuItem.Name = "changeFontToolStripMenuItem";
-            this.changeFontToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
+            this.changeFontToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
             this.changeFontToolStripMenuItem.Text = "Change &Font";
             this.changeFontToolStripMenuItem.ToolTipText = "Click here to change the display font for this text box";
             this.changeFontToolStripMenuItem.Click += new System.EventHandler(this.changeFontToolStripMenuItem_Click);
@@ -306,70 +294,70 @@ namespace SilEncConverters40
             // toolStripSeparator4
             // 
             this.toolStripSeparator4.Name = "toolStripSeparator4";
-            this.toolStripSeparator4.Size = new System.Drawing.Size(196, 6);
+            this.toolStripSeparator4.Size = new System.Drawing.Size(207, 6);
             // 
             // undoToolStripMenuItem
             // 
             this.undoToolStripMenuItem.Name = "undoToolStripMenuItem";
-            this.undoToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
+            this.undoToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
             this.undoToolStripMenuItem.Text = "&Undo";
             this.undoToolStripMenuItem.Click += new System.EventHandler(this.undoToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(196, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(207, 6);
             // 
             // cutToolStripMenuItem
             // 
             this.cutToolStripMenuItem.Name = "cutToolStripMenuItem";
-            this.cutToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
+            this.cutToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
             this.cutToolStripMenuItem.Text = "Cut";
             this.cutToolStripMenuItem.Click += new System.EventHandler(this.cutToolStripMenuItem_Click);
             // 
             // copyToolStripMenuItem
             // 
             this.copyToolStripMenuItem.Name = "copyToolStripMenuItem";
-            this.copyToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
+            this.copyToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
             this.copyToolStripMenuItem.Text = "Copy";
             this.copyToolStripMenuItem.Click += new System.EventHandler(this.copyToolStripMenuItem_Click);
             // 
             // pasteToolStripMenuItem
             // 
             this.pasteToolStripMenuItem.Name = "pasteToolStripMenuItem";
-            this.pasteToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
+            this.pasteToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
             this.pasteToolStripMenuItem.Text = "Paste";
             this.pasteToolStripMenuItem.Click += new System.EventHandler(this.pasteToolStripMenuItem_Click);
             // 
             // deleteToolStripMenuItem
             // 
             this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
-            this.deleteToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
+            this.deleteToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
             this.deleteToolStripMenuItem.Text = "Delete";
             this.deleteToolStripMenuItem.Click += new System.EventHandler(this.deleteToolStripMenuItem_Click);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(196, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(207, 6);
             // 
             // selectAllToolStripMenuItem
             // 
             this.selectAllToolStripMenuItem.Name = "selectAllToolStripMenuItem";
-            this.selectAllToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
+            this.selectAllToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
             this.selectAllToolStripMenuItem.Text = "Select All";
             this.selectAllToolStripMenuItem.Click += new System.EventHandler(this.selectAllToolStripMenuItem_Click);
             // 
             // toolStripSeparator3
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(196, 6);
+            this.toolStripSeparator3.Size = new System.Drawing.Size(207, 6);
             // 
             // right2LeftToolStripMenuItem
             // 
             this.right2LeftToolStripMenuItem.CheckOnClick = true;
             this.right2LeftToolStripMenuItem.Name = "right2LeftToolStripMenuItem";
-            this.right2LeftToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
+            this.right2LeftToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
             this.right2LeftToolStripMenuItem.Text = "&Right to left reading order";
             this.right2LeftToolStripMenuItem.Click += new System.EventHandler(this.right2LeftToolStripMenuItem_Click);
             // 
@@ -382,9 +370,8 @@ namespace SilEncConverters40
             this.ecTextBoxOutput.Location = new System.Drawing.Point(51, 221);
             this.ecTextBoxOutput.Name = "ecTextBoxOutput";
             this.ecTextBoxOutput.ReadOnly = true;
-            this.ecTextBoxOutput.Size = new System.Drawing.Size(542, 82);
+            this.ecTextBoxOutput.Size = new System.Drawing.Size(542, 24);
             this.ecTextBoxOutput.TabIndex = 3;
-            this.ecTextBoxOutput.Text = "";
             // 
             // buttonTest
             // 
@@ -407,8 +394,8 @@ namespace SilEncConverters40
             this.comboBoxFont.Location = new System.Drawing.Point(291, 193);
             this.comboBoxFont.Name = "comboBoxFont";
             this.comboBoxFont.Size = new System.Drawing.Size(176, 21);
-            this.comboBoxFont.TabIndex = 7;
             this.comboBoxFont.Sorted = true;
+            this.comboBoxFont.TabIndex = 7;
             this.comboBoxFont.SelectedIndexChanged += new System.EventHandler(this.comboBoxFont_SelectedIndexChanged);
             // 
             // tabPageAdvanced
@@ -777,6 +764,14 @@ namespace SilEncConverters40
             this.fontDialog.AllowScriptChange = false;
             this.fontDialog.ShowColor = true;
             // 
+            // webBrowser
+            // 
+            this.webBrowser.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.webBrowser.Location = new System.Drawing.Point(3, 3);
+            this.webBrowser.Name = "webBrowser";
+            this.webBrowser.Size = new System.Drawing.Size(596, 394);
+            this.webBrowser.TabIndex = 0;
+            // 
             // AutoConfigDialog
             // 
             this.AcceptButton = this.buttonOK;
@@ -812,24 +807,9 @@ namespace SilEncConverters40
 
         #endregion
 
-        protected void linkLabel1_LinkClicked(object sender, System.Windows.Forms.LinkLabelLinkClickedEventArgs e)
-        {
-            // Specify that the link was visited.
-            this.labelHelp.LinkVisited = true;
-
-            // Navigate to a URL.
-            //System.Diagnostics.Process.Start("http://www.microsoft.com");
-            string loc = "file://" + e.Link.LinkData.ToString();
-            System.Diagnostics.Debug.WriteLine("going to " + loc);
-            System.Diagnostics.Process.Start(loc);
-        }
-
         public System.Windows.Forms.TabControl tabControl;
         public System.Windows.Forms.TabPage tabPageAbout;
-        //[CLSCompliant(false)]
-        //public GeckoWebBrowser webBrowserHelp;
-        //public System.Windows.Forms.Label labelHelp;
-        public System.Windows.Forms.LinkLabel labelHelp;
+        public System.Windows.Forms.WebBrowser webBrowserHelp;
         public System.Windows.Forms.TabPage tabPageSetup;
         public System.Windows.Forms.TabPage tabPageTestArea;
         public System.Windows.Forms.TableLayoutPanel tableLayoutPanelTestPage;
@@ -889,5 +869,6 @@ namespace SilEncConverters40
         private System.Windows.Forms.ToolStripMenuItem right2LeftToolStripMenuItem;
         protected internal System.Windows.Forms.FontDialog fontDialog;
         private System.Windows.Forms.ComboBox comboBoxFont;
+        private WebBrowserAdaptor webBrowser;
     }
 }

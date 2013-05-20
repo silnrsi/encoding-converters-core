@@ -17,13 +17,13 @@ namespace SilEncConverters40
 	{
 		#region DLLImport Statements
 		// On Linux looks for libIcuConvEC.so (adds lib- and -.so)
-		[DllImport("IcuConvEC", EntryPoint="IcuConvEC_ConverterNameList_start")]
+		[DllImport("IcuConvEC", EntryPoint = "IcuConvEC_ConverterNameList_start", CallingConvention = CallingConvention.Cdecl)]
 		static extern unsafe int CppConverterNameList_start();
 
-		[DllImport("IcuConvEC", EntryPoint="IcuConvEC_ConverterNameList_next")]
+		[DllImport("IcuConvEC", EntryPoint = "IcuConvEC_ConverterNameList_next", CallingConvention = CallingConvention.Cdecl)]
 		static extern unsafe string CppConverterNameList_next();
 
-		[DllImport("IcuConvEC", EntryPoint="IcuConvEC_GetDisplayName")]
+		[DllImport("IcuConvEC", EntryPoint = "IcuConvEC_GetDisplayName", CallingConvention = CallingConvention.Cdecl)]
 		static extern unsafe string CppGetDisplayName(string strID);
 		#endregion DLLImport Statements
 
@@ -170,14 +170,24 @@ namespace SilEncConverters40
 		{
 			this.listBoxConvName.Items.Clear();
 			int count = 0;
-			try {
+			
+#if __MonoCS__  // this isn't needed for Windows/.Net (and sending a message about .so files is confusing)
+            try 
+            {
+#endif
 				count = CppConverterNameList_start();
-			} catch (DllNotFoundException exc) {
+
+#if __MonoCS__  // this isn't needed for Windows/.Net (and sending a message about .so files is confusing)
+			} 
+            catch (DllNotFoundException) 
+            {
 				throw new Exception("Failed to load .so file. Check path.");
-			} catch (EntryPointNotFoundException exc) {
+			} 
+            catch (EntryPointNotFoundException) 
+            {
 				throw new Exception("Failed to find function in .so file.");
 			}
-
+#endif
 			// Store the IDs in an array, and put the display names in the
 			// list box.
 			translitIDs = new string[count];

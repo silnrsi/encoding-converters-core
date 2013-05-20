@@ -23,11 +23,11 @@ namespace SilEncConverters40
     {
         #region DLLImport Statements
         // On Linux looks for libIcuRegexEC.so (adds lib- and -.so)
-        [DllImport("IcuRegexEC", EntryPoint="IcuRegexEC_Initialize")]
+		[DllImport("IcuRegexEC", EntryPoint = "IcuRegexEC_Initialize", CallingConvention = CallingConvention.Cdecl)]
         static extern int CppInitialize (
             [MarshalAs(UnmanagedType.LPStr)] string strConverterSpec);
 
-        [DllImport("IcuRegexEC", EntryPoint="IcuRegexEC_DoConvert")]
+		[DllImport("IcuRegexEC", EntryPoint = "IcuRegexEC_DoConvert", CallingConvention = CallingConvention.Cdecl)]
         static extern unsafe int CppDoConvert(
             byte* lpInputBuffer, int nInBufLen,
             byte* lpOutputBuffer, int *npOutBufLen);
@@ -132,13 +132,18 @@ namespace SilEncConverters40
 
             System.Diagnostics.Debug.WriteLine("Calling CppInitialize");
             int status = 0;
+#if __MonoCS__  // this isn't needed for Windows/.Net (and sending a message about .so files is confusing)
             try {
+#endif
                 status = CppInitialize(strExpression);
-            } catch (DllNotFoundException exc) {
+
+#if __MonoCS__  // this isn't needed for Windows/.Net (and sending a message about .so files is confusing)
+            } catch (DllNotFoundException) {
                 throw new Exception("Failed to load .so file. Check path.");
-            } catch (EntryPointNotFoundException exc) {
+            } catch (EntryPointNotFoundException) {
                 throw new Exception("Failed to find function in .so file.");
             }
+#endif
             if( status != 0 )  
             {
                 throw new Exception("CppInitialize failed.");
@@ -194,7 +199,6 @@ namespace SilEncConverters40
             Load(ConverterIdentifier);
         }
 
-        [CLSCompliant(false)]
         protected override unsafe void DoConvert
             (
             byte*       lpInBuffer,
