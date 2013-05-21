@@ -18,6 +18,10 @@
 // Uncomment the following line if you want verbose debugging output
 //#define VERBOSE_DEBUGGING
 
+#ifndef _MSC_VER
+#define _strdup strdup
+#endif
+
 #define MAXNAMESIZE 300
 
 // Keep this in a namespace so that it doesn't get confused with functions that

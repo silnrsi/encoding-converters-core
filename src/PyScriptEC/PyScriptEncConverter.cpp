@@ -3,6 +3,7 @@
 // Rewritten by Jim Kornelsen for Linux on Nov 15 2011.
 //
 // 05-Dec-11 JDK  Put into a namespace.
+// 20-May-13 JDK  Linux requires strdup() instead of _strdup().
 //
 // sudo apt-get install python-dev
 // g++ PyScriptEncConverter.cpp -o PyScriptEC.exe -I/usr/include/python2.7/ -lpython2.7
@@ -25,6 +26,10 @@
 
 // Uncomment the following line if you want verbose debugging output
 //#define VERBOSE_DEBUGGING
+
+#ifndef _MSC_VER
+#define _strdup strdup
+#endif
 
 // Keep this in a namespace so that it doesn't get confused with functions that
 // have the same name in other converters, for example Load().
@@ -163,7 +168,7 @@ namespace PyScriptEC
         if (m_strScriptDir != NULL)
         {
             char strCmd[1000];
-#if !be106
+#ifdef MSC_VER
 			_snprintf_s(strCmd, 1000, "import sys\nsys.path.append('%s')", m_strScriptDir);
 #else
             snprintf(strCmd, 1000, "import sys\nsys.path.append('%s')", m_strScriptDir);
