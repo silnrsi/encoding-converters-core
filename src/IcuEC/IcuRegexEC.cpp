@@ -21,6 +21,10 @@
 // Uncomment the following line if you want verbose debugging output
 //#define VERBOSE_DEBUGGING
 
+#ifndef _MSC_VER
+#define _strdup strdup
+#endif
+
 // Keep this in a namespace so that it doesn't get confused with functions that
 // have the same name in other converters, for example Load().
 namespace IcuRegexEC
