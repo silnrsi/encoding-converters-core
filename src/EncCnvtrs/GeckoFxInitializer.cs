@@ -1,4 +1,6 @@
-﻿using System;
+﻿// 21-May-2013 JDK  Check for xulrunner folder in DirectoryOfApplication method.
+
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
@@ -9,9 +11,11 @@ namespace SilEncConverters40
 {
     public class GeckoFxInitializer
     {
+#if _MSC_VER
         [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         static extern bool SetDllDirectory(string lpPathName);
+#endif
 
         public static bool SetUpXulRunner()
         {
@@ -19,49 +23,42 @@ namespace SilEncConverters40
 		        return true;
 
             string xulRunnerPath;
-            if (!DoesXulRunnerFolderExist(out xulRunnerPath))
+            if (!XulRunnerDirectoryOfApplicationOrLib(out xulRunnerPath))
                 return false;
+            System.Diagnostics.Debug.WriteLine("xulRunnerPath=" + xulRunnerPath);
 
+#if _MSC_VER
             //Review: an early tester found that wrong xpcom was being loaded. The following solution is from http://www.geckofx.org/viewtopic.php?id=74&action=new
             SetDllDirectory(xulRunnerPath);
+#endif
 
             Gecko.Xpcom.Initialize(xulRunnerPath);
             return true;
         }
 
-        public static bool DoesXulRunnerFolderExist(out string xulRunnerPath)
-        {
-            xulRunnerPath = Path.Combine(DirectoryOfApplicationOrSolution, "xulrunner");
-            if (Directory.Exists(xulRunnerPath))
-                return true;
-        
-            //if this is a programmer, go look in the lib directory
-            xulRunnerPath = Path.Combine(DirectoryOfApplicationOrSolution,
-                                         Path.Combine("lib", "xulrunner"));
-            return (Directory.Exists(xulRunnerPath));
-        }
-
         /// <summary>
-        /// Gives the directory of either the project folder (if running from visual studio), or
+        /// Gives an xulrunner subdirectory of either solutiondir/lib (if running from visual studio), or
         /// the installation folder.  Helpful for finding templates and things; by using this,
         /// you don't have to copy those files into the build directory during development.
         /// It assumes your build directory has "output" as part of its path.
         /// </summary>
         /// <returns></returns>
-        public static string DirectoryOfApplicationOrSolution
+        public static bool XulRunnerDirectoryOfApplicationOrLib(out string xulRunnerPath)
         {
-            get
-            {
-                string path = DirectoryOfTheApplicationExecutable;
-                char sep = Path.DirectorySeparatorChar;
-                int i = path.ToLower().LastIndexOf(sep + "output" + sep);
+            string path = DirectoryOfTheApplicationExecutable;
+            xulRunnerPath = Path.Combine(path, "xulrunner");
+            if (Directory.Exists(xulRunnerPath))
+                return true;
 
-                if (i > -1)
-                {
-                    path = path.Substring(0, i + 1);
-                }
-                return path;
+            //if this is a programmer, go look in the lib directory
+            char sep = Path.DirectorySeparatorChar;
+            int i = path.ToLower().LastIndexOf(sep + "output" + sep);
+            if (i > -1)
+            {
+                path = path.Substring(0, i + 1);
             }
+            xulRunnerPath = Path.Combine(path, Path.Combine("lib", "xulrunner"));
+            return (Directory.Exists(xulRunnerPath));
         }
 
         public static string DirectoryOfTheApplicationExecutable

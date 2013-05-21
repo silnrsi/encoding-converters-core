@@ -45,10 +45,6 @@ namespace SilEncConverters40
             System.Diagnostics.Debug.WriteLine("AutoConfigDialog ctor BEGIN");
             InitializeComponent();
             System.Diagnostics.Debug.WriteLine("finished InitializeComponent.");
-            //System.Diagnostics.Debug.WriteLine("LD_LIBRARY_PATH=" +
-            //    Environment.GetEnvironmentVariable("LD_LIBRARY_PATH"));
-            //System.Diagnostics.Debug.WriteLine("loc=" + XULRunnerLocator.GetXULRunnerLocation());
-            //Xpcom.Initialize(XULRunnerLocator.GetXULRunnerLocation());
 			this.tabControl.Selecting += new System.Windows.Forms.TabControlCancelEventHandler(tabControl_Selecting);
 
             helpProvider.SetHelpString(buttonSaveInRepository, Properties.Resources.SaveInRepositoryHelpString);
@@ -133,9 +129,10 @@ namespace SilEncConverters40
                 var strXmlFilePath = (string)keyRoot.GetValue("RootDir");
                 if (String.IsNullOrEmpty(strXmlFilePath))
                     throw new ApplicationException("The 'RootDir' registry key is not define!? Perhaps it needs to be re-installed. Ask the developer.");
-                if (strXmlFilePath[strXmlFilePath.Length - 1] != '\\')
-                    strXmlFilePath += '\\';
-                strXmlFilePath += @"help\" + strHtmlFileName;
+                //if (strXmlFilePath[strXmlFilePath.Length - 1] != '\\')
+                //   strXmlFilePath += '\\';
+                strXmlFilePath = Path.Combine(strXmlFilePath, Path.Combine(@"Help", strHtmlFileName));
+                System.Diagnostics.Debug.WriteLine(strXmlFilePath);
                 System.Diagnostics.Debug.Assert(System.IO.File.Exists(strXmlFilePath), String.Format("Can find '{0}'. If this is a development machine, you need to add the following reg key to see the About help files: HLKM\\SOFTWARE\\SIL\\SilEncConverters40\\[RootDir] = '<parent folder where the 'help' sub-folder exists>' along with a trailing slash (e.g. \"C:\\fw\\lib\\release\\\")", strHtmlFileName));
                 this.webBrowser.Navigate(strXmlFilePath);
             }
