@@ -132,18 +132,7 @@ namespace SilEncConverters40
 
             System.Diagnostics.Debug.WriteLine("Calling CppInitialize");
             int status = 0;
-#if __MonoCS__  // this isn't needed for Windows/.Net (and sending a message about .so files is confusing)
-            try {
-#endif
-                status = CppInitialize(strExpression);
-
-#if __MonoCS__  // this isn't needed for Windows/.Net (and sending a message about .so files is confusing)
-            } catch (DllNotFoundException) {
-                throw new Exception("Failed to load .so file. Check path.");
-            } catch (EntryPointNotFoundException) {
-                throw new Exception("Failed to find function in .so file.");
-            }
-#endif
+            status = CppInitialize(strExpression);
             if( status != 0 )  
             {
                 throw new Exception("CppInitialize failed.");

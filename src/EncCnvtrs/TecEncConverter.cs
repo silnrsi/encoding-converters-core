@@ -589,30 +589,13 @@ namespace SilEncConverters40
             fixed (UInt32* pLhsFlags = &m_lhsFlags, pRhsFlags = &m_rhsFlags)
             {
                 System.Diagnostics.Debug.WriteLine("Calling TECkit.");
-                System.Diagnostics.Debug.WriteLine("LD_LIBRARY_PATH=" +
-                Environment.GetEnvironmentVariable("LD_LIBRARY_PATH"));
-
-#if __MonoCS__  // this isn't needed for Windows/.Net (and sending a message about .so files is confusing)
-                try 
-                {
-#endif
-                    status = TECkit_GetMappingFlags(
-                        pbyMapping,
-                        m_nMapSize,
-                        pLhsFlags,
-                        pRhsFlags);
-#if __MonoCS__  // this isn't needed for Windows/.Net (and sending a message about .so files is confusing)
-                }
-                catch (DllNotFoundException) 
-                {
-                    throw new Exception("Failed to load .so file. Check path.");
-                }
-                catch (EntryPointNotFoundException) 
-                {
-                    throw new Exception("Failed to find function in .so file.");
-                }
+                System.Diagnostics.Debug.WriteLine("LD_LIBRARY_PATH=" + Environment.GetEnvironmentVariable("LD_LIBRARY_PATH"));
+                status = TECkit_GetMappingFlags(
+                    pbyMapping,
+                    m_nMapSize,
+                    pLhsFlags,
+                    pRhsFlags);
                 System.Diagnostics.Debug.WriteLine("Successfully called TECkit.");
-#endif
             }
 
             //System.Diagnostics.Debug.WriteLine("    5");

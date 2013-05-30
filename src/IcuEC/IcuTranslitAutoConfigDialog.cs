@@ -168,18 +168,7 @@ namespace SilEncConverters40
         {
             this.listBoxTranslitName.Items.Clear();
             int count = 0;
-#if __MonoCS__  // this isn't needed for Windows/.Net (and sending a message about .so files is confusing)
-            try {
-#endif
-                count = CppConverterNameList_start();
-
-#if __MonoCS__  // this isn't needed for Windows/.Net (and sending a message about .so files is confusing)
-            } catch (DllNotFoundException) {
-                throw new Exception("Failed to load .so file. Check path.");
-            } catch (EntryPointNotFoundException) {
-                throw new Exception("Failed to find function in .so file.");
-            }
-#endif
+            count = CppConverterNameList_start();
 
             // Store the IDs in an array, and put the display names in the
             // list box.

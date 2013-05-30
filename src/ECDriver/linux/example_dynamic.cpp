@@ -1,5 +1,10 @@
 //
+// example_dynamic.cpp
+//
+// Created by Jim Kornelsen in 2011.
+//
 // An example of how to call ECDriver dynamically from another application.
+// This code is more complex than the shared approach.
 // The advantage of linking dynamically is that the application does not
 // have to be compiled or linked with ECDriver files when building.
 //
@@ -41,9 +46,9 @@ int main(int argc, char **argv)
     } else {
         printf("not ok\n");
     }
-    getchar();
+    //getchar();    // pause so the results are visible
     (*funcCleanup)();
     fprintf(stderr, "main() finished.\n");
-    getchar();
+    //getchar();    // pause so the results are visible
     return 0;
 }

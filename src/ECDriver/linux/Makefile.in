@@ -1,5 +1,7 @@
 # Master Makefile for the ECDriver library
 # Makefile.in created January 20, 2012 by Stephen McConnel
+#
+# 30-May-13 JDK  Add ECDriver_test.
 
 VPATH       = @srcdir@
 CXX         = @CXX@
@@ -39,18 +41,27 @@ $(BUILDDIR)/ECDriver.o: $(SRCDIR)ECDriver.cpp $(SRCDIR)ecdriver.h
 	g++ -Wall -fPIC -c $(SRCDIR)ECDriver.cpp -o $(BUILDDIR)/ECDriver.o \
   $(MONO_INCLUDE)
 
-$(OUTDIR)/testECDriverDyn: $(SRCDIR)testDynamic.cpp
-	g++ -Wall $(SRCDIR)testDynamic.cpp -ldl -o $(OUTDIR)/testECDriverDyn
+test: $(OUTDIR)/ECDriver_example_dynamic $(OUTDIR)/ECDriver_example_shared $(OUTDIR)/ECDriver_test
+	#LD_LIBRARY_PATH=$(OUTDIR):$(LD_LIBRARY_PATH) $(OUTDIR)/ECDriver_example_dynamic
+	#LD_LIBRARY_PATH=$(OUTDIR):$(LD_LIBRARY_PATH) $(OUTDIR)/ECDriver_example_shared
+	LD_LIBRARY_PATH=$(OUTDIR):$(LD_LIBRARY_PATH) $(OUTDIR)/ECDriver_test
 
-$(OUTDIR)/testECDriverShared: $(BUILDDIR)/testShared.o
-	g++ -g -o $(OUTDIR)/testECDriverShared $(BUILDDIR)/testShared.o
+$(OUTDIR)/ECDriver_test: $(BUILDDIR)/ECDriver_test.o
+	g++ -g -o $(OUTDIR)/ECDriver_test $(BUILDDIR)/ECDriver_test.o \
+	-L$(OUTDIR) -lecdriver
 
-test: $(OUTDIR)/testECDriverDyn # $(OUTDIR)/testECDriverShared
-	LD_LIBRARY_PATH=$(OUTDIR):$(LD_LIBRARY_PATH) $(OUTDIR)/testECDriverDyn
-	LD_LIBRARY_PATH=$(OUTDIR):$(LD_LIBRARY_PATH) $(OUTDIR)/testECDriverShared
+$(BUILDDIR)/ECDriver_test.o: $(SRCDIR)ECDriver_test.cpp
+	g++ -Wall -g -c $(SRCDIR)ECDriver_test.cpp -o $(BUILDDIR)/ECDriver_test.o
 
-$(BUILDDIR)/testShared.o: $(SRCDIR)testShared.cpp
-	g++ -Wall -g -c $(SRCDIR)testShared.cpp -o $(BUILDDIR)/testShared.o
+$(OUTDIR)/ECDriver_example_dynamic: $(SRCDIR)example_dynamic.cpp
+	g++ -Wall $(SRCDIR)example_dynamic.cpp -ldl -o $(OUTDIR)/ECDriver_example_dynamic
+
+$(OUTDIR)/ECDriver_example_shared: $(BUILDDIR)/example_shared.o
+	g++ -g -o $(OUTDIR)/ECDriver_example_shared $(BUILDDIR)/example_shared.o \
+	-L$(OUTDIR) -lecdriver
+
+$(BUILDDIR)/example_shared.o: $(SRCDIR)example_shared.cpp
+	g++ -Wall -g -c $(SRCDIR)example_shared.cpp -o $(BUILDDIR)/example_shared.o
 
 release: $(RELEASEBLD) $(RELEASEOUT)/libecdriver.so.1.0
 
@@ -70,25 +81,22 @@ $(RELEASEBLD)/ECDriver.o: $(SRCDIR)ECDriver.cpp $(SRCDIR)ecdriver.h
 	g++ -Wall -fPIC -c $(SRCDIR)ECDriver.cpp -o $(RELEASEBLD)/ECDriver.o \
   $(MONO_INCLUDE)
 
-$(RELEASEOUT)/testECDriverDyn: $(SRCDIR)testDynamic.cpp
-	g++ -Wall $(SRCDIR)testDynamic.cpp -ldl -o $(RELEASEOUT)/testECDriverDyn
+testrel: $(RELEASEOUT)/ECDriver_test
+	LD_LIBRARY_PATH=$(RELEASEOUT):$(LD_LIBRARY_PATH) $(RELEASEOUT)/ECDriver_test
 
-$(RELEASEOUT)/testECDriverShared: $(RELEASEBLD)/testShared.o
-	g++ -g -o $(RELEASEOUT)/testECDriverShared $(RELEASEBLD)/testShared.o
+$(RELEASEOUT)/ECDriver_test: $(RELEASEBLD)/ECDriver_test.o
+	g++ -g -o $(RELEASEOUT)/ECDriver_test $(RELEASEBLD)/ECDriver_test.o \
+	-L$(RELEASEOUT) -lecdriver
 
-testrel: $(RELEASEOUT)/testECDriverDyn # $(RELEASEOUT)/testECDriverShared
-	LD_LIBRARY_PATH=$(RELEASEOUT):$(LD_LIBRARY_PATH) $(RELEASEOUT)/testECDriverDyn
-	LD_LIBRARY_PATH=$(RELEASEOUT):$(LD_LIBRARY_PATH) $(RELEASEOUT)/testECDriverShared
-
-$(RELEASEBLD)/testShared.o: $(SRCDIR)testShared.cpp
-	g++ -Wall -g -c $(SRCDIR)testShared.cpp -o $(RELEASEBLD)/testShared.o
+$(RELEASEBLD)/ECDriver_test.o: $(SRCDIR)ECDriver_test.cpp
+	g++ -Wall -g -c $(SRCDIR)ECDriver_test.cpp -o $(RELEASEBLD)/ECDriver_test.o
 
 clean:
 	rm -f *~
-	rm -f $(BUILDDIR)/ECDriver.o
-	rm -f $(OUTDIR)/libecdriver.so* $(OUTDIR)/testECDriver.exe
-	rm -f $(RELEASEBLD)/ECDriver.o
-	rm -f $(RELEASEOUT)/libecdriver.so* $(RELEASEOUT)/testECDriver.exe
+	rm -f $(BUILDDIR)/ECDriver*.o
+	rm -f $(OUTDIR)/libecdriver.so* $(OUTDIR)/ECDriver_test $(OUTDIR)/ECDriver_example*
+	rm -f $(RELEASEBLD)/ECDriver*.o
+	rm -f $(RELEASEOUT)/libecdriver.so* $(RELEASEOUT)/ECDriver_test $(OUTDIR)/ECDriver_example*
 
 distclean: clean
 	rm -f Makefile

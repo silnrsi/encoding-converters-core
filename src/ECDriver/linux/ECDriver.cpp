@@ -1,7 +1,7 @@
 /**
  * ECDriver.cpp
  * 
- * ECDriver is a shared library of unmanaged code that embeds Mono to call
+ * ECDriver is a library of unmanaged code that embeds Mono to call
  * the C# EncConverters core, starting with the EncConverters class in
  * SilEncConverters40.dll.
  *
@@ -306,7 +306,8 @@ int EncConverterConvertString (
     MonoString * mOutput = (MonoString*)mResult;
     strncpy(sOutput, mono_string_to_utf8(mOutput), nOutputLen);
     sOutput[nOutputLen - 1]= '\0';  // make sure the string is null-terminated
-    fprintf(stderr, "ECDriver: Result is: %s\n", sOutput);
+    //fprintf(stderr, "ECDriver: Result is: %s\n", sOutput);
+    fprintf(stderr, "ECDriver: Got result.\n", sOutput);
 
     return 0;
 }
@@ -325,43 +326,8 @@ int EncConverterConverterDescription (
     fprintf(stderr, "ECDriver: invoked.\n");
     MonoString *mDescription = (MonoString*)mResult;
     strcpy(sDescription, mono_string_to_utf8(mDescription));
-    fprintf(stderr, "ECDriver: Result is: %s\n", sDescription);
+    //fprintf(stderr, "ECDriver: Result is: %s\n", sDescription);
+    fprintf(stderr, "ECDriver: got description.\n");
 
     return 0;
 }
-
-/*
-// This code can be used for testing ECDriver. It is not used when
-// building as a library.
-int main()
-{
-    fprintf(stderr, "ECDriver: main() BEGIN\n");
-    if (IsEcInstalled())
-    {
-        char sConverterName[1000];
-        bool bDirectionForward = true;
-        int eNormFormOutput = 0;
-        if (EncConverterSelectConverter (
-            sConverterName, bDirectionForward, eNormFormOutput) == 0)
-        {
-            char sDescription[1000];
-            EncConverterConverterDescription(
-                sConverterName, sDescription, 1000);
-            fprintf(stderr, "ECDriver: Description is %s.", sDescription);
-
-            // input data is unicode bytes (UTF-8)
-            //const char * sInput = "abCde";
-            const char sInput[] = "abCde";
-            char sOutput[1000];
-            EncConverterConvertString (
-                sConverterName, sInput, sOutput, 1000);
-            // sOutput contains the unicode result (UTF-8)
-            fprintf(stderr, "ECDriver: Result is %s.", sOutput);
-        }
-    }
-    //cleanup();
-    fprintf(stderr, "ECDriver: main() END\n");
-    return 0;
-}
-*/
-
