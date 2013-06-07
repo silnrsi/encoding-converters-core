@@ -9,6 +9,8 @@
 // However dynamic code is somewhat more complicated.
 //
 // Contact silconverters_support@sil.org if you need other things in this interface.
+//
+// 03-Jun-2013 JDK  Added EncConverterAddConverter().
 
 #ifndef __ECDRIVER_H__
 #define __ECDRIVER_H__
@@ -42,6 +44,17 @@ extern "C" {
     int EncConverterInitializeConverter(
         const char * lpszConverterName, bool bDirectionForward, int eNormOutputForm);
 
+    /// Add a converter to the repository (e.g. .Add \"Annapurna<>UNICODE\", \"C:\\Program Files\\Common Files\\SIL\\MapsTables\\Annapurna.tec\", Legacy_to_from_Unicode, \"SIL-ANNAPURNA_05-2002\", \"UNICODE\", ProcessEncodingConversion)
+    /// <param name="mappingName">friendly name key that the converter is to be accessed with</param>
+    /// <param name="converterSpec">technical spec of the converter (e.g. TECkit & CC = filespec to map)</param>
+    /// <param name="conversionType">ConvType parameter indicating the type of conversion (e.g. "Legacy_to_from_Unicode")</param>
+    /// <param name="leftEncoding">optional technical name of the left-hand side encoding (e.g. SIL-ANNAPURNA-05)</param>
+    /// <param name="rightEncoding">optional technical name of the right-hand side encoding (e.g. UNICODE)</param>
+    /// <param name="processType">flag to indicate teh implementation/transduction type (e.g. UnicodeEncodingConversion) from which you can do later filtering (e.g. ByEncodingID)</param>
+    int EncConverterAddConverter(
+        const char * lpszConverterName, const char * converterSpec, int conversionType,
+        const char * leftEncoding, const char * rightEncoding, int processType);
+
     // this function can be used to convert a string of narrow bytes using the named converter
     //  this string of narrow bytes ought to be UTF8 if the input to the conversion is Unicode.
     //  You should pass the length of the buffer for the converted result.
@@ -58,7 +71,7 @@ extern "C" {
 #ifdef __cplusplus
 }   // Close the extern C.
 
-//  Here are some snippets for using the above:
+//  Here are some snippets for using ECDriver on MS Windows:
 
 /*
 // this code is to ask the user to choose a converter
