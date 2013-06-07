@@ -4,15 +4,19 @@
  * ECDriver is a library of unmanaged code that embeds Mono to call
  * the C# EncConverters core, starting with the EncConverters class in
  * SilEncConverters40.dll.
- * It implements the same interface as the Windows ECDriver.
+ * It implements nearly the same interface as the Windows ECDriver,
+ * but uses only narrow UTF8 streams, not wide ("W") UTF16 streams.
  *
  * When building this file, be sure to link with mono-2.0
+ * Also define LIBDIR, for example -DLIBDIR=/usr/lib/encConverters.
  *
  * Created by Jim Kornelsen on 29-Oct-2011.
  *
  * 25-Jan-2012 JDK  Specify MONO_PATH to find other assemblies.
  * 27-Mar-2012 JDK  Fixed bug: Maps require std::string to do string comparison.
  * 01-Jun-2013 JDK  Fixed crash: Don't call methGetMapByName from InitConv().
+ * 03-Jun-2013 JDK  Added EncConverterAddConverter().
+ * 06-Jun-2013 JDK  Fail gracefully if a C# exception occurs.
  */
 
 #include "ecdriver.h"
@@ -27,39 +31,48 @@
 #include <cstring>      // for strcmp
 #include <map>
 
-//const char * ASSEMBLYFILE = "SilEncConverters40.dll";     // located in working directory
-const char * ASSEMBLYFILE  = "/usr/lib/encConverters/SilEncConverters40.dll";
-const char * ASSEMBLIESDIR = "MONO_PATH=/usr/lib/encConverters";  // look for other SEC assemblies here
+// Path to EncConverters assembly, based on LIBDIR defined by compiler flag.
+#define STRINGIFY(x) #x             // turn x into "x"
+#define TOSTRING(x) STRINGIFY(x)    // expand macro x into its value
+const char * ASSEMBLYFILE  = TOSTRING(LIBDIR) "/SilEncConverters40.dll";
+const char * ASSEMBLIESDIR = "MONO_PATH=" TOSTRING(LIBDIR);
+const char * MONO_REGISTRY = "MONO_REGISTRY_PATH=/var/lib/fieldworks/registry";
 
 // Uncomment the following line for verbose debugging output.
-//#define VERBOSE_DEBUGGING
+#define VERBOSE_DEBUGGING
 
-bool loaded=false;  // true when methods have been loaded
+bool loaded = false;  // true when methods have been loaded
 MonoDomain * domain                  = NULL;
 MonoClass  * ecsClass                = NULL;
 MonoObject * ecsObj                  = NULL;
+MonoMethod * methAddConv             = NULL;
 MonoMethod * methAutoSelect          = NULL;
-MonoMethod * methMakeWindowGoAway    = NULL;
+MonoMethod * methConvert             = NULL;
+MonoMethod * methGetConverterName    = NULL;
 MonoMethod * methGetDirectionForward = NULL;
 MonoMethod * methSetDirectionForward = NULL;
+MonoMethod * methGetMapByName        = NULL;
 MonoMethod * methGetNormalizeOutput  = NULL;
 MonoMethod * methSetNormalizeOutput  = NULL;
-MonoMethod * methGetConverterName    = NULL;
-MonoMethod * methGetMapByName        = NULL;
+MonoMethod * methMakeWindowGoAway    = NULL;
 MonoMethod * methToString            = NULL;
-MonoMethod * methConvert             = NULL;
 std::map<std::string, MonoObject *> mapECs;  // a map of EC objects
 void * noArgs[0];   // when no arguments need to be passed
 
-// Embed Mono, then load C# EncConverter classes and methods.
+//******************************************************************************
+/**
+ * Embed Mono, then load C# EncConverter classes and methods.
+ */
 void LoadClasses(void)
 {
     if (loaded) return;
 #ifdef VERBOSE_DEBUGGING
     fprintf(stderr, "ECDriver: Loading Mono and SEC classes.\n");
+    fprintf(stderr, "ECDriver: %s.\n", ASSEMBLIESDIR);
 #endif
 
     putenv((char *)ASSEMBLIESDIR);
+    putenv((char *)MONO_REGISTRY);
     domain = mono_jit_init(ASSEMBLYFILE);
     mono_config_parse(NULL);  // prevents System.Drawing.GDIPlus exception
     MonoAssembly *assembly = mono_domain_assembly_open (domain, ASSEMBLYFILE);
@@ -108,6 +121,8 @@ void LoadClasses(void)
 #endif
         if (strcmp (methName, "AutoSelect") == 0) {
             methAutoSelect = m;
+        } else if (strcmp (methName, "Add") == 0) {
+            methAddConv = m;
         } else if (strcmp (methName, "MakeSureTheWindowGoesAway") == 0) {
             methMakeWindowGoAway = m;
         } else if (strcmp (methName, "get_Item") == 0) {
@@ -159,6 +174,7 @@ void LoadClasses(void)
     loaded = true;
 }
 
+//******************************************************************************
 void Cleanup(void)
 {
 #ifdef VERBOSE_DEBUGGING
@@ -172,20 +188,28 @@ void Cleanup(void)
 #endif
 }
 
+//******************************************************************************
 bool IsEcInstalled(void)
 {
     LoadClasses();
     return loaded;
 }
 
-MonoObject * GetEncConverter(const char * sConverterName)
+//******************************************************************************
+/**
+ * pEC should be the address of a pointer which will be set to result object.
+ * returns 0 for success, -1 for failure, -6 for exception
+ * This is an internal method, not to be called from other code.
+ */
+int GetEncConverter(const char * sConverterName, MonoObject ** pEC)
 {
     if (mapECs.find(sConverterName) != mapECs.end())
     {
 #ifdef VERBOSE_DEBUGGING
         fprintf(stderr, "ECDriver: Got converter %s.\n", sConverterName);
 #endif
-        return mapECs[sConverterName];
+        *pEC = mapECs[sConverterName];
+        return 0;
     }
 #ifdef VERBOSE_DEBUGGING
     fprintf(stderr, "ECDriver: Couldn't get converter %s.\n", sConverterName);
@@ -201,19 +225,25 @@ MonoObject * GetEncConverter(const char * sConverterName)
     MonoString * mConverterName = mono_string_new (domain, sConverterName);
     void * args1[1];
     args1[0] = mConverterName;
-    MonoObject * pEC = mono_runtime_invoke(
-                       methGetMapByName, ecsObj, args1, NULL);
-    if (pEC != NULL)
+    MonoObject * mException = NULL;
+    *pEC = mono_runtime_invoke(methGetMapByName, ecsObj, args1, &mException);
+    if (mException != NULL) {
+        fprintf(stderr, "ECDriver: An exception was thrown getting map.\n");
+        mono_runtime_invoke(methMakeWindowGoAway, ecsObj, noArgs, NULL);
+        return /*ErrStatus.Exception*/ -6;
+    }
+    if (*pEC != NULL)
     {
-        mapECs[sConverterName] = pEC;
-        return pEC;
+        mapECs[sConverterName] = *pEC;
+        return 0;
     }
 #ifdef VERBOSE_DEBUGGING
     fprintf(stderr, "ECDriver: Did not find map.\n");
 #endif
-    return 0;
+    return -1;
 }
 
+//******************************************************************************
 int EncConverterSelectConverter (
     char * sConverterName, bool & bDirectionForward, int & eNormOutputForm)
 {
@@ -223,9 +253,15 @@ int EncConverterSelectConverter (
     int convType = 0;   // convType Unknown, defined in ECInterfaces.cs
     void * args1[1];
     args1[0] = &convType;
+    MonoObject * mException = NULL;
     MonoObject *pEC = mono_runtime_invoke(
-                         methAutoSelect, ecsObj, args1, NULL);
+                         methAutoSelect, ecsObj, args1, &mException);
     mono_runtime_invoke(methMakeWindowGoAway, ecsObj, noArgs, NULL);
+    if (mException != NULL) {
+        fprintf(stderr,
+                "ECDriver: An exception was thrown during selection.\n");
+        return /*ErrStatus.Exception*/ -6;
+    }
     if (pEC == NULL) {
         fprintf(stderr, "ECDriver: Did not get converter.\n");
         return -1;
@@ -272,15 +308,19 @@ int EncConverterSelectConverter (
     return 0;
 }
 
+//******************************************************************************
 int EncConverterInitializeConverter(
     const char * sConverterName, bool bDirectionForward, int eNormOutputForm)
 {
     LoadClasses();
     if (!loaded) return -1;
 
-    MonoObject * pEC = GetEncConverter(sConverterName);
-    if (pEC == 0)
-        return /*NameNotFound*/ -7;
+    MonoObject * pEC = NULL;
+    int err = GetEncConverter(sConverterName, &pEC);
+    if (err == -6)
+        return /*ErrStatus.Exception*/ -6;
+    else if (err == -1 || pEC == 0)
+        return /*ErrStatus.NameNotFound*/ -7;
  
     void * args2[1];
     args2[0] = &bDirectionForward;
@@ -299,6 +339,68 @@ int EncConverterInitializeConverter(
     return 0;
 }
 
+//******************************************************************************
+int EncConverterAddConverter(
+    const char * sConverterName,
+    const char * sConverterSpec,
+    int          conversionType,
+    const char * sLeftEncoding,
+    const char * sRightEncoding,
+    int          processType)
+{
+    LoadClasses();
+    if (!loaded) return -1;
+
+    MonoObject * pEC = NULL;
+    int err = GetEncConverter(sConverterName, &pEC);
+    if (err == -6)
+        return /*ErrStatus.Exception*/ -6;
+    if (pEC != 0)
+    {
+        fprintf(stderr, "ECDriver: converter %s is already available.\n",
+                sConverterName);
+        return 0;
+    }
+
+    MonoString * mConverterName = mono_string_new(domain, sConverterName);
+    MonoString * mConverterSpec = mono_string_new(domain, sConverterSpec);
+    MonoString * mLeftEncoding  = mono_string_new(domain, sLeftEncoding);
+    MonoString * mRightEncoding = mono_string_new(domain, sRightEncoding);
+    void * args1[6];
+    args1[0] = mConverterName;
+    args1[1] = mConverterSpec;
+    args1[2] = &conversionType;
+    args1[3] = mLeftEncoding;
+    args1[4] = mRightEncoding;
+    args1[5] = &processType;
+    MonoObject * mException = NULL;
+#ifdef VERBOSE_DEBUGGING
+    fprintf(stderr, "ECDriver: Calling methAddConv.\n");
+#endif
+    mono_runtime_invoke (methAddConv, ecsObj, args1, &mException);
+#ifdef VERBOSE_DEBUGGING
+    fprintf(stderr, "ECDriver: Invoked methAddConv.\n");
+#endif
+
+    if (mException != NULL) {
+        fprintf(stderr,
+                "ECDriver: An exception was thrown while adding converter.\n");
+        mono_runtime_invoke(methMakeWindowGoAway, ecsObj, noArgs, NULL);
+        return /*ErrStatus.Exception*/ -6;
+    } 
+    err = GetEncConverter(sConverterName, &pEC);
+    if (err == -6)
+        return /*ErrStatus.Exception*/ -6;
+    else if (err == -1 || pEC == 0)
+    {
+        fprintf(stderr, "ECDriver: failed to add converter %s.\n",
+                sConverterName);
+        return -1;
+    }
+    return 0;
+}
+
+//******************************************************************************
 /*
  When calling this function, provide a writable buffer for sOutput.
  If the result is bigger than nOutputLen, the result will be truncated.
@@ -309,24 +411,37 @@ int EncConverterConvertString (
     char *       sOutput,
     int          nOutputLen)
 {
+#ifdef VERBOSE_DEBUGGING
+    fprintf(stderr, "ECDriver: EncConverterConvertString BEGIN.\n");
+#endif
     LoadClasses();
     if (!loaded) return -1;
 
-    MonoObject * pEC = GetEncConverter(sConverterName);
-    if (pEC == 0)
-        return /*NameNotFound*/ -7;
+    MonoObject * pEC = NULL;
+    int err = GetEncConverter(sConverterName, &pEC);
+    if (err == -6)
+        return /*ErrStatus.Exception*/ -6;
+    else if (err == -1 || pEC == 0)
+        return /*ErrStatus.NameNotFound*/ -7;
  
     MonoString * mInput = mono_string_new(domain, sInput);
     void * args1[1];
     args1[0] = mInput;
+    MonoObject * mException = NULL;
 #ifdef VERBOSE_DEBUGGING
     fprintf(stderr, "ECDriver: Calling methConvert.\n");
 #endif
     MonoString * mOutput = (MonoString *) mono_runtime_invoke (
-                           methConvert, pEC, args1, NULL);
+                           methConvert, pEC, args1, &mException);
 #ifdef VERBOSE_DEBUGGING
     fprintf(stderr, "ECDriver: Method invoked.\n");
 #endif
+    if (mException != NULL) {
+        fprintf(stderr,
+                "ECDriver: An exception was thrown during conversion.\n");
+        mono_runtime_invoke(methMakeWindowGoAway, ecsObj, noArgs, NULL);
+        return /*ErrStatus.Exception*/ -6;
+    }
     char * sTemp = mono_string_to_utf8(mOutput);
     strncpy(sOutput, sTemp, nOutputLen);
     sOutput[nOutputLen - 1] = '\0'; // make sure string is null-terminated
@@ -338,15 +453,19 @@ int EncConverterConvertString (
     return 0;
 }
 
+//******************************************************************************
 int EncConverterConverterDescription (
     const char * sConverterName, char * sDescription, int nDescriptionLen)
 {
     LoadClasses();
     if (!loaded) return -1;
 
-    MonoObject * pEC = GetEncConverter(sConverterName);
-    if (pEC == 0)
-        return /*NameNotFound*/ -7;
+    MonoObject * pEC = NULL;
+    int err = GetEncConverter(sConverterName, &pEC);
+    if (err == -6)
+        return /*ErrStatus.Exception*/ -6;
+    else if (err == -1 || pEC == 0)
+        return /*ErrStatus.NameNotFound*/ -7;
 
     MonoString * mDescription = (MonoString *) mono_runtime_invoke (
                                 methToString, pEC, noArgs, NULL);

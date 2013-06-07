@@ -1,11 +1,13 @@
 # Master Makefile for the encConverters package
 # Makefile.in created January 20, 2012 by Stephen McConnel
+#
+# 06-Jun-13 JDK  Added uninstall target.
 
 @SET_MAKE@
 # the next line requires GNU make ...
-MAKEFLAGS=#--no-print-directory
-srcdir = @srcdir@
-VPATH  = @srcdir@
+MAKEFLAGS   =#--no-print-directory
+srcdir      = @srcdir@
+VPATH       = @srcdir@
 INSTALL     = @INSTALL@
 prefix      = @prefix@
 exec_prefix = @exec_prefix@
@@ -14,12 +16,12 @@ OUTDIR      = $(ROOTDIR)/output/Debug
 RELEASEOUT  = $(ROOTDIR)/output/Release
 MONO        = @MONO@
 MONO_LDFLAGS= @MONO_LDFLAGS@
+LIBDIR      = @libdir@/encConverters
 
 SRCDIRS = src/IcuEC src/PyScriptEC src/ECDriver/linux
 DLLS    = ECInterfaces.dll SilEncConverters40.dll CcEC.dll \
   IcuEC.dll PyScriptEC.dll PerlExpressionEC.dll AIGuesserEC.dll
 # CodePageEC.dll
-LIBDIR  = $(exec_prefix)/lib/encConverters
 PLUGINS = "AI 4.0.0.0 Plugin Details.xml" "CC 4.0.0.0 Plugin Details.xml" \
     "EC 4.0.0.0 Plugin Details.xml" "IcuEC 4.0.0.0 Plugin Details.xml" \
     "PerlEC 4.0.0.0 Plugin Details.xml" "PythonEC 4.0.0.0 Plugin Details.xml"
@@ -102,8 +104,12 @@ install: release
 	done; \
 	fi
 	@cp -p src/EncCnvtrs/SilEncConverters40.dll.config $(DESTDIR)$(LIBDIR)
-	@$(INSTALL) -d $(DESTDIR)/usr/share/encConverters
-	@$(INSTALL) values.xml $(DESTDIR)/usr/share/encConverters
+	@$(INSTALL) -d $(DESTDIR)$(prefix)/share/encConverters
+	@$(INSTALL) values.xml $(DESTDIR)$(prefix)/share/encConverters
+
+uninstall:
+	rm -f -r $(DESTDIR)$(LIBDIR)/*
+	rm -f $(DESTDIR)$(prefix)/share/encConverters/values.xml
 
 NUNITROOT=`which nunit-console | sed s=/bin/nunit-console=/lib/mono=`
 check: all

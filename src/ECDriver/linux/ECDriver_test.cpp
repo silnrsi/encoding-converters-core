@@ -2,15 +2,19 @@
 // ECDriver_test.cpp
 //
 // Test code to verify that the ECDriver works correctly.
-// Before running, manually create a converter called capsTest.
-// Results will be given in STDERR, and other messages will be in STDOUT.
+// A converter will be added to the repository.
+// Results will be given in STDERR, and other messages in STDOUT.
 //
 // Created by Jim Kornelsen on May 30 2013.
+//
+// 03-Jun-13 JDK  Automatically add converter.
 //
 
 #include <stdio.h>
 #include <string.h>
 #include "ecdriver.h"
+
+const char convName_toUpper[] = "testECDriver_toUpper";
 
 typedef bool (*funcTest_t)(void);
 
@@ -40,35 +44,63 @@ bool assertContains(char * s1, char * s2)
     }
 }
 
+bool addTestConverter()
+{
+    const int Unicode_to_from_Unicode = 4;
+    const int ICUTransliteration      = 0x0004;
+    if (IsEcInstalled())
+    {
+        int err = EncConverterAddConverter (
+            convName_toUpper,
+            "Any-Upper",
+            Unicode_to_from_Unicode,
+            "",
+            "",
+            ICUTransliteration);
+        return (err == 0);
+    }
+    printf("Cannot find ECDriver.\n");
+    return false;
+}
+
 bool testCaps()
 {
     if (IsEcInstalled())
     {
-        const char sConverterName[] = "capsTest";
         const bool bDirectionForward = true;
         const int eNormFormOutput = 0;
         if (EncConverterInitializeConverter (
-            sConverterName, bDirectionForward, eNormFormOutput) == 0)
+            convName_toUpper, bDirectionForward, eNormFormOutput) == 0)
         {
             char sDescription[1000];
             EncConverterConverterDescription(
-                sConverterName, sDescription, 1000);
+                convName_toUpper, sDescription, 1000);
             //fprintf(stderr, "Description is %s.", sDescription);
-            if (!assertContains(sDescription, (char *)"Name: 'capsTest'"))
+            char sExpected[256];    // what we expect the results to contain
+            strcpy(sExpected, "Name: '");
+            strcat(sExpected, convName_toUpper);
+            strcat(sExpected, "'");
+            if (!assertContains(sDescription, sExpected))
                 return false;
 
             // input data is unicode bytes (UTF-8)
             const char sInput[] = "abCde";
             char sOutput[1000];
             EncConverterConvertString (
-                sConverterName, sInput, sOutput, 1000);
+                convName_toUpper, sInput, sOutput, 1000);
             // sOutput contains the unicode result (UTF-8)
             //fprintf(stderr, "Result is %s.", sOutput);
             if (!assertEqual(sOutput, (char *)"ABCDE")) return false;
 
             return true;
         }
+        else
+        {
+            printf("Error initializing converter.\n");
+            return false;
+        }
     }
+    printf("Cannot find ECDriver.\n");
     return false;
 }
 
@@ -97,15 +129,15 @@ bool testRepeat()
     {
         if (IsEcInstalled())
         {
+            char sConverterName[1000];
 //#define CALL_AUTOSELECT   // uncomment to call EncConverters.AutoSelect()
 #ifdef CALL_AUTOSELECT 
-            char sConverterName[1000];
             bool bDirectionForward = true;
             int eNormFormOutput = 0;
             if (EncConverterSelectConverter (
                 sConverterName, bDirectionForward, eNormFormOutput) == 0)
 #else
-            const char sConverterName[] = "capsTest";
+            strcpy(sConverterName, convName_toUpper);
             const bool bDirectionForward = true;
             const int eNormFormOutput = 0;
             if (EncConverterInitializeConverter (
@@ -133,6 +165,7 @@ bool testRepeat()
         }
         else
         {
+            printf("Cannot find ECDriver.\n");
             return false;
         }
     }
@@ -141,6 +174,9 @@ bool testRepeat()
 
 int main(int argc, char **argv)
 {
+    fprintf(stderr, "ECDriver_test.main()\n");
+    if (!addTestConverter())
+        return -1;
     int num_failed      = 0;
     const int NUM_TESTS = 2;
     funcTest_t testFunctions[NUM_TESTS];
@@ -148,7 +184,7 @@ int main(int argc, char **argv)
     testFunctions[1] = &testRepeat;
     for (int testnum = 0; testnum < NUM_TESTS; testnum++)
     {
-        fprintf(stderr, "Running test %d... ", testnum);
+        fprintf(stderr, "Running test %d... ", testnum + 1);
         funcTest_t func = testFunctions[testnum];
         bool ok = (*func)();
         if (ok) {
@@ -158,11 +194,12 @@ int main(int argc, char **argv)
             num_failed++;
         }
     }
-    fprintf(stderr, "\n\n"); // stdout results may perhaps be shown after this.
+    fprintf(stderr, "\n\n"); // stdout results may perhaps flush out after this.
     if (num_failed == 0) {
         printf("All %d tests passed.\n", NUM_TESTS);
     } else {
         printf("%d of %d tests failed.\n", num_failed, NUM_TESTS);
     }
+    Cleanup();
     return 0;
 }

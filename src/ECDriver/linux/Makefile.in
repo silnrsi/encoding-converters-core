@@ -1,12 +1,14 @@
 # Master Makefile for the ECDriver library
 # Makefile.in created January 20, 2012 by Stephen McConnel
 #
-# 30-May-13 JDK  Add ECDriver_test.
+# 30-May-13 JDK  Added ECDriver_test.
+# 05-Jun-13 JDK  Added -DLIBDIR flag.
+# 06-Jun-13 JDK  Remove library version numbers.
 
 VPATH       = @srcdir@
 CXX         = @CXX@
 CC          = @CC@
-CFLAGS      = @CFLAGS@ @DEFS@ -I. -I../..
+CFLAGS      = @CFLAGS@ @DEFS@ -I.
 INSTALL     = @INSTALL@
 prefix      = @prefix@
 exec_prefix = @exec_prefix@
@@ -16,34 +18,26 @@ BUILDDIR    = $(ROOTDIR)/build/Obj
 OUTDIR      = $(ROOTDIR)/output/Debug
 RELEASEBLD  = $(ROOTDIR)/build/Obj/Release
 RELEASEOUT  = $(ROOTDIR)/output/Release
+LIBDIR      = @libdir@/encConverters
 MONO_INCLUDE= @MONO_CPPFLAGS@
 MONO_LDFLAGS= @MONO_LDFLAGS@
-ECHEADERDIR=../EncCnvtrs/lib
-ECHEADER=$(ECHEADERDIR)/CEncConverter.h
 
-LIBDIR = $(exec_prefix)/lib/encConverters
-
-all: $(BUILDDIR) $(OUTDIR)/libecdriver.so.1.0
+all: $(BUILDDIR) $(OUTDIR)/libecdriver.so
 
 $(BUILDDIR):
 	mkdir -p $(BUILDDIR)
 	mkdir -p $(OUTDIR)
 
-$(OUTDIR)/libecdriver.so.1.0: $(BUILDDIR)/ECDriver.o
-	g++ -shared -Wl,-soname,libecdriver.so.1 \
-  -o $(OUTDIR)/libecdriver.so.1.0 $(BUILDDIR)/ECDriver.o \
+$(OUTDIR)/libecdriver.so: $(BUILDDIR)/ECDriver.o
+	g++ -shared -Wl,-soname,libecdriver.so \
+  -o $(OUTDIR)/libecdriver.so $(BUILDDIR)/ECDriver.o \
   $(MONO_LDFLAGS) -lmono-2.0
-	rm -f  $(OUTDIR)/libecdriver.so $(OUTDIR)/libecdriver.so.1
-	ln -s libecdriver.so.1.0 $(OUTDIR)/libecdriver.so.1
-	ln -s libecdriver.so.1.0 $(OUTDIR)/libecdriver.so
 
 $(BUILDDIR)/ECDriver.o: $(SRCDIR)ECDriver.cpp $(SRCDIR)ecdriver.h
 	g++ -Wall -fPIC -c $(SRCDIR)ECDriver.cpp -o $(BUILDDIR)/ECDriver.o \
-  $(MONO_INCLUDE)
+  $(MONO_INCLUDE) -DLIBDIR=$(LIBDIR)
 
 test: $(OUTDIR)/ECDriver_example_dynamic $(OUTDIR)/ECDriver_example_shared $(OUTDIR)/ECDriver_test
-	#LD_LIBRARY_PATH=$(OUTDIR):$(LD_LIBRARY_PATH) $(OUTDIR)/ECDriver_example_dynamic
-	#LD_LIBRARY_PATH=$(OUTDIR):$(LD_LIBRARY_PATH) $(OUTDIR)/ECDriver_example_shared
 	LD_LIBRARY_PATH=$(OUTDIR):$(LD_LIBRARY_PATH) $(OUTDIR)/ECDriver_test
 
 $(OUTDIR)/ECDriver_test: $(BUILDDIR)/ECDriver_test.o
@@ -63,23 +57,20 @@ $(OUTDIR)/ECDriver_example_shared: $(BUILDDIR)/example_shared.o
 $(BUILDDIR)/example_shared.o: $(SRCDIR)example_shared.cpp
 	g++ -Wall -g -c $(SRCDIR)example_shared.cpp -o $(BUILDDIR)/example_shared.o
 
-release: $(RELEASEBLD) $(RELEASEOUT)/libecdriver.so.1.0
+release: $(RELEASEBLD) $(RELEASEOUT)/libecdriver.so
 
 $(RELEASEBLD):
 	mkdir -p $(RELEASEBLD)
 	mkdir -p $(RELEASEOUT)
 
-$(RELEASEOUT)/libecdriver.so.1.0: $(RELEASEBLD)/ECDriver.o
-	g++ -shared -Wl,-soname,libecdriver.so.1 \
-  -o $(RELEASEOUT)/libecdriver.so.1.0 $(RELEASEBLD)/ECDriver.o \
+$(RELEASEOUT)/libecdriver.so: $(RELEASEBLD)/ECDriver.o
+	g++ -shared -Wl,-soname,libecdriver.so \
+  -o $(RELEASEOUT)/libecdriver.so $(RELEASEBLD)/ECDriver.o \
   $(MONO_LDFLAGS) -lmono-2.0
-	rm -f  $(RELEASEOUT)/libecdriver.so $(RELEASEOUT)/libecdriver.so.1
-	ln -s libecdriver.so.1.0 $(RELEASEOUT)/libecdriver.so.1
-	ln -s libecdriver.so.1.0 $(RELEASEOUT)/libecdriver.so
 
 $(RELEASEBLD)/ECDriver.o: $(SRCDIR)ECDriver.cpp $(SRCDIR)ecdriver.h
 	g++ -Wall -fPIC -c $(SRCDIR)ECDriver.cpp -o $(RELEASEBLD)/ECDriver.o \
-  $(MONO_INCLUDE)
+  $(MONO_INCLUDE) -DLIBDIR=$(LIBDIR)
 
 testrel: $(RELEASEOUT)/ECDriver_test
 	LD_LIBRARY_PATH=$(RELEASEOUT):$(LD_LIBRARY_PATH) $(RELEASEOUT)/ECDriver_test
@@ -103,6 +94,6 @@ distclean: clean
 
 install: release
 	mkdir -p $(DESTDIR)$(LIBDIR)
-	$(INSTALL) $(RELEASEOUT)/libecdriver.so.1.0 $(DESTDIR)$(LIBDIR)
+	$(INSTALL) $(RELEASEOUT)/libecdriver.so $(DESTDIR)$(LIBDIR)
 
 check:

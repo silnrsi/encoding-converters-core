@@ -1,3 +1,5 @@
+// 03-Jun-13 JDK  Added option to select converter.
+
 using System;
 using System.IO;
 using ECInterfaces;
@@ -85,9 +87,6 @@ namespace ECFileConverter
                 }
                 else if( arg == "i32" )
                 {
-#if VERBOSE_DEBUGGING
-                    Console.WriteLine("ECFileConv: Setting InputEncoding UTF32");
-#endif
 					m_eParamState = ParamState.eParamInputFileName;
                     InputEncoding = System.Text.Encoding.UTF32;
                 }
@@ -153,7 +152,7 @@ namespace ECFileConverter
         }
 
 
-        private const string sUsage = "Usage:\nECFileConverter (/n <ConverterName> /r(everse)) {/i|i8|i16} <InputFileName> /{o|o8|o16} <OutputFileName>\n\nwhere:\n  no ConverterFriendlyName parameter means no conversion (except the file encoding)\n  r means run the converter in reverse\n  i causes the the input file to be read as an Ansi encoded file (also for narrow, legacy-encoded, non-Ansi files)\n  i8 causes it to be read as a UTF8 encoded file\n  i16 causes it to be read as a UTF16 encoded file\n  (same details for the 'o' forms for encoding the output file)";
+        private const string sUsage = "Usage:\nECFileConverter (/n <ConverterName> /r(everse)) {/i|i8|i16} <InputFileName> /{o|o8|o16} <OutputFileName>\n\nwhere:\n  no ConverterName parameter means no conversion (except the file encoding)\n  ConverterName askMe displays the converter selection dialog\n  r means run the converter in reverse\n  i causes the the input file to be read as an Ansi encoded file (also for narrow, legacy-encoded, non-Ansi files)\n  i8 causes it to be read as a UTF8 encoded file\n  i16 causes it to be read as a UTF16 encoded file\n  (same details for the 'o' forms for encoding the output file)";
         
         protected enum ParamState   
         {
@@ -256,30 +255,41 @@ namespace ECFileConverter
 				EncConverters aECs = new EncConverters();
 #if VERBOSE_DEBUGGING
                 Console.WriteLine("ECFileConv: Created EncConverters object.");
-				//// here's how you'd add the map programmatically (of course,
-				////  update the path here
-				//string mapLoc = Path.Combine(GetProjectFolder, "ToUpper.tec");
-				//Console.WriteLine("mapLoc " + mapLoc);
-				//aECs.AddConversionMap(strConverterName, Path.Combine(GetProjectFolder, "ToUpper.tec"),
-				//    ConvType.Unicode_to_from_Unicode, EncConverters.strTypeSILtec, 
-				//    "UNICODE", "UNICODE", ProcessTypeFlags.DontKnow);
-				//Console.WriteLine("Added map.");
 #endif
-				//aEC = aECs[strConverterName];    // e.g. "Devanagri<>Latin(ICU)"
-
+                if (strConverterName.ToLower() == "askme")
+                {
 #if VERBOSE_DEBUGGING
-                Console.WriteLine("ECFileConv: Calling AutoSelect.");
+                    Console.WriteLine("ECFileConv: Calling AutoSelect.");
 #endif
-				aEC = aECs.AutoSelect(ConvType.Unknown);
+                    aEC = aECs.AutoSelect(ConvType.Unknown);
+                    if (aEC == null)
+                    {
+                        // user probably pressed Cancel
+                        Console.WriteLine("ECFileConv: No converter was selected.");
+                        return;
+                    }
+                }
+                else
+                {
+                    //// here's how you'd add the map programmatically (of course,
+                    ////  update the path here
+                    //string mapLoc = Path.Combine(GetProjectFolder, "ToUpper.tec");
+                    //Console.WriteLine("mapLoc " + mapLoc);
+                    //aECs.AddConversionMap(strConverterName, Path.Combine(GetProjectFolder, "ToUpper.tec"),
+                    //    ConvType.Unicode_to_from_Unicode, EncConverters.strTypeSILtec, 
+                    //    "UNICODE", "UNICODE", ProcessTypeFlags.DontKnow);
+                    //Console.WriteLine("Added map.");
+                    aEC = aECs[strConverterName];    // e.g. "Devanagri<>Latin(ICU)"
+                    if (aEC == null)
+                        throw new ApplicationException(
+                            String.Format("The converter '{0}' wasn't in the repository. Did you forget to add it?",
+                                          strConverterName));
+                }
+#if VERBOSE_DEBUGGING
+                Console.WriteLine("ECFileConv: Got EncConverter.");
+#endif
             }
 
-            if (aEC == null)
-                throw new ApplicationException(
-                    String.Format("The converter '{0}' wasn't in the repository. Did you forget to add it?",
-                                  strConverterName));
-#if VERBOSE_DEBUGGING
-			Console.WriteLine("ECFileConv: Got EncConverter.");
-#endif
             // open the input and output files using the given encoding formats
             StreamReader srReadLine = new StreamReader(strInputFileName, inEnc, true);
             srReadLine.BaseStream.Seek(0, SeekOrigin.Begin);
