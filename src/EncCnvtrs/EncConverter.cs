@@ -502,28 +502,13 @@ namespace SilEncConverters40
 
             // allow the converter engine's (and/or its COM wrapper) to do some preprocessing.
             EncodingForm eFormEngineIn = EncodingForm.Unspecified, eFormEngineOut = EncodingForm.Unspecified;
-            try
-            {
-                PreConvert(
-                    eInEncodingForm,        // [in] form in the BSTR
-                    ref eFormEngineIn,      // [out] form the conversion engine wants, etc.
-                    eOutEncodingForm,
-                    ref eFormEngineOut,
-                    ref eNormalizeOutput,
-                    bForward);
-            }
-            catch (DllNotFoundException e)
-            {
-                MessageBox.Show("Failed to load library file: " + e.Message + ". Check path.",
-                                traceSwitch.DisplayName);
-                throw e;
-            }
-            catch (EntryPointNotFoundException e) 
-            {
-                MessageBox.Show("Failed to find function in library file: " + e.Message,
-                                traceSwitch.DisplayName);
-                throw e;
-            }
+            PreConvert(
+                eInEncodingForm,        // [in] form in the BSTR
+                ref eFormEngineIn,      // [out] form the conversion engine wants, etc.
+                eOutEncodingForm,
+                ref eFormEngineOut,
+                ref eNormalizeOutput,
+                bForward);
             int nBufSize = baInput.Length;
             fixed (byte* lpInBuffer = baInput)
             {
@@ -589,28 +574,13 @@ namespace SilEncConverters40
 
             // allow the converter engine's (and/or its COM wrapper) to do some preprocessing.
             EncodingForm eFormEngineIn = EncodingForm.Unspecified, eFormEngineOut = EncodingForm.Unspecified;
-            try
-            {
-                PreConvert(
-                    eInEncodingForm,    // [in] form in the BSTR
-                    ref eFormEngineIn,  // [out] form the conversion engine wants, etc.
-                    eOutEncodingForm,
-                    ref eFormEngineOut,
-                    ref eNormalizeOutput,
-                    bForward);
-            }
-            catch (DllNotFoundException e)
-            {
-                MessageBox.Show("Failed to load library file: " + e.Message + ". Check path.",
-                                traceSwitch.DisplayName);
-                throw e;
-            }
-            catch (EntryPointNotFoundException e) 
-            {
-                MessageBox.Show("Failed to find function in library file: " + e.Message,
-                                traceSwitch.DisplayName);
-                throw e;
-            }
+            PreConvert(
+                eInEncodingForm,    // [in] form in the BSTR
+                ref eFormEngineIn,  // [out] form the conversion engine wants, etc.
+                eOutEncodingForm,
+                ref eFormEngineOut,
+                ref eNormalizeOutput,
+                bForward);
             // get enough space for us to normalize the input data (6x ought to be enough)
             int nBufSize = sInput.Length * 6;
             byte[] abyInBuffer = new byte[nBufSize];
@@ -721,30 +691,15 @@ namespace SilEncConverters40
 
             // allow the converter engine's (and/or its COM wrapper) to do some preprocessing.
             EncodingForm eFormEngineIn = EncodingForm.Unspecified, eFormEngineOut = EncodingForm.Unspecified;
-            try
-            {
-                PreConvert
-                    (
-                    eInEncodingForm,	// [in] form in the BSTR
-                    ref eFormEngineIn,  // [out] form the conversion engine wants, etc.
-                    eOutEncodingForm,
-                    ref eFormEngineOut,
-                    ref eNormalizeOutput,
-                    bForward
-                    );
-            }
-            catch (DllNotFoundException e)
-            {
-                MessageBox.Show("Failed to load library file: " + e.Message + ". Check path.",
-                                traceSwitch.DisplayName);
-                throw e;
-            }
-            catch (EntryPointNotFoundException e) 
-            {
-                MessageBox.Show("Failed to find function in library file: " + e.Message,
-                                traceSwitch.DisplayName);
-                throw e;
-            }
+            PreConvert
+                (
+                eInEncodingForm,	// [in] form in the BSTR
+                ref eFormEngineIn,  // [out] form the conversion engine wants, etc.
+                eOutEncodingForm,
+                ref eFormEngineOut,
+                ref eNormalizeOutput,
+                bForward
+                );
 
             // get enough space for us to normalize the input data (6x ought to be enough)
              int nBufSize = sInput.Length * 6;
