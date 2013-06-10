@@ -17,6 +17,7 @@
  * 01-Jun-2013 JDK  Fixed crash: Don't call methGetMapByName from InitConv().
  * 03-Jun-2013 JDK  Added EncConverterAddConverter().
  * 06-Jun-2013 JDK  Fail gracefully if a C# exception occurs.
+ * 10-Jun-2013 JDK  Display C# exceptions in an alert window.
  */
 
 #include "ecdriver.h"
@@ -27,8 +28,10 @@
 #include <mono/metadata/mono-config.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string>       // for std::string
-#include <cstring>      // for strcmp
+#include <string>       // std::string
+#include <cstring>      // strcmp
+#include <unistd.h>     // execl
+#include <sys/wait.h>
 #include <map>
 
 // Path to EncConverters assembly, based on LIBDIR defined by compiler flag.
@@ -58,6 +61,52 @@ MonoMethod * methMakeWindowGoAway    = NULL;
 MonoMethod * methToString            = NULL;
 std::map<std::string, MonoObject *> mapECs;  // a map of EC objects
 void * noArgs[0];   // when no arguments need to be passed
+
+//******************************************************************************
+/**
+ * Show a message box like the Windows MessageBox call.
+ */
+void ShowAlert(char * sMessage)
+{
+    fprintf(stderr, "%s\n", sMessage);  // Print on command line as well.
+
+    // Zenity chokes on seeming markup, so replace markup characters with '?'
+    for (int i = 0; sMessage[i] != '\0'; i++)
+    {
+        if (sMessage[i] == '<' || sMessage[i] == '>' || sMessage[i] == '&')
+            sMessage[i] = '?';
+    }
+
+    int pID = fork();
+    if (pID == 0)   // child
+    {
+        execl("/usr/bin/zenity", "/usr/bin/zenity", "--error", "--title",
+              "Caught exception", "--text", sMessage, (char *) NULL);
+        fprintf(stderr, "ECDriver: error executing zenity\n");
+        exit(1);
+    }
+    else if (pID < 0)
+    {
+        fprintf(stderr, "ECDriver: failed to fork\n");
+    }
+    else    // parent
+    {
+        fprintf(stderr, "ECDriver: Waiting for alert window to close...\n");
+        wait(NULL);
+        fprintf(stderr, "ECDriver: Window has been closed.\n");
+    }
+}
+
+//******************************************************************************
+void DisplayException(MonoObject * mException)
+{
+    MonoObject * other_exc = NULL;
+    MonoString * sException = mono_object_to_string (
+                              mException, &other_exc);
+    char * sTemp = mono_string_to_utf8(sException);
+    ShowAlert(sTemp);
+    mono_free(sTemp);
+}
 
 //******************************************************************************
 /**
@@ -230,6 +279,7 @@ int GetEncConverter(const char * sConverterName, MonoObject ** pEC)
     if (mException != NULL) {
         fprintf(stderr, "ECDriver: An exception was thrown getting map.\n");
         mono_runtime_invoke(methMakeWindowGoAway, ecsObj, noArgs, NULL);
+        DisplayException(mException);
         return /*ErrStatus.Exception*/ -6;
     }
     if (*pEC != NULL)
@@ -260,6 +310,7 @@ int EncConverterSelectConverter (
     if (mException != NULL) {
         fprintf(stderr,
                 "ECDriver: An exception was thrown during selection.\n");
+        DisplayException(mException);
         return /*ErrStatus.Exception*/ -6;
     }
     if (pEC == NULL) {
@@ -386,6 +437,7 @@ int EncConverterAddConverter(
         fprintf(stderr,
                 "ECDriver: An exception was thrown while adding converter.\n");
         mono_runtime_invoke(methMakeWindowGoAway, ecsObj, noArgs, NULL);
+        DisplayException(mException);
         return /*ErrStatus.Exception*/ -6;
     } 
     err = GetEncConverter(sConverterName, &pEC);
@@ -440,6 +492,7 @@ int EncConverterConvertString (
         fprintf(stderr,
                 "ECDriver: An exception was thrown during conversion.\n");
         mono_runtime_invoke(methMakeWindowGoAway, ecsObj, noArgs, NULL);
+        DisplayException(mException);
         return /*ErrStatus.Exception*/ -6;
     }
     char * sTemp = mono_string_to_utf8(mOutput);

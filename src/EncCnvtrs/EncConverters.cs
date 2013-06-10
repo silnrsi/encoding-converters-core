@@ -3080,7 +3080,7 @@ namespace SilEncConverters40
                 }
                 catch (DllNotFoundException e)
                 {
-                    MessageBox.Show("Failed to load library file: " + e.Message + ". Check path.",
+                    MessageBox.Show("Failed to load library file: " + e.Message,
                                     traceSwitch.DisplayName);
                 }
                 catch (EntryPointNotFoundException e) 
@@ -3091,7 +3091,6 @@ namespace SilEncConverters40
                 catch (Exception e)
                 {
                     MessageBox.Show("AutoConfigure failed: " + e.Message, traceSwitch.DisplayName);
-                    throw e;    // for debugging only
                 }
             }
             return false;
