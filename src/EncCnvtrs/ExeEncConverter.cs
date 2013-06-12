@@ -145,78 +145,70 @@ namespace SilEncConverters40
                 	var progpath = Path.Combine(WorkingDir, ExeName);
 					if (!File.Exists(progpath))
 						progpath = ExeName;		// assume program is in the user's path.
-					m_psi = new ProcessStartInfo(progpath);
-					m_psi.Arguments = Arguments;
-                    m_psi.WorkingDirectory = WorkingDir;
-                    m_psi.UseShellExecute = false;
-                    m_psi.CreateNoWindow = true;
-                    m_psi.RedirectStandardInput = true;
-                    m_psi.RedirectStandardOutput = true;
-                    m_psi.RedirectStandardError = true;
-                    //m_psi.StandardOutputEncoding = Encoding.UTF8;
-                    m_psi.StandardOutputEncoding = Encoding.Unicode;
+
+                    m_psi = new ProcessStartInfo(progpath)
+                                {
+                                    Arguments = Arguments,
+                                    WorkingDirectory = WorkingDir,
+                                    UseShellExecute = false,
+                                    CreateNoWindow = true,
+                                    RedirectStandardInput = true,
+                                    RedirectStandardOutput = true,
+                                    RedirectStandardError = true,
+                                    StandardOutputEncoding = StandardOutputEncoding
+                                };
                 }
                 return m_psi;
             }
         }
+
+	    protected virtual Encoding StandardOutputEncoding
+	    {
+	        get
+	        {
+                return Encoding.UTF8;
+	        }
+	    }
+
+        protected virtual Encoding StandardInputEncoding
+        {
+            get
+            {
+                return Encoding.UTF8;
+            }
+        }
+
         #endregion Derived Class overrides
 
         #region Implementation
         protected string DoExeCall(string sInput)
         {
-            ProcessStartInfo Si = ProcessStarter;
-            string strOutput = null;
+            var si = ProcessStarter;
+            string strOutput;
 
             try
             {
-                Process P = Process.Start(Si);
+                var p = Process.Start(si);
                 
                 // set up the writer to use the correct code page
-                StreamWriter sw = null;
-                if( P.StandardInput.Encoding.CodePage != this.CodePageInput )
-                {
-                    Encoding enc;
-                    try
-                    {
-                        enc = Encoding.GetEncoding(this.CodePageInput);
-                    }
-                    catch
-                    {
-                        enc = Encoding.GetEncoding(EncConverters.cnIso8859_1CodePage);
-                    }
-                    sw = new StreamWriter(P.StandardInput.BaseStream,enc);
-                }
-                else
-                    sw = P.StandardInput;
+                var sw = (p.StandardInput.Encoding != StandardInputEncoding)
+                             ? new StreamWriter(p.StandardInput.BaseStream, StandardInputEncoding)
+                             : p.StandardInput;
 
                 // call a virtual to do this in case the sub-classes have special behavior
                 WriteToExeInputStream(sInput,sw);
 
                 // set up the reader to use the correct code page
-                StreamReader sr = null;
-                if( P.StandardOutput.CurrentEncoding.CodePage != this.CodePageOutput )
-                {
-                    Encoding enc;
-                    try
-                    {
-                        enc = Encoding.GetEncoding(this.CodePageOutput);
-                    }
-                    catch
-                    {
-                        //enc = Encoding.GetEncoding(EncConverters.cnIso8859_1CodePage);
-                        enc = Encoding.Default;
-                    }
-                    sr = new StreamReader(P.StandardOutput.BaseStream, enc);
-                }
-                else
-                    sr = P.StandardOutput;
+                var sr = p.StandardOutput;
 
                 // call a virtual to do this in case the sub-classes have special behavior
-                strOutput = ReadFromExeOutputStream(sr, P.StandardError);
+                strOutput = ReadFromExeOutputStream(sr, p.StandardError);
             }
             catch(Exception e)
             {
-                throw e;
+                if (e.Message == "The system cannot find the file specified")
+                    throw new ApplicationException(String.Format("Unable to find the file '{0}'. Is the proper program distribution installed?", si.FileName), e);
+                throw;
             }
 
             return strOutput;
@@ -234,80 +226,38 @@ namespace SilEncConverters40
             )
         {
             rnOutLen = 0;
-            //if( !String.IsNullOrEmpty(WorkingDir) )
-            if(true)
-            {
-                // we need to put it *back* into a string because the StreamWriter that will
-                // ultimately write to the StandardInput uses a string. Use the correct codepg.
-                byte [] baDst = new byte [nInLen];
-                ECNormalizeData.ByteStarToByteArr(lpInBuffer,nInLen,baDst);
-                Encoding enc;
-                try
-                {
-                    enc = Encoding.GetEncoding(this.CodePageInput);
-                }
-                catch
-                {
-                    //enc = Encoding.GetEncoding(EncConverters.cnIso8859_1CodePage);
-                    enc = Encoding.Default;
-                }
-                string strInput = enc.GetString(baDst);
+
+            // we need to put it *back* into a string because the StreamWriter that will
+            // ultimately write to the StandardInput uses a string. For now, the only user
+            //  is Perl, which only supports Unicode to Unicode and so the data coming in
+            //  will be UTF-16. So to put it back into a string, we just need to use this:
+            var baDst = new byte [nInLen];
+            ECNormalizeData.ByteStarToByteArr(lpInBuffer,nInLen,baDst);
+            var enc = Encoding.Unicode;
+            var strInput = enc.GetString(baDst);
                 
-                // call the helper that calls the exe
-                string strOutput = DoExeCall(strInput);
-#if DEBUG
-				Console.Error.WriteLine("Got result from system call: " + strOutput);
-                byte[] baOut2 = Encoding.Unicode.GetBytes(strOutput);  // easier to read
-                dispBytes("Output UTF16LE", baOut2);
+            // call the helper that calls the exe
+            var strOutput = DoExeCall(strInput);
 
-				TextWriter tw = new StreamWriter(
-					Path.Combine(Path.GetTempPath(), "returning.txt"));
-                tw.WriteLine("input: '"  + strInput + "'");
-                tw.WriteLine("output: '" + strOutput + "'");
-                tw.Close();
+#if DEBUG && __MonoCS__
+			Console.Error.WriteLine("Got result from system call: " + strOutput);
+            byte[] baOut2 = Encoding.Unicode.GetBytes(strOutput);  // easier to read
+            dispBytes("Output UTF16LE", baOut2);
+
+			TextWriter tw = new StreamWriter(
+				Path.Combine(Path.GetTempPath(), "returning.txt"));
+            tw.WriteLine("input: '"  + strInput + "'");
+            tw.WriteLine("output: '" + strOutput + "'");
+            tw.Close();
 #endif
-                // if there's a response...
-                if( !String.IsNullOrEmpty(strOutput) )
-                {
-                    // ... put it in the output buffer
-                    // if the output is legacy, then we need to shrink it from wide to narrow
-                    // it'll be legacy either if (the direction is forward and the rhs=eLegacy) 
-                    // or if (the direction is reverse and the rhs=eLegacy)
-                    bool bLegacyOutput = 
-                        (
-                            (   (this.DirectionForward == true)
-                            &&  (EncConverter.NormalizeRhsConversionType(this.ConversionType) == NormConversionType.eLegacy) 
-                            )
-                        ||  (   (this.DirectionForward == false)
-                            &&  (EncConverter.NormalizeLhsConversionType(this.ConversionType) == NormConversionType.eLegacy) 
-                            )
-                        );
 
-                    if( bLegacyOutput )
-                    {
-                        try
-                        {
-                            enc = Encoding.GetEncoding(this.CodePageOutput);
-                        }
-                        catch
-                        {
-                            enc = Encoding.GetEncoding(EncConverters.cnIso8859_1CodePage);
-                        }
-                        byte [] baOut = enc.GetBytes(strOutput);
-                        ECNormalizeData.ByteArrToByteStar(baOut,lpOutBuffer);
-                        rnOutLen = baOut.Length;
-                    }
-                    else
-                    {
-                        rnOutLen = strOutput.Length * 2;
-                        rnOutLen = ECNormalizeData.StringToByteStar(strOutput,lpOutBuffer,rnOutLen,false);
-                    }
-                }
-            }
-/*
-            else
-                EncConverters.ThrowError(ErrStatus.RegistryCorrupt);
-*/
+            // if there's a response...
+            if (String.IsNullOrEmpty(strOutput))
+                return;
+
+            // put it in the output buffer 
+            rnOutLen = strOutput.Length * 2;
+            rnOutLen = ECNormalizeData.StringToByteStar(strOutput,lpOutBuffer,rnOutLen,false);
         }
         #endregion Abstract Base Class Overrides
     }

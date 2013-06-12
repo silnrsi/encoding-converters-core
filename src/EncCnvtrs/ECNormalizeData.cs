@@ -25,7 +25,7 @@ namespace SilEncConverters40
             // oops: cp8859 won't work for symbol data, so if GetBytes
             //  fails, just go back to stripping out the low byte as we had it
             //  originally. This'll work for both 8859 and symbol
-            System.Diagnostics.Debug.WriteLine("Narrowizing by stripping the low byte.");
+            EncConverter.DebugWriteLine("Narrowizing by stripping the low byte.");
             var ba = new byte[nInLen];
             for (int i = 0; i < nInLen; i++)
                 ba[i] = (byte)(strInput[i] & 0xFF);
@@ -35,8 +35,8 @@ namespace SilEncConverters40
         // this is the helper method that returns the input data normalized
         internal static unsafe byte* GetBytes(string strInput, int cnCountIn, EncodingForm eEncFormIn, int nCodePageIn, EncodingForm eFormEngineIn, byte* pBuf, ref int nBufSize, ref bool bDebugDisplayMode)
         {
-            System.Diagnostics.Debug.WriteLine("ECNormalizeData.GetBytes()");
-            System.Diagnostics.Debug.WriteLine(
+            EncConverter.DebugWriteLine("ECNormalizeData.GetBytes()");
+            EncConverter.DebugWriteLine(
                 "eEncFormIn " + eEncFormIn.ToString() + "," +
                 "eFormEngineIn " + eFormEngineIn.ToString());
 
@@ -131,7 +131,7 @@ namespace SilEncConverters40
                                 {
                                     Encoding enc = Encoding.GetEncoding(nCodePageIn);
                                     ba = enc.GetBytes(strInput);
-                                    System.Diagnostics.Debug.WriteLine("Narrowized by given code page.");
+                                    EncConverter.DebugWriteLine("Narrowized by given code page.");
                                 }
                                 catch
                                 {
@@ -142,7 +142,7 @@ namespace SilEncConverters40
                             {
                                 // otherwise, simply use CP_ACP (or the default code page) to 
                                 //  narrowize it.
-                                System.Diagnostics.Debug.WriteLine("Narrowizing by given code page.");
+                                EncConverter.DebugWriteLine("Narrowizing by given code page.");
                                 Encoding enc = Encoding.GetEncoding(nCodePageIn);
                                 ba = enc.GetBytes(strInput);
                             }

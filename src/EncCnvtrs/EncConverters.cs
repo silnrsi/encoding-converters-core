@@ -206,7 +206,7 @@ namespace SilEncConverters40
 
         internal   void AddActualConverters()
         {
-            System.Diagnostics.Debug.WriteLine("AddActualConverters BEGIN");
+            EncConverter.DebugWriteLine("AddActualConverters BEGIN");
             // create the 'data set' that goes with our schema and read the file (also get
             // an xmldoc so we can do some xpath queries to retrieve encoding/font info).
             mappingRegistry file = RepositoryFile;
@@ -347,7 +347,7 @@ namespace SilEncConverters40
                 
                 WriteRepositoryFile(file);
             }
-            System.Diagnostics.Debug.WriteLine("AddActualConverters END");
+            EncConverter.DebugWriteLine("AddActualConverters END");
         }
 
 #if UseXmlFilesForPlugins
@@ -489,20 +489,20 @@ namespace SilEncConverters40
                 var aEcPluginFile = new EncConverterPlugins();
                 try
                 {
-                    System.Diagnostics.Debug.WriteLine("Reading plugins from " + strPluginXmlFile);
+                    EncConverter.DebugWriteLine("Reading plugins from " + strPluginXmlFile);
                     aEcPluginFile.ReadXml(strPluginXmlFile);
                 }
                 catch
                 {
-                    System.Diagnostics.Debug.WriteLine("Failed to read XML file.");
+                    EncConverter.DebugWriteLine("Failed to read XML file.");
                     continue;   // skip this one if we can't read it
                 }
 
-                System.Diagnostics.Debug.WriteLine("Found " +
+                EncConverter.DebugWriteLine("Found " +
                     aEcPluginFile.ECPluginDetails.Count.ToString() + " plugin details.");
                 foreach (EncConverterPlugins.ECPluginDetailsRow aDetailsRow in aEcPluginFile.ECPluginDetails)
                 {
-                    System.Diagnostics.Debug.WriteLine("Trying " + aDetailsRow.ImplementationProgId);
+                    EncConverter.DebugWriteLine("Trying " + aDetailsRow.ImplementationProgId);
                     try
                     {
                         // actually, now first thing first: make sure we can load it. If
@@ -512,11 +512,11 @@ namespace SilEncConverters40
                                                                       ? null
                                                                       : aDetailsRow.AssemblyReference);
                         if (rConverter == null) {
-                            System.Diagnostics.Debug.WriteLine(
+                            EncConverter.DebugWriteLine(
                                 "Failed to instantiate " + aDetailsRow.ImplementationProgId);
                             continue;
                         }
-                        System.Diagnostics.Debug.WriteLine("Instantiated " + aDetailsRow.ImplementationProgId);
+                        EncConverter.DebugWriteLine("Instantiated " + aDetailsRow.ImplementationProgId);
 
                         // [note: if this version of the repository is based on IEncConverter v3.0.0.0 (as 
                         //  defined in the ECInterfaces assembly), then it can only use an identical versioned 
@@ -568,7 +568,7 @@ namespace SilEncConverters40
                         //  and if so, check the relative versions.
                         string strImplementationType = aDetailsRow.ImplementationName;
                         string strProgId = aDetailsRow.ImplementationProgId;
-                        System.Diagnostics.Debug.WriteLine("Prog ID " + strProgId);
+                        EncConverter.DebugWriteLine("Prog ID " + strProgId);
                         if (m_mapImplTypeToProgId.ContainsKey(strImplementationType))
                         {
                             strProgId = (string)m_mapImplTypeToProgId[strImplementationType];
@@ -686,7 +686,7 @@ namespace SilEncConverters40
                     }
                     catch (Exception exc)
                     {
-                        System.Diagnostics.Debug.WriteLine(exc.ToString());
+                        EncConverter.DebugWriteLine(exc.ToString());
                     }
                 }
 
@@ -1030,31 +1030,31 @@ namespace SilEncConverters40
         public IEncConverter GetMapByName(object mapName)
         {
             string strMapName = StringMapNameFromObject(mapName);   // supports int indexing
-            System.Diagnostics.Debug.WriteLine("  looking for " + strMapName);
+            EncConverter.DebugWriteLine("  looking for " + strMapName);
             IEncConverter aEC = (IEncConverter) base[strMapName];
-            if (aEC != null) System.Diagnostics.Debug.WriteLine("  (1)found something.");
+            if (aEC != null) EncConverter.DebugWriteLine("  (1)found something.");
 
             // if we didn't find it by that name, then check the alias list
             if( aEC == null ) {
                 aEC = (IEncConverter) m_mapAliasNames[strMapName];
-                if (aEC != null) System.Diagnostics.Debug.WriteLine("  (2)found something.");
+                if (aEC != null) EncConverter.DebugWriteLine("  (2)found something.");
             }
 
             // if it's still unfound, see if the user requested it *with* the implemType
             if( aEC == null )
             {
-                System.Diagnostics.Debug.WriteLine("  not found yet.");
+                EncConverter.DebugWriteLine("  not found yet.");
                 string strImplementType;
                 strMapName = GetMappingName(strMapName, out strImplementType);
                 aEC = (IEncConverter) base[strMapName];
-                if (aEC != null) System.Diagnostics.Debug.WriteLine("  (3)might have found something.");
+                if (aEC != null) EncConverter.DebugWriteLine("  (3)might have found something.");
 
                 // but make sure it really is this implementation type
                 if( (aEC != null) && (aEC.ImplementType != strImplementType) )
                     aEC = null;
-                if (aEC != null) System.Diagnostics.Debug.WriteLine("  (4)found something.");
+                if (aEC != null) EncConverter.DebugWriteLine("  (4)found something.");
             }
-            if (aEC == null) System.Diagnostics.Debug.WriteLine("didn't find anything.");
+            if (aEC == null) EncConverter.DebugWriteLine("didn't find anything.");
 
             return aEC;
         }
@@ -1130,7 +1130,7 @@ namespace SilEncConverters40
             ConvType conversionType, string implementType, string leftEncoding, 
             string rightEncoding, ProcessTypeFlags processType)
         {
-            System.Diagnostics.Debug.WriteLine("AddConversionMap BEGIN");
+            EncConverter.DebugWriteLine("AddConversionMap BEGIN");
             // first, disallow a semi-colon in the mapping name (too many plug-ins use 
             //  those to delimit stuff and we don't want to run into problems.
             if( mappingName.IndexOf(';') != -1 )
@@ -1947,7 +1947,7 @@ namespace SilEncConverters40
         [Description("Remove an item from the collection and the persistent store (e.g. '.Remove(\"Annapurna<>UNICODE\")')"),Category("Data")]
         public override void Remove(object mapName)
         {
-            System.Diagnostics.Debug.WriteLine("Remove BEGIN");
+            EncConverter.DebugWriteLine("Remove BEGIN");
             string strMapName = StringMapNameFromObject(mapName);   // allow int indexing
 
             // triangulate the given mapping name which might be a combination
@@ -1967,7 +1967,7 @@ namespace SilEncConverters40
         [Description("Remove an item from the collection, but not the persistent store (e.g. '.RemoveNonPersist(\"Annapurna<>UNICODE\")')--for programmatic filtering"),Category("Data")]
         public void RemoveNonPersist(object mapName)
         {
-            System.Diagnostics.Debug.WriteLine("RemoveNonPersist BEGIN");
+            EncConverter.DebugWriteLine("RemoveNonPersist BEGIN");
             // first see if this name is a concatenation of mappingName+implementation
             string sImplementType;
             string strMapName = StringMapNameFromObject(mapName);
@@ -2005,9 +2005,9 @@ namespace SilEncConverters40
                 if( nCount == 1 )
                 {
                     Debug.Assert(base.ContainsKey(aECHighest.Name));
-                    System.Diagnostics.Debug.WriteLine("(1)Removing " + aECHighest.Name);
+                    EncConverter.DebugWriteLine("(1)Removing " + aECHighest.Name);
                     base.Remove(aECHighest.Name);
-                    System.Diagnostics.Debug.WriteLine("(1)Adding " + strConverterName);
+                    EncConverter.DebugWriteLine("(1)Adding " + strConverterName);
                     base[strConverterName] = aECHighest;
                     aECHighest.Name = strConverterName;
                 }
@@ -2035,7 +2035,7 @@ namespace SilEncConverters40
                 foreach(string strName in saNames)
                 {
 //                  IEncConverter ecTmp = (IEncConverter)base[strName];
-                    System.Diagnostics.Debug.WriteLine("(2)Removing " + strName);
+                    EncConverter.DebugWriteLine("(2)Removing " + strName);
                     base.Remove(strName);
 //                  Marshal.ReleaseComObject(ecTmp);
                 }
@@ -2370,10 +2370,10 @@ namespace SilEncConverters40
 
         public IEncConverter InstantiateIEncConverter(string strProgID, string strAssemblySpec)
         {
-            System.Diagnostics.Debug.WriteLine("InstantiateIEncConverter BEGIN");
+            EncConverter.DebugWriteLine("InstantiateIEncConverter BEGIN");
             Debug.Assert(!String.IsNullOrEmpty(strProgID));
             if (strAssemblySpec != null)
-                System.Diagnostics.Debug.WriteLine("Assembly Spec " + strAssemblySpec);
+                EncConverter.DebugWriteLine("Assembly Spec " + strAssemblySpec);
 
             // Initially, we created the IEncConverter objects based on the prog id from the registry.
             //  (see comments near "Item" for why we're dealing with the interface rather
@@ -2390,32 +2390,32 @@ namespace SilEncConverters40
             if (!String.IsNullOrEmpty(strAssemblySpec) ||
                 m_mapProgIdsToAssemblyName.TryGetValue(strProgID, out strAssemblySpec))
             {
-                System.Diagnostics.Debug.WriteLine("Getting from assembly.");
+                EncConverter.DebugWriteLine("Getting from assembly.");
 
                 ObjectHandle ohndl = Activator.CreateInstance(strAssemblySpec, strProgID);
                 rConverter = (IEncConverter)ohndl.Unwrap();
                 if (rConverter == null) {
-                    System.Diagnostics.Debug.WriteLine("Returning null.");
+                    EncConverter.DebugWriteLine("Returning null.");
                 } else {
-                    System.Diagnostics.Debug.WriteLine("Returning not null.");
+                    EncConverter.DebugWriteLine("Returning not null.");
                 }
             }
             else
             {
                 // the fall back is just to give it a stab via its progid
                 // see if we have some other assembly with the same version number we can pull it out of
-                System.Diagnostics.Debug.WriteLine("Getting from progid.");
+                EncConverter.DebugWriteLine("Getting from progid.");
                 Type typeEncConverter = Type.GetTypeFromProgID(strProgID);
                 if (typeEncConverter != null)
                     rConverter = (IEncConverter)Activator.CreateInstance(typeEncConverter);
                 if (rConverter == null) {
-                    System.Diagnostics.Debug.WriteLine("Returning null.");
+                    EncConverter.DebugWriteLine("Returning null.");
                 } else {
-                    System.Diagnostics.Debug.WriteLine("Returning not null.");
+                    EncConverter.DebugWriteLine("Returning not null.");
                 }
             }
 
-            //System.Diagnostics.Debug.WriteLine("InstantiateIEncConverter END");
+            //EncConverter.DebugWriteLine("InstantiateIEncConverter END");
             return rConverter;
         }
 
@@ -2678,7 +2678,7 @@ namespace SilEncConverters40
 
         public void RemoveAttribute(ECAttributes aECAttributes, object Key)
         {
-            System.Diagnostics.Debug.WriteLine("RemoveAttribute BEGIN");
+            EncConverter.DebugWriteLine("RemoveAttribute BEGIN");
             string sKey = (string)Key;
             RemoveNonPersist(sKey);
             mappingRegistry file = EncConverters.GetRepositoryFile();
@@ -3096,17 +3096,17 @@ namespace SilEncConverters40
             string          strRhsEncodingID
             )
         {
-            System.Diagnostics.Debug.WriteLine("AutoConfigureEx BEGIN");
+            EncConverter.DebugWriteLine("AutoConfigureEx BEGIN");
             try
             {
                 // get the configuration interface for this type
                 IEncConverterConfig rConfigurator = rIEncConverter.Configurator;
 
                 // call its Configure method to do the UI
-                System.Diagnostics.Debug.WriteLine("Calling UI");
+                EncConverter.DebugWriteLine("Calling UI");
                 if( rConfigurator.Configure(this, strFriendlyName, eConversionTypeFilter, strLhsEncodingID, strRhsEncodingID) )
                 {
-                    System.Diagnostics.Debug.WriteLine("Returned True");
+                    EncConverter.DebugWriteLine("Returned True");
                     // if this is just a temporary converter (i.e. it isn't being added permanentally to the
                     //  repository), then just make up a name so the caller can use it.
                     if( !rConfigurator.IsInRepository )
@@ -3131,7 +3131,7 @@ namespace SilEncConverters40
                 }
                 else if( rConfigurator.IsInRepository && !String.IsNullOrEmpty(rConfigurator.ConverterFriendlyName) )
                 {
-                    System.Diagnostics.Debug.WriteLine("Second try returned True");
+                    EncConverter.DebugWriteLine("Second try returned True");
                     // if the user added it to the repository and then *cancelled* it (i.e. so Configure 
                     //  returns false), then it *still* is in the repository and we should therefore return
                     //  true.
@@ -3139,16 +3139,16 @@ namespace SilEncConverters40
                     return true;
                 }
                 else {
-                    System.Diagnostics.Debug.WriteLine("Both returned false.");
+                    EncConverter.DebugWriteLine("Both returned false.");
                 }
             }
             catch 
             {
-                System.Diagnostics.Debug.WriteLine("Caught error.");
+                EncConverter.DebugWriteLine("Caught error.");
                 throw;
             }
 
-            System.Diagnostics.Debug.WriteLine("AutoConfigureEx END");
+            EncConverter.DebugWriteLine("AutoConfigureEx END");
             return false;
         }
 
@@ -3174,13 +3174,13 @@ namespace SilEncConverters40
         {
             SelectConverter dlg = new SelectConverter(this, eConversionTypeFilter, strChooseConverterDialogTitle, (string)null, (string)null);
             IEncConverter result = null;
-            System.Diagnostics.Debug.WriteLine("Calling dialog.");
+            EncConverter.DebugWriteLine("Calling dialog.");
             if (dlg.ShowDialog() == DialogResult.OK) {
                 result = dlg.IEncConverter;   // return it, whatever it is (may be 0)
             }
-            System.Diagnostics.Debug.WriteLine("Finished calling dialog.");
+            EncConverter.DebugWriteLine("Finished calling dialog.");
             dlg.Dispose();
-            System.Diagnostics.Debug.WriteLine("Disposed dialog.");
+            EncConverter.DebugWriteLine("Disposed dialog.");
             return result;
         }
 
@@ -3249,7 +3249,7 @@ namespace SilEncConverters40
             ref ConvType eConversionType, ref int processTypeFlags, Int32 codePageInput, 
             Int32 codePageOutput, bool bAddingPersist)
         {
-            System.Diagnostics.Debug.WriteLine("AddEx BEGIN");
+            EncConverter.DebugWriteLine("AddEx BEGIN");
             if( strProgID == null )
                 ThrowError(ErrStatus.NoAvailableConverters);
 
@@ -3260,17 +3260,17 @@ namespace SilEncConverters40
             //  because that different version of the assembly will have a different IEncConverter definition.
             // So... try to get it out of the local assembly first
 #if !DontCheckAssemVersion
-            System.Diagnostics.Debug.WriteLine("Instantiating  " + strProgID);
+            EncConverter.DebugWriteLine("Instantiating  " + strProgID);
             IEncConverter rConverter = InstantiateIEncConverter(strProgID, null);
 #else
-            System.Diagnostics.Debug.WriteLine("Creating instance of " + strProgID);
+            EncConverter.DebugWriteLine("Creating instance of " + strProgID);
             Type typeEncConverter = Type.GetTypeFromProgID(strProgID);
             rIEncConverter = (IEncConverter)Activator.CreateInstance(typeEncConverter);
 #endif
 
             if (rConverter == null)
                 throw new ApplicationException(String.Format("Unable to create an object of type '{0}'", strProgID));
-            System.Diagnostics.Debug.WriteLine("Successfully created converter.");
+            EncConverter.DebugWriteLine("Successfully created converter.");
 
             // initialize and add to collection
             InitializeConverter(rConverter, mappingName, converterSpec, 
@@ -3291,17 +3291,17 @@ namespace SilEncConverters40
             //  AddConversionMap), we know that the converter *is* or is *about* to be in the 
             //  persistent store, so from here we can make the IsInRepository flag true.
             rConverter.IsInRepository = true;
-            System.Diagnostics.Debug.WriteLine("AddEx END");     // FIXME: Not getting this far.
+            EncConverter.DebugWriteLine("AddEx END");     // FIXME: Not getting this far.
 
             return rConverter;
         }
 
         internal IEncConverter InitializeConverter(IEncConverter rConverter, string converterName, string converterSpec, ref string rLhsEncoding, ref string rRhsEncoding, ref ConvType eConversionType, ref Int32 processType, Int32 codePageInput, Int32 codePageOutput, bool bAddingPersist)
         {
-            System.Diagnostics.Debug.WriteLine("InitializeConverter BEGIN");
+            EncConverter.DebugWriteLine("InitializeConverter BEGIN");
             rConverter.Initialize(converterName,converterSpec,ref rLhsEncoding,ref rRhsEncoding, ref eConversionType,ref processType,codePageInput,codePageOutput,bAddingPersist);
 
-            System.Diagnostics.Debug.WriteLine("Calling AddToCollection");
+            EncConverter.DebugWriteLine("Calling AddToCollection");
             AddToCollection(rConverter,converterName);
 
             return rConverter;
@@ -3309,7 +3309,7 @@ namespace SilEncConverters40
 
         protected void AddToCollection(IEncConverter rConverter, string converterName)
         {
-            System.Diagnostics.Debug.WriteLine("AddToCollection BEGIN");
+            EncConverter.DebugWriteLine("AddToCollection BEGIN");
             // now add it to the 'this' collection
             // converterName.ToLower(); // this does nothing anyway, so get rid of it
 
@@ -3318,19 +3318,19 @@ namespace SilEncConverters40
             if (ContainsKey(converterName))
             {
 //              IEncConverter ecTmp = (IEncConverter)base[converterName];
-                System.Diagnostics.Debug.WriteLine("(3)Removing " + converterName);
+                EncConverter.DebugWriteLine("(3)Removing " + converterName);
                 base.Remove(converterName); // always overwrite existing ones.
 //              Marshal.ReleaseComObject(ecTmp);
             }
 
-            System.Diagnostics.Debug.WriteLine("(2)Adding " + converterName);
+            EncConverter.DebugWriteLine("(2)Adding " + converterName);
             base[converterName] = rConverter;
         }
 
         protected string AdjustMappingNames(string mappingNameNew, string implementTypeNew, 
             ref IEncConverter aExistEC)
         {
-            System.Diagnostics.Debug.WriteLine("AdjustMappingNames BEGIN");
+            EncConverter.DebugWriteLine("AdjustMappingNames BEGIN");
             // this means that we already have (at least) one other spec with this same
             //  mapping name. 
             Debug.Assert( aExistEC != null );
@@ -3342,10 +3342,10 @@ namespace SilEncConverters40
             // If it has the same implementation, then this is *replacing* the existing one.
             if( aExistEC.ImplementType == implementTypeNew )
             {
-                System.Diagnostics.Debug.WriteLine("same implementation, so replacing");
+                EncConverter.DebugWriteLine("same implementation, so replacing");
                 RemoveNonPersist(aExistEC.Name);
                 aExistEC = null;        // in this case, it doesn't really exist anymore...
-                System.Diagnostics.Debug.WriteLine("AdjustMappingNames RETURNING");
+                EncConverter.DebugWriteLine("AdjustMappingNames RETURNING");
                 return mappingNameNew;  // so don't add the implement type (as in the last line below)
             }
             else if( strImplementType == null )
@@ -3356,7 +3356,7 @@ namespace SilEncConverters40
                 // replace the existing one with the new combined name
                 base.Remove(strExistName);
                 aExistEC.Name = strNewNameExist;
-                System.Diagnostics.Debug.WriteLine("setting to exist " + strNewNameExist);
+                EncConverter.DebugWriteLine("setting to exist " + strNewNameExist);
                 base[strNewNameExist] = aExistEC;
             }
 
@@ -3367,7 +3367,7 @@ namespace SilEncConverters40
                 m_mapAliasNames.Remove(strExistName);
 
             // finally, the new map must also be concatenated
-            System.Diagnostics.Debug.WriteLine("AdjustMappingNames END");
+            EncConverter.DebugWriteLine("AdjustMappingNames END");
             return String.Format(strMapPlusImplFormat, mappingNameNew, implementTypeNew);
         }
 
@@ -3377,7 +3377,7 @@ namespace SilEncConverters40
             string strMapName = null;
             if( mapName.GetType() != typeof(string) )
             {
-                System.Diagnostics.Debug.WriteLine("Doesn't seem to be a string.");
+                EncConverter.DebugWriteLine("Doesn't seem to be a string.");
                 // it might be numeric, so try casting it as an int.
                 int nIndex = -1;
                 try
@@ -3400,9 +3400,9 @@ namespace SilEncConverters40
 
             // otherwise, try forcing the string cast in case that might work...
             if (strMapName == null)
-                System.Diagnostics.Debug.WriteLine("Casting as a string.");
+                EncConverter.DebugWriteLine("Casting as a string.");
             strMapName = ((strMapName == null) ? (string)mapName : strMapName);
-            System.Diagnostics.Debug.WriteLine("MapName " + strMapName);
+            EncConverter.DebugWriteLine("MapName " + strMapName);
             return strMapName;
         }
 
@@ -3422,7 +3422,7 @@ namespace SilEncConverters40
         internal static EncConverter m_ecTec = null;
         public static string UnicodeEncodingFormConvertEx(string sInput, EncodingForm eFormInput, int ciInput, EncodingForm eFormOutput, NormalizeFlags eNormalizeOutput, out int nNumItems)
         {
-            System.Diagnostics.Debug.WriteLine("UnicodeEncodingFormConvertEx BEGIN");
+            EncConverter.DebugWriteLine("UnicodeEncodingFormConvertEx BEGIN");
             nNumItems = 0;
             string sOutput = null;
             
@@ -3433,7 +3433,7 @@ namespace SilEncConverters40
             if( m_ecTec != null )
                 sOutput = m_ecTec.ConvertEx(sInput,eFormInput,ciInput,eFormOutput,out nNumItems,eNormalizeOutput,true);
 
-            System.Diagnostics.Debug.WriteLine("UnicodeEncodingFormConvertEx END");
+            EncConverter.DebugWriteLine("UnicodeEncodingFormConvertEx END");
             return sOutput;
         }
 
@@ -3622,7 +3622,7 @@ namespace SilEncConverters40
             strFilename = strExt = null;
             if (str == null)
             {
-                System.Diagnostics.Debug.WriteLine("filename arg is null");
+                EncConverter.DebugWriteLine("filename arg is null");
                 return false;
             }
             int nPeriodIndex = str.LastIndexOf('.');
@@ -3849,20 +3849,20 @@ namespace SilEncConverters40
         /// <returns>file spec to the most recent XML file</returns>
         public static string GetRepositoryFileName()
         {
-            //System.Diagnostics.Debug.WriteLine("GetRepositoryFileName BEGIN");
+            //EncConverter.DebugWriteLine("GetRepositoryFileName BEGIN");
             // try the current user key first
             string strRepositoryFile = null;
             try
             {
                 RegistryKey aStoreKey = Registry.CurrentUser.OpenSubKey(EncConverters.HKLM_PATH_TO_XML_FILE);
-                //System.Diagnostics.Debug.WriteLine("Looking at key " + EncConverters.HKLM_PATH_TO_XML_FILE);
+                //EncConverter.DebugWriteLine("Looking at key " + EncConverters.HKLM_PATH_TO_XML_FILE);
     
                 if (aStoreKey == null)
                     aStoreKey = Registry.LocalMachine.OpenSubKey(EncConverters.HKLM_PATH_TO_XML_FILE);
     
                 if (aStoreKey != null) {
                     strRepositoryFile = (string)aStoreKey.GetValue(strRegKeyForStorePath);
-                    //System.Diagnostics.Debug.WriteLine("Got value " + strRepositoryFile);
+                    //EncConverter.DebugWriteLine("Got value " + strRepositoryFile);
                 }
             }
             catch {}
@@ -3871,16 +3871,16 @@ namespace SilEncConverters40
                 // by default, put it in the C:\ProgramData\SIL\Repository folder
                 strRepositoryFile = DefaultRepositoryPath;
                 WriteStorePath(strRepositoryFile);
-                //System.Diagnostics.Debug.WriteLine("Using " + strRepositoryFile);
+                //EncConverter.DebugWriteLine("Using " + strRepositoryFile);
             }
             else 
             {
                 string strPath = strRepositoryFile.Substring(0,strRepositoryFile.LastIndexOf(Path.DirectorySeparatorChar));
                 VerifyDirectoryExists(strPath);
-                //System.Diagnostics.Debug.WriteLine("Verifying folder " + strPath);
+                //EncConverter.DebugWriteLine("Verifying folder " + strPath);
             }
 
-            //System.Diagnostics.Debug.WriteLine("Got " + strRepositoryFile);
+            //EncConverter.DebugWriteLine("Got " + strRepositoryFile);
             return strRepositoryFile;
         }
         
@@ -3921,7 +3921,7 @@ namespace SilEncConverters40
         /// <returns></returns>
         public static mappingRegistry GetRepositoryFile()
         {
-            System.Diagnostics.Debug.WriteLine("GetRepositoryFile BEGIN");
+            EncConverter.DebugWriteLine("GetRepositoryFile BEGIN");
             string strRepositoryFile = GetRepositoryFileName();
 
             // create the 'data set' that goes with our schema and read the file
@@ -3940,7 +3940,7 @@ namespace SilEncConverters40
                 file.implementations.AddimplementationsRow();
                 
                 // save these new values
-                System.Diagnostics.Debug.WriteLine("(1)writing to " + strRepositoryFile);
+                EncConverter.DebugWriteLine("(1)writing to " + strRepositoryFile);
                 file.WriteXml(strRepositoryFile);
             }
 
@@ -3954,7 +3954,7 @@ namespace SilEncConverters40
         /// <param name="file">DataSet of the repository information</param>
         public static void WriteRepositoryFile(mappingRegistry file)
         {
-            //System.Diagnostics.Debug.WriteLine("WriteRepositoryFile BEGIN");
+            //EncConverter.DebugWriteLine("WriteRepositoryFile BEGIN");
             string strRepositoryFile = GetRepositoryFileName();
 #if !DontAddVersionNumbersToXMLFilename
             const int cnVersionDigits = 1;
@@ -3992,7 +3992,7 @@ namespace SilEncConverters40
             // finally save the XML file
             try
             {
-                System.Diagnostics.Debug.WriteLine("(2)writing to " + strRepositoryFile);
+                EncConverter.DebugWriteLine("(2)writing to " + strRepositoryFile);
                 file.WriteXml(strRepositoryFile);
             }
             catch (UnauthorizedAccessException ex)
@@ -4015,7 +4015,7 @@ namespace SilEncConverters40
             bool bClearOldEncodingInfo, out mappingRegistry.mappingRow aMapRow, 
             out mappingRegistry.specRow aSpecRow)
         {
-            System.Diagnostics.Debug.WriteLine("AddConversionMapEx BEGIN");
+            EncConverter.DebugWriteLine("AddConversionMapEx BEGIN");
             // some items are common for all cases below
             bool bBidi = !IsUnidirectional(conversionType);
             string direction = ((bBidi) ? strDefDirection : strForward_only_Direction);
@@ -4025,7 +4025,7 @@ namespace SilEncConverters40
             string rightType = (bRhsUnicode ? strDefTypeUnicode : strDefTypeBytes);
 
             // load the XML file and see if this mappingName already exists
-            System.Diagnostics.Debug.WriteLine("loading XML file");
+            EncConverter.DebugWriteLine("loading XML file");
             mappingRegistry.mappingDataTable aMapDT = file.mapping;
             aMapRow = aMapDT.FindByname(mappingName);
 
@@ -4531,7 +4531,7 @@ namespace SilEncConverters40
             string mappingName, out string lhsEncodingID, out string rhsEncodingID, 
             out int lhsCodePage, out int rhsCodePage)
         {
-            System.Diagnostics.Debug.WriteLine("GetEncodingFontDetails BEGIN");
+            EncConverter.DebugWriteLine("GetEncodingFontDetails BEGIN");
             // initialize out params
             lhsEncodingID = rhsEncodingID = null;
             lhsCodePage = rhsCodePage = cnDefCodePage;
@@ -4591,7 +4591,7 @@ namespace SilEncConverters40
             {
                 GetFontDetails(doc, nsmgr, rhsEncodingID, out rhsCodePage);
             }
-            System.Diagnostics.Debug.WriteLine("GetEncodingFontDetails END");
+            EncConverter.DebugWriteLine("GetEncodingFontDetails END");
         }
 
         internal int GetProcessType(mappingRegistry.specRow aSpecRow)
@@ -4667,14 +4667,14 @@ namespace SilEncConverters40
         internal void GetXmlDocument(
             mappingRegistry file, out XmlDocument xmlDoc, out XmlNamespaceManager nsmgr)
         {
-            System.Diagnostics.Debug.WriteLine("GetXmlDocument BEGIN");
+            EncConverter.DebugWriteLine("GetXmlDocument BEGIN");
             //xmlDoc = new XmlDataDocument(file);
             xmlDoc = new XmlDocument();
             xmlDoc.LoadXml(file.GetXml());    // or .Load
-            System.Diagnostics.Debug.WriteLine("Read from data source.");
+            EncConverter.DebugWriteLine("Read from data source.");
             nsmgr = new XmlNamespaceManager(xmlDoc.NameTable);
             nsmgr.AddNamespace("ec",strDefXmlNamespace);
-            System.Diagnostics.Debug.WriteLine("GetXmlDocument END");
+            EncConverter.DebugWriteLine("GetXmlDocument END");
         }
         #endregion XPath Helpers
 

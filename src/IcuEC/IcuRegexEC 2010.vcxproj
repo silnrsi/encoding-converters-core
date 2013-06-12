@@ -38,7 +38,7 @@
   <PropertyGroup>
     <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)output\$(Configuration)\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)build\Obj\$(Configuration)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectName)\$(Configuration)\</IntDir>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)output\$(Configuration)\</OutDir>
     <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
     <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
@@ -70,10 +70,8 @@
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>copy $(SolutionDir)DistFiles\icu\bin\icuuc50.dll $(OutDir)
-copy $(SolutionDir)DistFiles\icu\bin\icuin50.dll $(OutDir)
-copy $(SolutionDir)DistFiles\icu\bin\icudt50.dll $(OutDir)
-</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -96,10 +94,8 @@ copy $(SolutionDir)DistFiles\icu\bin\icudt50.dll $(OutDir)
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>copy $(SolutionDir)DistFiles\icu\bin\icuuc50.dll $(OutDir)
-copy $(SolutionDir)DistFiles\icu\bin\icuin50.dll $(OutDir)
-copy $(SolutionDir)DistFiles\icu\bin\icudt50.dll $(OutDir)
-</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

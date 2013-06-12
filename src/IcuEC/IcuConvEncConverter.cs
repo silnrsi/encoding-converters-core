@@ -76,7 +76,7 @@ namespace SilEncConverters40
 			Int32 codePageOutput,
 			bool bAdding)
 		{
-			System.Diagnostics.Debug.WriteLine("IcuConv EC Initialize BEGIN");
+			DebugWriteLine("IcuConv EC Initialize BEGIN");
 			// let the base class have first stab at it
 			base.Initialize(converterName, converterSpec, ref lhsEncodingID, ref rhsEncodingID,
 				ref conversionType, ref processTypeFlags, codePageInput, codePageOutput,
@@ -101,7 +101,7 @@ namespace SilEncConverters40
 				default:
 					break;
 			}
-			System.Diagnostics.Debug.WriteLine("IcuConv EC Initialize END");
+			DebugWriteLine("IcuConv EC Initialize END");
 		}
 		#endregion Initialization
 
@@ -123,8 +123,8 @@ namespace SilEncConverters40
 
 		protected unsafe void Load(string strConvID)
 		{
-			System.Diagnostics.Debug.WriteLine("IcuConv Load BEGIN");
-			System.Diagnostics.Debug.WriteLine("Calling CppInitialize");
+			DebugWriteLine("IcuConv Load BEGIN");
+			DebugWriteLine("Calling CppInitialize");
 			int status = 0;
 
 #if __MonoCS__  // this isn't needed for Windows/.Net (and sending a message about .so files is confusing)
@@ -148,7 +148,7 @@ namespace SilEncConverters40
 			{
 				throw new Exception("CppInitialize failed.");
 			}
-			System.Diagnostics.Debug.WriteLine("IcuConv Load END");
+			DebugWriteLine("IcuConv Load END");
 		}
 		#endregion Misc helpers
 
@@ -224,7 +224,7 @@ namespace SilEncConverters40
 			byte*   lpOutBuffer,
 			ref int rnOutLen)
 		{
-            System.Diagnostics.Debug.WriteLine("IcuConvEC.DoConvert BEGIN()");
+            DebugWriteLine("IcuConvEC.DoConvert BEGIN()");
 			int status = 0;
 			fixed(int* pnOut = &rnOutLen)
 			{
@@ -234,7 +234,7 @@ namespace SilEncConverters40
 			{
 				EncConverters.ThrowError(ErrStatus.Exception, "CppDoConvert() failed.");
 			}
-            System.Diagnostics.Debug.WriteLine("IcuConvEC.DoConvert END()");
+            DebugWriteLine("IcuConvEC.DoConvert END()");
 		}
 
 		protected override string GetConfigTypeName

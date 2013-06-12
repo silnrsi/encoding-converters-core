@@ -88,7 +88,7 @@ namespace SilEncConverters40
             get
             {
                 const string cstrLinkPrefix = "To use Mozilla to display the help file, download xulRunner from ";
-                const string cstrXulRunnerLink = "http://ftp.mozilla.org/pub/mozilla.org/xulrunner/releases/18.0/runtimes";
+                const string cstrXulRunnerLink = "http://ftp.mozilla.org/pub/mozilla.org/xulrunner/releases/14.0.1/runtimes";
                 const string cstrFolderPrefix = " and put the xulrunner folder as a subfolder in the ";
                 var labelInstructions = new LinkLabel
                                             {

@@ -83,15 +83,15 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ECInterfaces, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485">
-      <Private>False</Private>
-      <HintPath>..\..\output\debug\ECInterfaces.dll</HintPath>
+    <Reference Include="ECInterfaces, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\output\release\ECInterfaces.dll</HintPath>
     </Reference>
-    <Reference Include="geckofx-core-18">
-      <HintPath>..\..\DistFiles\geckofx-core-18.dll</HintPath>
+    <Reference Include="geckofx-core-14">
+      <HintPath>..\..\DistFiles\geckofx-core-14.dll</HintPath>
     </Reference>
-    <Reference Include="Geckofx-Winforms-18">
-      <HintPath>..\..\DistFiles\Geckofx-Winforms-18.dll</HintPath>
+    <Reference Include="Geckofx-Winforms-14">
+      <HintPath>..\..\DistFiles\Geckofx-Winforms-14.dll</HintPath>
     </Reference>
     <Reference Include="System">
       <Name>System</Name>

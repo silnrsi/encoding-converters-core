@@ -79,7 +79,7 @@ namespace SilEncConverters40
             Int32 codePageOutput,
             bool bAdding)
         {
-            System.Diagnostics.Debug.WriteLine("IcuTranslit EC Initialize BEGIN");
+            DebugWriteLine("IcuTranslit EC Initialize BEGIN");
             // let the base class have first stab at it
             base.Initialize(converterName, converterSpec, ref lhsEncodingID, ref rhsEncodingID, 
                 ref conversionType, ref processTypeFlags, codePageInput, codePageOutput, bAdding );
@@ -103,7 +103,7 @@ namespace SilEncConverters40
                 default:
                     break;
             }
-            System.Diagnostics.Debug.WriteLine("IcuTranslit EC Initialize END");
+            DebugWriteLine("IcuTranslit EC Initialize END");
         }
 
         #endregion Initialization
@@ -117,7 +117,7 @@ namespace SilEncConverters40
 
         protected void Unload()
         { 
-            //System.Diagnostics.Debug.WriteLine("CcEncConverter.Unload");
+            //DebugWriteLine("CcEncConverter.Unload");
             //if( IsFileLoaded() )
             //{
             //    CCUnloadTable(m_hTable);
@@ -133,12 +133,12 @@ namespace SilEncConverters40
 
         protected unsafe void Load(string strTranslitID)
         {
-            System.Diagnostics.Debug.WriteLine("IcuTranslit Load BEGIN");
+            DebugWriteLine("IcuTranslit Load BEGIN");
 
             if( IsFileLoaded() )
                 Unload();
 
-            System.Diagnostics.Debug.WriteLine("Calling CppInitialize");
+            DebugWriteLine("Calling CppInitialize");
             int status = 0;
 
 #if __MonoCS__  // this isn't needed for Windows/.Net (and sending a message about .so files is confusing)
@@ -157,7 +157,7 @@ namespace SilEncConverters40
             {
                 throw new Exception("CppInitialize failed.");
             }
-            System.Diagnostics.Debug.WriteLine("IcuTranslit Load END");
+            DebugWriteLine("IcuTranslit Load END");
         }
         #endregion Misc helpers
 
@@ -226,7 +226,7 @@ namespace SilEncConverters40
             ref int     rnOutLen
             )
         {
-            System.Diagnostics.Debug.WriteLine("IcuTranslitEC.DoConvert BEGIN()");
+            DebugWriteLine("IcuTranslitEC.DoConvert BEGIN()");
             int status = 0;
             fixed(int* pnOut = &rnOutLen)
             {
@@ -236,7 +236,7 @@ namespace SilEncConverters40
             {
                 EncConverters.ThrowError(ErrStatus.Exception, "CppDoConvert() failed.");
             }
-            System.Diagnostics.Debug.WriteLine("IcuTranslitEC.DoConvert END()");
+            DebugWriteLine("IcuTranslitEC.DoConvert END()");
         }
 
         protected override string   GetConfigTypeName

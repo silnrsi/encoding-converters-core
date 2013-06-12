@@ -23,6 +23,11 @@
 #include "CEncConverter.h"
 #include "PyScriptEncConverter.h"
 
+#ifdef VERBOSE_DEBUGGING && _WIN32
+#include "Windows.h"		// for OutputDebugString
+#include "WinBase.h"
+#endif
+
 // Uncomment the following line if you want verbose debugging output
 //#define VERBOSE_DEBUGGING
 
@@ -50,12 +55,30 @@ namespace PyScriptEC
     int ErrorOccurred();    // defined later
 
     bool IsModuleLoaded() { return (m_pModule != 0); };
+
+	// this version is for where we use sprintf to print it to the sprintfBuffer, so just pass *that* buffer to the debug function
+	void DebugOutput(const char* str)
+	{
+#ifdef VERBOSE_DEBUGGING
+#ifdef _WIN32
+		OutputDebugStringA(str);
+#else
+		fprintf(stderr, str);
+#endif
+#endif
+	}
+
+	char sprintfBuffer[1000];	// buffer used below
+	void DebugOutput(int dontcare)
+	{
+		DebugOutput((const char*)sprintfBuffer);
+	}
+
     void ResetPython()
     {
-#ifdef VERBOSE_DEBUGGING
-        fprintf(stderr, "ResetPython() BEGIN\n");
-#endif
-         if( m_pArgs != 0 )
+        DebugOutput("ResetPython() BEGIN\n");
+
+		if( m_pArgs != 0 )
         {
             Py_DecRef(m_pArgs);
             m_pArgs = 0;
@@ -65,10 +88,9 @@ namespace PyScriptEC
         {
             // this means we *were* doing something, so release everything (not the 
             //  func itself, but the module and then Finalize)
-#ifdef VERBOSE_DEBUGGING
-            fprintf(stderr, "releasing what we were doing...\n");
-#endif
-            Py_DecRef(m_pModule);
+            DebugOutput("releasing what we were doing...\n");
+
+			Py_DecRef(m_pModule);
             m_pModule = 0;
 
             // reset the function pointer as well (just good practice)
@@ -79,10 +101,9 @@ namespace PyScriptEC
             
             Py_Finalize();
         }
-#ifdef VERBOSE_DEBUGGING
-        fprintf(stderr, "ResetPython() END\n");
-#endif
-    }
+        DebugOutput("ResetPython() END\n");
+
+	}
 
 #ifdef _MSC_VER
     // Copy the first len characters of src into a dynamically allocated string.
@@ -97,7 +118,7 @@ namespace PyScriptEC
         char * dst = (char *)malloc(len + 1);
 #if !be106
 		// use the safe version
-        strncpy_s(dst, len, src, len);
+        strncpy_s(dst, len + 1, src, len);
 #else
         strncpy(dst, src, len);
 #endif
@@ -108,26 +129,22 @@ namespace PyScriptEC
 
     int Load(void)
     {
-#ifdef VERBOSE_DEBUGGING
-        fprintf(stderr, "PyScript.CppLoad() BEGIN\n");
-#endif
-        int hr = 0;
+        DebugOutput("PyScript.CppLoad() BEGIN\n");
+
+		int hr = 0;
 
         struct stat attrib;
-#ifdef VERBOSE_DEBUGGING
-        fprintf(stderr, "Checking for file '%s'\n", m_strFileSpec);
-#endif
-        if(stat(m_strFileSpec, &attrib) != 0 || !S_ISREG(attrib.st_mode))
+        DebugOutput(sprintf(sprintfBuffer, "Checking for file '%s'\n", m_strFileSpec));
+
+		if(stat(m_strFileSpec, &attrib) != 0 || !S_ISREG(attrib.st_mode))
         {
-#ifdef VERBOSE_DEBUGGING
-            fprintf(stderr, "PyScript: Invalid script path");
-#endif
-            return -1;
+            DebugOutput("PyScript: Invalid script path");
+
+			return /* CantOpenReadMap = */ -11;
         }
-#ifdef VERBOSE_DEBUGGING
-        fprintf(stderr, "Script file exists.\n");
-#endif
-            
+        DebugOutput("Script file exists.\n");
+
+
         // see if the file has been changed (and reload if so)
         if (m_timeLastModified != 0)
         {
@@ -137,10 +154,9 @@ namespace PyScriptEC
                 ResetPython();
             }
         }
-#ifdef VERBOSE_DEBUGGING
-        fprintf(stderr, "Setting time last modified.\n");
-#endif
-        m_timeLastModified = attrib.st_mtime;
+        DebugOutput("Setting time last modified.\n");
+
+		m_timeLastModified = attrib.st_mtime;
 
         // if we've already initialized Python, then we're done.
         if( IsModuleLoaded() )
@@ -151,13 +167,11 @@ namespace PyScriptEC
         int nAstrArgs = 0;
 
         // hook up to the Python DLL
-#ifdef VERBOSE_DEBUGGING
-        fprintf(stderr, "Initializing python...\n");
-#endif
-        Py_Initialize();
-#ifdef VERBOSE_DEBUGGING
-        fprintf(stderr, "Initialized.\n");
-#endif
+        DebugOutput("Initializing python...\n");
+
+		Py_Initialize();
+        DebugOutput("Initialized.\n");
+
 
         // next add the path to the sys.path
         if (m_strScriptDir != NULL)
@@ -169,30 +183,26 @@ namespace PyScriptEC
             snprintf(strCmd, 1000, "import sys\nsys.path.append('%s')", m_strScriptDir);
 #endif
             strCmd[999] = 0;    // just in case...
-#ifdef VERBOSE_DEBUGGING
-            fprintf(stderr, "Running this python command:\n%s\n", strCmd);
-#endif
-            PyRun_SimpleString(strCmd);
-#ifdef VERBOSE_DEBUGGING
-            fprintf(stderr, "Finished python command.\n");
-#endif
-        }
+            DebugOutput(sprintf(sprintfBuffer, "Running this python command:\n%s\n", strCmd));
+
+			PyRun_SimpleString(strCmd);
+            DebugOutput("Finished python command.\n");
+
+		}
 
         // turn the filename into a Python object (Python import doesn't like .py extension)
-#ifdef VERBOSE_DEBUGGING
-        fprintf(stderr, "ScriptFile '%s'\n", m_strScriptFile);
-#endif
-        char * pszExtension = strrchr(m_strScriptFile, '.');
+        DebugOutput(sprintf(sprintfBuffer, "ScriptFile '%s'\n", m_strScriptFile));
+
+		char * pszExtension = strrchr(m_strScriptFile, '.');
         if (!strcmp(pszExtension, ".py"))
             m_strScriptName = strndup(m_strScriptFile, strlen(m_strScriptFile) - 3);
         else
             m_strScriptName = _strdup(m_strScriptFile);
 
         // get the module point by the name
-#ifdef VERBOSE_DEBUGGING
-        fprintf(stderr, "ScriptName '%s'\n", m_strScriptName);
-#endif
-        m_pModule = PyImport_ImportModule(m_strScriptName);
+        DebugOutput(sprintf(sprintfBuffer, "ScriptName '%s'\n", m_strScriptName));
+
+		m_pModule = PyImport_ImportModule(m_strScriptName);
         if( m_pModule == 0 )
         {
             // gracefully disconnect from Python
@@ -201,10 +211,9 @@ namespace PyScriptEC
             ErrorOccurred();
             Py_Finalize();
 
-#ifdef VERBOSE_DEBUGGING
-            fprintf(stderr, "PyScript: Unable to import script module '%s'! Is it locked? Does it have a syntax error? Is a Python distribution installed?", m_strScriptName);
-#endif
-            return -1;
+            DebugOutput(sprintf(sprintfBuffer, "PyScript: Unable to import script module '%s'! Is it locked? Does it have a syntax error? Is a Python distribution installed?", m_strScriptName));
+
+			return /* CantOpenReadMap = */ -11;
         }
 
         PyObject* pDict = PyModule_GetDict(m_pModule);
@@ -224,12 +233,11 @@ namespace PyScriptEC
         if(!MyPyCallable_Check(m_pFunc))
         {
             // gracefully disconnect from Python
-#ifdef VERBOSE_DEBUGGING
-            fprintf(stderr, "PyScript: no callable function named '%s' in script module '%s'!",
-                    m_strFuncName, m_strScriptName);
-#endif
-            ResetPython();
-            return -1;
+            DebugOutput(sprintf(sprintfBuffer, "PyScript: no callable function named '%s' in script module '%s'!",
+											 m_strFuncName, m_strScriptName));
+
+			ResetPython();
+            return /* NameNotFound = */ -7;
         }
 
         // finally, if the user configured any additional parameters to be passed
@@ -249,10 +257,9 @@ namespace PyScriptEC
                 {
                     // gracefully disconnect from Python
                     ResetPython();
-#ifdef VERBOSE_DEBUGGING
-                    fprintf(stderr, "PyScript: Can't convert optional fixed parameter '%s' to a Python unicode string", strArg);
-#endif
-                    return -1;
+                    DebugOutput(sprintf(sprintfBuffer, "PyScript: Can't convert optional fixed parameter '%s' to a Python unicode string", strArg));
+
+					return -1;
                 }
 
                 // put it into the argument tuple (pValue reference is "stolen" here)
@@ -265,28 +272,27 @@ namespace PyScriptEC
             m_nArgCount = 1;
             m_pArgs = PyTuple_New(m_nArgCount);
         }
-#ifdef VERBOSE_DEBUGGING
-        fprintf(stderr, "m_nArgCount = %d", m_nArgCount);
-        fprintf(stderr, "Load() END\n");
-#endif
-        return hr;
+
+        DebugOutput(sprintf(sprintfBuffer, "m_nArgCount = %d", m_nArgCount));
+        DebugOutput("Load() END\n");
+
+		return hr;
     }
 
     int Initialize(char * strScript, char * strDir)
     {
-#ifdef VERBOSE_DEBUGGING
-        fprintf(stderr, "PyScript.CppInitialize() BEGIN\n");
-        fprintf(stderr, "strScript '%s'\n", strScript);
-        fprintf(stderr, "strDir '%s'\n", strDir);
-#endif
-        if (initialized)
+        DebugOutput("PyScript.CppInitialize() BEGIN\n");
+        DebugOutput(sprintf(sprintfBuffer, "strScript '%s'\n", strScript));
+        DebugOutput(sprintf(sprintfBuffer, "strDir '%s'\n", strDir));
+
+		if (initialized)
         {
             if (!strcmp(strDir, m_strScriptDir) && !strcmp(strScript, m_strScriptFile))
                 return 0;
             ResetPython();
         }
         m_timeLastModified = time(NULL);
-        m_eStringDataTypeIn = m_eStringDataTypeOut = eBytes;
+        m_eStringDataTypeIn = m_eStringDataTypeOut = eUCS2;		// assume the caller is giving us utf-16 (the converter only supports Unicode-to-Unicode converters
 
         if (m_strScriptFile != NULL && strcmp(strScript, m_strScriptFile))
         {
@@ -323,10 +329,9 @@ namespace PyScriptEC
     // call to clean up resources when we've been inactive for some time.
     void InactivityWarning()
     {
-#ifdef VERBOSE_DEBUGGING
-        fprintf(stderr, "CPyScriptEncConverter::InactivityWarning\n");
-#endif
-        ResetPython();
+        DebugOutput("CPyScriptEncConverter::InactivityWarning\n");
+
+		ResetPython();
     }
 
     int PreConvert
@@ -405,8 +410,8 @@ namespace PyScriptEC
         {
 #ifdef VERBOSE_DEBUGGING
             bool printedErr = false;
-            fprintf(stderr, "While executing the function, '%s', in the python script, '%s', the following error occurred:\n",
-                    m_strFuncName, m_strScriptName );
+            DebugOutput(sprintf(sprintfBuffer, "While executing the function, '%s', in the python script, '%s', the following error occurred:\n",
+											 m_strFuncName, m_strScriptName));
             PyObject *err_type, *err_value, *err_traceback;
             PyErr_Fetch(&err_type, &err_value, &err_traceback);
             
@@ -416,20 +421,20 @@ namespace PyScriptEC
                 if( pName != 0 )
                 {
                     char * name = PyString_AsString(pName);
-                    fprintf(stderr, "%s; ", name);
+                    DebugOutput(sprintf(sprintfBuffer, "%s; ", name));
                 }
                 printedErr = true;
             }
 
             if( MyPyInstance_Check(err_value) )
             {
-                fprintf(stderr, "Instance error; ");
+                DebugOutput("Instance error; ");
                 printedErr = true;
             }
             else if( MyPyString_Check(err_value) )
             {
                 char * value = PyString_AsString(err_value);
-                fprintf(stderr, "%s; ", value);
+                DebugOutput(sprintf(sprintfBuffer, "%s; ", value));
                 printedErr = true;
             }
 
@@ -438,11 +443,11 @@ namespace PyScriptEC
                 PyTracebackObject* pTb = (PyTracebackObject*)err_traceback;
                 // if( PyTraceBack_Print(err_traceback,pTb) )
                 char * trace = PyString_AsString(err_traceback);
-                fprintf(stderr, "%s; ", trace);
+                DebugOutput(sprintf(sprintfBuffer, "%s; ", trace));
                 printedErr = true;
             }
             if (!printedErr)
-                fprintf(stderr, "\n\n\tPyScript: No data return from Python! Perhaps there's a syntax error in the Python function\n");
+                DebugOutput("\n\n\tPyScript: No data return from Python! Perhaps there's a syntax error in the Python function\n");
 #endif
             PyErr_Clear();
         }
@@ -450,7 +455,8 @@ namespace PyScriptEC
         // reset python before we go
         ResetPython();
 
-        return -1;
+		// most likely a compilation failure
+        return /* CompilationFailed = */ -9;
     }
 
     int DoConvert
@@ -461,17 +467,16 @@ namespace PyScriptEC
         int&    rnOutLen
     )
     {
-#ifdef VERBOSE_DEBUGGING
-        fprintf(stderr, "PyScript.CppDoConvert() BEGIN\n");
-#endif
-        PyObject* pValue = 0;
+        DebugOutput("PyScript.CppDoConvert() BEGIN\n");
+
+		PyObject* pValue = 0;
         switch(m_eStringDataTypeIn)
         {
             case eBytes:
                 pValue = PyString_FromStringAndSize((const char *)lpInBuffer,nInLen);
                 break;
             case eUCS2:
-                pValue = PyUnicode_FromUnicode((const Py_UNICODE*)(const char *)lpInBuffer,nInLen / 2);
+                pValue = PyUnicode_FromUnicode((const Py_UNICODE*)(const char *)lpInBuffer, nInLen / 2);
                 break;
     /*      // apparently, UTF32 isn't available concurrently with UTF16... so for now... comment it out
             case eUCS4:
@@ -483,27 +488,24 @@ namespace PyScriptEC
         if( pValue == 0 )
         {
             ResetPython();
-#ifdef VERBOSE_DEBUGGING
-            fprintf(stderr, "PyScript: Can't convert input data '%s' to a form that Python can read!?\n", 
-                    lpInBuffer);
-#endif
-            return -1;
+
+			DebugOutput(sprintf(sprintfBuffer, "PyScript: Can't convert input data '%s' to a form that Python can read!?\n", 
+											 lpInBuffer));
+
+			return /* IncompleteChar = */ -8;
         }
 
-#ifdef VERBOSE_DEBUGGING
-        fprintf(stderr, "nInLen = %d, rnOutLen = %d\n", nInLen, rnOutLen);
-#endif
-        // put the value to convert into the last argument slot
+        DebugOutput(sprintf(sprintfBuffer, "nInLen = %d, rnOutLen = %d\n", nInLen, rnOutLen));
+
+		// put the value to convert into the last argument slot
         PyTuple_SetItem(m_pArgs, m_nArgCount - 1, pValue);
 
         // do the call
-#ifdef VERBOSE_DEBUGGING
-        fprintf(stderr, "Calling...");
-#endif
-        pValue = PyObject_CallObject(m_pFunc, m_pArgs);
-#ifdef VERBOSE_DEBUGGING
-        fprintf(stderr, "finished.\n");
-#endif
+        DebugOutput("Calling...");
+
+		pValue = PyObject_CallObject(m_pFunc, m_pArgs);
+        DebugOutput("finished.\n");
+
 
         Py_ssize_t nOut;
 
@@ -517,30 +519,27 @@ namespace PyScriptEC
         switch(m_eStringDataTypeOut)
         {
             case eBytes:
-#ifdef VERBOSE_DEBUGGING
-                fprintf(stderr, "getting eBytes of pValue\n");
-#endif
-                PyString_AsStringAndSize(pValue,(char **)&lpOutValue,&nOut);
+                DebugOutput("getting eBytes of pValue\n");
+
+				PyString_AsStringAndSize(pValue,(char **)&lpOutValue,&nOut);
                 if( nOut < 0 )
                 {
                     // at least, this is what happens if the python function returns a string, but the ConvType is
                     //  incorrectly configured as returning Unicode. ErrStatus
-#ifdef VERBOSE_DEBUGGING
-                    fprintf(stderr, "PyScript: Are you sure that the Python function returns non-Unicode-encoded (bytes) data?");
-#endif
-                    hr = -1;
+                    DebugOutput("PyScript: Are you sure that the Python function returns non-Unicode-encoded (bytes) data?");
+
+					hr = /* OutEncFormNotSupported = */ -13;
                 }
                 break;
             case eUCS2:
-                nOut = (int)PyUnicode_GetSize(pValue) * sizeof(char);
+                nOut = (int)PyUnicode_GetSize(pValue) * sizeof(char) * 2;	// EC is expecting the number of bytes
                 if( nOut < 0 )
                 {
                     // at least, this is what happens if the python function returns a string, but the ConvType is
                     //  incorrectly configured as returning Unicode. ErrStatus
-#ifdef VERBOSE_DEBUGGING
-                    fprintf(stderr, "PyScript: Are you sure that the Python function returns Unicode-encoded (wide) data?");
-#endif
-                    hr = -1;
+                    DebugOutput("PyScript: Are you sure that the Python function returns Unicode-encoded (wide) data?");
+
+					hr = /* OutEncFormNotSupported = */ -13;
                 }
                 lpOutValue = PyUnicode_AsUnicode(pValue);   // PyUnicodeUCS2_AsUnicode(pValue);
                 break;
@@ -557,27 +556,23 @@ namespace PyScriptEC
         {
             if( nOut > (int)rnOutLen )
             {
-#ifdef VERBOSE_DEBUGGING
-                fprintf(stderr, "Too long: '%s'\n", (char *)lpOutValue);
-#endif
-                hr = -1;
+                DebugOutput(sprintf(sprintfBuffer, "Too long: '%s'\n", (char *)lpOutValue));
+
+				hr = /* NotEnoughBuffer = */ -17;
             }
             else
             {
                 rnOutLen = nOut;
-#ifdef VERBOSE_DEBUGGING
-                fprintf(stderr, "copying to length %d\n", (int)nOut);
-#endif
-                if( nOut > 0 )
+                DebugOutput(sprintf(sprintfBuffer, "copying to length %d\n", (int)nOut));
+
+				if( nOut > 0 )
                     memcpy(lpOutBuffer,lpOutValue,nOut);
-#ifdef VERBOSE_DEBUGGING
-                fprintf(stderr, "length of outBuffer = %u\n", (unsigned)strlen(lpOutBuffer));
-#endif
-                    lpOutBuffer[nOut] = '\0';   // end the string here
-#ifdef VERBOSE_DEBUGGING
-                    fprintf(stderr, "length of outBuffer = %u\n", (unsigned)strlen(lpOutBuffer));
-#endif
-                }
+                DebugOutput(sprintf(sprintfBuffer, "length of outBuffer = %u\n", (unsigned)strlen(lpOutBuffer)));
+
+				lpOutBuffer[nOut] = '\0';   // end the string here
+                    DebugOutput(sprintf(sprintfBuffer, "length of outBuffer = %u\n", (unsigned)strlen(lpOutBuffer)));
+
+			}
         }
 
         Py_DecRef(pValue);
@@ -587,7 +582,7 @@ namespace PyScriptEC
 
     /*
     int main() {
-        fprintf(stderr, "main() BEGIN\n");
+        DebugOutput("main() BEGIN\n");
         char scriptDir[]  = "/media/winD/Jim/computing/SEC_on_linux/testing/";
         char scriptName[] = "testcnv.py";
         int err = Initialize(scriptName, scriptDir);
@@ -602,9 +597,9 @@ namespace PyScriptEC
         if (err != 0) {
             return err;
         }
-        fprintf(stderr, "Got %s\n", strOut);
+        DebugOutput("Got %s\n", strOut);
 
-        fprintf(stderr, "main() END\n");
+        DebugOutput("main() END\n");
         return 0;
     }
     */

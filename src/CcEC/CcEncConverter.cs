@@ -60,7 +60,7 @@ namespace SilEncConverters40
 
         public override void Initialize(string converterName, string converterSpec, ref string lhsEncodingID, ref string rhsEncodingID, ref ConvType conversionType, ref Int32 processTypeFlags, Int32 codePageInput, Int32 codePageOutput, bool bAdding)
         {
-            System.Diagnostics.Debug.WriteLine("Cc EC Initialize BEGIN");
+            DebugWriteLine("Cc EC Initialize BEGIN");
             // let the base class have first stab at it
             base.Initialize(converterName, converterSpec, ref lhsEncodingID, ref rhsEncodingID, 
                 ref conversionType, ref processTypeFlags, codePageInput, codePageOutput, bAdding );
@@ -99,7 +99,7 @@ namespace SilEncConverters40
             //  other)
             if( bAdding )
                 m_timeModified = DateTime.MinValue;
-            System.Diagnostics.Debug.WriteLine("Cc EC Initialize END");
+            DebugWriteLine("Cc EC Initialize END");
         }
 
         #endregion Initialization
@@ -112,7 +112,7 @@ namespace SilEncConverters40
 
         protected void Unload()
         { 
-            System.Diagnostics.Debug.WriteLine("CcEncConverter.Unload");
+            DebugWriteLine("CcEncConverter.Unload");
             if( IsFileLoaded() )
             {
                 CCUnloadTable(m_hTable);
@@ -128,8 +128,8 @@ namespace SilEncConverters40
 
         protected unsafe void Load(string strTablePath)
         {
-            System.Diagnostics.Debug.WriteLine("CcEncConverter.Load BEGIN");
-            System.Diagnostics.Debug.WriteLine("path " + strTablePath);
+            DebugWriteLine("CcEncConverter.Load BEGIN");
+            DebugWriteLine("path " + strTablePath);
             // first make sure it's there and get the last time it was modified
             DateTime timeModified = DateTime.Now; // don't care really, but have to initialize it.
             if( !DoesFileExist(strTablePath, ref timeModified) )
@@ -156,7 +156,7 @@ namespace SilEncConverters40
                 fixed(byte* pszTablePath = baTablePath)
                     fixed(Int32* phTable = &m_hTable)
                     {
-                        System.Diagnostics.Debug.WriteLine("Calling CCLoadTable");
+                        DebugWriteLine("Calling CCLoadTable");
                         int status = 0;
 
 #if __MonoCS__  // this isn't needed for Windows/.Net (and sending a message about .so files is confusing)
@@ -175,10 +175,10 @@ namespace SilEncConverters40
                         {
                             TranslateErrStatus(status);
                         }
-                        System.Diagnostics.Debug.WriteLine("Finished calling CCLoadTable");
+                        DebugWriteLine("Finished calling CCLoadTable");
                     }
             }
-            System.Diagnostics.Debug.WriteLine("CcEncConverter.Load END");
+            DebugWriteLine("CcEncConverter.Load END");
         }
 
         protected void    TranslateErrStatus(int status)

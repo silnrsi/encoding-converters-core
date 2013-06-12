@@ -38,7 +38,7 @@ using System;
 //  support the new version number and allow for the old one when serializing in
 //  the data.
 [assembly: AssemblyVersion("4.0.0.0")]
-[assembly: AssemblyFileVersionAttribute("4.0.1.1")]
+[assembly: AssemblyFileVersionAttribute("4.0.2.0")]
 
 [assembly: CLSCompliantAttribute(true)]
 

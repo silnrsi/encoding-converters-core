@@ -28,9 +28,9 @@ namespace SilEncConverters40
             bool bIsInRepository
             )
         {
-            System.Diagnostics.Debug.WriteLine("TecAutoConfigDialog ctor1 BEGIN");
+            EncConverter.DebugWriteLine("TecAutoConfigDialog ctor1 BEGIN");
             InitializeComponent();
-            System.Diagnostics.Debug.WriteLine("initialized component");
+            EncConverter.DebugWriteLine("initialized component");
 
             base.Initialize
             (
@@ -45,7 +45,7 @@ namespace SilEncConverters40
             lProcessTypeFlags,
             bIsInRepository
             );
-            System.Diagnostics.Debug.WriteLine("called base.Initalize");
+            EncConverter.DebugWriteLine("called base.Initalize");
 
             // if we're editing a TECkit map, then set the Converter Spec and say it's unmodified
             if (m_bEditMode)
@@ -57,9 +57,9 @@ namespace SilEncConverters40
 
             m_bInitialized = true;
 
-            System.Diagnostics.Debug.WriteLine("setting help string");
+            EncConverter.DebugWriteLine("setting help string");
             helpProvider.SetHelpString(textBoxFileSpec, Properties.Resources.ConverterFileSpecHelpString);
-            System.Diagnostics.Debug.WriteLine("TecAutoConfigDialog ctor1 END");
+            EncConverter.DebugWriteLine("TecAutoConfigDialog ctor1 END");
         }
 
         public TecAutoConfigDialog
@@ -71,7 +71,7 @@ namespace SilEncConverters40
             string strTestData
             )
         {
-            System.Diagnostics.Debug.WriteLine("TecAutoConfigDialog ctor2 BEGIN");
+            EncConverter.DebugWriteLine("TecAutoConfigDialog ctor2 BEGIN");
             InitializeComponent();
 
             base.Initialize
@@ -82,7 +82,7 @@ namespace SilEncConverters40
             eConversionType,
             strTestData
             );
-            System.Diagnostics.Debug.WriteLine("TecAutoConfigDialog ctor2 END");
+            EncConverter.DebugWriteLine("TecAutoConfigDialog ctor2 END");
         }
 
         // this method is called either when the user clicks the "Apply" or "OK" buttons *OR* if she
@@ -92,10 +92,10 @@ namespace SilEncConverters40
         {
 #if DEBUG
             if (textBoxFileSpec == null) 
-                System.Diagnostics.Debug.WriteLine("textBoxFileSpec null!!!");
+                EncConverter.DebugWriteLine("textBoxFileSpec null!!!");
             if (tabControl == null) 
-                System.Diagnostics.Debug.WriteLine("tabControl null!!!");
-            System.Diagnostics.Debug.WriteLine("Nothing seems to be null");
+                EncConverter.DebugWriteLine("tabControl null!!!");
+            EncConverter.DebugWriteLine("Nothing seems to be null");
 #endif
             // for TECkit, get the converter identifier from the Setup tab controls.
             ConverterIdentifier = textBoxFileSpec.Text;
