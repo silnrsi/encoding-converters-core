@@ -191,7 +191,6 @@ namespace SilEncConverters40
         */
         protected virtual bool Load(bool bMapOfMaps)
         {
-            System.Diagnostics.Debug.WriteLine("AdaptItKBReader.Load() BEGIN");
             System.Diagnostics.Debug.Assert(!String.IsNullOrEmpty(m_strProjectFileSpec));
             System.Diagnostics.Debug.Assert(!String.IsNullOrEmpty(m_strKnowledgeBaseFileSpec));
 
@@ -313,7 +312,6 @@ namespace SilEncConverters40
                                 string strSourceWord = xpSourceWords.Current.GetAttribute("k", navigator.NamespaceURI);
                                 System.Diagnostics.Debug.Assert(!mapWords.ContainsKey(strSourceWord), String.Format("The Knowledge Base has two different source records which are canonically equivalent! See if you can merge the two KB entries for word that look like, '{0}'", strSourceWord));
                                 mapWords[strSourceWord] = strTargetWordFull;
-                                System.Diagnostics.Debug.WriteLine("mapWords[" + strSourceWord + "] = " + strTargetWordFull);
                             }
                         }
                     }
@@ -372,7 +370,6 @@ namespace SilEncConverters40
                                 }
 
                                 m_mapLookup[aTURow.k] = strValue;
-                                System.Diagnostics.Debug.WriteLine("m_mapLookup[" + aTURow.k +  "] = " + strValue);
                             }
                         }
                     }
@@ -447,7 +444,6 @@ namespace SilEncConverters40
                 }
             }
 
-            System.Diagnostics.Debug.WriteLine("AdaptItKBReader.Load() END");
             return bSomethingChanged;   // indicate whether the data was reinitialized or not
         }
 
@@ -519,7 +515,6 @@ namespace SilEncConverters40
 
         protected void GetXmlDocument(out XmlDocument doc, out XPathNavigator navigator, out XmlNamespaceManager manager)
         {
-            System.Diagnostics.Debug.WriteLine("AdaptItKBReader.cs: Loading " + m_strKnowledgeBaseFileSpec);
             doc = new XmlDocument();
             doc.Load(m_strKnowledgeBaseFileSpec);
             navigator = doc.CreateNavigator();

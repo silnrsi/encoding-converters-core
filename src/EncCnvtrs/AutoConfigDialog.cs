@@ -42,27 +42,26 @@ namespace SilEncConverters40
 #if VERBOSE_DEBUGGING
             Console.WriteLine("AutoConfigDialog ctor");
 #endif
-            System.Diagnostics.Debug.WriteLine("AutoConfigDialog ctor BEGIN");
+            EncConverter.DebugWriteLine("AutoConfigDialog ctor BEGIN");
             InitializeComponent();
-            System.Diagnostics.Debug.WriteLine("finished InitializeComponent.");
-            //System.Diagnostics.Debug.WriteLine("LD_LIBRARY_PATH=" +
+            EncConverter.DebugWriteLine("finished InitializeComponent.");
+            //EncConverter.DebugWriteLine("LD_LIBRARY_PATH=" +
             //    Environment.GetEnvironmentVariable("LD_LIBRARY_PATH"));
-            //System.Diagnostics.Debug.WriteLine("loc=" + XULRunnerLocator.GetXULRunnerLocation());
+            //EncConverter.DebugWriteLine("loc=" + XULRunnerLocator.GetXULRunnerLocation());
             //Xpcom.Initialize(XULRunnerLocator.GetXULRunnerLocation());
 
             helpProvider.SetHelpString(buttonSaveInRepository, Properties.Resources.SaveInRepositoryHelpString);
-            System.Diagnostics.Debug.WriteLine("finished first SetHelpString.");
+            EncConverter.DebugWriteLine("finished first SetHelpString.");
             helpProvider.SetHelpString(ecTextBoxInput, Properties.Resources.TestInputBoxHelpString);
             helpProvider.SetHelpString(ecTextBoxOutput, Properties.Resources.TestOutputBoxHelpString);
             helpProvider.SetHelpString(richTextBoxHexInput, Properties.Resources.TestHexDecOutputBoxesHelpString);
             helpProvider.SetHelpString(richTextBoxHexOutput, Properties.Resources.TestHexDecOutputBoxesHelpString);
 
-            System.Drawing.Text.InstalledFontCollection fonts = new System.Drawing.Text.InstalledFontCollection();
-            FontFamily [] families = fonts.Families;
-            foreach (FontFamily family in fonts.Families)
+            var fonts = new System.Drawing.Text.InstalledFontCollection();
+            foreach (var family in fonts.Families)
                 this.comboBoxFont.Items.Add(family.Name);
 
-            System.Diagnostics.Debug.WriteLine("AutoConfigDialog ctor END");
+            EncConverter.DebugWriteLine("AutoConfigDialog ctor END");
         }
 
         public virtual void Initialize
@@ -82,7 +81,7 @@ namespace SilEncConverters40
 #if VERBOSE_DEBUGGING
 			Console.WriteLine("AutoConfigDialog initialize");
 #endif
-			System.Diagnostics.Debug.WriteLine("AutoConfigDialog.Initialize BEGIN");
+			EncConverter.DebugWriteLine("AutoConfigDialog.Initialize BEGIN");
             htmlfilename = strHtmlFileName;
             m_strOriginalFriendlyName = FriendlyName = strFriendlyName;
             ConverterIdentifier = strConverterIdentifier;
@@ -146,7 +145,7 @@ namespace SilEncConverters40
             ecTextBoxInput.Text = "Test Data";
             //char[] chinese = {'\u6B22','\u8FCE','\u4F7F','\u7528','\u0020'};
             //ecTextBoxInput.Text = new string(chinese);
-            System.Diagnostics.Debug.WriteLine("Initialize END");
+            EncConverter.DebugWriteLine("Initialize END");
         }
 
         protected virtual void SetConvTypeControls()
@@ -163,7 +162,7 @@ namespace SilEncConverters40
             string strTestData
             )
         {
-            System.Diagnostics.Debug.WriteLine("Initialize2 BEGIN");
+            EncConverter.DebugWriteLine("Initialize2 BEGIN");
             FriendlyName = strFriendlyName;
             ConverterIdentifier = strConverterIdentifier;
             ConversionType = eConversionType;
@@ -324,7 +323,7 @@ namespace SilEncConverters40
 
         private void buttonApply_Click(object sender, EventArgs e)
         {
-            System.Diagnostics.Debug.WriteLine("buttonApply_Click");
+            EncConverter.DebugWriteLine("buttonApply_Click");
             OnApply();
         }
 
@@ -572,7 +571,7 @@ namespace SilEncConverters40
 
         private void tabControl_Selected(object sender, TabControlEventArgs e)
         {
-            System.Diagnostics.Debug.WriteLine("tabControl_Selected()");
+            EncConverter.DebugWriteLine("tabControl_Selected()");
             if (e.TabPage == tabPageSetup)
             {
                 buttonSaveInRepository.Visible = SetupTabSelected_MakeSaveInRepositoryVisible;
@@ -713,7 +712,7 @@ namespace SilEncConverters40
 
         private void richTextBoxInput_TextChanged(object sender, EventArgs e)
         {
-            System.Diagnostics.Debug.WriteLine("richTextBoxInput_TextChanged()");
+            EncConverter.DebugWriteLine("richTextBoxInput_TextChanged()");
             TestTabInputChanged();
         }
 
@@ -747,7 +746,7 @@ namespace SilEncConverters40
 
         private void buttonTest_Click(object sender, EventArgs e)
         {
-            System.Diagnostics.Debug.WriteLine("buttonTest_Click()");
+            EncConverter.DebugWriteLine("buttonTest_Click()");
             IEncConverter aEC = InitializeEncConverter;
             if (aEC != null)
             {
@@ -756,7 +755,7 @@ namespace SilEncConverters40
                     aEC.DirectionForward = !checkBoxTestReverse.Checked;
                     //ecTextBoxOutput.Text = aEC.Convert(ecTextBoxInput.Text);
                     string result = aEC.Convert(ecTextBoxInput.Text);
-                    System.Diagnostics.Debug.WriteLine("Putting in text box: '" + result + "'");
+                    EncConverter.DebugWriteLine("Putting in text box: '" + result + "'");
                     ecTextBoxOutput.Text = result;
                     //ecTextBoxOutput.Text = "Hello there!";
                 }
@@ -788,7 +787,7 @@ namespace SilEncConverters40
 
         private void buttonOK_Click(object sender, EventArgs e)
         {
-            System.Diagnostics.Debug.WriteLine("buttonOK_Click()");
+            EncConverter.DebugWriteLine("buttonOK_Click()");
             if (OnApply())
             {
                 // see if the user has *not* added the converter to the repository (i.e. it's currently
@@ -810,7 +809,7 @@ namespace SilEncConverters40
 
         private void ecTextBoxInput_TextChanged(object sender, EventArgs e)
         {
-            System.Diagnostics.Debug.WriteLine("ecTextBoxInput_TextChanged()");
+            EncConverter.DebugWriteLine("ecTextBoxInput_TextChanged()");
             TestTabInputChanged();
         }
 
@@ -821,16 +820,16 @@ namespace SilEncConverters40
             try {
             aCMS = (ContextMenuStrip)sender;
             } catch (System.InvalidCastException) {
-                System.Diagnostics.Debug.WriteLine("InvalidCastExc 1");
+                EncConverter.DebugWriteLine("InvalidCastExc 1");
                 return;
             }
             if (aCMS.SourceControl != null) {
-                System.Diagnostics.Debug.WriteLine("Name: " + aCMS.SourceControl.Name);
+                EncConverter.DebugWriteLine("Name: " + aCMS.SourceControl.Name);
             }
             try {
             m_tbLastClicked = (TextBox)aCMS.SourceControl;
             } catch (System.InvalidCastException) {
-                System.Diagnostics.Debug.WriteLine("InvalidCastExc 2");
+                EncConverter.DebugWriteLine("InvalidCastExc 2");
                 return;
             }
             right2LeftToolStripMenuItem.Checked = (m_tbLastClicked.RightToLeft == RightToLeft.Yes);
@@ -838,7 +837,7 @@ namespace SilEncConverters40
 
         private void changeFontToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            System.Diagnostics.Debug.WriteLine("changeFontToolStripMenuItem_Click()");
+            EncConverter.DebugWriteLine("changeFontToolStripMenuItem_Click()");
             if (m_tbLastClicked != null)
             {
                 fontDialog.Font = m_tbLastClicked.Font;
@@ -912,7 +911,7 @@ namespace SilEncConverters40
 
         private void comboBoxFont_SelectedIndexChanged(object sender, EventArgs e)
         {
-            System.Diagnostics.Debug.WriteLine("comboBoxFont_SelectedIndexChanged()");
+            EncConverter.DebugWriteLine("comboBoxFont_SelectedIndexChanged()");
             if (comboBoxFont.SelectedIndex == -1) return;
             string newVal  = comboBoxFont.SelectedItem.ToString();
             float  newSize = 12;

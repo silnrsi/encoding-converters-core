@@ -38,10 +38,9 @@ namespace SilEncConverters40
 
         #region Member Variable Definitions
         private DateTime    m_timeModified = DateTime.MinValue;
-        private bool        m_bUseDelimiters = false;
 
         public const string strDisplayName = "Python Script";
-        public const string strHtmlFilename = "Python Script Plug-in About box.htm";
+        public const string strHtmlFilename = "Python Script Plug-in About box.mht";
         #endregion Member Variable Definitions
 
         #region Initialization
@@ -50,14 +49,6 @@ namespace SilEncConverters40
         public PyScriptEncConverter() : base (
             typeof(PyScriptEncConverter).FullName,EncConverters.strTypeSILPyScript)
         {
-        }
-
-        /// <summary>
-        /// The class destructor. </summary>
-        ~PyScriptEncConverter()
-        {
-            //if( IsFileLoaded() )
-            //    CCUnloadTable(m_hTable);
         }
 
         public override void Initialize(
@@ -71,30 +62,13 @@ namespace SilEncConverters40
             Int32 codePageOutput,
             bool bAdding)
         {
-            System.Diagnostics.Debug.WriteLine("PyScript EC Initialize BEGIN");
+            DebugWriteLine("PyScript EC Initialize BEGIN");
             // let the base class have first stab at it
             base.Initialize(converterName, converterSpec, ref lhsEncodingID, ref rhsEncodingID, 
                 ref conversionType, ref processTypeFlags, codePageInput, codePageOutput, bAdding );
 
-            // the only thing we want to add (now that the convType can be less than accurate) 
-            //  is to make sure it's unidirectional
-            switch(conversionType)
-            {
-                case ConvType.Legacy_to_from_Legacy:
-                    conversionType = ConvType.Legacy_to_Legacy;
-                    break;
-                case ConvType.Legacy_to_from_Unicode:
-                    conversionType = ConvType.Legacy_to_Unicode;
-                    break;
-                case ConvType.Unicode_to_from_Legacy:
-                    conversionType = ConvType.Unicode_to_Legacy;
-                    break;
-                case ConvType.Unicode_to_from_Unicode:
-                    conversionType = ConvType.Unicode_to_Unicode;
-                    break;
-                default:
-                    break;
-            }
+            // this is the only one we support from now on (if the user really wants to do legacy to unicode, they have to deal with the legacy as coming in utf-8 format
+            conversionType = ConvType.Unicode_to_Unicode;
 
             // if we're supposedly adding this one, then clobber our copy of its last modified 
             // (there was a problem with us instantiating lots of these things in a row and
@@ -102,28 +76,12 @@ namespace SilEncConverters40
             //  other)
             if( bAdding )
                 m_timeModified = DateTime.MinValue;
-            System.Diagnostics.Debug.WriteLine("PyScript EC Initialize END");
+            DebugWriteLine("PyScript EC Initialize END");
         }
 
         #endregion Initialization
 
         #region Misc helpers
-        protected bool IsFileLoaded()
-        { 
-            //return (m_hTable != 0);
-            return false;
-        }
-
-        protected void Unload()
-        { 
-            //System.Diagnostics.Debug.WriteLine("CcEncConverter.Unload");
-            //if( IsFileLoaded() )
-            //{
-            //    CCUnloadTable(m_hTable);
-            //    m_hTable = 0;
-            //}
-        }
-
         protected override EncodingForm  DefaultUnicodeEncForm(bool bForward, bool bLHS)
         {
             // if it's unspecified, then we want UTF-16 in C#.
@@ -132,7 +90,7 @@ namespace SilEncConverters40
 
         protected unsafe void Load(string strScriptPath)
         {
-            System.Diagnostics.Debug.WriteLine("PyScript Load BEGIN");
+            DebugWriteLine("PyScript Load BEGIN");
             // first make sure it's there and get the last time it was modified
             DateTime timeModified = DateTime.Now; // don't care really, but have to initialize it.
             if( !DoesFileExist(strScriptPath, ref timeModified) )
@@ -144,10 +102,7 @@ namespace SilEncConverters40
                 // keep track of the modified date, so we can detect a new version to reload
                 m_timeModified = timeModified;
 
-                if( IsFileLoaded() )
-                    Unload();
-
-                System.Diagnostics.Debug.WriteLine("Calling CppInitialize");
+                DebugWriteLine("Calling CppInitialize");
                 string strScriptName = Path.GetFileName(strScriptPath);
                 string strScriptDir = Path.GetDirectoryName(strScriptPath);
                 int status = 0;
@@ -164,13 +119,21 @@ namespace SilEncConverters40
                     throw new Exception("Failed to find function in .so file.");
                 }
 #endif
-                if( status != 0 )  
+                if( status != 0 )
                 {
-                    throw new Exception("CppInitialize failed.");
+                    var strExtraValue = strScriptPath;
+                    var errStatus = (ErrStatus) status;
+                    switch(errStatus)
+                    {
+                        case ErrStatus.NameNotFound:
+                            strExtraValue = "Convert";
+                            break;
+                    }
+                    EncConverters.ThrowError(errStatus, strExtraValue);
                 }
-                System.Diagnostics.Debug.WriteLine("Finished calling CppInitialize");
+                DebugWriteLine("Finished calling CppInitialize");
             }
-            System.Diagnostics.Debug.WriteLine("PyScript Load END");
+            DebugWriteLine("PyScript Load END");
         }
         #endregion Misc helpers
 
@@ -195,20 +158,22 @@ namespace SilEncConverters40
             {
                 // returning this value will cause the input Unicode data (of any form, UTF16, BE, etc.)
                 //	to be converted to UTF8 narrow bytes before calling DoConvert.
-                eInFormEngine = EncodingForm.UTF8Bytes;
+                eInFormEngine = EncodingForm.UTF16;
             }
             else
             {
+                System.Diagnostics.Debug.Fail("This converter doesn't support a legacy side (anymore)");
                 // legacy
                 eInFormEngine = EncodingForm.LegacyBytes;
             }
 
             if( NormalizeRhsConversionType(ConversionType) == NormConversionType.eUnicode )
             {
-                eOutFormEngine = EncodingForm.UTF8Bytes;
+                eOutFormEngine = EncodingForm.UTF16;
             }
             else
             {
+                System.Diagnostics.Debug.Fail("This converter doesn't support a legacy side (anymore)");
                 eOutFormEngine = EncodingForm.LegacyBytes;
             }
 
@@ -224,44 +189,6 @@ namespace SilEncConverters40
             ref int     rnOutLen
             )
         {
-/*          rde1.2.1.0 don't pad with space anymore
-            rde2.2.0.0 Ahh... now I remember why this was there before: if you use boundary
-            condition testing in CC (e.g. "prec(ws) 'i' fol(ws)", where  'ws' contains things 
-            like spaces, nl, tabs, punctuation, etc) then those tests will fail on the first 
-            and last character in the stream (which are at a boundary conditions, but can't be 
-            detected by CC). Anyway, so I want to put back in the stream delimiting, but the 
-            reason this was originally taken out was because someone had a CC table which was 
-            eating spaces, so I'll use 'd10' (which never comes in on an Windows system by itself)
-            to delimit the stream AND only then if it's a spelling fixer cc table (see Initialize)
-*/
-#if !rde220
-            // the delimiter (if used) is actually '\n', but this normally isn't received by CC 
-            // without '\r' as well, so it makes a good delimiter in that CC tables aren't likely 
-            // to be looking to eat it up (which was the problem we had when we delimited with
-            // a space).
-            const byte byDelim = 10;
-            if( m_bUseDelimiters )
-            {
-                // move the input data down to make room for the initial delimiter
-                ECNormalizeData.MemMove(lpInBuffer+1, lpInBuffer, nInLen);
-
-                lpInBuffer[0] = byDelim;
-                lpInBuffer[nInLen + 1] = byDelim;
-                nInLen += 2;
-            }
-#else
-            bool bLastWasD10 = false;
-            if( lpInBuffer[nInLen-1] == ' ' )
-            {
-                bLastWasSpace = true;
-            }
-            else
-            {
-                lpInBuffer[nInLen++] = (byte)' ';
-                lpInBuffer[nInLen] = 0;
-            }
-#endif
-
             int status = 0;
             fixed(int* pnOut = &rnOutLen)
             {
@@ -270,27 +197,8 @@ namespace SilEncConverters40
 
             if( status != 0 )  
             {
-                EncConverters.ThrowError(ErrStatus.Exception, "CppDoConvert() failed.");
+                EncConverters.ThrowError(ErrStatus.Exception, "Python Script errored out during conversion!");
             }
-#if !rde220
-            else if( m_bUseDelimiters )
-            {
-                if( lpOutBuffer[0] == byDelim )
-                    ECNormalizeData.MemMove(lpOutBuffer, lpOutBuffer + 1, --rnOutLen);
-                if( lpOutBuffer[rnOutLen - 1] == byDelim )
-                    rnOutLen--;                
-            }
-#else
-/*
-            // otherwise strip out that final space we added (sometimes it goes away by itself!!??, 
-            //  so check first...)
-            //  also only if the last of the input was *NOT* a space...
-            else if( !bLastWasSpace && (lpOutBuffer[rnOutLen-1] == ' ') )
-            {
-                rnOutLen--;
-            }
-*/
-#endif
         }
 
         protected override string   GetConfigTypeName
