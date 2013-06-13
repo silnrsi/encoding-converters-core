@@ -24,9 +24,11 @@
 #include "CEncConverter.h"
 #include "PyScriptEncConverter.h"
 
-#ifdef VERBOSE_DEBUGGING && _WIN32
+#ifdef VERBOSE_DEBUGGING
+#ifdef _WIN32
 #include "Windows.h"		// for OutputDebugString
 #include "WinBase.h"
+#endif
 #endif
 
 // Uncomment the following line if you want verbose debugging output
