@@ -83,7 +83,7 @@ namespace TestEncCnvtrs
 			}
 			catch (Exception e)
 			{
-				System.Diagnostics.Debug.WriteLine(e.Message);
+				EncConverter.DebugWriteLine(e.Message);
 				Console.WriteLine(e.Message);
 			}
 		}

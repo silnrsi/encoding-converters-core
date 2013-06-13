@@ -34,7 +34,11 @@ namespace SilEncConverters40
         private string      strTempFile      = string.Empty;
 
         public const string strDisplayName = "Perl Script";
+#if __MonoCS__
         public const string strHtmlFilename = "Perl Expression Plug-in About box.htm";
+#else
+        public const string strHtmlFilename = "Perl Expression Plug-in About box.mht";
+#endif
         public const string strExeDefPath   = "";
         #endregion Member Variable Definitions
 
@@ -45,7 +49,7 @@ namespace SilEncConverters40
             : base (
             typeof(PerlExpressionEncConverter).FullName,
             EncConverters.strTypeSILPerlExpression,
-            ConvType.Unicode_to_from_Unicode,        // conversionType
+            ConvType.Unicode_to_Unicode,             // conversionType
             EncConverters.strDefUnicodeEncoding,     // lhsEncodingID
             EncConverters.strDefUnicodeEncoding,     // rhsEncodingID
             (Int32)ProcessTypeFlags.Transliteration, // lProcessType
@@ -71,50 +75,35 @@ namespace SilEncConverters40
             Int32 codePageOutput,
             bool bAdding)
         {
-            System.Diagnostics.Debug.WriteLine("PerlExpression EC Initialize BEGIN");
             // let the base class have first stab at it
             base.Initialize(converterName, converterSpec, ref lhsEncodingID, ref rhsEncodingID, 
                 ref conversionType, ref processTypeFlags, codePageInput, codePageOutput, bAdding );
 
-/*
-            // the only thing we want to add (now that the convType can be less than accurate) 
-            //  is to make sure it's unidirectional
-            switch(conversionType)
-            {
-                case ConvType.Legacy_to_from_Legacy:
-                    conversionType = ConvType.Legacy_to_Legacy;
-                    break;
-                case ConvType.Legacy_to_from_Unicode:
-                    conversionType = ConvType.Legacy_to_Unicode;
-                    break;
-                case ConvType.Unicode_to_from_Legacy:
-                    conversionType = ConvType.Unicode_to_Legacy;
-                    break;
-                //case ConvType.Unicode_to_from_Unicode:
-                //    conversionType = ConvType.Unicode_to_Unicode;
-                //    break;
-                default:
-                    break;
-            }
-*/
-
-            System.Diagnostics.Debug.WriteLine("PerlExpression EC Initialize END");
+            // this is the only one we support from now on (if the user really wants to do legacy to unicode, they have to deal with the legacy as coming in utf-8 format
+            conversionType = ConvType.Unicode_to_Unicode;
         }
         #endregion Initialization
 
         public override string ExeName
         {
-            get {
-                if (ECNormalizeData.IsUnix)
-                    return "perl";
-                else
-                    return "perl.exe";
+            get 
+            {
+                return ECNormalizeData.IsUnix 
+                        ? "perl"
+#if DEBUG
+                        : @"\temp\perl\bin\perl.exe";
+#else
+                        : "perl.exe";
+#endif
             }
         }
+
         public override string Arguments
         {
-            get {
-                return this.strTempFile + " +s";
+            get 
+            {
+                // put the path to the temp file in quotes
+                return String.Format("\"{0}\" +s", strTempFile);
             }
         }
 
@@ -126,11 +115,11 @@ namespace SilEncConverters40
 
         protected void Unload()
         { 
-            System.Diagnostics.Debug.WriteLine("PerlExpressionEncConverter.Unload");
+            DebugWriteLine("PerlExpressionEncConverter.Unload");
             if( IsFileLoaded() )
             {
                 File.Delete(strTempFile);
-                System.Diagnostics.Debug.WriteLine("Deleted file " + strTempFile);
+                DebugWriteLine("Deleted file " + strTempFile);
                 strTempFile = string.Empty;
                 m_psi = null;
             }
@@ -142,9 +131,9 @@ namespace SilEncConverters40
             return EncodingForm.UTF16;
         }
 
-        protected unsafe void Load(string strExpression)
+        protected void Load(string strExpression)
         {
-            System.Diagnostics.Debug.WriteLine("PerlExpression Load BEGIN");
+            DebugWriteLine("PerlExpression Load BEGIN");
             //this.strFilepath = strExpression;
 
             if( IsFileLoaded() ) {
@@ -191,9 +180,6 @@ namespace SilEncConverters40
             try
             {
                 strTempFile = Path.GetTempFileName();   // create a temporary file
-                FileInfo fileInfo = new FileInfo(strTempFile);
-                fileInfo.Attributes = FileAttributes.Temporary;
-                System.Diagnostics.Debug.WriteLine("Temporary file created: " + strTempFile);
 
                 TextWriter tw = new StreamWriter(strTempFile);
                 tw.WriteLine("binmode(STDIN,  ':utf8');");
@@ -216,27 +202,33 @@ namespace SilEncConverters40
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine (
+                DebugWriteLine (
                     "Unable to create TEMP file or set attributes: " + ex.Message);
             }
 
             //
             // Test to see if the script compiles.
             //
-            ProcessStartInfo psi = new ProcessStartInfo(ExeName, "-c " + strTempFile);
-            psi.RedirectStandardError = true;
-            psi.UseShellExecute = false;
-            Process p = new Process();
-            p.StartInfo = psi;
+            var psi = new ProcessStartInfo(ExeName, String.Format("-c \"{0}\"", strTempFile))
+                          {
+                              RedirectStandardError = true,
+                              UseShellExecute = false,
+                              CreateNoWindow = true
+                          };
+            var p = new Process
+                        {
+                            StartInfo = psi
+                        };
             p.Start();
-            StreamReader myErrOut = p.StandardError;
-            string errOutput = myErrOut.ReadToEnd();
+            var myErrOut = p.StandardError;
+            var errOutput = myErrOut.ReadToEnd();
             if (!errOutput.Contains("syntax OK"))
             {
-                throw new Exception (
-                    "The Perl code did not compile correctly:\n\n" + errOutput);
+                throw new ApplicationException(
+                    String.Format("The Perl expression did not compile correctly:{0}{0}{1}",
+                                  Environment.NewLine, errOutput));
             }
-            System.Diagnostics.Debug.WriteLine("PerlExpression Load END");
+            DebugWriteLine("PerlExpression Load END");
         }
         #endregion Misc helpers
 
@@ -256,227 +248,9 @@ namespace SilEncConverters40
 							eOutEncodingForm, ref eOutFormEngine,
 							ref eNormalizeOutput, bForward);
 
-            // The Perl converter expects UTF8 bytes as input (see the binmode line in Load() above).
-            if( NormalizeLhsConversionType(ConversionType) == NormConversionType.eUnicode )
-            {
-                // returning this value will cause the input Unicode data (of any form, UTF16, BE, etc.)
-                //	to be converted to UTF8 narrow bytes before calling DoConvert.
-                eInFormEngine = EncodingForm.UTF8Bytes;
-            }
-            else
-            {
-                // legacy
-                eInFormEngine = EncodingForm.LegacyBytes;
-            }
-
-            // Output will be stored in a typical C# string, so eOutFormEngine will be UTF16,
-            // even though the Perl script is writing UTF8 bytes to output.
-            if( NormalizeRhsConversionType(ConversionType) == NormConversionType.eUnicode )
-            {
-                //eOutFormEngine = EncodingForm.UTF8Bytes;
-                eOutFormEngine = EncodingForm.UTF16;
-                //eOutFormEngine = EncodingForm.UTF16BE;
-            }
-            else
-            {
-                eOutFormEngine = EncodingForm.LegacyBytes;
-            }
-
             // do the load at this point.
             Load(ConverterIdentifier);
         }
-
-/*
-        [CLSCompliant(false)]
-        protected override unsafe void DoConvert
-            (
-            byte*       lpInBuffer,
-            int         nInLen,
-            byte*       lpOutBuffer,
-            ref int     rnOutLen
-            )
-        {
-//          rde1.2.1.0 don't pad with space anymore
-            rde2.2.0.0 Ahh... now I remember why this was there before: if you use boundary
-            condition testing in CC (e.g. "prec(ws) 'i' fol(ws)", where  'ws' contains things 
-            like spaces, nl, tabs, punctuation, etc) then those tests will fail on the first 
-            and last character in the stream (which are at a boundary conditions, but can't be 
-            detected by CC). Anyway, so I want to put back in the stream delimiting, but the 
-            reason this was originally taken out was because someone had a CC table which was 
-            eating spaces, so I'll use 'd10' (which never comes in on an Windows system by itself)
-            to delimit the stream AND only then if it's a spelling fixer cc table (see Initialize)
-//
-#if !rde220
-            // the delimiter (if used) is actually '\n', but this normally isn't received by CC 
-            // without '\r' as well, so it makes a good delimiter in that CC tables aren't likely 
-            // to be looking to eat it up (which was the problem we had when we delimited with
-            // a space).
-            const byte byDelim = 10;
-            if( m_bUseDelimiters )
-            {
-                // move the input data down to make room for the initial delimiter
-                ECNormalizeData.MemMove(lpInBuffer+1, lpInBuffer, nInLen);
-
-                lpInBuffer[0] = byDelim;
-                lpInBuffer[nInLen + 1] = byDelim;
-                nInLen += 2;
-            }
-#else
-            bool bLastWasD10 = false;
-            if( lpInBuffer[nInLen-1] == ' ' )
-            {
-                bLastWasSpace = true;
-            }
-            else
-            {
-                lpInBuffer[nInLen++] = (byte)' ';
-                lpInBuffer[nInLen] = 0;
-            }
-#endif
-
-            int status = 0;
-            //{
-            //status = CppDoConvert(lpInBuffer, nInLen, lpOutBuffer, pnOut);
-            System.Diagnostics.Debug.WriteLine("Using perl script " + this.strFilepath);
-            ProcessStartInfo psi = new ProcessStartInfo (
-                "perl",  // perl.exe on Windows
-                this.strFilepath + " +s");
-            psi.UseShellExecute = false;
-            psi.RedirectStandardInput  = true;
-            psi.RedirectStandardOutput = true;
-            psi.StandardOutputEncoding = Encoding.UTF8;
-            Process p=new Process();
-            p.StartInfo = psi;
-            p.Start();
-            StreamWriter myStreamWriter = p.StandardInput;
-
-            byte[] inBuffer_managed = new byte[nInLen];
-            Marshal.Copy((IntPtr)lpInBuffer, inBuffer_managed, 0, nInLen);
-            //ECNormalizeData.ByteStarToByteArr(lpInBuffer, nInLen, inBuffer_managed);
-            string inString = System.Text.Encoding.UTF8.GetString(inBuffer_managed, 0, nInLen);
-            //string inString = Marshal.PtrToStringUni((IntPtr)lpInBuffer, nInLen); // doesn't work well
-            myStreamWriter.WriteLine(inString);
-            myStreamWriter.Close();
-
-            string output = p.StandardOutput.ReadToEnd();
-            System.Diagnostics.Debug.WriteLine("Got result: " + output);
-            p.WaitForExit();
-//begin comment
-            Regex re = new Regex("\r\n$");
-            if (re.IsMatch(output)) {
-                System.Diagnostics.Debug.WriteLine("stripping Windows-style newline");
-                output = re.Replace(output, "");
-            } else {
-                System.Diagnostics.Debug.WriteLine("stripping Unix-style newline");
-                re = new Regex("\n$");
-                output = re.Replace(output, "");
-            }
-//end
-            //TODO: Move this code into a method "CopyStringToUTF8ByteStar" /* for Linux /
-            //int nLengthBytes = output.Length * 2; // for Unicode
-            //int nLengthBytes = output.Length;   // for ANSI
-            //rnOutLen = nLengthBytes;
-            //CopyStringToByteStar((IntPtr)lpOutBuffer, output);
-            byte[] baOut1 = Encoding.UTF8.GetBytes(output);
-            rnOutLen = Marshal.SizeOf(baOut1[0]) * baOut1.Length + Marshal.SizeOf(baOut1[0]);
-            Marshal.Copy(baOut1, 0, (IntPtr)lpOutBuffer, baOut1.Length);
-            Marshal.WriteByte((IntPtr)lpOutBuffer, rnOutLen, 0);
-//begin comment
-            byte* stringPointer = (byte*) Marshal.StringToHGlobalUni(output).ToPointer();
-            IntPtr stringPointer = Marshal.StringToHGlobalUni(output);
-            //byte* stringPointer = (byte*) Marshal.StringToHGlobalAnsi(output).ToPointer();
-            ECNormalizeData.MemMove(lpOutBuffer, stringPointer, nLengthBytes);
-            //rnOutLen = ECNormalizeData.StringToByteStar(output, lpOutBuffer, nLengthBytes);
-            //lpOutBuffer = (byte *)Marshal.StringToHGlobalAnsi(output);
-            //lpOutBuffer = (byte *)System.Text.Encoding.UTF8.GetBytes(output);
-//end
-            //}
-
-            if( status != 0 )  
-            {
-                EncConverters.ThrowError(ErrStatus.Exception, "Perl call failed.");
-            }
-#if !rde220
-            else if( m_bUseDelimiters )
-            {
-//begin comment
-                if( lpOutBuffer[0] == byDelim )
-                    ECNormalizeData.MemMove(lpOutBuffer, lpOutBuffer + 1, --rnOutLen);
-                if( lpOutBuffer[rnOutLen - 1] == byDelim )
-                    rnOutLen--;                
-//end comment
-            }
-#else
-//begin comment
-            // otherwise strip out that final space we added (sometimes it goes away by itself!!??, 
-            //  so check first...)
-            //  also only if the last of the input was *NOT* a space...
-            else if( !bLastWasSpace && (lpOutBuffer[rnOutLen-1] == ' ') )
-            {
-                rnOutLen--;
-            }
-//end comment
-#endif
-            // Check to see how it turned out.
-            byte[] baOut = new byte[rnOutLen];
-            Marshal.Copy((IntPtr)lpOutBuffer, baOut, 0, rnOutLen);
-            //ECNormalizeData.ByteStarToByteArr(lpOutBuffer, rnOutLen, baOut);
-            //String strConvertedResult = System.Text.Encoding.Default.GetString(baOut);
-            String strConvertedResult = System.Text.Encoding.UTF8.GetString(baOut);
-            //String strConvertedResult = System.Text.Encoding.ASCII.GetString(baOut);
-            System.Diagnostics.Debug.WriteLine("Returning val '" + strConvertedResult + "'");
-            System.IO.TextWriter tw = new System.IO.StreamWriter(
-                "/media/winD/Jim/computing/SEC_on_linux/testing/returning.txt");
-            tw.WriteLine("output: '" + output + "'");
-            tw.WriteLine("result: '" + strConvertedResult + "'");
-//begin comment
-            byte[] baOut2 = new byte[rnOutLen];
-            ECNormalizeData.ByteStarToByteArr(stringPointer, rnOutLen, baOut);
-            //String strPointerConv = System.Text.Encoding.Default.GetString(baOut);
-            String strPointerConv = System.Text.Encoding.UTF8.GetString(baOut);
-            tw.WriteLine("intermediate: '" + strPointerConv + "'");
-            Marshal.FreeHGlobal((IntPtr)stringPointer);
-//end comment
-            tw.Close();
-        }
-*/
-
-/*
-        private static void CopyStringToByteStar(IntPtr pExportedDataAddress, string value)
-        {
-            int iByteSizeOfCharacter = 0;
-            IntPtr pUnmanagedString = IntPtr.Zero;
-
-            //if (false)  // change this as needed
-            if (true)  // change this as needed
-            {
-                iByteSizeOfCharacter = sizeof(sbyte);
-                pUnmanagedString = Marshal.StringToHGlobalAnsi(value);  // utf8 on Linux?
-            }
-            else
-            {
-                iByteSizeOfCharacter = sizeof(char);
-                pUnmanagedString = Marshal.StringToHGlobalUni(value);
-            }
-
-            // Allocate a byte array with a size according to the character byte size of the
-            // current string type. Also allocate space for a terminating NULL character.
-            byte[] byArray = new byte[(value.Length * iByteSizeOfCharacter) + iByteSizeOfCharacter];
-
-            // Copy all ANSI characters from pUnmanagedString to the byte array.
-            Marshal.Copy(pUnmanagedString, byArray, 0, (value.Length * iByteSizeOfCharacter));
-            // Make sure the last byte element is a null value.
-            byArray[value.Length] = 0;
-
-            // Now copy all bytes from the byte array to the pExportedDataAddress.
-            Marshal.Copy(byArray, 0, pExportedDataAddress, byArray.Length);
-
-            // We must not forget to free the unmanaged memory which contains
-            // a copy of the "value".
-            Marshal.FreeHGlobal(pUnmanagedString);
-            pUnmanagedString = IntPtr.Zero;
-        }
-*/
 
         protected override string   GetConfigTypeName
         {

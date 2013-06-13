@@ -89,125 +89,116 @@ namespace SilEncConverters40
         private System.Windows.Forms.Button buttonBrowse;
         private System.Windows.Forms.OpenFileDialog openFileDialogBrowse;
 
-        private System.Windows.Forms.Label labelFunctionName;
-        private System.Windows.Forms.ComboBox comboBoxFunctionName;
-        private System.Windows.Forms.Label labelAddlParams;
-        private System.Windows.Forms.TextBox textBoxAddlParams;
-
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
 
         // This code was NOT generated!
         // So feel free to modify it as needed.
         private void InitializeComponent()
         {
+            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.labelScriptFile = new System.Windows.Forms.Label();
+            this.textBoxFileSpec = new System.Windows.Forms.TextBox();
+            this.buttonBrowse = new System.Windows.Forms.Button();
+            this.openFileDialogBrowse = new System.Windows.Forms.OpenFileDialog();
             this.tabControl.SuspendLayout();
             this.tabPageSetup.SuspendLayout();
+            this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
-
             // 
-            // Script file
+            // tabPageSetup
             // 
-
-            this.labelScriptFile = new System.Windows.Forms.Label();
-            this.labelScriptFile.Text = "Python script file:";
+            this.tabPageSetup.Controls.Add(this.tableLayoutPanel1);
+            // 
+            // buttonApply
+            // 
+            this.helpProvider.SetHelpString(this.buttonApply, "Click this button to apply the configured values for this converter");
+            this.helpProvider.SetShowHelp(this.buttonApply, true);
+            // 
+            // buttonCancel
+            // 
+            this.helpProvider.SetHelpString(this.buttonCancel, "Click this button to cancel this dialog");
+            this.helpProvider.SetShowHelp(this.buttonCancel, true);
+            // 
+            // buttonOK
+            // 
+            this.helpProvider.SetHelpString(this.buttonOK, "Click this button to accept the configured values for this converter");
+            this.helpProvider.SetShowHelp(this.buttonOK, true);
+            // 
+            // buttonSaveInRepository
+            // 
+            this.helpProvider.SetHelpString(this.buttonSaveInRepository, "\r\nClick to add this converter to the system repository permanently.\r\n    ");
+            this.helpProvider.SetShowHelp(this.buttonSaveInRepository, true);
+            // 
+            // tableLayoutPanel1
+            // 
+            this.tableLayoutPanel1.ColumnCount = 3;
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel1.Controls.Add(this.labelScriptFile, 0, 0);
+            this.tableLayoutPanel1.Controls.Add(this.textBoxFileSpec, 1, 0);
+            this.tableLayoutPanel1.Controls.Add(this.buttonBrowse, 2, 0);
+            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(3, 3);
+            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+            this.tableLayoutPanel1.RowCount = 2;
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(596, 394);
+            this.tableLayoutPanel1.TabIndex = 1;
+            // 
+            // labelScriptFile
+            // 
             this.labelScriptFile.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.labelScriptFile.AutoSize = true;
+            this.labelScriptFile.Location = new System.Drawing.Point(3, 8);
             this.labelScriptFile.Name = "labelScriptFile";
+            this.labelScriptFile.Size = new System.Drawing.Size(87, 13);
             this.labelScriptFile.TabIndex = 0;
-
-            this.textBoxFileSpec = new System.Windows.Forms.TextBox();
+            this.labelScriptFile.Text = "Python script file:";
+            // 
+            // textBoxFileSpec
+            // 
             this.textBoxFileSpec.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.textBoxFileSpec.Location = new System.Drawing.Point(88, 14);
+            this.textBoxFileSpec.Location = new System.Drawing.Point(96, 4);
             this.textBoxFileSpec.Name = "textBoxFileSpec";
             this.textBoxFileSpec.Size = new System.Drawing.Size(400, 20);
             this.textBoxFileSpec.TabIndex = 1;
             this.textBoxFileSpec.TextChanged += new System.EventHandler(this.textBoxFileSpec_TextChanged);
-
-            this.buttonBrowse = new System.Windows.Forms.Button();
-            this.buttonBrowse.Text = "Browse...";
-            this.buttonBrowse.Dock = System.Windows.Forms.DockStyle.Fill;
+            // 
+            // buttonBrowse
+            // 
             this.buttonBrowse.AutoSize = true;
+            this.buttonBrowse.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.buttonBrowse.Location = new System.Drawing.Point(502, 3);
             this.buttonBrowse.Name = "buttonBrowse";
+            this.buttonBrowse.Size = new System.Drawing.Size(91, 23);
             this.buttonBrowse.TabIndex = 2;
-            //this.buttonBrowse.UseVisualStyleBackColor = true;
+            this.buttonBrowse.Text = "Browse...";
             this.buttonBrowse.Click += new System.EventHandler(this.buttonBrowse_Click);
-
-            this.openFileDialogBrowse = new System.Windows.Forms.OpenFileDialog();
-            this.openFileDialogBrowse.Title = "Browse for Python script";
-            this.openFileDialogBrowse.Filter = "Python scrips (*.py)|*.py";
+            // 
+            // openFileDialogBrowse
+            // 
             this.openFileDialogBrowse.DefaultExt = "py";
-
+            this.openFileDialogBrowse.Filter = "Python scrips (*.py)|*.py";
+            this.openFileDialogBrowse.Title = "Browse for Python script";
             // 
-            // Function Name
+            // PyScriptAutoConfigDialog
             // 
-
-            this.labelFunctionName = new System.Windows.Forms.Label();
-            this.labelFunctionName.Text = "Python script file:";
-            this.labelFunctionName.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.labelFunctionName.AutoSize = true;
-            this.labelFunctionName.Name = "labelFunctionName";
-            this.labelFunctionName.TabIndex = 0;
-
-            this.comboBoxFunctionName = new System.Windows.Forms.ComboBox();
-            this.comboBoxFunctionName.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.comboBoxFunctionName.Name = "comboBoxFunctionName";
-            this.comboBoxFunctionName.Size = new System.Drawing.Size(350, 20);
-            this.comboBoxFunctionName.TabIndex = 1;
-
-            // 
-            // Additional parameters
-            // 
-
-            this.labelAddlParams = new System.Windows.Forms.Label();
-            this.labelAddlParams.Text = "Additional parameters:";
-            this.labelAddlParams.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.labelAddlParams.AutoSize = true;
-            this.labelAddlParams.Name = "labelAddlParams";
-            this.labelAddlParams.TabIndex = 0;
-
-            this.textBoxAddlParams = new System.Windows.Forms.TextBox();
-            this.textBoxAddlParams.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.textBoxAddlParams.Name = "textBoxAddlParams";
-            this.textBoxAddlParams.Size = new System.Drawing.Size(249, 14);
-            this.textBoxAddlParams.TabIndex = 1;
-
-            // 
-            // Panel and Dialog Window
-            // 
-
-            this.tableLayoutPanel1 =
-                new System.Windows.Forms.TableLayoutPanel();
-            this.tableLayoutPanel1.SuspendLayout();
-            this.tableLayoutPanel1.ColumnCount = 4;
-            this.tableLayoutPanel1.RowCount    = 4;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle()); // an empty row
-            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(3, 3);
-            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(620, 394);
-            this.tableLayoutPanel1.TabIndex = 1;
-            this.tableLayoutPanel1.Controls.Add(this.labelScriptFile,      0, 0);
-            this.tableLayoutPanel1.Controls.Add(this.textBoxFileSpec,      1, 0);
-            this.tableLayoutPanel1.Controls.Add(this.buttonBrowse,         2, 0);
-            this.tableLayoutPanel1.Controls.Add(this.labelFunctionName,    0, 1);
-            this.tableLayoutPanel1.Controls.Add(this.comboBoxFunctionName, 1, 1);
-            this.tableLayoutPanel1.Controls.Add(this.labelAddlParams,      0, 2);
-            this.tableLayoutPanel1.Controls.Add(this.textBoxAddlParams,    1, 2);
-
-            this.tabPageSetup.Controls.Add(this.tableLayoutPanel1);
-
             this.ClientSize = new System.Drawing.Size(634, 479);
             this.Name = "PyScriptAutoConfigDialog";
+            this.Controls.SetChildIndex(this.tabControl, 0);
+            this.Controls.SetChildIndex(this.buttonApply, 0);
+            this.Controls.SetChildIndex(this.buttonCancel, 0);
+            this.Controls.SetChildIndex(this.buttonOK, 0);
+            this.Controls.SetChildIndex(this.buttonSaveInRepository, 0);
             this.tabControl.ResumeLayout(false);
             this.tabPageSetup.ResumeLayout(false);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             this.ResumeLayout(false);
+
         }
 
         protected void UpdateUI(bool bVisible)
