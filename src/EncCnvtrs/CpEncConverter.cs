@@ -150,7 +150,7 @@ namespace SilEncConverters40
         {
 			byte[] baIn = new byte[nInLen];
 			ECNormalizeData.ByteStarToByteArr(lpInBuffer, nInLen, baIn);
-			System.Diagnostics.Debug.WriteLine(String.Format("Starting with {0} bytes.", baIn.Length));
+			DebugWriteLine(String.Format("Starting with {0} bytes.", baIn.Length));
 			byte[] baOut;
 			if (m_bToWide)
 			{
@@ -165,7 +165,7 @@ namespace SilEncConverters40
 				Encoding encTo   = Encoding.GetEncoding(m_nCodePage);
 				baOut = Encoding.Convert(encFrom, encTo, baIn);
 			}
-			System.Diagnostics.Debug.WriteLine(String.Format("Converted to {0} bytes.", baOut.Length));
+			DebugWriteLine(String.Format("Converted to {0} bytes.", baOut.Length));
 			if (baOut.Length > 0)
 				rnOutLen = Marshal.SizeOf(baOut[0]) * baOut.Length;
 			else

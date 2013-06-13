@@ -214,7 +214,6 @@ namespace SilEncConverters40
             // 
             // AdaptItAutoConfigDialog
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.ClientSize = new System.Drawing.Size(634, 479);
             this.Name = "AdaptItAutoConfigDialog";
             this.Controls.SetChildIndex(this.tabControl, 0);
