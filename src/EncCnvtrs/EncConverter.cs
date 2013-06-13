@@ -1,11 +1,9 @@
 #define v22_AllowEmptyReturn    // turn off the code that disallowed empty returns
-#define VERBOSE_DEBUGGING
 
 using System;
 using System.Runtime.InteropServices;   // for the class attributes
 using System.Collections;               // for Hashtable
 using System.Resources;                 // for ResourceManager
-using System.Windows.Forms;             // for MessageBox (for showing compiler errors)
 using System.IO;
 using System.ComponentModel;
 using System.Diagnostics;               // for Debug.Assert
@@ -58,9 +56,6 @@ namespace SilEncConverters40
         protected Hashtable     m_mapProperties;        // map of all attributes (filled during get_AttributeKeys)
         protected bool          m_bInitialized;         // indicates whether Initialize has been called
         protected bool          m_bIsInRepository;      // indicates whether this converter is in the static repository (true) or not (false)
-
-        // trace switch
-        private TraceSwitch traceSwitch = new TraceSwitch(typeof(EncConverters).FullName, "General Tracing", "Off");
         #endregion Member Variable Definitions
 
         #region Public Interface
@@ -93,7 +88,7 @@ namespace SilEncConverters40
         // [DispId(1)]
         public virtual void Initialize(string converterName, string converterSpec, ref string lhsEncodingID, ref string rhsEncodingID, ref ConvType conversionType, ref Int32 processTypeFlags, Int32 codePageInput, Int32 codePageOutput, bool bAdding)
         {
-            System.Diagnostics.Debug.WriteLine("EC Initialize BEGIN");
+            DebugWriteLine("EC Initialize BEGIN");
             m_bInitialized = true;
             m_strName = converterName;
             m_strConverterID = converterSpec;
@@ -112,7 +107,7 @@ namespace SilEncConverters40
             {
                 m_strConverterID = m_strConverterID.Substring(9);
             }
-            System.Diagnostics.Debug.WriteLine("EC Initialize END");
+            DebugWriteLine("EC Initialize END");
         }
 
         // [DispId(2)]
@@ -488,7 +483,7 @@ namespace SilEncConverters40
             out int rciOutput,
             bool bForward)
         {
-            System.Diagnostics.Debug.WriteLine("InternalConvertEx (input bytes) BEGIN");
+            DebugWriteLine("InternalConvertEx (input bytes) BEGIN");
             if( baInput == null )
                 EncConverters.ThrowError(ErrStatus.IncompleteChar);
             if (baInput.Length == 0) {
@@ -519,27 +514,27 @@ namespace SilEncConverters40
                     lpOutBuffer[0] = lpOutBuffer[1] = lpOutBuffer[2] = lpOutBuffer[3] = 0;
 
                     // call the wrapper sub-classes' DoConvert to let them do it.
-                    System.Diagnostics.Debug.WriteLine("Calling DoConvert from EC.InternalConvertEx");
+                    DebugWriteLine("Calling DoConvert from EC.InternalConvertEx");
                     DoConvert(lpInBuffer, nBufSize, lpOutBuffer, ref nOutLen);
-                    System.Diagnostics.Debug.WriteLine("EC Output length " + nOutLen.ToString());
+                    DebugWriteLine("EC Output length " + nOutLen.ToString());
 
                     byte[] baOut = new byte[nOutLen];
                     ECNormalizeData.ByteStarToByteArr(lpOutBuffer, nOutLen, baOut);
                     dispBytes("Output In Bytes", baOut);
-                    System.Diagnostics.Debug.WriteLine("EC Got val '" +
+                    DebugWriteLine("EC Got val '" +
                                         System.Text.Encoding.Unicode.GetString(baOut) + "'");
                     string result = ECNormalizeData.GetString(lpOutBuffer, nOutLen, eOutEncodingForm,
                         ((bForward) ? CodePageOutput : CodePageInput), eFormEngineOut, eNormalizeOutput,
                         out rciOutput, ref m_bDebugDisplayMode);
 #if DEBUG
-                    System.Diagnostics.Debug.WriteLine("EC normalized result '" + result + "'");
+                    DebugWriteLine("EC normalized result '" + result + "'");
                     byte[] baResult = System.Text.Encoding.BigEndianUnicode.GetBytes(result);
                     dispBytes("Normalized Output in UTF16BE", baResult);
                     baResult = System.Text.Encoding.Unicode.GetBytes(result);
                     dispBytes("Normalized Output in UTF16LE", baResult);
                     baResult = System.Text.Encoding.UTF8.GetBytes(result);
                     dispBytes("Normalized Output In UTF8", baResult);
-                    System.Diagnostics.Debug.WriteLine("EC Returning.");
+                    DebugWriteLine("EC Returning.");
 #endif
                     return result;
                 }
@@ -557,16 +552,16 @@ namespace SilEncConverters40
             out int rciOutput,
             bool bForward)
         {
-            System.Diagnostics.Debug.WriteLine("InternalConvertEx (output bytes) BEGIN");
+            DebugWriteLine("InternalConvertEx (output bytes) BEGIN");
             if( sInput == null )
                 EncConverters.ThrowError(ErrStatus.IncompleteChar);
-            System.Diagnostics.Debug.WriteLine("sInput.Length() is " + sInput.Length.ToString() + ".");
+            DebugWriteLine("sInput.Length() is " + sInput.Length.ToString() + ".");
             if (sInput.Length == 0) {
                 // this section added 11/10/2011 by Jim K
                 rciOutput = 0;
                 return new byte[0];
             }
-            System.Diagnostics.Debug.WriteLine("sInput is " + sInput + ".");
+            DebugWriteLine("sInput is " + sInput + ".");
             // if the user hasn't specified, then take the default case for the ConversionType:
             //  if L/RHS == eLegacy, then LegacyString
             //  if L/RHS == eUnicode, then UTF16
@@ -587,7 +582,7 @@ namespace SilEncConverters40
             fixed (byte* lpInBuffer = abyInBuffer)
             {
                 // use a helper class to normalize the data to the format needed by the engine
-                System.Diagnostics.Debug.WriteLine("Calling GetBytes");
+                DebugWriteLine("Calling GetBytes");
                 ECNormalizeData.GetBytes(sInput, sInput.Length, eInEncodingForm,
                     ((bForward) ? CodePageInput : CodePageOutput), eFormEngineIn, lpInBuffer,
                     ref nBufSize, ref m_bDebugDisplayMode);
@@ -601,14 +596,14 @@ namespace SilEncConverters40
                     lpOutBuffer[0] = lpOutBuffer[1] = lpOutBuffer[2] = lpOutBuffer[3] = 0;
 
                     // call the wrapper sub-classes' DoConvert to let them do it.
-                    System.Diagnostics.Debug.WriteLine("Calling DoConvert from EC.InternalConvertEx");
+                    DebugWriteLine("Calling DoConvert from EC.InternalConvertEx");
                     DoConvert(lpInBuffer, nBufSize, lpOutBuffer, ref nOutLen);
                     byte[] baOut = new byte[nOutLen];
                     ECNormalizeData.ByteStarToByteArr(lpOutBuffer, nOutLen, baOut);
 #if DEBUG
-                    System.Diagnostics.Debug.WriteLine("EC Output length " + nOutLen.ToString());
+                    DebugWriteLine("EC Output length " + nOutLen.ToString());
                     dispBytes("Output In Bytes", baOut);
-                    System.Diagnostics.Debug.WriteLine("EC Returning.");
+                    DebugWriteLine("EC Returning.");
 #endif
                 	rciOutput = nOutLen;
                     return baOut;
@@ -647,18 +642,20 @@ namespace SilEncConverters40
             bool            bForward
             )
         {
-            System.Diagnostics.Debug.WriteLine("InternalConvertEx BEGIN (2)");
+            DebugWriteLine("InternalConvertEx BEGIN");
             if( sInput == null )
                 EncConverters.ThrowError(ErrStatus.IncompleteChar);
             if (sInput.Length == 0) {
+                // this section added 11/10/2011 by Jim K
                 rciOutput = 0;
                 return "";
             }
 
-#if VERBOSE_DEBUGGING
+#if DEBUG && __MonoCS__
+// for debugging only BEGIN
             //byte[] baIn = System.Text.Encoding.UTF8.GetBytes(sInput);            // works
             byte[] baIn = System.Text.Encoding.BigEndianUnicode.GetBytes(sInput);  // easier to read
-            dispBytes("Input BigEndianUnicode (2)", baIn);
+            dispBytes("Input BigEndianUnicode", baIn);
 
             int nInLen = sInput.Length;
             byte [] baIn2 = new byte[nInLen];
@@ -670,14 +667,14 @@ namespace SilEncConverters40
             System.Text.Encoding encTo   = System.Text.Encoding.UTF8;
 
             // Perform the conversion from one encoding to the other.
-            System.Diagnostics.Debug.WriteLine("Starting with " + baIn.Length.ToString() + " bytes.");
+            DebugWriteLine("Starting with " + baIn.Length.ToString() + " bytes.");
             byte[] baOut2 = System.Text.Encoding.Convert(encFrom, encTo, baIn);
-            System.Diagnostics.Debug.WriteLine("Converted to " + baOut2.Length.ToString() + " bytes.");
+            DebugWriteLine("Converted to " + baOut2.Length.ToString() + " bytes.");
             string resultString = System.Text.Encoding.Default.GetString(baOut2, 0, baOut2.Length);
-            System.Diagnostics.Debug.WriteLine("Test output '" + resultString + "'");
+            DebugWriteLine("Test output '" + resultString + "'");
 */
+// for debugging only END
 #endif
-
 
             // if the user hasn't specified, then take the default case for the ConversionType:
             //  if L/RHS == eLegacy, then LegacyString
@@ -707,7 +704,7 @@ namespace SilEncConverters40
             fixed (byte* lpInBuffer = abyInBuffer)
             {
                 // use a helper class to normalize the data to the format needed by the engine
-                System.Diagnostics.Debug.WriteLine("Calling GetBytes");
+                DebugWriteLine("Calling GetBytes");
                 ECNormalizeData.GetBytes(sInput, ciInput, eInEncodingForm,
                     ((bForward) ? CodePageInput : CodePageOutput), eFormEngineIn, lpInBuffer,
                     ref nBufSize, ref m_bDebugDisplayMode);
@@ -721,43 +718,62 @@ namespace SilEncConverters40
                     lpOutBuffer[0] = lpOutBuffer[1] = lpOutBuffer[2] = lpOutBuffer[3] = 0;
 
                     // call the wrapper sub-classes' DoConvert to let them do it.
-                    System.Diagnostics.Debug.WriteLine("Calling DoConvert from EC.InternalConvertEx");
+                    DebugWriteLine("Calling DoConvert from EC.InternalConvertEx");
                     DoConvert(lpInBuffer, nBufSize, lpOutBuffer, ref nOutLen);
-#if DEBUG
-                    System.Diagnostics.Debug.WriteLine("EC Output length " + nOutLen.ToString());
+#if DEBUG && __MonoCS__
+                    DebugWriteLine("EC Output length " + nOutLen.ToString());
                 	byte[] baOut = new byte[nOutLen];
                     ECNormalizeData.ByteStarToByteArr(lpOutBuffer, nOutLen, baOut);
                     dispBytes("Output In Bytes", baOut);
-                    System.Diagnostics.Debug.WriteLine("EC Got val '" +
+                    DebugWriteLine("EC Got val '" +
                                                        System.Text.Encoding.Unicode.GetString(baOut) + "'");
 #endif
                     string result = ECNormalizeData.GetString(lpOutBuffer, nOutLen, eOutEncodingForm,
                         ((bForward) ? CodePageOutput : CodePageInput), eFormEngineOut, eNormalizeOutput,
                         out rciOutput, ref m_bDebugDisplayMode);
-#if DEBUG
-                    System.Diagnostics.Debug.WriteLine("EC normalized result '" + result + "'");
+#if DEBUG && __MonoCS__
+                    DebugWriteLine("EC normalized result '" + result + "'");
                     byte[] baResult = System.Text.Encoding.BigEndianUnicode.GetBytes(result);
                     dispBytes("Normalized Output in UTF16BE", baResult);
                     baResult = System.Text.Encoding.Unicode.GetBytes(result);
                     dispBytes("Normalized Output in UTF16LE", baResult);
                     baResult = System.Text.Encoding.UTF8.GetBytes(result);
                     dispBytes("Normalized Output In UTF8", baResult);
-                    System.Diagnostics.Debug.WriteLine("EC Returning.");
+                    DebugWriteLine("EC Returning.");
 #endif
-                	return result;
+                    return result;
                 }
             }
         }
 
+        public static void DebugWrite(string str)
+        {
+            // this makes it unbearibly slow on Windows...
+#if DEBUG && __MonoCS__
+            System.Diagnostics.Debug.Write(str);
+#endif
+        }
+
+        public static void DebugWriteLine(string str)
+        {
+            // this makes it unbearibly slow on Windows...
+#if DEBUG && __MonoCS__
+            System.Diagnostics.Debug.WriteLine(str);
+#endif
+        }
+
         static public void dispBytes(string desc, byte[] ba)
         {
-            System.Diagnostics.Debug.Write(desc + ": ");
+            // this makes it unbearibly slow on Windows...
+#if DEBUG && __MonoCS__
+            DebugWrite(desc + ": ");
             for (int i = 0; i < ba.Length; i++)
             {
-                System.Diagnostics.Debug.Write(ba[i].ToString("x2"));
-                System.Diagnostics.Debug.Write(" ");
+                DebugWrite(ba[i].ToString("x2"));
+                DebugWrite(" ");
             }
-            System.Diagnostics.Debug.WriteLine("");
+            DebugWriteLine("");
+#endif
         }
 
         protected void CheckInitEncForms
