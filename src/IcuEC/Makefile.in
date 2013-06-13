@@ -1,0 +1,123 @@
+# Master Makefile for the IcuEC converter libraries
+# Makefile.in created January 20, 2012 by Stephen McConnel
+#
+# 06-Jun-13 JDK  Remove library version numbers.
+
+VPATH       = @srcdir@
+CXX         = @CXX@
+CC          = @CC@
+CFLAGS      = @CFLAGS@ @DEFS@ -I. -I..
+INSTALL     = @INSTALL@
+prefix      = @prefix@
+exec_prefix = @exec_prefix@
+ROOTDIR     = @abs_top_srcdir@
+TOPDIR      = @top_srcdir@
+BUILDDIR    = $(ROOTDIR)/build/Obj
+OUTDIR      = $(ROOTDIR)/output/Debug
+RELEASEBLD  = $(ROOTDIR)/build/Obj/Release
+RELEASEOUT  = $(ROOTDIR)/output/Release
+ECHEADERDIR=../EncCnvtrs/lib
+ECHEADER=$(ECHEADERDIR)/CEncConverter.h
+LIBDIR = $(exec_prefix)/lib/encConverters
+
+all: $(BUILDDIR) $(OUTDIR)/libIcuTranslitEC.so \
+  $(OUTDIR)/libIcuRegexEC.so $(OUTDIR)/libIcuConvEC.so
+
+$(BUILDDIR):
+	mkdir -p $(BUILDDIR)
+	mkdir -p $(OUTDIR)
+
+$(OUTDIR)/libIcuTranslitEC.so: $(BUILDDIR)/IcuTranslitEC.o \
+  $(OUTDIR)/IcuEC.dll.config
+	g++ -shared -Wl,-soname,libIcuTranslitEC.so \
+  -o $(OUTDIR)/libIcuTranslitEC.so $(BUILDDIR)/IcuTranslitEC.o \
+  -licuuc -licui18n
+	rm -f $(OUTDIR)/libIcuTranslitEC.so
+
+$(OUTDIR)/libIcuRegexEC.so: $(BUILDDIR)/IcuRegexEC.o \
+  $(OUTDIR)/IcuEC.dll.config
+	g++ -shared -Wl,-soname,libIcuRegexEC.so \
+  -o $(OUTDIR)/libIcuRegexEC.so $(BUILDDIR)/IcuRegexEC.o \
+  -licuuc -licui18n
+
+$(OUTDIR)/libIcuConvEC.so: $(BUILDDIR)/IcuConvEC.o \
+  $(OUTDIR)/IcuEC.dll.config
+	g++ -shared -Wl,-soname,libIcuConvEC.so \
+  -o $(OUTDIR)/libIcuConvEC.so $(BUILDDIR)/IcuConvEC.o \
+  -licuuc -licui18n
+
+$(OUTDIR)/IcuEC.dll.config: IcuEC.dll.config
+	cp IcuEC.dll.config $(OUTDIR)
+
+$(BUILDDIR)/IcuTranslitEC.o: IcuTranslitEC.cpp IcuTranslitEC.h $(ECHEADER)
+	g++ -Wall -fPIC -c IcuTranslitEC.cpp -o $(BUILDDIR)/IcuTranslitEC.o \
+  -I$(ECHEADERDIR)
+
+$(BUILDDIR)/IcuRegexEC.o: IcuRegexEC.cpp IcuRegexEC.h $(ECHEADER)
+	g++ -Wall -fPIC -c IcuRegexEC.cpp -o $(BUILDDIR)/IcuRegexEC.o \
+  -I$(ECHEADERDIR)
+
+$(BUILDDIR)/IcuConvEC.o: IcuConvEC.cpp IcuConvEC.h $(ECHEADER)
+	g++ -Wall -fPIC -c IcuConvEC.cpp -o $(BUILDDIR)/IcuConvEC.o \
+  -I$(ECHEADERDIR)
+
+release: $(RELEASEBLD) $(RELEASEOUT)/libIcuTranslitEC.so \
+  $(RELEASEOUT)/libIcuRegexEC.so $(RELEASEOUT)/libIcuConvEC.so
+
+$(RELEASEBLD):
+	mkdir -p $(RELEASEBLD)
+	mkdir -p $(RELEASEOUT)
+
+$(RELEASEOUT)/libIcuTranslitEC.so: $(RELEASEBLD)/IcuTranslitEC.o \
+  $(RELEASEOUT)/IcuEC.dll.config
+	g++ -shared -Wl,-soname,libIcuTranslitEC.so \
+  -o $(RELEASEOUT)/libIcuTranslitEC.so $(RELEASEBLD)/IcuTranslitEC.o \
+  -licuuc -licui18n
+
+$(RELEASEOUT)/libIcuRegexEC.so: $(RELEASEBLD)/IcuRegexEC.o \
+  $(RELEASEOUT)/IcuEC.dll.config
+	g++ -shared -Wl,-soname,libIcuRegexEC.so \
+  -o $(RELEASEOUT)/libIcuRegexEC.so $(RELEASEBLD)/IcuRegexEC.o \
+  -licuuc -licui18n
+
+$(RELEASEOUT)/libIcuConvEC.so: $(RELEASEBLD)/IcuConvEC.o \
+  $(RELEASEOUT)/IcuEC.dll.config
+	g++ -shared -Wl,-soname,libIcuConvEC.so \
+  -o $(RELEASEOUT)/libIcuConvEC.so $(RELEASEBLD)/IcuConvEC.o \
+  -licuuc -licui18n
+
+$(RELEASEOUT)/IcuEC.dll.config: IcuEC.dll.config
+	cp IcuEC.dll.config $(RELEASEOUT)
+
+$(RELEASEBLD)/IcuTranslitEC.o: IcuTranslitEC.cpp IcuTranslitEC.h $(ECHEADER)
+	g++ -Wall -fPIC -O -I$(ECHEADERDIR) -c IcuTranslitEC.cpp \
+  -o $(RELEASEBLD)/IcuTranslitEC.o
+
+$(RELEASEBLD)/IcuRegexEC.o: IcuRegexEC.cpp IcuRegexEC.h $(ECHEADER)
+	g++ -Wall -fPIC -O -I$(ECHEADERDIR) -c IcuRegexEC.cpp \
+  -o $(RELEASEBLD)/IcuRegexEC.o
+
+$(RELEASEBLD)/IcuConvEC.o: IcuConvEC.cpp IcuConvEC.h $(ECHEADER)
+	g++ -Wall -fPIC -O -I$(ECHEADERDIR) -c IcuConvEC.cpp \
+  -o $(RELEASEBLD)/IcuConvEC.o
+
+clean:
+	rm -f *~
+	rm -f $(BUILDDIR)/IcuTranslitEC.o $(OUTDIR)/libIcuTranslitEC.so*
+	rm -f $(BUILDDIR)/IcuRegexEC.o $(OUTDIR)/libIcuRegexEC.so*
+	rm -f $(BUILDDIR)/IcuConvEC.o $(OUTDIR)/libIcuConvEC.so*
+	rm -f $(RELEASEBLD)/IcuTranslitEC.o $(RELEASEOUT)/libIcuTranslitEC.so*
+	rm -f $(RELEASEBLD)/IcuRegexEC.o $(RELEASEOUT)/libIcuRegexEC.so*
+	rm -f $(RELEASEBLD)/IcuConvEC.o $(RELEASEOUT)/libIcuConvEC.so*
+
+distclean: clean
+	rm -f Makefile
+
+install: release IcuEC.dll.config
+	mkdir -p $(DESTDIR)$(LIBDIR)
+	$(INSTALL) -s $(RELEASEOUT)/libIcuTranslitEC.so $(DESTDIR)$(LIBDIR)
+	$(INSTALL) -s $(RELEASEOUT)/libIcuRegexEC.so $(DESTDIR)$(LIBDIR)
+	$(INSTALL) -s $(RELEASEOUT)/libIcuConvEC.so $(DESTDIR)$(LIBDIR)
+	$(INSTALL) IcuEC.dll.config $(DESTDIR)$(LIBDIR)
+
+check:

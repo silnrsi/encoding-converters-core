@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+	<Module Id="TECkitDLLsMM" Language="1033" Version="4.0.0.0">
+		<Package Id="19522a8c-f977-4273-8315-7e20fcaf1e75" Comments="Merge module containing the TECkit run-time engine DLLs" Description="TECkit DLLs" InstallerVersion="200" Keywords="TECkit, Encoding Conversion, SILConverters" Manufacturer="SIL International" />
+
+		<Directory Id="TARGETDIR" Name="SourceDir">
+			<Directory Id="MergeRedirectFolder">
+
+                <Component Id="TECkit_x86.dll" Guid="{F078D000-316C-4D97-8759-F18D3435BA6C}">
+                    <File Id="TECkit_x86.dll" Name="TECkit_x86.dll" KeyPath="yes" Source="..\..\redist\TECkit_x86.dll" />
+                </Component>
+                <Component Id="TECkit_Compiler_x86.dll" Guid="{78B38109-7C53-4B49-AFE1-F923E3F16E12}">
+                    <File Id="TECkit_Compiler_x86.dll" Name="TECkit_Compiler_x86.dll" KeyPath="yes" Source="..\..\redist\TECkit_Compiler_x86.dll" />
+                </Component>
+
+			</Directory>
+		</Directory>
+	</Module>
+</Wix>

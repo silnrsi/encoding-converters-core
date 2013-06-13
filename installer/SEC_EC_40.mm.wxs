@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2003/01/wi">
+	<Module Id="SECEC40" Guid="D51562C9-E076-4029-807C-2732B431BD2D" Language="1033" Version="4.0.0.0">
+		<Package Id="????????-????-????-????-????????????" Keywords="SIL; Encoding Conversion; Transliteration; EncConverters" Description="EncConverter core 4.0 Merge Module -- Include in any client application deployment project which uses the EncConverters objects" Comments="Common installer module for SIL's version 4.0 of the EncConverter's core" Manufacturer="SIL International" InstallerVersion="200" Platforms="Intel" Languages="1033" SummaryCodepage="1252" />
+
+		<IgnoreModularization Name="INSTALLDIR" Type="Directory"/>
+
+		<Directory Id="INSTALLDIR" Name="SILCON~1" LongName="SILConverters">
+			<Component Id="ECInterfaces.dll" Guid="7B5EC0FA-BC63-4010-B0A0-927BD419B4A3">
+				<File Id="ECInterfaces.dll" Name="ECINTE~2.dll" LongName="ECInterfaces.dll" Vital="yes" KeyPath="yes" AssemblyManifest="ECInterfaces.dll" AssemblyApplication="ECInterfaces.dll" Assembly=".net" Source="Lib\${config}\ECInterfaces.dll" />
+			</Component>
+			<Component Id="ECInterfaces.tlb" Guid="51404655-DB11-4872-8B7F-718AA917ABBA">
+				<File Id="ECInterfaces.tlb" Name="ECINTE~1.tlb" LongName="ECInterfaces.tlb" Vital="yes" KeyPath="yes" Source="Lib\${config}\ECInterfaces.tlb" />
+				<TypeLib Id="6a977123-92af-43d2-83a7-b4e853ee42d1" Language="0" MajorVersion="3" MinorVersion="1" Description="Encoding Converters Interface definitions for the repository and converter engines" Cost="0" />
+			</Component>
+			<Component Id="SilEncConverters40.dll" Guid="A1F02AE5-132B-4025-B744-478C44CBBFA2">
+				<File Id="SilEncConverters40.dll" Name="SILENC~1.dll" LongName="SilEncConverters40.dll" Vital="yes" KeyPath="yes" AssemblyManifest="SilEncConverters40.dll" AssemblyApplication="SilEncConverters40.dll" Assembly=".net" Source="Lib\${config}\SilEncConverters40.dll" />
+			</Component>
+			<Component Id="SilEncConverters40.tlb" Guid="513E71DB-F4BA-4B15-B4BD-F2F3883218E6">
+				<File Id="SilEncConverters40.tlb" Name="SILENC~1.tlb" LongName="SilEncConverters40.tlb" Vital="yes" KeyPath="yes" Source="Lib\${config}\SilEncConverters40.tlb" />
+				<TypeLib Id="06F10557-EE67-4dad-B3F5-031568E4DB31" Language="0" MajorVersion="4" MinorVersion="0" Description="Encoding Converters Repository and basic converter engine wrappers" Cost="0" />
+			</Component>
+			<Component Id="EncConvertersAppDataMover40.exe" Guid="4F57740F-5033-42f2-A41A-ED8022731CE0">
+				<File Id="EncConvertersAppDataMover40.exe" Name="EncCon~1.exe" LongName="EncConvertersAppDataMover40.exe" ReadOnly="yes" KeyPath="yes" Source="Lib\${config}\EncConvertersAppDataMover40.exe"/>
+			</Component>
+			<Directory Id="ECFolder" Name="EC">
+				<Directory Id="PluginsFolder" Name="Plugins">
+					<Component Id="EC4.0.0.0PluginDetails.xml" Guid="579194FE-37AA-47a3-A089-B0F1F17415FB">
+						<File Id="EC4.0.0.0PluginDetails.xml" Name="EC400~1.xml" LongName="EC 4.0.0.0 Plugin Details.xml" KeyPath="yes" Source="Lib\release\EC\Plugins\EC 4.0.0.0 Plugin Details.xml"/>
+					</Component>
+				</Directory>
+			</Directory>
+		</Directory>
+
+		<CustomAction Id="LaunchAppDataMover" Execute="deferred" Impersonate="no" FileKey="EncConvertersAppDataMover40.exe" ExeCommand="" Return="ignore" />
+		<InstallExecuteSequence>
+			<Custom Action="LaunchAppDataMover" After="PublishComponents"><![CDATA[NOT Installed]]></Custom>
+		</InstallExecuteSequence>
+
+	</Module>
+</Wix>
