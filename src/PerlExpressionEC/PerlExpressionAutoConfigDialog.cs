@@ -1,14 +1,12 @@
 // Created by Jim Kornelsen on Nov 21 2011
 //
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using System.IO;
-using ECInterfaces;                     // for IEncConverter
+using ECInterfaces;
+using PerlExpressionEC.Properties;
+
+// for IEncConverter
 
 //uncomment the following line for verbose debugging output using Console.WriteLine
 //#define VERBOSE_DEBUGGING
@@ -31,11 +29,11 @@ namespace SilEncConverters40
             bool bIsInRepository)
         {
 #if VERBOSE_DEBUGGING
-            Console.WriteLine("PerlExpressionAutoConfigDialog ctor BEGIN");
+            EncConverter.DebugWriteLine("PerlExpressionAutoConfigDialog ctor BEGIN");
 #endif
 			InitializeComponent();
 #if VERBOSE_DEBUGGING
-            Console.WriteLine("Initialized PerlExpressionAutoConfigDialog component.");
+            EncConverter.DebugWriteLine("Initialized PerlExpressionAutoConfigDialog component.");
 #endif
 			base.Initialize (
                 aECs,
@@ -49,24 +47,37 @@ namespace SilEncConverters40
                 lProcessTypeFlags,
                 bIsInRepository);
 #if VERBOSE_DEBUGGING
-            Console.WriteLine("Initialized base.");
+            EncConverter.DebugWriteLine("Initialized base.");
 #endif
             // if we're editing a CC table/spellfixer project, then set the Converter Spec and say it's unmodified
             if (m_bEditMode)
             {
 #if VERBOSE_DEBUGGING
-                Console.WriteLine("Edit mode");
+                EncConverter.DebugWriteLine("Edit mode");
 #endif
 				System.Diagnostics.Debug.Assert(!String.IsNullOrEmpty(ConverterIdentifier));
                 textBoxExpression.Text = ConverterIdentifier;
                 IsModified = false;
             }
 
+            // initialize the combo box with some examples that users can try
+            LoadComboBoxFromSettings(comboBoxPreviousPerlExpressions);
+
+            if (comboBoxPreviousPerlExpressions.Items.Count > 0)
+                comboBoxPreviousPerlExpressions.SelectedIndex = 0;
+
             m_bInitialized = true;
 #if VERBOSE_DEBUGGING
-            Console.WriteLine("PerlExpressionAutoConfigDialog ctor END");
+            EncConverter.DebugWriteLine("PerlExpressionAutoConfigDialog ctor END");
 #endif
 		}
+
+        private void LoadComboBoxFromSettings(ComboBox comboBox)
+        {
+            comboBox.Items.Clear();
+            foreach (var str in Settings.Default.RecentlyUsedExpressions)
+                comboBox.Items.Add(str);
+        }
 
         public PerlExpressionAutoConfigDialog (
             IEncConverters aECs,
@@ -86,90 +97,141 @@ namespace SilEncConverters40
 
         private System.Windows.Forms.Label              labelScriptFile;
         private System.Windows.Forms.TextBox            textBoxExpression;
+        private Label label1;
+        private ComboBox comboBoxPreviousPerlExpressions;
+        private Button buttonDeleteSavedExpression;
         private System.Windows.Forms.TableLayoutPanel   tableLayoutPanel1;
 
         // This code was NOT generated!
         // So feel free to modify it as needed.
         private void InitializeComponent()
         {
+            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.labelScriptFile = new System.Windows.Forms.Label();
+            this.textBoxExpression = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.comboBoxPreviousPerlExpressions = new System.Windows.Forms.ComboBox();
+            this.buttonDeleteSavedExpression = new System.Windows.Forms.Button();
             this.tabControl.SuspendLayout();
             this.tabPageSetup.SuspendLayout();
-            this.SuspendLayout();
-
-            // 
-            // Script file
-            // 
-
-            this.labelScriptFile = new System.Windows.Forms.Label();
-            this.labelScriptFile.Text = "Perl expression:";
-            this.labelScriptFile.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.labelScriptFile.AutoSize = true;
-            this.labelScriptFile.Name = "labelExpression";
-            this.labelScriptFile.TabIndex = 0;
-
-            this.textBoxExpression = new System.Windows.Forms.TextBox();
-            this.textBoxExpression.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.textBoxExpression.Location = new System.Drawing.Point(88, 14);
-            this.textBoxExpression.Name = "textBoxExpression";
-            this.textBoxExpression.TabIndex = 1;
-            this.textBoxExpression.AcceptsReturn = true;
-            this.textBoxExpression.AcceptsTab = true;
-            this.textBoxExpression.Multiline = true;
-            this.textBoxExpression.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBoxExpression.Size = new System.Drawing.Size(400, 300);
-            this.textBoxExpression.TextChanged += new System.EventHandler(
-                                                  this.textBoxExpression_TextChanged);
-
-            // 
-            // Panel and Dialog Window
-            // 
-
-            this.tableLayoutPanel1 =
-                new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel1.SuspendLayout();
+            this.SuspendLayout();
+            // 
+            // tabPageSetup
+            // 
+            this.tabPageSetup.Controls.Add(this.tableLayoutPanel1);
+            // 
+            // buttonApply
+            // 
+            this.helpProvider.SetHelpString(this.buttonApply, "Click this button to apply the configured values for this converter");
+            this.helpProvider.SetShowHelp(this.buttonApply, true);
+            // 
+            // buttonCancel
+            // 
+            this.helpProvider.SetHelpString(this.buttonCancel, "Click this button to cancel this dialog");
+            this.helpProvider.SetShowHelp(this.buttonCancel, true);
+            // 
+            // buttonOK
+            // 
+            this.helpProvider.SetHelpString(this.buttonOK, "Click this button to accept the configured values for this converter");
+            this.helpProvider.SetShowHelp(this.buttonOK, true);
+            // 
+            // buttonSaveInRepository
+            // 
+            this.helpProvider.SetHelpString(this.buttonSaveInRepository, "\r\nClick to add this converter to the system repository permanently.\r\n    ");
+            this.helpProvider.SetShowHelp(this.buttonSaveInRepository, true);
+            // 
+            // tableLayoutPanel1
+            // 
             this.tableLayoutPanel1.ColumnCount = 3;
-            this.tableLayoutPanel1.RowCount    = 2;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel1.Controls.Add(this.labelScriptFile, 0, 0);
+            this.tableLayoutPanel1.Controls.Add(this.textBoxExpression, 1, 0);
+            this.tableLayoutPanel1.Controls.Add(this.label1, 0, 2);
+            this.tableLayoutPanel1.Controls.Add(this.comboBoxPreviousPerlExpressions, 1, 2);
+            this.tableLayoutPanel1.Controls.Add(this.buttonDeleteSavedExpression, 2, 2);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(3, 3);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(620, 394);
+            this.tableLayoutPanel1.RowCount = 4;
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(596, 394);
             this.tableLayoutPanel1.TabIndex = 1;
-            this.tableLayoutPanel1.Controls.Add(this.labelScriptFile,      0, 0);
-            this.tableLayoutPanel1.Controls.Add(this.textBoxExpression,    1, 0);
-
-            this.tabPageSetup.Controls.Add(this.tableLayoutPanel1);
-
+            // 
+            // labelScriptFile
+            // 
+            this.labelScriptFile.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.labelScriptFile.AutoSize = true;
+            this.labelScriptFile.Location = new System.Drawing.Point(31, 135);
+            this.labelScriptFile.Name = "labelScriptFile";
+            this.labelScriptFile.Size = new System.Drawing.Size(81, 13);
+            this.labelScriptFile.TabIndex = 0;
+            this.labelScriptFile.Text = "Perl expression:";
+            // 
+            // textBoxExpression
+            // 
+            this.textBoxExpression.AcceptsReturn = true;
+            this.textBoxExpression.AcceptsTab = true;
+            this.tableLayoutPanel1.SetColumnSpan(this.textBoxExpression, 2);
+            this.textBoxExpression.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.textBoxExpression.Location = new System.Drawing.Point(118, 3);
+            this.textBoxExpression.Multiline = true;
+            this.textBoxExpression.Name = "textBoxExpression";
+            this.textBoxExpression.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.textBoxExpression.Size = new System.Drawing.Size(475, 278);
+            this.textBoxExpression.TabIndex = 1;
+            this.textBoxExpression.TextChanged += new System.EventHandler(this.textBoxExpression_TextChanged);
+            // 
+            // label1
+            // 
+            this.label1.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(3, 332);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(109, 13);
+            this.label1.TabIndex = 0;
+            this.label1.Text = "Previous expressions:";
+            // 
+            // comboBoxPreviousPerlExpressions
+            // 
+            this.comboBoxPreviousPerlExpressions.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.comboBoxPreviousPerlExpressions.FormattingEnabled = true;
+            this.comboBoxPreviousPerlExpressions.Location = new System.Drawing.Point(118, 327);
+            this.comboBoxPreviousPerlExpressions.Name = "comboBoxPreviousPerlExpressions";
+            this.comboBoxPreviousPerlExpressions.Size = new System.Drawing.Size(380, 21);
+            this.comboBoxPreviousPerlExpressions.TabIndex = 2;
+            this.comboBoxPreviousPerlExpressions.SelectedIndexChanged += new System.EventHandler(this.comboBoxPreviousPerlExpressions_SelectedIndexChanged);
+            // 
+            // buttonDeleteSavedExpression
+            // 
+            this.buttonDeleteSavedExpression.Location = new System.Drawing.Point(504, 327);
+            this.buttonDeleteSavedExpression.Name = "buttonDeleteSavedExpression";
+            this.buttonDeleteSavedExpression.Size = new System.Drawing.Size(89, 23);
+            this.buttonDeleteSavedExpression.TabIndex = 3;
+            this.buttonDeleteSavedExpression.Text = "Delete";
+            this.buttonDeleteSavedExpression.UseVisualStyleBackColor = true;
+            this.buttonDeleteSavedExpression.Click += new System.EventHandler(this.buttonDeleteSavedExpression_Click);
+            // 
+            // PerlExpressionAutoConfigDialog
+            // 
             this.ClientSize = new System.Drawing.Size(634, 479);
             this.Name = "PerlExpressionAutoConfigDialog";
+            this.Controls.SetChildIndex(this.tabControl, 0);
+            this.Controls.SetChildIndex(this.buttonApply, 0);
+            this.Controls.SetChildIndex(this.buttonCancel, 0);
+            this.Controls.SetChildIndex(this.buttonOK, 0);
+            this.Controls.SetChildIndex(this.buttonSaveInRepository, 0);
             this.tabControl.ResumeLayout(false);
             this.tabPageSetup.ResumeLayout(false);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             this.ResumeLayout(false);
-        }
 
-        protected void UpdateUI(bool bVisible)
-        {
-#if VERBOSE_DEBUGGING
-            Console.WriteLine("UpdateUI BEGIN");
-#endif
-/*
-            buttonSaveInRepository.Visible =
-                groupBoxExpects.Visible =
-                groupBoxReturns.Visible = bVisible;
-*/
-#if VERBOSE_DEBUGGING
-            Console.WriteLine("UpdateUI END");
-#endif
-		}
-
-        protected override void SetConvTypeControls()
-        {
-            //SetRbValuesFromConvType(radioButtonExpectsUnicode, radioButtonExpectsLegacy, radioButtonReturnsUnicode,
-            //    radioButtonReturnsLegacy);
         }
 
         // this method is called either when the user clicks the "Apply" or "OK" buttons *OR* if she
@@ -177,11 +239,9 @@ namespace SilEncConverters40
         //  to make sure that the user has correctly configured a legitimate converter.
         protected override bool OnApply()
         {
-            Console.Error.WriteLine("OnApply() BEGIN");
+            EncConverter.DebugWriteLine("OnApply() BEGIN");
             // Get the converter identifier from the Setup tab controls.
             ConverterIdentifier = textBoxExpression.Text;
-            //SetConvTypeFromRbControls(radioButtonExpectsUnicode, radioButtonExpectsLegacy,
-            //    radioButtonReturnsUnicode, radioButtonReturnsLegacy);
 
             // if we're actually on the setup tab, then do some further checking as well.
             if (tabControl.SelectedTab == tabPageSetup)
@@ -194,27 +254,18 @@ namespace SilEncConverters40
                     MessageBox.Show(this, "Enter a Perl expression first!", EncConverters.cstrCaption);
                     return false;
                 }
+
+                if (!Settings.Default.RecentlyUsedExpressions.Contains(ConverterIdentifier))
+                {
+                    Settings.Default.RecentlyUsedExpressions.Add(ConverterIdentifier);
+                    Settings.Default.Save();
+                    LoadComboBoxFromSettings(comboBoxPreviousPerlExpressions);
+                }
             }
-            Console.Error.WriteLine("OnApply() END");
+
+            EncConverter.DebugWriteLine("OnApply() END");
             return base.OnApply();
         }
-
-/*
-        protected override bool ShouldRemoveBeforeAdd
-        {
-            get { return true; }
-        }
-
-        protected override bool ShouldFriendlyNameBeReadOnly
-        {
-            get { return false; }
-        }
-
-        protected override bool GetFontMapping(string strFriendlyName, out string strLhsFont, out string strRhsFont)
-        {
-            return base.GetFontMapping(strFriendlyName, out strLhsFont, out strRhsFont);
-        }
-*/
 
         protected override string ProgID
         {
@@ -235,52 +286,37 @@ namespace SilEncConverters40
         private void textBoxExpression_TextChanged(object sender, EventArgs e)
         {
             if (m_bInitialized) // but only do this after we're already initialized
-            {
                 IsModified = (((TextBox)sender).Text.Length > 0);
-                //ProcessType &= ~(int)ProcessTypeFlags.SpellingFixerProject;
-                UpdateUI(IsModified);
-                //Unload();
-            }
         }
 
-/*
-        protected override bool SetupTabSelected_MakeSaveInRepositoryVisible
+        private void comboBoxPreviousPerlExpressions_SelectedIndexChanged(object sender, EventArgs e)
         {
-            get { return !IsSpellFixerProject; }
+            // enter the new selected item into the text box
+            if (m_bInitialized)
+                textBoxExpression.Text = comboBoxPreviousPerlExpressions.SelectedItem.ToString();
         }
 
-        private void buttonAddSpellFixer_Click(object sender, EventArgs e)
+        private void buttonDeleteSavedExpression_Click(object sender, EventArgs e)
         {
-            try
-            {
-                SpellFixerByReflection aSF = new SpellFixerByReflection();
-                aSF.LoginProject();
-                ((EncConverters)m_aECs).Reinitialize();
-                FriendlyName = aSF.SpellFixerEncConverterName;
-                m_aEC = m_aECs[FriendlyName];
-                if (m_aEC != null)
-                {
-                    textBoxExpression.Text = ConverterIdentifier = m_aEC.ConverterIdentifier;
-                    ConversionType = m_aEC.ConversionType;
-                    ProcessType = m_aEC.ProcessType;
-                    UpdateUI(false);
-                    aSF.QueryForSpellingCorrectionIfTableEmpty("incorect");
-                    aSF.EditSpellingFixes();
-                    IsInRepository = true;
-                }
-            }
-            catch (Exception)
-            {
-                // usually just a "no project selected message, so .... ignoring it
-                // MessageBox.Show(ex.Message, EncConverters.cstrCaption);
-            }
-        }
+            var str = comboBoxPreviousPerlExpressions.SelectedItem.ToString();
+            if (!Settings.Default.RecentlyUsedExpressions.Contains(str))
+                return;
 
-        private void radioButton_CheckedChanged(object sender, EventArgs e)
-        {
-            IsModified = true;
+            Settings.Default.RecentlyUsedExpressions.Remove(str);
+            Settings.Default.Save();
+            
+            LoadComboBoxFromSettings(comboBoxPreviousPerlExpressions);
+
+            // if there are any left...
+            if (comboBoxPreviousPerlExpressions.Items.Count <= 0)
+                return;
+
+            // ... set something in the combo box so it doesn't keep showing the now deleted one
+            // (but pretend we're not initialized so we don't overwrite what's in the text box
+            m_bInitialized = false;
+            comboBoxPreviousPerlExpressions.SelectedIndex = 0;
+            m_bInitialized = true;
         }
-*/
     }
 }
 

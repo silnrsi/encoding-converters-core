@@ -42,10 +42,10 @@ namespace SilEncConverters40
             int lProcessTypeFlags,
             bool bIsInRepository)
         {
-            System.Diagnostics.Debug.WriteLine("IcuTranslitAutoConfigDialog ctor BEGIN");
+            EncConverter.DebugWriteLine("IcuTranslitAutoConfigDialog ctor BEGIN");
             InitializeComponent();
             fillListBox();
-            System.Diagnostics.Debug.WriteLine("Initialized IcuTranslitAutoConfigDialog component.");
+            EncConverter.DebugWriteLine("Initialized IcuTranslitAutoConfigDialog component.");
             base.Initialize (
                 aECs,
                 IcuTranslitEncConverter.strHtmlFilename,
@@ -57,12 +57,12 @@ namespace SilEncConverters40
                 strRhsEncodingId,
                 lProcessTypeFlags,
                 bIsInRepository);
-            System.Diagnostics.Debug.WriteLine("Initialized base.");
+            EncConverter.DebugWriteLine("Initialized base.");
 
             // if we're editing, then set the Converter Spec and say it's unmodified
             if (m_bEditMode)
             {
-                System.Diagnostics.Debug.WriteLine("Edit mode");
+                EncConverter.DebugWriteLine("Edit mode");
                 System.Diagnostics.Debug.Assert(!String.IsNullOrEmpty(ConverterIdentifier));
                 //listBoxTranslitName.SelectedValue = ConverterIdentifier;
                 for (int i = 0; i < translitIDs.Length; i++)
@@ -77,7 +77,7 @@ namespace SilEncConverters40
             }
 
             m_bInitialized = true;
-            System.Diagnostics.Debug.WriteLine("IcuTranslitAutoConfigDialog ctor END");
+            EncConverter.DebugWriteLine("IcuTranslitAutoConfigDialog ctor END");
         }
 
         public IcuTranslitAutoConfigDialog (
@@ -224,7 +224,7 @@ namespace SilEncConverters40
         //  to make sure that the user has correctly configured a legitimate converter.
         protected override bool OnApply()
         {
-            System.Diagnostics.Debug.WriteLine("OnApply() BEGIN");
+            EncConverter.DebugWriteLine("OnApply() BEGIN");
             // Get the converter identifier from the Setup tab controls.
             ConverterIdentifier = translitIDs[listBoxTranslitName.SelectedIndex];
             //SetConvTypeFromRbControls(radioButtonExpectsUnicode, radioButtonExpectsLegacy,
@@ -242,7 +242,7 @@ namespace SilEncConverters40
                     return false;
                 }
             }
-            System.Diagnostics.Debug.WriteLine("OnApply() END");
+            EncConverter.DebugWriteLine("OnApply() END");
             return base.OnApply();
         }
 
@@ -285,7 +285,7 @@ namespace SilEncConverters40
             if (m_bInitialized) // but only do this after we're already initialized
             {
                 ListBox lb = this.listBoxTranslitName;  // shorter nickname
-                System.Diagnostics.Debug.WriteLine(lb.SelectedIndex.ToString()+ "\n" + lb.GetItemText(lb.SelectedItem),"lb_SelectedIndexChanged"); 
+                EncConverter.DebugWriteLine(lb.SelectedIndex.ToString() + "\n" + lb.GetItemText(lb.SelectedItem) + "lb_SelectedIndexChanged"); 
                 IsModified = true;
                 //ProcessType &= ~(int)ProcessTypeFlags.SpellingFixerProject;
             }

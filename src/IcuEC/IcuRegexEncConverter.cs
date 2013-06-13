@@ -64,7 +64,7 @@ namespace SilEncConverters40
             Int32 codePageOutput,
             bool bAdding)
         {
-            System.Diagnostics.Debug.WriteLine("IcuRegex EC Initialize BEGIN");
+            DebugWriteLine("IcuRegex EC Initialize BEGIN");
             // let the base class have first stab at it
             base.Initialize(converterName, converterSpec, ref lhsEncodingID, ref rhsEncodingID, 
                 ref conversionType, ref processTypeFlags, codePageInput, codePageOutput, bAdding );
@@ -91,7 +91,7 @@ namespace SilEncConverters40
             }
 */
 
-            System.Diagnostics.Debug.WriteLine("IcuRegex EC Initialize END");
+            DebugWriteLine("IcuRegex EC Initialize END");
         }
         #endregion Initialization
 
@@ -115,7 +115,7 @@ namespace SilEncConverters40
 
         protected unsafe void Load(string strExpression)
         {
-            System.Diagnostics.Debug.WriteLine("IcuRegex Load BEGIN");
+            DebugWriteLine("IcuRegex Load BEGIN");
             //this.strFilepath = strExpression;
 
             if( IsFileLoaded() ) {
@@ -130,14 +130,14 @@ namespace SilEncConverters40
                     "'\n\ndoesn't contain -> ");
             }
 
-            System.Diagnostics.Debug.WriteLine("Calling CppInitialize");
+            DebugWriteLine("Calling CppInitialize");
             int status = 0;
             status = CppInitialize(strExpression);
             if( status != 0 )  
             {
                 throw new Exception("CppInitialize failed.");
             }
-            System.Diagnostics.Debug.WriteLine("IcuRegex Load END");
+            DebugWriteLine("IcuRegex Load END");
         }
         #endregion Misc helpers
 

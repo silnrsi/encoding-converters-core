@@ -74,22 +74,18 @@ namespace SilEncConverters40
 #if VERBOSE_DEBUGGING
             Console.WriteLine("1");
 #endif
-			//helpProvider.SetHelpString(textBoxFileSpec, Properties.Resources.ConverterFileSpecHelpString);
 			helpProvider.SetHelpString(textBoxFileSpec, "Enter the file path to the converter table/map.");
 #if VERBOSE_DEBUGGING
             Console.WriteLine("2");
 #endif
-			//helpProvider.SetHelpString(buttonBrowse, Properties.Resources.BrowseFileSpecHelpString);
 			helpProvider.SetHelpString(buttonBrowse, "Click to browse for the converter table/map");
 #if VERBOSE_DEBUGGING
             Console.WriteLine("3");
 #endif
-			//helpProvider.SetHelpString(groupBoxExpects, Properties.Resources.ConvTypeExpectsHelpString);
 			helpProvider.SetHelpString(groupBoxExpects, "Choose the encoding type for the input to the table/map: either Unicode or Legacy bytes.  For example, if this is an Unicode encoding converter, then the input will be Legacy bytes.");
 #if VERBOSE_DEBUGGING
             Console.WriteLine("4");
 #endif
-			//helpProvider.SetHelpString(groupBoxReturns, Properties.Resources.ConvTypeReturnsHelpString);
 			helpProvider.SetHelpString(groupBoxReturns, "Choose the encoding type for the output of the table/map: either Unicode or Legacy bytes For example, if this is an Unicode encoding converter, then the output will be Unicode encoding.");
 #if VERBOSE_DEBUGGING
             Console.WriteLine("CcAutoConfigDialog ctor END");

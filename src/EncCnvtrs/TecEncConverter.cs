@@ -160,8 +160,8 @@ namespace SilEncConverters40
 
         public override void Initialize(string converterName, string converterSpec, ref string lhsEncodingID, ref string rhsEncodingID, ref ConvType conversionType, ref Int32 processTypeFlags, Int32 codePageInput, Int32 codePageOutput, bool bAdding)
         {
-            System.Diagnostics.Debug.WriteLine("T EC Initialize BEGIN");
-            System.Diagnostics.Debug.WriteLine(converterName + ", " + converterSpec);
+            DebugWriteLine("T EC Initialize BEGIN");
+            DebugWriteLine(converterName + ", " + converterSpec);
 #if AssemblyChecking
             MessageBox.Show(String.Format("You are listening to:{0}{0}'{1}'{0}{0}implemented in assembly:{0}{0}'{2}'{0}{0}executing from:{0}{0}'{3}'{0}{0}Trying to instantiate:{0}{0}{4}",
                 Environment.NewLine,
@@ -195,7 +195,7 @@ namespace SilEncConverters40
                 // initialize our references to the two files for later use
                 m_strTecFileSpec = strFilename + ".tec";
                 m_strMapFileSpec = strFilename + ".map";
-                System.Diagnostics.Debug.WriteLine(m_strTecFileSpec);
+                DebugWriteLine(m_strTecFileSpec);
 
                 strExt.ToLower();
 				DateTime timeModified = DateTime.Now; // don't care really, but have to initialize it.
@@ -204,7 +204,7 @@ namespace SilEncConverters40
                     if( !DoesFileExist(m_strTecFileSpec, ref timeModified) )
                     {
                         // if the .tec file doesn't exist yet, then compile it.
-                        System.Diagnostics.Debug.WriteLine("Compiling map");
+                        DebugWriteLine("Compiling map");
                         CompileMap(m_strMapFileSpec, ref m_strTecFileSpec);
                     }
 				}
@@ -219,17 +219,17 @@ namespace SilEncConverters40
 
 				// in either case, if it doesn't exist at this point, then throw an error.
 				if( !DoesFileExist(converterSpec,ref timeModified) ) {
-                    System.Diagnostics.Debug.WriteLine("Throwing error");
+                    DebugWriteLine("Throwing error");
 					EncConverters.ThrowError(ErrStatus.CantOpenReadMap, converterSpec);
                 }
-                System.Diagnostics.Debug.WriteLine("Ok so far.");
+                DebugWriteLine("Ok so far.");
 
                 // if we're just now adding this, then double check the info in the map
                 if( bAdding )
                 {
-                    System.Diagnostics.Debug.WriteLine("Just now adding.");
+                    DebugWriteLine("Just now adding.");
                     Load(true);
-                    System.Diagnostics.Debug.WriteLine("Loaded.");
+                    DebugWriteLine("Loaded.");
 
                     // if the user didn't specify the encoding values, then get them from
                     //  the map.
@@ -245,7 +245,7 @@ namespace SilEncConverters40
                     conversionType = m_eConversionType;
 				}
 			}
-            System.Diagnostics.Debug.WriteLine("T EC Initialize END");   // FIXME: Not getting this far.
+            DebugWriteLine("T EC Initialize END");   // FIXME: Not getting this far.
 		}
         #endregion Initialization
 
@@ -345,7 +345,7 @@ namespace SilEncConverters40
                 // make a converter for this new combination.
                 fixed(Int32* converter = &m_converter)
                 {
-                    System.Diagnostics.Debug.WriteLine("Creating TECkit converter: in " +
+                    DebugWriteLine("Creating TECkit converter: in " +
                                                        eInEncodingForm.ToString() + ", out " +
                                                        eOutEncodingForm.ToString());
                     if( IsFileLoaded() )
@@ -535,7 +535,7 @@ namespace SilEncConverters40
 
         protected unsafe void Load(bool bReload)
         {
-            System.Diagnostics.Debug.WriteLine("Load BEGIN");
+            DebugWriteLine("Load BEGIN");
             // if this is an EncodingForm Conversion request, then there is no filename...
             if( m_bEFCReq )
                 return;
@@ -546,7 +546,7 @@ namespace SilEncConverters40
             // if the spec corresponds to the map...
             if (m_bCompileable)
             {
-                System.Diagnostics.Debug.WriteLine("can compile");
+                DebugWriteLine("can compile");
                 // ... see if the map file is newer than the compiled version
                 DateTime fsmap = new DateTime(0);
                 if (!DoesFileExist(m_strMapFileSpec, ref fsmap))
@@ -567,51 +567,51 @@ namespace SilEncConverters40
             }
             else if (!DoesFileExist(m_strTecFileSpec, ref m_timeModifiedTec) )
             {
-                System.Diagnostics.Debug.WriteLine("throwing error");
+                DebugWriteLine("throwing error");
                 EncConverters.ThrowError(ErrStatus.CantOpenReadMap, m_strTecFileSpec);
             }
 
-            //System.Diagnostics.Debug.WriteLine("(3)continuing...");
+            //DebugWriteLine("(3)continuing...");
             if( IsFileLoaded() )
                 return;
 
             // otherwise, load it now.
-            //System.Diagnostics.Debug.WriteLine("Load it now...");
+            //DebugWriteLine("Load it now...");
             FileStream fileTec = File.OpenRead(m_strTecFileSpec);
-            //System.Diagnostics.Debug.WriteLine("    1");
+            //DebugWriteLine("    1");
             m_baMapping = new byte [fileTec.Length];
             m_nMapSize = (uint)fileTec.Read(m_baMapping,0,(int)fileTec.Length);
-            //System.Diagnostics.Debug.WriteLine("    2");
+            //DebugWriteLine("    2");
 
             int status = 0;
-            //System.Diagnostics.Debug.WriteLine("    3");
+            //DebugWriteLine("    3");
             fixed (byte* pbyMapping = m_baMapping)
             fixed (UInt32* pLhsFlags = &m_lhsFlags, pRhsFlags = &m_rhsFlags)
             {
-                System.Diagnostics.Debug.WriteLine("Calling TECkit.");
-                System.Diagnostics.Debug.WriteLine("LD_LIBRARY_PATH=" + Environment.GetEnvironmentVariable("LD_LIBRARY_PATH"));
+                DebugWriteLine("Calling TECkit.");
+                DebugWriteLine("LD_LIBRARY_PATH=" + Environment.GetEnvironmentVariable("LD_LIBRARY_PATH"));
                 status = TECkit_GetMappingFlags(
                     pbyMapping,
                     m_nMapSize,
                     pLhsFlags,
                     pRhsFlags);
-                System.Diagnostics.Debug.WriteLine("Successfully called TECkit.");
+                DebugWriteLine("Successfully called TECkit.");
             }
 
-            //System.Diagnostics.Debug.WriteLine("    5");
+            //DebugWriteLine("    5");
 
             if( status != (int)ErrStatus.NoError ) {
-                //System.Diagnostics.Debug.WriteLine("    6");
+                //DebugWriteLine("    6");
                 EncConverters.ThrowError(status);
             }
-            //System.Diagnostics.Debug.WriteLine("(7)Ok so far.");
+            //DebugWriteLine("(7)Ok so far.");
 
             if (bReload)
             {
-                System.Diagnostics.Debug.WriteLine("Reload...");
+                DebugWriteLine("Reload...");
                 // call this method to load the attributes from the map (don't care about retval)
                 string[] asDontCare = AttributeKeys;
-                //System.Diagnostics.Debug.WriteLine("Loaded attributes.");
+                //DebugWriteLine("Loaded attributes.");
 
                 // if the user didn't specify the encoding values, then get them from
                 //  the map.
@@ -652,7 +652,7 @@ namespace SilEncConverters40
                     }
                 }
             }
-            System.Diagnostics.Debug.WriteLine("Load END");
+            DebugWriteLine("Load END");
         }
 
         protected void ResetConverters()
@@ -702,7 +702,7 @@ namespace SilEncConverters40
 
         protected unsafe override void GetAttributeKeys(out string [] rSa)
         {
-            System.Diagnostics.Debug.WriteLine("GetAttributeKeys BEGIN");
+            DebugWriteLine("GetAttributeKeys BEGIN");
             // first create the thing
             rSa = new string [ (m_bEFCReq) ? 2 : 11 ];
 
@@ -739,7 +739,7 @@ namespace SilEncConverters40
                 LoadAttribute(out rSa[9], strRegisName, kNameID_RegName, pbaNameBuffer, pbyMapping);
                 LoadAttribute(out rSa[10], strCopyright, kNameID_Copyright, pbaNameBuffer, pbyMapping);
             }
-            System.Diagnostics.Debug.WriteLine("GetAttributeKeys END");
+            DebugWriteLine("GetAttributeKeys END");
         }
         #endregion Misc helpers
     }
