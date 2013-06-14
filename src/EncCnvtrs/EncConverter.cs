@@ -1,11 +1,9 @@
 #define v22_AllowEmptyReturn    // turn off the code that disallowed empty returns
-#define VERBOSE_DEBUGGING
 
 using System;
 using System.Runtime.InteropServices;   // for the class attributes
 using System.Collections;               // for Hashtable
 using System.Resources;                 // for ResourceManager
-using System.Windows.Forms;             // for MessageBox (for showing compiler errors)
 using System.IO;
 using System.ComponentModel;
 using System.Diagnostics;               // for Debug.Assert
@@ -58,9 +56,6 @@ namespace SilEncConverters40
         protected Hashtable     m_mapProperties;        // map of all attributes (filled during get_AttributeKeys)
         protected bool          m_bInitialized;         // indicates whether Initialize has been called
         protected bool          m_bIsInRepository;      // indicates whether this converter is in the static repository (true) or not (false)
-
-        // trace switch
-        private TraceSwitch traceSwitch = new TraceSwitch(typeof(EncConverters).FullName, "General Tracing", "Off");
         #endregion Member Variable Definitions
 
         #region Public Interface
@@ -651,14 +646,16 @@ namespace SilEncConverters40
             if( sInput == null )
                 EncConverters.ThrowError(ErrStatus.IncompleteChar);
             if (sInput.Length == 0) {
+                // this section added 11/10/2011 by Jim K
                 rciOutput = 0;
                 return "";
             }
 
-#if VERBOSE_DEBUGGING
+#if DEBUG && __MonoCS__
+// for debugging only BEGIN
             //byte[] baIn = System.Text.Encoding.UTF8.GetBytes(sInput);            // works
             byte[] baIn = System.Text.Encoding.BigEndianUnicode.GetBytes(sInput);  // easier to read
-            dispBytes("Input BigEndianUnicode (2)", baIn);
+            dispBytes("Input BigEndianUnicode", baIn);
 
             int nInLen = sInput.Length;
             byte [] baIn2 = new byte[nInLen];
@@ -676,6 +673,7 @@ namespace SilEncConverters40
             string resultString = System.Text.Encoding.Default.GetString(baOut2, 0, baOut2.Length);
             DebugWriteLine("Test output '" + resultString + "'");
 */
+// for debugging only END
 #endif
 
             // if the user hasn't specified, then take the default case for the ConversionType:

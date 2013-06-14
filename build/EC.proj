@@ -127,6 +127,25 @@
 				 ToolsVersion="3.5"/>
 	</Target>
 
+    <Target Name="test" DependsOnTargets="TestEncCnvtrs">
+        <Message text="Please execute $(dir-output)/RunTests.exe manually."/>
+        <!--
+        <CreateItem Include="$(dir-output)/TestEncCnvtrs.dll">
+            <Output TaskParameter="Include" ItemName="TestAssembly" />
+        </CreateItem>
+        <NUnit Assemblies="@(TestAssembly)" />
+        -->
+<!--
+        <echo message="'nant test' may fail some tests unless LD_LIBRARY_PATH is set to include ${dir.output} before running nant"/>
+        <echo message="LD_LIBRARY_PATH=${environment::get-variable('LD_LIBRARY_PATH')} nant test"/>
+        <nunit2>
+            <formatter type="Plain" />
+            <test assemblyname="${dir.output}/TestEncCnvtrs.dll" appconfig="${dir.output}/TestEncCnvtrs.dll.config">
+        </test>
+        </nunit2>
+-->
+    </Target>
+
 	<PropertyGroup>
 		<DeployDir>/usr/lib/encConverters</DeployDir>
 	</PropertyGroup>
