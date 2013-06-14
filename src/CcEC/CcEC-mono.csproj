@@ -80,14 +80,16 @@
     <Compile Include="CcEncConverter.cs" />
     <Compile Include="CcEncConverterConfig.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Resources.Designer.cs" />
+    <!--<Compile Include="Resources.Designer.cs" />-->
   </ItemGroup>
+  <!--
   <ItemGroup>
     <EmbeddedResource Include="CcAutoConfigDialog.resx">
       <DependentUpon>CcAutoConfigDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources.resx" />
   </ItemGroup>
+  -->
   <ItemGroup>
     <ProjectReference Include="..\ECInterfaces\ECInterfaces-mono.csproj">
       <Project>{2935E02F-43ED-4670-9A00-A91B0AD3D66C}</Project>
