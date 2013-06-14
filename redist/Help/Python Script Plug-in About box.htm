@@ -210,6 +210,31 @@ href="Python%20Script%20Plug-in%20About%20box_files/colorschememapping.xml">
 <!--
  /* Font Definitions */
  @font-face
+	{font-family:Helvetica;
+	panose-1:2 11 6 4 2 2 2 2 2 4;
+	mso-font-charset:0;
+	mso-generic-font-family:swiss;
+	mso-font-pitch:variable;
+	mso-font-signature:-536859905 -1073711037 9 0 511 0;}
+@font-face
+	{font-family:Courier;
+	panose-1:2 7 4 9 2 2 5 2 4 4;
+	mso-font-alt:"Courier New";
+	mso-font-charset:0;
+	mso-generic-font-family:modern;
+	mso-font-format:other;
+	mso-font-pitch:fixed;
+	mso-font-signature:3 0 0 0 1 0;}
+@font-face
+	{font-family:Courier;
+	panose-1:2 7 4 9 2 2 5 2 4 4;
+	mso-font-alt:"Courier New";
+	mso-font-charset:0;
+	mso-generic-font-family:modern;
+	mso-font-format:other;
+	mso-font-pitch:fixed;
+	mso-font-signature:3 0 0 0 1 0;}
+@font-face
 	{font-family:Tahoma;
 	panose-1:2 11 6 4 3 5 4 4 2 4;
 	mso-font-charset:0;
@@ -967,7 +992,7 @@ div.WordSection1
  @list l0
 	{mso-list-id:-126;
 	mso-list-type:simple;
-	mso-list-template-ids:-1154969326;}
+	mso-list-template-ids:125595174;}
 @list l0:level1
 	{mso-level-number-format:bullet;
 	mso-level-style-link:"List Bullet 3";
@@ -980,7 +1005,7 @@ div.WordSection1
 @list l1
 	{mso-list-id:-125;
 	mso-list-type:simple;
-	mso-list-template-ids:-413766120;}
+	mso-list-template-ids:517523954;}
 @list l1:level1
 	{mso-level-number-format:bullet;
 	mso-level-style-link:"List Bullet 2";
@@ -992,7 +1017,7 @@ div.WordSection1
 @list l2
 	{mso-list-id:-119;
 	mso-list-type:simple;
-	mso-list-template-ids:225502098;}
+	mso-list-template-ids:539030868;}
 @list l2:level1
 	{mso-level-number-format:bullet;
 	mso-level-style-link:"List Bullet";
@@ -1130,10 +1155,55 @@ class=GramE>for</span> <span class=SpellE>ch</span> in u:</p>
 <p class=MsoPlainText><span style='mso-spacerun:yes'>            </span>r +=
 '%s; ' % <span class=GramE>unicodedata.name(</span><span class=SpellE>ch</span>)</p>
 
-<p class=MsoPlainText><span style='mso-spacerun:yes'>        </span><span
-class=GramE>return</span> r</p>
+<p class=MsoPlainText><span style='mso-spacerun:yes'>       </span><span
+style='mso-spacerun:yes'> </span><span class=GramE>return</span> r</p>
 
 <p class=spacesingle>&nbsp;</p>
+
+<p class=spacesingle>The directory of the Python script gets added to <span
+class=SpellE><span class=definedword>sys.path</span></span> by <span
+class=SpellE>EncConverters</span>.<span style='mso-spacerun:yes'>  </span>This
+makes it easy to import another python script in the same directory.<span
+style='mso-spacerun:yes'>  </span>For example, a script could say:<o:p></o:p></p>
+
+<p class=spacesingle>&nbsp;<o:p></o:p></p>
+
+<p class=MsoPlainText><span class=GramE><span style='mso-bidi-font-family:"Courier New"'>import</span></span><span
+style='mso-bidi-font-family:"Courier New"'> script2<br>
+</span><span class=SpellE><span style='font-family:Courier;mso-bidi-font-family:
+Helvetica'>def</span></span><span style='font-family:Courier;mso-bidi-font-family:
+Helvetica'> Convert(u):<br>
+&nbsp;&nbsp;&nbsp; return script2.enToGarhwali(u)</span><o:p></o:p></p>
+
+<p class=spacesingle>&nbsp;<o:p></o:p></p>
+
+<p class=spacesingle>If there was a <span class=definedword>script2.py</span> in
+the same folder defined, for example, as:<o:p></o:p></p>
+
+<p class=spacesingle>&nbsp;<o:p></o:p></p>
+
+<p class=MsoPlainText><span class=SpellE><span class=GramE><span
+style='mso-bidi-font-family:"Courier New"'>def</span></span></span><span
+style='mso-bidi-font-family:"Courier New"'> <span class=SpellE>enToGarhwali</span>(u):<o:p></o:p></span></p>
+
+<p class=MsoPlainText><span style='mso-bidi-font-family:"Courier New"'><span
+style='mso-spacerun:yes'>    </span><span class=GramE>if</span> <span
+class=SpellE>u.lower</span>() in (<span class=SpellE>u&quot;what's</span> this?&quot;,
+<span class=SpellE>u&quot;what</span> is this?&quot;):<o:p></o:p></span></p>
+
+<p class=MsoPlainText><span style='mso-bidi-font-family:"Courier New"'><span
+style='mso-spacerun:yes'>        </span><span class=GramE>return</span> <span
+class=SpellE>u&quot;yu</span> <span class=SpellE>kyaa</span> <span
+class=SpellE>chh</span>?&quot;<o:p></o:p></span></p>
+
+<p class=MsoPlainText><span style='mso-bidi-font-family:"Courier New"'><span
+style='mso-spacerun:yes'>    </span><span class=GramE>else</span>:<o:p></o:p></span></p>
+
+<p class=MsoPlainText><span style='mso-bidi-font-family:"Courier New"'><span
+style='mso-spacerun:yes'>        </span>return u&quot;(could not
+translate)&quot;</span><o:p></o:p></p>
+
+<p class=spacesingle>&nbsp;<o:p></o:p></p>
 
 <div style='mso-element:para-border-div;border:solid windowtext 1.0pt;
 mso-border-alt:solid windowtext .5pt;padding:1.0pt 4.0pt 1.0pt 4.0pt;
@@ -1207,8 +1277,8 @@ class=userinterface>Apply</span> button to accept the Python script.</p>
 name=FunctionPrototype></a><a name=SaveInRepository></a><![if !supportLists]><span
 style='mso-bookmark:_Ref133732366'><span style='mso-list:Ignore'>2.<span
 style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span></span><![endif]><span
-dir=LTR></span><span style='mso-bookmark:_Ref133732366'>If you want the Python function
-to be permanently added to the System Repository, then click the </span><span
+dir=LTR></span><span style='mso-bookmark:_Ref133732366'>If you want the Python
+function to be permanently added to the System Repository, then click the </span><span
 style='mso-bookmark:_Ref133732366'><span class=userinterface>Save in System
 Repository</span> button.</span></p>
 
