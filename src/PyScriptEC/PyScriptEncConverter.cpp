@@ -24,9 +24,11 @@
 #include "CEncConverter.h"
 #include "PyScriptEncConverter.h"
 
-#ifdef VERBOSE_DEBUGGING && _WIN32
+#ifdef VERBOSE_DEBUGGING
+#ifdef _WIN32
 #include "Windows.h"		// for OutputDebugString
 #include "WinBase.h"
+#endif
 #endif
 
 // Uncomment the following line if you want verbose debugging output
@@ -35,7 +37,6 @@
 #ifndef _MSC_VER
 #define _strdup strdup
 #endif
-#define _CRT_SECURE_NO_WARNINGS
 
 // Keep this in a namespace so that it doesn't get confused with functions that
 // have the same name in other converters, for example Load().
