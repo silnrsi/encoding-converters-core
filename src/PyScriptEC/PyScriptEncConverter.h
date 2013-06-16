@@ -12,9 +12,15 @@ namespace PyScriptEC
 // keep track of how we're supposed to interpret the data (it comes into "DoConvert"
 //  as a 'byte' pointer, but we need to create it as a Python object which is 
 //  different depending on the expected type.
-typedef enum PyStringDataType
+#ifdef _MSC_VER
+typedef
+#endif
+enum PyStringDataType
 {
     eBytes,
+#ifndef _MSC_VER
+    eUTF8Bytes,
+#endif
     eUCS2,
     eUCS4       // not supported yet by this code
 };

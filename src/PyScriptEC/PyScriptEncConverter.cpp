@@ -24,6 +24,9 @@
 #include "CEncConverter.h"
 #include "PyScriptEncConverter.h"
 
+// Uncomment the following line if you want verbose debugging output
+#define VERBOSE_DEBUGGING
+
 #ifdef VERBOSE_DEBUGGING
 #ifdef _WIN32
 #include "Windows.h"		// for OutputDebugString
@@ -31,10 +34,7 @@
 #endif
 #endif
 
-// Uncomment the following line if you want verbose debugging output
-//#define VERBOSE_DEBUGGING
-
-#ifndef _MSC_VER
+#ifndef _WIN32
 #define _strdup strdup
 #endif
 
@@ -70,7 +70,7 @@ namespace PyScriptEC
 #ifdef _WIN32
 		OutputDebugStringA(str);
 #else
-		fprintf(stderr, str);
+		fprintf(stderr, "%s", str);
 #endif
 #endif
 	}
@@ -281,7 +281,7 @@ namespace PyScriptEC
         }
 
         DebugOutput(sprintf(sprintfBuffer, "m_nArgCount = %d", m_nArgCount));
-        DebugOutput("Load() END\n");
+        DebugOutput("PyScript.CppLoad() END\n");
 
 		return hr;
     }
@@ -299,7 +299,15 @@ namespace PyScriptEC
             ResetPython();
         }
         m_timeLastModified = time(NULL);
-        m_eStringDataTypeIn = m_eStringDataTypeOut = eUCS2;		// assume the caller is giving us utf-16 (the converter only supports Unicode-to-Unicode converters
+#ifdef _WIN32
+        // assume the caller is giving us utf-16 (the converter only supports Unicode-to-Unicode converters)
+        m_eStringDataTypeIn = m_eStringDataTypeOut = eUCS2;
+#else
+        // On most Linux builds Python expects 4-byte data.
+        m_eStringDataTypeIn = m_eStringDataTypeOut = eUCS4;
+        //m_eStringDataTypeIn  = eUTF8Bytes;   // works if eInFormEngine is set to UTF8Bytes in C#
+        //m_eStringDataTypeOut = eUCS4;
+#endif
 
         if (m_strScriptFile != NULL && strcmp(strScript, m_strScriptFile))
         {
@@ -352,6 +360,7 @@ namespace PyScriptEC
         int     nInactivityWarningTimeOut
     )
     {
+        DebugOutput("CPyScriptEncConverter::PreConvert\n");
         int hr = 0;
         if(hr == 0)
         {
@@ -447,7 +456,7 @@ namespace PyScriptEC
 
             if( MyPyTraceBack_Check(err_traceback) )
             {
-                PyTracebackObject* pTb = (PyTracebackObject*)err_traceback;
+                //PyTracebackObject* pTb = (PyTracebackObject*)err_traceback;
                 // if( PyTraceBack_Print(err_traceback,pTb) )
                 char * trace = PyString_AsString(err_traceback);
                 DebugOutput(sprintf(sprintfBuffer, "%s; ", trace));
@@ -475,21 +484,33 @@ namespace PyScriptEC
     )
     {
         DebugOutput("PyScript.CppDoConvert() BEGIN\n");
+        DebugOutput(sprintf(sprintfBuffer, "nInLen = %d, rnOutLen = %d\n", nInLen, rnOutLen));
+        DebugOutput(sprintf(sprintfBuffer, "sizeof(Py_UNICODE) = %d\n", sizeof(Py_UNICODE)));
 
 		PyObject* pValue = 0;
         switch(m_eStringDataTypeIn)
         {
             case eBytes:
+                DebugOutput("CppDoConvert: eBytes input\n");
                 pValue = PyString_FromStringAndSize((const char *)lpInBuffer,nInLen);
                 break;
+#ifndef _WIN32
+            case eUTF8Bytes:
+                DebugOutput("CppDoConvert: eUTF8Bytes input\n");
+                pValue = PyUnicode_FromStringAndSize((const char *)lpInBuffer,nInLen);
+                break;
+#endif
             case eUCS2:
+                DebugOutput("CppDoConvert: eUCS2 input\n");
                 pValue = PyUnicode_FromUnicode((const Py_UNICODE*)(const char *)lpInBuffer, nInLen / 2);
                 break;
-    /*      // apparently, UTF32 isn't available concurrently with UTF16... so for now... comment it out
+          // apparently, UTF32 isn't available concurrently with UTF16... so for now... disable it on Windows
+#ifndef _WIN32
             case eUCS4:
-                pValue = PyUnicodeUCS4_FromUnicode(lpInBuffer,nInLen / 4);
+                DebugOutput("CppDoConvert: eUCS4 input\n");
+                pValue = PyUnicodeUCS4_FromUnicode((const Py_UNICODE*)(const char *)lpInBuffer,nInLen / 4);
                 break;
-    */
+#endif
         }
 
         if( pValue == 0 )
@@ -502,17 +523,13 @@ namespace PyScriptEC
 			return /* IncompleteChar = */ -8;
         }
 
-        DebugOutput(sprintf(sprintfBuffer, "nInLen = %d, rnOutLen = %d\n", nInLen, rnOutLen));
-
 		// put the value to convert into the last argument slot
         PyTuple_SetItem(m_pArgs, m_nArgCount - 1, pValue);
 
         // do the call
-        DebugOutput("Calling...");
-
+        DebugOutput("CppDoConvert: Calling...");
 		pValue = PyObject_CallObject(m_pFunc, m_pArgs);
         DebugOutput("finished.\n");
-
 
         Py_ssize_t nOut;
 
@@ -526,35 +543,49 @@ namespace PyScriptEC
         switch(m_eStringDataTypeOut)
         {
             case eBytes:
-                DebugOutput("getting eBytes of pValue\n");
+#ifndef _WIN32
+            //case eUTF8Bytes:      // I'm not sure how to get UTF8 results from Python.
+#endif
+                DebugOutput("getting eBytes output\n");
 
 				PyString_AsStringAndSize(pValue,(char **)&lpOutValue,&nOut);
                 if( nOut < 0 )
                 {
                     // at least, this is what happens if the python function returns a string, but the ConvType is
                     //  incorrectly configured as returning Unicode. ErrStatus
-                    DebugOutput("PyScript: Are you sure that the Python function returns non-Unicode-encoded (bytes) data?");
+                    DebugOutput("PyScript: Are you sure that the Python function returns non-Unicode-encoded (bytes) data?\n");
 
 					hr = /* OutEncFormNotSupported = */ -13;
                 }
                 break;
             case eUCS2:
+                DebugOutput("getting eUCS2 output\n");
                 nOut = (int)PyUnicode_GetSize(pValue) * sizeof(char) * 2;	// EC is expecting the number of bytes
                 if( nOut < 0 )
                 {
                     // at least, this is what happens if the python function returns a string, but the ConvType is
                     //  incorrectly configured as returning Unicode. ErrStatus
-                    DebugOutput("PyScript: Are you sure that the Python function returns Unicode-encoded (wide) data?");
+                    DebugOutput("PyScript: Are you sure that the Python function returns Unicode-encoded (wide) data?\n");
 
 					hr = /* OutEncFormNotSupported = */ -13;
                 }
                 lpOutValue = PyUnicode_AsUnicode(pValue);   // PyUnicodeUCS2_AsUnicode(pValue);
                 break;
-    /*
+#ifndef _WIN32
             case eUCS4:
+                DebugOutput("getting eUCS4 output\n");
+                nOut = (int)PyUnicode_GetSize(pValue) * sizeof(char) * 4;	// EC is expecting the number of bytes
+                if( nOut < 0 )
+                {
+                    // at least, this is what happens if the python function returns a string, but the ConvType is
+                    //  incorrectly configured as returning Unicode. ErrStatus
+                    DebugOutput("PyScript: Are you sure that the Python function returns Unicode-encoded (wide) data?\n");
+
+					hr = /* OutEncFormNotSupported = */ -13;
+                }
                 lpOutValue = PyUnicodeUCS4_AsUnicode(pValue);
                 break;
-    */
+#endif
         }
 
         // don't let it be longer than out output buffer (I had a problem with the UnicodeName function
@@ -584,32 +615,9 @@ namespace PyScriptEC
 
         Py_DecRef(pValue);
 
+        DebugOutput("PyScript.CppDoConvert() END\n");
         return hr;
     }
-
-    /*
-    int main() {
-        DebugOutput("main() BEGIN\n");
-        char scriptDir[]  = "/media/winD/Jim/computing/SEC_on_linux/testing/";
-        char scriptName[] = "testcnv.py";
-        int err = Initialize(scriptName, scriptDir);
-        if (err != 0) {
-            return err;
-        }
-
-        char strIn[] = "abcde";
-        int szOut    = 1000;
-        char strOut[szOut];
-        err = DoConvert(strIn, strlen(strIn), strOut, szOut);
-        if (err != 0) {
-            return err;
-        }
-        DebugOutput("Got %s\n", strOut);
-
-        DebugOutput("main() END\n");
-        return 0;
-    }
-    */
 }
 
 //******************************************************************************
