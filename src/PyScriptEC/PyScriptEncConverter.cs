@@ -10,7 +10,7 @@ using ECInterfaces;                     // for IEncConverter
 namespace SilEncConverters40
 {
     /// <summary>
-    /// Managed Pyhton script EncConverter
+    /// Managed Python script EncConverter
     /// </summary>
     //[GuidAttribute("54E0185D-3603-4113-B323-E0222FAD4CCE")]
     // normally these subclasses are treated as the base class (i.e. the 
@@ -62,7 +62,7 @@ namespace SilEncConverters40
             Int32 codePageOutput,
             bool bAdding)
         {
-            DebugWriteLine("PyScript EC Initialize BEGIN");
+            DebugWriteLine("PyScriptEC Initialize BEGIN");
             // let the base class have first stab at it
             base.Initialize(converterName, converterSpec, ref lhsEncodingID, ref rhsEncodingID, 
                 ref conversionType, ref processTypeFlags, codePageInput, codePageOutput, bAdding );
@@ -76,7 +76,7 @@ namespace SilEncConverters40
             //  other)
             if( bAdding )
                 m_timeModified = DateTime.MinValue;
-            DebugWriteLine("PyScript EC Initialize END");
+            DebugWriteLine("PyScriptEC Initialize END");
         }
 
         #endregion Initialization
@@ -84,13 +84,19 @@ namespace SilEncConverters40
         #region Misc helpers
         protected override EncodingForm  DefaultUnicodeEncForm(bool bForward, bool bLHS)
         {
+#if __MonoCS__
+            // if it's unspecified, then we want UTF-32 in C# on Linux.
+            DebugWriteLine("PyScriptEC DefaultUnicodeEncForm UTF32");
+            return EncodingForm.UTF32;
+#else
             // if it's unspecified, then we want UTF-16 in C#.
             return EncodingForm.UTF16;
+#endif
         }
 
         protected unsafe void Load(string strScriptPath)
         {
-            DebugWriteLine("PyScript Load BEGIN");
+            DebugWriteLine("PyScriptEC Load BEGIN");
             // first make sure it's there and get the last time it was modified
             DateTime timeModified = DateTime.Now; // don't care really, but have to initialize it.
             if( !DoesFileExist(strScriptPath, ref timeModified) )
@@ -122,7 +128,7 @@ namespace SilEncConverters40
                 }
                 DebugWriteLine("Finished calling CppInitialize");
             }
-            DebugWriteLine("PyScript Load END");
+            DebugWriteLine("PyScriptEC Load END");
         }
         #endregion Misc helpers
 
@@ -142,26 +148,37 @@ namespace SilEncConverters40
 							eOutEncodingForm, ref eOutFormEngine,
 							ref eNormalizeOutput, bForward);
 
-            // On Linux the Python C++ EncConverter expects type char, which is UTF8 (narrow).
             if( NormalizeLhsConversionType(ConversionType) == NormConversionType.eUnicode )
             {
-                // returning this value will cause the input Unicode data (of any form, UTF16, BE, etc.)
-                //	to be converted to UTF8 narrow bytes before calling DoConvert.
+#if _MSC_VER
+                DebugWriteLine("PyScriptEC eInFormEngine UTF16");
                 eInFormEngine = EncodingForm.UTF16;
+#else
+                DebugWriteLine("PyScriptEC eInFormEngine UTF32");
+                eInFormEngine = EncodingForm.UTF32;
+#endif
             }
             else
             {
-                System.Diagnostics.Debug.Fail("This converter doesn't support a legacy side (anymore)");
                 // legacy
+                DebugWriteLine("PyScriptEC eInFormEngine LegacyBytes");
+                System.Diagnostics.Debug.Fail("This converter doesn't support a legacy side (anymore)");
                 eInFormEngine = EncodingForm.LegacyBytes;
             }
 
             if( NormalizeRhsConversionType(ConversionType) == NormConversionType.eUnicode )
             {
+#if _MSC_VER
+                DebugWriteLine("PyScriptEC eOutFormEngine UTF16");
                 eOutFormEngine = EncodingForm.UTF16;
+#else
+                DebugWriteLine("PyScriptEC eOutFormEngine UTF32");
+                eOutFormEngine = EncodingForm.UTF32;
+#endif
             }
             else
             {
+                DebugWriteLine("PyScriptEC eOutFormEngine LegacyBytes");
                 System.Diagnostics.Debug.Fail("This converter doesn't support a legacy side (anymore)");
                 eOutFormEngine = EncodingForm.LegacyBytes;
             }
@@ -181,6 +198,11 @@ namespace SilEncConverters40
             int status = 0;
             fixed(int* pnOut = &rnOutLen)
             {
+#if DEBUG && __MonoCS__
+                byte[] baIn = new byte[nInLen];
+                ECNormalizeData.ByteStarToByteArr(lpInBuffer, nInLen, baIn);
+                dispBytes("PyScriptEC: Sending bytes to CppDoConvert", baIn);
+#endif
                 status = CppDoConvert(lpInBuffer, nInLen, lpOutBuffer, pnOut);
             }
 

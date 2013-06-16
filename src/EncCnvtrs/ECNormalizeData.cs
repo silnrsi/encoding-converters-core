@@ -37,7 +37,7 @@ namespace SilEncConverters40
         {
             EncConverter.DebugWriteLine("ECNormalizeData.GetBytes()");
             EncConverter.DebugWriteLine(
-                "eEncFormIn " + eEncFormIn.ToString() + "," +
+                "ECNormalizeData eEncFormIn " + eEncFormIn.ToString() + ", " +
                 "eFormEngineIn " + eFormEngineIn.ToString());
 
             // if the form the user gave is not what the engine wants (and it isn't legacy
@@ -48,6 +48,7 @@ namespace SilEncConverters40
                 //  is UTF16 and the desired form is UTF8, then simply use CCUnicode8 below
                 if ((eEncFormIn == EncodingForm.UTF16) && (eFormEngineIn == EncodingForm.UTF8Bytes))
                 {
+                    EncConverter.DebugWriteLine("ECNormalizeData: using CCUnicode8");
                     eEncFormIn = (EncodingForm)CCUnicode8;
                 }
                 // we can also do the following one
@@ -269,14 +270,19 @@ namespace SilEncConverters40
         internal static unsafe string GetString(byte* lpOutBuffer, int nOutLen, EncodingForm eOutEncodingForm, int nCodePageOut, EncodingForm eFormEngineOut, NormalizeFlags eNormalizeOutput, out int rciOutput, ref bool bDebugDisplayMode)
         {
             // null terminate the output and turn it into a (real) array of bytes
+            EncConverter.DebugWriteLine("ECNormalizeData.GetString()");
             lpOutBuffer[nOutLen] = lpOutBuffer[nOutLen + 1] = lpOutBuffer[nOutLen + 2] = lpOutBuffer[nOutLen + 3] = 0;
             byte[] baOut = new byte[nOutLen];
             ByteStarToByteArr(lpOutBuffer, nOutLen, baOut);
+            EncConverter.dispBytes("ECNormalizeData null-terminated", baOut);
 
             // check to see if the engine handled the given output form. If not, then see
             //  if it's a conversion we can easily do (otherwise we'll ask TEC to do the 
             //  conversion for us (later) so that all engines can handle all possible
             //  output encoding forms.
+            EncConverter.DebugWriteLine(
+                "ECNormalizeData eOutEncodingForm " + eOutEncodingForm.ToString() + ", " +
+                "eFormEngineOut " + eFormEngineOut.ToString());
             if (eOutEncodingForm != eFormEngineOut)
             {
                 if (EncConverter.IsLegacyFormat(eOutEncodingForm))
@@ -295,6 +301,7 @@ namespace SilEncConverters40
                     if ((eOutEncodingForm == EncodingForm.UTF16) && (eFormEngineOut == EncodingForm.UTF8Bytes))
                     {
                         // use the special form to convert it below
+                        EncConverter.DebugWriteLine("ECNormalizeData: using CCUnicode8");
                         eOutEncodingForm = eFormEngineOut = (EncodingForm)CCUnicode8;
                     }
                     // or vise versa
@@ -313,7 +320,11 @@ namespace SilEncConverters40
                     else if ((eOutEncodingForm == EncodingForm.UTF8String)
                         || (eOutEncodingForm == EncodingForm.UTF16))
                     {
+#if _MSC_VER
+                        // Doesn't this wipe out the distinction?
+                        // On Linux we need to be able to convert the output from UTF32 to UTF16.
                         eFormEngineOut = eOutEncodingForm;
+#endif
                     }
                 }
             }
@@ -443,6 +454,12 @@ namespace SilEncConverters40
             //  requested that normalized form when we created the converter--see 
             //  TecEncConverter.PreConvert)
             string strOutput = new string(caOut);
+#if DEBUG
+            byte[] byteArray = Encoding.BigEndianUnicode.GetBytes(caOut);
+            EncConverter.dispBytes("ECNormalizeData characters", byteArray);
+            byte[] baResult = System.Text.Encoding.BigEndianUnicode.GetBytes(strOutput);
+            EncConverter.dispBytes("ECNormalizeData Normalized strOutput in UTF16BE", baResult);
+#endif
             if ((eFormEngineOut != eOutEncodingForm)
                 || (eNormalizeOutput != NormalizeFlags.None))
             {
