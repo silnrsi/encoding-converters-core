@@ -17,7 +17,7 @@ typedef
 #endif
 enum PyStringDataType
 {
-    eBytes,
+    eBytes,     // legacy bytes
 #ifndef _MSC_VER
     eUTF8Bytes,
 #endif

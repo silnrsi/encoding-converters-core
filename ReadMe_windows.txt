@@ -1,4 +1,4 @@
-This file is only the beginnings of a ReadMe. This initial version was created by John Thomson to document the
+This file is only the beginnings of a ReadMe. This initial version was created by John Thomson (November 5 2012) to document the
 things I've discovered that I wished someone had documented for me. I am not the author of any of this code.
 I may have some of this wrong. Please add to it or correct it as you are able.
 
