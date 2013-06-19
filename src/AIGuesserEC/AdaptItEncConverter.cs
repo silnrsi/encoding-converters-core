@@ -83,7 +83,7 @@ namespace SilEncConverters40
             ref int rnOutLen
             )
         {
-            DebugWriteLine("AdaptItEC.DoConvert BEGIN");
+            DebugWriteLine(this, "BEGIN");
             // we need to put it *back* into a string for the lookup
             // [aside: I should probably override base.InternalConvertEx so I can avoid having the base 
             //  class version turn the input string into a byte* for this call just so we can turn around 
@@ -112,7 +112,7 @@ namespace SilEncConverters40
 
             // here's our input string
             string strInput = new string(caIn);
-            DebugWriteLine("Twice-converted input string: '" + strInput + "'");
+            DebugWriteLine(this, "Twice-converted input string: '" + strInput + "'");
 
             List<string> lstInputTokens, lstInputInBetweenTokens, lstOutputTokens, lstOutputInBetweenTokens;
             SplitAndConvertEx(strInput, out lstInputTokens, out lstInputInBetweenTokens,
@@ -125,11 +125,11 @@ namespace SilEncConverters40
             for (i = 0; i < lstOutputTokens.Count; i++)
                 strOutput += lstOutputInBetweenTokens[i] + lstOutputTokens[i];
             strOutput += lstOutputInBetweenTokens[i];
-            DebugWriteLine("Output string: '" + strOutput + "'");
+            DebugWriteLine(this, "Output string: '" + strOutput + "'");
 
             StringToProperByteStar(strOutput, lpOutBuffer, ref rnOutLen);
-            DebugWriteLine("Result len " + rnOutLen.ToString());
-            DebugWriteLine("AdaptItEC.DoConvert END");
+            DebugWriteLine(this, "Result len " + rnOutLen.ToString());
+            DebugWriteLine(this, "END");
         }
 
         // calling from external we need to possibly re-load
@@ -146,7 +146,7 @@ namespace SilEncConverters40
             out List<string> lstInputTokens, out List<string> lstInputInBetweenTokens, 
             out List<string> lstOutputTokens, out List<string> lstOutputInBetweenTokens)
         {
-            DebugWriteLine("SplitAndConvert BEGIN");
+            DebugWriteLine(this, "BEGIN");
             // Here's a problem: if the user wants to go reverse, the AdaptIt KB file doesn't have a multi-word 
             //  phrase maps for the reverse direction. So although this is kind of "brute force", I'm at a loss 
             //  for a better way to do this. So, if this is reverse, then go thru all of the maps and create a 
@@ -341,9 +341,9 @@ namespace SilEncConverters40
 
                     // now see if we have a replacement
                     System.Diagnostics.Debug.Assert(!String.IsNullOrEmpty(strSearchToken));
-                    DebugWriteLine("Looking for '" + strSearchToken + "'");
+                    DebugWriteLine(this, "Looking for '" + strSearchToken + "'");
                     foreach(string key in mapLookup.Keys) {
-                        DebugWriteLine("A dict elem is '" + key + "'");
+                        DebugWriteLine(this, "A dict elem is '" + key + "'");
                         break;  // stop after first time
                     }
                     string strLookedup;
@@ -362,7 +362,7 @@ namespace SilEncConverters40
             // finally, before we return, let's remove the "never used" character from the output strings
             for (nWordIndex = 0; nWordIndex < lstOutputTokens.Count; nWordIndex++)
                 lstOutputTokens[nWordIndex] = lstOutputTokens[nWordIndex].Replace(chNeverUsedChar, null);
-            DebugWriteLine("SplitAndConvert END");
+            DebugWriteLine(this, "END");
         }
 
         // if we've replaced multiple words as a phrase, then we need to collapse the lists

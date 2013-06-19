@@ -32,7 +32,6 @@ $(OUTDIR)/libIcuTranslitEC.so: $(BUILDDIR)/IcuTranslitEC.o \
 	g++ -shared -Wl,-soname,libIcuTranslitEC.so \
   -o $(OUTDIR)/libIcuTranslitEC.so $(BUILDDIR)/IcuTranslitEC.o \
   -licuuc -licui18n
-	rm -f $(OUTDIR)/libIcuTranslitEC.so
 
 $(OUTDIR)/libIcuRegexEC.so: $(BUILDDIR)/IcuRegexEC.o \
   $(OUTDIR)/IcuEC.dll.config

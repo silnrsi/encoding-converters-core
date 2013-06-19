@@ -17,6 +17,8 @@ RELEASEOUT  = $(ROOTDIR)/output/Release
 MONO        = @MONO@
 MONO_LDFLAGS= @MONO_LDFLAGS@
 LIBDIR      = @libdir@/encConverters
+REGROOT     = /var/lib/fieldworks
+REGKEY      = $(REGROOT)/registry/LocalMachine/software/sil/silencconverters40
 
 SRCDIRS = src/IcuEC src/PyScriptEC src/ECDriver/linux
 DLLS    = ECInterfaces.dll SilEncConverters40.dll CcEC.dll \
@@ -107,6 +109,8 @@ install: release
 	@cp -p src/EncCnvtrs/SilEncConverters40.dll.config $(DESTDIR)$(LIBDIR)
 	@$(INSTALL) -d $(DESTDIR)$(prefix)/share/encConverters
 	@$(INSTALL) values.xml $(DESTDIR)$(prefix)/share/encConverters
+	@$(INSTALL) -d $(DESTDIR)$(REGROOT) -m +wt
+	@$(INSTALL) values.xml $(DESTDIR)$(REGKEY)
 
 uninstall:
 	rm -f -r $(DESTDIR)$(LIBDIR)/*

@@ -6,11 +6,6 @@ using System.IO;
 using ECInterfaces;
 using PerlExpressionEC.Properties;
 
-// for IEncConverter
-
-//uncomment the following line for verbose debugging output using Console.WriteLine
-//#define VERBOSE_DEBUGGING
-
 namespace SilEncConverters40
 {
     public class PerlExpressionAutoConfigDialog : SilEncConverters40.AutoConfigDialog
@@ -28,13 +23,9 @@ namespace SilEncConverters40
             int lProcessTypeFlags,
             bool bIsInRepository)
         {
-#if VERBOSE_DEBUGGING
-            EncConverter.DebugWriteLine("PerlExpressionAutoConfigDialog ctor BEGIN");
-#endif
+            EncConverter.DebugWriteLine(this, "BEGIN");
 			InitializeComponent();
-#if VERBOSE_DEBUGGING
-            EncConverter.DebugWriteLine("Initialized PerlExpressionAutoConfigDialog component.");
-#endif
+            EncConverter.DebugWriteLine(this, "Initialized component.");
 			base.Initialize (
                 aECs,
                 PerlExpressionEncConverter.strHtmlFilename,
@@ -46,15 +37,11 @@ namespace SilEncConverters40
                 strRhsEncodingId,
                 lProcessTypeFlags,
                 bIsInRepository);
-#if VERBOSE_DEBUGGING
-            EncConverter.DebugWriteLine("Initialized base.");
-#endif
+            EncConverter.DebugWriteLine(this, "Initialized base.");
             // if we're editing a CC table/spellfixer project, then set the Converter Spec and say it's unmodified
             if (m_bEditMode)
             {
-#if VERBOSE_DEBUGGING
-                EncConverter.DebugWriteLine("Edit mode");
-#endif
+                EncConverter.DebugWriteLine(this, "Edit mode");
 				System.Diagnostics.Debug.Assert(!String.IsNullOrEmpty(ConverterIdentifier));
                 textBoxExpression.Text = ConverterIdentifier;
                 IsModified = false;
@@ -67,9 +54,7 @@ namespace SilEncConverters40
                 comboBoxPreviousPerlExpressions.SelectedIndex = 0;
 
             m_bInitialized = true;
-#if VERBOSE_DEBUGGING
-            EncConverter.DebugWriteLine("PerlExpressionAutoConfigDialog ctor END");
-#endif
+            EncConverter.DebugWriteLine(this, "END");
 		}
 
         private void LoadComboBoxFromSettings(ComboBox comboBox)
@@ -239,7 +224,7 @@ namespace SilEncConverters40
         //  to make sure that the user has correctly configured a legitimate converter.
         protected override bool OnApply()
         {
-            EncConverter.DebugWriteLine("OnApply() BEGIN");
+            EncConverter.DebugWriteLine(this, "BEGIN");
             // Get the converter identifier from the Setup tab controls.
             ConverterIdentifier = textBoxExpression.Text;
 
@@ -263,7 +248,7 @@ namespace SilEncConverters40
                 }
             }
 
-            EncConverter.DebugWriteLine("OnApply() END");
+            EncConverter.DebugWriteLine(this, "END");
             return base.OnApply();
         }
 

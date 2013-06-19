@@ -16,6 +16,8 @@ namespace SilEncConverters40
     {
         public const int CCUnicode8 = 30;
 
+        private static string className = typeof(ECNormalizeData).Name;
+
         #region Interface
 
         static byte[] BruteForceNarrowize (string strInput, int nInLen)
@@ -25,7 +27,7 @@ namespace SilEncConverters40
             // oops: cp8859 won't work for symbol data, so if GetBytes
             //  fails, just go back to stripping out the low byte as we had it
             //  originally. This'll work for both 8859 and symbol
-            EncConverter.DebugWriteLine("Narrowizing by stripping the low byte.");
+            EncConverter.DebugWriteLine(className, "Narrowizing by stripping the low byte.");
             var ba = new byte[nInLen];
             for (int i = 0; i < nInLen; i++)
                 ba[i] = (byte)(strInput[i] & 0xFF);
@@ -35,9 +37,9 @@ namespace SilEncConverters40
         // this is the helper method that returns the input data normalized
         internal static unsafe byte* GetBytes(string strInput, int cnCountIn, EncodingForm eEncFormIn, int nCodePageIn, EncodingForm eFormEngineIn, byte* pBuf, ref int nBufSize, ref bool bDebugDisplayMode)
         {
-            EncConverter.DebugWriteLine("ECNormalizeData.GetBytes()");
-            EncConverter.DebugWriteLine(
-                "ECNormalizeData eEncFormIn " + eEncFormIn.ToString() + ", " +
+            EncConverter.DebugWriteLine(className, "BEGIN");
+            EncConverter.DebugWriteLine(className, 
+                "eEncFormIn " + eEncFormIn.ToString() + ", " +
                 "eFormEngineIn " + eFormEngineIn.ToString());
 
             // if the form the user gave is not what the engine wants (and it isn't legacy
@@ -48,7 +50,7 @@ namespace SilEncConverters40
                 //  is UTF16 and the desired form is UTF8, then simply use CCUnicode8 below
                 if ((eEncFormIn == EncodingForm.UTF16) && (eFormEngineIn == EncodingForm.UTF8Bytes))
                 {
-                    EncConverter.DebugWriteLine("ECNormalizeData: using CCUnicode8");
+                    EncConverter.DebugWriteLine(className, "using CCUnicode8");
                     eEncFormIn = (EncodingForm)CCUnicode8;
                 }
                 // we can also do the following one
@@ -114,13 +116,17 @@ namespace SilEncConverters40
                             nCodePageIn = EncConverters.cnSymbolFontCodePage;
                         }
 
+#if __MonoCS__
                         // Narrowizing by code page 0 doesn't seem to be what we want on Linux.
                         // Treating it as a symbol font or stripping off the low byte works better.
-                        if (IsUnix && (nCodePageIn == 0))
+                        if (nCodePageIn == 0)
                         {
                             ba = BruteForceNarrowize (strInput, nInLen);
                         }
                         else 
+#else
+                        if (true)
+#endif
                         {
                             // if it's a symbol or iso-8859 encoding, then we can handle just 
                             //  taking the low byte (i.e. the catch case)
@@ -132,7 +138,7 @@ namespace SilEncConverters40
                                 {
                                     Encoding enc = Encoding.GetEncoding(nCodePageIn);
                                     ba = enc.GetBytes(strInput);
-                                    EncConverter.DebugWriteLine("Narrowized by given code page.");
+                                    EncConverter.DebugWriteLine(className, "Narrowized by given code page.");
                                 }
                                 catch
                                 {
@@ -143,7 +149,7 @@ namespace SilEncConverters40
                             {
                                 // otherwise, simply use CP_ACP (or the default code page) to 
                                 //  narrowize it.
-                                EncConverter.DebugWriteLine("Narrowizing by given code page.");
+                                EncConverter.DebugWriteLine(className, "Narrowizing by given code page.");
                                 Encoding enc = Encoding.GetEncoding(nCodePageIn);
                                 ba = enc.GetBytes(strInput);
                             }
@@ -270,18 +276,18 @@ namespace SilEncConverters40
         internal static unsafe string GetString(byte* lpOutBuffer, int nOutLen, EncodingForm eOutEncodingForm, int nCodePageOut, EncodingForm eFormEngineOut, NormalizeFlags eNormalizeOutput, out int rciOutput, ref bool bDebugDisplayMode)
         {
             // null terminate the output and turn it into a (real) array of bytes
-            EncConverter.DebugWriteLine("ECNormalizeData.GetString()");
+            EncConverter.DebugWriteLine(className, "BEGIN");
             lpOutBuffer[nOutLen] = lpOutBuffer[nOutLen + 1] = lpOutBuffer[nOutLen + 2] = lpOutBuffer[nOutLen + 3] = 0;
             byte[] baOut = new byte[nOutLen];
             ByteStarToByteArr(lpOutBuffer, nOutLen, baOut);
-            EncConverter.dispBytes("ECNormalizeData null-terminated", baOut);
+            EncConverter.DebugWriteLine(className, EncConverter.displayBytes("null-terminated", baOut));
 
             // check to see if the engine handled the given output form. If not, then see
             //  if it's a conversion we can easily do (otherwise we'll ask TEC to do the 
             //  conversion for us (later) so that all engines can handle all possible
             //  output encoding forms.
-            EncConverter.DebugWriteLine(
-                "ECNormalizeData eOutEncodingForm " + eOutEncodingForm.ToString() + ", " +
+            EncConverter.DebugWriteLine(className,
+                "eOutEncodingForm " + eOutEncodingForm.ToString() + ", " +
                 "eFormEngineOut " + eFormEngineOut.ToString());
             if (eOutEncodingForm != eFormEngineOut)
             {
@@ -301,7 +307,7 @@ namespace SilEncConverters40
                     if ((eOutEncodingForm == EncodingForm.UTF16) && (eFormEngineOut == EncodingForm.UTF8Bytes))
                     {
                         // use the special form to convert it below
-                        EncConverter.DebugWriteLine("ECNormalizeData: using CCUnicode8");
+                        EncConverter.DebugWriteLine(className, "using CCUnicode8");
                         eOutEncodingForm = eFormEngineOut = (EncodingForm)CCUnicode8;
                     }
                     // or vise versa
@@ -355,13 +361,17 @@ namespace SilEncConverters40
 
                         nCharsLen = nItems = nOutLen;
 
+#if __MonoCS__
                         // Narrowizing by code page 0 doesn't seem to be what we want on Linux.
                         // Treating it as a symbol font or stripping off the low byte works better.
-                        if (IsUnix && (nCodePageOut == 0))
+                        if (nCodePageOut == 0)
                         {
                             caOut = BruteForceWiden (nCodePageOut, baOut, nCharsLen);
                         }
                         else 
+#else
+                        if (true)
+#endif
                         {
                             try
                             {
@@ -456,9 +466,9 @@ namespace SilEncConverters40
             string strOutput = new string(caOut);
 #if DEBUG
             byte[] byteArray = Encoding.BigEndianUnicode.GetBytes(caOut);
-            EncConverter.dispBytes("ECNormalizeData characters", byteArray);
+            EncConverter.DebugWriteLine(className, EncConverter.displayBytes("characters", byteArray));
             byte[] baResult = System.Text.Encoding.BigEndianUnicode.GetBytes(strOutput);
-            EncConverter.dispBytes("ECNormalizeData Normalized strOutput in UTF16BE", baResult);
+            EncConverter.DebugWriteLine(className, EncConverter.displayBytes("Normalized strOutput in UTF16BE", baResult));
 #endif
             if ((eFormEngineOut != eOutEncodingForm)
                 || (eNormalizeOutput != NormalizeFlags.None))
@@ -713,31 +723,6 @@ namespace SilEncConverters40
             }
         }
         #endregion Misc Unsafe Byte copying helpers
-
-        public static bool IsMono
-        {
-            get { return  (Type.GetType ("Mono.Runtime") != null); }
-        }
-        public static bool IsUnix
-        {
-            get
-			{
-                // Will return false for Windows
-				return Environment.OSVersion.Platform == PlatformID.Unix ||
-					Environment.OSVersion.Platform == PlatformID.MacOSX;	// MacOSX is built on top of BSD.
-            }
-        }
-        public static bool IsWindows
-        {
-            get
-			{
-				return Environment.OSVersion.Platform == PlatformID.Win32S ||
-					Environment.OSVersion.Platform == PlatformID.Win32Windows ||
-					Environment.OSVersion.Platform == PlatformID.Win32NT ||
-					Environment.OSVersion.Platform == PlatformID.WinCE;
-			}
-        }
-
 
         #region Debug helper
         private unsafe static void DisplayDebugCharValues(byte[] baInputString, string strCaption, ref bool bDebugDisplayMode)

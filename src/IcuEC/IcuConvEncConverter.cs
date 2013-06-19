@@ -76,7 +76,7 @@ namespace SilEncConverters40
 			Int32 codePageOutput,
 			bool bAdding)
 		{
-			DebugWriteLine("IcuConv EC Initialize BEGIN");
+			DebugWriteLine(this, "BEGIN");
 			// let the base class have first stab at it
 			base.Initialize(converterName, converterSpec, ref lhsEncodingID, ref rhsEncodingID,
 				ref conversionType, ref processTypeFlags, codePageInput, codePageOutput,
@@ -101,7 +101,7 @@ namespace SilEncConverters40
 				default:
 					break;
 			}
-			DebugWriteLine("IcuConv EC Initialize END");
+			DebugWriteLine(this, "END");
 		}
 		#endregion Initialization
 
@@ -123,8 +123,8 @@ namespace SilEncConverters40
 
 		protected unsafe void Load(string strConvID)
 		{
-			DebugWriteLine("IcuConv Load BEGIN");
-			DebugWriteLine("Calling CppInitialize");
+			DebugWriteLine(this, "BEGIN");
+			DebugWriteLine(this, "Calling CppInitialize");
 			int status = 0;
 
             status = CppInitialize(strConvID);
@@ -132,7 +132,7 @@ namespace SilEncConverters40
 			{
 				throw new Exception("CppInitialize failed.");
 			}
-			DebugWriteLine("IcuConv Load END");
+			DebugWriteLine(this, "END");
 		}
 		#endregion Misc helpers
 
@@ -152,17 +152,14 @@ namespace SilEncConverters40
 
 			if (NormalizeLhsConversionType(ConversionType) == NormConversionType.eUnicode)
 			{
-				if (ECNormalizeData.IsUnix)
-				{
+#if __MonoCS__
 					// returning this value will cause the input Unicode data (of any form,
 					// UTF16, BE, etc.) to be converted to UTF8 narrow bytes before calling
 					// DoConvert.
 					eInFormEngine = EncodingForm.UTF8Bytes;
-				}
-				else
-				{
+#else
 					eInFormEngine = EncodingForm.UTF16;
-				}
+#endif
 			}
 			else
 			{
@@ -172,14 +169,11 @@ namespace SilEncConverters40
 
 			if (NormalizeRhsConversionType(ConversionType) == NormConversionType.eUnicode)
 			{
-				if (ECNormalizeData.IsUnix)
-				{
+#if __MonoCS__
 					eOutFormEngine = EncodingForm.UTF8Bytes;
-				}
-				else
-				{
+#else
 					eOutFormEngine = EncodingForm.UTF16;
-				}
+#endif
 			}
 			else
 			{
@@ -208,7 +202,7 @@ namespace SilEncConverters40
 			byte*   lpOutBuffer,
 			ref int rnOutLen)
 		{
-            DebugWriteLine("IcuConvEC.DoConvert BEGIN()");
+			DebugWriteLine(this, "BEGIN");
 			int status = 0;
 			fixed(int* pnOut = &rnOutLen)
 			{
@@ -218,7 +212,7 @@ namespace SilEncConverters40
 			{
 				EncConverters.ThrowError(ErrStatus.Exception, "CppDoConvert() failed.");
 			}
-            DebugWriteLine("IcuConvEC.DoConvert END()");
+            DebugWriteLine(this, "END");
 		}
 
 		protected override string GetConfigTypeName

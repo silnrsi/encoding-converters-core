@@ -105,62 +105,83 @@ Set MONO_PATH to load assemblies outside the current directory.
 locate
 updatedb
 
+
 ## ICU
 
-    sudo apt-get install libicu50   # probably already done by default
-    sudo apt-get install libicu-dev
-    installs header files at /usr/include/unicode
-    library files are in /usr/lib or /user/lib/i386-linux-gnu
-    in /usr/lib/fieldworks:
-        libicuuc.so
-            contains ucnv_openPackage used by IcuConverter.cpp
-        libicui18n.so
-            contains uregex_replaceAll used by IcuRegexEncConverter.cpp
-    readelf -Ws          # look for numbers in the 7th column
-    ldd libIcuConvEC.so  # view dependences and any problems
-    A possibly easier way than adding -licuuc in makefiles:
-    icu-config --ldflags
-    Note: On the ICU website it seems to suggest downloading and building
-    manually. When I did this, make put files in various places under
-    /usr/local, which makes sense, but these overrode files elsewhere.
-    Anyway what I really wanted to do was probably apt-get install libicu-dev.
+sudo apt-get install libicu50   # probably already done by default
+sudo apt-get install libicu-dev
+installs header files at /usr/include/unicode
+library files are in /usr/lib or /user/lib/i386-linux-gnu
+in /usr/lib/fieldworks:
+    libicuuc.so
+        contains ucnv_openPackage used by IcuConverter.cpp
+    libicui18n.so
+        contains uregex_replaceAll used by IcuRegexEncConverter.cpp
+readelf -Ws          # look for numbers in the 7th column
+ldd libIcuConvEC.so  # view dependences and any problems
+A possibly easier way than adding -licuuc in makefiles:
+icu-config --ldflags
+
+Note: On the ICU website it seems to suggest downloading and building
+manually. When I did this, make put files in various places under
+/usr/local, which makes sense, but these overrode files elsewhere.
+Anyway what I really wanted to do was probably apt-get install libicu-dev.
+
 
 ## ldconfig
 
 /usr/lib/encConverters
-    Create file /etc/ld.so.conf.d/encConverters.conf containing this text:
-        /usr/lib/encConverters
-    Then sudo ldconfig
+Create file /etc/ld.so.conf.d/encConverters.conf containing this text:
+    /usr/lib/encConverters
+Then sudo ldconfig
+
 
 ## NUnit
 
-    Copy this file to /output/Debug:
-    /usr/lib/mono/gac/nunit.framework/2.5.10.0__96d09a1eb7f44a77/nunit.framework.dll 
-    To run tests directly:
-        cd output/Debug
-        nunit-console TestEncCnvtrs.dll
-    NAnt runs NUnit tests conveniently, but csproj files don't do this without
-    installing extra libraries.
+Copy this file to /output/Debug:
+/usr/lib/mono/gac/nunit.framework/2.5.10.0__96d09a1eb7f44a77/nunit.framework.dll 
+To run tests directly:
+    cd output/Debug
+    nunit-console TestEncCnvtrs.dll
+NAnt runs NUnit tests conveniently, but csproj files don't do this without
+installing extra libraries.
 
 Assembly DLLs can be viewed in MonoDevelop with the Assembly browser.
 Easier is to edit references and browse to a file.
 When selected (not added), it will show the version info at the bottom.
 
+
 ## Registry
 
-    There are several places where a registry structure is stored.
-    echo $MONO_REGISTRY_PATH
+#mkdir /var/lib/fieldworks
+#chmod a+rwx /var/lib/fieldworks
+sudo mkdir -p /var/lib/fieldworks && sudo chmod +wt /var/lib/fieldworks
+
+Two registry key folders:
+    SOFTWARE\SIL\EncodingConverterRepository
+        Created by EncConverters.WriteStorePath().
+        Gets read to find the repository file when initializing the list.
+    SOFTWARE\SIL\SilEncConverters40
+        Gets created on Windows during installation by wxs script.
+        Gets created on Linux during "sudo make install prefix=/usr"
+        A message recommendeds to create it manually on developer machines.
+        Some subkeys apparently get created by the Converters Installer.
+        Gets read to open help file in AutoConfigDialog.cs.
+
+There are several places where a registry structure is stored.
     /etc/mono/registry              # HKCR - system wide shared settings
     ~/.mono/registry                # HKCU - user settings
-    # fieldworks settings
-    /var/lib/fieldworks/registry
-    ~/.config/fieldworks/registry/
-    chmod 777 /etc/mono/registry/ClassesRoot -R
+    /var/lib/fieldworks/registry    # system wide fieldworks settings
+    ~/.config/fieldworks/registry/  # user fieldworks settings
+        chmod 777 /etc/mono/registry/ClassesRoot -R
+    echo $MONO_REGISTRY_PATH
+
 
 ## Repository
 
-    /var/lib/fieldworks/SIL/Repository/mappingRegistry.xml
-    rm *RESTOREME   # may be needed when running tests
+/var/lib/fieldworks/SIL/Repository/mappingRegistry.xml
+rm *RESTOREME   # may be needed when running tests
+
 
 ## Gecko
 
