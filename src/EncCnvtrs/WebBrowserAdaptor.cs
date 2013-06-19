@@ -89,7 +89,11 @@ namespace SilEncConverters40
         {
             get
             {
-                return ECNormalizeData.IsUnix || WindowsUserWantsToUseGecko;
+#if __MonoCS__
+                return true;
+#else
+                return WindowsUserWantsToUseGecko;
+#endif
             }
         }
 

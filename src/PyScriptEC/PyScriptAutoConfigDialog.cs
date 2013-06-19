@@ -10,9 +10,6 @@ using System.Windows.Forms;
 using System.IO;
 using ECInterfaces;                     // for IEncConverter
 
-//uncomment the following line for verbose debugging output using Console.WriteLine
-//#define VERBOSE_DEBUGGING
-
 namespace SilEncConverters40
 {
     public class PyScriptAutoConfigDialog : SilEncConverters40.AutoConfigDialog
@@ -30,13 +27,9 @@ namespace SilEncConverters40
             int lProcessTypeFlags,
             bool bIsInRepository)
         {
-#if VERBOSE_DEBUGGING
-            Console.WriteLine("PyScriptAutoConfigDialog ctor BEGIN");
-#endif
+            EncConverter.DebugWriteLine(this, "BEGIN");
 			InitializeComponent();
-#if VERBOSE_DEBUGGING
-            Console.WriteLine("Initialized PyScriptAutoConfigDialog component.");
-#endif
+            EncConverter.DebugWriteLine(this, "Initialized component.");
 			base.Initialize (
                 aECs,
                 PyScriptEncConverter.strHtmlFilename,
@@ -48,24 +41,18 @@ namespace SilEncConverters40
                 strRhsEncodingId,
                 lProcessTypeFlags,
                 bIsInRepository);
-#if VERBOSE_DEBUGGING
-            Console.WriteLine("Initialized base.");
-#endif
+            EncConverter.DebugWriteLine(this, "Initialized base.");
             // if we're editing a CC table/spellfixer project, then set the Converter Spec and say it's unmodified
             if (m_bEditMode)
             {
-#if VERBOSE_DEBUGGING
-                Console.WriteLine("Edit mode");
-#endif
+                EncConverter.DebugWriteLine(this, "Edit mode");
 				System.Diagnostics.Debug.Assert(!String.IsNullOrEmpty(ConverterIdentifier));
                 textBoxFileSpec.Text = ConverterIdentifier;
                 IsModified = false;
             }
 
             m_bInitialized = true;
-#if VERBOSE_DEBUGGING
-            Console.WriteLine("PyScriptAutoConfigDialog ctor END");
-#endif
+            EncConverter.DebugWriteLine(this, "END");
 		}
 
         public PyScriptAutoConfigDialog (
@@ -203,17 +190,13 @@ namespace SilEncConverters40
 
         protected void UpdateUI(bool bVisible)
         {
-#if VERBOSE_DEBUGGING
-            Console.WriteLine("UpdateUI BEGIN");
-#endif
+            EncConverter.DebugWriteLine(this, "BEGIN");
 /*
             buttonSaveInRepository.Visible =
                 groupBoxExpects.Visible =
                 groupBoxReturns.Visible = bVisible;
 */
-#if VERBOSE_DEBUGGING
-            Console.WriteLine("UpdateUI END");
-#endif
+            EncConverter.DebugWriteLine(this, "END");
 		}
 
         protected override void SetConvTypeControls()
@@ -227,7 +210,7 @@ namespace SilEncConverters40
         //  to make sure that the user has correctly configured a legitimate converter.
         protected override bool OnApply()
         {
-            Console.Error.WriteLine("OnApply() BEGIN");
+            EncConverter.DebugWriteLine(this, "BEGIN");
             // Get the converter identifier from the Setup tab controls.
             ConverterIdentifier = textBoxFileSpec.Text;
             //SetConvTypeFromRbControls(radioButtonExpectsUnicode, radioButtonExpectsLegacy,
@@ -250,7 +233,7 @@ namespace SilEncConverters40
                     return false;
                 }
             }
-            Console.Error.WriteLine("OnApply() END");
+            EncConverter.DebugWriteLine(this, "END");
             return base.OnApply();
         }
 

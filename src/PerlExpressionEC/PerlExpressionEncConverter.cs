@@ -88,12 +88,15 @@ namespace SilEncConverters40
         {
             get 
             {
-                return ECNormalizeData.IsUnix 
-                        ? "perl"
-#if DEBUG
-                        : @"\temp\perl\bin\perl.exe";
+                return
+#if __MonoCS__
+                        "perl";
 #else
-                        : "perl.exe";
+#if DEBUG
+                        @"\temp\perl\bin\perl.exe";
+#else
+                        "perl.exe";
+#endif
 #endif
             }
         }
@@ -115,11 +118,11 @@ namespace SilEncConverters40
 
         protected void Unload()
         { 
-            DebugWriteLine("PerlExpressionEncConverter.Unload");
+            DebugWriteLine(this, "BEGIN");
             if( IsFileLoaded() )
             {
                 File.Delete(strTempFile);
-                DebugWriteLine("Deleted file " + strTempFile);
+                DebugWriteLine(this, "Deleted file " + strTempFile);
                 strTempFile = string.Empty;
                 m_psi = null;
             }
@@ -133,7 +136,7 @@ namespace SilEncConverters40
 
         protected void Load(string strExpression)
         {
-            DebugWriteLine("PerlExpression Load BEGIN");
+            DebugWriteLine(this, "BEGIN");
             //this.strFilepath = strExpression;
 
             if( IsFileLoaded() ) {
@@ -203,7 +206,7 @@ namespace SilEncConverters40
             catch (Exception ex)
             {
                 DebugWriteLine (
-                    "Unable to create TEMP file or set attributes: " + ex.Message);
+                    this, "Unable to create TEMP file or set attributes: " + ex.Message);
             }
 
             //
@@ -228,7 +231,7 @@ namespace SilEncConverters40
                     String.Format("The Perl expression did not compile correctly:{0}{0}{1}",
                                   Environment.NewLine, errOutput));
             }
-            DebugWriteLine("PerlExpression Load END");
+            DebugWriteLine(this, "END");
         }
         #endregion Misc helpers
 

@@ -26,13 +26,13 @@ namespace ECFileConverter
         {
             m_eParamState = ParamState.eParamStart;
 
-            if (ECNormalizeData.IsWindows) {
-                InputEncoding = System.Text.Encoding.UTF8;
-                OutputEncoding = System.Text.Encoding.Unicode;
-            } else {
-                InputEncoding = System.Text.Encoding.Unicode;
-                OutputEncoding = System.Text.Encoding.UTF8;
-            }
+#if _MSC_VER
+            InputEncoding  = System.Text.Encoding.UTF8;
+            OutputEncoding = System.Text.Encoding.Unicode;
+#else
+            InputEncoding  = System.Text.Encoding.UTF8;
+            OutputEncoding = System.Text.Encoding.UTF8;
+#endif
 
             DirectionForward = true;
         }

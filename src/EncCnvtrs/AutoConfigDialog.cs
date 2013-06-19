@@ -39,16 +39,13 @@ namespace SilEncConverters40
 
         public AutoConfigDialog()
         {
-#if VERBOSE_DEBUGGING
-            Console.WriteLine("AutoConfigDialog ctor");
-#endif
-            EncConverter.DebugWriteLine("AutoConfigDialog ctor BEGIN");
+            EncConverter.DebugWriteLine(this, "BEGIN");
             InitializeComponent();
-            EncConverter.DebugWriteLine("finished InitializeComponent.");
-	    this.tabControl.Selecting += new System.Windows.Forms.TabControlCancelEventHandler(tabControl_Selecting);
+            EncConverter.DebugWriteLine(this, "finished InitializeComponent");
+	        this.tabControl.Selecting += new System.Windows.Forms.TabControlCancelEventHandler(tabControl_Selecting);
 
             helpProvider.SetHelpString(buttonSaveInRepository, Properties.Resources.SaveInRepositoryHelpString);
-            EncConverter.DebugWriteLine("finished first SetHelpString.");
+            EncConverter.DebugWriteLine(this, "finished first SetHelpString.");
             helpProvider.SetHelpString(ecTextBoxInput, Properties.Resources.TestInputBoxHelpString);
             helpProvider.SetHelpString(ecTextBoxOutput, Properties.Resources.TestOutputBoxHelpString);
             helpProvider.SetHelpString(richTextBoxHexInput, Properties.Resources.TestHexDecOutputBoxesHelpString);
@@ -58,7 +55,7 @@ namespace SilEncConverters40
             foreach (var family in fonts.Families)
                 this.comboBoxFont.Items.Add(family.Name);
 
-            EncConverter.DebugWriteLine("AutoConfigDialog ctor END");
+            EncConverter.DebugWriteLine(this, "END");
         }
 
         public virtual void Initialize
@@ -75,10 +72,7 @@ namespace SilEncConverters40
             bool bIsInRepository
             )
         {
-#if VERBOSE_DEBUGGING
-			Console.WriteLine("AutoConfigDialog initialize");
-#endif
-			EncConverter.DebugWriteLine("AutoConfigDialog.Initialize BEGIN");
+			EncConverter.DebugWriteLine(this, "BEGIN");
             htmlfilename = strHtmlFileName;
             m_strOriginalFriendlyName = FriendlyName = strFriendlyName;
             ConverterIdentifier = strConverterIdentifier;
@@ -127,23 +121,21 @@ namespace SilEncConverters40
             {
                 var strXmlFilePath = (string)keyRoot.GetValue("RootDir");
                 if (String.IsNullOrEmpty(strXmlFilePath))
-                    throw new ApplicationException("The 'RootDir' registry key is not define!? Perhaps it needs to be re-installed. Ask the developer.");
-                //if (strXmlFilePath[strXmlFilePath.Length - 1] != '\\')
-                //   strXmlFilePath += '\\';
+                    throw new ApplicationException("The 'RootDir' registry key is not defined!? Perhaps the application needs to be re-installed. Ask the developer.");
                 strXmlFilePath = Path.Combine(strXmlFilePath, Path.Combine(@"Help", strHtmlFileName));
                 System.Diagnostics.Debug.WriteLine(strXmlFilePath);
-                System.Diagnostics.Debug.Assert(System.IO.File.Exists(strXmlFilePath), String.Format("Can find '{0}'. If this is a development machine, you need to add the following reg key to see the About help files: HLKM\\SOFTWARE\\SIL\\SilEncConverters40\\[RootDir] = '<parent folder where the 'help' sub-folder exists>' along with a trailing slash (e.g. \"C:\\fw\\lib\\release\\\")", strHtmlFileName));
+                System.Diagnostics.Debug.Assert(System.IO.File.Exists(strXmlFilePath), String.Format("Cannot find '{0}'. If this is a development machine, you need to add the following reg key to see the About help files: HLKM\\SOFTWARE\\SIL\\SilEncConverters40\\[RootDir] = '<parent folder where the 'help' sub-folder exists>' along with a trailing slash (e.g. \"C:\\fw\\lib\\release\\\")", strHtmlFileName));
                 this.webBrowser.Navigate(strXmlFilePath);
             }
 #if DEBUG
             else
-                throw new ApplicationException(@"Can't read the HLKM\SOFTWARE\SIL\SilEncConverters40\[RootDir] registry key!");
+                throw new ApplicationException(@"Can't read the HLKM\SOFTWARE\SIL\SilEncConverters40\[RootDir] registry key, which should get created during installation.");
 #endif
 
             ecTextBoxInput.Text = "Test Data";
             //char[] chinese = {'\u6B22','\u8FCE','\u4F7F','\u7528','\u0020'};
             //ecTextBoxInput.Text = new string(chinese);
-            EncConverter.DebugWriteLine("Initialize END");
+            EncConverter.DebugWriteLine(this, "END");
         }
 
         protected virtual void SetConvTypeControls()
@@ -160,7 +152,7 @@ namespace SilEncConverters40
             string strTestData
             )
         {
-            EncConverter.DebugWriteLine("Initialize2 BEGIN");
+            EncConverter.DebugWriteLine(this, "BEGIN");
             FriendlyName = strFriendlyName;
             ConverterIdentifier = strConverterIdentifier;
             ConversionType = eConversionType;
@@ -321,7 +313,7 @@ namespace SilEncConverters40
 
         private void buttonApply_Click(object sender, EventArgs e)
         {
-            EncConverter.DebugWriteLine("buttonApply_Click");
+            EncConverter.DebugWriteLine(this, "BEGIN");
             OnApply();
         }
 
@@ -592,7 +584,7 @@ namespace SilEncConverters40
 
         private void tabControl_Selected(object sender, TabControlEventArgs e)
         {
-            EncConverter.DebugWriteLine("tabControl_Selected()");
+            EncConverter.DebugWriteLine(this, "BEGIN");
             if (e.TabPage == tabPageSetup)
             {
                 buttonSaveInRepository.Visible = SetupTabSelected_MakeSaveInRepositoryVisible;
@@ -733,7 +725,7 @@ namespace SilEncConverters40
 
         private void richTextBoxInput_TextChanged(object sender, EventArgs e)
         {
-            EncConverter.DebugWriteLine("richTextBoxInput_TextChanged()");
+            EncConverter.DebugWriteLine(this, "BEGIN");
             TestTabInputChanged();
         }
 
@@ -767,7 +759,7 @@ namespace SilEncConverters40
 
         private void buttonTest_Click(object sender, EventArgs e)
         {
-            EncConverter.DebugWriteLine("buttonTest_Click()");
+            EncConverter.DebugWriteLine(this, "BEGIN");
             IEncConverter aEC = InitializeEncConverter;
             if (aEC != null)
             {
@@ -776,7 +768,7 @@ namespace SilEncConverters40
                     aEC.DirectionForward = !checkBoxTestReverse.Checked;
                     //ecTextBoxOutput.Text = aEC.Convert(ecTextBoxInput.Text);
                     string result = aEC.Convert(ecTextBoxInput.Text);
-                    EncConverter.DebugWriteLine("Putting in text box: '" + result + "'");
+                    EncConverter.DebugWriteLine(this, "Putting in text box: '" + result + "'");
                     ecTextBoxOutput.Text = result;
                     //ecTextBoxOutput.Text = "Hello there!";
                 }
@@ -808,7 +800,7 @@ namespace SilEncConverters40
 
         private void buttonOK_Click(object sender, EventArgs e)
         {
-            EncConverter.DebugWriteLine("buttonOK_Click()");
+            EncConverter.DebugWriteLine(this, "BEGIN");
             if (OnApply())
             {
                 // see if the user has *not* added the converter to the repository (i.e. it's currently
@@ -830,7 +822,7 @@ namespace SilEncConverters40
 
         private void ecTextBoxInput_TextChanged(object sender, EventArgs e)
         {
-            EncConverter.DebugWriteLine("ecTextBoxInput_TextChanged()");
+            EncConverter.DebugWriteLine(this, "BEGIN");
             TestTabInputChanged();
         }
 
@@ -841,16 +833,16 @@ namespace SilEncConverters40
             try {
             aCMS = (ContextMenuStrip)sender;
             } catch (System.InvalidCastException) {
-                EncConverter.DebugWriteLine("InvalidCastExc 1");
+                EncConverter.DebugWriteLine(this, "InvalidCastExc 1");
                 return;
             }
             if (aCMS.SourceControl != null) {
-                EncConverter.DebugWriteLine("Name: " + aCMS.SourceControl.Name);
+                EncConverter.DebugWriteLine(this, "Name: " + aCMS.SourceControl.Name);
             }
             try {
             m_tbLastClicked = (TextBox)aCMS.SourceControl;
             } catch (System.InvalidCastException) {
-                EncConverter.DebugWriteLine("InvalidCastExc 2");
+                EncConverter.DebugWriteLine(this, "InvalidCastExc 2");
                 return;
             }
             right2LeftToolStripMenuItem.Checked = (m_tbLastClicked.RightToLeft == RightToLeft.Yes);
@@ -858,7 +850,7 @@ namespace SilEncConverters40
 
         private void changeFontToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            EncConverter.DebugWriteLine("changeFontToolStripMenuItem_Click()");
+            EncConverter.DebugWriteLine(this, "BEGIN");
             if (m_tbLastClicked != null)
             {
                 fontDialog.Font = m_tbLastClicked.Font;
@@ -932,7 +924,7 @@ namespace SilEncConverters40
 
         private void comboBoxFont_SelectedIndexChanged(object sender, EventArgs e)
         {
-            EncConverter.DebugWriteLine("comboBoxFont_SelectedIndexChanged()");
+            EncConverter.DebugWriteLine(this, "BEGIN");
             if (comboBoxFont.SelectedIndex == -1) return;
             string newVal  = comboBoxFont.SelectedItem.ToString();
             float  newSize = 12;

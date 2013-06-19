@@ -8,7 +8,7 @@ namespace SilEncConverters40
     {
         public EcTextBox()
         {
-            EncConverter.DebugWriteLine("Default Font " +
+            EncConverter.DebugWriteLine(this, "Default Font " +
                 this.Font.Name + ", Size " + this.Font.Size.ToString());
             //this.Font = new System.Drawing.Font("Arial", 11);
         }
