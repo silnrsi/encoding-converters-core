@@ -27,7 +27,7 @@ namespace SilEncConverters40
             // oops: cp8859 won't work for symbol data, so if GetBytes
             //  fails, just go back to stripping out the low byte as we had it
             //  originally. This'll work for both 8859 and symbol
-            EncConverter.DebugWriteLine(className, "Narrowizing by stripping the low byte.");
+            Util.DebugWriteLine(className, "Narrowizing by stripping the low byte.");
             var ba = new byte[nInLen];
             for (int i = 0; i < nInLen; i++)
                 ba[i] = (byte)(strInput[i] & 0xFF);
@@ -37,8 +37,8 @@ namespace SilEncConverters40
         // this is the helper method that returns the input data normalized
         internal static unsafe byte* GetBytes(string strInput, int cnCountIn, EncodingForm eEncFormIn, int nCodePageIn, EncodingForm eFormEngineIn, byte* pBuf, ref int nBufSize, ref bool bDebugDisplayMode)
         {
-            EncConverter.DebugWriteLine(className, "BEGIN");
-            EncConverter.DebugWriteLine(className, 
+            Util.DebugWriteLine(className, "BEGIN");
+            Util.DebugWriteLine(className, 
                 "eEncFormIn " + eEncFormIn.ToString() + ", " +
                 "eFormEngineIn " + eFormEngineIn.ToString());
 
@@ -50,7 +50,7 @@ namespace SilEncConverters40
                 //  is UTF16 and the desired form is UTF8, then simply use CCUnicode8 below
                 if ((eEncFormIn == EncodingForm.UTF16) && (eFormEngineIn == EncodingForm.UTF8Bytes))
                 {
-                    EncConverter.DebugWriteLine(className, "using CCUnicode8");
+                    Util.DebugWriteLine(className, "using CCUnicode8");
                     eEncFormIn = (EncodingForm)CCUnicode8;
                 }
                 // we can also do the following one
@@ -138,7 +138,7 @@ namespace SilEncConverters40
                                 {
                                     Encoding enc = Encoding.GetEncoding(nCodePageIn);
                                     ba = enc.GetBytes(strInput);
-                                    EncConverter.DebugWriteLine(className, "Narrowized by given code page.");
+                                    Util.DebugWriteLine(className, "Narrowized by given code page.");
                                 }
                                 catch
                                 {
@@ -149,7 +149,7 @@ namespace SilEncConverters40
                             {
                                 // otherwise, simply use CP_ACP (or the default code page) to 
                                 //  narrowize it.
-                                EncConverter.DebugWriteLine(className, "Narrowizing by given code page.");
+                                Util.DebugWriteLine(className, "Narrowizing by given code page.");
                                 Encoding enc = Encoding.GetEncoding(nCodePageIn);
                                 ba = enc.GetBytes(strInput);
                             }
@@ -276,17 +276,17 @@ namespace SilEncConverters40
         internal static unsafe string GetString(byte* lpOutBuffer, int nOutLen, EncodingForm eOutEncodingForm, int nCodePageOut, EncodingForm eFormEngineOut, NormalizeFlags eNormalizeOutput, out int rciOutput, ref bool bDebugDisplayMode)
         {
             // null terminate the output and turn it into a (real) array of bytes
-            EncConverter.DebugWriteLine(className, "BEGIN");
+            Util.DebugWriteLine(className, "BEGIN");
             lpOutBuffer[nOutLen] = lpOutBuffer[nOutLen + 1] = lpOutBuffer[nOutLen + 2] = lpOutBuffer[nOutLen + 3] = 0;
             byte[] baOut = new byte[nOutLen];
             ByteStarToByteArr(lpOutBuffer, nOutLen, baOut);
-            EncConverter.DebugWriteLine(className, EncConverter.displayBytes("null-terminated", baOut));
+            Util.DebugWriteLine(className, Util.getDisplayBytes("null-terminated", baOut));
 
             // check to see if the engine handled the given output form. If not, then see
             //  if it's a conversion we can easily do (otherwise we'll ask TEC to do the 
             //  conversion for us (later) so that all engines can handle all possible
             //  output encoding forms.
-            EncConverter.DebugWriteLine(className,
+            Util.DebugWriteLine(className,
                 "eOutEncodingForm " + eOutEncodingForm.ToString() + ", " +
                 "eFormEngineOut " + eFormEngineOut.ToString());
             if (eOutEncodingForm != eFormEngineOut)
@@ -307,7 +307,7 @@ namespace SilEncConverters40
                     if ((eOutEncodingForm == EncodingForm.UTF16) && (eFormEngineOut == EncodingForm.UTF8Bytes))
                     {
                         // use the special form to convert it below
-                        EncConverter.DebugWriteLine(className, "using CCUnicode8");
+                        Util.DebugWriteLine(className, "using CCUnicode8");
                         eOutEncodingForm = eFormEngineOut = (EncodingForm)CCUnicode8;
                     }
                     // or vise versa
@@ -466,9 +466,9 @@ namespace SilEncConverters40
             string strOutput = new string(caOut);
 #if DEBUG
             byte[] byteArray = Encoding.BigEndianUnicode.GetBytes(caOut);
-            EncConverter.DebugWriteLine(className, EncConverter.displayBytes("characters", byteArray));
+            Util.DebugWriteLine(className, Util.getDisplayBytes("characters", byteArray));
             byte[] baResult = System.Text.Encoding.BigEndianUnicode.GetBytes(strOutput);
-            EncConverter.DebugWriteLine(className, EncConverter.displayBytes("Normalized strOutput in UTF16BE", baResult));
+            Util.DebugWriteLine(className, Util.getDisplayBytes("Normalized strOutput in UTF16BE", baResult));
 #endif
             if ((eFormEngineOut != eOutEncodingForm)
                 || (eNormalizeOutput != NormalizeFlags.None))

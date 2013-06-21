@@ -79,7 +79,7 @@ namespace SilEncConverters40
             Int32 codePageOutput,
             bool bAdding)
         {
-			DebugWriteLine(this, "BEGIN");
+			Util.DebugWriteLine(this, "BEGIN");
             // let the base class have first stab at it
             base.Initialize(converterName, converterSpec, ref lhsEncodingID, ref rhsEncodingID, 
                 ref conversionType, ref processTypeFlags, codePageInput, codePageOutput, bAdding );
@@ -103,7 +103,7 @@ namespace SilEncConverters40
                 default:
                     break;
             }
-			DebugWriteLine(this, "END");
+			Util.DebugWriteLine(this, "END");
         }
 
         #endregion Initialization
@@ -117,7 +117,7 @@ namespace SilEncConverters40
 
         protected void Unload()
         { 
-            //DebugWriteLine(this, "BEGIN");
+            //Util.DebugWriteLine(this, "BEGIN");
             //if( IsFileLoaded() )
             //{
             //    CCUnloadTable(m_hTable);
@@ -133,12 +133,12 @@ namespace SilEncConverters40
 
         protected unsafe void Load(string strTranslitID)
         {
-            DebugWriteLine(this, "BEGIN");
+            Util.DebugWriteLine(this, "BEGIN");
 
             if( IsFileLoaded() )
                 Unload();
 
-            DebugWriteLine(this, "Calling CppInitialize");
+            Util.DebugWriteLine(this, "Calling CppInitialize");
             int status = 0;
 
             status = CppInitialize(strTranslitID);
@@ -146,7 +146,7 @@ namespace SilEncConverters40
             {
                 throw new Exception("CppInitialize failed.");
             }
-            DebugWriteLine(this, "END");
+            Util.DebugWriteLine(this, "END");
         }
         #endregion Misc helpers
 
@@ -209,7 +209,7 @@ namespace SilEncConverters40
             ref int     rnOutLen
             )
         {
-            DebugWriteLine(this, "BEGIN");
+            Util.DebugWriteLine(this, "BEGIN");
             int status = 0;
             fixed(int* pnOut = &rnOutLen)
             {
@@ -219,7 +219,7 @@ namespace SilEncConverters40
             {
                 EncConverters.ThrowError(ErrStatus.Exception, "CppDoConvert() failed.");
             }
-            DebugWriteLine(this, "END");
+            Util.DebugWriteLine(this, "END");
         }
 
         protected override string   GetConfigTypeName

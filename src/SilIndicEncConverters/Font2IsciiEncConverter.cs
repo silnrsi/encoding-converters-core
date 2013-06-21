@@ -291,7 +291,7 @@ namespace SilEncConverters31
 				this.CodePageOutput = 1252;
 
             // string strExePath = Environment.GetFolderPath(Environment.SpecialFolder.CommonProgramFiles);
-            string strMapPath = Util.GetSpecialFolderPath(Environment.SpecialFolder.CommonApplicationData);
+            string strMapPath = Util.CommonAppDataPath();
             WorkingDir = strMapPath + strMapDefPath;
 		}
 		#endregion Initialization

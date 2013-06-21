@@ -39,13 +39,13 @@ namespace SilEncConverters40
 
         public AutoConfigDialog()
         {
-            EncConverter.DebugWriteLine(this, "BEGIN");
+            Util.DebugWriteLine(this, "BEGIN");
             InitializeComponent();
-            EncConverter.DebugWriteLine(this, "finished InitializeComponent");
+            Util.DebugWriteLine(this, "finished InitializeComponent");
 	        this.tabControl.Selecting += new System.Windows.Forms.TabControlCancelEventHandler(tabControl_Selecting);
 
             helpProvider.SetHelpString(buttonSaveInRepository, Properties.Resources.SaveInRepositoryHelpString);
-            EncConverter.DebugWriteLine(this, "finished first SetHelpString.");
+            Util.DebugWriteLine(this, "finished first SetHelpString.");
             helpProvider.SetHelpString(ecTextBoxInput, Properties.Resources.TestInputBoxHelpString);
             helpProvider.SetHelpString(ecTextBoxOutput, Properties.Resources.TestOutputBoxHelpString);
             helpProvider.SetHelpString(richTextBoxHexInput, Properties.Resources.TestHexDecOutputBoxesHelpString);
@@ -55,7 +55,7 @@ namespace SilEncConverters40
             foreach (var family in fonts.Families)
                 this.comboBoxFont.Items.Add(family.Name);
 
-            EncConverter.DebugWriteLine(this, "END");
+            Util.DebugWriteLine(this, "END");
         }
 
         public virtual void Initialize
@@ -72,7 +72,7 @@ namespace SilEncConverters40
             bool bIsInRepository
             )
         {
-			EncConverter.DebugWriteLine(this, "BEGIN");
+			Util.DebugWriteLine(this, "BEGIN");
             htmlfilename = strHtmlFileName;
             m_strOriginalFriendlyName = FriendlyName = strFriendlyName;
             ConverterIdentifier = strConverterIdentifier;
@@ -135,7 +135,7 @@ namespace SilEncConverters40
             ecTextBoxInput.Text = "Test Data";
             //char[] chinese = {'\u6B22','\u8FCE','\u4F7F','\u7528','\u0020'};
             //ecTextBoxInput.Text = new string(chinese);
-            EncConverter.DebugWriteLine(this, "END");
+            Util.DebugWriteLine(this, "END");
         }
 
         protected virtual void SetConvTypeControls()
@@ -152,7 +152,7 @@ namespace SilEncConverters40
             string strTestData
             )
         {
-            EncConverter.DebugWriteLine(this, "BEGIN");
+            Util.DebugWriteLine(this, "BEGIN");
             FriendlyName = strFriendlyName;
             ConverterIdentifier = strConverterIdentifier;
             ConversionType = eConversionType;
@@ -313,7 +313,7 @@ namespace SilEncConverters40
 
         private void buttonApply_Click(object sender, EventArgs e)
         {
-            EncConverter.DebugWriteLine(this, "BEGIN");
+            Util.DebugWriteLine(this, "BEGIN");
             OnApply();
         }
 
@@ -584,7 +584,7 @@ namespace SilEncConverters40
 
         private void tabControl_Selected(object sender, TabControlEventArgs e)
         {
-            EncConverter.DebugWriteLine(this, "BEGIN");
+            Util.DebugWriteLine(this, "BEGIN");
             if (e.TabPage == tabPageSetup)
             {
                 buttonSaveInRepository.Visible = SetupTabSelected_MakeSaveInRepositoryVisible;
@@ -725,7 +725,7 @@ namespace SilEncConverters40
 
         private void richTextBoxInput_TextChanged(object sender, EventArgs e)
         {
-            EncConverter.DebugWriteLine(this, "BEGIN");
+            Util.DebugWriteLine(this, "BEGIN");
             TestTabInputChanged();
         }
 
@@ -759,7 +759,7 @@ namespace SilEncConverters40
 
         private void buttonTest_Click(object sender, EventArgs e)
         {
-            EncConverter.DebugWriteLine(this, "BEGIN");
+            Util.DebugWriteLine(this, "BEGIN");
             IEncConverter aEC = InitializeEncConverter;
             if (aEC != null)
             {
@@ -768,7 +768,7 @@ namespace SilEncConverters40
                     aEC.DirectionForward = !checkBoxTestReverse.Checked;
                     //ecTextBoxOutput.Text = aEC.Convert(ecTextBoxInput.Text);
                     string result = aEC.Convert(ecTextBoxInput.Text);
-                    EncConverter.DebugWriteLine(this, "Putting in text box: '" + result + "'");
+                    Util.DebugWriteLine(this, "Putting in text box: '" + result + "'");
                     ecTextBoxOutput.Text = result;
                     //ecTextBoxOutput.Text = "Hello there!";
                 }
@@ -800,7 +800,7 @@ namespace SilEncConverters40
 
         private void buttonOK_Click(object sender, EventArgs e)
         {
-            EncConverter.DebugWriteLine(this, "BEGIN");
+            Util.DebugWriteLine(this, "BEGIN");
             if (OnApply())
             {
                 // see if the user has *not* added the converter to the repository (i.e. it's currently
@@ -822,7 +822,7 @@ namespace SilEncConverters40
 
         private void ecTextBoxInput_TextChanged(object sender, EventArgs e)
         {
-            EncConverter.DebugWriteLine(this, "BEGIN");
+            Util.DebugWriteLine(this, "BEGIN");
             TestTabInputChanged();
         }
 
@@ -833,16 +833,16 @@ namespace SilEncConverters40
             try {
             aCMS = (ContextMenuStrip)sender;
             } catch (System.InvalidCastException) {
-                EncConverter.DebugWriteLine(this, "InvalidCastExc 1");
+                Util.DebugWriteLine(this, "InvalidCastExc 1");
                 return;
             }
             if (aCMS.SourceControl != null) {
-                EncConverter.DebugWriteLine(this, "Name: " + aCMS.SourceControl.Name);
+                Util.DebugWriteLine(this, "Name: " + aCMS.SourceControl.Name);
             }
             try {
             m_tbLastClicked = (TextBox)aCMS.SourceControl;
             } catch (System.InvalidCastException) {
-                EncConverter.DebugWriteLine(this, "InvalidCastExc 2");
+                Util.DebugWriteLine(this, "InvalidCastExc 2");
                 return;
             }
             right2LeftToolStripMenuItem.Checked = (m_tbLastClicked.RightToLeft == RightToLeft.Yes);
@@ -850,7 +850,7 @@ namespace SilEncConverters40
 
         private void changeFontToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            EncConverter.DebugWriteLine(this, "BEGIN");
+            Util.DebugWriteLine(this, "BEGIN");
             if (m_tbLastClicked != null)
             {
                 fontDialog.Font = m_tbLastClicked.Font;
@@ -924,7 +924,7 @@ namespace SilEncConverters40
 
         private void comboBoxFont_SelectedIndexChanged(object sender, EventArgs e)
         {
-            EncConverter.DebugWriteLine(this, "BEGIN");
+            Util.DebugWriteLine(this, "BEGIN");
             if (comboBoxFont.SelectedIndex == -1) return;
             string newVal  = comboBoxFont.SelectedItem.ToString();
             float  newSize = 12;

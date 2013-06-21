@@ -64,7 +64,7 @@ namespace SilEncConverters40
             Int32 codePageOutput,
             bool bAdding)
         {
-			DebugWriteLine(this, "BEGIN");
+			Util.DebugWriteLine(this, "BEGIN");
             // let the base class have first stab at it
             base.Initialize(converterName, converterSpec, ref lhsEncodingID, ref rhsEncodingID, 
                 ref conversionType, ref processTypeFlags, codePageInput, codePageOutput, bAdding );
@@ -91,7 +91,7 @@ namespace SilEncConverters40
             }
 */
 
-            DebugWriteLine(this, "END");
+            Util.DebugWriteLine(this, "END");
         }
         #endregion Initialization
 
@@ -115,7 +115,7 @@ namespace SilEncConverters40
 
         protected unsafe void Load(string strExpression)
         {
-            DebugWriteLine(this, "BEGIN");
+            Util.DebugWriteLine(this, "BEGIN");
             //this.strFilepath = strExpression;
 
             if( IsFileLoaded() ) {
@@ -130,14 +130,14 @@ namespace SilEncConverters40
                     "'\n\ndoesn't contain -> ");
             }
 
-            DebugWriteLine(this, "Calling CppInitialize");
+            Util.DebugWriteLine(this, "Calling CppInitialize");
             int status = 0;
             status = CppInitialize(strExpression);
             if( status != 0 )  
             {
                 throw new Exception("CppInitialize failed.");
             }
-            DebugWriteLine(this, "END");
+            Util.DebugWriteLine(this, "END");
         }
         #endregion Misc helpers
 

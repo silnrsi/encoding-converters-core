@@ -64,12 +64,12 @@ namespace AppDataMover
                 nArgument++;    // unnecessary, but...
             }
             else
-                strTargetDir = Util.GetSpecialFolderPath(Environment.SpecialFolder.CommonApplicationData);
+                strTargetDir = Util.CommonAppDataPath();
 
             // set-up the paths to the source and target folders
             System.Diagnostics.Debug.Assert(strTargetDir[strTargetDir.Length - 1] != '\\', "Don't pass the target directory with a final slash");
             string strCommonApplicationDataSilPath = strTargetDir + cstrSIL;
-            m_strCommonProgramFilesSilPath = Util.GetSpecialFolderPath(Environment.SpecialFolder.CommonProgramFiles) + cstrSIL;
+            m_strCommonProgramFilesSilPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonProgramFiles) + cstrSIL;
 
             // move all the files in the following folders (here the MapsTables and Repository folders)
             Log(String.Format("Moving files from: {0} to {1}", m_strCommonProgramFilesSilPath + cstrMapsTables,
@@ -94,7 +94,7 @@ namespace AppDataMover
             // the following should come last
             // set the key that tells EncConverter to do a fixup of the converter specs
             Log(String.Format("Setting the RegistryKeyValue: {0} to {1}", EncConverters.strRegKeyForMovingRepository,
-				    Util.GetSpecialFolderPath(Environment.SpecialFolder.CommonApplicationData)));
+				    Util.CommonAppDataPath()));
 			SetRegistryKeyValue(Registry.LocalMachine, EncConverters.HKLM_PATH_TO_XML_FILE, EncConverters.strRegKeyForMovingRepository,
                 strTargetDir);
 

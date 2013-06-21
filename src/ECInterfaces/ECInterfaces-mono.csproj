@@ -40,6 +40,7 @@
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>..\..\output\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <!--<DefineConstants>DEBUG;TRACE;COMMON_DATA_FW</DefineConstants>-->
     <RegisterForComInterop>true</RegisterForComInterop>
     <DebugType>full</DebugType>
     <PlatformTarget>x86</PlatformTarget>
@@ -53,6 +54,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <OutputPath>..\..\output\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
+    <!--<DefineConstants>TRACE;COMMON_DATA_FW</DefineConstants>-->
     <Optimize>true</Optimize>
     <RegisterForComInterop>true</RegisterForComInterop>
     <DebugType>pdbonly</DebugType>
