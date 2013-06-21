@@ -27,9 +27,9 @@ namespace SilEncConverters40
             int lProcessTypeFlags,
             bool bIsInRepository)
         {
-            EncConverter.DebugWriteLine(this, "BEGIN");
+            Util.DebugWriteLine(this, "BEGIN");
 			InitializeComponent();
-            EncConverter.DebugWriteLine(this, "Initialized component.");
+            Util.DebugWriteLine(this, "Initialized component.");
 			base.Initialize (
                 aECs,
                 PyScriptEncConverter.strHtmlFilename,
@@ -41,18 +41,18 @@ namespace SilEncConverters40
                 strRhsEncodingId,
                 lProcessTypeFlags,
                 bIsInRepository);
-            EncConverter.DebugWriteLine(this, "Initialized base.");
+            Util.DebugWriteLine(this, "Initialized base.");
             // if we're editing a CC table/spellfixer project, then set the Converter Spec and say it's unmodified
             if (m_bEditMode)
             {
-                EncConverter.DebugWriteLine(this, "Edit mode");
+                Util.DebugWriteLine(this, "Edit mode");
 				System.Diagnostics.Debug.Assert(!String.IsNullOrEmpty(ConverterIdentifier));
                 textBoxFileSpec.Text = ConverterIdentifier;
                 IsModified = false;
             }
 
             m_bInitialized = true;
-            EncConverter.DebugWriteLine(this, "END");
+            Util.DebugWriteLine(this, "END");
 		}
 
         public PyScriptAutoConfigDialog (
@@ -190,13 +190,13 @@ namespace SilEncConverters40
 
         protected void UpdateUI(bool bVisible)
         {
-            EncConverter.DebugWriteLine(this, "BEGIN");
+            Util.DebugWriteLine(this, "BEGIN");
 /*
             buttonSaveInRepository.Visible =
                 groupBoxExpects.Visible =
                 groupBoxReturns.Visible = bVisible;
 */
-            EncConverter.DebugWriteLine(this, "END");
+            Util.DebugWriteLine(this, "END");
 		}
 
         protected override void SetConvTypeControls()
@@ -210,7 +210,7 @@ namespace SilEncConverters40
         //  to make sure that the user has correctly configured a legitimate converter.
         protected override bool OnApply()
         {
-            EncConverter.DebugWriteLine(this, "BEGIN");
+            Util.DebugWriteLine(this, "BEGIN");
             // Get the converter identifier from the Setup tab controls.
             ConverterIdentifier = textBoxFileSpec.Text;
             //SetConvTypeFromRbControls(radioButtonExpectsUnicode, radioButtonExpectsLegacy,
@@ -233,7 +233,7 @@ namespace SilEncConverters40
                     return false;
                 }
             }
-            EncConverter.DebugWriteLine(this, "END");
+            Util.DebugWriteLine(this, "END");
             return base.OnApply();
         }
 
@@ -275,7 +275,7 @@ namespace SilEncConverters40
             if (!String.IsNullOrEmpty(ConverterIdentifier))
                 openFileDialogBrowse.InitialDirectory = Path.GetDirectoryName(ConverterIdentifier);
             else
-                openFileDialogBrowse.InitialDirectory = Util.GetSpecialFolderPath(Environment.SpecialFolder.CommonApplicationData) + EncConverters.strDefMapsTablesPath;
+                openFileDialogBrowse.InitialDirectory = Util.CommonAppDataPath() + EncConverters.strDefMapsTablesPath;
 
             if (openFileDialogBrowse.ShowDialog() == DialogResult.OK)
             {

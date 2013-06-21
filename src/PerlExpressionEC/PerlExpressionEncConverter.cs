@@ -118,11 +118,11 @@ namespace SilEncConverters40
 
         protected void Unload()
         { 
-            DebugWriteLine(this, "BEGIN");
+            Util.DebugWriteLine(this, "BEGIN");
             if( IsFileLoaded() )
             {
                 File.Delete(strTempFile);
-                DebugWriteLine(this, "Deleted file " + strTempFile);
+                Util.DebugWriteLine(this, "Deleted file " + strTempFile);
                 strTempFile = string.Empty;
                 m_psi = null;
             }
@@ -136,7 +136,7 @@ namespace SilEncConverters40
 
         protected void Load(string strExpression)
         {
-            DebugWriteLine(this, "BEGIN");
+            Util.DebugWriteLine(this, "BEGIN");
             //this.strFilepath = strExpression;
 
             if( IsFileLoaded() ) {
@@ -205,7 +205,7 @@ namespace SilEncConverters40
             }
             catch (Exception ex)
             {
-                DebugWriteLine (
+                Util.DebugWriteLine (
                     this, "Unable to create TEMP file or set attributes: " + ex.Message);
             }
 
@@ -231,7 +231,7 @@ namespace SilEncConverters40
                     String.Format("The Perl expression did not compile correctly:{0}{0}{1}",
                                   Environment.NewLine, errOutput));
             }
-            DebugWriteLine(this, "END");
+            Util.DebugWriteLine(this, "END");
         }
         #endregion Misc helpers
 

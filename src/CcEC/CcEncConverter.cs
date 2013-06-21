@@ -60,7 +60,7 @@ namespace SilEncConverters40
 
         public override void Initialize(string converterName, string converterSpec, ref string lhsEncodingID, ref string rhsEncodingID, ref ConvType conversionType, ref Int32 processTypeFlags, Int32 codePageInput, Int32 codePageOutput, bool bAdding)
         {
-            DebugWriteLine(this, "BEGIN");
+            Util.DebugWriteLine(this, "BEGIN");
             // let the base class have first stab at it
             base.Initialize(converterName, converterSpec, ref lhsEncodingID, ref rhsEncodingID, 
                 ref conversionType, ref processTypeFlags, codePageInput, codePageOutput, bAdding );
@@ -99,7 +99,7 @@ namespace SilEncConverters40
             //  other)
             if( bAdding )
                 m_timeModified = DateTime.MinValue;
-            DebugWriteLine(this, "Initialize END");
+            Util.DebugWriteLine(this, "Initialize END");
         }
 
         #endregion Initialization
@@ -112,7 +112,7 @@ namespace SilEncConverters40
 
         protected void Unload()
         { 
-            DebugWriteLine(this, "BEGIN");
+            Util.DebugWriteLine(this, "BEGIN");
             if( IsFileLoaded() )
             {
                 CCUnloadTable(m_hTable);
@@ -128,8 +128,8 @@ namespace SilEncConverters40
 
         protected unsafe void Load(string strTablePath)
         {
-            DebugWriteLine(this, "BEGIN");
-            DebugWriteLine(this, "path " + strTablePath);
+            Util.DebugWriteLine(this, "BEGIN");
+            Util.DebugWriteLine(this, "path " + strTablePath);
             // first make sure it's there and get the last time it was modified
             DateTime timeModified = DateTime.Now; // don't care really, but have to initialize it.
             if( !DoesFileExist(strTablePath, ref timeModified) )
@@ -152,21 +152,21 @@ namespace SilEncConverters40
                     baTablePath[i] = baTablePathTemp[i];
                 baTablePath[baTablePath.Length - 1] = 0;    // null terminate
 
-                DebugWriteLine(this, displayBytes("CC Table Name", baTablePath));
+                Util.DebugWriteLine(this, Util.getDisplayBytes("CC Table Name", baTablePath));
                 fixed(byte* pszTablePath = baTablePath)
                     fixed(Int32* phTable = &m_hTable)
                     {
-                        DebugWriteLine(this, "Calling CCLoadTable");
+                        Util.DebugWriteLine(this, "Calling CCLoadTable");
                         int status = 0;
                         status = CCLoadTable( pszTablePath, phTable, hInstanceHandle );
                         if( status != 0 )  
                         {
                             TranslateErrStatus(status);
                         }
-                        DebugWriteLine(this, "Finished calling CCLoadTable");
+                        Util.DebugWriteLine(this, "Finished calling CCLoadTable");
                     }
             }
-            DebugWriteLine(this, "END");
+            Util.DebugWriteLine(this, "END");
         }
 
         protected void    TranslateErrStatus(int status)

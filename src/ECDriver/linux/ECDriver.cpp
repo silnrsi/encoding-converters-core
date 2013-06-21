@@ -38,8 +38,8 @@
 #define STRINGIFY(x) #x             // turn x into "x"
 #define TOSTRING(x) STRINGIFY(x)    // expand macro x into its value
 const char * ASSEMBLYFILE  = TOSTRING(LIBDIR) "/SilEncConverters40.dll";
-const char * ASSEMBLIESDIR = "MONO_PATH=" TOSTRING(LIBDIR);
-const char * MONO_REGISTRY = "MONO_REGISTRY_PATH=/var/lib/fieldworks/registry";
+const char * MONO_PATH = "MONO_PATH=" TOSTRING(LIBDIR);
+const char * MONO_REG  = "MONO_REGISTRY_PATH=" TOSTRING(REGROOT) "/registry";
 
 // Uncomment the following line for verbose debugging output.
 #define VERBOSE_DEBUGGING
@@ -117,11 +117,11 @@ void LoadClasses(void)
     if (loaded) return;
 #ifdef VERBOSE_DEBUGGING
     fprintf(stderr, "ECDriver: Loading Mono and SEC classes.\n");
-    fprintf(stderr, "ECDriver: %s.\n", ASSEMBLIESDIR);
+    fprintf(stderr, "ECDriver: %s.\n", MONO_PATH);
+    fprintf(stderr, "ECDriver: %s.\n", MONO_REG);
 #endif
-
-    putenv((char *)ASSEMBLIESDIR);
-    putenv((char *)MONO_REGISTRY);
+    putenv((char *)MONO_PATH);
+    putenv((char *)MONO_REG);
     domain = mono_jit_init(ASSEMBLYFILE);
     mono_config_parse(NULL);  // prevents System.Drawing.GDIPlus exception
     MonoAssembly *assembly = mono_domain_assembly_open (domain, ASSEMBLYFILE);

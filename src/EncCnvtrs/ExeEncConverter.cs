@@ -240,12 +240,12 @@ namespace SilEncConverters40
             var strOutput = DoExeCall(strInput);
 
 #if DEBUG && __MonoCS__
-			DebugWriteLine(this, "Got result from system call: " + strOutput);
+			Util.DebugWriteLine(this, "Got result from system call: " + strOutput);
             byte[] baOut2 = Encoding.Unicode.GetBytes(strOutput);  // easier to read
-            DebugWriteLine(this, displayBytes("Output UTF16LE", baOut2));
+            Util.DebugWriteLine(this, Util.getDisplayBytes("Output UTF16LE", baOut2));
 
             string filepath = Path.Combine(Path.GetTempPath(), "returning.txt");
-            DebugWriteLine(this, "See " + filepath);
+            Util.DebugWriteLine(this, "See " + filepath);
 			TextWriter tw = new StreamWriter(filepath);
             tw.WriteLine("input: '"  + strInput + "'");
             tw.WriteLine("output: '" + strOutput + "'");

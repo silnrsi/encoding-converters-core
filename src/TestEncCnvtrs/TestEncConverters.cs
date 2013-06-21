@@ -37,20 +37,22 @@ namespace TestEncCnvtrs
 		[TestFixtureSetUp]
 		public void InitForClass()
 		{
-			if (Util.IsUnix)
-			{
-				// Make sure we get set up to be able to access Registry.LocalMachine.
-				string machine_store = Environment.GetEnvironmentVariable("MONO_REGISTRY_PATH");
-				if (machine_store == null)
-				{
-					Console.WriteLine("First, make sure that /var/lib/fieldworks exists and is writeable by everyone.");
-					Console.WriteLine("eg, sudo mkdir -p /var/lib/fieldworks && sudo chmod +wt /var/lib/fieldworks");
-					Console.WriteLine("Then add the following line to ~/.profile, logout, and login again.");
-					Console.WriteLine("MONO_REGISTRY_PATH=/var/lib/fieldworks/registry; export MONO_REGISTRY_PATH");
-					// doesn't work on Maverick, but try it anyway...
-					Environment.SetEnvironmentVariable("MONO_REGISTRY_PATH", "/var/lib/fieldworks/registry");
-				}
-			}
+#if __MonoCS__
+            // Make sure we get set up to be able to access Registry.LocalMachine.
+            string machine_store = Environment.GetEnvironmentVariable("MONO_REGISTRY_PATH");
+            if (machine_store == null)
+            {
+                Console.WriteLine("First, make sure that " + Util.CommonAppDataPath() +
+                                  " exists and is writeable by everyone.");
+                Console.WriteLine("eg, sudo mkdir -p " + Util.CommonAppDataPath() +
+                                  " && sudo chmod +wt " + Util.CommonAppDataPath());
+                Console.WriteLine("Then add the following line to ~/.profile, logout, and login again.");
+                Console.WriteLine("MONO_REGISTRY_PATH=" + Util.CommonAppDataPath() +
+                                  "/registry; export MONO_REGISTRY_PATH");
+                // doesn't work on Maverick, but try it anyway...
+                Environment.SetEnvironmentVariable("MONO_REGISTRY_PATH", Util.CommonAppDataPath() + "/registry");
+            }
+#endif
 			m_repoFile = null;
 			RegistryKey key = Registry.CurrentUser.OpenSubKey(EncConverters.HKLM_PATH_TO_XML_FILE, true);
 			if (key != null)
@@ -83,7 +85,7 @@ namespace TestEncCnvtrs
 			}
 			catch (Exception e)
 			{
-				EncConverter.DebugWriteLine(this, e.Message);
+				Util.DebugWriteLine(this, e.Message);
 			}
 		}
 
@@ -499,8 +501,10 @@ namespace TestEncCnvtrs
 			string filepath;
 			var uri = new Uri(Assembly.GetExecutingAssembly().CodeBase);
 			filepath = uri.GetComponents(UriComponents.Path, UriFormat.Unescaped);
-			if (Util.IsUnix && codeBase.StartsWith("file:///") && !filepath.StartsWith("/"))
+#if __MonoCS__
+			if (codeBase.StartsWith("file:///") && !filepath.StartsWith("/"))
 				filepath = "/" + filepath;
+#endif
 			var configDir = Path.GetDirectoryName(filepath);
 			var outDir = Path.GetDirectoryName(configDir);
 			var dir = Path.GetDirectoryName(outDir);

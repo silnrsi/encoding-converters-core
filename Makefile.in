@@ -17,7 +17,10 @@ RELEASEOUT  = $(ROOTDIR)/output/Release
 MONO        = @MONO@
 MONO_LDFLAGS= @MONO_LDFLAGS@
 LIBDIR      = @libdir@/encConverters
-REGROOT     = /var/lib/fieldworks
+# For fieldworks, define COMMON_DATA_FW in ECInterfaces.csproj for Util.cs.
+# Also change REGROOT in ECDriver Makefile.in.
+#REGROOT     = /var/lib/fieldworks
+REGROOT     = /var/lib/encConverters
 REGKEY      = $(REGROOT)/registry/LocalMachine/software/sil/silencconverters40
 
 SRCDIRS = src/IcuEC src/PyScriptEC src/ECDriver/linux
@@ -107,14 +110,15 @@ install: release
 	done; \
 	fi
 	@cp -p src/EncCnvtrs/SilEncConverters40.dll.config $(DESTDIR)$(LIBDIR)
-	@$(INSTALL) -d $(DESTDIR)$(prefix)/share/encConverters
-	@$(INSTALL) values.xml $(DESTDIR)$(prefix)/share/encConverters
-	@$(INSTALL) -d $(DESTDIR)$(REGROOT) -m +wt
-	@$(INSTALL) values.xml $(DESTDIR)$(REGKEY)
+	# Set up writable directories and keys to use as a registry.
+	@$(INSTALL) -d $(DESTDIR)$(REGROOT) -m +rwxt
+	@mkdir -p $(DESTDIR)$(REGKEY)
+	@find $(DESTDIR)$(REGROOT) -type d -exec chmod 777 {} \;
+	$(INSTALL) values.xml $(DESTDIR)$(REGKEY) -m +rw
 
 uninstall:
 	rm -f -r $(DESTDIR)$(LIBDIR)/*
-	rm -f $(DESTDIR)$(prefix)/share/encConverters/values.xml
+	rm -f $(DESTDIR)$(REGKEY)/values.xml
 
 NUNITROOT=`which nunit-console | sed s=/bin/nunit-console=/lib/mono=`
 check: all

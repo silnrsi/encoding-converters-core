@@ -44,10 +44,10 @@ namespace SilEncConverters40
 			int lProcessTypeFlags,
 			bool bIsInRepository)
 		{
-			EncConverter.DebugWriteLine(this, "BEGIN");
+			Util.DebugWriteLine(this, "BEGIN");
 			InitializeComponent();
 			fillListBox();
-			EncConverter.DebugWriteLine(this, "Initialized component.");
+			Util.DebugWriteLine(this, "Initialized component.");
 			base.Initialize (
 				aECs,
 				IcuConvEncConverter.strHtmlFilename,
@@ -59,12 +59,12 @@ namespace SilEncConverters40
 				strRhsEncodingId,
 				lProcessTypeFlags,
 				bIsInRepository);
-			EncConverter.DebugWriteLine(this, "Initialized base.");
+			Util.DebugWriteLine(this, "Initialized base.");
 
 			// if we're editing, then set the Converter Spec and say it's unmodified
 			if (m_bEditMode)
 			{
-				EncConverter.DebugWriteLine(this, "Edit mode");
+				Util.DebugWriteLine(this, "Edit mode");
 				System.Diagnostics.Debug.Assert(!String.IsNullOrEmpty(ConverterIdentifier));
 				//listBoxConvName.SelectedValue = ConverterIdentifier;
 				for (int i = 0; i < translitIDs.Length; i++)
@@ -79,7 +79,7 @@ namespace SilEncConverters40
 			}
 
 			m_bInitialized = true;
-			EncConverter.DebugWriteLine(this, "END");
+			Util.DebugWriteLine(this, "END");
 		}
 
 		public IcuConvAutoConfigDialog (
@@ -226,7 +226,7 @@ namespace SilEncConverters40
 		// converter.
 		protected override bool OnApply()
 		{
-			EncConverter.DebugWriteLine(this, "BEGIN");
+			Util.DebugWriteLine(this, "BEGIN");
 			// Get the converter identifier from the Setup tab controls.
 			ConverterIdentifier = translitIDs[listBoxConvName.SelectedIndex];
 			//SetConvTypeFromRbControls(radioButtonExpectsUnicode, radioButtonExpectsLegacy,
@@ -245,7 +245,7 @@ namespace SilEncConverters40
 					return false;
 				}
 			}
-			EncConverter.DebugWriteLine(this, "END");
+			Util.DebugWriteLine(this, "END");
 			return base.OnApply();
 		}
 
@@ -271,7 +271,7 @@ namespace SilEncConverters40
 			if (m_bInitialized) // but only do this after we're already initialized
 			{
 				ListBox lb = this.listBoxConvName;  // shorter nickname
-				EncConverter.DebugWriteLine(this,
+				Util.DebugWriteLine(this,
                     lb.SelectedIndex.ToString() + "\n" + lb.GetItemText(lb.SelectedItem) + "lb_SelectedIndexChanged"); 
 				IsModified = true;
 			}

@@ -21,10 +21,11 @@ Contents:
 
 ## To build using makefiles.
 
-from project root, sudo ./autogen.sh        # calls configure
-make                                        # for testing
-make release
+cd to project root
+sudo ./autogen.sh        # calls configure
+make                     # for testing and debugging
 sudo make install prefix=/usr
+
 http://www.gnu.org/prep/standards/html_node/Directory-Variables.html
 
 ## xbuild
@@ -54,6 +55,7 @@ gmcs ECFileConverter.cs -r:bin/x86/Debug/ECInterfaces.dll -r:bin/x86/Debug/SilEn
 #-------------------------------------------------------------------------------
 
 cd output/Debug
+export MONO_REGISTRY_PATH=/var/lib/encConverters/registry
 ./ECFileConverter.exe /i in.txt /o out.txt /n askMe
 
 ## Running tests
@@ -168,7 +170,7 @@ Two registry key folders:
         Some subkeys apparently get created by the Converters Installer.
         Gets read to open help file in AutoConfigDialog.cs.
 
-There are several places where a registry structure is stored.
+There are several places where a registry structure can be stored.
     /etc/mono/registry              # HKCR - system wide shared settings
     ~/.mono/registry                # HKCU - user settings
     /var/lib/fieldworks/registry    # system wide fieldworks settings

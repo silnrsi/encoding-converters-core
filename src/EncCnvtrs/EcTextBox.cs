@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using ECInterfaces;     // for Util
 
 namespace SilEncConverters40
 {
@@ -8,7 +9,7 @@ namespace SilEncConverters40
     {
         public EcTextBox()
         {
-            EncConverter.DebugWriteLine(this, "Default Font " +
+            Util.DebugWriteLine(this, "Default Font " +
                 this.Font.Name + ", Size " + this.Font.Size.ToString());
             //this.Font = new System.Drawing.Font("Arial", 11);
         }

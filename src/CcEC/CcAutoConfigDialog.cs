@@ -227,7 +227,7 @@ namespace SilEncConverters40
             if (!String.IsNullOrEmpty(ConverterIdentifier))
                 openFileDialogBrowse.InitialDirectory = Path.GetDirectoryName(ConverterIdentifier);
             else
-                openFileDialogBrowse.InitialDirectory = Util.GetSpecialFolderPath(Environment.SpecialFolder.CommonApplicationData) + EncConverters.strDefMapsTablesPath;
+                openFileDialogBrowse.InitialDirectory = Util.CommonAppDataPath() + EncConverters.strDefMapsTablesPath;
 
             if (openFileDialogBrowse.ShowDialog() == DialogResult.OK)
             {

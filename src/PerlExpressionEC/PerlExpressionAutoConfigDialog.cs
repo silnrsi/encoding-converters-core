@@ -23,9 +23,9 @@ namespace SilEncConverters40
             int lProcessTypeFlags,
             bool bIsInRepository)
         {
-            EncConverter.DebugWriteLine(this, "BEGIN");
+            Util.DebugWriteLine(this, "BEGIN");
 			InitializeComponent();
-            EncConverter.DebugWriteLine(this, "Initialized component.");
+            Util.DebugWriteLine(this, "Initialized component.");
 			base.Initialize (
                 aECs,
                 PerlExpressionEncConverter.strHtmlFilename,
@@ -37,11 +37,11 @@ namespace SilEncConverters40
                 strRhsEncodingId,
                 lProcessTypeFlags,
                 bIsInRepository);
-            EncConverter.DebugWriteLine(this, "Initialized base.");
+            Util.DebugWriteLine(this, "Initialized base.");
             // if we're editing a CC table/spellfixer project, then set the Converter Spec and say it's unmodified
             if (m_bEditMode)
             {
-                EncConverter.DebugWriteLine(this, "Edit mode");
+                Util.DebugWriteLine(this, "Edit mode");
 				System.Diagnostics.Debug.Assert(!String.IsNullOrEmpty(ConverterIdentifier));
                 textBoxExpression.Text = ConverterIdentifier;
                 IsModified = false;
@@ -54,7 +54,7 @@ namespace SilEncConverters40
                 comboBoxPreviousPerlExpressions.SelectedIndex = 0;
 
             m_bInitialized = true;
-            EncConverter.DebugWriteLine(this, "END");
+            Util.DebugWriteLine(this, "END");
 		}
 
         private void LoadComboBoxFromSettings(ComboBox comboBox)
@@ -224,7 +224,7 @@ namespace SilEncConverters40
         //  to make sure that the user has correctly configured a legitimate converter.
         protected override bool OnApply()
         {
-            EncConverter.DebugWriteLine(this, "BEGIN");
+            Util.DebugWriteLine(this, "BEGIN");
             // Get the converter identifier from the Setup tab controls.
             ConverterIdentifier = textBoxExpression.Text;
 
@@ -248,7 +248,7 @@ namespace SilEncConverters40
                 }
             }
 
-            EncConverter.DebugWriteLine(this, "END");
+            Util.DebugWriteLine(this, "END");
             return base.OnApply();
         }
 

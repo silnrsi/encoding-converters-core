@@ -19,6 +19,8 @@ OUTDIR      = $(ROOTDIR)/output/Debug
 RELEASEBLD  = $(ROOTDIR)/build/Obj/Release
 RELEASEOUT  = $(ROOTDIR)/output/Release
 LIBDIR      = @libdir@/encConverters
+#REGROOT     = /var/lib/fieldworks
+REGROOT     = /var/lib/encConverters
 MONO_INCLUDE= @MONO_CPPFLAGS@
 MONO_LDFLAGS= @MONO_LDFLAGS@
 
@@ -35,7 +37,7 @@ $(OUTDIR)/libecdriver.so: $(BUILDDIR)/ECDriver.o
 
 $(BUILDDIR)/ECDriver.o: $(SRCDIR)ECDriver.cpp $(SRCDIR)ecdriver.h
 	g++ -Wall -fPIC -c $(SRCDIR)ECDriver.cpp -o $(BUILDDIR)/ECDriver.o \
-  $(MONO_INCLUDE) -DLIBDIR=$(LIBDIR)
+  $(MONO_INCLUDE) -DLIBDIR=$(LIBDIR) -DREGROOT=$(REGROOT)
 
 test: $(OUTDIR)/ECDriver_example_dynamic $(OUTDIR)/ECDriver_example_shared $(OUTDIR)/ECDriver_test
 	LD_LIBRARY_PATH=$(OUTDIR):$(LD_LIBRARY_PATH) $(OUTDIR)/ECDriver_test
@@ -70,7 +72,7 @@ $(RELEASEOUT)/libecdriver.so: $(RELEASEBLD)/ECDriver.o
 
 $(RELEASEBLD)/ECDriver.o: $(SRCDIR)ECDriver.cpp $(SRCDIR)ecdriver.h
 	g++ -Wall -fPIC -c $(SRCDIR)ECDriver.cpp -o $(RELEASEBLD)/ECDriver.o \
-  $(MONO_INCLUDE) -DLIBDIR=$(LIBDIR)
+  $(MONO_INCLUDE) -DLIBDIR=$(LIBDIR) -DREGROOT=$(REGROOT)
 
 testrel: $(RELEASEOUT)/ECDriver_test
 	LD_LIBRARY_PATH=$(RELEASEOUT):$(LD_LIBRARY_PATH) $(RELEASEOUT)/ECDriver_test

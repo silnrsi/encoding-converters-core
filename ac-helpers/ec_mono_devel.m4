@@ -54,6 +54,10 @@ AC_DEFUN([EC_MONO_DEVEL],[
 		MONO_LDFLAGS=-L$ec_monobase/lib
 		AC_MSG_RESULT([$MONO_LDFLAGS])
 		AC_SUBST([MONO_LDFLAGS])
+	elif test -f $ec_monobase/lib64/libmono-2.0.so; then
+		MONO_LDFLAGS=-L$ec_monobase/lib64
+		AC_MSG_RESULT([$MONO_LDFLAGS])
+		AC_SUBST([MONO_LDFLAGS])
 	else
 		AC_MSG_ERROR([Cannot find lib/libmono-2.0.a.  Please install a version of mono >= 2.8.0])
 	fi
