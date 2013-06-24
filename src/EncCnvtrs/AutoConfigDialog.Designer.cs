@@ -1,4 +1,5 @@
 using System;
+using ECInterfaces;                     // for Util
 
 namespace SilEncConverters40
 {
@@ -30,6 +31,7 @@ namespace SilEncConverters40
         /// </summary>
         private void InitializeComponent()
         {
+            Util.DebugWriteLine(this, "AutoConfigDialog BEGIN");
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AutoConfigDialog));
             this.tabControl = new System.Windows.Forms.TabControl();
@@ -801,7 +803,7 @@ namespace SilEncConverters40
             this.flowLayoutPanelTransductionTypes.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewProperties)).EndInit();
             this.ResumeLayout(false);
-
+            Util.DebugWriteLine(this, "END");
         }
 
         #endregion

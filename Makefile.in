@@ -31,7 +31,9 @@ PLUGINS = "AI 4.0.0.0 Plugin Details.xml" "CC 4.0.0.0 Plugin Details.xml" \
     "EC 4.0.0.0 Plugin Details.xml" "IcuEC 4.0.0.0 Plugin Details.xml" \
     "PerlEC 4.0.0.0 Plugin Details.xml" "PythonEC 4.0.0.0 Plugin Details.xml"
 
-all:
+all: debug
+
+debug:
 	@(cd build && ./xbuild.sh $(MONO) $(MONO_LDFLAGS)) || true
 	@for subdir in $(SRCDIRS); do \
 	  echo making in $$subdir; \
@@ -109,12 +111,22 @@ install: release
 	  $(INSTALL) $$file $(DESTDIR)$(LIBDIR); \
 	done; \
 	fi
+	for file in DistFiles/*-14.dll; do \
+	  $(INSTALL) $$file $(DESTDIR)$(LIBDIR); \
+	done;
 	@cp -p src/EncCnvtrs/SilEncConverters40.dll.config $(DESTDIR)$(LIBDIR)
 	# Set up writable directories and keys to use as a registry.
 	@$(INSTALL) -d $(DESTDIR)$(REGROOT) -m +rwxt
 	@mkdir -p $(DESTDIR)$(REGKEY)
 	@find $(DESTDIR)$(REGROOT) -type d -exec chmod 777 {} \;
 	$(INSTALL) values.xml $(DESTDIR)$(REGKEY) -m +rw
+
+# useful for debugging the ECDriver
+install-debug:
+	@cp $(OUTDIR)/*.dll $(DESTDIR)$(LIBDIR)
+	@cp $(OUTDIR)/*.dll.mdb $(DESTDIR)$(LIBDIR)
+	@cp $(OUTDIR)/*.tlb $(DESTDIR)$(LIBDIR)
+	@cp $(OUTDIR)/*.so $(DESTDIR)$(LIBDIR)
 
 uninstall:
 	rm -f -r $(DESTDIR)$(LIBDIR)/*
@@ -133,3 +145,6 @@ check: all
 	  echo checking in $$subdir; \
 	  (cd $$subdir && $(MAKE) check) || true; \
 	done
+test:
+	@cd src/ECDriver/linux && $(MAKE) test
+

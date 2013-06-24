@@ -1,11 +1,15 @@
-﻿// 21-May-2013 JDK  Add link to help file in instructions.
+﻿#define LoadGeckoLibs
+// 21-May-2013 JDK  Add link to help file in instructions.
+// 24-Jun-2013 JDK  Loading Gecko libs may fail, so supply a macro to disable.
 
 using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
+#if LoadGeckoLibs
 using Gecko;
+#endif
 using Microsoft.Win32;
 
 namespace SilEncConverters40
@@ -24,7 +28,9 @@ namespace SilEncConverters40
         }
 
         private WhichBrowser     _whichBrowser   { get; set; }
+#if LoadGeckoLibs
         private GeckoWebBrowser  GeckoWebBrowser { get; set; }
+#endif
         private WebBrowser       IeWebBrowser    { get; set; }
         private TableLayoutPanel LabelsPanel     { get; set; }
 
@@ -38,9 +44,14 @@ namespace SilEncConverters40
             {
                 // try to initialize 
                 // if GeckoFx was successfully initialized, then use it
+#if LoadGeckoLibs
                 if (GeckoFxInitializer.SetUpXulRunner())
+#else
+                if (false)
+#endif
                 {
                     _whichBrowser = WhichBrowser.GeckoFx;
+#if LoadGeckoLibs
                     GeckoWebBrowser = new GeckoWebBrowser
                     {
                         Dock = DockStyle.Fill,
@@ -52,6 +63,7 @@ namespace SilEncConverters40
                     };
 
                     Controls.Add(GeckoWebBrowser);
+#endif
                 }
                 else
                 {
@@ -139,7 +151,9 @@ namespace SilEncConverters40
                 }
                 if (IsGecko)
                 {
+#if LoadGeckoLibs
                     GeckoWebBrowser.Navigate("file://" + strXmlFilePath);
+#endif
                 }
                 else
                 {

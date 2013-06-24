@@ -3103,6 +3103,9 @@ namespace SilEncConverters40
                 catch (Exception e)
                 {
                     MessageBox.Show("AutoConfigure failed: " + e.Message, traceSwitch.DisplayName);
+#if DEBUG && __MonoCS__
+                    throw;
+#endif
                 }
             }
             return false;
@@ -3840,7 +3843,7 @@ namespace SilEncConverters40
             }
             catch
             {
-#if DEBUG
+#if DEBUG && __MonoCS__
                 throw;
 #endif
             }
