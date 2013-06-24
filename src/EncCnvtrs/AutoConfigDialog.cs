@@ -7,9 +7,6 @@ using System.IO;                        // for Path.DirectorySeparatorChar
 using Microsoft.Win32;                  // for RegistryKey
 using ECInterfaces;                     // for IEncConverter
 
-//uncomment the following line for verbose debugging output using Console.WriteLine
-//#define VERBOSE_DEBUGGING
-
 namespace SilEncConverters40
 {
     //[CLSCompliantAttribute(false)]  // because of GeckoWebBrowser
@@ -39,7 +36,7 @@ namespace SilEncConverters40
 
         public AutoConfigDialog()
         {
-            Util.DebugWriteLine(this, "BEGIN");
+            Util.DebugWriteLine(this, "AutoConfigDialog (1) BEGIN");
             InitializeComponent();
             Util.DebugWriteLine(this, "finished InitializeComponent");
 	        this.tabControl.Selecting += new System.Windows.Forms.TabControlCancelEventHandler(tabControl_Selecting);
@@ -72,7 +69,7 @@ namespace SilEncConverters40
             bool bIsInRepository
             )
         {
-			Util.DebugWriteLine(this, "BEGIN");
+			Util.DebugWriteLine(this, "AutoConfigDialog (2) BEGIN");
             htmlfilename = strHtmlFileName;
             m_strOriginalFriendlyName = FriendlyName = strFriendlyName;
             ConverterIdentifier = strConverterIdentifier;

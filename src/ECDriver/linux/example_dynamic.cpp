@@ -22,7 +22,7 @@ int main(int argc, char **argv)
     funcSelectConverter_t funcSelectConverter;
     funcCleanup_t         funcCleanup;
 
-    void* handle = dlopen("libecdriver.so.1.0", RTLD_LAZY);
+    void* handle = dlopen("libecdriver.so", RTLD_LAZY);
     //void* handle = dlopen("./libecdriver.so", RTLD_NOW);  // better for debugging
     if (!handle) {
         fputs (dlerror(), stderr);

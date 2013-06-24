@@ -279,6 +279,11 @@ Solution: build this assembly with mono 4.0 libraries instead of 2.0
     - are we building each assembly to the expected version of mono
     - are we running with the expected version of mono
 
+Type load error
+    in AutoConfigDialog.ctor when calling InitializeComponent().
+Solution: WebBrowserAdaptor.cs requires Gecko DLLs (notice "using Gecko" line)
+    even if there is no xulrunner folder.
+
 If creating the converter fails (for example if TECkit is not found),
 then it crashes because the name is null.
 
