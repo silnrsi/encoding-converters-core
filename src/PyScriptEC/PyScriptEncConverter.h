@@ -1,7 +1,3 @@
-//
-// Note: To check the contents of the .so, you can do this:
-// nm -g libPyScriptEncConverter.so.1.0
-//
 #ifndef __PYSCRIPTENCCONVERTER_H__
 #define __PYSCRIPTENCCONVERTER_H__
 
@@ -17,12 +13,10 @@ typedef
 #endif
 enum PyStringDataType
 {
-    eBytes,     // legacy bytes
-#ifndef _MSC_VER
-    eUTF8Bytes,
-#endif
-    eUCS2,
-    eUCS4       // not supported yet by this code
+    eBytes,     // legacy bytes or possibly encoded unicode data
+    eUTF8Bytes, // UTF8 bytes in C#, unicode string in python script
+    eUCS2,      // Windows; unicode string in python script
+    eUCS4       // Linux;   unicode string in python script
 };
 
 // make my own version of certain Python macros (since they aren't doing type checking or null pointer testing!)

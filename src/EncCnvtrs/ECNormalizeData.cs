@@ -280,7 +280,7 @@ namespace SilEncConverters40
             lpOutBuffer[nOutLen] = lpOutBuffer[nOutLen + 1] = lpOutBuffer[nOutLen + 2] = lpOutBuffer[nOutLen + 3] = 0;
             byte[] baOut = new byte[nOutLen];
             ByteStarToByteArr(lpOutBuffer, nOutLen, baOut);
-            Util.DebugWriteLine(className, Util.getDisplayBytes("null-terminated", baOut));
+            Util.DebugWriteLine(className, Util.getDisplayBytes("byte array", baOut));
 
             // check to see if the engine handled the given output form. If not, then see
             //  if it's a conversion we can easily do (otherwise we'll ask TEC to do the 

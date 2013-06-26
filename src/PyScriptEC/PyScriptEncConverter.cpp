@@ -29,7 +29,7 @@
 
 #ifdef VERBOSE_DEBUGGING
 #ifdef _WIN32
-#include "Windows.h"		// for OutputDebugString
+#include "Windows.h"        // for OutputDebugString
 #include "WinBase.h"
 #endif
 #endif
@@ -63,29 +63,30 @@ namespace PyScriptEC
 
     bool IsModuleLoaded() { return (m_pModule != 0); };
 
-	// this version is for where we use sprintf to print it to the sprintfBuffer, so just pass *that* buffer to the debug function
-	void DebugOutput(const char* str)
-	{
+    // this version is for where we use sprintf to print it to the sprintfBuffer, so just pass *that* buffer to the debug function
+    void DebugOutput(const char* str)
+    {
 #ifdef VERBOSE_DEBUGGING
 #ifdef _WIN32
-		OutputDebugStringA(str);
+        OutputDebugStringA(str);
 #else
-		fprintf(stderr, "%s", str);
+        fprintf(stderr, "%s", str);
+        //printf("%s", str);
 #endif
 #endif
-	}
+    }
 
-	char sprintfBuffer[1000];	// buffer used below
-	void DebugOutput(int dontcare)
-	{
-		DebugOutput((const char*)sprintfBuffer);
-	}
+    char sprintfBuffer[1000];   // buffer used below
+    void DebugOutput(int dontcare)
+    {
+        DebugOutput((const char*)sprintfBuffer);
+    }
 
     void ResetPython()
     {
         DebugOutput("ResetPython() BEGIN\n");
 
-		if( m_pArgs != 0 )
+        if( m_pArgs != 0 )
         {
             Py_DecRef(m_pArgs);
             m_pArgs = 0;
@@ -97,7 +98,7 @@ namespace PyScriptEC
             //  func itself, but the module and then Finalize)
             DebugOutput("releasing what we were doing...\n");
 
-			Py_DecRef(m_pModule);
+            Py_DecRef(m_pModule);
             m_pModule = 0;
 
             // reset the function pointer as well (just good practice)
@@ -110,7 +111,7 @@ namespace PyScriptEC
         }
         DebugOutput("ResetPython() END\n");
 
-	}
+    }
 
 #ifdef _MSC_VER
     // Copy the first len characters of src into a dynamically allocated string.
@@ -124,7 +125,7 @@ namespace PyScriptEC
             len = strlen(src);
         char * dst = (char *)malloc(len + 1);
 #if !be106
-		// use the safe version
+        // use the safe version
         strncpy_s(dst, len + 1, src, len);
 #else
         strncpy(dst, src, len);
@@ -138,16 +139,16 @@ namespace PyScriptEC
     {
         DebugOutput("PyScript.CppLoad() BEGIN\n");
 
-		int hr = 0;
+        int hr = 0;
 
         struct stat attrib;
         DebugOutput(sprintf(sprintfBuffer, "Checking for file '%s'\n", m_strFileSpec));
 
-		if(stat(m_strFileSpec, &attrib) != 0 || !S_ISREG(attrib.st_mode))
+        if(stat(m_strFileSpec, &attrib) != 0 || !S_ISREG(attrib.st_mode))
         {
             DebugOutput("PyScript: Invalid script path");
 
-			return /* CantOpenReadMap = */ -11;
+            return /* CantOpenReadMap = */ -11;
         }
         DebugOutput("Script file exists.\n");
 
@@ -163,7 +164,7 @@ namespace PyScriptEC
         }
         DebugOutput("Setting time last modified.\n");
 
-		m_timeLastModified = attrib.st_mtime;
+        m_timeLastModified = attrib.st_mtime;
 
         // if we've already initialized Python, then we're done.
         if( IsModuleLoaded() )
@@ -176,7 +177,7 @@ namespace PyScriptEC
         // hook up to the Python DLL
         DebugOutput("Initializing python...\n");
 
-		Py_Initialize();
+        Py_Initialize();
         DebugOutput("Initialized.\n");
 
 
@@ -185,22 +186,22 @@ namespace PyScriptEC
         {
             char strCmd[1000];
 #ifdef MSC_VER
-			_snprintf_s(strCmd, 1000, "import sys\nsys.path.append('%s')", m_strScriptDir);
+            _snprintf_s(strCmd, 1000, "import sys\nsys.path.append('%s')", m_strScriptDir);
 #else
             snprintf(strCmd, 1000, "import sys\nsys.path.append('%s')", m_strScriptDir);
 #endif
             strCmd[999] = 0;    // just in case...
             DebugOutput(sprintf(sprintfBuffer, "Running this python command:\n%s\n", strCmd));
 
-			PyRun_SimpleString(strCmd);
+            PyRun_SimpleString(strCmd);
             DebugOutput("Finished python command.\n");
 
-		}
+        }
 
         // turn the filename into a Python object (Python import doesn't like .py extension)
         DebugOutput(sprintf(sprintfBuffer, "ScriptFile '%s'\n", m_strScriptFile));
 
-		char * pszExtension = strrchr(m_strScriptFile, '.');
+        char * pszExtension = strrchr(m_strScriptFile, '.');
         if (!strcmp(pszExtension, ".py"))
             m_strScriptName = strndup(m_strScriptFile, strlen(m_strScriptFile) - 3);
         else
@@ -209,7 +210,7 @@ namespace PyScriptEC
         // get the module point by the name
         DebugOutput(sprintf(sprintfBuffer, "ScriptName '%s'\n", m_strScriptName));
 
-		m_pModule = PyImport_ImportModule(m_strScriptName);
+        m_pModule = PyImport_ImportModule(m_strScriptName);
         if( m_pModule == 0 )
         {
             // gracefully disconnect from Python
@@ -220,7 +221,7 @@ namespace PyScriptEC
 
             DebugOutput(sprintf(sprintfBuffer, "PyScript: Unable to import script module '%s'! Is it locked? Does it have a syntax error? Is a Python distribution installed?", m_strScriptName));
 
-			return /* CantOpenReadMap = */ -11;
+            return /* CantOpenReadMap = */ -11;
         }
 
         PyObject* pDict = PyModule_GetDict(m_pModule);
@@ -241,9 +242,9 @@ namespace PyScriptEC
         {
             // gracefully disconnect from Python
             DebugOutput(sprintf(sprintfBuffer, "PyScript: no callable function named '%s' in script module '%s'!",
-											 m_strFuncName, m_strScriptName));
+                                             m_strFuncName, m_strScriptName));
 
-			ResetPython();
+            ResetPython();
             return /* NameNotFound = */ -7;
         }
 
@@ -266,7 +267,7 @@ namespace PyScriptEC
                     ResetPython();
                     DebugOutput(sprintf(sprintfBuffer, "PyScript: Can't convert optional fixed parameter '%s' to a Python unicode string", strArg));
 
-					return -1;
+                    return -1;
                 }
 
                 // put it into the argument tuple (pValue reference is "stolen" here)
@@ -283,7 +284,7 @@ namespace PyScriptEC
         DebugOutput(sprintf(sprintfBuffer, "m_nArgCount = %d", m_nArgCount));
         DebugOutput("PyScript.CppLoad() END\n");
 
-		return hr;
+        return hr;
     }
 
     int Initialize(char * strScript, char * strDir)
@@ -292,7 +293,7 @@ namespace PyScriptEC
         DebugOutput(sprintf(sprintfBuffer, "strScript '%s'\n", strScript));
         DebugOutput(sprintf(sprintfBuffer, "strDir '%s'\n", strDir));
 
-		if (initialized)
+        if (initialized)
         {
             if (!strcmp(strDir, m_strScriptDir) && !strcmp(strScript, m_strScriptFile))
                 return 0;
@@ -305,9 +306,9 @@ namespace PyScriptEC
 #else
         // On most Linux builds Python expects 4-byte data.
         m_eStringDataTypeIn = m_eStringDataTypeOut = eUCS4;
-        //m_eStringDataTypeIn  = eUTF8Bytes;   // works if eInFormEngine is set to UTF8Bytes in C#
-        //m_eStringDataTypeOut = eUCS4;
 #endif
+        // If this is used, eInFormEngine and eOutFormEngine must be set to UTF8Bytes in C# PreConvert().
+        //m_eStringDataTypeIn = m_eStringDataTypeOut = eUTF8Bytes;
 
         if (m_strScriptFile != NULL && strcmp(strScript, m_strScriptFile))
         {
@@ -346,7 +347,7 @@ namespace PyScriptEC
     {
         DebugOutput("CPyScriptEncConverter::InactivityWarning\n");
 
-		ResetPython();
+        ResetPython();
     }
 
     int PreConvert
@@ -364,7 +365,7 @@ namespace PyScriptEC
         int hr = 0;
         if(hr == 0)
         {
-            // I don't think Python does "bi-directional", so this code ignores the 
+            // the Python converter doesn't currently do "bi-directional", so this code ignores the 
             //  the direction.
             switch(eInEncodingForm)
             {
@@ -427,7 +428,7 @@ namespace PyScriptEC
 #ifdef VERBOSE_DEBUGGING
             bool printedErr = false;
             DebugOutput(sprintf(sprintfBuffer, "While executing the function, '%s', in the python script, '%s', the following error occurred:\n",
-											 m_strFuncName, m_strScriptName));
+                                             m_strFuncName, m_strScriptName));
             PyObject *err_type, *err_value, *err_traceback;
             PyErr_Fetch(&err_type, &err_value, &err_traceback);
             
@@ -471,7 +472,7 @@ namespace PyScriptEC
         // reset python before we go
         ResetPython();
 
-		// most likely a compilation failure
+        // most likely a compilation failure
         return /* CompilationFailed = */ -9;
     }
 
@@ -487,28 +488,27 @@ namespace PyScriptEC
         DebugOutput(sprintf(sprintfBuffer, "nInLen = %d, rnOutLen = %d\n", nInLen, rnOutLen));
         DebugOutput(sprintf(sprintfBuffer, "sizeof(Py_UNICODE) = %d\n", sizeof(Py_UNICODE)));
 
-		PyObject* pValue = 0;
+        PyObject* pValue = 0;
         switch(m_eStringDataTypeIn)
         {
             case eBytes:
                 DebugOutput("CppDoConvert: eBytes input\n");
-                pValue = PyString_FromStringAndSize((const char *)lpInBuffer,nInLen);
+                pValue = PyString_FromStringAndSize((const char *)lpInBuffer, nInLen);
                 break;
-#ifndef _WIN32
             case eUTF8Bytes:
                 DebugOutput("CppDoConvert: eUTF8Bytes input\n");
-                pValue = PyUnicode_FromStringAndSize((const char *)lpInBuffer,nInLen);
+                pValue = PyUnicode_FromStringAndSize((const char *)lpInBuffer, nInLen);
                 break;
-#endif
             case eUCS2:
                 DebugOutput("CppDoConvert: eUCS2 input\n");
                 pValue = PyUnicode_FromUnicode((const Py_UNICODE*)(const char *)lpInBuffer, nInLen / 2);
                 break;
-          // apparently, UTF32 isn't available concurrently with UTF16... so for now... disable it on Windows
+          // UTF32 isn't available concurrently with UTF16... so for now... disable it on Windows
 #ifndef _WIN32
             case eUCS4:
                 DebugOutput("CppDoConvert: eUCS4 input\n");
-                pValue = PyUnicodeUCS4_FromUnicode((const Py_UNICODE*)(const char *)lpInBuffer,nInLen / 4);
+                int lenRoundedUp = (nInLen + (4 - 1)) / 4;  // don't want to chop off trailing 2-byte values
+                pValue = PyUnicodeUCS4_FromUnicode((const Py_UNICODE*)(const char *)lpInBuffer, lenRoundedUp);
                 break;
 #endif
         }
@@ -517,18 +517,18 @@ namespace PyScriptEC
         {
             ResetPython();
 
-			DebugOutput(sprintf(sprintfBuffer, "PyScript: Can't convert input data '%s' to a form that Python can read!?\n", 
-											 lpInBuffer));
+            DebugOutput(sprintf(sprintfBuffer, "PyScript: Can't convert input data '%s' to a form that Python can read!?\n", 
+                                             lpInBuffer));
 
-			return /* IncompleteChar = */ -8;
+            return /* IncompleteChar = */ -8;
         }
 
-		// put the value to convert into the last argument slot
+        // put the value to convert into the last argument slot
         PyTuple_SetItem(m_pArgs, m_nArgCount - 1, pValue);
 
         // do the call
         DebugOutput("CppDoConvert: Calling...");
-		pValue = PyObject_CallObject(m_pFunc, m_pArgs);
+        pValue = PyObject_CallObject(m_pFunc, m_pArgs);
         DebugOutput("finished.\n");
 
         Py_ssize_t nOut;
@@ -538,50 +538,67 @@ namespace PyScriptEC
             return ErrorOccurred();
         }
 
-        int hr = 0;
         void * lpOutValue = 0;
+        int    hr         = 0;
+        int    err        = 0;
         switch(m_eStringDataTypeOut)
         {
             case eBytes:
-#ifndef _WIN32
-            //case eUTF8Bytes:      // I'm not sure how to get UTF8 results from Python.
-#endif
-                DebugOutput("getting eBytes output\n");
-
-				PyString_AsStringAndSize(pValue,(char **)&lpOutValue,&nOut);
+                DebugOutput("CppDoConvert: eBytes output\n");
+                PyString_AsStringAndSize(pValue,(char **)&lpOutValue,&nOut);
                 if( nOut < 0 )
                 {
                     // at least, this is what happens if the python function returns a string, but the ConvType is
                     //  incorrectly configured as returning Unicode. ErrStatus
-                    DebugOutput("PyScript: Are you sure that the Python function returns non-Unicode-encoded (bytes) data?\n");
+                    DebugOutput("CppDoConvert: The Python function may have returned illegal bytes.\n");
 
-					hr = /* OutEncFormNotSupported = */ -13;
+                    hr = /* OutEncFormNotSupported = */ -13;
+                }
+                break;
+            case eUTF8Bytes:
+                DebugOutput("CppDoConvert: eUTF8Bytes output\n");
+#ifdef _WIN32
+                // This might be unnecessary, but the documentation suggests that PyString_AsStringAndSize
+                // might output something like cp1252 on Windows instead of UTF-8.
+                pValue = PyUnicode_AsUTF8String(pValue);
+                if (pValue == NULL)
+                {
+                    DebugOutput("CppDoConvert: Are you sure that the Python function returns Unicode-encoded (wide) data?\n");
+                    hr = /* OutEncFormNotSupported = */ -13;
+                    break;
+                }
+#endif
+                err = PyString_AsStringAndSize(pValue, (char **)&lpOutValue, &nOut);
+                if ( nOut < 0 || err < 0)
+                {
+                    DebugOutput("CppDoConvert: The Python function may have returned some illegal bytes.\n");
+                    hr = /* OutEncFormNotSupported = */ -13;
                 }
                 break;
             case eUCS2:
-                DebugOutput("getting eUCS2 output\n");
-                nOut = (int)PyUnicode_GetSize(pValue) * sizeof(char) * 2;	// EC is expecting the number of bytes
+                DebugOutput("CppDoConvert: eUCS2 output\n");
+                nOut = (int)PyUnicode_GetSize(pValue) * sizeof(char) * 2;   // EC is expecting the number of bytes
                 if( nOut < 0 )
                 {
                     // at least, this is what happens if the python function returns a string, but the ConvType is
                     //  incorrectly configured as returning Unicode. ErrStatus
-                    DebugOutput("PyScript: Are you sure that the Python function returns Unicode-encoded (wide) data?\n");
+                    DebugOutput("CppDoConvert: Are you sure that the Python function returns Unicode-encoded (wide) data?\n");
 
-					hr = /* OutEncFormNotSupported = */ -13;
+                    hr = /* OutEncFormNotSupported = */ -13;
                 }
                 lpOutValue = PyUnicode_AsUnicode(pValue);   // PyUnicodeUCS2_AsUnicode(pValue);
                 break;
 #ifndef _WIN32
             case eUCS4:
-                DebugOutput("getting eUCS4 output\n");
-                nOut = (int)PyUnicode_GetSize(pValue) * sizeof(char) * 4;	// EC is expecting the number of bytes
+                DebugOutput("CppDoConvert: eUCS4 output\n");
+                nOut = (int)PyUnicode_GetSize(pValue) * sizeof(char) * 4;   // EC is expecting the number of bytes
                 if( nOut < 0 )
                 {
                     // at least, this is what happens if the python function returns a string, but the ConvType is
                     //  incorrectly configured as returning Unicode. ErrStatus
-                    DebugOutput("PyScript: Are you sure that the Python function returns Unicode-encoded (wide) data?\n");
+                    DebugOutput("CppDoConvert: Are you sure that the Python function returns Unicode-encoded (wide) data?\n");
 
-					hr = /* OutEncFormNotSupported = */ -13;
+                    hr = /* OutEncFormNotSupported = */ -13;
                 }
                 lpOutValue = PyUnicodeUCS4_AsUnicode(pValue);
                 break;
@@ -596,21 +613,21 @@ namespace PyScriptEC
             {
                 DebugOutput(sprintf(sprintfBuffer, "Too long: '%s'\n", (char *)lpOutValue));
 
-				hr = /* NotEnoughBuffer = */ -17;
+                hr = /* NotEnoughBuffer = */ -17;
             }
             else
             {
                 rnOutLen = nOut;
                 DebugOutput(sprintf(sprintfBuffer, "copying to length %d\n", (int)nOut));
 
-				if( nOut > 0 )
+                if( nOut > 0 )
                     memcpy(lpOutBuffer,lpOutValue,nOut);
                 DebugOutput(sprintf(sprintfBuffer, "length of outBuffer = %u\n", (unsigned)strlen(lpOutBuffer)));
 
-				lpOutBuffer[nOut] = '\0';   // end the string here
+                lpOutBuffer[nOut] = '\0';   // end the string here
                     DebugOutput(sprintf(sprintfBuffer, "length of outBuffer = %u\n", (unsigned)strlen(lpOutBuffer)));
 
-			}
+            }
         }
 
         Py_DecRef(pValue);

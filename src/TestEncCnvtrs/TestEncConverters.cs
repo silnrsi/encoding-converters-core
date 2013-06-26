@@ -37,6 +37,7 @@ namespace TestEncCnvtrs
 		[TestFixtureSetUp]
 		public void InitForClass()
 		{
+				Util.DebugWriteLine(this, "BEGIN");
 #if __MonoCS__
             // Make sure we get set up to be able to access Registry.LocalMachine.
             string machine_store = Environment.GetEnvironmentVariable("MONO_REGISTRY_PATH");
@@ -87,6 +88,7 @@ namespace TestEncCnvtrs
 			{
 				Util.DebugWriteLine(this, e.Message);
 			}
+            Util.DebugWriteLine(this, "END");
 		}
 
 		/// --------------------------------------------------------------------
@@ -679,6 +681,7 @@ namespace TestEncCnvtrs
 		[Test]
 		public void TestPyScriptEncConverters()
 		{
+            Util.DebugWriteLine(this, "BEGIN");
 			int countOrig = m_encConverters.Count;
 			var dir = GetTestSourceFolder();
 			string filename1 = Path.Combine(dir, "From1252.py");
@@ -725,6 +728,7 @@ namespace TestEncCnvtrs
 			m_encConverters.Remove("UnitTesting-Python-Unicode-To-1252");
 			int countAfter = m_encConverters.Count;
 			Assert.AreEqual(countOrig, countAfter, "Should have the original number of converters now.");
+            Util.DebugWriteLine(this, "END");
 		}
 
 		[Test]
@@ -873,25 +877,5 @@ namespace TestEncCnvtrs
 			}
 			Console.WriteLine();
 		}
-		
-        public static bool IsUnix
-        {
-            get
-			{
-				return Environment.OSVersion.Platform == PlatformID.Unix ||
-						Environment.OSVersion.Platform == PlatformID.MacOSX;	// MacOSX is built on top of BSD.
-			}
-        }
-
-		public static bool IsWindows
-        {
-            get
-			{
-				return Environment.OSVersion.Platform == PlatformID.Win32S ||
-					Environment.OSVersion.Platform == PlatformID.Win32Windows ||
-					Environment.OSVersion.Platform == PlatformID.Win32NT ||
-					Environment.OSVersion.Platform == PlatformID.WinCE;
-			}
-        }
 	}
 }
