@@ -19,16 +19,20 @@ namespace ECInterfaces
     {
         private static string s_CommonAppDataFolder;
 
-        // This list of methods will not be shown in debugging output.
+        // The following classes and methods will not be shown in debugging output.
         // Comment out or add as desired.
+        private static readonly string [] DEBUG_EXCLUDE_CLASSES = {
+            "EncConverters",
+        };
         private static readonly string [] DEBUG_EXCLUDE_METHODS = {
-            "EncConverters.AddEx",
-            "EncConverters.AddToCollection",
+            //"EncConverters.AddEx",
+            //"EncConverters.AddToCollection",
             //"EncConverters.GetConversionEnginesSupported",
             //"EncConverters.GetRepositoryFileName",
-            "EncConverters.GetEncodingFontDetails",
-            "EncConverters.InitializeConverter",
-            "EncConverters.InstantiateIEncConverter",
+            //"EncConverters.GetEncodingFontDetails",
+            //"EncConverters.InitializeConverter",
+            //"EncConverters.InstantiateIEncConverter",
+
             "IcuTranslitEncConverter.Initialize",
             "PerlExpressionEncConverter.Initialize",
             "PyScriptEncConverter.Initialize",
@@ -79,6 +83,8 @@ namespace ECInterfaces
 
         // Currently we are using the following routines rather than log4net
         // in order to avoid a dependency on another library.
+        // It sure would be nice if C# came with something more powerful
+        // than System.Diagnostics.TraceSwitch.
 
         private static void DebugWriteLine(StackFrame sf, string className, string strMsg)
         {
@@ -87,10 +93,20 @@ namespace ECInterfaces
             System.Reflection.MethodBase mb = sf.GetMethod();
             string methodName = mb != null ? mb.Name : "";
             string fullMethodName = className + "." + methodName;
+            if (DEBUG_EXCLUDE_CLASSES.Contains(className))
+                return;
             if (DEBUG_EXCLUDE_METHODS.Contains(fullMethodName))
                 return;
-            System.Diagnostics.Debug.WriteLine(
-                String.Format("{0,-40} {1}", fullMethodName + ":", strMsg));
+            string output = String.Format("{0,-40} {1}", fullMethodName + ":", strMsg);
+
+            // Should we use System.Diagnostics.Debug or Console.Error here?
+            // Using Debug is nice because it can be turned on or off with an environment variable.
+            // However Debug.Flush() doesn't have any effect, which means that the messages can
+            // get out of order relative to C++ output.
+
+            System.Diagnostics.Debug.WriteLine(output);
+            //Console.WriteLine(output);
+            //Console.Error.WriteLine(output);
 #endif
         }
 

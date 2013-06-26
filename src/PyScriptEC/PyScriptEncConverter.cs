@@ -84,14 +84,8 @@ namespace SilEncConverters40
         #region Misc helpers
         protected override EncodingForm  DefaultUnicodeEncForm(bool bForward, bool bLHS)
         {
-#if __MonoCS__
-            // if it's unspecified, then we want UTF-32 in C# on Linux.
-            Util.DebugWriteLine(this, "DefaultUnicodeEncForm UTF32");
-            return EncodingForm.UTF32;
-#else
             // if it's unspecified, then we want UTF-16 in C#.
             return EncodingForm.UTF16;
-#endif
         }
 
         protected unsafe void Load(string strScriptPath)

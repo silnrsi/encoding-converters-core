@@ -15,6 +15,7 @@ Contents:
     Paths and Libraries
     Solutions to common error messages
 
+
 #-------------------------------------------------------------------------------
 # Building
 #-------------------------------------------------------------------------------
@@ -22,20 +23,23 @@ Contents:
 ## To build using makefiles.
 
 cd to project root
-sudo ./autogen.sh        # calls configure
-make                     # for testing and debugging
+./autogen.sh        # calls configure
+make                # for testing and debugging
 sudo make install prefix=/usr
 
 http://www.gnu.org/prep/standards/html_node/Directory-Variables.html
+
 
 ## xbuild
 
 Generate msbuild from VStudio and port to Mono xbuild.
 http://www.mono-project.com/Microsoft.Build
 
+
 ## Mono
 
 sudo apt-get install mono-complete   # includes xbuild and mono-2.0-dev
+
 
 ## MonoDevelop
 
@@ -45,10 +49,12 @@ either. Just remove and then add each project file.
 Editing the solution file itself is possible but a little tricky.
 Lines containing .Build.0 are needed for every project file.
 
+
 ## compile a single file with Mono
 
 gmcs TestEncConverters.cs /r:../../output/Debug/ECInterfaces.dll /r:../../output/Debug/SilEncConverters40.dll
 gmcs ECFileConverter.cs -r:bin/x86/Debug/ECInterfaces.dll -r:bin/x86/Debug/SilEncConverters40.dll
+
 
 #-------------------------------------------------------------------------------
 # Running
@@ -58,10 +64,14 @@ cd output/Debug
 export MONO_REGISTRY_PATH=/var/lib/encConverters/registry
 ./ECFileConverter.exe /i in.txt /o out.txt /n askMe
 
+Running like this was necessary on Fedora:
+sudo mono ECFileConverter.exe /i in.txt /o out.txt /n askMe
+
+
 ## Running tests
 
-./RunTests.exe
-or use sudo for possibly better results.
+nunit-console TestEncCnvtrs.dll
+./RunTests.exe  # does the same thing but works in MonoDevelop
 
 Instructions given by the program:
 First, make sure that /var/lib/fieldworks exists and is writeable by everyone.
@@ -69,23 +79,27 @@ eg, sudo mkdir -p /var/lib/fieldworks && sudo chmod +wt /var/lib/fieldworks
 Then add the following line to ~/.profile, logout, and login again.
 MONO_REGISTRY_PATH=/var/lib/fieldworks/registry; export MONO_REGISTRY_PATH
 
-Cleanup() often complains about the RESTOREME file at:
+Cleanup() may complain about the RESTOREME file at:
 /var/lib/fieldworks/SIL/Repository
 Fix this by renaming manually.
 
+May need to copy this file to /output/Debug:
+/usr/lib/mono/gac/nunit.framework/2.5.10.0__96d09a1eb7f44a77/nunit.framework.dll
+
+NAnt runs NUnit tests conveniently, but csproj files don't do this without
+installing extra libraries.
+
+
 ## Debugging
 
-    Make sure the project is getting built with the debug flag.
-    Then run it like this:
-    mono --debug --trace=N:TestEncCnvtrs,RunTests,SilEncConverters40,ECInterfaces ./RunTests.exe > out.txt
+Make sure the project is getting built with the debug flag.
+Then run it like this:
+mono --debug --trace=N:TestEncCnvtrs,RunTests,SilEncConverters40,ECInterfaces ./RunTests.exe > out.txt
 
-    Does this set a breakpoint?
-    gdb mono
-    run --debug --break "RunTests:Main" ./RunTests.exe
+Does this set a breakpoint?
+gdb mono
+run --debug --break "RunTests:Main" ./RunTests.exe
 
-## Root Privileges
-
-    in shell script, gksu mono ECFileConverter.exe
 
 #-------------------------------------------------------------------------------
 # Paths and Libraries
@@ -93,19 +107,22 @@ Fix this by renaming manually.
 
 ## Paths
 
-/usr/lib/encConverters has to be set with LD_LIBRARY_PATH in order for
-    OOoLT to find ECDriver.
-    To do this, add a file to ld.so.conf.d with the path.
-    Or we could specify the path in OOoLT.
+/usr/lib/encConverters is searched by OOoLT to find libecdriver.so
 There seems to be a problem when the TECkit library is in a different
     place from the running SilEncConverters40.dll.
     Setting LD_LIBRARY_PATH makes this work, but ldconfig does not.
     Anyway in a production environment this shouldn't be a problem because
     they will be in the same directory.
 Set MONO_PATH to load assemblies outside the current directory.
+If there are several versions of mono, then it may be necessary to set the
+    path so that the appropriate version is found.
+    which mono
 
-locate
-updatedb
+Some commands to find things:
+    which
+    whereis
+    locate
+    updatedb (no arguments)  # update database used by locate
 
 
 ## ICU
@@ -130,34 +147,21 @@ manually. When I did this, make put files in various places under
 Anyway what I really wanted to do was probably apt-get install libicu-dev.
 
 
-## ldconfig
-
-/usr/lib/encConverters
-Create file /etc/ld.so.conf.d/encConverters.conf containing this text:
-    /usr/lib/encConverters
-Then sudo ldconfig
-
-
-## NUnit
-
-Copy this file to /output/Debug:
-/usr/lib/mono/gac/nunit.framework/2.5.10.0__96d09a1eb7f44a77/nunit.framework.dll 
-To run tests directly:
-    cd output/Debug
-    nunit-console TestEncCnvtrs.dll
-NAnt runs NUnit tests conveniently, but csproj files don't do this without
-installing extra libraries.
-
-Assembly DLLs can be viewed in MonoDevelop with the Assembly browser.
-Easier is to edit references and browse to a file.
-When selected (not added), it will show the version info at the bottom.
-
-
 ## Registry
+
+Mono uses folders and XML files to simulate the Windows registry.
 
 #mkdir /var/lib/fieldworks
 #chmod a+rwx /var/lib/fieldworks
-sudo mkdir -p /var/lib/fieldworks && sudo chmod +wt /var/lib/fieldworks
+sudo mkdir -p /var/lib/encConverters && sudo chmod +wt /var/lib/encConverters
+
+There are several places where a registry structure can be stored.
+    /etc/mono/registry              # HKCR - system wide shared settings
+    ~/.mono/registry                # HKCU - user settings
+    /var/lib/fieldworks/registry    # system wide fieldworks settings
+    ~/.config/fieldworks/registry/  # user fieldworks settings
+        chmod 777 /etc/mono/registry/ClassesRoot -R
+    echo $MONO_REGISTRY_PATH
 
 Two registry key folders:
     SOFTWARE\SIL\EncodingConverterRepository
@@ -170,19 +174,23 @@ Two registry key folders:
         Some subkeys apparently get created by the Converters Installer.
         Gets read to open help file in AutoConfigDialog.cs.
 
-There are several places where a registry structure can be stored.
-    /etc/mono/registry              # HKCR - system wide shared settings
-    ~/.mono/registry                # HKCU - user settings
-    /var/lib/fieldworks/registry    # system wide fieldworks settings
-    ~/.config/fieldworks/registry/  # user fieldworks settings
-        chmod 777 /etc/mono/registry/ClassesRoot -R
-    echo $MONO_REGISTRY_PATH
 
-
-## Repository
+## Mapping Repository
 
 /var/lib/fieldworks/SIL/Repository/mappingRegistry.xml
 rm *RESTOREME   # may be needed when running tests
+
+
+## Viewing compiled files
+
+file abc            # technical overview of what abc is
+nm -g abc.so        # list symbols in abc.so
+readelf -Ws abc.so  # output all symbols defined in abc.so
+ldd abc.so          # list dependencies of abc.so
+
+Assembly DLLs can be viewed in MonoDevelop with the Assembly browser.
+Easier is to edit references and browse to a file.
+When selected (not added), it will show the version info at the bottom.
 
 
 ## Gecko
@@ -231,6 +239,16 @@ To build Skybound.Gecko.dll, in MonoDevelop:
     Options-> Run -> General
     change Environment Variable LD_LIBRARY_PATH to .17 instead of .13
 
+
+## ldconfig
+
+/usr/lib/encConverters
+Create file /etc/ld.so.conf.d/encConverters.conf containing this text:
+    /usr/lib/encConverters
+Then sudo ldconfig
+However none of this is currently needed.
+
+
 ## Fieldworks paths
 
 /usr/lib/fieldworks/mono/lib/mono/2.0/gmcs.exe
@@ -242,9 +260,11 @@ To build Skybound.Gecko.dll, in MonoDevelop:
 
 /usr/share/fieldworks/setup-user
 
+
 ## Embedding Mono
 
 http://stackoverflow.com/questions/3672532/use-mono-net-library-in-linux
+
 
 #-------------------------------------------------------------------------------
 # Solutions to common error messages
@@ -261,10 +281,10 @@ Solution: build with g++ instead of gcc
 
 usr/bin/cli: symbol lookup error: libIcuEC.so: undefined symbol: ucnv_open_44
 Solution: link with -licuuc (actual solution was to fix libicu48 package by
-          removing libicu44 items from /usr/local).
-          Two things to check:
-          - is the correct library found at link time
-          - is the correct library found at runtime
+    removing libicu44 items from /usr/local).
+    Two things to check:
+    - is the correct library found at link time
+    - is the correct library found at runtime
 
 Missing method
 System.Reflection.MethodInfo::op_Inequality(MethodInfo,MethodInfo)
