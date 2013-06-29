@@ -1,8 +1,6 @@
 ﻿# -*- coding: utf-8 -*-
 #-------------------------------------------------------------------------------
 # ToNfc.py
-#
-# Warning: This code will not work on Python 3.
 #-------------------------------------------------------------------------------
 from unicodedata import normalize
 
@@ -12,13 +10,14 @@ def Convert(u):
     return normalize('NFC', u)
 
 if __name__ == '__main__':
-    ui = u"Ę"
-    print repr(ui)
-    u = Convert(ui)  # NFD string
-    print "result: " + repr(u)
-    print "expecting: " + repr(u"Ę")  # NFC string
-    if u == u"Ę": # NFC string
+    ## Warning: The following testing code will not work on Python 3.
+    uInput = u"Ę" # NFD string
+    print u"sending: %s" % repr(uInput)
+    result = Convert(uInput)
+    print u"result: %s" % repr(result)
+    expected = u"Ę" # NFC string
+    if result == expected:
         print "ok"
     else:
-        print "unexpected result"
+        print u"unexpected result; expected %s" % repr(expected)
 

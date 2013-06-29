@@ -222,8 +222,7 @@ namespace ECFileConverter
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine("ECFileConv: program error!" + e.Message);
-                    throw;
+                    Console.WriteLine("ECFileConv: " + e.Message);
                 }
             }
 		}

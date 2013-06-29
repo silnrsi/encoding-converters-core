@@ -13,7 +13,7 @@ typedef
 #endif
 enum PyStringDataType
 {
-    eBytes,     // legacy bytes or possibly encoded unicode data
+    eBytes,     // non-unicode bytes (or encoded unicode data, but EncConverters doesn't recommend this)
     eUTF8Bytes, // UTF8 bytes in C#, unicode string in python script
     eUCS2,      // Windows; unicode string in python script
     eUCS4       // Linux;   unicode string in python script
@@ -30,10 +30,6 @@ enum PyStringDataType
 #define MyPyType_Check(op)      ((!op) ? false : PyObject_TypeCheck(op, &PyType_Type))
 #define MyPyDict_Check(op)      ((!op) ? false : PyObject_TypeCheck(op, &PyDict_Type))
 #define MyPyList_Check(op)      ((!op) ? false : PyObject_TypeCheck(op, &PyList_Type))
-
-/////////////////////////////////////////////////////////////////////////////
-// CPyScriptEncConverter
-#define PythonInactivityWarningTimeOut 60000   // 60 seconds of inactivity means clean up resources
 }
 
 #ifdef __cplusplus
@@ -51,10 +47,8 @@ extern "C" {
 #endif
 
     DLLEXPORT int PyScriptEC_Initialize(char * strScript, char * strDir);
-    DLLEXPORT int PyScriptEC_PreConvert (int eInEncodingForm, int& eInFormEngine,
-                        int eOutEncodingForm, int& eOutFormEngine,
-                        int& eNormalizeOutput, bool bForward,
-                        int nInactivityWarningTimeOut);
+    DLLEXPORT int PyScriptEC_PreConvert (int eInFormEngine, int eOutFormEngine,
+                        int eNormalizeOutput, bool bForward);
     DLLEXPORT int PyScriptEC_DoConvert (char * lpInBuffer, int nInLen, char * lpOutBuffer,
                         int& rnOutLen);
 

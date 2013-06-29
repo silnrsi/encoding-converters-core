@@ -20,17 +20,21 @@ namespace SilEncConverters40
     //  'HKEY_CLASSES_ROOT\SilEncConverters40.TecEncConverter' which is the basis of 
     //  how it is started (see EncConverters.AddEx).
     // [ComVisible(false)] 
-	public class PyScriptEncConverter : EncConverter
+    public class PyScriptEncConverter : EncConverter
     {
         #region DLLImport Statements
         // On Linux looks for libPyScriptEncConverter.so (adds lib- and -.so)
-        //[DllImport("PyScriptEncConverter", SetLastError=true)]
-		[DllImport("PyScriptEncConverter", EntryPoint = "PyScriptEC_Initialize", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("PyScriptEncConverter", EntryPoint = "PyScriptEC_Initialize", CallingConvention = CallingConvention.Cdecl)]
         static extern int CppInitialize (
             [MarshalAs(UnmanagedType.LPStr)] string strScript,
             [MarshalAs(UnmanagedType.LPStr)] string strDir);
 
-		[DllImport("PyScriptEncConverter", EntryPoint = "PyScriptEC_DoConvert", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("PyScriptEncConverter", EntryPoint = "PyScriptEC_PreConvert", CallingConvention = CallingConvention.Cdecl)]
+        static extern unsafe int CppPreConvert(
+            int eInFormEngine, int eOutFormEngine,
+            int eNormalizeOutput, bool bForward);
+
+        [DllImport("PyScriptEncConverter", EntryPoint = "PyScriptEC_DoConvert", CallingConvention = CallingConvention.Cdecl)]
         static extern unsafe int CppDoConvert(
             byte* lpInputBuffer, int nInBufLen,
             byte* lpOutputBuffer, int *npOutBufLen);
@@ -67,64 +71,42 @@ namespace SilEncConverters40
             base.Initialize(converterName, converterSpec, ref lhsEncodingID, ref rhsEncodingID, 
                 ref conversionType, ref processTypeFlags, codePageInput, codePageOutput, bAdding );
 
-            // this is the only one we support from now on (if the user really wants to do legacy to unicode, they have to deal with the legacy as coming in utf-8 format
-            conversionType = ConvType.Unicode_to_Unicode;
+            // the only thing we want to add (now that the convType can be less than accurate) 
+            //  is to make sure it's unidirectional
+            switch(conversionType)
+            {
+                case ConvType.Legacy_to_from_Legacy:
+                    conversionType = ConvType.Legacy_to_Legacy;
+                    break;
+                case ConvType.Legacy_to_from_Unicode:
+                    conversionType = ConvType.Legacy_to_Unicode;
+                    break;
+                case ConvType.Unicode_to_from_Legacy:
+                    conversionType = ConvType.Unicode_to_Legacy;
+                    break;
+                case ConvType.Unicode_to_from_Unicode:
+                    conversionType = ConvType.Unicode_to_Unicode;
+                    break;
+                default:
+                    break;
+            }
 
             // if we're supposedly adding this one, then clobber our copy of its last modified 
             // (there was a problem with us instantiating lots of these things in a row and
             //  not detecting the change because the modified date was within a second of each 
             //  other)
             if( bAdding )
+            {
+                Util.DebugWriteLine(this, "Adding");
                 m_timeModified = DateTime.MinValue;
+
+                // do the load at this point; not that we need it, but for checking that everything's okay.
+                Load();
+            }
             Util.DebugWriteLine(this, "END");
         }
 
         #endregion Initialization
-
-        #region Misc helpers
-        protected override EncodingForm  DefaultUnicodeEncForm(bool bForward, bool bLHS)
-        {
-            // if it's unspecified, then we want UTF-16 in C#.
-            return EncodingForm.UTF16;
-        }
-
-        protected unsafe void Load(string strScriptPath)
-        {
-            Util.DebugWriteLine(this, "BEGIN");
-            // first make sure it's there and get the last time it was modified
-            DateTime timeModified = DateTime.Now; // don't care really, but have to initialize it.
-            if( !DoesFileExist(strScriptPath, ref timeModified) )
-                EncConverters.ThrowError(ErrStatus.CantOpenReadMap, strScriptPath);
-
-            // if it has been modified or it's not already loaded...
-            if( timeModified > m_timeModified )
-            {
-                // keep track of the modified date, so we can detect a new version to reload
-                m_timeModified = timeModified;
-
-                Util.DebugWriteLine(this, "Calling CppInitialize");
-                string strScriptName = Path.GetFileName(strScriptPath);
-                string strScriptDir = Path.GetDirectoryName(strScriptPath);
-                int status = 0;
-
-                status = CppInitialize(strScriptName, strScriptDir);
-                if( status != 0 )
-                {
-                    var strExtraValue = strScriptPath;
-                    var errStatus = (ErrStatus) status;
-                    switch(errStatus)
-                    {
-                        case ErrStatus.NameNotFound:
-                            strExtraValue = "Convert";
-                            break;
-                    }
-                    EncConverters.ThrowError(errStatus, strExtraValue);
-                }
-                Util.DebugWriteLine(this, "Finished calling CppInitialize");
-            }
-            Util.DebugWriteLine(this, "END");
-        }
-        #endregion Misc helpers
 
         #region Abstract Base Class Overrides
         protected override void PreConvert
@@ -137,13 +119,14 @@ namespace SilEncConverters40
             bool                bForward
             ) 
         {
-	        // let the base class do its thing first
+            // let the base class do its thing first
             base.PreConvert( eInEncodingForm, ref eInFormEngine,
-							eOutEncodingForm, ref eOutFormEngine,
-							ref eNormalizeOutput, bForward);
+                            eOutEncodingForm, ref eOutFormEngine,
+                            ref eNormalizeOutput, bForward);
 
             if( NormalizeLhsConversionType(ConversionType) == NormConversionType.eUnicode )
             {
+                // We could use UTF-8 here, but wide data works just fine.
 #if _MSC_VER
                 Util.DebugWriteLine(this, "eInFormEngine UTF16");
                 eInFormEngine = EncodingForm.UTF16;
@@ -156,7 +139,6 @@ namespace SilEncConverters40
             {
                 // legacy
                 Util.DebugWriteLine(this, "eInFormEngine LegacyBytes");
-                System.Diagnostics.Debug.Fail("This converter doesn't support a legacy side (anymore)");
                 eInFormEngine = EncodingForm.LegacyBytes;
             }
 
@@ -173,12 +155,47 @@ namespace SilEncConverters40
             else
             {
                 Util.DebugWriteLine(this, "eOutFormEngine LegacyBytes");
-                System.Diagnostics.Debug.Fail("This converter doesn't support a legacy side (anymore)");
                 eOutFormEngine = EncodingForm.LegacyBytes;
             }
 
-            // do the load at this point.
-            Load(ConverterIdentifier);
+            // do the load at this point
+            Load();
+
+            // then do the C++ encoding form settings
+            CppPreConvert((int)eInFormEngine,
+                          (int)eOutFormEngine,
+                          (int)eNormalizeOutput, bForward);
+        }
+
+        protected unsafe void Load()
+        {
+            Util.DebugWriteLine(this, "BEGIN");
+            string strScriptPath = ConverterIdentifier;
+
+            // first make sure it's there and get the last time it was modified
+            DateTime timeModified = DateTime.Now; // don't care really, but have to initialize it.
+            if( !DoesFileExist(strScriptPath, ref timeModified) )
+                EncConverters.ThrowError(ErrStatus.CantOpenReadMap, strScriptPath);
+
+            // if it has been modified or it's not already loaded...
+            if( timeModified > m_timeModified )
+            {
+                // keep track of the modified date, so we can detect a new version to reload
+                m_timeModified = timeModified;
+
+                Util.DebugWriteLine(this, "Calling CppInitialize");
+                string strScriptName = Path.GetFileName(strScriptPath);
+                string strScriptDir  = Path.GetDirectoryName(strScriptPath);
+                int status = CppInitialize(strScriptName, strScriptDir);
+                if( status != 0 )
+                {
+                    var strExtraValue = strScriptPath;
+                    var errStatus     = (ErrStatus) status;
+                    EncConverters.ThrowError(errStatus, strExtraValue);
+                }
+                Util.DebugWriteLine(this, "Finished calling CppInitialize");
+            }
+            Util.DebugWriteLine(this, "END");
         }
 
         protected override unsafe void DoConvert
@@ -202,7 +219,7 @@ namespace SilEncConverters40
 
             if( status != 0 )  
             {
-                EncConverters.ThrowError(ErrStatus.Exception, "Python Script errored out during conversion!");
+                EncConverters.ThrowError(status);
             }
         }
 
