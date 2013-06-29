@@ -4,7 +4,9 @@
 //
 // 05-Dec-11 JDK  Put into a namespace.
 // 20-May-13 JDK  Linux requires strdup() instead of _strdup().
+// 29-Jun-13 JDK  Implement choice of unicode string or bytes.
 //
+// Example steps to compile:
 // sudo apt-get install python-dev
 // g++ PyScriptEncConverter.cpp -o PyScriptEC.exe -I/usr/include/python2.7/ -lpython2.7
 
@@ -25,7 +27,7 @@
 #include "PyScriptEncConverter.h"
 
 // Uncomment the following line if you want verbose debugging output
-#define VERBOSE_DEBUGGING
+//#define VERBOSE_DEBUGGING
 
 #ifdef VERBOSE_DEBUGGING
 #ifdef _WIN32
@@ -39,22 +41,15 @@
 #endif
 
 // Keep this in a namespace so that it doesn't get confused with functions that
-// have the same name in other converters, for example Load().
+// have the same name in other converters.
 namespace PyScriptEC
 {
     bool initialized=false;  // true after Initialize() is called
 
-    PyObject*   m_pFunc     = 0;
-    PyObject*   m_pModule   = 0;
-    PyObject*   m_pArgs     = 0;
-    int         m_nArgCount = 0;
-
-    time_t     m_timeLastModified   = 0;
-    char *     m_strFileSpec        = NULL;
-    char *     m_strScriptDir       = NULL;
-    char *     m_strScriptFile      = NULL;
-    char *     m_strScriptName      = NULL;
-    char *     m_strFuncName        = NULL;
+    PyObject * m_pFunc         = 0;
+    PyObject * m_pModule       = 0;
+    char *     m_strScriptFile = NULL;
+    char *     m_strFuncName   = NULL;
 
     PyStringDataType    m_eStringDataTypeIn;
     PyStringDataType    m_eStringDataTypeOut;
@@ -84,19 +79,12 @@ namespace PyScriptEC
 
     void ResetPython()
     {
-        DebugOutput("ResetPython() BEGIN\n");
-
-        if( m_pArgs != 0 )
-        {
-            Py_DecRef(m_pArgs);
-            m_pArgs = 0;
-        }
-
+        DebugOutput("CppResetPython() BEGIN\n");
         if( IsModuleLoaded() )
         {
             // this means we *were* doing something, so release everything (not the 
             //  func itself, but the module and then Finalize)
-            DebugOutput("releasing what we were doing...\n");
+            DebugOutput("CppResetPython: releasing what we were doing...\n");
 
             Py_DecRef(m_pModule);
             m_pModule = 0;
@@ -109,86 +97,55 @@ namespace PyScriptEC
             
             Py_Finalize();
         }
-        DebugOutput("ResetPython() END\n");
+        DebugOutput("CppResetPython() END\n");
 
     }
 
-#ifdef _MSC_VER
-    // Copy the first len characters of src into a dynamically allocated string.
-    char * strndup(const char * src, size_t len)
+    //**************************************************************************
+    /**
+     * Set default string types and load the script.
+     */
+    int Initialize(char * strScriptFile, char * strScriptDir)
     {
-        if (src == NULL)
-            return NULL;
-        if (len < 0)
-            len = 0;
-        else if (len > strlen(src))
-            len = strlen(src);
-        char * dst = (char *)malloc(len + 1);
-#if !be106
-        // use the safe version
-        strncpy_s(dst, len + 1, src, len);
+        DebugOutput("CppInitialize() BEGIN\n");
+        DebugOutput(sprintf(sprintfBuffer, "strScriptFile '%s'\n", strScriptFile));
+        DebugOutput(sprintf(sprintfBuffer, "strScriptDir '%s'\n", strScriptDir));
+        if (initialized)
+        {
+            ResetPython();
+        }
+
+#ifdef _WIN32
+        // On Windows the caller should typically give us utf-16.
+        m_eStringDataTypeIn = m_eStringDataTypeOut = eUCS2;
 #else
-        strncpy(dst, src, len);
-#endif
-        dst[len] = 0;
-        return dst;
-    }
+        // On most Linux builds Python expects 4-byte data.
+        m_eStringDataTypeIn = m_eStringDataTypeOut = eUCS4;
 #endif
 
-    int Load(void)
-    {
-        DebugOutput("PyScript.CppLoad() BEGIN\n");
+        // do the load at this point
+        initialized = true;
+        DebugOutput("CppInitialize: Loading\n");
 
         int hr = 0;
-
-        struct stat attrib;
-        DebugOutput(sprintf(sprintfBuffer, "Checking for file '%s'\n", m_strFileSpec));
-
-        if(stat(m_strFileSpec, &attrib) != 0 || !S_ISREG(attrib.st_mode))
-        {
-            DebugOutput("PyScript: Invalid script path");
-
-            return /* CantOpenReadMap = */ -11;
-        }
-        DebugOutput("Script file exists.\n");
-
-
-        // see if the file has been changed (and reload if so)
-        if (m_timeLastModified != 0)
-        {
-            if (attrib.st_mtime > m_timeLastModified)
-            {
-                // unload it and then we'll reload it later
-                ResetPython();
-            }
-        }
-        DebugOutput("Setting time last modified.\n");
-
-        m_timeLastModified = attrib.st_mtime;
 
         // if we've already initialized Python, then we're done.
         if( IsModuleLoaded() )
             return hr;
 
-        // put the rest of the arguments into an array for later processing
-        char ** astrArgs = NULL; 
-        int nAstrArgs = 0;
-
         // hook up to the Python DLL
-        DebugOutput("Initializing python...\n");
-
+        DebugOutput("CppInitialize: Initializing python...\n");
         Py_Initialize();
-        DebugOutput("Initialized.\n");
-
+        DebugOutput("CppInitialize: Initialized.\n");
 
         // next add the path to the sys.path
-        if (m_strScriptDir != NULL)
+        if (strScriptDir != NULL)
         {
             char strCmd[1000];
 #ifdef MSC_VER
-            _snprintf_s(strCmd, 1000, "import sys\nsys.path.append('%s')", m_strScriptDir);
+            _snprintf_s(strCmd, 1000, "import sys\nsys.path.append('%s')", strScriptDir);
 #else
-            snprintf(strCmd, 1000, "import sys\nsys.path.append('%s')", m_strScriptDir);
+            snprintf(strCmd, 1000, "import sys\nsys.path.append('%s')", strScriptDir);
 #endif
             strCmd[999] = 0;    // just in case...
             DebugOutput(sprintf(sprintfBuffer, "Running this python command:\n%s\n", strCmd));
@@ -198,19 +155,18 @@ namespace PyScriptEC
 
         }
 
-        // turn the filename into a Python object (Python import doesn't like .py extension)
-        DebugOutput(sprintf(sprintfBuffer, "ScriptFile '%s'\n", m_strScriptFile));
-
-        char * pszExtension = strrchr(m_strScriptFile, '.');
-        if (!strcmp(pszExtension, ".py"))
-            m_strScriptName = strndup(m_strScriptFile, strlen(m_strScriptFile) - 3);
-        else
-            m_strScriptName = _strdup(m_strScriptFile);
+        // turn the filename into a Python object name (Python import doesn't like .py extension)
+        DebugOutput(sprintf(sprintfBuffer, "ScriptFile '%s'\n", strScriptFile));
+        m_strScriptFile = _strdup(strScriptFile);   // save name for error messages
+        char * strScriptName = _strdup(strScriptFile);
+        char * pszExtension = strstr(strScriptName, ".py");
+        if (pszExtension)
+            pszExtension[0] = '\0';  // truncate strScriptName at position of pszExtension
 
         // get the module point by the name
-        DebugOutput(sprintf(sprintfBuffer, "ScriptName '%s'\n", m_strScriptName));
+        DebugOutput(sprintf(sprintfBuffer, "ScriptName '%s'\n", strScriptName));
 
-        m_pModule = PyImport_ImportModule(m_strScriptName);
+        m_pModule = PyImport_ImportModule(strScriptName);
         if( m_pModule == 0 )
         {
             // gracefully disconnect from Python
@@ -219,261 +175,127 @@ namespace PyScriptEC
             ErrorOccurred();
             Py_Finalize();
 
-            DebugOutput(sprintf(sprintfBuffer, "PyScript: Unable to import script module '%s'! Is it locked? Does it have a syntax error? Is a Python distribution installed?", m_strScriptName));
+            DebugOutput(sprintf(sprintfBuffer, "PyScript: Unable to import script module '%s'! Is it locked? Does it have a syntax error? Is a Python distribution installed?", strScriptFile));
 
             return /* CantOpenReadMap = */ -11;
         }
 
         PyObject* pDict = PyModule_GetDict(m_pModule);
 
-        // if the user didn't give us a function name, then use the
-        //  default function name, 'Convert'
-        if(nAstrArgs > 1)
-        {
-            m_strFuncName = _strdup(astrArgs[1]);
-        }
-        else
-        {
-            m_strFuncName = _strdup("Convert");
-        }
+        // use the default function name, 'Convert'
+        m_strFuncName = _strdup("Convert");
         m_pFunc = PyDict_GetItemString(pDict, m_strFuncName);
         
         if(!MyPyCallable_Check(m_pFunc))
         {
             // gracefully disconnect from Python
             DebugOutput(sprintf(sprintfBuffer, "PyScript: no callable function named '%s' in script module '%s'!",
-                                             m_strFuncName, m_strScriptName));
+                                               m_strFuncName, strScriptFile));
 
             ResetPython();
             return /* NameNotFound = */ -7;
         }
 
-        // finally, if the user configured any additional parameters to be passed
-        //  directly to the module, add those to the arguments we're going to pass.
-        if(nAstrArgs > 2)
-        {
-            // make it size + 1 (for the data as the last value--filled in by
-            //  PreConvert)
-            m_nArgCount = nAstrArgs - 1;
-            m_pArgs = PyTuple_New(m_nArgCount);
-            for(int i = 2; i < nAstrArgs; i++)
-            {
-                char * strArg = astrArgs[i];
-                PyObject* pValue = PyUnicode_FromUnicode (
-                                   (const Py_UNICODE*)(const char *)strArg,strlen(strArg));
-                if (pValue == 0) 
-                {
-                    // gracefully disconnect from Python
-                    ResetPython();
-                    DebugOutput(sprintf(sprintfBuffer, "PyScript: Can't convert optional fixed parameter '%s' to a Python unicode string", strArg));
-
-                    return -1;
-                }
-
-                // put it into the argument tuple (pValue reference is "stolen" here)
-                PyTuple_SetItem(m_pArgs, i - 2, pValue);
-            }
-        }
-        else
-        {
-            // we need at least one for the data value to be passed
-            m_nArgCount = 1;
-            m_pArgs = PyTuple_New(m_nArgCount);
-        }
-
-        DebugOutput(sprintf(sprintfBuffer, "m_nArgCount = %d", m_nArgCount));
-        DebugOutput("PyScript.CppLoad() END\n");
-
+        DebugOutput("CppInitialize() END\n");
         return hr;
-    }
-
-    int Initialize(char * strScript, char * strDir)
-    {
-        DebugOutput("PyScript.CppInitialize() BEGIN\n");
-        DebugOutput(sprintf(sprintfBuffer, "strScript '%s'\n", strScript));
-        DebugOutput(sprintf(sprintfBuffer, "strDir '%s'\n", strDir));
-
-        if (initialized)
-        {
-            if (!strcmp(strDir, m_strScriptDir) && !strcmp(strScript, m_strScriptFile))
-                return 0;
-            ResetPython();
-        }
-        m_timeLastModified = time(NULL);
-#ifdef _WIN32
-        // assume the caller is giving us utf-16 (the converter only supports Unicode-to-Unicode converters)
-        m_eStringDataTypeIn = m_eStringDataTypeOut = eUCS2;
-#else
-        // On most Linux builds Python expects 4-byte data.
-        m_eStringDataTypeIn = m_eStringDataTypeOut = eUCS4;
-#endif
-        // If this is used, eInFormEngine and eOutFormEngine must be set to UTF8Bytes in C# PreConvert().
-        //m_eStringDataTypeIn = m_eStringDataTypeOut = eUTF8Bytes;
-
-        if (m_strScriptFile != NULL && strcmp(strScript, m_strScriptFile))
-        {
-            free((void *)m_strScriptFile);
-            m_strScriptFile = NULL;
-        }
-        if (m_strScriptFile == NULL)
-            m_strScriptFile = _strdup(strScript);
-
-        if (m_strScriptDir != NULL && strcmp(strDir, m_strScriptDir))
-        {
-            free((void *)m_strScriptDir);
-            m_strScriptDir = NULL;
-        }
-        if (m_strScriptDir == NULL)
-            m_strScriptDir  = _strdup(strDir);
-
-        if (m_strFileSpec != NULL)
-            free((void *)m_strFileSpec);
-        size_t stringSize = sizeof(char) * (strlen(strDir) + strlen(strScript) + 2);
-        m_strFileSpec = (char *)malloc(stringSize);
-#ifdef _MSC_VER
-        _snprintf_s(m_strFileSpec, stringSize, stringSize, "%s\\%s", strDir, strScript);
-#else
-        snprintf(m_strFileSpec, stringSize, "%s/%s", strDir, strScript);
-#endif
-        m_strFileSpec[stringSize - 1] = 0;
-
-        // do the load at this point; not that we need it, but for checking that everything's okay.
-        initialized = true;
-        return Load();
     }
 
     // call to clean up resources when we've been inactive for some time.
     void InactivityWarning()
     {
-        DebugOutput("CPyScriptEncConverter::InactivityWarning\n");
+        DebugOutput("CppInactivityWarning BEGIN\n");
 
         ResetPython();
     }
 
     int PreConvert
     (
-        int     eInEncodingForm,
-        int&    eInFormEngine,
-        int     eOutEncodingForm,
-        int&    eOutFormEngine,
-        int&    eNormalizeOutput,
-        bool    bForward,
-        int     nInactivityWarningTimeOut
+        int  eInFormEngine,
+        int  eOutFormEngine,
+        int  eNormalizeOutput,
+        bool bForward
     )
     {
-        DebugOutput("CPyScriptEncConverter::PreConvert\n");
+        DebugOutput("CppPreConvert BEGIN\n");
         int hr = 0;
         if(hr == 0)
         {
             // the Python converter doesn't currently do "bi-directional", so this code ignores the 
             //  the direction.
-            switch(eInEncodingForm)
+            switch(eInFormEngine)
             {
                 case EncodingForm_LegacyBytes:
                 case EncodingForm_LegacyString:
-                    eInFormEngine = EncodingForm_LegacyBytes;
+                    DebugOutput("CppPreConvert: eInFormEngine legacy bytes\n");
                     m_eStringDataTypeIn = eBytes;
                     break;
 
                 case EncodingForm_UTF8Bytes:
+                    DebugOutput("CppPreConvert: eInFormEngine UTF-8\n");
+                    m_eStringDataTypeIn = eUTF8Bytes;
+                    break;
+
                 case EncodingForm_UTF8String:
                 case EncodingForm_UTF16BE:
                 case EncodingForm_UTF16:
-                    eInFormEngine = EncodingForm_UTF16;
+                    DebugOutput("CppPreConvert: eInFormEngine 1- or 2-byte unicode\n");
                     m_eStringDataTypeIn = eUCS2;
                     break;
 
                 case EncodingForm_UTF32BE:
                 case EncodingForm_UTF32:
-                    eInFormEngine = EncodingForm_UTF32;
+                    DebugOutput("CppPreConvert: eInFormEngine 4-byte unicode\n");
                     m_eStringDataTypeIn = eUCS4;
                     break;
             };
 
-            switch(eOutEncodingForm)
+            switch(eOutFormEngine)
             {
                 case EncodingForm_LegacyBytes:
                 case EncodingForm_LegacyString:
-                    eOutFormEngine = EncodingForm_LegacyBytes;
+                    DebugOutput("CppPreConvert: eOutFormEngine legacy bytes\n");
                     m_eStringDataTypeOut = eBytes;
                     break;
 
                 case EncodingForm_UTF8Bytes:
+                    DebugOutput("CppPreConvert: eOutFormEngine UTF-8\n");
+                    m_eStringDataTypeOut = eUTF8Bytes;
+                    break;
+
                 case EncodingForm_UTF8String:
                 case EncodingForm_UTF16BE:
                 case EncodingForm_UTF16:
-                    eOutFormEngine = EncodingForm_UTF16;
+                    DebugOutput("CppPreConvert: eOutFormEngine 1- or 2-byte unicode\n");
                     m_eStringDataTypeOut = eUCS2;
                     break;
 
                 case EncodingForm_UTF32BE:
                 case EncodingForm_UTF32:
-                    eOutFormEngine = EncodingForm_UTF32;
+                    DebugOutput("CppPreConvert: eOutFormEngine 4-byte unicode\n");
                     m_eStringDataTypeOut = eUCS4;
                     break;
             };
-
-            // do the load at this point.
-            hr = Load();
         }
+        DebugOutput("CppPreConvert END\n");
         return hr;
     }
-
-    //extern char * EnumerateDictionary(PyObject* pDict);
 
     int ErrorOccurred()
     {
         if( PyErr_Occurred() )
         {
-#ifdef VERBOSE_DEBUGGING
-            bool printedErr = false;
-            DebugOutput(sprintf(sprintfBuffer, "While executing the function, '%s', in the python script, '%s', the following error occurred:\n",
-                                             m_strFuncName, m_strScriptName));
-            PyObject *err_type, *err_value, *err_traceback;
-            PyErr_Fetch(&err_type, &err_value, &err_traceback);
-            
-            if( MyPyClass_Check(err_type) )
-            {
-                PyObject *pName = ((PyClassObject*)err_type)->cl_name;
-                if( pName != 0 )
-                {
-                    char * name = PyString_AsString(pName);
-                    DebugOutput(sprintf(sprintfBuffer, "%s; ", name));
-                }
-                printedErr = true;
-            }
-
-            if( MyPyInstance_Check(err_value) )
-            {
-                DebugOutput("Instance error; ");
-                printedErr = true;
-            }
-            else if( MyPyString_Check(err_value) )
-            {
-                char * value = PyString_AsString(err_value);
-                DebugOutput(sprintf(sprintfBuffer, "%s; ", value));
-                printedErr = true;
-            }
-
-            if( MyPyTraceBack_Check(err_traceback) )
-            {
-                //PyTracebackObject* pTb = (PyTracebackObject*)err_traceback;
-                // if( PyTraceBack_Print(err_traceback,pTb) )
-                char * trace = PyString_AsString(err_traceback);
-                DebugOutput(sprintf(sprintfBuffer, "%s; ", trace));
-                printedErr = true;
-            }
-            if (!printedErr)
-                DebugOutput("\n\n\tPyScript: No data return from Python! Perhaps there's a syntax error in the Python function\n");
-#endif
+            DebugOutput(sprintf(sprintfBuffer, "Error occurred while executing %s() in %s.\n",
+                                               m_strFuncName, m_strScriptFile));
+            PyErr_Print();
             PyErr_Clear();
+
+            // reset python before we go
+            ResetPython();
+
+            // most likely a compilation failure
+            return -9; // CompilationFailed
         }
-
-        // reset python before we go
-        ResetPython();
-
-        // most likely a compilation failure
-        return /* CompilationFailed = */ -9;
+        return 0;
     }
 
     int DoConvert
@@ -484,7 +306,7 @@ namespace PyScriptEC
         int&    rnOutLen
     )
     {
-        DebugOutput("PyScript.CppDoConvert() BEGIN\n");
+        DebugOutput("CppDoConvert() BEGIN\n");
         DebugOutput(sprintf(sprintfBuffer, "nInLen = %d, rnOutLen = %d\n", nInLen, rnOutLen));
         DebugOutput(sprintf(sprintfBuffer, "sizeof(Py_UNICODE) = %d\n", sizeof(Py_UNICODE)));
 
@@ -507,7 +329,7 @@ namespace PyScriptEC
 #ifndef _WIN32
             case eUCS4:
                 DebugOutput("CppDoConvert: eUCS4 input\n");
-                int lenRoundedUp = (nInLen + (4 - 1)) / 4;  // don't want to chop off trailing 2-byte values
+                int lenRoundedUp = (nInLen + (4 - 1)) / 4;  // don't chop off trailing values of less than 4 bytes
                 pValue = PyUnicodeUCS4_FromUnicode((const Py_UNICODE*)(const char *)lpInBuffer, lenRoundedUp);
                 break;
 #endif
@@ -524,23 +346,26 @@ namespace PyScriptEC
         }
 
         // put the value to convert into the last argument slot
-        PyTuple_SetItem(m_pArgs, m_nArgCount - 1, pValue);
+        // we need at least one for the data value to be passed
+        int nArgCount = 1;
+        PyObject * pArgs = PyTuple_New(nArgCount);
+        PyTuple_SetItem(pArgs, nArgCount - 1, pValue);
 
         // do the call
         DebugOutput("CppDoConvert: Calling...");
-        pValue = PyObject_CallObject(m_pFunc, m_pArgs);
+        pValue = PyObject_CallObject(m_pFunc, pArgs);
+        Py_DecRef(pArgs);
         DebugOutput("finished.\n");
-
-        Py_ssize_t nOut;
 
         if( pValue == 0 )
         {
             return ErrorOccurred();
         }
 
-        void * lpOutValue = 0;
-        int    hr         = 0;
-        int    err        = 0;
+        Py_ssize_t nOut;
+        void *     lpOutValue = 0;
+        int        hr         = 0;
+        int        err        = 0;
         switch(m_eStringDataTypeOut)
         {
             case eBytes:
@@ -632,7 +457,7 @@ namespace PyScriptEC
 
         Py_DecRef(pValue);
 
-        DebugOutput("PyScript.CppDoConvert() END\n");
+        DebugOutput("CppDoConvert() END\n");
         return hr;
     }
 }
@@ -645,15 +470,11 @@ int PyScriptEC_Initialize(char * strScript, char * strDir)
 {
     return PyScriptEC::Initialize(strScript, strDir);
 }
-int PyScriptEC_PreConvert (int eInEncodingForm, int& eInFormEngine,
-    int eOutEncodingForm, int& eOutFormEngine,
-    int& eNormalizeOutput, bool bForward,
-    int nInactivityWarningTimeOut)
+int PyScriptEC_PreConvert (int eInFormEngine, int eOutFormEngine,
+    int eNormalizeOutput, bool bForward)
 {
-    return PyScriptEC::PreConvert (eInEncodingForm, eInFormEngine,
-                        eOutEncodingForm, eOutFormEngine,
-                        eNormalizeOutput, bForward,
-                        nInactivityWarningTimeOut);
+    return PyScriptEC::PreConvert (eInFormEngine, eOutFormEngine,
+                        eNormalizeOutput, bForward);
 }
 int PyScriptEC_DoConvert (char * lpInBuffer, int nInLen, char * lpOutBuffer,
     int& rnOutLen)

@@ -120,11 +120,13 @@ namespace SilEncConverters40
             }
         }
 
+/*
         protected override EncodingForm  DefaultUnicodeEncForm(bool bForward, bool bLHS)
         {
             // if it's unspecified, then we want UTF-16
             return EncodingForm.UTF16; 
         }
+*/
 
         protected unsafe void Load(string strTablePath)
         {

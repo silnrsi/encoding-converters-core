@@ -15,10 +15,15 @@ Contents:
     Paths and Libraries
     Solutions to common error messages
 
-
 #-------------------------------------------------------------------------------
 # Building
 #-------------------------------------------------------------------------------
+
+## Getting Source Code
+
+Use TortoiseHg to clone this repository:
+http://hg.palaso.org/ec-main
+
 
 ## To build using makefiles.
 
@@ -64,7 +69,7 @@ cd output/Debug
 export MONO_REGISTRY_PATH=/var/lib/encConverters/registry
 ./ECFileConverter.exe /i in.txt /o out.txt /n askMe
 
-Running like this was necessary on Fedora:
+It was necessary to run like this on Fedora:
 sudo mono ECFileConverter.exe /i in.txt /o out.txt /n askMe
 
 

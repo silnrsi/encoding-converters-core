@@ -882,7 +882,8 @@ namespace SilEncConverters40
                 ||  (eForm == EncodingForm.LegacyBytes));
         }
 
-        // some converters (e.g. cc) use a different Unicode form as basic
+        // C# strings are UTF-16 so we usually want to store UTF-16 data in them.
+        // However some converters (e.g. cc??? But the subclass says UTF-16) use a different Unicode form as basic.
         protected virtual EncodingForm  DefaultUnicodeEncForm(bool bForward, bool bLHS)
         {
             return EncodingForm.UTF16;
