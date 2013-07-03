@@ -144,9 +144,9 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>copy $(SolutionDir)DistFiles\icu\bin\icuuc50.dll $(OutDir)
-copy $(SolutionDir)DistFiles\icu\bin\icuin50.dll $(OutDir)
-copy $(SolutionDir)DistFiles\icu\bin\icudt50.dll $(OutDir)
+    <PostBuildEvent>copy $(SolutionDir)DistFiles\windows\icu\bin\icuuc50.dll $(OutDir)
+copy $(SolutionDir)DistFiles\windows\icu\bin\icuin50.dll $(OutDir)
+copy $(SolutionDir)DistFiles\windows\icu\bin\icudt50.dll $(OutDir)
 </PostBuildEvent>
   </PropertyGroup>
 </Project>

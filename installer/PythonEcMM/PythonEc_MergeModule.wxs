@@ -60,12 +60,12 @@
                 <Directory Id="SIL" Name="SIL">
                     <Directory Id="MapsTables" Name="MapsTables">
                         <Component Id="ReverseString.py" Guid="{24ED86BE-479B-4853-BBC2-3D66314182E8}">
-                            <File Id="ReverseString.py" Name="ReverseString.py" KeyPath="yes" Source="..\..\DistFiles\MapsTables\ReverseString.py" />
-                            <File Id="ToLowerCase.py" Name="ToLowerCase.py" Source="..\..\DistFiles\MapsTables\ToLowerCase.py" />
-                            <File Id="ToUpperCase.py" Name="ToUpperCase.py" Source="..\..\DistFiles\MapsTables\ToUpperCase.py" />
-                            <File Id="ToNfc.py" Name="ToNfc.py" Source="..\..\DistFiles\MapsTables\ToNfc.py" />
-                            <File Id="ToNfd.py" Name="ToNfd.py" Source="..\..\DistFiles\MapsTables\ToNfd.py" />
-                            <File Id="ToUnicodeNames.py" Name="ToUnicodeNames.py" Source="..\..\DistFiles\MapsTables\ToUnicodeNames.py" />
+                            <File Id="ReverseString.py" Name="ReverseString.py" KeyPath="yes" Source="..\..\redist\MapsTables\PythonExamples\ReverseString.py" />
+                            <File Id="ToLowerCase.py" Name="ToLowerCase.py" Source="..\..\redist\MapsTables\PythonExamples\ToLowerCase.py" />
+                            <File Id="ToUpperCase.py" Name="ToUpperCase.py" Source="..\..\redist\MapsTables\PythonExamples\ToUpperCase.py" />
+                            <File Id="ToNfc.py" Name="ToNfc.py" Source="..\..\redist\MapsTables\PythonExamples\ToNfc.py" />
+                            <File Id="ToNfd.py" Name="ToNfd.py" Source="..\..\redist\MapsTables\PythonExamples\ToNfd.py" />
+                            <File Id="ToUnicodeNames.py" Name="ToUnicodeNames.py" Source="..\..\redist\MapsTables\PythonExamples\ToUnicodeNames.py" />
                         </Component>
                     </Directory>
                 </Directory>

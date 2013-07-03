@@ -109,7 +109,7 @@
     <Link>
       <AdditionalDependencies>CppEncConverterCommon.lib;icuuc.lib;icuin.lib;comsvcs.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
-      <AdditionalLibraryDirectories>../../DistFiles/icu/lib;$(SolutionDir)output/$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../DistFiles/windows/icu/lib;$(SolutionDir)output/$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ModuleDefinitionFile>.\IcuEC.def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -123,7 +123,7 @@
     </Link>
     <PostBuildEvent>
       <Message>Performing registration</Message>
-      <Command>set path=%path%%3b$(SolutionDir)DistFiles\icu\bin
+      <Command>set path=%path%%3b$(SolutionDir)DistFiles\windows\icu\bin
 echo copy $(TargetPath) $(SolutionDir)output\$(Configuration)
 copy $(OutDir)$(TargetFileName) $(SolutionDir)output\$(Configuration)
 echo copy $(OutDir)$(TargetName).tlb $(SolutionDir)output\$(Configuration)
@@ -169,7 +169,7 @@ regsvr32 /s /c "$(SolutionDir)output\$(Configuration)\$(TargetFileName)"
     <Link>
       <AdditionalDependencies>CppEncConverterCommon.lib;icuuc.lib;icuin.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
-      <AdditionalLibraryDirectories>../../DistFiles/icu/lib;$(SolutionDir)output/$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../DistFiles/windows/icu/lib;$(SolutionDir)output/$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ModuleDefinitionFile>.\IcuEC.def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -184,7 +184,7 @@ regsvr32 /s /c "$(SolutionDir)output\$(Configuration)\$(TargetFileName)"
     </Link>
     <PostBuildEvent>
       <Message>Performing registration</Message>
-      <Command>set path=%path%%3b$(SolutionDir)DistFiles\icu\bin
+      <Command>set path=%path%%3b$(SolutionDir)DistFiles\windows\icu\bin
 echo copy $(TargetPath) $(SolutionDir)output\$(Configuration)
 copy $(OutDir)$(TargetFileName) $(SolutionDir)output\$(Configuration)
 echo copy $(OutDir)$(TargetName).tlb $(SolutionDir)output\$(Configuration)

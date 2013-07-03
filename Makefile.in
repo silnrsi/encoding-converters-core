@@ -111,7 +111,7 @@ install: release
 	  $(INSTALL) $$file $(DESTDIR)$(LIBDIR); \
 	done; \
 	fi
-	for file in DistFiles/*-14.dll; do \
+	for file in DistFiles/linux/geckofx/*-14.dll; do \
 	  $(INSTALL) $$file $(DESTDIR)$(LIBDIR); \
 	done;
 	@cp -p src/EncCnvtrs/SilEncConverters40.dll.config $(DESTDIR)$(LIBDIR)

@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<SILConvertersInstallerDetails xmlns="http://www.sil.org/computing/schemas/SILConvertersInstallerDetails.xsd">
+    <MapsTables>
+        <MapTable
+            mappingName="BheleASCII&lt;&gt;UNICODE"
+            converterSpec="BheleASCII-Unicode.tec"
+            IsConverterSpecAFile="true"
+            description="BheleASCII to Unicode"
+            implementType="SIL.tec"
+            conversionType="LegacyToFromUnicode"
+            encodingNameLhs = "BheleASCII"
+            encodingNameRhs = "Unicode IPA"
+            processType="UnicodeEncodingConversion"
+            sampleData="Test Data">
+            <AddFont        side="left" font="Bhele SILDoulos"       codePage="1252"/>
+            <AddFont        side="left" font="Bhele SILManuscripter" codePage="1252"/>
+            <AddFontMapping left="Bhele SILDoulos"       right="Doulos SIL"/>
+            <AddFontMapping left="Bhele SILManuscripter" right="Doulos SIL"/>
+        </MapTable>
+        <MapTable
+            mappingName="BUDU&lt;&gt;UNICODE"
+            converterSpec="BUDU-Unicode.tec"
+            IsConverterSpecAFile="true"
+            description="BUDU to Unicode"
+            implementType="SIL.tec"
+            conversionType="LegacyToFromUnicode"
+            encodingNameLhs = "BUDU"
+            encodingNameRhs = "Unicode IPA"
+            processType="UnicodeEncodingConversion"
+            sampleData="Test Data">
+            <AddFont        side="left" font="Budu Orth" codePage="1252"/>
+            <AddFontMapping left="Budu Orth" right="Doulos SIL"/>
+        </MapTable>
+        <MapTable
+            mappingName="BuduASCII&lt;&gt;UNICODE"
+            converterSpec="BuduASCII-Unicode.tec"
+            IsConverterSpecAFile="true"
+            description="BuduASCII to Unicode"
+            implementType="SIL.tec"
+            conversionType="LegacyToFromUnicode"
+            encodingNameLhs = "BuduASCII"
+            encodingNameRhs = "Unicode IPA"
+            processType="UnicodeEncodingConversion"
+            sampleData="Test Data">
+            <AddFont        side="left" font="Budu ASCII Mono" codePage="1252"/>
+            <AddFontMapping left="Budu ASCII Mono" right="Doulos SIL"/>
+        </MapTable>
+        <MapTable
+            mappingName="ECG&lt;&gt;UNICODE"
+            converterSpec="ECG-Unicode.tec"
+            IsConverterSpecAFile="true"
+            description="ECG (Jan.2005) to Unicode"
+            implementType="SIL.tec"
+            conversionType="LegacyToFromUnicode"
+            encodingNameLhs = "ECG"
+            encodingNameRhs = "Unicode IPA"
+            processType="UnicodeEncodingConversion"
+            sampleData="Test Data">
+            <AddFont        side="left" font="ECG-C" codePage="1252"/>
+            <AddFont        side="left" font="ECG-D" codePage="1252"/>
+            <AddFont        side="left" font="ECG-M" codePage="1252"/>
+            <AddFont        side="left" font="ECG-S" codePage="1252"/>
+            <AddFontMapping left="ECG-C" right="Doulos SIL"/>
+            <AddFontMapping left="ECG-D" right="Doulos SIL"/>
+            <AddFontMapping left="ECG-M" right="Doulos SIL"/>
+            <AddFontMapping left="ECG-S" right="Doulos SIL"/>
+        </MapTable>
+        <MapTable
+            mappingName="Komo&lt;&gt;UNICODE"
+            converterSpec="Komo-Unicode.tec"
+            IsConverterSpecAFile="true"
+            description="Komo to Unicode"
+            implementType="SIL.tec"
+            conversionType="LegacyToFromUnicode"
+            encodingNameLhs = "Komo"
+            encodingNameRhs = "Unicode IPA"
+            processType="UnicodeEncodingConversion"
+            sampleData="Test Data">
+            <AddFont        side="left" font="Times Roman Komo" codePage="1252"/>
+            <AddFontMapping left="Times Roman Komo" right="Doulos SIL"/>
+        </MapTable>
+        <MapTable
+            mappingName="KomoASCII&lt;&gt;UNICODE"
+            converterSpec="KomoASCII-Unicode.tec"
+            IsConverterSpecAFile="true"
+            description="KomoASCII to Unicode"
+            implementType="SIL.tec"
+            conversionType="LegacyToFromUnicode"
+            encodingNameLhs = "KomoASCII"
+            encodingNameRhs = "Unicode IPA"
+            processType="UnicodeEncodingConversion"
+            sampleData="Test Data">
+            <AddFont        side="left" font="Komo Times Roman" codePage="1252"/>
+            <AddFontMapping left="Komo Times Roman" right="Doulos SIL"/>
+        </MapTable>
+        <MapTable
+            mappingName="Mayogo&lt;&gt;UNICODE"
+            converterSpec="Mayogo-Unicode.tec"
+            IsConverterSpecAFile="true"
+            description="Mayogo to Unicode"
+            implementType="SIL.tec"
+            conversionType="LegacyToFromUnicode"
+            encodingNameLhs = "Mayogo"
+            encodingNameRhs = "Unicode IPA"
+            processType="UnicodeEncodingConversion"
+            sampleData="Test Data">
+            <AddFont        side="left" font="Mayogo-C" codePage="1252"/>
+            <AddFont        side="left" font="Mayogo-D" codePage="1252"/>
+            <AddFont        side="left" font="Mayogo-M" codePage="1252"/>
+            <AddFont        side="left" font="Mayogo-S" codePage="1252"/>
+            <AddFontMapping left="Mayogo-C" right="Doulos SIL"/>
+            <AddFontMapping left="Mayogo-D" right="Doulos SIL"/>
+            <AddFontMapping left="Mayogo-M" right="Doulos SIL"/>
+            <AddFontMapping left="Mayogo-S" right="Doulos SIL"/>
+        </MapTable>
+    </MapsTables>
+</SILConvertersInstallerDetails>

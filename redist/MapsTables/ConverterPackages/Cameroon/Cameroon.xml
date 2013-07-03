@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<SILConvertersInstallerDetails xmlns="http://www.sil.org/computing/schemas/SILConvertersInstallerDetails.xsd">
+    <MapsTables>
+        <MapTable
+            mappingName="Cameroon&lt;&gt;UNICODE"
+            converterSpec="Cameroon2Unicode2007.tec"
+            IsConverterSpecAFile="true"
+            description="Cameroon TECkit table converter between CamCam and Unicode (2007)"
+            implementType="SIL.tec"
+            conversionType="LegacyToFromUnicode"
+            leftEncoding="Cameroon"
+            rightEncoding="Unicode IPA"
+            processType="UnicodeEncodingConversion">
+            <AddFont        side="left"  font=
+    codePage="1252"/>
+            <AddFont        side="left"  font="Cam Cam SILDoulosL"      codePage="1252"/>
+            <AddFont        side="left"  font="Cam Cam SILSophiaL"      codePage="1252"/>
+            <AddFont        side="left"  font="Cam Cam SILManuscriptL"  codePage="1252"/>
+            <AddFont        side="left"  font="Cam2 Cam2 SILDoulos"     codePage="1252"/>
+            <AddFont        side="left"  font="Cam2 Cam2 SILSophia"     codePage="1252"/>
+            <AddFont        side="left"  font="Cam2 Cam2 SILManuscript" codePage="1252"/>
+            <AddFont        side="left"  font="Cam Paratext SILDoulos"  codePage="1252"/>
+            <AddFont        side="left"  font="Cam Paratext SILSophia"  codePage="1252"/>
+            <AddFont        side="left"  font="Cam Paratext SILManuscript" codePage="1252"/>
+            <AddUnicodeFont side="right" font="Doulos SIL"/>
+            <AddFontMapping left="Cam Cam SILDoulosL"     right="Doulos SIL"/>
+            <AddFontMapping left="Cam2 Cam2 SILDoulos"    right="Doulos SIL"/>
+            <AddFontMapping left="Cam Paratext SILDoulos" right="Doulos SIL"/>
+        </MapTable>
+    </MapsTables>
+</SILConvertersInstallerDetails>
