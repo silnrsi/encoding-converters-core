@@ -46,7 +46,7 @@
   <ItemGroup>
     <Reference Include="nunit.framework">
       <Private>True</Private>
-      <HintPath>C:\WW\Bin\NUnit\bin\nunit.framework.dll</HintPath>
+      <HintPath>..\..\lib\windows\NUnit\framework\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="SilEncConverters40">

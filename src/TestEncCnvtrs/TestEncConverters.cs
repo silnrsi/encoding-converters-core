@@ -500,9 +500,9 @@ namespace TestEncCnvtrs
 
 		private static string GetTestSourceFolder()
 		{
-			var dir = GetBaseDir();
+			var dir = GetMapsTablesFolder();
 			if (dir != null)
-				dir = Path.Combine(Path.Combine(dir, "src"), "TestEncCnvtrs");
+				dir = Path.Combine(dir, "TestEncCnvtrs");
 			return dir;
 		}
 
@@ -510,7 +510,7 @@ namespace TestEncCnvtrs
 		{
 			var dir = GetBaseDir();
 			if (dir != null)
-				dir = Path.Combine(Path.Combine(dir, "DistFiles"), "MapsTables");
+				dir = Path.Combine(Path.Combine(dir, "redist"), "MapsTables");
 			return dir;
 		}
 
@@ -749,7 +749,7 @@ namespace TestEncCnvtrs
 			byte[] outputBytes = TestUtil.GetBytesFromPseudoString(outputRaw);
 			Assert.AreEqual(m_1252bytes, outputBytes, filenames[n] + " should convert data properly!");
 
-		    dir = GetMapsTablesFolder();
+		    dir = Path.Combine(GetMapsTablesFolder(), "PythonExamples");
 
             n++;
 			filenames[n] = "ReverseString.py";

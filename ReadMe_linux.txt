@@ -216,7 +216,7 @@ Download:
 
 Need to do on Linux before initializing xulrunner:
 LD_LIBRARY_PATH=/media/winD/Jim/computing/SEC_on_linux/ec-main/lib/xulrunner
-LD_PRELOAD=../../DistFiles/linux/geckofix.so
+LD_PRELOAD=../../DistFiles/linux/geckofx/geckofix.so
 
 Fixes for building GeckoFx 14:
     In Geckofx-Core/Linux/Makefile, set -I to dir containing HashFunctions.h,

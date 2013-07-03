@@ -43,7 +43,7 @@ Confusion is easy especially because for several years they were exactly in sync
 Now however we are still at version 4.0 of the Enc Converters interfaces, but are up to 48 (soon to be 50) of ICU.
 
 Upgrading ICU to a new version
-- obtain or build the appropriate icudtVV.dll, icuinVV.dll, and icuucVV.dll modules from icu/bin in the ICU download package and put them in ICU/DistFiles/icu/bin
+- obtain or build the appropriate icudtVV.dll, icuinVV.dll, and icuucVV.dll modules from icu/bin in the ICU download package and put them in ICU/DistFiles/windows/icu/bin
 - get the appropriate header files (from the ICU download package include/unicode folder) and put them in EC/include/unicode.
 Remove any obsolete ones. (Note that we probably don't need them all. But it does little harm to have them.)
 - copy all the files from the download package icu/lib folder to EC/lib/windows (some are probably not needed...)

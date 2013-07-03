@@ -88,10 +88,10 @@
       <HintPath>..\..\output\release\ECInterfaces.dll</HintPath>
     </Reference>
     <Reference Include="geckofx-core-14">
-      <HintPath>..\..\DistFiles\geckofx-core-14.dll</HintPath>
+      <HintPath>..\..\DistFiles\windows\geckofx\geckofx-core-14.dll</HintPath>
     </Reference>
     <Reference Include="Geckofx-Winforms-14">
-      <HintPath>..\..\DistFiles\Geckofx-Winforms-14.dll</HintPath>
+      <HintPath>..\..\DistFiles\windows\geckofx\Geckofx-Winforms-14.dll</HintPath>
     </Reference>
     <Reference Include="System">
       <Name>System</Name>
