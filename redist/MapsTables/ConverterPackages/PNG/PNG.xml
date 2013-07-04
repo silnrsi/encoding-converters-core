@@ -1,12 +1,27 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <SILConvertersInstallerDetails xmlns="http://www.sil.org/computing/schemas/SILConvertersInstallerDetails.xsd">
     <MapsTables>
-        <MapTable description="Conversion between SIL PNG legacy fonts (PNG SILDoulos, PNG SILCharis, etc.) and Unicode - both ways">
-            <scriptInstall filename="MapsTables\pngsil.tec.vbs" mappingName="SIL PNG&lt;&gt;UNICODE" converterSpec="MapsTables\SIL-PNG.tec" IsConverterSpecAFile="true" conversionType="LegacyToFromUnicode" implementType="SIL.tec" ></scriptInstall>
-            <FilesToInstall>
-                <FileToInstall filename="MapsTables\SIL-PNG.tec"></FileToInstall>
-                <FileToInstall filename="MapsTables\SIL-PNG.map"></FileToInstall>
-            </FilesToInstall>
+        <MapTable
+            mappingName="SIL PNG&lt;&gt;UNICODE"
+            converterSpec="SIL-PNG.tec"
+            IsConverterSpecAFile="true"
+            description="Conversion between SIL PNG legacy fonts (PNG SILDoulos, PNG SILCharis, etc.) and Unicode - both ways"
+            implementType="SIL.tec"
+            conversionType="LegacyToFromUnicode"
+            leftEncoding="SIL-PNG_Fonts-1998"
+            rightEncoding="Unicode IPA"
+            processType="LegacyToFromUnicode"
+>
+            <AddFont        side="left"  font="PNG SILCharis" codePage="1252"/>
+            <AddFont        side="left"  font="PNG SILDoulos" codePage="1252"/>
+            <AddFont        side="left"  font="PNG SILManuscript" codePage="1252"/>
+            <AddFont        side="left"  font="PNG SILSophia Lit" codePage="1252"/>
+            <AddFont        side="left"  font="PNG SILCharis Lit" codePage="1252"/>
+            <AddFont        side="left"  font="PNG SILSophia CQLit" codePage="1252"/>
+            <AddFontMapping left="PNG SILCharis" right="Charis SIL"/>
+            <AddFontMapping left="PNG SILDoulos" right="Doulos SIL"/>
+            <AddFontMapping left="PNG SILCharis Lit" right="Charis SIL Lit"/>
+            <AddFontMapping left="PNG SILSophia CQLit" right="Andika"/>
         </MapTable>
     </MapsTables>
 </SILConvertersInstallerDetails>

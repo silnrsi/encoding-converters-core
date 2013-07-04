@@ -1,47 +1,71 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <SILConvertersInstallerDetails xmlns="http://www.sil.org/computing/schemas/SILConvertersInstallerDetails.xsd">
     <MapsTables>
-        <MapTable description="TECkit converter between HimaliNew Devanagari and Unicode">
-            <autoInstall mappingName="HimaliNew Devanagari&lt;&gt;UNICODE" converterSpec="HimaliNew.tec" IsConverterSpecAFile="true" conversionType="LegacyToFromUnicode" implementType="SIL.tec" leftEncoding="Devanagari-HimaliNew" rightEncoding="Unicode Devanagari" processType="UnicodeEncodingConversion" ></autoInstall>
-            <FilesToInstall>
-                <FileToInstall filename="HimaliNew.tec"></FileToInstall>
-                <FileToInstall filename="HimaliNew.Map"></FileToInstall>
-            </FilesToInstall>
+        <MapTable
+            mappingName="HimaliNew Devanagari&lt;&gt;UNICODE"
+            converterSpec="HimaliNew.tec"
+            IsConverterSpecAFile="true"
+            description="TECkit converter between HimaliNew Devanagari and Unicode"
+            implementType="SIL.tec"
+            conversionType="LegacyToFromUnicode"
+            leftEncoding="Devanagari-HimaliNew"
+            rightEncoding="Unicode Devanagari"
+            processType="UnicodeEncodingConversion">
         </MapTable>
-        <MapTable description="TECkit converter between Himallill Devanagari (Mac) and Unicode">
-            <autoInstall mappingName="Himallill Devanagari (Mac)&lt;&gt;UNICODE" converterSpec="HimalliLLMac.tec" IsConverterSpecAFile="true" conversionType="LegacyToFromUnicode" implementType="SIL.tec" leftEncoding="Devanagari-HimallillMac-1999" rightEncoding="Unicode Devanagari" processType="UnicodeEncodingConversion" ></autoInstall>
-            <FilesToInstall>
-                <FileToInstall filename="HimalliLLMac.tec"></FileToInstall>
-                <FileToInstall filename="HimalliLLMac.map"></FileToInstall>
-            </FilesToInstall>
+        <MapTable
+            mappingName="Himallill Devanagari (Mac)&lt;&gt;UNICODE"
+            converterSpec="HimalliLLMac.tec"
+            IsConverterSpecAFile="true"
+            description="TECkit converter between Himallill Devanagari (Mac) and Unicode"
+            implementType="SIL.tec"
+            conversionType="LegacyToFromUnicode"
+            leftEncoding="Devanagari-HimallillMac-1999"
+            rightEncoding="Unicode Devanagari"
+            processType="UnicodeEncodingConversion" >
         </MapTable>
-        <MapTable description="TECkit converter between Himallill Devanagari (PC 2001) and Unicode">
-            <autoInstall mappingName="Himallill Devanagari (PC 2001)&lt;&gt;UNICODE" converterSpec="HimalliLLPC.tec" IsConverterSpecAFile="true" conversionType="LegacyToFromUnicode" implementType="SIL.tec" leftEncoding="Devanagari-HimallillPC-2001" rightEncoding="Unicode Devanagari" processType="UnicodeEncodingConversion" ></autoInstall>
-            <FilesToInstall>
-                <FileToInstall filename="HimalliLLPC.tec"></FileToInstall>
-                <FileToInstall filename="HimalliLLPC.map"></FileToInstall>
-            </FilesToInstall>
+        <MapTable
+            mappingName="Himallill Devanagari (PC 2001)&lt;&gt;UNICODE"
+            converterSpec="HimalliLLPC.tec"
+            IsConverterSpecAFile="true"
+            description="TECkit converter between Himallill Devanagari (PC 2001) and Unicode"
+            implementType="SIL.tec"
+            conversionType="LegacyToFromUnicode"
+            leftEncoding="Devanagari-HimallillPC-2001"
+            rightEncoding="Unicode Devanagari"
+            processType="UnicodeEncodingConversion" >
         </MapTable>
-        <MapTable description="TECkit converter between Himalli Devanagari (Mac) and Unicode">
-            <autoInstall mappingName="Himalli Devanagari (Mac)&lt;&gt;UNICODE" converterSpec="HimalliMAC.tec" IsConverterSpecAFile="true" conversionType="LegacyToFromUnicode" implementType="SIL.tec" leftEncoding="Devanagari-HimalliMac-1999" rightEncoding="Unicode Devanagari" processType="UnicodeEncodingConversion" ></autoInstall>
-            <FilesToInstall>
-                <FileToInstall filename="HimalliMAC.tec"></FileToInstall>
-                <FileToInstall filename="HimalliMac.map"></FileToInstall>
-            </FilesToInstall>
+        <MapTable
+            mappingName="Himalli Devanagari (Mac)&lt;&gt;UNICODE"
+            converterSpec="HimalliMAC.tec"
+            IsConverterSpecAFile="true"
+            description="TECkit converter between Himalli Devanagari (Mac) and Unicode"
+            implementType="SIL.tec"
+            conversionType="LegacyToFromUnicode"
+            leftEncoding="Devanagari-HimalliMac-1999"
+            rightEncoding="Unicode Devanagari"
+            processType="UnicodeEncodingConversion" >
         </MapTable>
-        <MapTable description="TECkit converter between Himalli Devanagari (PC 1998) and Unicode">
-            <autoInstall mappingName="Himalli Devanagari (PC 1998)&lt;&gt;UNICODE" converterSpec="HimalliPC-1998.tec" IsConverterSpecAFile="true" conversionType="LegacyToFromUnicode" implementType="SIL.tec" leftEncoding="Devanagari-HimalliPC-1998" rightEncoding="Unicode Devanagari" processType="UnicodeEncodingConversion" ></autoInstall>
-            <FilesToInstall>
-                <FileToInstall filename="HimalliPC-1998.tec"></FileToInstall>
-                <FileToInstall filename="HimalliPC-1998.map"></FileToInstall>
-            </FilesToInstall>
+        <MapTable
+            mappingName="Himalli Devanagari (PC 1998)&lt;&gt;UNICODE"
+            converterSpec="HimalliPC-1998.tec"
+            IsConverterSpecAFile="true"
+            description="TECkit converter between Himalli Devanagari (PC 1998) and Unicode"
+            implementType="SIL.tec"
+            conversionType="LegacyToFromUnicode"
+            leftEncoding="Devanagari-HimalliPC-1998"
+            rightEncoding="Unicode Devanagari"
+            processType="UnicodeEncodingConversion" >
         </MapTable>
-        <MapTable description="TECkit converter between Himalli Devanagari (PC 2002) and Unicode">
-            <autoInstall mappingName="Himalli Devanagari (PC 2002)&lt;&gt;UNICODE" converterSpec="HimalliPC-2002.tec" IsConverterSpecAFile="true" conversionType="LegacyToFromUnicode" implementType="SIL.tec" leftEncoding="Devanagari-HimalliPC-2002" rightEncoding="Unicode Devanagari" processType="UnicodeEncodingConversion" ></autoInstall>
-            <FilesToInstall>
-                <FileToInstall filename="HimalliPC-2002.tec"></FileToInstall>
-                <FileToInstall filename="HimalliPC-2002.map"></FileToInstall>
-            </FilesToInstall>
+        <MapTable
+            mappingName="Himalli Devanagari (PC 2002)&lt;&gt;UNICODE"
+            converterSpec="HimalliPC-2002.tec"
+            IsConverterSpecAFile="true"
+            description="TECkit converter between Himalli Devanagari (PC 2002) and Unicode"
+            implementType="SIL.tec"
+            conversionType="LegacyToFromUnicode"
+            leftEncoding="Devanagari-HimalliPC-2002"
+            rightEncoding="Unicode Devanagari"
+            processType="UnicodeEncodingConversion" >
         </MapTable>
     </MapsTables>
 </SILConvertersInstallerDetails>

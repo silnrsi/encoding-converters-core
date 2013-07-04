@@ -1,20 +1,49 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <SILConvertersInstallerDetails xmlns="http://www.sil.org/computing/schemas/SILConvertersInstallerDetails.xsd">
     <MapsTables>
-        <MapTable description="Modifies Unicode Hebrew from 4.0 to 5.0">
-            <autoInstall mappingName="Hebrew Unicode 4.0&lt;&gt;Hebrew Unicode 5.0" converterSpec="MapsTables\EzraSIL20to25.tec" IsConverterSpecAFile="true" implementType="SIL.tec" conversionType="UnicodeToFromUnicode" leftEncoding="UNICODE" rightEncoding="UNICODE" processType="DontKnow"></autoInstall>
-            <FilesToInstall>
-                <FileToInstall filename="MapsTables\EzraSIL20to25.tec"></FileToInstall>
-                <FileToInstall filename="MapsTables\EzraSIL20to25.map"></FileToInstall>
-            </FilesToInstall>
+        <MapTable
+            description="Modifies Unicode Hebrew from 4.0 to 5.0"
+            mappingName="Hebrew Unicode 4.0&lt;&gt;Hebrew Unicode 5.0"
+            converterSpec="EzraSIL20to25.tec"
+            IsConverterSpecAFile="true"
+            implementType="SIL.tec"
+            conversionType="UnicodeToFromUnicode"
+            leftEncoding="UNICODE"
+            rightEncoding="UNICODE"
+            processType="DontKnow">
         </MapTable>
-        <MapTable description="Converts SIL Ezra data to Unicode Hebrew encoding (including the byte reversal)">
-            <scriptInstall filename="MapsTables\SIL Ezra.vbs" mappingName="SIL Ezra&lt;&gt;UNICODE" conversionType="LegacyToFromUnicode" implementType="SIL.comp" ></scriptInstall>
-            <FilesToInstall>
-                <FileToInstall filename="MapsTables\r2l_2004.cct"></FileToInstall>
-                <FileToInstall filename="MapsTables\SILEzratoUni50.map"></FileToInstall>
-                <FileToInstall filename="MapsTables\SILEzratoUni50.tec"></FileToInstall>
-            </FilesToInstall>
+        <MapTable
+            mappingName="ReverseString"
+            converterSpec="r2l_2004.cct"
+            IsConverterSpecAFile="true"
+            description="byte reversal"
+            implementType="SIL.cc"
+            conversionType="LegacyToFromLegacy"
+            leftEncoding="Legacy"
+            rightEncoding="Legacy"
+            processType="DontKnow">
+        </MapTable>
+        <MapTable
+            mappingName="SIL Ezra<>UNICODE (without byte reversing)"
+            converterSpec="SILEzratoUni50.tec"
+            IsConverterSpecAFile="true"
+            description="Convert SIL Ezra to Unicode. May need to reverse bytes first."
+            implementType="SIL.tec"
+            conversionType="LegacyToFromUnicode"
+            leftEncoding="SIL-HEBREW_STANDARD-1997"
+            rightEncoding="UNICODE"
+            processType="UnicodeEncodingConversion">
+            <AddFont        side="left" font="SIL Ezra" codePage="42"/>
+            <AddFontMapping left="SIL Ezra" right="Ezra SIL"/>
+        </MapTable>
+        <MapTable
+            mappingName="SIL Ezra&lt;&gt;UNICODE"
+            converterSpec="SIL Ezra&lt;&gt;UNICODE"
+            description="Converts SIL Ezra data to Unicode Hebrew encoding (including the byte reversal)"
+            implementType="SIL.comp"
+            conversionType="LegacyToFromUnicode">
+            <AddCompoundConverterStep mappingName="ReverseString"/>
+            <AddCompoundConverterStep mappingName="SIL Ezra<>UNICODE (without byte reversing)"/>
         </MapTable>
     </MapsTables>
 </SILConvertersInstallerDetails>
