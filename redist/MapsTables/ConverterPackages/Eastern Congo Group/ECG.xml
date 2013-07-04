@@ -8,8 +8,8 @@
             description="BheleASCII to Unicode"
             implementType="SIL.tec"
             conversionType="LegacyToFromUnicode"
-            encodingNameLhs = "BheleASCII"
-            encodingNameRhs = "Unicode IPA"
+            leftEncoding = "BheleASCII"
+            rightEncoding = "Unicode IPA"
             processType="UnicodeEncodingConversion"
             sampleData="Test Data">
             <AddFont        side="left" font="Bhele SILDoulos"       codePage="1252"/>
@@ -24,8 +24,8 @@
             description="BUDU to Unicode"
             implementType="SIL.tec"
             conversionType="LegacyToFromUnicode"
-            encodingNameLhs = "BUDU"
-            encodingNameRhs = "Unicode IPA"
+            leftEncoding = "BUDU"
+            rightEncoding = "Unicode IPA"
             processType="UnicodeEncodingConversion"
             sampleData="Test Data">
             <AddFont        side="left" font="Budu Orth" codePage="1252"/>
@@ -38,8 +38,8 @@
             description="BuduASCII to Unicode"
             implementType="SIL.tec"
             conversionType="LegacyToFromUnicode"
-            encodingNameLhs = "BuduASCII"
-            encodingNameRhs = "Unicode IPA"
+            leftEncoding = "BuduASCII"
+            rightEncoding = "Unicode IPA"
             processType="UnicodeEncodingConversion"
             sampleData="Test Data">
             <AddFont        side="left" font="Budu ASCII Mono" codePage="1252"/>
@@ -52,8 +52,8 @@
             description="ECG (Jan.2005) to Unicode"
             implementType="SIL.tec"
             conversionType="LegacyToFromUnicode"
-            encodingNameLhs = "ECG"
-            encodingNameRhs = "Unicode IPA"
+            leftEncoding = "ECG"
+            rightEncoding = "Unicode IPA"
             processType="UnicodeEncodingConversion"
             sampleData="Test Data">
             <AddFont        side="left" font="ECG-C" codePage="1252"/>
@@ -72,8 +72,8 @@
             description="Komo to Unicode"
             implementType="SIL.tec"
             conversionType="LegacyToFromUnicode"
-            encodingNameLhs = "Komo"
-            encodingNameRhs = "Unicode IPA"
+            leftEncoding = "Komo"
+            rightEncoding = "Unicode IPA"
             processType="UnicodeEncodingConversion"
             sampleData="Test Data">
             <AddFont        side="left" font="Times Roman Komo" codePage="1252"/>
@@ -86,8 +86,8 @@
             description="KomoASCII to Unicode"
             implementType="SIL.tec"
             conversionType="LegacyToFromUnicode"
-            encodingNameLhs = "KomoASCII"
-            encodingNameRhs = "Unicode IPA"
+            leftEncoding = "KomoASCII"
+            rightEncoding = "Unicode IPA"
             processType="UnicodeEncodingConversion"
             sampleData="Test Data">
             <AddFont        side="left" font="Komo Times Roman" codePage="1252"/>
@@ -100,8 +100,8 @@
             description="Mayogo to Unicode"
             implementType="SIL.tec"
             conversionType="LegacyToFromUnicode"
-            encodingNameLhs = "Mayogo"
-            encodingNameRhs = "Unicode IPA"
+            leftEncoding = "Mayogo"
+            rightEncoding = "Unicode IPA"
             processType="UnicodeEncodingConversion"
             sampleData="Test Data">
             <AddFont        side="left" font="Mayogo-C" codePage="1252"/>
