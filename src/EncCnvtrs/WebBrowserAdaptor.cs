@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using Gecko;
 #endif
 using Microsoft.Win32;
+using ECInterfaces;     // for Util
 
 namespace SilEncConverters40
 {
@@ -36,6 +37,7 @@ namespace SilEncConverters40
 
         public WebBrowserAdaptor()
         {
+            Util.DebugWriteLine(this, "BEGIN");
             InitializeComponent();
 
             // on linux, only Gecko works (on Windows, either Gecko or IE will work, but using IE saves us from having to redistribute too much)
@@ -50,6 +52,7 @@ namespace SilEncConverters40
                 if (false)
 #endif
                 {
+                    Util.DebugWriteLine(this, "Using GeckoFx");
                     _whichBrowser = WhichBrowser.GeckoFx;
 #if LoadGeckoLibs
                     GeckoWebBrowser = new GeckoWebBrowser
@@ -67,6 +70,7 @@ namespace SilEncConverters40
                 }
                 else
                 {
+                    Util.DebugWriteLine(this, "Could not use GeckoFx");
                     _whichBrowser = WhichBrowser.Instructions;
                     LabelsPanel = new TableLayoutPanel
                                                  {
@@ -82,6 +86,7 @@ namespace SilEncConverters40
             }
             else
             {
+                Util.DebugWriteLine(this, "Using Internet Explorer");
                 _whichBrowser = WhichBrowser.InternetExplorer;
                 IeWebBrowser = new WebBrowser
                                    {
@@ -95,6 +100,7 @@ namespace SilEncConverters40
                                    };
                 Controls.Add(IeWebBrowser);
             }
+            Util.DebugWriteLine(this, "END");
         }
 
         private static bool ShouldUseGecko

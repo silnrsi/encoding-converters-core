@@ -82,7 +82,7 @@ Instructions given by the program:
 First, make sure that /var/lib/fieldworks exists and is writeable by everyone.
 eg, sudo mkdir -p /var/lib/fieldworks && sudo chmod +wt /var/lib/fieldworks
 Then add the following line to ~/.profile, logout, and login again.
-MONO_REGISTRY_PATH=/var/lib/fieldworks/registry; export MONO_REGISTRY_PATH
+MONO_REGISTRY_PATH=/var/lib/encConverters/registry; export MONO_REGISTRY_PATH
 
 Cleanup() may complain about the RESTOREME file at:
 /var/lib/fieldworks/SIL/Repository
@@ -156,16 +156,13 @@ Anyway what I really wanted to do was probably apt-get install libicu-dev.
 
 Mono uses folders and XML files to simulate the Windows registry.
 
-#mkdir /var/lib/fieldworks
-#chmod a+rwx /var/lib/fieldworks
-sudo mkdir -p /var/lib/encConverters && sudo chmod +wt /var/lib/encConverters
-
-There are several places where a registry structure can be stored.
-    /etc/mono/registry              # HKCR - system wide shared settings
-    ~/.mono/registry                # HKCU - user settings
-    /var/lib/fieldworks/registry    # system wide fieldworks settings
-    ~/.config/fieldworks/registry/  # user fieldworks settings
+There are several places where a registry structure gets stored.
+    /etc/mono/registry              # HKCR - all users shared settings
         chmod 777 /etc/mono/registry/ClassesRoot -R
+    ~/.mono/registry                # HKCU - current user shared settings
+    /var/lib/encConverters/registry # all users encConverters settings
+    /var/lib/fieldworks/registry    # all users fieldworks settings
+    ~/.config/fieldworks/registry   # current user fieldworks settings
     echo $MONO_REGISTRY_PATH
 
 Two registry key folders:
@@ -179,10 +176,11 @@ Two registry key folders:
         Some subkeys apparently get created by the Converters Installer.
         Gets read to open help file in AutoConfigDialog.cs.
 
+sudo mkdir -p /var/lib/encConverters && sudo chmod +wt /var/lib/encConverters
 
 ## Mapping Repository
 
-/var/lib/fieldworks/SIL/Repository/mappingRegistry.xml
+/var/lib/encConverters/SIL/Repository/mappingRegistry.xml
 rm *RESTOREME   # may be needed when running tests
 
 
@@ -200,23 +198,16 @@ When selected (not added), it will show the version info at the bottom.
 
 ## Gecko
 
-Suspicion of the main problem: Which version of mono?
-We need to build and run with a version of mono that has the correct libs.
-- Does the fieldworks version?
-- What about mono-2.0 libs?
-
-System.TypeInitializationException: An exception was thrown by the type
-initializer for Gtk.Application ---> System.EntryPointNotFoundException:
-glibsharp_g_thread_supported
-
+Install firefox-geckofx package from SIL lsdev server.
 Download:
     geckofx 14 source code
     xulrunner libraries
     xulrunner sdk (just for header files)
 
 Need to do on Linux before initializing xulrunner:
-LD_LIBRARY_PATH=/media/winD/Jim/computing/SEC_on_linux/ec-main/lib/xulrunner
-LD_PRELOAD=../../DistFiles/linux/geckofx/geckofix.so
+#LD_LIBRARY_PATH=/media/winD/Jim/computing/SEC_on_linux/ec-main/lib/xulrunner
+LD_LIBRARY_PATH=/usr/lib/xulrunner-geckofx
+LD_PRELOAD=../../DistFiles/linux/geckofix/geckofix.so
 
 Fixes for building GeckoFx 14:
     In Geckofx-Core/Linux/Makefile, set -I to dir containing HashFunctions.h,
@@ -237,6 +228,15 @@ Additional fixes for building GeckoFx 18:
     In Geckofx-Core/DOM, rename one file xxDOMyy to xxDomyy.
     In solution file, delete two WPF projects (not supported on Mono).
     In unit test class, add "ref" as the compiler requests.
+
+Which version of mono?
+We need to build and run with a version of mono that has the correct libs.
+- Does the fieldworks version?
+- What about mono-2.0 libs?
+
+System.TypeInitializationException: An exception was thrown by the type
+initializer for Gtk.Application ---> System.EntryPointNotFoundException:
+glibsharp_g_thread_supported
 
 To build Skybound.Gecko.dll, in MonoDevelop:
     go to Solution tab
