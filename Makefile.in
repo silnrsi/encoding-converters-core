@@ -120,6 +120,7 @@ install: release
 	@mkdir -p $(DESTDIR)$(REGKEY)
 	@find $(DESTDIR)$(REGROOT) -type d -exec chmod 777 {} \;
 	$(INSTALL) values.xml $(DESTDIR)$(REGKEY) -m +rw
+	@cp -pR redist/MapsTables $(DESTDIR)$(REGROOT)/SIL
 
 # useful for debugging the ECDriver
 install-debug:
@@ -130,6 +131,7 @@ install-debug:
 
 uninstall:
 	rm -f -r $(DESTDIR)$(LIBDIR)/*
+	rm -f $(DESTDIR)$(REGROOT)/SIL
 	rm -f $(DESTDIR)$(REGKEY)/values.xml
 
 NUNITROOT=`which nunit-console | sed s=/bin/nunit-console=/lib/mono=`

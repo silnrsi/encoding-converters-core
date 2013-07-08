@@ -12,12 +12,13 @@
  *
  * Created by Jim Kornelsen on 29-Oct-2011.
  *
- * 25-Jan-2012 JDK  Specify MONO_PATH to find other assemblies.
- * 27-Mar-2012 JDK  Fixed bug: Maps require std::string to do string comparison.
- * 01-Jun-2013 JDK  Fixed crash: Don't call methGetMapByName from InitConv().
- * 03-Jun-2013 JDK  Added EncConverterAddConverter().
- * 06-Jun-2013 JDK  Fail gracefully if a C# exception occurs.
- * 10-Jun-2013 JDK  Display C# exceptions in an alert window.
+ * 25-Jan-12 JDK  Specify MONO_PATH to find other assemblies.
+ * 27-Mar-12 JDK  Fixed bug: Maps require std::string to do string comparison.
+ * 01-Jun-13 JDK  Fixed crash: Don't call methGetMapByName from InitConv().
+ * 03-Jun-13 JDK  Added EncConverterAddConverter().
+ * 06-Jun-13 JDK  Fail gracefully if a C# exception occurs.
+ * 10-Jun-13 JDK  Display C# exceptions in an alert window.
+ * 08-Jul-13 JDK  Display other error messages in an alert window as well.
  */
 
 #include "ecdriver.h"
@@ -30,6 +31,7 @@
 #include <stdlib.h>
 #include <string>       // std::string
 #include <cstring>      // strcmp
+#include <cstdarg>     // va_start
 #include <unistd.h>     // execl
 #include <sys/wait.h>
 #include <map>
@@ -98,6 +100,35 @@ void ShowAlert(char * sMessage)
 }
 
 //******************************************************************************
+void DisplayMsg(const char * message)
+{
+    int BUFSIZE = 1024;
+    char msgbuf[BUFSIZE];
+    strncpy(msgbuf, message, BUFSIZE);
+    ShowAlert(msgbuf);
+}
+
+//******************************************************************************
+/**
+ * Handle arguments like printf.
+ */
+void DisplayMsgFormatted(const char * format, ...)
+{
+    int BUFSIZE = 1024;
+    char msgbuf[BUFSIZE];
+    va_list argptr;
+    va_start(argptr, format);
+    int len = vsnprintf(msgbuf, BUFSIZE, format, argptr);
+    va_end(argptr);
+    if (len < 0) {
+        fprintf(stderr, "ECDriver: failed to format message.\n");
+        DisplayMsg(format);
+        return;
+    }
+    ShowAlert(msgbuf);
+}
+
+//******************************************************************************
 void DisplayException(MonoObject * mException)
 {
     MonoObject * other_exc = NULL;
@@ -130,7 +161,7 @@ void LoadClasses(void)
         fprintf(stderr, "ECDriver: Got assembly %s.\n", ASSEMBLYFILE);
 #endif
     } else {
-        fprintf(stderr, "ECDriver: Could not open assembly %s. Please verify the location.\n", ASSEMBLYFILE);
+        DisplayMsgFormatted("ECDriver: Could not open assembly %s. Please verify the location.", ASSEMBLYFILE);
         return;
     }
     MonoImage* image = mono_assembly_get_image(assembly);
@@ -143,7 +174,7 @@ void LoadClasses(void)
     ecsClass = mono_class_from_name (
                image, "SilEncConverters40", "EncConverters");
     if (ecsClass == NULL) {
-        fprintf(stderr, "ECDriver: Could not get the class. Perhaps ECInterfaces.dll is missing.\n");
+        DisplayMsg("ECDriver: Could not get the class. Perhaps ECInterfaces.dll is missing.");
         return;
     }
 #ifdef VERBOSE_DEBUGGING
@@ -181,7 +212,7 @@ void LoadClasses(void)
         }
     }
     if (methAutoSelect == NULL) {
-        fprintf(stderr, "ECDriver: Error! Could not get method(s).\n");
+        DisplayMsg("ECDriver: Error! Could not get method(s).");
         return;
     }
 
@@ -213,7 +244,7 @@ void LoadClasses(void)
         }
     }
     if (methConvert == NULL) {
-        fprintf(stderr, "ECDriver: Error! Could not get method(s).\n");
+        DisplayMsg("ECDriver: Error! Could not get method(s).");
         return;
     }
 #ifdef VERBOSE_DEBUGGING
@@ -435,7 +466,7 @@ int EncConverterAddConverter(
 
     if (mException != NULL) {
         fprintf(stderr,
-                "ECDriver: An exception was thrown while adding converter.\n");
+        "ECDriver: An exception was thrown while adding converter.\n");
         mono_runtime_invoke(methMakeWindowGoAway, ecsObj, noArgs, NULL);
         DisplayException(mException);
         return /*ErrStatus.Exception*/ -6;
@@ -445,7 +476,7 @@ int EncConverterAddConverter(
         return /*ErrStatus.Exception*/ -6;
     else if (err == -1 || pEC == 0)
     {
-        fprintf(stderr, "ECDriver: failed to add converter %s.\n",
+        DisplayMsgFormatted("ECDriver: failed to add converter %s.",
                 sConverterName);
         return -1;
     }

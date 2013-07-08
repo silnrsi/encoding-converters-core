@@ -22,17 +22,18 @@ namespace ECInterfaces
         // The following classes and methods will not be shown in debugging output.
         // Comment out or add as desired.
         private static readonly string [] DEBUG_EXCLUDE_CLASSES = {
-            "EncConverters",
+            //"EncConverters",
         };
         private static readonly string [] DEBUG_EXCLUDE_METHODS = {
-            //"EncConverters.AddEx",
-            //"EncConverters.AddToCollection",
-            //"EncConverters.GetConversionEnginesSupported",
+            "EncConverters.AddEx",
+            "EncConverters.AddToCollection",
+            "EncConverters.GetConversionEnginesSupported",
             //"EncConverters.GetRepositoryFileName",
-            //"EncConverters.GetEncodingFontDetails",
-            //"EncConverters.InitializeConverter",
-            //"EncConverters.InstantiateIEncConverter",
+            "EncConverters.GetEncodingFontDetails",
+            "EncConverters.InitializeConverter",
+            "EncConverters.InstantiateIEncConverter",
 
+            "EncConverter.Initialize",
             "IcuTranslitEncConverter.Initialize",
             "PerlExpressionEncConverter.Initialize",
             "PyScriptEncConverter.Initialize",
@@ -104,8 +105,8 @@ namespace ECInterfaces
             // However Debug.Flush() doesn't have any effect, which means that the messages can
             // get out of order relative to C++ output.
 
-            System.Diagnostics.Debug.WriteLine(output);
-            //Console.WriteLine(output);
+            //System.Diagnostics.Debug.WriteLine(output);
+            Console.WriteLine(output);
             //Console.Error.WriteLine(output);
 #endif
         }

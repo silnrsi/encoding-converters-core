@@ -6,6 +6,7 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using ECInterfaces;     // for Util
 
 namespace SilEncConverters40
 {
@@ -16,16 +17,18 @@ namespace SilEncConverters40
         [return: MarshalAs(UnmanagedType.Bool)]
         static extern bool SetDllDirectory(string lpPathName);
 #endif
+        private static string className = typeof(GeckoFxInitializer).Name;
 
         public static bool SetUpXulRunner()
         {
+            Util.DebugWriteLine(className, "BEGIN");
 	        if (Gecko.Xpcom.IsInitialized)
 		        return true;
 
             string xulRunnerPath;
             if (!XulRunnerDirectoryOfApplicationOrLib(out xulRunnerPath))
                 return false;
-            System.Diagnostics.Debug.WriteLine("xulRunnerPath=" + xulRunnerPath);
+            Util.DebugWriteLine(className, "xulRunnerPath=" + xulRunnerPath);
 
 #if _MSC_VER
             //Review: an early tester found that wrong xpcom was being loaded. The following solution is from http://www.geckofx.org/viewtopic.php?id=74&action=new
@@ -33,6 +36,7 @@ namespace SilEncConverters40
 #endif
 
             Gecko.Xpcom.Initialize(xulRunnerPath);
+            Util.DebugWriteLine(className, "END");
             return true;
         }
 
@@ -49,6 +53,12 @@ namespace SilEncConverters40
             xulRunnerPath = Path.Combine(path, "xulrunner");
             if (Directory.Exists(xulRunnerPath))
                 return true;
+
+#if __MonoCS__
+            xulRunnerPath = "/usr/lib/xulrunner-geckofx";
+            if (Directory.Exists(xulRunnerPath))
+                return true;
+#endif
 
             //if this is a programmer, go look in the lib directory
             char sep = Path.DirectorySeparatorChar;
@@ -84,18 +94,24 @@ namespace SilEncConverters40
         {
             get
             {
+#if __MonoCS__
+                return new LinkLabel
+                    {
+                        Text = "To use Mozilla to display the help file, install the firefox-geckofx package.",
+                        Dock = DockStyle.Fill
+                    };
+#else
                 const string cstrLinkPrefix = "To use Mozilla to display the help file, download xulRunner from ";
                 const string cstrXulRunnerLink = "http://ftp.mozilla.org/pub/mozilla.org/xulrunner/releases/14.0.1/runtimes";
-                const string cstrFolderPrefix = " and put the xulrunner folder as a subfolder in the ";
                 var labelInstructions = new LinkLabel
-                                            {
-                                                Text =
-                                                    cstrLinkPrefix + cstrXulRunnerLink + cstrFolderPrefix +
-                                                    DirectoryOfTheApplicationExecutable + String.Format(@" folder. Otherwise, change the registry key 'HKLM\{0}\{1}' to 'False'",
-                                                                                                        EncConverters.SEC_ROOT_KEY,
-                                                                                                        EncConverters.CstrUseGeckoRegKey),
-                                                Dock = DockStyle.Fill
-                                            };
+                    {
+                        Text = " and put the xulrunner folder as a subfolder in the ";
+                               cstrLinkPrefix + cstrXulRunnerLink + cstrFolderPrefix +
+                               DirectoryOfTheApplicationExecutable +
+                               String.Format(@" folder. Otherwise, change the registry key 'HKLM\{0}\{1}' to 'False'",
+                               EncConverters.SEC_ROOT_KEY, EncConverters.CstrUseGeckoRegKey);
+                        Dock = DockStyle.Fill
+                    };
                 labelInstructions.Links.Add(cstrLinkPrefix.Length, cstrXulRunnerLink.Length, cstrXulRunnerLink);
                 labelInstructions.Links.Add(labelInstructions.Text.IndexOf(DirectoryOfTheApplicationExecutable),
                                             DirectoryOfTheApplicationExecutable.Length,
@@ -106,6 +122,7 @@ namespace SilEncConverters40
                                                             Process.Start(args.Link.LinkData as string);
                                                      };
                 return labelInstructions;
+#endif
             }
         }
     }  
