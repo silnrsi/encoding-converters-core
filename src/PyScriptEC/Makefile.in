@@ -21,7 +21,11 @@ PYTHON_CPPFLAGS=@PYTHON_CPPFLAGS@
 ECHEADERDIR=../EncCnvtrs/lib
 ECHEADER=$(ECHEADERDIR)/CEncConverter.h
 
+ifeq ($(strip $(FIELDWORKS)),)
 LIBDIR = $(exec_prefix)/lib/encConverters
+else
+LIBDIR = $(exec_prefix)/lib/fieldworks
+endif
 
 all: $(BUILDDIR) $(OUTDIR)/libPyScriptEncConverter.so
 

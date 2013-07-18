@@ -4,6 +4,7 @@
 # 30-May-13 JDK  Added ECDriver_test.
 # 05-Jun-13 JDK  Added -DLIBDIR flag.
 # 06-Jun-13 JDK  Remove library version numbers.
+# 16-Jul-13 SMc  Add conditional test for FIELDWORKS (requires GNU Make)
 
 VPATH       = @srcdir@
 CXX         = @CXX@
@@ -18,9 +19,13 @@ BUILDDIR    = $(ROOTDIR)/build/Obj
 OUTDIR      = $(ROOTDIR)/output/Debug
 RELEASEBLD  = $(ROOTDIR)/build/Obj/Release
 RELEASEOUT  = $(ROOTDIR)/output/Release
+ifeq ($(strip $(FIELDWORKS)),)
 LIBDIR      = @libdir@/encConverters
-#REGROOT     = /var/lib/fieldworks
 REGROOT     = /var/lib/encConverters
+else
+LIBDIR      = @libdir@/fieldworks
+REGROOT     = /var/lib/fieldworks
+endif
 MONO_INCLUDE= @MONO_CPPFLAGS@
 MONO_LDFLAGS= @MONO_LDFLAGS@
 

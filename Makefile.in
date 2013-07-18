@@ -2,6 +2,7 @@
 # Makefile.in created January 20, 2012 by Stephen McConnel
 #
 # 06-Jun-13 JDK  Added uninstall target.
+# 16-Jul-13 SMc  Add conditional test for FIELDWORKS (requires GNU Make)
 
 @SET_MAKE@
 # the next line requires GNU make ...
@@ -16,11 +17,15 @@ OUTDIR      = $(ROOTDIR)/output/Debug
 RELEASEOUT  = $(ROOTDIR)/output/Release
 MONO        = @MONO@
 MONO_LDFLAGS= @MONO_LDFLAGS@
-LIBDIR      = @libdir@/encConverters
 # For fieldworks, define COMMON_DATA_FW in ECInterfaces.csproj for Util.cs.
 # Also change REGROOT in ECDriver Makefile.in.
-#REGROOT     = /var/lib/fieldworks
+ifeq ($(strip $(FIELDWORKS)),)
+LIBDIR      = @libdir@/encConverters
 REGROOT     = /var/lib/encConverters
+else
+LIBDIR      = @libdir@/fieldworks
+REGROOT     = /var/lib/fieldworks
+endif
 REGKEY      = $(REGROOT)/registry/LocalMachine/software/sil/silencconverters40
 
 SRCDIRS = src/IcuEC src/PyScriptEC src/ECDriver/linux
@@ -34,10 +39,10 @@ PLUGINS = "AI 4.0.0.0 Plugin Details.xml" "CC 4.0.0.0 Plugin Details.xml" \
 all: debug
 
 debug:
-	@(cd build && ./xbuild.sh $(MONO) $(MONO_LDFLAGS)) || true
+	@(cd build && ./xbuild.sh $(MONO) $(MONO_LDFLAGS) /property:FIELDWORKS=$(FIELDWORKS)) || true
 	@for subdir in $(SRCDIRS); do \
 	  echo making in $$subdir; \
-	  (cd $$subdir && $(MAKE) all) || true; \
+	  (cd $$subdir && $(MAKE) all FIELDWORKS=$(FIELDWORKS)) || true; \
 	done
 	@mkdir -p $(OUTDIR)/EC/Plugins
 	@for file in $(PLUGINS); do \
@@ -50,10 +55,10 @@ debug:
 	@cp -p src/TestEncCnvtrs/TestEncCnvtrs.dll.config $(OUTDIR)
 
 release:
-	@(cd build && ./xbuild.sh $(MONO) $(MONO_LDFLAGS) /property:config=Release) || true
+	@(cd build && ./xbuild.sh $(MONO) $(MONO_LDFLAGS) /property:config=Release /property:FIELDWORKS=$(FIELDWORKS)) || true
 	@for subdir in $(SRCDIRS); do \
 	  echo making in $$subdir; \
-	  (cd $$subdir && $(MAKE) release) || true; \
+	  (cd $$subdir && $(MAKE) release FIELDWORKS=$(FIELDWORKS)) || true; \
 	done
 	@mkdir -p $(RELEASEOUT)/EC/Plugins
 	@for file in $(PLUGINS); do \

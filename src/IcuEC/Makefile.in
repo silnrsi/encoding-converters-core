@@ -18,7 +18,11 @@ RELEASEBLD  = $(ROOTDIR)/build/Obj/Release
 RELEASEOUT  = $(ROOTDIR)/output/Release
 ECHEADERDIR=../EncCnvtrs/lib
 ECHEADER=$(ECHEADERDIR)/CEncConverter.h
+ifeq ($(strip $(FIELDWORKS)),)
 LIBDIR = $(exec_prefix)/lib/encConverters
+else
+LIBDIR = $(exec_prefix)/lib/fieldworks
+endif
 
 all: $(BUILDDIR) $(OUTDIR)/libIcuTranslitEC.so \
   $(OUTDIR)/libIcuRegexEC.so $(OUTDIR)/libIcuConvEC.so
