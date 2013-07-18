@@ -5,6 +5,7 @@
 # 05-Jun-13 JDK  Added -DLIBDIR flag.
 # 06-Jun-13 JDK  Remove library version numbers.
 # 16-Jul-13 SMc  Add conditional test for FIELDWORKS (requires GNU Make)
+# 18-Jul-13 SMc  Add $(WIDTH) to distinguish 32-bit from 64-bit output
 
 VPATH       = @srcdir@
 CXX         = @CXX@
@@ -29,15 +30,21 @@ endif
 MONO_INCLUDE= @MONO_CPPFLAGS@
 MONO_LDFLAGS= @MONO_LDFLAGS@
 
-all: $(BUILDDIR) $(OUTDIR)/libecdriver.so
+# the unmarked case is 32-bit (i686)
+ARCH := $(shell uname -m)
+ifeq ($(ARCH),x86_64)
+WIDTH=_64
+endif
+
+all: $(BUILDDIR) $(OUTDIR)/libecdriver$(WIDTH).so
 
 $(BUILDDIR):
 	mkdir -p $(BUILDDIR)
 	mkdir -p $(OUTDIR)
 
-$(OUTDIR)/libecdriver.so: $(BUILDDIR)/ECDriver.o
-	g++ -shared -Wl,-soname,libecdriver.so \
-  -o $(OUTDIR)/libecdriver.so $(BUILDDIR)/ECDriver.o \
+$(OUTDIR)/libecdriver$(WIDTH).so: $(BUILDDIR)/ECDriver.o
+	g++ -shared -Wl,-soname,libecdriver$(WIDTH).so \
+  -o $(OUTDIR)/libecdriver$(WIDTH).so $(BUILDDIR)/ECDriver.o \
   $(MONO_LDFLAGS) -lmono-2.0
 
 $(BUILDDIR)/ECDriver.o: $(SRCDIR)ECDriver.cpp $(SRCDIR)ecdriver.h
@@ -64,15 +71,15 @@ $(OUTDIR)/ECDriver_example_shared: $(BUILDDIR)/example_shared.o
 $(BUILDDIR)/example_shared.o: $(SRCDIR)example_shared.cpp
 	g++ -Wall -g -c $(SRCDIR)example_shared.cpp -o $(BUILDDIR)/example_shared.o
 
-release: $(RELEASEBLD) $(RELEASEOUT)/libecdriver.so
+release: $(RELEASEBLD) $(RELEASEOUT)/libecdriver$(WIDTH).so
 
 $(RELEASEBLD):
 	mkdir -p $(RELEASEBLD)
 	mkdir -p $(RELEASEOUT)
 
-$(RELEASEOUT)/libecdriver.so: $(RELEASEBLD)/ECDriver.o
-	g++ -shared -Wl,-soname,libecdriver.so \
-  -o $(RELEASEOUT)/libecdriver.so $(RELEASEBLD)/ECDriver.o \
+$(RELEASEOUT)/libecdriver$(WIDTH).so: $(RELEASEBLD)/ECDriver.o
+	g++ -shared -Wl,-soname,libecdriver$(WIDTH).so \
+  -o $(RELEASEOUT)/libecdriver$(WIDTH).so $(RELEASEBLD)/ECDriver.o \
   $(MONO_LDFLAGS) -lmono-2.0
 
 $(RELEASEBLD)/ECDriver.o: $(SRCDIR)ECDriver.cpp $(SRCDIR)ecdriver.h
@@ -92,15 +99,15 @@ $(RELEASEBLD)/ECDriver_test.o: $(SRCDIR)ECDriver_test.cpp
 clean:
 	rm -f *~
 	rm -f $(BUILDDIR)/ECDriver*.o
-	rm -f $(OUTDIR)/libecdriver.so* $(OUTDIR)/ECDriver_test $(OUTDIR)/ECDriver_example*
+	rm -f $(OUTDIR)/libecdriver$(WIDTH).so* $(OUTDIR)/ECDriver_test $(OUTDIR)/ECDriver_example*
 	rm -f $(RELEASEBLD)/ECDriver*.o
-	rm -f $(RELEASEOUT)/libecdriver.so* $(RELEASEOUT)/ECDriver_test $(OUTDIR)/ECDriver_example*
+	rm -f $(RELEASEOUT)/libecdriver$(WIDTH).so* $(RELEASEOUT)/ECDriver_test $(OUTDIR)/ECDriver_example*
 
 distclean: clean
 	rm -f Makefile
 
 install: release
 	mkdir -p $(DESTDIR)$(LIBDIR)
-	$(INSTALL) $(RELEASEOUT)/libecdriver.so $(DESTDIR)$(LIBDIR)
+	$(INSTALL) $(RELEASEOUT)/libecdriver$(WIDTH).so $(DESTDIR)$(LIBDIR)
 
 check:
