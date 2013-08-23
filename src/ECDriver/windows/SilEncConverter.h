@@ -1,3 +1,5 @@
+// 12-Jun-2013 JDK  Return error code if exception is caught during conversion.
+
 #pragma once
 
 #import "SilEncConverters22.tlb"  raw_interfaces_only
@@ -14,49 +16,57 @@ typedef CComPtr<ECInterfaces::IEncConverter>  IEC30;
 class CSilEncConverter
 {
 public:
-	CSilEncConverter(void);
-	~CSilEncConverter(void);
+    CSilEncConverter(void);
+    ~CSilEncConverter(void);
 
-	CStringW Convert(const CStringW& strInput);
+    HRESULT Convert(const CStringW& strInput, CStringW& strOutput);
 
-	bool operator!() const throw()
-	{
-		return (!m_aEC22 && !m_aEC30);
-	}
+    bool operator!() const throw()
+    {
+        return (!m_aEC22 && !m_aEC30);
+    }
 
-	bool IsInputLegacy() const;
-	bool IsOutputLegacy() const;
-	int	CodePageInput() const;
-	int	CodePageOutput() const;
+    bool IsInputLegacy() const;
+    bool IsOutputLegacy() const;
+    int CodePageInput() const;
+    int CodePageOutput() const;
 
-	// initial the IEC
-	HRESULT Initialize(const CStringW& strFriendlyName, BOOL bDirectionForward, int eNormalizeFlag);
+    // initial the IEC
+    HRESULT Initialize(const CStringW& strFriendlyName, BOOL bDirectionForward, int eNormalizeFlag);
 
-	HRESULT AutoSelect();
+    HRESULT AutoSelect();
 
-	CStringW	Description();
+    HRESULT Add(
+        const CStringW & strConverterName,
+        const CStringW & converterSpec,
+        int conversionType,
+        const CStringW & leftEncoding,
+        const CStringW & rightEncoding,
+        int processType);
+
+    CStringW    Description();
 
     // my properties
-    CStringW	ConverterName;
-    BOOL		DirectionForward;
-	int			NormalizeOutput;
+    CStringW    ConverterName;
+    BOOL        DirectionForward;
+    int         NormalizeOutput;
 
 protected:
-	bool IsSEC30() const
-	{
-		return !!m_aEC30;
-	}
+    bool IsSEC30() const
+    {
+        return !!m_aEC30;
+    }
 
-	bool IsSEC22() const
-	{
-		return !!m_aEC22;
-	}
+    bool IsSEC22() const
+    {
+        return !!m_aEC22;
+    }
 
-	void Detach();
+    void Detach();
 
 protected:
-	IEC22	m_aEC22;
-	IEC30	m_aEC30;
+    IEC22   m_aEC22;
+    IEC30   m_aEC30;
 };
 
-extern BOOL ProcessHResult(HRESULT hr, IUnknown* p, const IID& iid);
+extern HRESULT ProcessHResult(HRESULT hr, IUnknown* p, const IID& iid);
