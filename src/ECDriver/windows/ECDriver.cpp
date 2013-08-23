@@ -1,5 +1,6 @@
 // ECDriver.cpp : Defines the entry point for the DLL application.
 //
+// 12-Jun-2013 JDK  Return error code if exception is caught during conversion.
 
 #include "stdafx.h"
 #include "ECDriver.h"
@@ -121,6 +122,19 @@ ECDRIVER_API HRESULT EncConverterInitializeConverterW(LPCWSTR lpszConverterName,
 	return pEC->Initialize(lpszConverterName, bDirectionForward, eNormOutputForm);
 }
 
+ECDRIVER_API HRESULT EncConverterAddConverterW(
+    LPCWSTR lpszConverterName,
+    LPCWSTR converterSpec,
+    int conversionType,
+    LPCWSTR leftEncoding,
+    LPCWSTR rightEncoding,
+    int processType)
+{
+    CSilEncConverter* pEC = GetEncConverter(lpszConverterName);
+    ATLASSERT(pEC != 0);
+    return pEC->Add(lpszConverterName, converterSpec, conversionType, leftEncoding, rightEncoding, processType);
+}
+
 ECDRIVER_API HRESULT EncConverterConvertStringA(LPCSTR lpszConverterName, LPCSTR lpszInput, LPSTR lpszOutput, int nOutputLen)
 {
     CStringW strConverterName = CA2W(lpszConverterName, 65001);
@@ -136,7 +150,10 @@ ECDRIVER_API HRESULT EncConverterConvertStringA(LPCSTR lpszConverterName, LPCSTR
 	// EncConverter's interface is easiest when wide
 	CStringW strInput = CA2W(lpszInput, nCodePage);
 
-	CStringW strOutputW = pEC->Convert(strInput);
+	CStringW strOutputW;
+    HRESULT hr = pEC->Convert(strInput, strOutputW);
+    if (hr < 0)
+        return hr;
 
 	nCodePage = (pEC->IsOutputLegacy()) ? pEC->CodePageOutput() : /* UTF8 */ 65001;
 
@@ -155,7 +172,10 @@ ECDRIVER_API HRESULT EncConverterConvertStringW(LPCWSTR lpszConverterName, LPCWS
 	if (!(*pEC))
 		return /*NameNotFound*/ -7;
 
-	CStringW strOutput = pEC->Convert(lpszInput);
+	CStringW strOutput;
+    HRESULT hr = pEC->Convert(lpszInput, strOutput);
+    if (hr < 0)
+        return hr;
 
 	wcsncpy(lpszOutput, (LPCWSTR)strOutput, nOutputLen);
 	return S_OK;
