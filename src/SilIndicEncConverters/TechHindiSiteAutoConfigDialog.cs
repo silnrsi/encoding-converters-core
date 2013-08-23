@@ -286,7 +286,7 @@ namespace SilEncConverters40
             if (String.IsNullOrEmpty(strHtmlSource))
                 return;
 
-            ElementPicker dlg = new ElementPicker(strHtmlSource, @"on[cC]lick=""(.*)\(", strDefaultValue);
+            var dlg = new ElementPicker(strHtmlSource, @"on[cC]lick=""(.*?)\(", strDefaultValue);
             if (dlg.ShowDialog() == DialogResult.OK)
                 textBoxConvertFunction.Text = dlg.SelectedElement;
         }

@@ -4,6 +4,8 @@
 //	ECDriver.lib library. And include the ECDriver.DLL AND MSVCRT80.dll in your tool
 //	(the later of which has to be done via a merge module).
 // Contact silconverters_support@sil.org if you need other things in this interface.
+//
+// 12-Jun-2013 JDK Added EncConverterAddConverterW.
 
 #pragma once
 #ifdef ECDRIVER_EXPORTS
@@ -40,6 +42,17 @@ extern "C" {
 	//	*SelectConverter before calling either of the *ConvertString calls below.
 	ECDRIVER_API HRESULT STDCALL EncConverterInitializeConverterA(LPCSTR lpszConverterName, BOOL bDirectionForward, int eNormOutputForm);
 	ECDRIVER_API HRESULT STDCALL EncConverterInitializeConverterW(LPCWSTR lpszConverterName, BOOL bDirectionForward, int eNormOutputForm);
+
+    /// Add a converter to the repository (e.g. .Add \"Annapurna<>UNICODE\", \"C:\\Program Files\\Common Files\\SIL\\MapsTables\\Annapurna.tec\", Legacy_to_from_Unicode, \"SIL-ANNAPURNA_05-2002\", \"UNICODE\", ProcessEncodingConversion)
+    /// <param name="mappingName">friendly name key that the converter is to be accessed with</param>
+    /// <param name="converterSpec">technical spec of the converter (e.g. TECkit & CC = filespec to map)</param>
+    /// <param name="conversionType">ConvType parameter indicating the type of conversion (e.g. "Legacy_to_from_Unicode")</param>
+    /// <param name="leftEncoding">optional technical name of the left-hand side encoding (e.g. SIL-ANNAPURNA-05)</param>
+    /// <param name="rightEncoding">optional technical name of the right-hand side encoding (e.g. UNICODE)</param>
+    /// <param name="processType">flag to indicate teh implementation/transduction type (e.g. UnicodeEncodingConversion) from which you can do later filtering (e.g. ByEncodingID)</param>
+    ECDRIVER_API HRESULT STDCALL EncConverterAddConverterW(
+        LPCWSTR lpszConverterName, LPCWSTR converterSpec, int conversionType,
+        LPCWSTR leftEncoding, LPCWSTR rightEncoding, int processType);
 
 	// this function can be used to convert a string of narrow bytes using the named converter
 	//	this string of narrow bytes ought to be UTF8 if the input to the conversion is Unicode.
