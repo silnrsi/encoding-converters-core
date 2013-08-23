@@ -198,9 +198,13 @@ namespace SilEncConverters40
                 {
                     aEC = DirectableEncConverter.EncConverters[m_strConverterName];
 
-					if (!checkBoxDebug.Visible)
+                    // BE: UPDATE: if this property is called after this dialog goes away (which it will), then the checkbox
+                    //  mentioned here *will* be not visible and yet, we still need to read the 'checked' state of the 
+                    //  run-time properties below (which works on Windows). So I'm adding 'Util.IsUnix' here so I don't
+                    //  break the Linux build, but so that the run-time properties will work on Windows
+					if (Util.IsUnix && !checkBoxDebug.Visible)
 						return aEC;
-					
+
                     // set the options too
                     aEC.DirectionForward = !this.checkBoxReverse.Checked;
                     aEC.Debug = this.checkBoxDebug.Checked;
