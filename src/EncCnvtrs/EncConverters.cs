@@ -1959,7 +1959,7 @@ namespace SilEncConverters40
             string sImplementType;
             string strConverterName = GetMappingName(strMapName, out sImplementType);
 
-            RemoveFromStore(strConverterName,sImplementType);    // from XML file
+			try { RemoveFromStore(strConverterName,sImplementType); } catch {}  // from XML file
             RemoveNonPersist(strMapName);  // from collection
         }
 
@@ -4397,9 +4397,12 @@ namespace SilEncConverters40
             GetEncodingFontDetails(xmlDoc, nsmgr, mappingName, out strLeftEncoding, out strRightEncoding, out ndontcare, out ndontcare);
 
             mappingRegistry.encodingDataTable aEncodingDT = file.encoding;
-            mappingRegistry.encodingRow aLEncodingRow = aEncodingDT.FindByname(strLeftEncoding);
-            mappingRegistry.encodingRow aREncodingRow = aEncodingDT.FindByname(strRightEncoding);
-
+			mappingRegistry.encodingRow aLEncodingRow = null;
+			mappingRegistry.encodingRow aREncodingRow = null;
+			if (!String.IsNullOrEmpty(strLeftEncoding))
+				aLEncodingRow = aEncodingDT.FindByname(strLeftEncoding);
+			if (!String.IsNullOrEmpty(strRightEncoding))
+				aREncodingRow = aEncodingDT.FindByname(strRightEncoding);
             // now remove the mapping entry... if requested
             if( bRemoveMap )
                 RemoveMapping(aMapRow, file);
