@@ -43,7 +43,7 @@ namespace SilEncConverters40
             eConversionType,
             strLhsEncodingId,
             strRhsEncodingId,
-            lProcessTypeFlags,
+            lProcessTypeFlags | (int)ProcessTypeFlags.CodePageConversion,
             bIsInRepository
             );
 

@@ -16,8 +16,6 @@ namespace SilEncConverters40
     //[CLSCompliantAttribute(false)]  // because of GeckoWebBrowser
     public partial class CcAutoConfigDialog : SilEncConverters40.AutoConfigDialog
     {
-        protected bool m_bInitialized = false;  // set at the end of Initialize (to block certain events until we're ready for them)
-
         public CcAutoConfigDialog
             (
             IEncConverters aECs,
