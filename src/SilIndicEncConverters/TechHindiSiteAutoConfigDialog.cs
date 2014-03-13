@@ -9,8 +9,6 @@ namespace SilEncConverters40
 {
     public partial class TechHindiSiteAutoConfigDialog : AutoConfigDialog
     {
-        protected bool m_bInitialized = false;  // set at the end of Initialize (to block certain events until we're ready for them)
-
         public TechHindiSiteAutoConfigDialog
             (
             IEncConverters aECs,
@@ -141,7 +139,7 @@ namespace SilEncConverters40
             if (!String.IsNullOrEmpty(textBoxFileSpec.Text))
                 openFileDialogBrowse.InitialDirectory = Path.GetDirectoryName(textBoxFileSpec.Text);
             else
-                openFileDialogBrowse.InitialDirectory = Util.GetSpecialFolderPath(Environment.SpecialFolder.CommonApplicationData) + EncConverters.strDefMapsTablesPath;
+                openFileDialogBrowse.InitialDirectory = Util.CommonAppDataPath() + EncConverters.strDefMapsTablesPath;
 
             if (openFileDialogBrowse.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {

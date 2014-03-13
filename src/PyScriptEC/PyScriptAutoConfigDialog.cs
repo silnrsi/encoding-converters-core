@@ -14,9 +14,6 @@ namespace SilEncConverters40
 {
     public class PyScriptAutoConfigDialog : SilEncConverters40.AutoConfigDialog
     {
-        // set at the end of Initialize (to block certain events until we're ready for them)
-        protected bool m_bInitialized = false;
-
         public PyScriptAutoConfigDialog (
             IEncConverters aECs,
             string strDisplayName,
@@ -40,7 +37,7 @@ namespace SilEncConverters40
                 eConversionType,
                 strLhsEncodingId,
                 strRhsEncodingId,
-                lProcessTypeFlags,
+                lProcessTypeFlags | (int)ProcessTypeFlags.PythonScript,
                 bIsInRepository);
             Util.DebugWriteLine(this, "Initialized base.");
             // if we're editing a CC table/spellfixer project, then set the
