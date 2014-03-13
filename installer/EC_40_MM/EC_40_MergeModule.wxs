@@ -258,8 +258,7 @@
                     <Class Id="{FBC7B81D-39A4-3DC6-A085-567D325146A2}" Context="InprocServer32" Description="SilEncConverters40.MetaCmpdAutoConfigDialog" ThreadingModel="both" ForeignServer="mscoree.dll">
                         <ProgId Id="SilEncConverters40.MetaCmpdAutoConfigDialog" Description="SilEncConverters40.MetaCmpdAutoConfigDialog" />
                     </Class>
-                    <File Id="SilEncConverters40.dll" Name="SilEncConverters40.dll" Vital="yes" KeyPath="yes" AssemblyManifest="SilEncConverters40.dll" AssemblyApplication="SilEncConverters40.dll" Assembly=".net" Source="..\..\output\release\SilEncConverters40.dll"/>
-                    <ProgId Id="Record" />
+                    <File Id="SilEncConverters40.dll" KeyPath="yes" Source="..\..\output\release\SilEncConverters40.dll"/>
                     <RegistryValue Root="HKCR" Key="CLSID\{0162B174-E479-44CD-BEE8-CFA9BC06BF92}\Implemented Categories\{62C8FE65-4EBB-45e7-B440-6E39B2CDBF29}" Value="" Type="string" Action="write" />
                     <RegistryValue Root="HKCR" Key="CLSID\{0162B174-E479-44CD-BEE8-CFA9BC06BF92}\InprocServer32\4.0.0.0" Name="Class" Value="SilEncConverters40.EncConverters" Type="string" Action="write" />
                     <RegistryValue Root="HKCR" Key="CLSID\{0162B174-E479-44CD-BEE8-CFA9BC06BF92}\InprocServer32\4.0.0.0" Name="Assembly" Value="SilEncConverters40, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" Type="string" Action="write" />
