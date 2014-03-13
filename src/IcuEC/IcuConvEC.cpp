@@ -257,6 +257,17 @@ namespace IcuConvEC
 		return m_cConvNames;
 	}
 
+	const char * ReturnableString(const char* name)
+	{
+		static char chbuf[MAXNAMESIZE];
+		size_t len = strlen(name);
+		if (len >= MAXNAMESIZE)
+			len = MAXNAMESIZE - 1;
+		strncpy_s(chbuf, name, len);
+		chbuf[len] = 0;
+		return (const char *)chbuf;
+	}
+
 	///////////////////////////////////////////////////////////////////////////
 	// NAME
 	//    ConverterNameList_next
@@ -277,11 +288,38 @@ namespace IcuConvEC
 #endif
 			return NULL;
 		}
+
 		const char *convName = ucnv_getAvailableName(m_iConvName++);
+
+		char buf[MAXNAMESIZE];
+		strcpy_s(buf, convName);
+
+		UErrorCode status = U_ZERO_ERROR;
+		int nSizeAliases = ucnv_countAliases(convName, &status);
+
+		if( nSizeAliases > 1 )
+            strcat_s(buf, " (aliases: ");
+
+        for( int j = 1; U_SUCCESS(status) && (j < nSizeAliases); j++ )
+        {
+            const char * lpszAlias = ucnv_getAlias(convName, (uint16_t)j, &status);
+            if( U_SUCCESS(status) )
+            {
+                strcat_s(buf, lpszAlias);
+				if (j < (nSizeAliases - 1))
+					strcat_s(buf, " OR ");
+            }
+        }
+
+		if( nSizeAliases > 1 )
+        {
+			strcat_s(buf, ")");
+        }
+
 #ifdef _MSC_VER
-		return convName;
+		return ReturnableString(buf);
 #else
-		return strdup(convName);
+		return strdup(buf);
 #endif
 	}
 
@@ -318,6 +356,11 @@ namespace IcuConvEC
 		if (conv != m_pConverter)
 			ucnv_close(conv);
 #ifdef _MSC_VER
+		const char* str = ReturnableString(name);
+		free((void *)name);
+		return str;
+
+		/*
 		static char chbuf[MAXNAMESIZE];
 		size_t len = strlen(name);
 		if (len >= MAXNAMESIZE)
@@ -326,6 +369,7 @@ namespace IcuConvEC
 		chbuf[len] = 0;
 		free((void *)name);
 		return (const char *)chbuf;
+		*/
 #else
 		return name;
 #endif
