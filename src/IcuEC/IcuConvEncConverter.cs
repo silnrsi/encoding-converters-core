@@ -237,7 +237,12 @@ namespace SilEncConverters40
 			}
 			return specs;
 		}
-		
+
+	    protected override void GetConverterNameEnum(out string [] rSa)
+        {
+            rSa = GetAvailableConverterSpecs().ToArray();
+        }
+
 		/// <summary>
 		/// Gets the display name of the given ICU converter specification.
 		/// In practice, the output may be the same as the input.
