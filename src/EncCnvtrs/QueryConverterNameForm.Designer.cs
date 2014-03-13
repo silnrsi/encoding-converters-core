@@ -46,6 +46,7 @@ namespace SilEncConverters40
             // 
             // textBoxFriendlyName
             // 
+            this.textBoxFriendlyName.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxFriendlyName.Location = new System.Drawing.Point(16, 35);
             this.textBoxFriendlyName.Name = "textBoxFriendlyName";
             this.textBoxFriendlyName.Size = new System.Drawing.Size(435, 20);
