@@ -99,22 +99,23 @@ int CSilEncConverter::CodePageOutput() const
 HRESULT CSilEncConverter::Convert(const CStringW& strInput, CStringW& strOutput)
 {
     // if it's connected (now) AND if the string isn't empty...
+	HRESULT hr = S_OK;
     CComBSTR bstrOutput;
     if( !!(*this) && !strInput.IsEmpty() )
     {
         // then we're all set: call Convert
         if (IsSEC30())
         {
-            return ProcessHResult(m_aEC30->Convert(CComBSTR(strInput), &bstrOutput), m_aEC30, __uuidof(ECInterfaces::IEncConverter));
+            hr = ProcessHResult(m_aEC30->Convert(CComBSTR(strInput), &bstrOutput), m_aEC30, __uuidof(ECInterfaces::IEncConverter));
         }
         else if (IsSEC22())
         {
-            return ProcessHResult(m_aEC22->Convert(CComBSTR(strInput), &bstrOutput), m_aEC22, __uuidof(SilEncConverters22::IEncConverter));
+            hr = ProcessHResult(m_aEC22->Convert(CComBSTR(strInput), &bstrOutput), m_aEC22, __uuidof(SilEncConverters22::IEncConverter));
         }
     }
 
     strOutput = CStringW(bstrOutput);
-    return S_OK;
+    return hr;
 }
 
 CStringW CSilEncConverter::Description()
@@ -219,7 +220,14 @@ HRESULT CSilEncConverter::AutoSelect()
     else
         strProgId = L"SilEncConverters30.EncConverters";
 
-    pEC30s.CoCreateInstance(strProgId);
+    HRESULT hr = pEC30s.CoCreateInstance(strProgId);
+	if (hr == 0x800401f0)
+	{
+		// means the calling program didn't call CoInitialize, so we need to do it here...
+		CoInitialize ( NULL );
+		pEC30s.CoCreateInstance(strProgId);
+	}
+
     if( !!pEC30s )
     {
         // now that we have the repository... now ask for the Configuration UI
@@ -230,7 +238,7 @@ HRESULT CSilEncConverter::AutoSelect()
         ECInterfaces::ConvType eConvType = ECInterfaces::ConvType_Unknown;   // this means show all converters
 
         // call the self-selection UI (NOTE: only in SC 2.2 and newer!)
-        if(     ProcessHResult(pEC30s->AutoSelect(eConvType, &m_aEC30), pEC30s, __uuidof(ECInterfaces::IEncConverters))
+        if(     (ProcessHResult(pEC30s->AutoSelect(eConvType, &m_aEC30), pEC30s, __uuidof(ECInterfaces::IEncConverters)) == S_OK)
             &&  !!m_aEC30 )
         {
             // get the name of the configured converter
@@ -263,7 +271,7 @@ HRESULT CSilEncConverter::AutoSelect()
             SilEncConverters22::ConvType eConvType22 = SilEncConverters22::ConvType_Unknown;   // this means show all converters
 
             // call the self-selection UI (NOTE: only in SC 2.2 and newer!)
-            if(     ProcessHResult(pEC22s->AutoSelect(eConvType22, &m_aEC22), pEC22s, __uuidof(SilEncConverters22::IEncConverters))
+            if(     (ProcessHResult(pEC22s->AutoSelect(eConvType22, &m_aEC22), pEC22s, __uuidof(SilEncConverters22::IEncConverters)) == S_OK)
                 &&  !!m_aEC22 )
             {
                 // get the name of the configured converter
@@ -324,9 +332,9 @@ HRESULT CSilEncConverter::Add(
         CComBSTR varSpec(converterSpec);
         CComBSTR varLeftEnc(leftEncoding);
         CComBSTR varRightEnc(rightEncoding);
-        if(!ProcessHResult(pEC30s->Add(
+        if(ProcessHResult(pEC30s->Add(
                 CComBSTR(converterName), varSpec, (ECInterfaces::ConvType)conversionType, varLeftEnc, varRightEnc, (ECInterfaces::ProcessTypeFlags) processType),
-                pEC30s, __uuidof(ECInterfaces::IEncConverters)))
+                pEC30s, __uuidof(ECInterfaces::IEncConverters)) != S_OK)
         {
             // An exception occurred.
             return /*ErrStatus.Exception*/ -6;
@@ -360,9 +368,9 @@ HRESULT CSilEncConverter::Add(
             CComBSTR varSpec(converterSpec);
             CComBSTR varLeftEnc(leftEncoding);
             CComBSTR varRightEnc(rightEncoding);
-            if(!ProcessHResult(pEC22s->Add(
+            if(ProcessHResult(pEC22s->Add(
                     CComBSTR(converterName), varSpec, (SilEncConverters22::ConvType)conversionType, varLeftEnc, varRightEnc, (SilEncConverters22::ProcessTypeFlags) processType),
-                    pEC22s, __uuidof(ECInterfaces::IEncConverters)))
+                    pEC22s, __uuidof(ECInterfaces::IEncConverters)) != S_OK)
             {
                 // An exception occurred.
                 return /*ErrStatus.Exception*/ -6;
