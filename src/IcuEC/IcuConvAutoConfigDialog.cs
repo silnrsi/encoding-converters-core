@@ -27,12 +27,6 @@ namespace SilEncConverters40
 		static extern unsafe string CppGetDisplayName(string strID);
 		#endregion DLLImport Statements
 
-		///<summary>
-		/// set at the end of Initialize (to block certain events until we're ready for them)
-		///</summary>
-		protected bool m_bInitialized = false;
-		private string [] translitIDs;
-
 		public IcuConvAutoConfigDialog (
 			IEncConverters aECs,
 			string strDisplayName,
@@ -57,7 +51,7 @@ namespace SilEncConverters40
 				eConversionType,
 				strLhsEncodingId,
 				strRhsEncodingId,
-				lProcessTypeFlags,
+				lProcessTypeFlags | (int)ProcessTypeFlags.ICUConverter,
 				bIsInRepository);
 			Util.DebugWriteLine(this, "Initialized base.");
 
@@ -66,15 +60,8 @@ namespace SilEncConverters40
 			{
 				Util.DebugWriteLine(this, "Edit mode");
 				System.Diagnostics.Debug.Assert(!String.IsNullOrEmpty(ConverterIdentifier));
-				//listBoxConvName.SelectedValue = ConverterIdentifier;
-				for (int i = 0; i < translitIDs.Length; i++)
-				{
-					if (translitIDs[i] == ConverterIdentifier)
-					{
-						listBoxConvName.SelectedIndex = i;
-						break;
-					}
-				}
+			    var index = listBoxConvName.FindString(ConverterIdentifier);
+			    listBoxConvName.SelectedIndex = index;
 				IsModified = false;
 			}
 
@@ -109,66 +96,97 @@ namespace SilEncConverters40
 		// So feel free to modify it as needed.
 		private void InitializeComponent()
 		{
-			this.tabControl.SuspendLayout();
-			this.tabPageSetup.SuspendLayout();
-			this.SuspendLayout();
+            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.labelConvName = new System.Windows.Forms.Label();
+            this.listBoxConvName = new System.Windows.Forms.ListBox();
+            this.tabControl.SuspendLayout();
+            this.tabPageSetup.SuspendLayout();
+            this.tableLayoutPanel1.SuspendLayout();
+            this.SuspendLayout();
+            // 
+            // tabPageSetup
+            // 
+            this.tabPageSetup.Controls.Add(this.tableLayoutPanel1);
+            // 
+            // buttonApply
+            // 
+            this.helpProvider.SetHelpString(this.buttonApply, "Click this button to apply the configured values for this converter");
+            this.helpProvider.SetShowHelp(this.buttonApply, true);
+            // 
+            // buttonCancel
+            // 
+            this.helpProvider.SetHelpString(this.buttonCancel, "Click this button to cancel this dialog");
+            this.helpProvider.SetShowHelp(this.buttonCancel, true);
+            // 
+            // buttonOK
+            // 
+            this.helpProvider.SetHelpString(this.buttonOK, "Click this button to accept the configured values for this converter");
+            this.helpProvider.SetShowHelp(this.buttonOK, true);
+            // 
+            // buttonSaveInRepository
+            // 
+            this.helpProvider.SetHelpString(this.buttonSaveInRepository, "\r\nClick to add this converter to the system repository permanently.\r\n    ");
+            this.helpProvider.SetShowHelp(this.buttonSaveInRepository, true);
+            // 
+            // tableLayoutPanel1
+            // 
+            this.tableLayoutPanel1.ColumnCount = 2;
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel1.Controls.Add(this.labelConvName, 0, 0);
+            this.tableLayoutPanel1.Controls.Add(this.listBoxConvName, 1, 0);
+            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(3, 3);
+            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+            this.tableLayoutPanel1.RowCount = 1;
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(596, 394);
+            this.tableLayoutPanel1.TabIndex = 1;
+            // 
+            // labelConvName
+            // 
+            this.labelConvName.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.labelConvName.AutoSize = true;
+            this.labelConvName.Location = new System.Drawing.Point(3, 190);
+            this.labelConvName.Name = "labelConvName";
+            this.labelConvName.Size = new System.Drawing.Size(56, 13);
+            this.labelConvName.TabIndex = 0;
+            this.labelConvName.Text = "Converter:";
+            // 
+            // listBoxConvName
+            // 
+            this.listBoxConvName.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.listBoxConvName.Location = new System.Drawing.Point(65, 3);
+            this.listBoxConvName.Name = "listBoxConvName";
+            this.listBoxConvName.Size = new System.Drawing.Size(528, 388);
+            this.listBoxConvName.TabIndex = 1;
+            this.listBoxConvName.SelectedIndexChanged += new System.EventHandler(this.listBoxConvName_SelectedIndexChanged);
+            // 
+            // IcuConvAutoConfigDialog
+            // 
+            this.ClientSize = new System.Drawing.Size(634, 479);
+            this.Name = "IcuConvAutoConfigDialog";
+            this.Controls.SetChildIndex(this.tabControl, 0);
+            this.Controls.SetChildIndex(this.buttonApply, 0);
+            this.Controls.SetChildIndex(this.buttonCancel, 0);
+            this.Controls.SetChildIndex(this.buttonOK, 0);
+            this.Controls.SetChildIndex(this.buttonSaveInRepository, 0);
+            this.tabControl.ResumeLayout(false);
+            this.tabPageSetup.ResumeLayout(false);
+            this.tableLayoutPanel1.ResumeLayout(false);
+            this.tableLayoutPanel1.PerformLayout();
+            this.ResumeLayout(false);
 
-			// 
-			// Script file
-			// 
-
-			this.labelConvName = new System.Windows.Forms.Label();
-			this.labelConvName.Text = "Converator:";
-			this.labelConvName.Anchor = System.Windows.Forms.AnchorStyles.Right;
-			this.labelConvName.AutoSize = true;
-			this.labelConvName.Name = "labelConvName";
-			this.labelConvName.TabIndex = 0;
-
-			this.listBoxConvName = new System.Windows.Forms.ListBox();
-			this.listBoxConvName.Anchor = System.Windows.Forms.AnchorStyles.Left;
-			this.listBoxConvName.Location = new System.Drawing.Point(88, 14);
-			this.listBoxConvName.Name = "listBoxConvName";
-			this.listBoxConvName.Size = new System.Drawing.Size(400, 400);
-			this.listBoxConvName.TabIndex = 1;
-			this.listBoxConvName.SelectedIndexChanged +=
-				new System.EventHandler (
-					this.listBoxConvName_SelectedIndexChanged);
-
-			// 
-			// Panel and Dialog Window
-			// 
-
-			this.tableLayoutPanel1 =
-				new System.Windows.Forms.TableLayoutPanel();
-			this.tableLayoutPanel1.SuspendLayout();
-			this.tableLayoutPanel1.ColumnCount = 4;
-			this.tableLayoutPanel1.RowCount    = 2;
-			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle()); // an empty row
-			this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.tableLayoutPanel1.Location = new System.Drawing.Point(3, 3);
-			this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-			this.tableLayoutPanel1.Size = new System.Drawing.Size(620, 394);
-			this.tableLayoutPanel1.TabIndex = 1;
-			this.tableLayoutPanel1.Controls.Add(this.labelConvName,      0, 0);
-			this.tableLayoutPanel1.Controls.Add(this.listBoxConvName,      1, 0);
-
-			this.tabPageSetup.Controls.Add(this.tableLayoutPanel1);
-
-			this.ClientSize = new System.Drawing.Size(634, 479);
-			this.Name = "IcuConvAutoConfigDialog";
-			this.tabControl.ResumeLayout(false);
-			this.tabPageSetup.ResumeLayout(false);
-			this.tableLayoutPanel1.ResumeLayout(false);
-			this.tableLayoutPanel1.PerformLayout();
-			this.ResumeLayout(false);
 		}
 
 		private void fillListBox()
 		{
 			this.listBoxConvName.Items.Clear();
+#if true
+		    var list = IcuConvEncConverter.GetAvailableConverterSpecs();
+            list.ForEach(i => listBoxConvName.Items.Add(i));
+#else
 			int count = 0;
 			
             count = CppConverterNameList_start();
@@ -214,6 +232,7 @@ namespace SilEncConverters40
 				}
 				while((swapped==true));
 			}
+#endif
 		}
 
 		protected override void SetConvTypeControls()
@@ -227,8 +246,15 @@ namespace SilEncConverters40
 		protected override bool OnApply()
 		{
 			Util.DebugWriteLine(this, "BEGIN");
-			// Get the converter identifier from the Setup tab controls.
-			ConverterIdentifier = translitIDs[listBoxConvName.SelectedIndex];
+			
+            // Get the converter identifier from the Setup tab controls.
+		    var strConverter = listBoxConvName.SelectedItem as String;
+		    var nIndex = strConverter.IndexOf(" (aliases: ");
+            if (nIndex != -1)
+                strConverter = strConverter.Substring(0, nIndex);
+            
+            ConverterIdentifier = strConverter;
+
 			//SetConvTypeFromRbControls(radioButtonExpectsUnicode, radioButtonExpectsLegacy,
 			//    radioButtonReturnsUnicode, radioButtonReturnsLegacy);
 

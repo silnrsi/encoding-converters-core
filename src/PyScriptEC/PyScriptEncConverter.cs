@@ -127,7 +127,9 @@ namespace SilEncConverters40
             if( NormalizeLhsConversionType(ConversionType) == NormConversionType.eUnicode )
             {
                 // We could use UTF-8 here, but wide data works just fine.
-#if _MSC_VER
+                // the windows version definitely needs UTF16, but for some reason _MSC_VER is not defined on windows (as I think Jim is expecting)
+                //  so I'll use the opposite logic of 'if not mono'...
+#if !__MonoCS__ // _MSC_VER
                 Util.DebugWriteLine(this, "eInFormEngine UTF16");
                 eInFormEngine = EncodingForm.UTF16;
 #else
@@ -144,7 +146,7 @@ namespace SilEncConverters40
 
             if( NormalizeRhsConversionType(ConversionType) == NormConversionType.eUnicode )
             {
-#if _MSC_VER
+#if !__MonoCS__ // _MSC_VER
                 Util.DebugWriteLine(this, "eOutFormEngine UTF16");
                 eOutFormEngine = EncodingForm.UTF16;
 #else

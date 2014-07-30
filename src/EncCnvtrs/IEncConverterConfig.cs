@@ -217,6 +217,16 @@ namespace SilEncConverters40
                 eConversionType = m_eConversionType;
         }
 
+        protected string BestGuessEncoding(string strClassEncodingId, string strEncodingId, string strDefaultEncoding)
+        {
+            if (!String.IsNullOrEmpty(strClassEncodingId))
+                return strClassEncodingId;
+
+            return !String.IsNullOrEmpty(strEncodingId)
+                ? strEncodingId 
+                : strDefaultEncoding;
+        }
+
         protected void DisplayTestPage(AutoConfigDialog form)
         {
             form.Text = String.Format("{0} (converter: {1})", m_strDisplayName, form.FriendlyName);

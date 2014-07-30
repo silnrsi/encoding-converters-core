@@ -31,7 +31,6 @@ namespace SilEncConverters40
         /// </summary>
         private void InitializeComponent()
         {
-            Util.DebugWriteLine(this, "AutoConfigDialog BEGIN");
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AutoConfigDialog));
             this.tabControl = new System.Windows.Forms.TabControl();
@@ -45,7 +44,6 @@ namespace SilEncConverters40
             this.checkBoxTestReverse = new System.Windows.Forms.CheckBox();
             this.richTextBoxHexOutput = new System.Windows.Forms.RichTextBox();
             this.richTextBoxHexInput = new System.Windows.Forms.RichTextBox();
-            this.ecTextBoxInput = new SilEncConverters40.EcTextBox();
             this.contextMenuStripTestBoxes = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.changeFontToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
@@ -59,7 +57,6 @@ namespace SilEncConverters40
             this.selectAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.right2LeftToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.ecTextBoxOutput = new SilEncConverters40.EcTextBox();
             this.buttonTest = new System.Windows.Forms.Button();
             this.comboBoxFont = new System.Windows.Forms.ComboBox();
             this.tabPageAdvanced = new System.Windows.Forms.TabPage();
@@ -96,6 +93,8 @@ namespace SilEncConverters40
             this.helpProvider = new System.Windows.Forms.HelpProvider();
             this.fontDialog = new System.Windows.Forms.FontDialog();
             this.webBrowser = new SilEncConverters40.WebBrowserAdaptor();
+            this.ecTextBoxInput = new SilEncConverters40.EcTextBox();
+            this.ecTextBoxOutput = new SilEncConverters40.EcTextBox();
             this.tabControl.SuspendLayout();
             this.tabPageAbout.SuspendLayout();
             this.tabPageTestArea.SuspendLayout();
@@ -253,18 +252,6 @@ namespace SilEncConverters40
             this.richTextBoxHexInput.TabIndex = 6;
             this.richTextBoxHexInput.Text = "";
             // 
-            // ecTextBoxInput
-            // 
-            this.tableLayoutPanelTestPage.SetColumnSpan(this.ecTextBoxInput, 4);
-            this.ecTextBoxInput.ContextMenuStrip = this.contextMenuStripTestBoxes;
-            this.ecTextBoxInput.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.ecTextBoxInput.Font = new System.Drawing.Font("Arial", 11F);
-            this.ecTextBoxInput.Location = new System.Drawing.Point(51, 16);
-            this.ecTextBoxInput.Name = "ecTextBoxInput";
-            this.ecTextBoxInput.Size = new System.Drawing.Size(542, 24);
-            this.ecTextBoxInput.TabIndex = 3;
-            this.ecTextBoxInput.TextChanged += new System.EventHandler(this.ecTextBoxInput_TextChanged);
-            // 
             // contextMenuStripTestBoxes
             // 
             this.contextMenuStripTestBoxes.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -361,18 +348,6 @@ namespace SilEncConverters40
             this.right2LeftToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
             this.right2LeftToolStripMenuItem.Text = "&Right to left reading order";
             this.right2LeftToolStripMenuItem.Click += new System.EventHandler(this.right2LeftToolStripMenuItem_Click);
-            // 
-            // ecTextBoxOutput
-            // 
-            this.tableLayoutPanelTestPage.SetColumnSpan(this.ecTextBoxOutput, 4);
-            this.ecTextBoxOutput.ContextMenuStrip = this.contextMenuStripTestBoxes;
-            this.ecTextBoxOutput.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.ecTextBoxOutput.Font = new System.Drawing.Font("Arial", 11F);
-            this.ecTextBoxOutput.Location = new System.Drawing.Point(51, 221);
-            this.ecTextBoxOutput.Name = "ecTextBoxOutput";
-            this.ecTextBoxOutput.ReadOnly = true;
-            this.ecTextBoxOutput.Size = new System.Drawing.Size(542, 24);
-            this.ecTextBoxOutput.TabIndex = 3;
             // 
             // buttonTest
             // 
@@ -773,6 +748,30 @@ namespace SilEncConverters40
             this.webBrowser.Size = new System.Drawing.Size(596, 394);
             this.webBrowser.TabIndex = 0;
             // 
+            // ecTextBoxInput
+            // 
+            this.tableLayoutPanelTestPage.SetColumnSpan(this.ecTextBoxInput, 4);
+            this.ecTextBoxInput.ContextMenuStrip = this.contextMenuStripTestBoxes;
+            this.ecTextBoxInput.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ecTextBoxInput.Font = new System.Drawing.Font("Arial", 11F);
+            this.ecTextBoxInput.Location = new System.Drawing.Point(51, 16);
+            this.ecTextBoxInput.Name = "ecTextBoxInput";
+            this.ecTextBoxInput.Size = new System.Drawing.Size(542, 24);
+            this.ecTextBoxInput.TabIndex = 3;
+            this.ecTextBoxInput.TextChanged += new System.EventHandler(this.ecTextBoxInput_TextChanged);
+            // 
+            // ecTextBoxOutput
+            // 
+            this.tableLayoutPanelTestPage.SetColumnSpan(this.ecTextBoxOutput, 4);
+            this.ecTextBoxOutput.ContextMenuStrip = this.contextMenuStripTestBoxes;
+            this.ecTextBoxOutput.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ecTextBoxOutput.Font = new System.Drawing.Font("Arial", 11F);
+            this.ecTextBoxOutput.Location = new System.Drawing.Point(51, 221);
+            this.ecTextBoxOutput.Name = "ecTextBoxOutput";
+            this.ecTextBoxOutput.ReadOnly = true;
+            this.ecTextBoxOutput.Size = new System.Drawing.Size(542, 24);
+            this.ecTextBoxOutput.TabIndex = 3;
+            // 
             // AutoConfigDialog
             // 
             this.AcceptButton = this.buttonOK;
@@ -803,7 +802,7 @@ namespace SilEncConverters40
             this.flowLayoutPanelTransductionTypes.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewProperties)).EndInit();
             this.ResumeLayout(false);
-            Util.DebugWriteLine(this, "END");
+
         }
 
         #endregion
