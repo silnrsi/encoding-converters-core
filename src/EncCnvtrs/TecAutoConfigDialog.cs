@@ -13,8 +13,6 @@ namespace SilEncConverters40
     //[CLSCompliantAttribute(false)]  // because of GeckoWebBrowser
     public partial class TecAutoConfigDialog : SilEncConverters40.AutoConfigDialog
     {
-        protected bool m_bInitialized = false;
-
         public TecAutoConfigDialog
             (
             IEncConverters aECs,

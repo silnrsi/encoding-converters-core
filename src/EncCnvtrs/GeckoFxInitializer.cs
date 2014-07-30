@@ -104,23 +104,23 @@ namespace SilEncConverters40
                 const string cstrLinkPrefix = "To use Mozilla to display the help file, download xulRunner from ";
                 const string cstrXulRunnerLink = "http://ftp.mozilla.org/pub/mozilla.org/xulrunner/releases/14.0.1/runtimes";
                 var labelInstructions = new LinkLabel
-                    {
-                        Text = " and put the xulrunner folder as a subfolder in the ";
-                               cstrLinkPrefix + cstrXulRunnerLink + cstrFolderPrefix +
-                               DirectoryOfTheApplicationExecutable +
-                               String.Format(@" folder. Otherwise, change the registry key 'HKLM\{0}\{1}' to 'False'",
-                               EncConverters.SEC_ROOT_KEY, EncConverters.CstrUseGeckoRegKey);
-                        Dock = DockStyle.Fill
-                    };
+                {
+                    Text =
+                        cstrLinkPrefix + cstrXulRunnerLink + " and put the xulrunner folder as a subfolder in the " +
+                        DirectoryOfTheApplicationExecutable + String.Format(@" folder. Otherwise, change the registry key 'HKLM\{0}\{1}' to 'False'",
+                                                                            EncConverters.SEC_ROOT_KEY,
+                                                                            EncConverters.CstrUseGeckoRegKey),
+                    Dock = DockStyle.Fill
+                };
                 labelInstructions.Links.Add(cstrLinkPrefix.Length, cstrXulRunnerLink.Length, cstrXulRunnerLink);
                 labelInstructions.Links.Add(labelInstructions.Text.IndexOf(DirectoryOfTheApplicationExecutable),
                                             DirectoryOfTheApplicationExecutable.Length,
                                             DirectoryOfTheApplicationExecutable);
                 labelInstructions.LinkClicked += (sender, args) =>
-                                                     {
-                                                         if (args.Link.LinkData != null);
-                                                            Process.Start(args.Link.LinkData as string);
-                                                     };
+                {
+                    if (args.Link.LinkData != null) ;
+                    Process.Start(args.Link.LinkData as string);
+                };
                 return labelInstructions;
 #endif
             }
