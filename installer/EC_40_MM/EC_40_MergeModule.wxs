@@ -518,12 +518,19 @@
                 <!--This is still needed to open authentication for the repository file folder-->
                 <Directory Id="CommonAppDataFolder" SourceName="AppData">
                     <Directory Id="AppDataSIL" Name="SIL">
-                        <Directory Id="AppDataECFolder" Name="EC">
-                            <Component Id="CreateEcFolder" Guid="78456078-a9db-40d9-bc9a-f79b24abd7df">
+                        <Directory Id="AppDataECFolder" Name="Repository">
+                            <Component Id="CreateRepositoryFolder" Guid="4C784F73-E98B-440C-91D8-7D07ED0DB41B">
                                 <CreateFolder>
                                     <util:PermissionEx User="AuthenticatedUser" GenericAll="yes" />
                                 </CreateFolder>
                             </Component>
+                        </Directory>
+                        <Directory Id="AppDataMapsTablesFolder" Name="MapsTables">
+                          <Component Id="CreateMapsTablesFolder" Guid="36C7C46E-B071-4B62-8AF8-2DA691F45C3A">
+                            <CreateFolder>
+                              <util:PermissionEx User="AuthenticatedUser" GenericAll="yes" />
+                            </CreateFolder>
+                          </Component>
                         </Directory>
                     </Directory>
                 </Directory>

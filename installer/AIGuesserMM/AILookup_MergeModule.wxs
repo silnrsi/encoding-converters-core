@@ -30,11 +30,11 @@
                     </Component>
                     <Directory Id="Help" Name="Help">
                         <Component Id="AdaptItGuesserHelp" Guid="8EA270BD-77D5-42AB-9B53-906310EA60F1">
-                            <File Id="AdaptItGuesserHelp" Name="AdaptIt Guesser Plug-in About box.mht" ReadOnly="yes" KeyPath="yes" Source="..\..\\redist\Help\AdaptIt Guesser Plug-in About box.mht"/>
+                            <File Id="AdaptItGuesserHelp" Name="AdaptIt Guesser Plug-in About box.mht" ReadOnly="yes" KeyPath="yes" Source="..\..\redist\Help\AdaptIt Guesser Plug-in About box.mht"/>
                             <Shortcut Id="AdaptItGuesserHelp" Directory="AiHelp" Name="AdaptIt Guesser Plug-in Help" Description="View help document for the AdaptIt Guesser Plug-in" IconIndex="0" Show="normal" Target="[#AdaptItGuesserHelp]" WorkingDirectory="Help" Advertise="no" />
                         </Component>
                         <Component Id="AdaptItLookupHelp" Guid="1B1FC8DC-B38E-4DEA-AF0C-58B62AAC8DF0">
-                            <File Id="AdaptItLookupHelp" Name="AdaptIt Plug-in About box.mht" ReadOnly="yes" KeyPath="yes" Source="..\..\\redist\Help\AdaptIt Plug-in About box.mht"/>
+                            <File Id="AdaptItLookupHelp" Name="AdaptIt Plug-in About box.mht" ReadOnly="yes" KeyPath="yes" Source="..\..\redist\Help\AdaptIt Plug-in About box.mht"/>
                             <Shortcut Id="AdaptItLookupHelp" Directory="AiHelp" Name="AdaptIt Lookup Plug-in Help" Description="View help document for the AdaptIt Lookup Plug-in" IconIndex="0" Show="normal" Target="[#AdaptItLookupHelp]" WorkingDirectory="Help" Advertise="no" />
                         </Component>
                     </Directory>
