@@ -33,7 +33,7 @@
             <Directory Id="ProgramMenuFolder" Name="Program">
                 <Directory Id="SIL_Converters" Name="SIL Converters">
                     <Directory Id="CcHelp" Name="Help">
-                        <Component Id="HelpShortcuts" Guid="5f95a3bb-d7be-4a03-a6e6-07f5b6e38c6d" KeyPath="yes">
+                        <Component Id="HelpShortcuts" Guid="A84EFA8C-D422-4D5D-B55B-C4FCDD6ECE61" KeyPath="yes">
                             <Shortcut Id="CCTablePluginHelp" Directory="CcHelp" Name="CC Table Plug-in Help" Target="[#CCTableHelp]" Hotkey="0" IconIndex="0" Show="normal" WorkingDirectory="Help"/>
                             <!-- The next item is junk to make validation pass on ICE18 -->
                             <CreateFolder/>
