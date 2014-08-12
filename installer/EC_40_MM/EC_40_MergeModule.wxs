@@ -477,10 +477,10 @@
                     <File Id="EncConvertersAppDataMover40.exe" Name="EncConvertersAppDataMover40.exe" ReadOnly="yes" KeyPath="yes" Source="..\..\output\release\EncConvertersAppDataMover40.exe" Assembly=".net" AssemblyApplication="EncConvertersAppDataMover40.exe" AssemblyManifest="EncConvertersAppDataMover40.exe"/>
                 </Component>
                 <Component Id="geckofx_core_14.dll" Guid="{39593B07-CD1F-40D0-A5D0-BDDB70F78152}">
-                    <File Id="geckofx_core_14.dll" Name="geckofx-core-14.dll" Vital="yes" KeyPath="yes" AssemblyManifest="geckofx_core_14.dll" AssemblyApplication="geckofx_core_14.dll" Assembly=".net" Source="..\..\output\release\geckofx-core-14.dll"/>
+                    <File Id="geckofx_core_14.dll" Name="geckofx-core-14.dll" Vital="yes" KeyPath="yes" AssemblyManifest="geckofx_core_14.dll" AssemblyApplication="geckofx_core_14.dll" Assembly=".net" Source="..\..\DistFiles\windows\geckofx\geckofx-core-14.dll"/>
                 </Component>
                 <Component Id="Geckofx_Winforms_14.dll" Guid="{DE143B00-87A2-4DD2-8A73-970B457D7AE4}">
-                    <File Id="Geckofx_Winforms_14.dll" Name="Geckofx-Winforms-14.dll" Vital="yes" KeyPath="yes" AssemblyManifest="Geckofx_Winforms_14.dll" AssemblyApplication="Geckofx_Winforms_14.dll" Assembly=".net" Source="..\..\output\release\Geckofx-Winforms-14.dll"/>
+                    <File Id="Geckofx_Winforms_14.dll" Name="Geckofx-Winforms-14.dll" Vital="yes" KeyPath="yes" AssemblyManifest="Geckofx_Winforms_14.dll" AssemblyApplication="Geckofx_Winforms_14.dll" Assembly=".net" Source="..\..\DistFiles\windows\geckofx\Geckofx-Winforms-14.dll"/>
                 </Component>
                 <Directory Id="ECFolder" Name="EC">
                     <Directory Id="PluginsFolder" Name="Plugins">
