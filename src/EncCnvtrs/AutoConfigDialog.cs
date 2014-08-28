@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Collections;               // for Hashtable (ECAttributes)
 using System.Windows.Forms;
@@ -929,6 +930,39 @@ namespace SilEncConverters40
                 newSize = this.ecTextBoxInput.Font.Size;
             this.ecTextBoxInput.Font = new Font(newVal, newSize);
             this.ecTextBoxOutput.Font = new Font(newVal, newSize);
+        }
+
+        protected static void LoadComboBoxFromSettings(ComboBox comboBox, StringCollection recentList)
+        {
+            comboBox.Items.Clear();
+            foreach (var str in recentList)
+                comboBox.Items.Add(str);
+        }
+
+        protected bool m_bInitialized;  // set at the end of Initialize (to block certain events until we're ready for them)
+
+        protected void DeleteSelectedItemFromComboBoxAndUpdateSettings(ComboBox comboBox, StringCollection recentlyUsedList)
+        {
+            if (comboBox.SelectedItem == null)
+                return;
+
+            var str = comboBox.SelectedItem.ToString();
+            if (!recentlyUsedList.Contains(str))
+                return;
+
+            recentlyUsedList.Remove(str);
+
+            LoadComboBoxFromSettings(comboBox, recentlyUsedList);
+
+            // if there are any left...
+            if (comboBox.Items.Count <= 0)
+                return;
+
+            // ... set something in the combo box so it doesn't keep showing the now deleted one
+            // (but pretend we're not initialized so we don't overwrite what's in the text box
+            m_bInitialized = false;
+            comboBox.SelectedIndex = 0;
+            m_bInitialized = true;
         }
     }
 }

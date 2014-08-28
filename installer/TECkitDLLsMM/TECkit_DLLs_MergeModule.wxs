@@ -6,14 +6,26 @@
 		<Directory Id="TARGETDIR" Name="SourceDir">
 			<Directory Id="MergeRedirectFolder">
 
-                <Component Id="TECkit_x86.dll" Guid="{F078D000-316C-4D97-8759-F18D3435BA6C}">
-                    <File Id="TECkit_x86.dll" Name="TECkit_x86.dll" KeyPath="yes" Source="..\..\redist\TECkit_x86.dll" />
-                </Component>
-                <Component Id="TECkit_Compiler_x86.dll" Guid="{78B38109-7C53-4B49-AFE1-F923E3F16E12}">
-                    <File Id="TECkit_Compiler_x86.dll" Name="TECkit_Compiler_x86.dll" KeyPath="yes" Source="..\..\redist\TECkit_Compiler_x86.dll" />
-                </Component>
+        <Component Id="TECkit_x86.dll" Guid="{46345FFA-F643-4F49-B40E-3177F372A474}">
+            <File Id="TECkit_x86.dll" Name="TECkit_x86.dll" KeyPath="yes" Source="..\..\redist\TECkit_x86.dll" />
+        </Component>
+        <Component Id="TECkit_Compiler_x86.dll" Guid="{154AC6A3-D3D0-4524-A1FD-5382A79042E0}">
+            <File Id="TECkit_Compiler_x86.dll" Name="TECkit_Compiler_x86.dll" KeyPath="yes" Source="..\..\redist\TECkit_Compiler_x86.dll" />
+        </Component>
 
-			</Directory>
+        <Component Id="libgcc_s_sjlj_1.dll" Guid="{D436B229-A613-4EEF-919C-99F6158E48BC}">
+          <File Id="libgcc_s_sjlj_1.dll" Name="libgcc_s_sjlj-1.dll" KeyPath="yes" Source="..\..\redist\libgcc_s_sjlj-1.dll" />
+        </Component>
+
+        <Component Id="libstdcpp_6.dll" Guid="{E3A37E1A-148E-4918-A0C0-8D2BFFCDBBB1}">
+          <File Id="libstdcpp_6.dll" Name="libstdc++-6.dll" KeyPath="yes" Source="..\..\redist\libstdc++-6.dll" />
+        </Component>
+
+        <Component Id="libwinpthread_1.dll" Guid="{D6096543-9AC3-41E0-9F73-7639CE6CA309}">
+          <File Id="libwinpthread_1.dll" Name="libwinpthread-1.dll" KeyPath="yes" Source="..\..\redist\libwinpthread-1.dll" />
+        </Component>
+
+      </Directory>
 		</Directory>
 	</Module>
 </Wix>

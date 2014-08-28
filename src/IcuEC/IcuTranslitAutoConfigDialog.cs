@@ -9,7 +9,10 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using System.IO;
-using ECInterfaces;                     // for IEncConverter
+using ECInterfaces;
+using IcuEC.Properties;
+
+// for IEncConverter
 
 namespace SilEncConverters40
 {
@@ -28,7 +31,14 @@ namespace SilEncConverters40
         static extern unsafe string CppGetDisplayName(string strID);
         #endregion DLLImport Statements
 
-        protected bool m_bInitialized = false;  // set at the end of Initialize (to block certain events until we're ready for them)
+        private TableLayoutPanel tableLayoutPanel1;
+        private ListBox listBoxTranslitName;
+        private RadioButton radioButtonBuiltIn;
+        private RadioButton radioButtonCustom;
+        private TextBox textBoxCustomTransliterator;
+        private ComboBox comboBoxPreviousCustomTransliterators;
+        private Label label1;
+        private Button buttonDeletePreviousCustomTransliterators;  // set at the end of Initialize (to block certain events until we're ready for them)
         private string [] translitIDs;
 
         public IcuTranslitAutoConfigDialog (
@@ -55,7 +65,7 @@ namespace SilEncConverters40
                 eConversionType,
                 strLhsEncodingId,
                 strRhsEncodingId,
-                lProcessTypeFlags,
+                lProcessTypeFlags | (int)ProcessTypeFlags.ICUTransliteration | (int)ProcessTypeFlags.Transliteration,
                 bIsInRepository);
             Util.DebugWriteLine(this, "Initialized base.");
 
@@ -75,6 +85,11 @@ namespace SilEncConverters40
                 }
                 IsModified = false;
             }
+
+            LoadComboBoxFromSettings(comboBoxPreviousCustomTransliterators, Settings.Default.RecentCustomTransliterators);
+
+            if (comboBoxPreviousCustomTransliterators.Items.Count > 0)
+                comboBoxPreviousCustomTransliterators.SelectedIndex = 0;
 
             m_bInitialized = true;
             Util.DebugWriteLine(this, "END");
@@ -98,70 +113,164 @@ namespace SilEncConverters40
             m_bInitialized = true;
         }
 
-        private System.Windows.Forms.Label labelTranslitName;
-        private System.Windows.Forms.ListBox listBoxTranslitName;
-
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
-
         // This code was NOT generated!
         // So feel free to modify it as needed.
         private void InitializeComponent()
         {
+            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.listBoxTranslitName = new System.Windows.Forms.ListBox();
+            this.radioButtonBuiltIn = new System.Windows.Forms.RadioButton();
+            this.radioButtonCustom = new System.Windows.Forms.RadioButton();
+            this.textBoxCustomTransliterator = new System.Windows.Forms.TextBox();
+            this.comboBoxPreviousCustomTransliterators = new System.Windows.Forms.ComboBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.buttonDeletePreviousCustomTransliterators = new System.Windows.Forms.Button();
             this.tabControl.SuspendLayout();
             this.tabPageSetup.SuspendLayout();
-            this.SuspendLayout();
-
-            // 
-            // Script file
-            // 
-
-            this.labelTranslitName = new System.Windows.Forms.Label();
-            this.labelTranslitName.Text = "Transliterator:";
-            this.labelTranslitName.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.labelTranslitName.AutoSize = true;
-            this.labelTranslitName.Name = "labelTranslitName";
-            this.labelTranslitName.TabIndex = 0;
-
-            this.listBoxTranslitName = new System.Windows.Forms.ListBox();
-            this.listBoxTranslitName.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.listBoxTranslitName.Location = new System.Drawing.Point(88, 14);
-            this.listBoxTranslitName.Name = "listBoxTranslitName";
-            this.listBoxTranslitName.Size = new System.Drawing.Size(400, 400);
-            this.listBoxTranslitName.TabIndex = 1;
-            this.listBoxTranslitName.SelectedIndexChanged +=
-                new System.EventHandler (
-                    this.listBoxTranslitName_SelectedIndexChanged);
-
-            // 
-            // Panel and Dialog Window
-            // 
-
-            this.tableLayoutPanel1 =
-                new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel1.SuspendLayout();
-            this.tableLayoutPanel1.ColumnCount = 4;
-            this.tableLayoutPanel1.RowCount    = 2;
+            this.SuspendLayout();
+            // 
+            // tabPageSetup
+            // 
+            this.tabPageSetup.Controls.Add(this.tableLayoutPanel1);
+            // 
+            // buttonApply
+            // 
+            this.helpProvider.SetHelpString(this.buttonApply, "Click this button to apply the configured values for this converter");
+            this.helpProvider.SetShowHelp(this.buttonApply, true);
+            // 
+            // buttonCancel
+            // 
+            this.helpProvider.SetHelpString(this.buttonCancel, "Click this button to cancel this dialog");
+            this.helpProvider.SetShowHelp(this.buttonCancel, true);
+            // 
+            // buttonOK
+            // 
+            this.helpProvider.SetHelpString(this.buttonOK, "Click this button to accept the configured values for this converter");
+            this.helpProvider.SetShowHelp(this.buttonOK, true);
+            // 
+            // buttonSaveInRepository
+            // 
+            this.helpProvider.SetHelpString(this.buttonSaveInRepository, "\r\nClick to add this converter to the system repository permanently.\r\n    ");
+            this.helpProvider.SetShowHelp(this.buttonSaveInRepository, true);
+            // 
+            // tableLayoutPanel1
+            // 
+            this.tableLayoutPanel1.ColumnCount = 3;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle()); // an empty row
+            this.tableLayoutPanel1.Controls.Add(this.listBoxTranslitName, 1, 1);
+            this.tableLayoutPanel1.Controls.Add(this.radioButtonBuiltIn, 1, 0);
+            this.tableLayoutPanel1.Controls.Add(this.radioButtonCustom, 1, 2);
+            this.tableLayoutPanel1.Controls.Add(this.textBoxCustomTransliterator, 1, 3);
+            this.tableLayoutPanel1.Controls.Add(this.comboBoxPreviousCustomTransliterators, 1, 4);
+            this.tableLayoutPanel1.Controls.Add(this.label1, 0, 4);
+            this.tableLayoutPanel1.Controls.Add(this.buttonDeletePreviousCustomTransliterators, 2, 4);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(3, 3);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(620, 394);
+            this.tableLayoutPanel1.RowCount = 6;
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 50F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 50F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(596, 394);
             this.tableLayoutPanel1.TabIndex = 1;
-            this.tableLayoutPanel1.Controls.Add(this.labelTranslitName,      0, 0);
-            this.tableLayoutPanel1.Controls.Add(this.listBoxTranslitName,      1, 0);
-
-            this.tabPageSetup.Controls.Add(this.tableLayoutPanel1);
-
+            // 
+            // listBoxTranslitName
+            // 
+            this.listBoxTranslitName.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.listBoxTranslitName.Location = new System.Drawing.Point(128, 26);
+            this.listBoxTranslitName.Name = "listBoxTranslitName";
+            this.listBoxTranslitName.Size = new System.Drawing.Size(370, 212);
+            this.listBoxTranslitName.TabIndex = 1;
+            this.listBoxTranslitName.SelectedIndexChanged += new System.EventHandler(this.listBoxTranslitName_SelectedIndexChanged);
+            // 
+            // radioButtonBuiltIn
+            // 
+            this.radioButtonBuiltIn.AutoSize = true;
+            this.radioButtonBuiltIn.Checked = true;
+            this.radioButtonBuiltIn.Location = new System.Drawing.Point(128, 3);
+            this.radioButtonBuiltIn.Name = "radioButtonBuiltIn";
+            this.radioButtonBuiltIn.Size = new System.Drawing.Size(121, 17);
+            this.radioButtonBuiltIn.TabIndex = 0;
+            this.radioButtonBuiltIn.TabStop = true;
+            this.radioButtonBuiltIn.Text = "&Built-in transliterators";
+            this.radioButtonBuiltIn.UseVisualStyleBackColor = true;
+            this.radioButtonBuiltIn.Click += new System.EventHandler(this.radioButtonBuiltIn_Click);
+            // 
+            // radioButtonCustom
+            // 
+            this.radioButtonCustom.AutoSize = true;
+            this.radioButtonCustom.Location = new System.Drawing.Point(128, 244);
+            this.radioButtonCustom.Name = "radioButtonCustom";
+            this.radioButtonCustom.Size = new System.Drawing.Size(120, 17);
+            this.radioButtonCustom.TabIndex = 2;
+            this.radioButtonCustom.TabStop = true;
+            this.radioButtonCustom.Text = "&Custom transliterator";
+            this.radioButtonCustom.UseVisualStyleBackColor = true;
+            this.radioButtonCustom.Click += new System.EventHandler(this.radioButtonCustom_Click);
+            // 
+            // textBoxCustomTransliterator
+            // 
+            this.textBoxCustomTransliterator.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.textBoxCustomTransliterator.Enabled = false;
+            this.textBoxCustomTransliterator.Location = new System.Drawing.Point(128, 267);
+            this.textBoxCustomTransliterator.Name = "textBoxCustomTransliterator";
+            this.textBoxCustomTransliterator.Size = new System.Drawing.Size(370, 20);
+            this.textBoxCustomTransliterator.TabIndex = 3;
+            this.textBoxCustomTransliterator.TextChanged += new System.EventHandler(this.textBoxCustomTransliterator_TextChanged);
+            // 
+            // comboBoxPreviousCustomTransliterators
+            // 
+            this.comboBoxPreviousCustomTransliterators.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.comboBoxPreviousCustomTransliterators.Enabled = false;
+            this.comboBoxPreviousCustomTransliterators.FormattingEnabled = true;
+            this.comboBoxPreviousCustomTransliterators.Location = new System.Drawing.Point(128, 317);
+            this.comboBoxPreviousCustomTransliterators.Name = "comboBoxPreviousCustomTransliterators";
+            this.comboBoxPreviousCustomTransliterators.Size = new System.Drawing.Size(370, 21);
+            this.comboBoxPreviousCustomTransliterators.TabIndex = 4;
+            this.comboBoxPreviousCustomTransliterators.SelectedIndexChanged += new System.EventHandler(this.comboBoxPreviousCustomTransliterators_SelectedIndexChanged);
+            // 
+            // label1
+            // 
+            this.label1.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(3, 322);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(119, 13);
+            this.label1.TabIndex = 0;
+            this.label1.Text = "Previous Custom Rules:";
+            // 
+            // buttonDeletePreviousCustomTransliterators
+            // 
+            this.buttonDeletePreviousCustomTransliterators.Enabled = false;
+            this.buttonDeletePreviousCustomTransliterators.Location = new System.Drawing.Point(504, 317);
+            this.buttonDeletePreviousCustomTransliterators.Name = "buttonDeletePreviousCustomTransliterators";
+            this.buttonDeletePreviousCustomTransliterators.Size = new System.Drawing.Size(89, 23);
+            this.buttonDeletePreviousCustomTransliterators.TabIndex = 5;
+            this.buttonDeletePreviousCustomTransliterators.Text = "Delete";
+            this.buttonDeletePreviousCustomTransliterators.UseVisualStyleBackColor = true;
+            this.buttonDeletePreviousCustomTransliterators.Click += new System.EventHandler(this.buttonDeletePreviousCustomTransliterators_Click);
+            // 
+            // IcuTranslitAutoConfigDialog
+            // 
             this.ClientSize = new System.Drawing.Size(634, 479);
             this.Name = "IcuTranslitAutoConfigDialog";
+            this.Controls.SetChildIndex(this.tabControl, 0);
+            this.Controls.SetChildIndex(this.buttonApply, 0);
+            this.Controls.SetChildIndex(this.buttonCancel, 0);
+            this.Controls.SetChildIndex(this.buttonOK, 0);
+            this.Controls.SetChildIndex(this.buttonSaveInRepository, 0);
             this.tabControl.ResumeLayout(false);
             this.tabPageSetup.ResumeLayout(false);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             this.ResumeLayout(false);
+
         }
 
         private void fillListBox()
@@ -225,10 +334,12 @@ namespace SilEncConverters40
         protected override bool OnApply()
         {
 			Util.DebugWriteLine(this, "BEGIN");
+
             // Get the converter identifier from the Setup tab controls.
-            ConverterIdentifier = translitIDs[listBoxTranslitName.SelectedIndex];
-            //SetConvTypeFromRbControls(radioButtonExpectsUnicode, radioButtonExpectsLegacy,
-            //    radioButtonReturnsUnicode, radioButtonReturnsLegacy);
+            if (radioButtonBuiltIn.Checked && (listBoxTranslitName.SelectedIndex != -1))
+                ConverterIdentifier = translitIDs[listBoxTranslitName.SelectedIndex];
+            else if (radioButtonCustom.Checked)
+                ConverterIdentifier = textBoxCustomTransliterator.Text;
 
             // if we're actually on the setup tab, then do some further checking as well.
             if (tabControl.SelectedTab == tabPageSetup)
@@ -241,7 +352,16 @@ namespace SilEncConverters40
                     MessageBox.Show(this, "Choose a transliterator first!", EncConverters.cstrCaption);
                     return false;
                 }
+
+                if (radioButtonCustom.Checked && 
+                    !Settings.Default.RecentCustomTransliterators.Contains(ConverterIdentifier))
+                {
+                    Settings.Default.RecentCustomTransliterators.Add(ConverterIdentifier);
+                    Settings.Default.Save();
+                    LoadComboBoxFromSettings(comboBoxPreviousCustomTransliterators, Settings.Default.RecentCustomTransliterators);
+                }
             }
+
             Util.DebugWriteLine(this, "END");
             return base.OnApply();
         }
@@ -279,57 +399,58 @@ namespace SilEncConverters40
             get { return ConverterIdentifier; }
         }
 
-        private void listBoxTranslitName_SelectedIndexChanged (
-            object sender, EventArgs e)
+        private void listBoxTranslitName_SelectedIndexChanged (object sender, EventArgs e)
         {
-            if (m_bInitialized) // but only do this after we're already initialized
-            {
-                ListBox lb = this.listBoxTranslitName;  // shorter nickname
-                Util.DebugWriteLine(this,
-                    lb.SelectedIndex.ToString() + "\n" + lb.GetItemText(lb.SelectedItem) + "lb_SelectedIndexChanged"); 
-                IsModified = true;
-                //ProcessType &= ~(int)ProcessTypeFlags.SpellingFixerProject;
-            }
-        }
+            if (!m_bInitialized) 
+                return;
 
-/*
-        protected override bool SetupTabSelected_MakeSaveInRepositoryVisible
-        {
-            get { return !IsSpellFixerProject; }
-        }
-
-        private void buttonAddSpellFixer_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                SpellFixerByReflection aSF = new SpellFixerByReflection();
-                aSF.LoginProject();
-                ((EncConverters)m_aECs).Reinitialize();
-                FriendlyName = aSF.SpellFixerEncConverterName;
-                m_aEC = m_aECs[FriendlyName];
-                if (m_aEC != null)
-                {
-                    listBoxTranslitName.Text = ConverterIdentifier = m_aEC.ConverterIdentifier;
-                    ConversionType = m_aEC.ConversionType;
-                    ProcessType = m_aEC.ProcessType;
-                    UpdateUI(false);
-                    aSF.QueryForSpellingCorrectionIfTableEmpty("incorect");
-                    aSF.EditSpellingFixes();
-                    IsInRepository = true;
-                }
-            }
-            catch (Exception)
-            {
-                // usually just a "no project selected message, so .... ignoring it
-                // MessageBox.Show(ex.Message, EncConverters.cstrCaption);
-            }
-        }
-
-        private void radioButton_CheckedChanged(object sender, EventArgs e)
-        {
+            var lb = this.listBoxTranslitName;  // shorter nickname
+            Util.DebugWriteLine(this,
+                                lb.SelectedIndex.ToString() + "\n" + lb.GetItemText(lb.SelectedItem) + "lb_SelectedIndexChanged"); 
             IsModified = true;
         }
-*/
+
+        private void buttonDeletePreviousCustomTransliterators_Click(object sender, EventArgs e)
+        {
+            DeleteSelectedItemFromComboBoxAndUpdateSettings(comboBoxPreviousCustomTransliterators,
+                                                            Settings.Default.RecentCustomTransliterators);
+
+            Settings.Default.Save();
+        }
+
+        private void radioButtonBuiltIn_Click(object sender, EventArgs e)
+        {
+            listBoxTranslitName.Enabled = true;
+            textBoxCustomTransliterator.Enabled =
+                comboBoxPreviousCustomTransliterators.Enabled =
+                buttonDeletePreviousCustomTransliterators.Enabled = false;
+        }
+
+        private void radioButtonCustom_Click(object sender, EventArgs e)
+        {
+            listBoxTranslitName.Enabled = false;
+            textBoxCustomTransliterator.Enabled =
+                comboBoxPreviousCustomTransliterators.Enabled =
+                buttonDeletePreviousCustomTransliterators.Enabled = true;
+        }
+
+        private void comboBoxPreviousCustomTransliterators_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (!m_bInitialized)
+                return;
+
+            var strConverterSpec = comboBoxPreviousCustomTransliterators.SelectedItem.ToString();
+            textBoxCustomTransliterator.Text = strConverterSpec;
+            IsModified = true;
+        }
+
+        private void textBoxCustomTransliterator_TextChanged(object sender, EventArgs e)
+        {
+            if (!m_bInitialized)
+                return;
+
+            IsModified = true;
+        }
     }
 }
 

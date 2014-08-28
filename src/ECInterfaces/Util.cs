@@ -145,5 +145,13 @@ namespace ECInterfaces
             return "";
 #endif
         }
+
+		/// <summary>
+		/// Test whether we're running on a Unix variant (such as Linux).
+		/// </summary>
+		static public bool IsUnix
+		{
+			get { return Environment.OSVersion.Platform == PlatformID.Unix; }
+		}
     }
 }

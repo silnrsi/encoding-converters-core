@@ -30,12 +30,14 @@ namespace SilEncConverters40
         string strRhsEncodingID
         )
         {
-            PyScriptAutoConfigDialog form = new PyScriptAutoConfigDialog (
+            var form = new PyScriptAutoConfigDialog (
                 aECs, m_strDisplayName, m_strFriendlyName,
-                m_strConverterID, m_eConversionType, m_strLhsEncodingID, m_strRhsEncodingID,
+                m_strConverterID, m_eConversionType,
+                BestGuessEncoding(m_strLhsEncodingID, strLhsEncodingID, EncConverters.strDefUnicodeEncoding),
+                BestGuessEncoding(m_strRhsEncodingID, strRhsEncodingID, EncConverters.strDefUnicodeEncoding), 
                 m_lProcessType, m_bIsInRepository);
 
-            return base.Configure(form);
+            return Configure(form);
         }
 
         public override void DisplayTestPage
