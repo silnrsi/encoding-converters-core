@@ -49,6 +49,7 @@ namespace SilEncConverters40
 			base.Initialize(converterName, converterSpec, ref lhsEncodingID, ref rhsEncodingID, ref conversionType, ref processTypeFlags, codePageInput, codePageOutput, bAdding );
             m_nCodePage = System.Convert.ToInt32(ConverterIdentifier);
             
+            /* BE: this doesn't make any sense... why would you bother creating a UTF16-UTF16 converter?
             // the UTF16 code page is a special case: ConvType must be Uni <> Uni
             if( m_nCodePage == CP_UTF16 )
             {
@@ -58,6 +59,17 @@ namespace SilEncConverters40
                     rhsEncodingID = m_strRhsEncodingID = EncConverters.strDefUnicodeEncoding;
                 
                 // This only works if we consider UTF16 to be unicode; not legacy
+                conversionType = m_eConversionType = ConvType.Unicode_to_from_Unicode;
+            }
+            */
+            if (m_nCodePage == CP_UTF8)
+            {
+                if (String.IsNullOrEmpty(LeftEncodingID))
+                    lhsEncodingID = m_strLhsEncodingID = "utf-8";
+                if (String.IsNullOrEmpty(RightEncodingID))
+                    rhsEncodingID = m_strRhsEncodingID = EncConverters.strDefUnicodeEncoding;
+
+                // This only works if we consider UTF8 to be unicode; not legacy
                 conversionType = m_eConversionType = ConvType.Unicode_to_from_Unicode;
             }
 
@@ -87,10 +99,39 @@ namespace SilEncConverters40
 
         protected override EncodingForm DefaultUnicodeEncForm(bool bForward, bool bLHS)
         { 
-            // C# wants UTF-16, generally speaking.
-            return EncodingForm.UTF16; 
+            // the only left-hand-side for forwarding conversion unicode possible is UTF8.
+            if( bLHS )
+                return bForward ? EncodingForm.UTF8String : EncodingForm.UTF16; 
+
+            // wrt. rhs
+            return bForward ? EncodingForm.UTF16 : EncodingForm.UTF8String;
         }
+
         #endregion Initialization
+
+        #region DLLImport Statements
+        [DllImport("kernel32", SetLastError=true)]
+        static extern unsafe int MultiByteToWideChar(
+            int CodePage,         // code page
+            uint dwFlags,         // character-type options
+            byte* lpMultiByteStr, // string to map
+            int cbMultiByte,       // number of bytes in string
+            char* lpWideCharStr,  // wide-character buffer
+            int cchWideChar        // size of buffer
+            );
+
+        [DllImport("kernel32", SetLastError=true)]
+        static extern unsafe int WideCharToMultiByte(
+            int CodePage,               // code page
+            uint dwFlags,               // performance and mapping flags
+            char* lpWideCharStr,        // wide-character string
+            int cchWideChar,            // number of chars in string
+            byte* lpMultiByteStr,       // buffer for new string
+            int cbMultiByte,            // size of buffer
+            int lpDefaultChar,       // default for unmappable chars
+            int lpUsedDefaultChar    // set when default char used
+            );
+        #endregion DLLImport Statements
 
         #region Abstract Base Class Overrides
         protected override void PreConvert
@@ -111,8 +152,6 @@ namespace SilEncConverters40
             // we have to know what the forward flag state is (and we can't use m_bForward because
             //  that might be different (e.g. if this was called from ConvertEx).
             m_bToWide = bForward;
-            if (!IsLegacyFormat(eInEncodingForm) && IsLegacyFormat(eOutEncodingForm))
-                m_bToWide = !bForward;
 
             // check if this is the special UTF8 code page, and if so, request that the engine
             //  form be UTF8Bytes (this is the one code page converter where both sides are 
@@ -122,20 +161,16 @@ namespace SilEncConverters40
                 // going "to wide" means the output form required by the engine is UTF16.
                 eOutFormEngine = EncodingForm.UTF16;
 
-                if (m_nCodePage == CP_UTF8 && !IsLegacyFormat(eInEncodingForm))
+                if( m_nCodePage == CP_UTF8 )
                     eInFormEngine = EncodingForm.UTF8Bytes;
-                else
-                    eInFormEngine = EncodingForm.LegacyBytes;
             }
             else
             {
                 // going "from wide" means the input form required by the engine is UTF16.
                 eInFormEngine = EncodingForm.UTF16;
 
-                if (m_nCodePage == CP_UTF8 && !IsLegacyFormat(eOutEncodingForm))
+                if( m_nCodePage == CP_UTF8 )
                     eOutFormEngine = EncodingForm.UTF8Bytes;
-                else if (IsLegacyFormat(eOutEncodingForm))
-                    eOutFormEngine = EncodingForm.LegacyBytes;
             }
         }
 
@@ -148,30 +183,15 @@ namespace SilEncConverters40
             ref int     rnOutLen
             )
         {
-			byte[] baIn = new byte[nInLen];
-			ECNormalizeData.ByteStarToByteArr(lpInBuffer, nInLen, baIn);
-			Util.DebugWriteLine(this, String.Format("Starting with {0} bytes.", baIn.Length));
-			byte[] baOut;
 			if (m_bToWide)
 			{
-				// Perform the conversion from one encoding to the other.
-				Encoding encFrom = Encoding.GetEncoding(m_nCodePage);
-				Encoding encTo   = Encoding.Unicode;
-				baOut = Encoding.Convert(encFrom, encTo, baIn);
+                rnOutLen = MultiByteToWideChar(m_nCodePage, 0, lpInBuffer, nInLen, (char*)lpOutBuffer, rnOutLen/2);
+                rnOutLen *= 2;  // sizeof(WCHAR);	// size in bytes
 			}
 			else
 			{
-				Encoding encFrom = Encoding.Unicode;
-				Encoding encTo   = Encoding.GetEncoding(m_nCodePage);
-				baOut = Encoding.Convert(encFrom, encTo, baIn);
+                rnOutLen = WideCharToMultiByte(m_nCodePage, 0, (char*)lpInBuffer, nInLen / 2, lpOutBuffer, rnOutLen, 0, 0);
 			}
-			Util.DebugWriteLine(this, String.Format("Converted to {0} bytes.", baOut.Length));
-			if (baOut.Length > 0)
-				rnOutLen = Marshal.SizeOf(baOut[0]) * baOut.Length;
-			else
-				rnOutLen = 0;
-			Marshal.Copy(baOut, 0, (IntPtr)lpOutBuffer, baOut.Length);
-			Marshal.WriteByte((IntPtr)lpOutBuffer, rnOutLen, 0); // nul terminate
         }
 
         protected override string   GetConfigTypeName

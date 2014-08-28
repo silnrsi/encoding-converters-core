@@ -1,6 +1,7 @@
 // Created by Jim Kornelsen on Nov 21 2011
 //
 using System;
+using System.Collections.Specialized;
 using System.Windows.Forms;
 using System.IO;
 using ECInterfaces;
@@ -10,8 +11,6 @@ namespace SilEncConverters40
 {
     public class PerlExpressionAutoConfigDialog : SilEncConverters40.AutoConfigDialog
     {
-        protected bool m_bInitialized = false;  // set at the end of Initialize (to block certain events until we're ready for them)
-
         public PerlExpressionAutoConfigDialog (
             IEncConverters aECs,
             string strDisplayName,
@@ -35,7 +34,7 @@ namespace SilEncConverters40
                 eConversionType,
                 strLhsEncodingId,
                 strRhsEncodingId,
-                lProcessTypeFlags,
+                lProcessTypeFlags | (int)ProcessTypeFlags.PerlExpression,
                 bIsInRepository);
             Util.DebugWriteLine(this, "Initialized base.");
             // if we're editing a CC table/spellfixer project, then set the Converter Spec and say it's unmodified
@@ -48,7 +47,7 @@ namespace SilEncConverters40
             }
 
             // initialize the combo box with some examples that users can try
-            LoadComboBoxFromSettings(comboBoxPreviousPerlExpressions);
+            LoadComboBoxFromSettings(comboBoxPreviousPerlExpressions, Settings.Default.RecentlyUsedExpressions);
 
             if (comboBoxPreviousPerlExpressions.Items.Count > 0)
                 comboBoxPreviousPerlExpressions.SelectedIndex = 0;
@@ -56,13 +55,6 @@ namespace SilEncConverters40
             m_bInitialized = true;
             Util.DebugWriteLine(this, "END");
 		}
-
-        private void LoadComboBoxFromSettings(ComboBox comboBox)
-        {
-            comboBox.Items.Clear();
-            foreach (var str in Settings.Default.RecentlyUsedExpressions)
-                comboBox.Items.Add(str);
-        }
 
         public PerlExpressionAutoConfigDialog (
             IEncConverters aECs,
@@ -244,7 +236,7 @@ namespace SilEncConverters40
                 {
                     Settings.Default.RecentlyUsedExpressions.Add(ConverterIdentifier);
                     Settings.Default.Save();
-                    LoadComboBoxFromSettings(comboBoxPreviousPerlExpressions);
+                    LoadComboBoxFromSettings(comboBoxPreviousPerlExpressions, Settings.Default.RecentlyUsedExpressions);
                 }
             }
 
@@ -283,24 +275,9 @@ namespace SilEncConverters40
 
         private void buttonDeleteSavedExpression_Click(object sender, EventArgs e)
         {
-            var str = comboBoxPreviousPerlExpressions.SelectedItem.ToString();
-            if (!Settings.Default.RecentlyUsedExpressions.Contains(str))
-                return;
-
-            Settings.Default.RecentlyUsedExpressions.Remove(str);
+            DeleteSelectedItemFromComboBoxAndUpdateSettings(comboBoxPreviousPerlExpressions,
+                                                            Settings.Default.RecentlyUsedExpressions);
             Settings.Default.Save();
-            
-            LoadComboBoxFromSettings(comboBoxPreviousPerlExpressions);
-
-            // if there are any left...
-            if (comboBoxPreviousPerlExpressions.Items.Count <= 0)
-                return;
-
-            // ... set something in the combo box so it doesn't keep showing the now deleted one
-            // (but pretend we're not initialized so we don't overwrite what's in the text box
-            m_bInitialized = false;
-            comboBoxPreviousPerlExpressions.SelectedIndex = 0;
-            m_bInitialized = true;
         }
     }
 }

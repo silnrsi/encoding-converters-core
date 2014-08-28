@@ -35,7 +35,7 @@ namespace SilEncConverters40
 
         #region Member Variable Definitions
         public const string strDisplayName = "ICU Regular Expression";
-        public const string strHtmlFilename = "ICU Regular Expression Plug-in About box.htm";
+        public const string strHtmlFilename = "ICU Regular Expression Plug-in About box.mht";
         #endregion Member Variable Definitions
 
         #region Initialization

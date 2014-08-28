@@ -49,7 +49,7 @@ namespace SilEncConverters40
 
         #region Member Variable Definitions
         public const string strDisplayName = "ICU Transliterator";
-        public const string strHtmlFilename = "ICU Transliterators Plug-in About box.htm";
+        public const string strHtmlFilename = "ICU Transliterators Plug-in About box.mht";
         #endregion Member Variable Definitions
 
         #region Initialization

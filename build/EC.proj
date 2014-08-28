@@ -48,7 +48,7 @@
 	<Target Name="all" DependsOnTargets="ECInterfaces;EncCnvtrs;CcEC;IcuEC;PerlExpressionEC;PyScriptEC;AIGuesserEC;ECFileConverter;RunTests"/>
 
 	<Target Name="Setup">
-        <CreateProperty Value="Configuration=$(config);ReferencePath=$(dir-output)">
+		<CreateProperty Value="Configuration=$(config);ReferencePath=$(dir-output);FIELDWORKS=$(FIELDWORKS)">
 			<Output TaskParameter="Value" PropertyName="msbuild-props"/>
         </CreateProperty>
 		<Message Text="msbuild-target='$(msbuild-target)'"/>

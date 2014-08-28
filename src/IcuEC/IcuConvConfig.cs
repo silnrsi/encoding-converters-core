@@ -15,7 +15,7 @@ namespace SilEncConverters40
 				typeof(IcuConvEncConverter).FullName,
 				IcuConvEncConverter.strDisplayName,
 				IcuConvEncConverter.strHtmlFilename,
-				ProcessTypeFlags.DontKnow)
+				ProcessTypeFlags.ICUConverter)
 		{
 		}
 
