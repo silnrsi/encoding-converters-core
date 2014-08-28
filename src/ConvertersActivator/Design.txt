@@ -1,0 +1,88 @@
+#
+
+GUI and functionality (SRS):
+
+"Add New" and...
+    "Add From List"
+    "Add Ready-Made"
+    "Ready-Made Sets"  # good by dictionary, although sounds unfamiliar to me
+    "Ready-Made"
+    "Packaged Sets"    # good because saying "Add / Remove" is long
+    "Bundled Sets"
+    "Converter Sets"
+    "Add from Sets"
+    "Select from List"
+    "Add Included"
+    "Add / Remove Included"
+    "Add Packaged"
+    "Add From Package"
+    "Add Canned"         # technically this is a good name
+    "Add Pre-Designed"
+    "Add Prefab"
+    "Add Pre-Made"
+    "Activate New"
+    "Activate Converters"
+    "Activate / Deactivate"  # but it doesn't mean activate what we just added.
+    "Install New"
+    "Load New"
+
+Brings up a new dialog window.
+Central pane is just a TreeView with checkboxes
+
+Buttons:
+- Add Selected
+- Cancel
+#- Reset
+#- Select All
+#- Remove Selected   # don't need because can delete just like other converters
+
+Warn if adding many at a time.
+"Adding more than 10 converters at a time is not recommended because your
+list may become long and difficult to manage.  Continue anyway?"
+or just:
+"Adding more than 10 converters at a time is not recommended. Continue anyway?"
+
+Checkboxes of installed converters will be checked and gray.
+This can simply check if the same name is there,
+not whether it has all of the same properties.
+Because if the same name is already there, then it shouldn't be able to add.
+
+
+# SDS
+
+ConvertersActivator.cs  # Compare to SelectConverter.cs
+    Form
+        - Inherit from something existing? Probably not.
+    TreeList
+        - Probably the control is enough -- we don't need a special class.
+    - Add items to the tree given by Reader: InitializeConverterList()
+    - Call Add() on each selected item
+
+ConverterSettings.cs
+- String name
+- EncConverter aEC = null;
+- list of FontsToAdd
+    + fontName
+    + side
+- other settings
+- Add()     # don't want to call this for converters already in the system
+- (could support Remove here if needed)
+
+SettingsReader.cs
+- return list of lists of ConverterSettings from XML files
+#- return list of lists of ConverterSettings from mapping registry
+    + take EncConverters aECs as parameter
+    + but this method is trivial -- it would be just a needless wrapper
+    + no, because it creates a ConverterSettings item
+    + but what is the advantage of that over an aEC item?
+      aEC.ToString() gives a nice tooltip, and of course we have aEC.Name.
+    + the advantage is that the main ConvertersActivator class can just
+      maintain a tree of ConverterSettings items.
+    + but the converter in question will already be in the tree. We just need
+      to know if it's in aECs yet or not.
+    + so just add a field to ConverterSettings containing aEC if it exists.
+    + That sounds good -- so where does aECs get checked?
+    + SettingsReader is already checking each item, so it would be easy to
+      set aEC at that time.
+
+
