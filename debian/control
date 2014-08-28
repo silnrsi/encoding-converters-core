@@ -1,0 +1,18 @@
+Source: enc-converters
+Priority: optional
+Maintainer: Stephen McConnel <stephen_mcconnel@sil.org>
+Build-Depends: debhelper (>= 7.0.50~), autotools-dev, python-dev (>=2.6),
+ libicu-dev, lsb-release, devscripts, fieldworks-mono, mono-devel, mono-gmcs
+Standards-Version: 3.9.1
+Section: libs
+Homepage: http://hg.palaso.org/ec-main
+
+Package: enc-converters
+Section: libs
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Recommends: libsilcc0
+Suggests: fieldworks
+Description: Encoding Converter libraries.
+ This provides a uniform interface to a variety of character encoding
+ converters.

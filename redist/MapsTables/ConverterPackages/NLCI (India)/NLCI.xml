@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<SILConvertersInstallerDetails xmlns="http://www.sil.org/computing/schemas/SILConvertersInstallerDetails.xsd">
+    <MapsTables>
+        <MapTable
+            mappingName="SL Oriya&lt;&gt;UNICODE"
+            converterSpec="SLOri2UOri.tec"
+            IsConverterSpecAFile="true"
+            description="NLCI's TECkit encoding converter between SL Oriya and Unicode"
+            implementType="SIL.tec"
+            conversionType="LegacyToFromUnicode"
+            leftEncoding="NLCI-SLOriya-2002"
+            rightEncoding="UNICODE"
+            processType="UnicodeEncodingConversion"
+            sampleData="Test Data">
+            <AddFont side="left" font="ORI Asika" codePage="42"/>
+        </MapTable>
+        <MapTable
+            mappingName="Winscript/iLeap Devanagari&lt;&gt;UNICODE"
+            converterSpec="WinScrDev.tec"
+            IsConverterSpecAFile="true"
+            description="NLCI's TECkit encoding converter between DevPanini (including DV-TTYogesh and other CDAC ISFOC DEVANAGARI encoded fonts) and Unicode"
+            implementType="SIL.tec"
+            conversionType="LegacyToFromUnicode"
+            leftEncoding="CDAC-ISFOC_DEVANAGARI"
+            rightEncoding="Unicode Devanagari"
+            processType="UnicodeEncodingConversion"
+            sampleData="/ÊEòiÉÉ¤É/ means 'book' in Hindi">
+            <AddFont        side="left"  font="DEV Panini" codePage="42"/>
+            <AddFont        side="left"  font="DV-TTYogesh" codePage="1252"/>
+            <AddFontMapping left="DEV Panini" right="Arial Unicode MS"/>
+            <AddFontMapping left="DV-TTYogesh" right="Arial Unicode MS"/>
+        </MapTable>
+        <MapTable
+            mappingName="Winscript/iLeap Gujarati&lt;&gt;UNICODE"
+            converterSpec="WinScrGuj.tec"
+            IsConverterSpecAFile="true"
+            description="NLCI's TECkit encoding converter between WinScript Gujarati (including other CDAC ISFOC Gujarati encoded fonts) and Unicode"
+            implementType="SIL.tec"
+            conversionType="LegacyToFromUnicode"
+            leftEncoding="CDAC-ISFOC_GUJARATI"
+            rightEncoding="UNICODE"
+            processType="UnicodeEncodingConversion"
+            sampleData="Test Data">
+            <AddFont side="left" font="GUJ Gir" codePage="42"/>
+        </MapTable>
+        <MapTable
+            description="NLCI's TECkit encoding converter between WinScript Malayalam and Unicode"
+            filename="WinScrMal.tec.vbs"
+            mappingName="Winscript Malayalam&lt;&gt;UNICODE"
+            converterSpec="WinScrMal.tec"
+            IsConverterSpecAFile="true"
+            conversionType="LegacyToFromUnicode"
+            implementType="SIL.tec"
+            leftEncoding="NLCI-Malayalam"
+            rightEncoding="UNICODE"
+            processType="UnicodeEncodingConversion"
+            sampleData="Test Data">
+            <AddFont side="left" font="MAL Vayalar" codePage="42"/>
+        </MapTable>
+        <MapTable
+            mappingName="Winscript Oriya&lt;&gt;UNICODE"
+            converterSpec="WinScrOri.tec"
+            IsConverterSpecAFile="true"
+            description="NLCI's TECkit encoding converter between WinScript Oriya and Unicode"
+            implementType="SIL.tec"
+            conversionType="LegacyToFromUnicode"
+            leftEncoding="NLCI-Oriya"
+            rightEncoding="Unicode Oriya"
+            processType="UnicodeEncodingConversion"
+             sampleData="Test Data">
+        </MapTable>
+        <MapTable
+            mappingName="Winscript Tamil&lt;&gt;UNICODE"
+            converterSpec="WinScrTam.tec"
+            IsConverterSpecAFile="true"
+            description="NLCI's TECkit encoding converter between WinScript Tamil and Unicode"
+            implementType="SIL.tec"
+            conversionType="LegacyToFromUnicode"
+            leftEncoding="NLCI-Tamil"
+            rightEncoding="UNICODE"
+            processType="UnicodeEncodingConversion"
+            sampleData="Test Data">
+            <AddFont side="left" font="TAM ThiruValluvar" codePage="42"/>
+        </MapTable>
+        <MapTable
+            mappingName="Winscript Telugu&lt;&gt;UNICODE"
+            converterSpec="WinScrTel.tec"
+            IsConverterSpecAFile="true"
+            description="NLCI's TECkit encoding converter between WinScript Telugu and Unicode"
+            implementType="SIL.tec"
+            conversionType="LegacyToFromUnicode"
+            leftEncoding="NLCI-TELEGU"
+            rightEncoding="UNICODE"
+            processType="UnicodeEncodingConversion"
+            sampleData="Test Data">
+            <AddFont side="left" font="TEL Nirmal" codePage="42"/>
+        </MapTable>
+        <MapTable
+            mappingName="PHNindus&lt;&gt;UNICODE"
+            converterSpec="PHNindus2UnicodeIPA.tec"
+            IsConverterSpecAFile="true"
+            description="NLCI's TECkit encoding converter between PHNindus and Unicode"
+            implementType="SIL.tec"
+            conversionType="LegacyToFromUnicode"
+            leftEncoding="PHNindus"
+            rightEncoding="Unicode IPA"
+            processType="UnicodeEncodingConversion"
+            sampleData="Test Data">
+        </MapTable>
+    </MapsTables>
+</SILConvertersInstallerDetails>

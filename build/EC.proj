@@ -1,0 +1,190 @@
+<?xml version="1.0"?>
+<!--
+	Created by Steve McConnel on Jan 11, 2013.
+
+    17-May-13 JDK  Clean deployed files as well.
+    18-May-13 JDK  Updated csproj references to 2010 files.
+    20-May-13 JDK  Make separate Linux varieties of all csproj files,
+                   just as there are 2008 and 2010 varieties.
+
+	To compile, invoke msbuild (xbuild for Mono) in the directory of this project file.
+	To deploy on Linux: sudo xbuild /t:deploy
+
+    To show debugging output (Debug.WriteLine) on Linux, enter in terminal:
+    export MONO_TRACE_LISTENER=Console.Out
+-->
+<Project DefaultTargets="all" InitialTargets="Setup" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+
+	<PropertyGroup>
+		<projroot>$(MSBuildProjectDirectory)/..</projroot>
+		<config Condition="'$(config)'==''">Debug</config>
+		<action Condition="'$(action)'==''">build</action>
+		<dir-output>$(projroot)/output/$(config)</dir-output>
+	</PropertyGroup>
+
+	<Choose>
+        <When Condition="'$(action)'=='build'">
+			<PropertyGroup>
+                <msbuild-target>Build</msbuild-target>
+			</PropertyGroup>
+        </When>
+        <When Condition="'$(action)'=='clean'">
+			<PropertyGroup>
+                <msbuild-target>Clean</msbuild-target>
+			</PropertyGroup>
+        </When>
+        <When Condition="'$(action)'=='rebuild'">
+			<PropertyGroup>
+                <msbuild-target>Rebuild</msbuild-target>
+			</PropertyGroup>
+        </When>
+        <Otherwise>
+			<PropertyGroup>
+                <msbuild-target>Build</msbuild-target>
+			</PropertyGroup>
+        </Otherwise>
+	</Choose>
+
+	<Target Name="all" DependsOnTargets="ECInterfaces;EncCnvtrs;CcEC;IcuEC;PerlExpressionEC;PyScriptEC;AIGuesserEC;ECFileConverter;RunTests"/>
+
+	<Target Name="Setup">
+        <CreateProperty Value="Configuration=$(config);ReferencePath=$(dir-output)">
+			<Output TaskParameter="Value" PropertyName="msbuild-props"/>
+        </CreateProperty>
+		<Message Text="msbuild-target='$(msbuild-target)'"/>
+		<Message Text="msbuild-props='$(msbuild-props)'"/>
+	</Target>
+
+	<Target Name="ECInterfaces">
+		<MSBuild Projects="$(projroot)/src/ECInterfaces/ECInterfaces-mono.csproj"
+				 Targets="$(msbuild-target)"
+				 Properties="$(msbuild-props)"
+				 ToolsVersion="3.5"/>
+	</Target>
+
+	<Target Name="EncCnvtrs" DependsOnTargets="ECInterfaces">
+		<MSBuild Projects="$(projroot)/src/EncCnvtrs/EncCnvtrs-mono.csproj"
+				 Targets="$(msbuild-target)"
+				 Properties="$(msbuild-props)"
+				 ToolsVersion="3.5"/>
+	</Target>
+
+	<Target Name="CcEC" DependsOnTargets="ECInterfaces;EncCnvtrs">
+		<MSBuild Projects="$(projroot)/src/CcEC/CcEC-mono.csproj"
+				 Targets="$(msbuild-target)"
+				 Properties="$(msbuild-props)"
+				 ToolsVersion="3.5"/>
+	</Target>
+
+	<Target Name="IcuEC" DependsOnTargets="ECInterfaces;EncCnvtrs">
+		<MSBuild Projects="$(projroot)/src/IcuEC/IcuEC-mono.csproj"
+				 Targets="$(msbuild-target)"
+				 Properties="$(msbuild-props)"
+				 ToolsVersion="3.5"/>
+	</Target>
+
+	<Target Name="PerlExpressionEC" DependsOnTargets="ECInterfaces;EncCnvtrs">
+		<MSBuild Projects="$(projroot)/src/PerlExpressionEC/PerlExpressionEC-mono.csproj"
+				 Targets="$(msbuild-target)"
+				 Properties="$(msbuild-props)"
+				 ToolsVersion="3.5"/>
+	</Target>
+
+	<Target Name="PyScriptEC" DependsOnTargets="ECInterfaces;EncCnvtrs">
+		<MSBuild Projects="$(projroot)/src/PyScriptEC/PyScriptEC-mono.csproj"
+				 Targets="$(msbuild-target)"
+				 Properties="$(msbuild-props)"
+				 ToolsVersion="3.5"/>
+	</Target>
+
+	<Target Name="AIGuesserEC" DependsOnTargets="ECInterfaces;CcEC">
+		<MSBuild Projects="$(projroot)/src/AIGuesserEC/AIGuesserEC-mono.csproj"
+				 Targets="$(msbuild-target)"
+				 Properties="$(msbuild-props)"
+				 ToolsVersion="3.5"/>
+	</Target>
+
+	<Target Name="ECFileConverter" DependsOnTargets="ECInterfaces">
+		<MSBuild Projects="$(projroot)/src/ECFileConverter/ECFileConverter-mono.csproj"
+				 Targets="$(msbuild-target)"
+				 Properties="$(msbuild-props)"
+				 ToolsVersion="3.5"/>
+	</Target>
+
+	<Target Name="TestEncCnvtrs" DependsOnTargets="ECInterfaces;IcuEC">
+		<MSBuild Projects="$(projroot)/src/TestEncCnvtrs/TestEncCnvtrs-mono.csproj"
+				 Targets="$(msbuild-target)"
+				 Properties="$(msbuild-props)"
+				 ToolsVersion="3.5"/>
+	</Target>
+
+    <!-- This target is rather useless except for debugging tests/code in MonoDevelop. -->
+    <!-- MonoDevelop doesn't run NUnit tests reliably in my experience.  :-( -->
+	<Target Name="RunTests" DependsOnTargets="TestEncCnvtrs">
+		<MSBuild Projects="$(projroot)/src/RunTests/RunTests-mono.csproj"
+				 Targets="$(msbuild-target)"
+				 Properties="$(msbuild-props)"
+				 ToolsVersion="3.5"/>
+	</Target>
+
+    <Target Name="test" DependsOnTargets="TestEncCnvtrs">
+        <Message text="Please execute $(dir-output)/RunTests.exe manually."/>
+        <!--
+        <CreateItem Include="$(dir-output)/TestEncCnvtrs.dll">
+            <Output TaskParameter="Include" ItemName="TestAssembly" />
+        </CreateItem>
+        <NUnit Assemblies="@(TestAssembly)" />
+        -->
+<!--
+        <echo message="'nant test' may fail some tests unless LD_LIBRARY_PATH is set to include ${dir.output} before running nant"/>
+        <echo message="LD_LIBRARY_PATH=${environment::get-variable('LD_LIBRARY_PATH')} nant test"/>
+        <nunit2>
+            <formatter type="Plain" />
+            <test assemblyname="${dir.output}/TestEncCnvtrs.dll" appconfig="${dir.output}/TestEncCnvtrs.dll.config">
+        </test>
+        </nunit2>
+-->
+    </Target>
+
+	<PropertyGroup>
+		<DeployDir>/usr/lib/encConverters</DeployDir>
+	</PropertyGroup>
+	<ItemGroup>
+		<LibsToDeploy Include="$(dir-output)/ECInterfaces.dll"/>
+		<LibsToDeploy Include="$(dir-output)/SilEncConverters40.dll"/>
+		<LibsToDeploy Include="$(dir-output)/CcEC.dll"/>
+		<LibsToDeploy Include="$(dir-output)/IcuEC.dll"/>
+		<LibsToDeploy Include="$(dir-output)/PyScriptEC.dll"/>
+		<LibsToDeploy Include="$(dir-output)/PerlExpressionEC.dll"/>
+		<LibsToDeploy Include="$(dir-output)/AIGuesserEC.dll"/>
+		<LibsToDeploy Include="$(dir-output)/libIcuTranslitEC.so.1.0"/>
+		<LibsToDeploy Include="$(dir-output)/libIcuRegexEC.so.1.0"/>
+		<LibsToDeploy Include="$(dir-output)/libPyScriptEncConverter.so.1.0"/>
+		<LibsToDeploy Include="$(dir-output)/libecdriver.so.1.0"/>
+	</ItemGroup>
+	<ItemGroup>
+		<ProgsToDeploy Include="$(dir-output)/ECFileConverter.exe"/>
+	</ItemGroup>
+	<Target Name="deploy" DependsOnTargets="all">
+		<Copy SourceFiles="@(LibsToDeploy)" DestinationFolder="$(DeployDir)"
+			  ContinueOnError="true"/>
+		<Copy SourceFiles="@(ProgsToDeploy)" DestinationFolder="$(DeployDir)"
+			  ContinueOnError="true"/>
+	</Target>
+
+	<ItemGroup>
+		<BuildFiles Include="$(projroot)/output/**/*"/>
+	</ItemGroup>
+	<ItemGroup>
+		<DeployedFiles Include="$(DeployDir)/*EC.*"/>
+		<DeployedFiles Include="$(DeployDir)/EC*"/>
+		<DeployedFiles Include="$(DeployDir)/*.exe"/>
+		<DeployedFiles Include="$(DeployDir)/libecdriver*"/>
+		<DeployedFiles Include="$(DeployDir)/libPyScript*"/>
+		<DeployedFiles Include="$(DeployDir)/SilEncConverters*.dll"/>
+	</ItemGroup>
+	<Target Name="clean">
+		<Delete Files="@(BuildFiles)" TreatErrorsAsWarnings="true"/>
+		<Delete Files="@(DeployedFiles)" TreatErrorsAsWarnings="true"/>
+	</Target>
+</Project>

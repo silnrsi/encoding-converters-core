@@ -1,0 +1,21 @@
+HKCR
+{
+	SilEncConverters40.IcuECRegexConfig.48 = s 'ICU Regular Expression Configurator Class'
+	{
+		CLSID = s '{CE2FD02D-257F-4E43-AA31-068023A0F79F}'
+	}
+	NoRemove CLSID
+	{
+		ForceRemove {CE2FD02D-257F-4E43-AA31-068023A0F79F} = s 'ICU Regular Expression Configurator Class'
+		{
+			ProgID = s 'SilEncConverters40.IcuECRegexConfig.48'
+			ForceRemove 'Programmable'
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Apartment'
+			}
+			val AppID = s '%APPID%'
+			TypeLib = s '{1E74D903-AD86-43F8-B39F-96653D7E170D}'
+		}
+	}
+}

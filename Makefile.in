@@ -1,0 +1,152 @@
+# Master Makefile for the encConverters package
+# Makefile.in created January 20, 2012 by Stephen McConnel
+#
+# 06-Jun-13 JDK  Added uninstall target.
+
+@SET_MAKE@
+# the next line requires GNU make ...
+MAKEFLAGS   =#--no-print-directory
+srcdir      = @srcdir@
+VPATH       = @srcdir@
+INSTALL     = @INSTALL@
+prefix      = @prefix@
+exec_prefix = @exec_prefix@
+ROOTDIR     = @abs_top_srcdir@
+OUTDIR      = $(ROOTDIR)/output/Debug
+RELEASEOUT  = $(ROOTDIR)/output/Release
+MONO        = @MONO@
+MONO_LDFLAGS= @MONO_LDFLAGS@
+LIBDIR      = @libdir@/encConverters
+# For fieldworks, define COMMON_DATA_FW in ECInterfaces.csproj for Util.cs.
+# Also change REGROOT in ECDriver Makefile.in.
+#REGROOT     = /var/lib/fieldworks
+REGROOT     = /var/lib/encConverters
+REGKEY      = $(REGROOT)/registry/LocalMachine/software/sil/silencconverters40
+
+SRCDIRS = src/IcuEC src/PyScriptEC src/ECDriver/linux
+DLLS    = ECInterfaces.dll SilEncConverters40.dll CcEC.dll \
+  IcuEC.dll PyScriptEC.dll PerlExpressionEC.dll AIGuesserEC.dll
+# CodePageEC.dll
+PLUGINS = "AI 4.0.0.0 Plugin Details.xml" "CC 4.0.0.0 Plugin Details.xml" \
+    "EC 4.0.0.0 Plugin Details.xml" "IcuEC 4.0.0.0 Plugin Details.xml" \
+    "PerlEC 4.0.0.0 Plugin Details.xml" "PythonEC 4.0.0.0 Plugin Details.xml"
+
+all: debug
+
+debug:
+	@(cd build && ./xbuild.sh $(MONO) $(MONO_LDFLAGS)) || true
+	@for subdir in $(SRCDIRS); do \
+	  echo making in $$subdir; \
+	  (cd $$subdir && $(MAKE) all) || true; \
+	done
+	@mkdir -p $(OUTDIR)/EC/Plugins
+	@for file in $(PLUGINS); do \
+	  cp -p redist/EC/Plugins/"$$file" $(OUTDIR)/EC/Plugins; \
+	done
+	@cp -pR redist/Help $(OUTDIR)
+	@cp -p redist/libTECkit*.so $(OUTDIR)
+	@cp -p src/EncCnvtrs/SilEncConverters40.dll.config $(OUTDIR)
+	@cp -p src/CcEC/CcEC.dll.config $(OUTDIR)
+	@cp -p src/TestEncCnvtrs/TestEncCnvtrs.dll.config $(OUTDIR)
+
+release:
+	@(cd build && ./xbuild.sh $(MONO) $(MONO_LDFLAGS) /property:config=Release) || true
+	@for subdir in $(SRCDIRS); do \
+	  echo making in $$subdir; \
+	  (cd $$subdir && $(MAKE) release) || true; \
+	done
+	@mkdir -p $(RELEASEOUT)/EC/Plugins
+	@for file in $(PLUGINS); do \
+	  cp -p redist/EC/Plugins/"$$file" $(RELEASEOUT)/EC/Plugins; \
+	done
+	@cp -pR redist/Help $(RELEASEOUT)
+	@cp -p redist/libTECkit*.so $(RELEASEOUT)
+	@cp -p src/EncCnvtrs/SilEncConverters40.dll.config $(RELEASEOUT)
+	@cp -p src/CcEC/CcEC.dll.config $(RELEASEOUT)
+	@cp -p src/TestEncCnvtrs/TestEncCnvtrs.dll.config $(RELEASEOUT)
+
+clean:
+	@(cd build && ./xbuild.sh $(MONO) $(MONO_LDFLAGS) /target:clean) || true
+	@for subdir in $(SRCDIRS); do \
+	  echo making in $$subdir; \
+	  (cd $$subdir && $(MAKE) clean) || true; \
+	done
+	@if [ -d $(OUTDIR) ]; then (cd $(OUTDIR) && rm -f *.xml); fi || true
+	@if [ -d $(OUTDIR) ]; then (cd $(OUTDIR) && rm -rf EC); fi || true
+	@if [ -d $(RELEASEOUT) ]; then (cd $(RELEASEOUT) && rm -f *.xml); fi || true
+	@if [ -d $(RELEASEOUT) ]; then (cd $(RELEASEOUT) && rm -rf EC); fi || true
+	@rm -f *~
+
+distclean: clean
+	@for subdir in $(SRCDIRS); do \
+	  echo making in $$subdir; \
+	  (cd $$subdir && $(MAKE) distclean) || true; \
+	done
+	@rm -f Makefile config.cache src/config.h config.log config.status
+	@rm -f src/stamp-h1
+	@rm -f aclocal.m4 configure
+	@rm -f autogen.err TestResult.xml src/TestEncCnvtrs/TestEncCnvtrs.pidb
+	@rm -rf autom4te.cache output build/Obj src/TestEncCnvtrs/test-results
+	@rm -rf $(OUTDIR) $(RELEASEDIR)
+
+install: release
+	@for subdir in $(SRCDIRS); do \
+	  echo installing in $$subdir; \
+	  (cd $$subdir && $(MAKE) install) || true; \
+	done
+	@mkdir -p $(DESTDIR)$(LIBDIR)/EC/Plugins
+	@for file in $(DLLS); do \
+	  $(INSTALL) $(RELEASEOUT)/$$file $(DESTDIR)$(LIBDIR); \
+	done
+	@for file in $(PLUGINS); do \
+	  cp -p redist/EC/Plugins/"$$file" $(DESTDIR)$(LIBDIR)/EC/Plugins; \
+	done
+	@cp -pR redist/Help $(DESTDIR)$(LIBDIR)
+	@if [ `uname -m` = "x86_64" ]; then \
+	for file in redist/libTECkit*x86_64.so; do \
+	  $(INSTALL) $$file $(DESTDIR)$(LIBDIR); \
+	done; \
+	else \
+	for file in redist/libTECkit*x86.so; do \
+	  $(INSTALL) $$file $(DESTDIR)$(LIBDIR); \
+	done; \
+	fi
+	for file in DistFiles/linux/geckofx/*-14.dll; do \
+	  $(INSTALL) $$file $(DESTDIR)$(LIBDIR); \
+	done;
+	@cp -p src/EncCnvtrs/SilEncConverters40.dll.config $(DESTDIR)$(LIBDIR)
+	# Set up writable directories and keys to use as a registry.
+	@$(INSTALL) -d $(DESTDIR)$(REGROOT) -m +rwxt
+	@mkdir -p $(DESTDIR)$(REGKEY)
+	@find $(DESTDIR)$(REGROOT) -type d -exec chmod 777 {} \;
+	$(INSTALL) values.xml $(DESTDIR)$(REGKEY) -m +rw
+	@cp -pR redist/MapsTables $(DESTDIR)$(REGROOT)/SIL
+
+# useful for debugging the ECDriver
+install-debug:
+	@cp $(OUTDIR)/*.dll $(DESTDIR)$(LIBDIR)
+	@cp $(OUTDIR)/*.dll.mdb $(DESTDIR)$(LIBDIR)
+	@cp $(OUTDIR)/*.tlb $(DESTDIR)$(LIBDIR)
+	@cp $(OUTDIR)/*.so $(DESTDIR)$(LIBDIR)
+
+uninstall:
+	rm -f -r $(DESTDIR)$(LIBDIR)/*
+	rm -f -r $(DESTDIR)$(REGROOT)/SIL
+	rm -f $(DESTDIR)$(REGKEY)/values.xml
+
+NUNITROOT=`which nunit-console | sed s=/bin/nunit-console=/lib/mono=`
+check: all
+	@if [ ! -f $(OUTDIR)/nunit.framework.dll ]; then \
+	  echo '#' even with nunit in the GAC, we seem to need need this copying...; \
+	  find $(NUNITROOT) -name nunit.framework.dll -exec cp -p '{}' $(OUTDIR) ';' -print ; \
+	  find $(NUNITROOT) -name nunit.core.dll -exec cp -p '{}' $(OUTDIR) ';' -print ; \
+	  find $(NUNITROOT) -name nunit.core.interfaces.dll -exec cp -p '{}' $(OUTDIR) ';' -print ; \
+	fi
+	@(cd build && LD_LIBRARY_PATH="$(OUTDIR)" ./xbuild.sh $(MONO) $(MONO_LDFLAGS) /target:test) || true
+	@for subdir in $(SRCDIRS); do \
+	  echo checking in $$subdir; \
+	  (cd $$subdir && $(MAKE) check) || true; \
+	done
+test:
+	@cd src/ECDriver/linux && $(MAKE) test
+

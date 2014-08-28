@@ -1,0 +1,27 @@
+﻿; This file was created by <author> using TECkitMappingEditorU.exe v4.0.0.0 on 10/4/2011.
+;   Conversion Type = Unicode_to_from_Unicode
+;   Left-hand side font = Times New Roman;11.25
+;   Right-hand side font = Times New Roman;11.25
+;   Main Window Position = 0,0,658,712
+;   Left-hand side Character Map Window Position = 658,0,457,446
+;   Right-hand side Character Map Window Position = 658,446,457,446
+
+LHSName                 "canonical name of the 'source' encoding or left-hand side of the conversion"
+RHSName                 "canonical name of the 'target' encoding or right-hand side of the conversion"
+LHSDescription          "description for the left-hand side of the mapping"
+RHSDescription          "description for the right-hand side of the mapping"
+Version                 "1"
+Contact                 "mailto:user@addr"
+RegistrationAuthority   "the organization responsible for the encoding"
+RegistrationName        "the name and version of the mapping, as recognized by that authority"
+Copyright               "© 2011 <CompanyName>. All rights reserved."
+LHSFlags                ()
+RHSFlags                ()
+
+pass(Unicode)
+
+UniClass[LC] = ( latin_small_letter_a .. latin_small_letter_z )
+UniClass[UC]  = ( latin_capital_letter_a .. latin_capital_letter_z )
+
+[LC] <> [UC]
+
