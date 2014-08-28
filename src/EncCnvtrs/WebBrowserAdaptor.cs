@@ -1,4 +1,4 @@
-﻿#define LoadGeckoLibs
+﻿//#define LoadGeckoLibs
 // 21-May-2013 JDK  Add link to help file in instructions.
 // 24-Jun-2013 JDK  Loading Gecko libs may fail, so supply a macro to disable.
 
