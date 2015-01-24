@@ -136,7 +136,7 @@ install-debug:
 
 uninstall:
 	rm -f -r $(DESTDIR)$(LIBDIR)/*
-	rm -f $(DESTDIR)$(REGROOT)/SIL
+	rm -f -r $(DESTDIR)$(REGROOT)/SIL
 	rm -f $(DESTDIR)$(REGKEY)/values.xml
 
 NUNITROOT=`which nunit-console | sed s=/bin/nunit-console=/lib/mono=`

@@ -261,6 +261,7 @@ namespace IcuConvEC
         return m_cConvNames;
     }
 
+#if _MSC_VER
     // from http://stackoverflow.com/questions/5308584/how-to-return-text-from-native-c-code
     BSTR ANSItoBSTR(const char* input)
     {
@@ -279,6 +280,7 @@ namespace IcuConvEC
     {
         return ::SysAllocString(ANSItoBSTR(name));
     }
+#endif
 
     ///////////////////////////////////////////////////////////////////////////
     // NAME
@@ -584,3 +586,4 @@ int IcuConvEC_DoConvert (char* lpInBuffer, int nInLen, char* lpOutBuffer, int& r
 {
     return IcuConvEC::DoConvert (lpInBuffer, nInLen, lpOutBuffer, rnOutLen);
 }
+
