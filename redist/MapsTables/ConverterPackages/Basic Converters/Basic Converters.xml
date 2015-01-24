@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<SILConvertersInstallerDetails xmlns="http://www.sil.org/computing/schemas/SILConvertersInstallerDetails.xsd">
+    <MapsTables>
+        <MapTable
+            mappingName="SIL IPA93&lt;&gt;UNICODE"
+            converterSpec="silipa93.tec"
+            IsConverterSpecAFile="true"
+            description="Conversion between SIL IPA93 (as supported by SIL IPA93 font package) and Unicode"
+            implementType="SIL.tec"
+            conversionType="LegacyToFromUnicode"
+            leftEncoding="SIL-IPA93-2001"
+            rightEncoding="Unicode IPA"
+            processType="UnicodeEncodingConversion"
+            sampleData="mU)÷êU is kA)ùNgri for boy">
+            <AddFont        side="left"  font="SILDoulos IPA93"     codePage="42"/>
+            <AddFont        side="left"  font="SILManuscript IPA93" codePage="42"/>
+            <AddFont        side="left"  font="SILSophia IPA93"     codePage="42"/>
+            <AddUnicodeFont side="right" font="Doulos SIL"/>
+            <AddFontMapping left="SILDoulos IPA93"     right="Doulos SIL"/>
+            <AddFontMapping left="SILManuscript IPA93" right="Courier New"/>
+            <AddFontAttr    side="left" name="Keyman Keyboard" value="IPA93 1.0 (FF)"/>
+        </MapTable>
+        <MapTable
+            mappingName="SIL-IPA-1990&lt;&gt;UNICODE"
+            converterSpec="SIL-IPA-1990.tec"
+            IsConverterSpecAFile="true"
+            description="Conversion between SIL IPA (as supported by the 'SIL Encore IPA Fonts 1.2a' font package) data to Unicode and vice versa"
+            implementType="SIL.tec"
+            conversionType="LegacyToFromUnicode"
+            leftEncoding="SIL-IPA-1990"
+            rightEncoding="Unicode IPA"
+            processType="UnicodeEncodingConversion"
+            sampleData="Tî« Ï¬öþû ºÒ¿ãN ¸OX Æ¬M¹«ë ¿ÃeÓ ÿúÔ Â?üY BñAþû êP©">
+            <AddFont        side="left"  font="SILDoulos IPA93"     codePage="42"/>
+            <AddFont        side="left"  font="SILManuscript IPA93" codePage="42"/>
+            <AddFont        side="left"  font="SILSophia IPA93"     codePage="42"/>
+            <AddUnicodeFont side="right" font="Doulos SIL"/>
+            <AddFontMapping left="SILDoulos IPA93"     right="Doulos SIL"/>
+            <AddFontMapping left="SILManuscript IPA93" right="Courier New"/>
+        </MapTable>
+        <MapTable
+            mappingName="SIL PUA 3.2&lt;&gt;UNICODE 4.1"
+            converterSpec="SILPUAtoUnicode41.tec"
+            IsConverterSpecAFile="true"
+            description="Conversion from SIL's deprecated PUA codepoints to official Unicode 4.1 codepoints"
+            implementType="SIL.tec"
+            conversionType="UnicodeToFromUnicode"
+            leftEncoding="UNICODE 3.2"
+            rightEncoding="UNICODE 5.0"
+            processType="UnicodeEncodingConversion"
+            sampleData="Th qc ow o j o h y  ">
+        </MapTable>
+        <MapTable
+            mappingName="SIL PUA 3.2&lt;&gt;UNICODE 5.0"
+            converterSpec="SILPUAtoUnicode50.tec"
+            IsConverterSpecAFile="true"
+            description="Conversion from SIL's deprecated PUA codepoints to official Unicode 5.0 codepoints"
+            implementType="SIL.tec"
+            conversionType="UnicodeToFromUnicode"
+            leftEncoding="UNICODE 3.2"
+            rightEncoding="UNICODE 5.0"
+            processType="UnicodeEncodingConversion"
+            sampleData="T c OWN o  o  y  ">
+        </MapTable>
+        <MapTable
+            mappingName="SIL PUA 3.2&lt;&gt;UNICODE 5.1"
+            converterSpec="MapsTables\SILPUAtoUnicode51.tec"
+            IsConverterSpecAFile="true"
+            description="Conversion from SIL's deprecated PUA codepoints to official Unicode 5.1 codepoints"
+            implementType="SIL.tec"
+            conversionType="UnicodeToFromUnicode"
+            leftEncoding="UNICODE 3.2"
+            rightEncoding="UNICODE 5.1"
+            processType="UnicodeEncodingConversion"
+            sampleData="T c OWN o  o  y  ">
+        </MapTable>
+        <MapTable
+            mappingName="SIL PUA 3.2&lt;&gt;UNICODE 6.0"
+            converterSpec="MapsTables\SILPUAtoUnicode60.tec"
+            IsConverterSpecAFile="true"
+            description="Conversion from SIL's deprecated PUA codepoints to official Unicode 6.0 codepoints"
+            implementType="SIL.tec"
+            conversionType="UnicodeToFromUnicode"
+            leftEncoding="UNICODE 3.2"
+            rightEncoding="UNICODE 6.0"
+            processType="UnicodeEncodingConversion"></autoInstall>
+        </MapTable>
+        <MapTable
+            mappingName="AMER PHON&gt;UNICODE"
+            converterSpec="MapsTables\AMPHON.tec"
+            IsConverterSpecAFile="true"
+            description="Conversion from AMER PHON (as supported by the 'Amer Phon SILDoulos' font) data to Unicode"
+            implementType="SIL.tec"
+            conversionType="LegacyToFromUnicode"
+            leftEncoding="(SIL)-Amer_Phon_SILDoulosL3-(2005)"
+            rightEncoding="UNICODE"
+            processType="UnicodeEncodingConversion"
+            sampleData="tJäó qìæck bÑrëñwê Foÿx jìKpåd ëãå@ DÚä éàzyÿ Béâck DëG">
+        </MapTable>
+        <MapTable
+            mappingName="Symbol&lt;&gt;cp1252"
+            converterSpec="MapsTables\Windows-SymbolEncodedFont.tec"
+            IsConverterSpecAFile="true"
+            description="SymbolFont to Latin1 transliterator"
+            implementType="SIL.tec"
+            conversionType="UnicodeToFromUnicode"
+            leftEncoding="Unicode Symbol"
+            rightEncoding="Unicode Latin1"
+            processType="Transliteration"
+            sampleData="">
+        </MapTable>
+        <MapTable
+            mappingName="Symbol&lt;&gt;cp42"
+            converterSpec="Windows-SymbolEncodedFont2SymbolCP.tec"
+            IsConverterSpecAFile="true"
+            description="SymbolFont to CP42 transliterator"
+            implementType="SIL.tec"
+            conversionType="UnicodeToFromLegacy"
+            leftEncoding="Unicode Symbol"
+            rightEncoding="Symbol"
+            processType="Transliteration"
+            sampleData="">
+        </MapTable>
+        <MapTable
+            mappingName="UTF8&lt;&gt;UTF16"
+            converterSpec="65001"
+            conversionType="UnicodeToFromUnicode"
+            description="This converter can be used to convert between UTF8 and UTF16 forms of Unicode (e.g. if you see 'à¤•à¤¿à¤¤à¤¾à¤¬', this converter will turn that into correctly displaying Unicode)"
+            implementType="cp"
+            sampleData="à¤•à¤¿à¤¤à¤¾à¤¬ is Hindi for 'book'">
+        </MapTable>
+        <MapTable
+            mappingName="null"
+            converterSpec="null"
+            description="null converter (e.g. so you can change the font w/o changing the data with the Data Conversion Macro)"
+            implementType="ICU.trans"
+            conversionType="UnicodeToFromUnicode"
+            leftEncoding="UNICODE"
+            rightEncoding="UNICODE"
+            sampleData="No change!">
+        </MapTable>
+        <MapTable
+            mappingName="NFC"
+            converterSpec="NFC"
+            description="generate Unicode 'normal form composed'"
+            implementType="ICU.trans"
+            conversionType="UnicodeToFromUnicode"
+            leftEncoding="UNICODE"
+            rightEncoding="UNICODE"
+            sampleData="ő (u006F) + (u030B) -> (u0151)">
+        </MapTable>
+        <MapTable
+            mappingName="NFD"
+            converterSpec="NFD"
+            description="generate Unicode 'normal form decomposed'"
+            implementType="ICU.trans"
+            conversionType="UnicodeToFromUnicode"
+            leftEncoding="UNICODE"
+            rightEncoding="UNICODE"
+            sampleData="ő (u0151) -> (u006F) + (u030B)">
+        </MapTable>
+        <MapTable
+            mappingName="ISO-8859&lt;&gt;UNICODE"
+            converterSpec="iso-8859.tec"
+            IsConverterSpecAFile="true"
+            description="Conversion between ISO-8859 and Unicode"
+            implementType="SIL.tec"
+            conversionType="LegacyToFromUnicode"
+            processType="UnicodeEncodingConversion"
+            sampleData="This converter zero extends narrow bytes to wide (e.g. d84 -> u0054)">
+        </MapTable>
+        <MapTable
+            mappingName="SIL Galatia&lt;&gt;UNICODE"
+            converterSpec="SILGreek2004-04-27.tec"
+            IsConverterSpecAFile="true"
+            description="Conversion between SIL Galatia and Unicode"
+            implementType="SIL.tec"
+            conversionType="LegacyToUnicode"
+            leftEncoding="SIL-GREEK_GALATIA-2001"
+            rightEncoding="Unicode Greek"
+            processType="UnicodeEncodingConversion"
+            sampleData="b°blov is book">
+            <AddFont        side="left"  font="SIL Galatia" codePage="42"/>
+            <AddUnicodeFont side="right" font="Galatia SIL"/>
+            <AddFontMapping left="SIL Galatia" right="Galatia SIL"/>
+        </MapTable>
+    </MapsTables>
+</SILConvertersInstallerDetails>

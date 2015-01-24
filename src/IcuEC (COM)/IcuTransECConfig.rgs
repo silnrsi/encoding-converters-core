@@ -1,0 +1,21 @@
+HKCR
+{
+	SilEncConverters40.IcuECTransConfig.48 = s 'ICU Transliterator Configurator Class'
+	{
+		CLSID = s '{CB989D4B-EDED-4F76-9BD0-4775236D6A69}'
+	}
+	NoRemove CLSID
+	{
+		ForceRemove {CB989D4B-EDED-4F76-9BD0-4775236D6A69} = s 'ICU Transliterator Configurator Class'
+		{
+			ProgID = s 'SilEncConverters40.IcuECTransConfig.48'
+			ForceRemove 'Programmable'
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Apartment'
+			}
+			val AppID = s '%APPID%'
+			TypeLib = s '{1E74D903-AD86-43F8-B39F-96653D7E170D}'
+		}
+	}
+}

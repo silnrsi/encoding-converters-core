@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<SILConvertersInstallerDetails xmlns="http://www.sil.org/computing/schemas/SILConvertersInstallerDetails.xsd">
+  <MapsTables>
+    <MapTable
+        mappingName="SIL-93linb-2005&lt;&gt;UNICODE"
+        converterSpec="93-linb.tec"
+        IsConverterSpecAFile="true"
+        description="SIL Burkina Faso 1990 font family to Unicode"
+        implementType="SIL.tec"
+        conversionType="LegacyToFromUnicode"
+        leftEncoding="SIL-93linb-2005"
+        rightEncoding="UNICODE"
+        processType="UnicodeEncodingConversion"
+         sampleData="Test Data">
+    </MapTable>
+    <MapTable
+        mappingName="UBS-Abidjan-2005&lt;&gt;UNICODE"
+        converterSpec="Abidjan.tec"
+        IsConverterSpecAFile="true"
+        description="UBS-Abidjan-2005"
+        implementType="SIL.tec"
+        conversionType="LegacyToFromUnicode"
+        leftEncoding="UBS-Abidjan-2005"
+        rightEncoding="UNICODE"
+        processType="UnicodeEncodingConversion"
+        sampleData="Test Data">
+    </MapTable>
+    <MapTable
+        mappingName="Bambara SIL Charis&lt;&gt;UNICODE"
+        converterSpec="Bambara SIL Charis.tec"
+        IsConverterSpecAFile="true"
+        description="Bambara SIL Charis"
+        implementType="SIL.tec"
+        conversionType="LegacyToFromUnicode"
+        leftEncoding="Bambara SIL Charis"
+        rightEncoding="UNICODE"
+        processType="UnicodeEncodingConversion"
+        sampleData="Test Data">
+    </MapTable>
+    <MapTable
+        mappingName="SIL-BF Font Family-2005&lt;&gt;UNICODE"
+        converterSpec="BF Font Family.tec"
+        IsConverterSpecAFile="true"
+        description="SIL Burkina Faso font family to Unicode"
+        implementType="SIL.tec"
+        conversionType="LegacyToFromUnicode"
+        leftEncoding="SIL-BF_Font_Family-2005"
+        rightEncoding="UNICODE"
+        processType="UnicodeEncodingConversion"
+        sampleData="Test Data">
+    </MapTable>
+    <MapTable
+        mappingName="SIL-BF_Times-2006&lt;&gt;UNICODE"
+        converterSpec="BF Times.tec"
+        IsConverterSpecAFile="true"
+        description="SIL Burkina Faso Times to Unicode"
+        implementType="SIL.tec"
+        conversionType="LegacyToFromUnicode"
+        leftEncoding="SIL-BF_Times-2006"
+        rightEncoding="UNICODE"
+        processType="UnicodeEncodingConversion"
+        sampleData="Test Data">
+    </MapTable>
+    <MapTable
+        mappingName="X-SIL-Fulfulde&lt;&gt;UNICODE"
+        converterSpec="fulfulde.tec"
+        IsConverterSpecAFile="true"
+        description="SIL FHP Fulfulde"
+        implementType="SIL.tec"
+        conversionType="LegacyToFromUnicode"
+        leftEncoding="X-SIL-Fulfulde"
+        rightEncoding="UNICODE"
+        processType="UnicodeEncodingConversion"
+        sampleData="Test Data">
+    </MapTable>
+    <MapTable
+        mappingName="SIL-Ghana Doulos-2005&lt;&gt;UNICODE"
+        converterSpec="Ghana.tec"
+        IsConverterSpecAFile="true"
+        description="SIL-Ghana Fonts to Unicode"
+        implementType="SIL.tec"
+        conversionType="LegacyToFromUnicode"
+        leftEncoding="SIL-Ghana_Doulos-2005"
+        rightEncoding="UNICODE"
+        processType="UnicodeEncodingConversion"
+        sampleData="Test Data">
+    </MapTable>
+    <MapTable
+        mappingName="SIL-Mali Standard Font Family&lt;&gt;UNICODE"
+        converterSpec="Mali Standard.tec"
+        IsConverterSpecAFile="true"
+        description="SIL-Mali Standard Font to Unicode mapping"
+        implementType="SIL.tec"
+        conversionType="LegacyToFromUnicode"
+        leftEncoding="Mali Standard SILDoulos-2005"
+        rightEncoding="UNICODE"
+        processType="UnicodeEncodingConversion"
+        sampleData="Test Data">
+    </MapTable>
+    <MapTable
+        mappingName="RCI Standard Doulos/Sophia/Manuscript&lt;&gt;UNICODE"
+        converterSpec="RCIStandard.tec"
+        IsConverterSpecAFile="true"
+        description="RCI Standard encoding conversion map"
+        implementType="SIL.tec"
+        conversionType="LegacyToFromUnicode"
+        leftEncoding="SIL-RCI Standard-1994"
+        rightEncoding="UNICODE"
+        processType="UnicodeEncodingConversion"
+        sampleData="Test Data">
+    </MapTable>
+    <MapTable
+        mappingName="X-SIL-Senufo&lt;&gt;UNICODE"
+        converterSpec="Senufo.tec"
+        IsConverterSpecAFile="true"
+        description="Senufo"
+        implementType="SIL.tec"
+        conversionType="LegacyToFromUnicode"
+        leftEncoding="X-SIL-Senufo"
+        rightEncoding="UNICODE"
+        processType="UnicodeEncodingConversion"
+        sampleData="Test Data">
+    </MapTable>
+    <MapTable
+        mappingName="SIL-Karaboro-2006&lt;&gt;UNICODE"
+        converterSpec="SIL-Kar.tec"
+        IsConverterSpecAFile="true"
+        description="SIL Karaboro font family to Unicode"
+        implementType="SIL.tec"
+        conversionType="LegacyToFromUnicode"
+        leftEncoding="SIL-Karaboro-2006"
+        rightEncoding="UNICODE"
+        processType="UnicodeEncodingConversion"
+        sampleData="Test Data">
+    </MapTable>
+    <MapTable
+        mappingName="SIL Samogho Doulos/Sophia/Manuscript&lt;&gt;UNICODE"
+        converterSpec="SILSamogho.tec"
+        IsConverterSpecAFile="true"
+        description="SIL Samogho encoding conversion map"
+        implementType="SIL.tec"
+        conversionType="LegacyToFromUnicode"
+        leftEncoding="SIL-Samogho-2006"
+        rightEncoding="UNICODE"
+        processType="UnicodeEncodingConversion"
+        sampleData="Test Data">
+    </MapTable>
+    <MapTable
+        mappingName="SIL-Songhai-2006&lt;&gt;UNICODE"
+        converterSpec="Songhai.tec"
+        IsConverterSpecAFile="true"
+        description="SIL Songhai Mali fonts to Unicode"
+        implementType="SIL.tec"
+        conversionType="LegacyToFromUnicode"
+        leftEncoding="SIL-Songhai-2006"
+        rightEncoding="UNICODE"
+        processType="UnicodeEncodingConversion"
+        sampleData="Test Data">
+    </MapTable>
+    <MapTable
+        mappingName="Tombouctou-Dutch&lt;&gt;UNICODE"
+        converterSpec="Tombouctou.tec"
+        IsConverterSpecAFile="true"
+        description="Tombouctou-Dutch to Unicode"
+        implementType="SIL.tec"
+        conversionType="LegacyToFromUnicode"
+        leftEncoding="SIL-Tombouctou-Dutch-2006"
+        rightEncoding="UNICODE"
+        processType="UnicodeEncodingConversion"
+        sampleData="Test Data">
+    </MapTable>
+    <MapTable
+        mappingName="Burkina Faso Winye-2003&lt;&gt;UNICODE"
+        converterSpec="Winye.tec"
+        IsConverterSpecAFile="true"
+        description="SIL-Burkina Winye Unknown Font to Unicode mapping"
+        implementType="SIL.tec"
+        conversionType="LegacyToFromUnicode"
+        leftEncoding="SIL-Burkina_Winye_Unknown_Font-2005"
+        rightEncoding="UNICODE"
+        processType="UnicodeEncodingConversion"
+        sampleData="Test Data">
+    </MapTable>
+    <MapTable
+        mappingName="SIL Togo-Benin Tbb font family&lt;&gt;UNICODE"
+        converterSpec="Tbb4.tec"
+        IsConverterSpecAFile="true"
+        description="SIL Togo-Benin Tbb font family to Unicode mapping"
+        implementType="SIL.tec"
+        conversionType="LegacyToFromUnicode"
+        leftEncoding="SIL-TBB-1996"
+        rightEncoding="UNICODE"
+        processType="UnicodeEncodingConversion"
+        sampleData="fýrýn wýËýtÿÿma">
+    </MapTable>
+  </MapsTables>
+</SILConvertersInstallerDetails>

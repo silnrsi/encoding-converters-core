@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<SILConvertersInstallerDetails xmlns="http://www.sil.org/computing/schemas/SILConvertersInstallerDetails.xsd">
+    <MapsTables>
+        <MapTable
+            mappingName="Times African&lt;&gt;UNICODE"
+            converterSpec="Times African.tec"
+            IsConverterSpecAFile="true"
+            description="Times African to Unicode"
+            implementType="SIL.tec"
+            conversionType="LegacyToFromUnicode"
+            leftEncoding="Times African"
+            rightEncoding="UNICODE"
+            processType="UnicodeEncodingConversion"
+            sampleData="Test Data">
+            <AddFont        side="left" font="Times African" codePage="1252"/>
+            <AddFontMapping left="Times African" right="Doulos SIL"/>
+        </MapTable>
+        <MapTable
+            mappingName="Bantu Und&lt;&gt;UNICODE"
+            converterSpec="Bantu Und.tec"
+            IsConverterSpecAFile="true"
+            description="Bantu Und to Unicode"
+            implementType="SIL.tec"
+            conversionType="LegacyToFromUnicode"
+            leftEncoding="Bantu Und"
+            rightEncoding="UNICODE"
+            processType="UnicodeEncodingConversion"
+            sampleData="Test Data">
+            <AddFont        side="left" font="Bantu Und" codePage="1252"/>
+            <AddFontMapping left="Bantu Und" right="Doulos SIL"/>
+        </MapTable>
+    </MapsTables>
+</SILConvertersInstallerDetails>
