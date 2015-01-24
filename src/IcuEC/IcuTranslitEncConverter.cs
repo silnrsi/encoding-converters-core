@@ -37,6 +37,7 @@ namespace SilEncConverters40
 		[DllImport("IcuTranslitEC", EntryPoint="IcuTranslitEC_ConverterNameList_start", CallingConvention = CallingConvention.Cdecl)]
 		static extern int CppConverterNameList_start();
 
+#if __MonoCS__
 		[DllImport("IcuTranslitEC", EntryPoint="IcuTranslitEC_ConverterNameList_next", CallingConvention = CallingConvention.Cdecl)]
 		[return: MarshalAs(UnmanagedType.LPStr)]
 		static extern string CppConverterNameList_next();
@@ -45,6 +46,15 @@ namespace SilEncConverters40
 		[return: MarshalAs(UnmanagedType.LPStr)]
 		static extern string CppGetDisplayName(
 			[MarshalAs(UnmanagedType.LPStr)] string strID);
+#else
+        [DllImport("IcuTranslitEC", EntryPoint = "IcuTranslitEC_ConverterNameList_next", CallingConvention = CallingConvention.Cdecl)]
+        [return: MarshalAs(UnmanagedType.BStr)]
+        static extern string CppConverterNameList_next();
+
+        [DllImport("IcuTranslitEC", EntryPoint = "IcuTranslitEC_GetDisplayName", CallingConvention = CallingConvention.Cdecl)]
+        [return: MarshalAs(UnmanagedType.BStr)]
+        static extern string CppGetDisplayName([MarshalAs(UnmanagedType.LPStr)] string strID);
+#endif
         #endregion DLLImport Statements
 
         #region Member Variable Definitions

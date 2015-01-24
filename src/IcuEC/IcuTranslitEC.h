@@ -22,8 +22,14 @@ extern "C" {
 #endif
 	
     DLLEXPORT int IcuTranslitEC_ConverterNameList_start(void);
+
+#ifdef _MSC_VER
+    DLLEXPORT BSTR IcuTranslitEC_ConverterNameList_next(void);
+    DLLEXPORT BSTR IcuTranslitEC_GetDisplayName(char * strID);
+#else
     DLLEXPORT const char * IcuTranslitEC_ConverterNameList_next(void);
     DLLEXPORT const char * IcuTranslitEC_GetDisplayName(char * strID);
+#endif
 
     DLLEXPORT int IcuTranslitEC_Initialize(char * strConverterID);
     DLLEXPORT int IcuTranslitEC_PreConvert (int eInEncodingForm, int& eInFormEngine,

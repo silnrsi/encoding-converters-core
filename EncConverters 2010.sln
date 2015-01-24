@@ -667,8 +667,8 @@ Global
 		{AC397DFB-5A78-43FF-AB14-83FCAE39ECEC}.Template|x86.ActiveCfg = Release|x86
 		{AC397DFB-5A78-43FF-AB14-83FCAE39ECEC}.Template|x86.Build.0 = Release|x86
 		{7F906C15-8DCD-466E-9AF3-2EF50E7FC046}.Debug|Any CPU.ActiveCfg = Debug|Win32
-		{7F906C15-8DCD-466E-9AF3-2EF50E7FC046}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
-		{7F906C15-8DCD-466E-9AF3-2EF50E7FC046}.Debug|Mixed Platforms.Build.0 = Debug|Win32
+		{7F906C15-8DCD-466E-9AF3-2EF50E7FC046}.Debug|Mixed Platforms.ActiveCfg = LegacyDebug|Win32
+		{7F906C15-8DCD-466E-9AF3-2EF50E7FC046}.Debug|Mixed Platforms.Build.0 = LegacyDebug|Win32
 		{7F906C15-8DCD-466E-9AF3-2EF50E7FC046}.Debug|Win32.ActiveCfg = Debug|Win32
 		{7F906C15-8DCD-466E-9AF3-2EF50E7FC046}.Debug|Win32.Build.0 = Debug|Win32
 		{7F906C15-8DCD-466E-9AF3-2EF50E7FC046}.Debug|x86.ActiveCfg = Debug|Win32

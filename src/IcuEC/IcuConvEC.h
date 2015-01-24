@@ -22,8 +22,14 @@ extern "C"
 #endif
 
     DLLEXPORT int IcuConvEC_ConverterNameList_start(void);
+
+#ifdef _MSC_VER
+    DLLEXPORT BSTR IcuConvEC_ConverterNameList_next(void);
+    DLLEXPORT BSTR IcuConvEC_GetDisplayName(char * strID);
+#else
     DLLEXPORT const char * IcuConvEC_ConverterNameList_next(void);
     DLLEXPORT const char * IcuConvEC_GetDisplayName(char * strID);
+#endif
 
     DLLEXPORT int IcuConvEC_Initialize(char * strConverterID);
     DLLEXPORT int IcuConvEC_PreConvert(int eInEncodingForm, int & eInFormEngine,

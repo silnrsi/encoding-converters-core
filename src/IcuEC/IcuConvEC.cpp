@@ -12,6 +12,7 @@
 #include "unicode/uloc.h"
 #include "unicode/unistr.h"
 
+#include <comutil.h>
 #include "CEncConverter.h"
 #include "IcuConvEC.h"
 
@@ -257,15 +258,23 @@ namespace IcuConvEC
 		return m_cConvNames;
 	}
 
-	const char * ReturnableString(const char* name)
+	// from http://stackoverflow.com/questions/5308584/how-to-return-text-from-native-c-code
+	BSTR ANSItoBSTR(const char* input)
 	{
-		static char chbuf[MAXNAMESIZE];
-		size_t len = strlen(name);
-		if (len >= MAXNAMESIZE)
-			len = MAXNAMESIZE - 1;
-		strncpy_s(chbuf, name, len);
-		chbuf[len] = 0;
-		return (const char *)chbuf;
+		BSTR result = NULL;
+		int lenA = lstrlenA(input);
+		int lenW = ::MultiByteToWideChar(CP_ACP, 0, input, lenA, NULL, 0);
+		if (lenW > 0)
+		{
+			result = ::SysAllocStringLen(0, lenW);
+			::MultiByteToWideChar(CP_ACP, 0, input, lenA, result, lenW);
+		} 
+		return result;
+	}
+
+	BSTR ReturnableString(const char* name)
+	{
+		return ::SysAllocString(ANSItoBSTR(name));
 	}
 
 	///////////////////////////////////////////////////////////////////////////
@@ -276,7 +285,11 @@ namespace IcuConvEC
 	// RETURN VALUE
 	//    dynamically allocated copy of the converter's name, or NULL if no more
 	//
+#ifdef _MSC_VER
+	BSTR ConverterNameList_next(void)
+#else
 	const char * ConverterNameList_next(void)
+#endif
 	{
 #ifdef VERBOSE_DEBUGGING
 		fprintf(stderr, "+");
@@ -333,7 +346,11 @@ namespace IcuConvEC
 	// RETURN VALUE
 	//    dynamically allocated copy of the display name of the given converter
 	//
+#ifdef _MSC_VER
+	BSTR GetDisplayName(char * strID)
+#else
 	const char * GetDisplayName(char * strID)
+#endif
 	{
 #ifdef VERBOSE_DEBUGGING
 		fprintf(stderr, "IcuConvEC::GetDisplayName(\"%s\") BEGIN\n", strID);
@@ -356,20 +373,9 @@ namespace IcuConvEC
 		if (conv != m_pConverter)
 			ucnv_close(conv);
 #ifdef _MSC_VER
-		const char* str = ReturnableString(name);
+		BSTR str = ReturnableString(name);
 		free((void *)name);
 		return str;
-
-		/*
-		static char chbuf[MAXNAMESIZE];
-		size_t len = strlen(name);
-		if (len >= MAXNAMESIZE)
-			len = MAXNAMESIZE - 1;
-		strncpy_s(chbuf, name, len);
-		chbuf[len] = 0;
-		free((void *)name);
-		return (const char *)chbuf;
-		*/
 #else
 		return name;
 #endif
@@ -539,12 +545,20 @@ int IcuConvEC_ConverterNameList_start(void)
 	return IcuConvEC::ConverterNameList_start();
 }
 //*****************************************************************************
+#ifdef _MSC_VER
+BSTR IcuConvEC_ConverterNameList_next(void)
+#else
 const char * IcuConvEC_ConverterNameList_next(void)
+#endif
 {
 	return IcuConvEC::ConverterNameList_next();
 }
 //*****************************************************************************
+#ifdef _MSC_VER
+BSTR IcuConvEC_GetDisplayName(char * strID)
+#else
 const char * IcuConvEC_GetDisplayName(char * strID)
+#endif
 {
 	return IcuConvEC::GetDisplayName(strID);
 }

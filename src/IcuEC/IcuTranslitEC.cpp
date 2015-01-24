@@ -16,7 +16,7 @@
 // This file is from the ICU library. If you don't have it, you may have to
 // download it or get it from a package such as FieldWorks.
 #include "unicode/translit.h"
-
+#include <comutil.h>
 #include "CEncConverter.h"
 #include "IcuTranslitEC.h"
 
@@ -221,47 +221,41 @@ namespace IcuTranslitEC
         return m_iConvNameCount;
     }
 
-    const char * ConverterNameList_next(void)
+#ifdef _MSC_VER
+	BSTR ConverterNameList_next(void)
+#else
+	const char * ConverterNameList_next(void)
+#endif
     {
 		if (m_iConvNameIndex >= m_iConvNameCount)
 			return NULL;
 		UnicodeString strID = Transliterator::getAvailableID(m_iConvNameIndex);
 		++m_iConvNameIndex;
-        char * name = UniStr_to_CharStar(strID);
+#ifdef _MSC_VER
+		return ::SysAllocString(strID.getTerminatedBuffer());
+#else
+		char * name = UniStr_to_CharStar(strID);
 #ifdef VERBOSE_DEBUGGING
         fprintf(stderr, "+");
 #endif
-#ifdef _MSC_VER
-		static char chbuf[MAXNAMESIZE];
-		size_t len = strlen(name);
-		if (len >= MAXNAMESIZE)
-			len = MAXNAMESIZE - 1;
-		strncpy_s(chbuf, name, len);
-		chbuf[len] = 0;
-		free((void *)name);
-		return (const char *)chbuf;
-#else
 		return name;
 #endif
     }
 
     // The ID is a string like "Any-Latin", and the display name is "Any to Latin".
     // Be sure to free the result when finished (C# marshalling will free it).
+#ifdef _MSC_VER
+	BSTR GetDisplayName(char * strID)
+#else
     const char * GetDisplayName(char * strID)
+#endif
     {
         UnicodeString strDisplayName;
         Transliterator::getDisplayName(strID, strDisplayName);
-		char * name = UniStr_to_CharStar(strDisplayName);
-#if _MSC_VER
-		static char chbuf[MAXNAMESIZE];
-		size_t len = strlen(name);
-		if (len >= MAXNAMESIZE)
-			len = MAXNAMESIZE - 1;
-		strncpy_s(chbuf, name, len);
-		chbuf[len] = 0;
-		free((void *)name);
-		return (const char *)chbuf;
+#ifdef _MSC_VER
+		return ::SysAllocString(strDisplayName.getTerminatedBuffer());
 #else
+		char * name = UniStr_to_CharStar(strDisplayName);
 		return name;
 #endif
     }
@@ -422,11 +416,19 @@ int IcuTranslitEC_ConverterNameList_start(void)
 {
     return IcuTranslitEC::ConverterNameList_start();
 }
+#ifdef _MSC_VER
+BSTR IcuTranslitEC_ConverterNameList_next(void)
+#else
 const char * IcuTranslitEC_ConverterNameList_next(void)
+#endif
 {
     return IcuTranslitEC::ConverterNameList_next();
 }
+#ifdef _MSC_VER
+BSTR IcuTranslitEC_GetDisplayName(char * strID)
+#else
 const char * IcuTranslitEC_GetDisplayName(char * strID)
+#endif
 {
     return IcuTranslitEC::GetDisplayName(strID);
 }

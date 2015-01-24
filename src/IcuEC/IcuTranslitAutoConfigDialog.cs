@@ -24,11 +24,23 @@ namespace SilEncConverters40
 		[DllImport("IcuTranslitEC", EntryPoint = "IcuTranslitEC_ConverterNameList_start", CallingConvention = CallingConvention.Cdecl)]
         static extern unsafe int CppConverterNameList_start();
 
+#if __MonoCS__
 		[DllImport("IcuTranslitEC", EntryPoint = "IcuTranslitEC_ConverterNameList_next", CallingConvention = CallingConvention.Cdecl)]
+        [return: MarshalAs(UnmanagedType.LPStr)]
         static extern unsafe string CppConverterNameList_next();
 
 		[DllImport("IcuTranslitEC", EntryPoint = "IcuTranslitEC_GetDisplayName", CallingConvention = CallingConvention.Cdecl)]
+        [return: MarshalAs(UnmanagedType.LPStr)]
         static extern unsafe string CppGetDisplayName(string strID);
+#else
+        [DllImport("IcuTranslitEC", EntryPoint = "IcuTranslitEC_ConverterNameList_next", CallingConvention = CallingConvention.Cdecl)]
+        [return: MarshalAs(UnmanagedType.BStr)]
+        static extern unsafe string CppConverterNameList_next();
+
+        [DllImport("IcuTranslitEC", EntryPoint = "IcuTranslitEC_GetDisplayName", CallingConvention = CallingConvention.Cdecl)]
+        [return: MarshalAs(UnmanagedType.BStr)]
+        static extern unsafe string CppGetDisplayName(string strID);
+#endif
         #endregion DLLImport Statements
 
         private TableLayoutPanel tableLayoutPanel1;
@@ -39,7 +51,7 @@ namespace SilEncConverters40
         private ComboBox comboBoxPreviousCustomTransliterators;
         private Label label1;
         private Button buttonDeletePreviousCustomTransliterators;  // set at the end of Initialize (to block certain events until we're ready for them)
-        private string [] translitIDs;
+        private List<string> lstTranslitIDs;
 
         public IcuTranslitAutoConfigDialog (
             IEncConverters aECs,
@@ -75,9 +87,9 @@ namespace SilEncConverters40
                 Util.DebugWriteLine(this, "Edit mode");
                 System.Diagnostics.Debug.Assert(!String.IsNullOrEmpty(ConverterIdentifier));
                 //listBoxTranslitName.SelectedValue = ConverterIdentifier;
-                for (int i = 0; i < translitIDs.Length; i++)
+                for (int i = 0; i < lstTranslitIDs.Count; i++)
                 {
-                    if (translitIDs[i] == ConverterIdentifier)
+                    if (lstTranslitIDs[i] == ConverterIdentifier)
                     {
                         listBoxTranslitName.SelectedIndex = i;
                         break;
@@ -281,11 +293,12 @@ namespace SilEncConverters40
 
             // Store the IDs in an array, and put the display names in the
             // list box.
-            translitIDs = new string[count];
+            lstTranslitIDs = new List<string>(count);
             for (int i = 0; i < count; i++)
             {
-                translitIDs[i] = CppConverterNameList_next();
-                string translitName   = CppGetDisplayName(translitIDs[i]);
+                var translitId = CppConverterNameList_next();
+                lstTranslitIDs.Add(translitId);
+                string translitName = CppGetDisplayName(translitId);
                 this.listBoxTranslitName.Items.Add(translitName);
             }
 
@@ -309,9 +322,9 @@ namespace SilEncConverters40
                             object tempName = lb.Items[counter];
                             lb.Items[counter]   = lb.Items[counter-1];
                             lb.Items[counter-1] = tempName;
-                            string tempID = translitIDs[counter];
-                            translitIDs[counter]   = translitIDs[counter-1];
-                            translitIDs[counter-1] = tempID;
+                            string tempID = lstTranslitIDs[counter];
+                            lstTranslitIDs[counter] = lstTranslitIDs[counter - 1];
+                            lstTranslitIDs[counter - 1] = tempID;
                             swapped = true;
                         }
                         // Decrement the counter.
@@ -337,7 +350,7 @@ namespace SilEncConverters40
 
             // Get the converter identifier from the Setup tab controls.
             if (radioButtonBuiltIn.Checked && (listBoxTranslitName.SelectedIndex != -1))
-                ConverterIdentifier = translitIDs[listBoxTranslitName.SelectedIndex];
+                ConverterIdentifier = lstTranslitIDs[listBoxTranslitName.SelectedIndex];
             else if (radioButtonCustom.Checked)
                 ConverterIdentifier = textBoxCustomTransliterator.Text;
 

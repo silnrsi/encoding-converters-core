@@ -20,12 +20,25 @@ namespace SilEncConverters40
 		[DllImport("IcuConvEC", EntryPoint = "IcuConvEC_ConverterNameList_start", CallingConvention = CallingConvention.Cdecl)]
 		static extern unsafe int CppConverterNameList_start();
 
-		[DllImport("IcuConvEC", EntryPoint = "IcuConvEC_ConverterNameList_next", CallingConvention = CallingConvention.Cdecl)]
-		static extern unsafe string CppConverterNameList_next();
+#if __MonoCS__
+		[DllImport("IcuConvEC.dll", EntryPoint = "IcuConvEC_ConverterNameList_next", CallingConvention = CallingConvention.Cdecl)]
+		[return : MarshalAs(UnmanagedType.LPStr)]
+		static extern string CppConverterNameList_next();
 
-		[DllImport("IcuConvEC", EntryPoint = "IcuConvEC_GetDisplayName", CallingConvention = CallingConvention.Cdecl)]
-		static extern unsafe string CppGetDisplayName(string strID);
-		#endregion DLLImport Statements
+		[DllImport("IcuConvEC.dll", EntryPoint = "IcuConvEC_GetDisplayName", CallingConvention = CallingConvention.Cdecl)]
+		[return: MarshalAs(UnmanagedType.LPStr)]
+		static extern string CppGetDisplayName(
+			[MarshalAs(UnmanagedType.LPStr)] string strID);
+#else
+        [DllImport("IcuConvEC.dll", EntryPoint = "IcuConvEC_ConverterNameList_next", CallingConvention = CallingConvention.Cdecl)]
+        [return: MarshalAs(UnmanagedType.BStr)]
+        static extern string CppConverterNameList_next();
+
+        [DllImport("IcuConvEC.dll", EntryPoint = "IcuConvEC_GetDisplayName", CallingConvention = CallingConvention.Cdecl)]
+        [return: MarshalAs(UnmanagedType.BStr)]
+        static extern string CppGetDisplayName([MarshalAs(UnmanagedType.LPStr)] string strID);
+#endif
+        #endregion DLLImport Statements
 
 		public IcuConvAutoConfigDialog (
 			IEncConverters aECs,
