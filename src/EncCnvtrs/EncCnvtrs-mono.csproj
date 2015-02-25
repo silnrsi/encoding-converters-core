@@ -89,9 +89,11 @@
     </Reference>
     <Reference Include="geckofx-core-14">
       <HintPath>/usr/lib/cli/geckofx-14.0.1/geckofx-core-14.dll</HintPath>
+      <HintPath>/usr/lib/cli/geckofx-29/Geckofx-Core.dll</HintPath>
     </Reference>
     <Reference Include="Geckofx-Winforms-14">
       <HintPath>/usr/lib/cli/geckofx-14.0.1/Geckofx-Winforms-14.dll</HintPath>
+      <HintPath>/usr/lib/cli/geckofx-29/Geckofx-Winforms.dll</HintPath>
     </Reference>
     <Reference Include="System">
       <Name>System</Name>
