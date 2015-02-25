@@ -16,7 +16,11 @@
 // This file is from the ICU library. If you don't have it, you may have to
 // download it or get it from a package such as FieldWorks.
 #include "unicode/translit.h"
+
+#ifdef _MSC_VER
 #include <comutil.h>
+#endif
+
 #include "CEncConverter.h"
 #include "IcuTranslitEC.h"
 

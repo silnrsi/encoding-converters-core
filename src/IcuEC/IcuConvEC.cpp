@@ -12,7 +12,10 @@
 #include "unicode/uloc.h"
 #include "unicode/unistr.h"
 
+#ifdef _MSC_VER
 #include <comutil.h>
+#endif
+
 #include "CEncConverter.h"
 #include "IcuConvEC.h"
 

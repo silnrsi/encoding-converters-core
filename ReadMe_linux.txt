@@ -27,6 +27,8 @@ http://hg.palaso.org/ec-main
 
 ## To build using makefiles.
 
+The following packages are required:
+    automake g++ python-dev mono-complete libicu-dev geckofx29
 cd to project root
 ./autogen.sh        # calls configure
 make                # for testing and debugging
@@ -39,11 +41,7 @@ http://www.gnu.org/prep/standards/html_node/Directory-Variables.html
 
 Generate msbuild from VStudio and port to Mono xbuild.
 http://www.mono-project.com/Microsoft.Build
-
-
-## Mono
-
-sudo apt-get install mono-complete   # includes xbuild and mono-2.0-dev
+Note: xbuild and mono-2.0-dev are included in mono-complete
 
 
 ## MonoDevelop
@@ -51,7 +49,7 @@ sudo apt-get install mono-complete   # includes xbuild and mono-2.0-dev
 It often says a project file will not be built in active configuration.
 I don't know of a conveninent solution to this, but it's not too hard to fix
 either. Just remove and then add each project file.
-Editing the solution file itself is possible but a little tricky.
+Editing the solution file with a text editor is possible but a little tricky.
 Lines containing .Build.0 are needed for every project file.
 
 
@@ -112,7 +110,7 @@ run --debug --break "RunTests:Main" ./RunTests.exe
 
 ## Paths
 
-/usr/lib/encConverters is searched by OOoLT to find libecdriver.so
+/usr/lib/encConverters is searched by OOLT to find libecdriver.so
 There seems to be a problem when the TECkit library is in a different
     place from the running SilEncConverters40.dll.
     Setting LD_LIBRARY_PATH makes this work, but ldconfig does not.
@@ -196,9 +194,10 @@ Easier is to edit references and browse to a file.
 When selected (not added), it will show the version info at the bottom.
 
 
-## Gecko
+## GeckoFx
 
-Install firefox-geckofx package from SIL lsdev server.
+Install geckofx29 package from packages.sil.org
+
 Download:
     geckofx 14 source code
     xulrunner libraries
