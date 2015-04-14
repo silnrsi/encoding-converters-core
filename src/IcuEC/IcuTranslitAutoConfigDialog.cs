@@ -19,25 +19,23 @@ namespace SilEncConverters40
     public class IcuTranslitAutoConfigDialog : SilEncConverters40.AutoConfigDialog
     {
         #region DLLImport Statements
-        // On Linux looks for libIcuTranslitEC.so (adds lib- and -.so)
-        //[DllImport("IcuTranslitEC", SetLastError=true)]
-		[DllImport("IcuTranslitEC", EntryPoint = "IcuTranslitEC_ConverterNameList_start", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport("IcuTranslitEC.dll", EntryPoint = "IcuTranslitEC_ConverterNameList_start", CallingConvention = CallingConvention.Cdecl)]
         static extern unsafe int CppConverterNameList_start();
 
 #if __MonoCS__
-		[DllImport("IcuTranslitEC", EntryPoint = "IcuTranslitEC_ConverterNameList_next", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport("IcuTranslitEC.dll", EntryPoint = "IcuTranslitEC_ConverterNameList_next", CallingConvention = CallingConvention.Cdecl)]
         [return: MarshalAs(UnmanagedType.LPStr)]
         static extern unsafe string CppConverterNameList_next();
 
-		[DllImport("IcuTranslitEC", EntryPoint = "IcuTranslitEC_GetDisplayName", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport("IcuTranslitEC.dll", EntryPoint = "IcuTranslitEC_GetDisplayName", CallingConvention = CallingConvention.Cdecl)]
         [return: MarshalAs(UnmanagedType.LPStr)]
         static extern unsafe string CppGetDisplayName(string strID);
 #else
-        [DllImport("IcuTranslitEC", EntryPoint = "IcuTranslitEC_ConverterNameList_next", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("IcuTranslitEC.dll", EntryPoint = "IcuTranslitEC_ConverterNameList_next", CallingConvention = CallingConvention.Cdecl)]
         [return: MarshalAs(UnmanagedType.BStr)]
         static extern unsafe string CppConverterNameList_next();
 
-        [DllImport("IcuTranslitEC", EntryPoint = "IcuTranslitEC_GetDisplayName", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("IcuTranslitEC.dll", EntryPoint = "IcuTranslitEC_GetDisplayName", CallingConvention = CallingConvention.Cdecl)]
         [return: MarshalAs(UnmanagedType.BStr)]
         static extern unsafe string CppGetDisplayName(string strID);
 #endif

@@ -38,14 +38,24 @@ namespace TestEncCnvtrs
 				//Console.WriteLine(converters[i]);
 			}
 			// Check for the specific converters used in the following tests.
-			Assert.Contains("ISO-8859-1", converters, "The set of ICU converters should contain 'ISO-8859-1'.");
-			Assert.Contains("iso-8859_10-1998", converters, "The set of ICU converters should contain 'iso-8859_10-1998'.");
-			Assert.Contains("iso-8859_11-2001", converters, "The set of ICU converters should contain 'iso-8859_11-2001'.");
-			Assert.Contains("iso-8859_14-1998", converters, "The set of ICU converters should contain 'iso-8859_14-1998'.");
+			Assert.IsTrue(IcuIncludes(converters, "ISO-8859-1"), "The set of ICU converters should contain 'ISO-8859-1'.");
+			Assert.IsTrue(IcuIncludes(converters, "iso-8859_10-1998"), "The set of ICU converters should contain 'iso-8859_10-1998'.");
+			Assert.IsTrue(IcuIncludes(converters, "iso-8859_11-2001"), "The set of ICU converters should contain 'iso-8859_11-2001'.");
+			Assert.IsTrue(IcuIncludes(converters, "iso-8859_14-1998"), "The set of ICU converters should contain 'iso-8859_14-1998'.");
 			string display1 = IcuConvEncConverter.GetDisplayName("ISO-8859-1");
 			Assert.IsNotNull(display1);
 			string display2 = IcuConvEncConverter.GetDisplayName ("iso-8859_10-1998");
 			Assert.IsNotNull(display2);
+		}
+
+		bool IcuIncludes(List<string> converters, string name)
+		{
+			foreach (var conv in converters)
+			{
+				if (conv == name || conv.StartsWith(name + " (aliases: "))
+					return true;
+			}
+			return false;
 		}
 		
 		byte[] m_bytesIso8859 = new byte[191] {
