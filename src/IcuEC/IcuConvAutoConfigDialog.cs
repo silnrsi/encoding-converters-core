@@ -16,8 +16,7 @@ namespace SilEncConverters40
 	public class IcuConvAutoConfigDialog : SilEncConverters40.AutoConfigDialog
 	{
 		#region DLLImport Statements
-		// On Linux looks for libIcuConvEC.so (adds lib- and -.so)
-		[DllImport("IcuConvEC", EntryPoint = "IcuConvEC_ConverterNameList_start", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport("IcuConvEC.dll", EntryPoint = "IcuConvEC_ConverterNameList_start", CallingConvention = CallingConvention.Cdecl)]
 		static extern unsafe int CppConverterNameList_start();
 
 #if __MonoCS__

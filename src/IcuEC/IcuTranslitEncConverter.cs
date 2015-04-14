@@ -25,33 +25,33 @@ namespace SilEncConverters40
     {
         #region DLLImport Statements
         // On Linux looks for libIcuTranslitEC.so (adds lib- and -.so)
-        [DllImport("IcuTranslitEC", EntryPoint="IcuTranslitEC_Initialize", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("IcuTranslitEC.dll", EntryPoint="IcuTranslitEC_Initialize", CallingConvention = CallingConvention.Cdecl)]
         static extern int CppInitialize (
             [MarshalAs(UnmanagedType.LPStr)] string strConverterID);
 
-        [DllImport("IcuTranslitEC", EntryPoint="IcuTranslitEC_DoConvert", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("IcuTranslitEC.dll", EntryPoint="IcuTranslitEC_DoConvert", CallingConvention = CallingConvention.Cdecl)]
         static extern unsafe int CppDoConvert(
             byte* lpInputBuffer, int nInBufLen,
             byte* lpOutputBuffer, int *npOutBufLen);
 
-		[DllImport("IcuTranslitEC", EntryPoint="IcuTranslitEC_ConverterNameList_start", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport("IcuTranslitEC.dll", EntryPoint="IcuTranslitEC_ConverterNameList_start", CallingConvention = CallingConvention.Cdecl)]
 		static extern int CppConverterNameList_start();
 
 #if __MonoCS__
-		[DllImport("IcuTranslitEC", EntryPoint="IcuTranslitEC_ConverterNameList_next", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport("IcuTranslitEC.dll", EntryPoint="IcuTranslitEC_ConverterNameList_next", CallingConvention = CallingConvention.Cdecl)]
 		[return: MarshalAs(UnmanagedType.LPStr)]
 		static extern string CppConverterNameList_next();
 
-		[DllImport("IcuTranslitEC", EntryPoint="IcuTranslitEC_GetDisplayName", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport("IcuTranslitEC.dll", EntryPoint="IcuTranslitEC_GetDisplayName", CallingConvention = CallingConvention.Cdecl)]
 		[return: MarshalAs(UnmanagedType.LPStr)]
 		static extern string CppGetDisplayName(
 			[MarshalAs(UnmanagedType.LPStr)] string strID);
 #else
-        [DllImport("IcuTranslitEC", EntryPoint = "IcuTranslitEC_ConverterNameList_next", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("IcuTranslitEC.dll", EntryPoint = "IcuTranslitEC_ConverterNameList_next", CallingConvention = CallingConvention.Cdecl)]
         [return: MarshalAs(UnmanagedType.BStr)]
         static extern string CppConverterNameList_next();
 
-        [DllImport("IcuTranslitEC", EntryPoint = "IcuTranslitEC_GetDisplayName", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("IcuTranslitEC.dll", EntryPoint = "IcuTranslitEC_GetDisplayName", CallingConvention = CallingConvention.Cdecl)]
         [return: MarshalAs(UnmanagedType.BStr)]
         static extern string CppGetDisplayName([MarshalAs(UnmanagedType.LPStr)] string strID);
 #endif

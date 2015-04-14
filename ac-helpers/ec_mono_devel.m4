@@ -24,8 +24,9 @@ AC_DEFUN([EC_MONO_DEVEL],[
 			# This can happen on developer machines with a custom compiled
 			# version of mono in /usr/local/bin...  We need a version of mono
 			# that came in a package that the user can install.
-			#
-			AC_PATH_PROG([MONO2],[mono],[$MONO],[/usr/bin:/bin:/usr/lib/fieldworks/mono/bin:/opt/mono-2.10/bin])
+			# The package mono-sil stores in /opt/mono-sil, but a developer may
+			# have built and placed it there without installing the package.
+			AC_PATH_PROG([MONO2],[mono],[$MONO],[/opt/mono-sil/bin:/usr/lib/fieldworks/mono/bin:/usr/bin:/bin])
 			MONO=$MONO2
 		fi
 	fi
@@ -37,7 +38,7 @@ AC_DEFUN([EC_MONO_DEVEL],[
 		# (I've included a couple of known distributed package locations in the
 		# path provided below.)
 		#
-		AC_PATH_PROG([MONO3],[mono],[$MONO],[/usr/lib/fieldworks/mono/bin:/opt/mono-2.10/bin:/usr/bin:/bin])
+		AC_PATH_PROG([MONO3],[mono],[$MONO],[/opt/mono-sil/bin:/usr/lib/fieldworks/mono/bin:/usr/bin:/bin])
 		MONO=$MONO3
 		ec_monobase=`echo $MONO|sed s-/bin/mono--`
 	fi
