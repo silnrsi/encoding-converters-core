@@ -6,6 +6,7 @@
 # 06-Jun-13 JDK  Remove library version numbers.
 # 16-Jul-13 SMc  Add conditional test for FIELDWORKS (requires GNU Make)
 # 18-Jul-13 SMc  Add $(WIDTH) to distinguish 32-bit from 64-bit output
+# 15-Apr-15 SMc  Add packageclean target
 
 VPATH       = @srcdir@
 CXX         = @CXX@
@@ -103,7 +104,9 @@ clean:
 	rm -f $(RELEASEBLD)/ECDriver*.o
 	rm -f $(RELEASEOUT)/libecdriver$(WIDTH).so* $(RELEASEOUT)/ECDriver_test $(OUTDIR)/ECDriver_example*
 
-distclean: clean
+packageclean: clean
+
+distclean: packageclean
 	rm -f Makefile
 
 install: release

@@ -5,6 +5,7 @@
 # 16-Jul-13 SMc  Add conditional test for FIELDWORKS (requires GNU Make)
 # 18-Jul-13 SMc  Add $(WIDTH) to distinguish 32-bit from 64-bit output
 # 12-Aug-13 SMc  Add $(ICUPATH), $(ICULIBS), and $(ICUINCLUDE) for FieldWorks build
+# 15-Apr-15 SMc  Add packageclean target
 
 VPATH       = @srcdir@
 CXX         = @CXX@
@@ -127,7 +128,9 @@ clean:
 	rm -f $(RELEASEBLD)/IcuRegexEC.o $(RELEASEOUT)/libIcuRegexEC$(WIDTH).so*
 	rm -f $(RELEASEBLD)/IcuConvEC.o $(RELEASEOUT)/libIcuConvEC$(WIDTH).so*
 
-distclean: clean
+packageclean: clean
+
+distclean: packageclean
 	rm -f Makefile
 
 install: release IcuEC.dll.config
