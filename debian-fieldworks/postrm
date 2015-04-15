@@ -18,6 +18,8 @@ set -e
 # for details, see http://www.debian.org/doc/debian-policy/ or
 # the debian-policy package
 
+PREFIX=/opt/mono-sil
+
 CONFFILE=/etc/ld.so.conf.d/encConverters.conf
 GLOBALREGFILE=/etc/mono/registry/LocalMachine/software/sil/silencconverters40/values.xml
 
@@ -33,11 +35,11 @@ case "$1" in
         elif [ -f $GLOBALREGFILE ]; then
             rm -rf $(dirname $GLOBALREGFILE)
         fi
-        if [ -d /usr/lib/encConverters ]; then
-            for f in /usr/lib/encConverters/lib*.so*; do
+        if [ -d $PREFIX/lib/encConverters ]; then
+            for f in $PREFIX/lib/encConverters/lib*.so*; do
                 if [ -L $f ]; then rm -f $f; fi
             done
-            rmdir --ignore-fail-on-non-empty /usr/lib/encConverters
+            rmdir --ignore-fail-on-non-empty $PREFIX/lib/encConverters
         fi
     ;;
 
