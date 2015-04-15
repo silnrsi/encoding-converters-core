@@ -3,6 +3,7 @@
 #
 # 06-Jun-13 JDK  Added uninstall target.
 # 16-Jul-13 SMc  Add conditional test for FIELDWORKS (requires GNU Make)
+# 15-Apr-15 SMc  Add packageclean target
 
 @SET_MAKE@
 # the next line requires GNU make ...
@@ -82,17 +83,24 @@ clean:
 	@if [ -d $(RELEASEOUT) ]; then (cd $(RELEASEOUT) && rm -rf EC); fi || true
 	@rm -f *~
 
-distclean: clean
+# we need to keep the generated configure script and Makefile for packaging
+packageclean: clean
+	@for subdir in $(SRCDIRS); do \
+	  echo making in $$subdir; \
+	  (cd $$subdir && $(MAKE) packageclean) || true; \
+	done
+	@rm -f src/config.h config.log
+	@rm -f src/stamp-h1
+	@rm -f autogen.err TestResult.xml src/TestEncCnvtrs/TestEncCnvtrs.pidb
+	@rm -rf autom4te.cache output build/Obj src/TestEncCnvtrs/test-results
+	@rm -rf $(OUTDIR) $(RELEASEDIR)
+
+distclean: packageclean
 	@for subdir in $(SRCDIRS); do \
 	  echo making in $$subdir; \
 	  (cd $$subdir && $(MAKE) distclean) || true; \
 	done
-	@rm -f Makefile config.cache src/config.h config.log config.status
-	@rm -f src/stamp-h1
-	@rm -f aclocal.m4 configure
-	@rm -f autogen.err TestResult.xml src/TestEncCnvtrs/TestEncCnvtrs.pidb
-	@rm -rf autom4te.cache output build/Obj src/TestEncCnvtrs/test-results
-	@rm -rf $(OUTDIR) $(RELEASEDIR)
+	@rm -f Makefile configure aclocal.m4 config.cache config.status
 
 install: release
 	@for subdir in $(SRCDIRS); do \
@@ -116,9 +124,6 @@ install: release
 	  $(INSTALL) $$file $(DESTDIR)$(LIBDIR); \
 	done; \
 	fi
-	for file in DistFiles/linux/geckofx/*-14.dll; do \
-	  $(INSTALL) $$file $(DESTDIR)$(LIBDIR); \
-	done;
 	@cp -p src/EncCnvtrs/SilEncConverters40.dll.config $(DESTDIR)$(LIBDIR)
 	# Set up writable directories and keys to use as a registry.
 	@$(INSTALL) -d $(DESTDIR)$(REGROOT) -m +rwxt
