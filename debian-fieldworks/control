@@ -1,0 +1,18 @@
+Source: fieldworks-enc-converters
+Priority: optional
+Maintainer: Stephen McConnel <stephen_mcconnel@sil.org>
+Build-Depends: debhelper (>= 7.0.50~), autotools-dev, python-dev (>=2.6),
+ libicu-dev, lsb-release, devscripts, mono-sil, geckofx29
+Standards-Version: 3.9.1
+Section: libs
+Homepage: http://hg.palaso.org/ec-main
+
+Package: fieldworks-enc-converters
+Section: libs
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, mono-sil, libsilcc0, geckofx29
+Suggests: fieldworks
+Description: Encoding Converter libraries.
+ This provides a uniform interface to a variety of character encoding
+ converters.  This is designed to be used with fieldworks, building and
+ running with the special version of mono distributed with fieldworks.
