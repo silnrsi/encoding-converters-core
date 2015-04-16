@@ -1,3 +1,16 @@
+enc-converters (4.0.3) precise; urgency=low
+
+  * Fixed broken postinst script.
+
+ -- Stephen McConnel <stephen_mcconnel@sil.org>  Thu, 16 Apr 2015 10:36:00 -0500
+
+enc-converters (4.0.2) precise; urgency=low
+
+  * Two years worth of minor (?) bugfixes.
+  * Simplified standard debian packaging.
+
+ -- Stephen McConnel <stephen_mcconnel@sil.org>  Wed, 15 Apr 2015 16:38:32 -0500
+
 enc-converters (4.0.1) precise; urgency=low
 
   * Fix Mono related bug in AutoConfigDialog.

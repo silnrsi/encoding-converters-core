@@ -11,6 +11,7 @@ Package: enc-converters
 Section: libs
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, libsilcc0, geckofx29
+Conflicts: fieldworks-enc-converters
 Description: Encoding Converter libraries.
  This provides a uniform interface to a variety of character encoding
  converters.
