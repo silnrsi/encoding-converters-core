@@ -36,7 +36,9 @@ case "$1" in
         done
         # set up the registry for the general case
         mkdir -p $(dirname $GLOBALREGFILE)
-        cp /usr/share/encConverters/values.xml $GLOBALREGFILE
+        if [ -f /var/lib/encConverters/registry/LocalMachine/software/sil/silencconverters40/values.xml ]; then
+            cp /var/lib/encConverters/registry/LocalMachine/software/sil/silencconverters40/values.xml $GLOBALREGFILE
+        fi
     ;;
 
     abort-upgrade|abort-remove|abort-deconfigure)
