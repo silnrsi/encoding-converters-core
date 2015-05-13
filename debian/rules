@@ -11,10 +11,15 @@ export DH_VERBOSE=1
 export DH_OPTIONS=-v
 
 %:
-	dh $@ 
+	dh --with autoreconf $@
 
 override_dh_auto_clean:
-	$(MAKE) packageclean
+
+# note that the Makefile determines the installation directory based on the
+# existence/value of the variable FIELDWORKS, so we don't need a --prefix
+# argument for autogen.sh
+override_dh_autoreconf:
+	./autogen.sh
 
 # don't try to run the tests while packaging!
 override_dh_auto_test:

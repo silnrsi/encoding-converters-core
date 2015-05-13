@@ -18,28 +18,29 @@ set -e
 # for details, see http://www.debian.org/doc/debian-policy/ or
 # the debian-policy package
 
-PREFIX=/opt/mono-sil
+FW_LIBDIR=/usr/lib/fieldworks
 
 CONFFILE=/etc/ld.so.conf.d/encConverters.conf
 GLOBALREGFILE=/etc/mono/registry/LocalMachine/software/sil/silencconverters40/values.xml
 
 case "$1" in
     purge|remove|upgrade|failed-upgrade|abort-install|abort-upgrade|disappear)
-        if [ -f $CONFFILE.OLD ]; then
-            mv $CONFFILE.OLD $CONFFILE;
+        if [ -f ${CONFFILE}.OLD ]; then
+            mv ${CONFFILE}.OLD ${CONFFILE};
         else
-            rm -f $CONFFILE;
+            rm -f ${CONFFILE};
         fi
-        if [ -f $GLOBALREGFILE.OLD ]; then
-            mv $GLOBALREGFILE.OLD $GLOBALREGFILE;
-        elif [ -f $GLOBALREGFILE ]; then
-            rm -rf $(dirname $GLOBALREGFILE)
+        if [ -f ${GLOBALREGFILE}.OLD ]; then
+            mv ${GLOBALREGFILE}.OLD ${GLOBALREGFILE};
+        elif [ -f ${GLOBALREGFILE} ]; then
+            rm -rf $(dirname ${GLOBALREGFILE})
         fi
-        if [ -d $PREFIX/lib/encConverters ]; then
-            for f in $PREFIX/lib/encConverters/lib*.so*; do
+        if [ -d ${FW_LIBDIR} ]; then
+            cd ${FW_LIBDIR};
+            for f in libecdriver*.so* libIcuConvEC*.so* libIcuRegexEC*.so* \
+                 libIcuTranslitEC*.so* libPyScriptEncConverter*.so*; do
                 if [ -L $f ]; then rm -f $f; fi
             done
-            rmdir --ignore-fail-on-non-empty $PREFIX/lib/encConverters
         fi
     ;;
 

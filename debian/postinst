@@ -30,9 +30,14 @@ case "$1" in
     configure)
         echo /usr/lib/encConverters>$CONFFILE
         cd /usr/lib/encConverters
-        for f in libecdriver.so libIcuConvEC.so libIcuRegexEC.so \
-                 libIcuTranslitEC.so libPyScriptEncConverter.so; do
-            if [ ! -e $f ]; then ln -s $f.1.0 $f; fi
+        CPU_ARCH=$(uname -m)
+        ARCH_EXT=""
+        if [ "$CPU_ARCH" = "x86_64" ]; then
+            ARCH_EXT="_64"
+        fi
+        for f in libecdriver$ARCH_EXT.so libIcuConvEC$ARCH_EXT.so libIcuRegexEC$ARCH_EXT.so \
+                 libIcuTranslitEC$ARCH_EXT.so libPyScriptEncConverter$ARCH_EXT.so; do
+            if [ ! -e $f ]; then ln -s -T $f $f.1.0; fi
         done
         # set up the registry for the general case
         mkdir -p $(dirname $GLOBALREGFILE)

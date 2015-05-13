@@ -10,19 +10,22 @@
 export DH_VERBOSE=1
 export DH_OPTIONS=-v
 
-INSTALL_PREFIX=/opt/mono-sil
+export MONO_PREFIX=/opt/mono-sil
+export FIELDWORKS=1
 
 %:
-	dh $@
+	dh --with autoreconf $@
 
 override_dh_auto_clean:
-	$(MAKE) packageclean
 
-override_dh_auto_configure:
-	dh_auto_configure -- --prefix=$(INSTALL_PREFIX) --sysconfdir=$(INSTALL_PREFIX)/etc
+# note that the Makefile determines the installation directory based on the
+# existence/value of the variable FIELDWORKS, so we don't need a --prefix
+# argument for autogen.sh
+override_dh_autoreconf:
+	./autogen.sh
 
 override_dh_shlibdeps:
-	dh_shlibdeps -l $(INSTALL_PREFIX)/lib
+	dh_shlibdeps -l $(MONO_PREFIX)/lib
 
 # don't try to run the tests while packaging!
 override_dh_auto_test:
