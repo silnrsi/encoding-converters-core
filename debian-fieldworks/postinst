@@ -17,7 +17,8 @@ set -e
 # for details, see http://www.debian.org/doc/debian-policy/ or
 # the debian-policy package
 
-INSTALL_PREFIX=/opt/mono-sil
+FW_LIBDIR=/usr/lib/fieldworks
+VAR_LIBDIR=/var/lib/fieldworks
 
 CONFFILE=/etc/ld.so.conf.d/encConverters.conf
 if [ -f $CONFFILE ]; then
@@ -30,16 +31,21 @@ fi
 
 case "$1" in
     configure)
-        echo $INSTALL_PREFIX/lib/encConverters>$CONFFILE
-        cd $INSTALL_PREFIX/lib/encConverters
-        for f in libecdriver.so libIcuConvEC.so libIcuRegexEC.so \
-                 libIcuTranslitEC.so libPyScriptEncConverter.so; do
-            if [ ! -e $f ]; then ln -s $f.1.0 $f; fi
+        echo $FW_LIBDIR>$CONFFILE
+        cd $FW_LIBDIR
+        CPU_ARCH=$(uname -m)
+        ARCH_EXT=""
+        if [ "$CPU_ARCH" = "x86_64" ]; then
+            ARCH_EXT="_64"
+        fi
+        for f in libecdriver$ARCH_EXT.so libIcuConvEC$ARCH_EXT.so libIcuRegexEC$ARCH_EXT.so \
+                 libIcuTranslitEC$ARCH_EXT.so libPyScriptEncConverter$ARCH_EXT.so; do
+            if [ ! -e $f ]; then ln -s -T $f $f.1.0; fi
         done
         # set up the registry for the general case
         mkdir -p $(dirname $GLOBALREGFILE)
-        if [ -f /var/lib/encConverters/registry/LocalMachine/software/sil/silencconverters40/values.xml ]; then
-            cp /var/lib/encConverters/registry/LocalMachine/software/sil/silencconverters40/values.xml $GLOBALREGFILE
+        if [ -f $VAR_LIBDIR/registry/LocalMachine/software/sil/silencconverters40/values.xml ]; then
+            cp $VAR_LIBDIR/registry/LocalMachine/software/sil/silencconverters40/values.xml $GLOBALREGFILE
         fi
     ;;
 

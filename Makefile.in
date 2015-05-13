@@ -49,7 +49,7 @@ debug:
 	@for file in $(PLUGINS); do \
 	  cp -p redist/EC/Plugins/"$$file" $(OUTDIR)/EC/Plugins; \
 	done
-	@cp -pR redist/Help $(OUTDIR)
+	@if [ -n $(FIELDWORKS) ]; then (cp -pR redist/Help $(OUTDIR)); fi || true
 	@cp -p redist/libTECkit*.so $(OUTDIR)
 	@cp -p src/EncCnvtrs/SilEncConverters40.dll.config $(OUTDIR)
 	@cp -p src/CcEC/CcEC.dll.config $(OUTDIR)
@@ -65,7 +65,7 @@ release:
 	@for file in $(PLUGINS); do \
 	  cp -p redist/EC/Plugins/"$$file" $(RELEASEOUT)/EC/Plugins; \
 	done
-	@cp -pR redist/Help $(RELEASEOUT)
+	@if [ -n $(FIELDWORKS) ]; then (cp -pR redist/Help $(RELEASEOUT)); fi || true
 	@cp -p redist/libTECkit*.so $(RELEASEOUT)
 	@cp -p src/EncCnvtrs/SilEncConverters40.dll.config $(RELEASEOUT)
 	@cp -p src/CcEC/CcEC.dll.config $(RELEASEOUT)
@@ -114,7 +114,7 @@ install: release
 	@for file in $(PLUGINS); do \
 	  cp -p redist/EC/Plugins/"$$file" $(DESTDIR)$(LIBDIR)/EC/Plugins; \
 	done
-	@cp -pR redist/Help $(DESTDIR)$(LIBDIR)
+	@if [ -n $(FIELDWORKS) ]; then (cp -pR redist/Help $(DESTDIR)$(LIBDIR)); fi || true
 	@if [ `uname -m` = "x86_64" ]; then \
 	for file in redist/libTECkit*x86_64.so; do \
 	  $(INSTALL) $$file $(DESTDIR)$(LIBDIR); \

@@ -2,7 +2,8 @@ Source: enc-converters
 Priority: optional
 Maintainer: Stephen McConnel <stephen_mcconnel@sil.org>
 Build-Depends: debhelper (>= 7.0.50~), autotools-dev, python-dev (>=2.6),
- libicu-dev, lsb-release, devscripts, mono-devel, mono-gmcs, geckofx29
+ dh-autoreconf, libicu-dev, lsb-release, devscripts, mono-devel,
+ mono-gmcs, geckofx29
 Standards-Version: 3.9.1
 Section: libs
 Homepage: http://hg.palaso.org/ec-main
