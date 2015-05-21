@@ -1,3 +1,9 @@
+fieldworks-enc-converters (4.0.4-1) precise; urgency=low
+
+  * Fix debian-fieldworks registry value.
+
+ -- Brent McCarthy <brent_mccarthy@sil.org>  Thu, 21 Apr 2015 10:36:00 -0500
+
 fieldworks-enc-converters (4.0.4) precise; urgency=low
 
   * Update debian-fieldworks to address registry issue.
