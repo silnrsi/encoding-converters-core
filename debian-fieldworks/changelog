@@ -1,4 +1,4 @@
-fieldworks-enc-converters (4.0.4-1) precise; urgency=low
+fieldworks-enc-converters (4.0.5) precise; urgency=low
 
   * Fix debian-fieldworks registry value.
 
