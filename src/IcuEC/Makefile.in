@@ -28,9 +28,8 @@ ICULIBS = -licuuc -licui18n
 ICUINCLUDE = 
 else
 LIBDIR = $(exec_prefix)/lib/fieldworks
-ICUPATH := $(shell find $(HOME) -name libicuuc.so -print | grep /Lib/src/icu/install | sort | head -1 | xargs dirname)
-ICULIBS := $(ICUPATH)/libicuuc.so $(ICUPATH)/libicui18n.so
-ICUINCLUDE := -I$(shell find $(HOME) -name ucnv.h -print | grep /Lib/src/icu/install.*/unicode/ucnv.h | sort | head -1 | xargs dirname | xargs dirname)
+ICULIBS := -L$(LIBDIR) -licuuc -licui18n
+ICUINCLUDE := -I$(ROOTDIR)/include
 endif
 
 # the unmarked case is 32-bit (i686)
