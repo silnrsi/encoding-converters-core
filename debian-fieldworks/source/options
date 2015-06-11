@@ -1,3 +1,4 @@
 tar-ignore=.hg
 tar-ignore=.hgignore
+tar-ignore=.git
 tar-ignore=.pc
