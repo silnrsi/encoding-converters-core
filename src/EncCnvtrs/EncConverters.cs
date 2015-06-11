@@ -453,10 +453,7 @@ namespace SilEncConverters40
             //      means load it out of that specific assembly)
             // On development machines, the folder for these files is based on the registry key:
             //  HKLM\SOFTWARE\SIL\SilEncConverters40[PluginDir] = <e.g. "C:\src\fw\lib\release\Plugins">
-            string strPluginXmlFilesFolder = null;
-            RegistryKey keyPluginFolder = Registry.LocalMachine.OpenSubKey(SEC_ROOT_KEY);
-            if (keyPluginFolder != null)
-                strPluginXmlFilesFolder = (string)keyPluginFolder.GetValue(CstrRegKeyPluginFolder);
+            string strPluginXmlFilesFolder = (string)GetRegistryValue(SEC_ROOT_KEY, CstrRegKeyPluginFolder);
 
 			if (String.IsNullOrEmpty(strPluginXmlFilesFolder))
 #if !PluginsInEachFolder
@@ -468,6 +465,7 @@ namespace SilEncConverters40
                 //  of the assembly installed by the other guy" doesn't work. Therefore, we 
                 //  also no longer want to. Each client will put the plugins in a
                 //  <running folder>\EC\Plugins folder
+                Console.WriteLine("EncConverters: Falling back to assembly folder");
                 strPluginXmlFilesFolder = Path.Combine(Path.Combine(GetRunningFolder,
                                                                     CstrDefPluginFolderEc),
                                                        CstrDefPluginFolderPlugins);
@@ -3863,6 +3861,36 @@ namespace SilEncConverters40
             // if we fall thru, it means we couldn't figure it out.
             ThrowError(ErrStatus.AddFontFirst, strFontName);
             return cnDefCodePage;   // unreachable
+        }
+
+        // Look up in CurrentUser and fall back to LocalMachine otherwise
+        internal static Object GetRegistryValue(string key, string value)
+        {
+            RegistryKey subkey;
+            Object result = null;
+
+            try
+            {
+                subkey = Registry.CurrentUser.OpenSubKey(key);
+                result = subkey.GetValue(value);
+            }
+            catch
+            {
+            }
+
+            if (result != null)
+                return result;
+
+            try
+            {
+                subkey = Registry.LocalMachine.OpenSubKey(key);
+                result = subkey.GetValue(value);
+            }
+            catch
+            {
+            }
+
+            return result;
         }
 
         #endregion Misc helpers
