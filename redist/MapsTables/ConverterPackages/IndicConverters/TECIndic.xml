@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<SILConvertersInstallerDetails xmlns="http://www.sil.org/computing/schemas/SILConvertersInstallerDetails.xsd">
+    <MapsTables>
+        <MapTable
+            mappingName="KrutiDev010&lt;&gt;UNICODE"
+            converterSpec="KrutiDev010.tec"
+            IsConverterSpecAFile="true"
+            description="SAG TECkit table converter between KrutiDev010 and Unicode"
+            implementType="SIL.tec"
+            conversionType="LegacyToFromUnicode"
+            leftEncoding="KrutiDev010"
+            rightEncoding="Unicode Devanagari"
+            processType="UnicodeEncodingConversion"
+             sampleData="fdrkc">
+        </MapTable>
+        <MapTable
+            mappingName="KrutiDev011&lt;&gt;UNICODE"
+            converterSpec="KrutiDev011.tec"
+            IsConverterSpecAFile="true"
+            description="SAG TECkit table converter between KrutiDev011 and Unicode"
+            implementType="SIL.tec"
+            conversionType="LegacyToFromUnicode"
+            leftEncoding="KrutiDev011"
+            rightEncoding="Unicode Devanagari"
+            processType="UnicodeEncodingConversion"
+             sampleData="fdrkc">
+        </MapTable>
+        <MapTable
+            mappingName="KrutiDev290&lt;&gt;UNICODE"
+            converterSpec="KrutiDev290.tec"
+            IsConverterSpecAFile="true"
+            description="SAG TECkit table converter between KrutiDev290 and Unicode"
+            implementType="SIL.tec"
+            conversionType="LegacyToFromUnicode"
+            leftEncoding="KrutiDev290"
+            rightEncoding="Unicode Devanagari"
+            processType="UnicodeEncodingConversion"
+            sampleData="fdrkc">
+        </MapTable>
+        <MapTable
+            mappingName="Kantipur Devanagari&lt;&gt;Unicode"
+            converterSpec="Kantipur.tec"
+            IsConverterSpecAFile="true"
+            description="SAG TECkit converter between Kantipur Devanagari font and Unicode"
+            implementType="SIL.tec"
+            conversionType="LegacyToFromUnicode"
+            sampleData="/lstfa/ means 'book' in Hindi">
+        </MapTable>
+        <MapTable
+            description="SAG TECkit converter between Preeti Devanagari font and Unicode"
+            mappingName="Preeti Devanagari&lt;&gt;Unicode"
+            converterSpec="Preeti.tec"
+            IsConverterSpecAFile="true"
+            implementType="SIL.tec"
+            conversionType="LegacyToFromUnicode"
+            sampleData="/lstfa/ means 'book' in Hindi">
+        </MapTable>
+        <MapTable
+            mappingName="Tibetan Modern A&lt;&gt;Unicode"
+            converterSpec="TIBA2UNI.tec"
+            IsConverterSpecAFile="true"
+            description="TECkit converter between Tibetan Modern A font and Unicode"
+            implementType="SIL.tec"
+            conversionType="LegacyToFromUnicode" >
+        </MapTable>
+        <MapTable
+            mappingName="UniDevanagri&lt;&gt;UniIPA (phonetic)"
+            converterSpec="UDev2UIpa.tec"
+            IsConverterSpecAFile="true"
+            description="Transliteration between Unicode Devanagari and Unicode IPA (phonetic) representation"
+            implementType="SIL.tec"
+            conversionType="UnicodeToFromUnicode"
+            leftEncoding="Unicode Devanagari"
+            rightEncoding="Unicode IPA"
+            processType="Transliteration"
+            sampleData="किताब becomes kɪtɑb">
+        </MapTable>
+        <MapTable
+            description="SAG TECkit table converter between Shusha and Unicode"
+            mappingName="Shusha&lt;&gt;UNICODE"
+            converterSpec="Shusha.tec"
+            IsConverterSpecAFile="true"
+            conversionType="LegacyToFromUnicode"
+            implementType="SIL.tec"
+            leftEncoding="Shusha"
+            rightEncoding="Unicode Devanagari"
+            processType="UnicodeEncodingConversion"
+             sampleData="iktaba">
+        </MapTable>
+        <MapTable description="SAG TECkit table converter between GujaratiLS font and Unicode"
+            mappingName="GujaratiLS&lt;&gt;UNICODE"
+            converterSpec="GujaratiLS.tec"
+            IsConverterSpecAFile="true"
+            conversionType="LegacyToFromUnicode"
+            implementType="SIL.tec"
+            leftEncoding="GujaratiLS"
+            rightEncoding="Unicode Gujarati"
+            processType="UnicodeEncodingConversion"
+            sampleData="7ct2b">
+        </MapTable>
+        <MapTable
+            mappingName="Telegu Anu&lt;&gt;UNICODE"
+            converterSpec="TELAnu2Uni.tec"
+            IsConverterSpecAFile="true"
+            description="SAG TECkit table converter between Anu Fonts and Unicode"
+            implementType="SIL.tec"
+            conversionType="LegacyToFromUnicode"
+            leftEncoding="TEL Anu"
+            rightEncoding="Unicode Telegu"
+            processType="UnicodeEncodingConversion">
+        </MapTable>
+    </MapsTables>
+</SILConvertersInstallerDetails>

@@ -1,0 +1,23 @@
+fieldworks-enc-converters (4.0.5) precise; urgency=low
+
+  * Fix debian-fieldworks registry value.
+
+ -- Brent McCarthy <brent_mccarthy@sil.org>  Thu, 21 Apr 2015 10:36:00 -0500
+
+fieldworks-enc-converters (4.0.4) precise; urgency=low
+
+  * Update debian-fieldworks to address registry issue.
+
+ -- Brent McCarthy <brent_mccarthy@sil.org>  Thu, 16 Apr 2015 10:36:00 -0500
+
+fieldworks-enc-converters (4.0.3) precise; urgency=low
+
+  * Fixed broken postinst script.
+
+ -- Stephen McConnel <stephen_mcconnel@sil.org>  Thu, 16 Apr 2015 10:36:00 -0500
+
+fieldworks-enc-converters (4.0.2) precise; urgency=low
+
+  * First package built explicitly to go with fieldworks using mono-sil.
+
+ -- Stephen McConnel <stephen_mcconnel@sil.org>  Tue, 14 Apr 2015 17:24:37 -0500

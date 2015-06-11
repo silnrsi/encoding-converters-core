@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<SILConvertersInstallerDetails xmlns="http://www.sil.org/computing/schemas/SILConvertersInstallerDetails.xsd">
+    <MapsTables>
+        <MapTable
+            mappingName="Devanagari to Latin"
+            converterSpec="Devanagari-Latin"
+            description="ICU Devanagari to/from Latin Transliterator (Unicode). 
+        These transliterators can be daisy-chained together to transliterate between non-Latin scripts (e.g. 'Devanagari-Latin' (forward) + 'Tamil-Latin' (reverse) gives 'Devanagari-Tamil'). 
+        Use the Data Conversion Macro--Add button to daisy-chain converters together."
+            implementType="ICU.trans"
+            conversionType="UnicodeToFromUnicode"
+            leftEncoding="Unicode Devanagari"
+            rightEncoding="Unicode Latin"
+            processType="ICUTransliteration"
+            sampleData="बाढ़ के बाद सारा संसार एक ही भाषा बोलता था।">
+        </MapTable>
+        <MapTable
+            mappingName="Bengali to Latin"
+            converterSpec="Bengali-Latin"
+            description="ICU Bengali to/from Latin Transliterator (Unicode). 
+        These transliterators can be daisy-chained together to transliterate between non-Latin scripts (e.g. 'Devanagari-Latin' (forward) + 'Tamil-Latin' (reverse) gives 'Devanagari-Tamil'). 
+        Use the Data Conversion Macro--Add button to daisy-chain converters together."
+            implementType="ICU.trans"
+            conversionType="UnicodeToFromUnicode"
+            leftEncoding="Unicode Bengali"
+            rightEncoding="Unicode Latin"
+            processType="ICUTransliteration"
+            sampleData="আমি কাঁচ খেতে পারি, তাতে আমার কোনো ক্ষতি হয় না।">
+        </MapTable>
+        <MapTable
+            mappingName="Gujarati to Latin"
+            converterSpec="Gujarati-Latin"
+            description="ICU Gujarati to/from Latin Transliterator (Unicode). 
+        These transliterators can be daisy-chained together to transliterate between non-Latin scripts (e.g. 'Devanagari-Latin' (forward) + 'Tamil-Latin' (reverse) gives 'Devanagari-Tamil'). 
+        Use the Data Conversion Macro--Add button to daisy-chain converters together."
+            implementType="ICU.trans"
+            conversionType="UnicodeToFromUnicode"
+            leftEncoding="Unicode Gujarati"
+            rightEncoding="Unicode Latin"
+            processType="ICUTransliteration"
+            sampleData="ગુજરાતી">
+        </MapTable>
+        <MapTable
+            mappingName="Gurmukhi to Latin"
+            converterSpec="Gurmukhi-Latin"
+            description="ICU Gurmukhi to/from Latin Transliterator (Unicode). 
+        These transliterators can be daisy-chained together to transliterate between non-Latin scripts (e.g. 'Devanagari-Latin' (forward) + 'Tamil-Latin' (reverse) gives 'Devanagari-Tamil'). 
+        Use the Data Conversion Macro--Add button to daisy-chain converters together."
+            implementType="ICU.trans"
+            conversionType="UnicodeToFromUnicode"
+            leftEncoding="Unicode Gurmukhi"
+            rightEncoding="Unicode Latin"
+            processType="ICUTransliteration"
+            sampleData="ਧਰਮਸ਼ਾਲਾ">
+        </MapTable>
+        <MapTable
+            mappingName="Kannada to Latin"
+            converterSpec="Kannada-Latin"
+            description="ICU Kannada to/from Latin Transliterator (Unicode). 
+        These transliterators can be daisy-chained together to transliterate between non-Latin scripts (e.g. 'Devanagari-Latin' (forward) + 'Tamil-Latin' (reverse) gives 'Devanagari-Tamil'). 
+        Use the Data Conversion Macro--Add button to daisy-chain converters together."
+            implementType="ICU.trans"
+            conversionType="UnicodeToFromUnicode"
+            leftEncoding="Unicode Kannada"
+            rightEncoding="Unicode Latin"
+            processType="ICUTransliteration"
+            sampleData="ಇಡೀ ಪ್ರಪಂಚದ ಜನರು ಒಂದೇ ಭಾಷೆಯನ್ನು ಮಾತಾಡುತ್ತಿ ದ್ದರು.">
+        </MapTable>
+        <MapTable
+            mappingName="Malayalam to Latin"
+            converterSpec="Malayalam-Latin"
+            description="ICU Malayalam to/from Latin Transliterator (Unicode). 
+        These transliterators can be daisy-chained together to transliterate between non-Latin scripts (e.g. 'Devanagari-Latin' (forward) + 'Tamil-Latin' (reverse) gives 'Devanagari-Tamil'). 
+        Use the Data Conversion Macro--Add button to daisy-chain converters together."
+            implementType="ICU.trans"
+            conversionType="UnicodeToFromUnicode"
+            leftEncoding="Unicode Malayalam"
+            rightEncoding="Unicode Latin"
+            processType="ICUTransliteration"
+            sampleData="ഭൂമിയില്‌ ഒക്കെയും ഒരേ ഭാഷയും ഒരേ വാക്കും ആയിരുന്നു.">
+        </MapTable>
+        <MapTable
+            mappingName="Oriya to Latin"
+            converterSpec="Oriya-Latin"
+            description="ICU Oriya to/from Latin Transliterator (Unicode). 
+        These transliterators can be daisy-chained together to transliterate between non-Latin scripts (e.g. 'Devanagari-Latin' (forward) + 'Tamil-Latin' (reverse) gives 'Devanagari-Tamil'). 
+        Use the Data Conversion Macro--Add button to daisy-chain converters together."
+            implementType="ICU.trans"
+            conversionType="UnicodeToFromUnicode"
+            leftEncoding="Unicode Oriya"
+            rightEncoding="Unicode Latin"
+            processType="ICUTransliteration"
+            sampleData="ଓଡ଼ିଆ">
+        </MapTable>
+        <MapTable
+            mappingName="Tamil to Latin"
+            converterSpec="Tamil-Latin"
+            description="ICU Tamil to/from Latin Transliterator (Unicode). 
+        These transliterators can be daisy-chained together to transliterate between non-Latin scripts (e.g. 'Devanagari-Latin' (forward) + 'Tamil-Latin' (reverse) gives 'Devanagari-Tamil'). 
+        Use the Data Conversion Macro--Add button to daisy-chain converters together."
+            implementType="ICU.trans"
+            conversionType="UnicodeToFromUnicode"
+            leftEncoding="Unicode Tamil"
+            rightEncoding="Unicode Latin"
+            processType="ICUTransliteration"
+            sampleData="வெள்ளப் பெருக்குக்குப் பிறகு முழு உலகமும் ஒரே மொழியைப் பேசியது.">
+        </MapTable>
+        <MapTable
+            mappingName="Telugu to Latin"
+            converterSpec="Telugu-Latin"
+            description="ICU Telugu to/from Latin Transliterator (Unicode). 
+        These transliterators can be daisy-chained together to transliterate between non-Latin scripts (e.g. 'Devanagari-Latin' (forward) + 'Tamil-Latin' (reverse) gives 'Devanagari-Tamil'). 
+        Use the Data Conversion Macro--Add button to daisy-chain converters together."
+            implementType="ICU.trans"
+            conversionType="UnicodeToFromUnicode"
+            leftEncoding="Unicode Telugu"
+            rightEncoding="Unicode Latin"
+            processType="ICUTransliteration"
+            sampleData="తెలుగు">
+        </MapTable>
+        <MapTable
+            mappingName="Arabic to Latin"
+            converterSpec="Arabic-Latin"
+            description="ICU Arabic to/from Latin Transliterator (Unicode). 
+        These transliterators can be daisy-chained together to transliterate between non-Latin scripts (e.g. 'Devanagari-Latin' (forward) + 'Tamil-Latin' (reverse) gives 'Devanagari-Tamil'). 
+        Use the Data Conversion Macro--Add button to daisy-chain converters together."
+            implementType="ICU.trans"
+            conversionType="UnicodeToFromUnicode"
+            leftEncoding="Unicode Arabic"
+            rightEncoding="Unicode Latin"
+            processType="ICUTransliteration"
+            sampleData="وَكَانَ أَهْلُ الأَرْضِ جَمِيعاً يَتَكَلَّمُونَ أَوَّلاً بِلِسَانٍ وَاحِدٍ وَلُغَةٍ وَاحِدَةٍ.">
+        </MapTable>
+        <MapTable
+            mappingName="Cyrillic to Latin"
+            converterSpec="Cyrillic-Latin"
+            description="ICU Cyrillic to/from Latin Transliterator (Unicode). 
+        These transliterators can be daisy-chained together to transliterate between non-Latin scripts (e.g. 'Devanagari-Latin' (forward) + 'Tamil-Latin' (reverse) gives 'Devanagari-Tamil'). 
+        Use the Data Conversion Macro--Add button to daisy-chain converters together."
+            implementType="ICU.trans"
+            conversionType="UnicodeToFromUnicode"
+            leftEncoding="Unicode Cyrillic"
+            rightEncoding="Unicode Latin"
+            processType="ICUTransliteration"
+            sampleData="В чащах юга жил бы цитрус? Да, но фальшивый экземпляр!">
+        </MapTable>
+        <MapTable
+            mappingName="Greek to Latin"
+            converterSpec="Greek-Latin"
+            description="ICU Greek to/from Latin Transliterator (Unicode). 
+        These transliterators can be daisy-chained together to transliterate between non-Latin scripts (e.g. 'Devanagari-Latin' (forward) + 'Tamil-Latin' (reverse) gives 'Devanagari-Tamil'). 
+        Use the Data Conversion Macro--Add button to daisy-chain converters together."
+            implementType="ICU.trans"
+            conversionType="UnicodeToFromUnicode"
+            leftEncoding="Unicode Greek"
+            rightEncoding="Unicode Latin"
+            processType="ICUTransliteration"
+            sampleData="Δεν ξέρω, εγώ απλά δουλεύω εδώ.">
+        </MapTable>
+        <MapTable
+            mappingName="Han to Latin"
+            converterSpec="Han-Latin"
+            description="ICU Han to/from Latin Transliterator (Unicode). 
+        These transliterators can be daisy-chained together to transliterate between non-Latin scripts (e.g. 'Devanagari-Latin' (forward) + 'Tamil-Latin' (reverse) gives 'Devanagari-Tamil'). 
+        Use the Data Conversion Macro--Add button to daisy-chain converters together."
+            implementType="ICU.trans"
+            conversionType="UnicodeToFromUnicode"
+            leftEncoding="Unicode Han"
+            rightEncoding="Unicode Latin"
+            processType="ICUTransliteration"
+            sampleData="那時，天下人的口音言語，都是一樣。">
+        </MapTable>
+        <MapTable
+            mappingName="Hangul to Latin"
+            converterSpec="Hangul-Latin"
+            description="ICU Hangul to/from Latin Transliterator (Unicode). 
+        These transliterators can be daisy-chained together to transliterate between non-Latin scripts (e.g. 'Devanagari-Latin' (forward) + 'Tamil-Latin' (reverse) gives 'Devanagari-Tamil'). 
+        Use the Data Conversion Macro--Add button to daisy-chain converters together."
+            implementType="ICU.trans"
+            conversionType="UnicodeToFromUnicode"
+            leftEncoding="Unicode Hangul"
+            rightEncoding="Unicode Latin"
+            processType="ICUTransliteration"
+            sampleData="온 땅의 구음이 하나이요 언어가 하나이었더라">
+        </MapTable>
+        <MapTable
+            mappingName="Hebrew to Latin"
+            converterSpec="Hebrew-Latin"
+            description="ICU Hebrew to/from Latin Transliterator (Unicode). 
+        These transliterators can be daisy-chained together to transliterate between non-Latin scripts (e.g. 'Devanagari-Latin' (forward) + 'Tamil-Latin' (reverse) gives 'Devanagari-Tamil'). 
+        Use the Data Conversion Macro--Add button to daisy-chain converters together."
+            implementType="ICU.trans"
+            conversionType="UnicodeToFromUnicode"
+            leftEncoding="Unicode Hebrew"
+            rightEncoding="Unicode Latin"
+            processType="ICUTransliteration"
+            sampleData="?דג סקרן שט בים מאוכזב ולפתע מצא לו חברה איך הקליטה">
+        </MapTable>
+        <MapTable
+            mappingName="Hiragana to Latin"
+            converterSpec="Hiragana-Latin"
+            description="ICU Hiragana to/from Latin Transliterator (Unicode). 
+        These transliterators can be daisy-chained together to transliterate between non-Latin scripts (e.g. 'Devanagari-Latin' (forward) + 'Tamil-Latin' (reverse) gives 'Devanagari-Tamil'). 
+        Use the Data Conversion Macro--Add button to daisy-chain converters together."
+            implementType="ICU.trans"
+            conversionType="UnicodeToFromUnicode"
+            leftEncoding="Unicode Hiragana"
+            rightEncoding="Unicode Latin"
+            processType="ICUTransliteration"
+            sampleData="いろはにほへとちりぬるを わかよたれそつねならむ うゐのおくやまけふこえて あさきゆめみしゑひもせす">
+        </MapTable>
+        <MapTable
+            mappingName="Katakana to Latin"
+            converterSpec="Katakana-Latin"
+            description="ICU Katakana to/from Latin Transliterator (Unicode). 
+        These transliterators can be daisy-chained together to transliterate between non-Latin scripts (e.g. 'Devanagari-Latin' (forward) + 'Tamil-Latin' (reverse) gives 'Devanagari-Tamil'). 
+        Use the Data Conversion Macro--Add button to daisy-chain converters together."
+            implementType="ICU.trans"
+            conversionType="UnicodeToFromUnicode"
+            leftEncoding="Unicode Katakana"
+            rightEncoding="Unicode Latin"
+            processType="ICUTransliteration"
+            sampleData="イロハニホヘト チリヌルヲ ワカヨタレソ ツネナラム ウヰノオクヤマ ケフコエテ アサキユメミシ ヱヒモセスン">
+        </MapTable>
+        <MapTable
+            mappingName="Jamo to Latin"
+            converterSpec="Jamo-Latin"
+            description="ICU Jamo to/from Latin Transliterator (Unicode). 
+        These transliterators can be daisy-chained together to transliterate between non-Latin scripts (e.g. 'Devanagari-Latin' (forward) + 'Tamil-Latin' (reverse) gives 'Devanagari-Tamil'). 
+        Use the Data Conversion Macro--Add button to daisy-chain converters together."
+            implementType="ICU.trans"
+            conversionType="UnicodeToFromUnicode"
+            leftEncoding="Unicode Jamo"
+            rightEncoding="Unicode Latin"
+            processType="ICUTransliteration"
+            sampleData="모음">
+        </MapTable>
+        <MapTable
+            mappingName="NumericPinyin to Latin"
+            converterSpec="NumericPinyin-Latin"
+            description="ICU NumericPinyin to/from Latin Transliterator (Unicode). 
+        These transliterators can be daisy-chained together to transliterate between non-Latin scripts (e.g. 'Devanagari-Latin' (forward) + 'Tamil-Latin' (reverse) gives 'Devanagari-Tamil'). 
+        Use the Data Conversion Macro--Add button to daisy-chain converters together."
+            implementType="ICU.trans"
+            conversionType="UnicodeToFromUnicode"
+            leftEncoding="Unicode NumericPinyin"
+            rightEncoding="Unicode Latin"
+            processType="ICUTransliteration"></autoInstall>
+        </MapTable>
+        <MapTable
+            mappingName="Any to Latin"
+            converterSpec="Any-Latin"
+            description="ICU 'Any' to/from Latin Transliterator (Unicode). 
+        These transliterators can be daisy-chained together to transliterate between non-Latin scripts (e.g. 'Devanagari-Latin' (forward) + 'Tamil-Latin' (reverse) gives 'Devanagari-Tamil'). 
+        Use the Data Conversion Macro--Add button to daisy-chain converters together."
+            implementType="ICU.trans"
+            conversionType="UnicodeToFromUnicode"
+            leftEncoding="UNICODE"
+            rightEncoding="Unicode Latin"
+            processType="ICUTransliteration"
+            sampleData="किताब becomes kitāba">
+        </MapTable>
+    </MapsTables>
+</SILConvertersInstallerDetails>

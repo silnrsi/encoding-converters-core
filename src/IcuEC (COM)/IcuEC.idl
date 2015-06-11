@@ -1,0 +1,79 @@
+// IcuEC.idl : IDL source for IcuEC
+//
+
+// This file will be processed by the MIDL tool to
+// produce the type library (IcuEC48.tlb) and marshalling code.
+
+import "oaidl.idl";
+import "ocidl.idl";
+
+[
+	uuid(1E74D903-AD86-43F8-B39F-96653D7E170D),
+	version(4.0),
+	helpstring("Icu 4.8 Encoding Converters Plug-in 4.0 Type Library")
+]
+library IcuECLib
+{
+	importlib("stdole2.tlb");
+    importlib("ECInterfaces.tlb");
+
+    [
+		uuid(0BEB0A3E-1AEC-45CB-8A64-12AEEDD8DFF7)
+		, helpstring("Icu Transliterator Class")
+        , hidden
+	]
+	coclass IcuECTransliterator
+	{
+		[default] interface IEncConverter;
+	};
+
+    [
+		uuid(CB989D4B-EDED-4F76-9BD0-4775236D6A69)
+		, helpstring("IcuTrans IEncConverterConfig implementation class")
+        , hidden
+	]
+	coclass IcuECTransConfig
+	{
+		[default] interface IEncConverterConfig;
+	};
+
+    [
+		uuid(284DC09D-DD56-48DE-8E1E-98646C8D0163)
+		, helpstring("Icu Encoding Converter Class")
+        , hidden
+	]
+	coclass IcuECConverter
+	{
+		[default] interface IEncConverter;
+	};
+
+    [
+		uuid(2AF35540-247E-464A-BA74-E64327C0EE43)
+		, helpstring("IcuConv IEncConverterConfig implementation class")
+        , hidden
+	]
+	coclass IcuECConvConfig
+	{
+		[default] interface IEncConverterConfig;
+	};
+
+    [
+		uuid(D8D1254E-F585-424D-9B46-7E050A1F097C)
+		, helpstring("Icu Regex Class")
+        , hidden
+	]
+	coclass IcuECRegex
+	{
+		[default] interface IEncConverter;
+	};
+
+    [
+		uuid(CE2FD02D-257F-4E43-AA31-068023A0F79F)
+		, helpstring("IcuRegex IEncConverterConfig implementation class")
+        , hidden
+	]
+	coclass IcuECRegexConfig
+	{
+		[default] interface IEncConverterConfig;
+	};
+};

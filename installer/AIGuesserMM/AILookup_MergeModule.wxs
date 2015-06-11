@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+	<Module Id="AITransducerMM" Language="1033" Version="4.0.0.0">
+		<Package Id="88DBA75B-2D22-41F3-8C3C-BB12F0B9153E" Comments="Merge module for the AdaptIt Lookup/Guesser EncConverter" Description="Include in any client application deployment project which uses the EncConverters interface" Manufacturer="SIL International" InstallerVersion="200" Keywords="SIL; AdaptIt; Affix Guessing; EncConverters"  />
+
+		<Directory Id="TARGETDIR" Name="SourceDir">
+			<Directory Id="MergeRedirectFolder">
+
+                <Component Id="AIGuesserEC.dll" Guid="50092CDC-A19C-406F-B649-47268C66C8EE">
+                    <File Id="AIGuesserEC.dll" Name="AIGuesserEC.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="AIGuesserEC.dll" AssemblyApplication="AIGuesserEC.dll" Source="..\..\output\release\AIGuesserEC.dll" />
+                </Component>
+
+                <Directory Id="AiECFolder" Name="EC">
+                    <Directory Id="AiPluginsFolder" Name="Plugins">
+                        <Component Id="AI4.0.0.0PluginDetails.xml" Guid="7116527A-8AE1-4D2A-A17C-34DDE2E7E0BF">
+                            <File Id="AI4.0.0.0PluginDetails.xml" Name="AI 4.0.0.0 Plugin Details.xml" KeyPath="yes" Source="..\..\redist\EC\Plugins\AI 4.0.0.0 Plugin Details.xml"/>
+                        </Component>
+                    </Directory>
+                </Directory>
+
+            </Directory>
+
+            <Directory Id="CommonFilesFolder" SourceName="Common Files Folder">
+                <Directory Id="AiSIL" Name="SIL">
+                    <Component Id="GuesserECLegacy.dll" Guid="035E0E4D-7C92-4872-8CCA-FED87CF63DB9">
+                        <File Id="GuesserECLegacy.dll" Name="GuesserECLegacy.dll" ReadOnly="yes" KeyPath="yes" Source="..\..\output\release\GuesserECLegacy.dll"/>
+                    </Component>
+                    <Component Id="GuesserEC.dll" Guid="D6327C7E-A1E0-4DE2-86C9-BD535A7E5324">
+                        <File Id="GuesserEC.dll" Name="GuesserEC.dll" ReadOnly="yes" KeyPath="yes" Source="..\..\output\release\GuesserEC.dll"/>
+                    </Component>
+                    <Directory Id="Help" Name="Help">
+                        <Component Id="AdaptItGuesserHelp" Guid="8EA270BD-77D5-42AB-9B53-906310EA60F1">
+                            <File Id="AdaptItGuesserHelp" Name="AdaptIt Guesser Plug-in About box.mht" ReadOnly="yes" KeyPath="yes" Source="..\..\redist\Help\AdaptIt Guesser Plug-in About box.mht"/>
+                            <Shortcut Id="AdaptItGuesserHelp" Directory="AiHelp" Name="AdaptIt Guesser Plug-in Help" Description="View help document for the AdaptIt Guesser Plug-in" IconIndex="0" Show="normal" Target="[#AdaptItGuesserHelp]" WorkingDirectory="Help" Advertise="no" />
+                        </Component>
+                        <Component Id="AdaptItLookupHelp" Guid="1B1FC8DC-B38E-4DEA-AF0C-58B62AAC8DF0">
+                            <File Id="AdaptItLookupHelp" Name="AdaptIt Plug-in About box.mht" ReadOnly="yes" KeyPath="yes" Source="..\..\redist\Help\AdaptIt Plug-in About box.mht"/>
+                            <Shortcut Id="AdaptItLookupHelp" Directory="AiHelp" Name="AdaptIt Lookup Plug-in Help" Description="View help document for the AdaptIt Lookup Plug-in" IconIndex="0" Show="normal" Target="[#AdaptItLookupHelp]" WorkingDirectory="Help" Advertise="no" />
+                        </Component>
+                    </Directory>
+                </Directory>
+            </Directory>
+
+            <Directory Id="StartMenuFolder" SourceName="Start Menu">
+                <Directory Id="ProgramMenuFolder" SourceName="Programs">
+                    <Directory Id="SILConverters" Name="SIL Converters">
+                        <Directory Id="AiHelp" Name="Help" />
+                    </Directory>
+                </Directory>
+            </Directory>
+            
+        </Directory>
+	</Module>
+</Wix>

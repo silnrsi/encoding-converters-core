@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<SILConvertersInstallerDetails xmlns="http://www.sil.org/computing/schemas/SILConvertersInstallerDetails.xsd">
+    <MapsTables>
+        <MapTable
+            mappingName="Annapurna&lt;&gt;UNICODE"
+            converterSpec="MapsTables\ann2unicode.cct"
+            IsConverterSpecAFile="true"
+            description="SAG CC table converter between Annapurna and Unicode"
+            implementType="SIL.cc"
+            conversionType="LegacyToUnicode"
+            leftEncoding="SIL-ANNAPURNA-05"
+            rightEncoding="UNICODE"
+            processType="UnicodeEncodingConversion"
+            sampleData="/éLƒç¢/ means 'book' in Hindi">
+        </MapTable>
+        <MapTable
+            mappingName="Annapurna&lt;&gt;UNICODE"
+            converterSpec="MapsTables\Annapurna.tec"
+            IsConverterSpecAFile="true"
+            description="SAG TECkit converter between Annapurna font and Unicode"
+            implementType="SIL.tec"
+            conversionType="LegacyToFromUnicode"
+            leftEncoding="SIL-ANNAPURNA-05"
+            rightEncoding="Unicode Devanagari"
+            processType="UnicodeEncodingConversion"
+            sampleData="/éLƒç¢/ means 'book' in Hindi">
+        </MapTable>
+            <AddFont        side="left"  font="Annapurna"       codePage="1252"/>
+            <AddFont        side="left"  font="AnnapurnaSymbol" codePage="1252"/>
+            <AddFontMapping left="Annapurna"       right="Arial Unicode MS"/>
+            <AddFontMapping left="AnnapurnaSymbol" right="Arial Unicode MS"/>
+        <MapTable
+            mappingName="SAG IPA&lt;&gt;UNICODE"
+            converterSpec="SAGIPA2Uni.tec"
+            IsConverterSpecAFile="true"
+            description="SAG TECkit converter between SAG IPA font and Unicode"
+            implementType="SIL.tec"
+            conversionType="LegacyToFromUnicode"
+            leftEncoding="SIL-SAG-IPA"
+            rightEncoding="UNICODE"
+            processType="UnicodeEncodingConversion">
+            <AddFont        side="left" font="SAG-IPA SILDoulos"                 codePage="42"/>
+            <AddFont        side="left" font="SAG-IPA SILDoulos Italic"          codePage="42"/>
+            <AddFont        side="left" font="SAG-IPA SILDoulos Bold"            codePage="42"/>
+            <AddFont        side="left" font="SAG-IPA SILDoulos Bold Italic"     codePage="42"/>
+            <AddFont        side="left" font="SAG-IPA SILManuscript"             codePage="42"/>
+            <AddFont        side="left" font="SAG-IPA SILManuscript Italic"      codePage="42"/>
+            <AddFont        side="left" font="SAG-IPA SILManuscript Bold"        codePage="42"/>
+            <AddFont        side="left" font="SAG-IPA SILManuscript Bold Italic" codePage="42"/>
+            <AddFont        side="left" font="SAG-IPA SILSophia"                 codePage="42"/>
+            <AddFont        side="left" font="SAG-IPA SILSophia Italic"          codePage="42"/>
+            <AddFont        side="left" font="SAG-IPA SILSophia Bold"            codePage="42"/>
+            <AddFont        side="left" font="SAG-IPA SILSophia Bold Italic"     codePage="42"/>
+            <AddFontMapping left="SAG-IPA SILDoulos"             right="Doulos SIL"/>
+            <AddFontMapping left="SAG-IPA SILDoulos Italic"      right="Doulos SIL"/>
+            <AddFontMapping left="SAG-IPA SILDoulos Bold"        right="Doulos SIL"/>
+            <AddFontMapping left="SAG-IPA SILDoulos Bold Italic" right="Doulos SIL"/>
+        </MapTable>
+        <MapTable
+            mappingName="SAG IPA Super&lt;&gt;UNICODE"
+            converterSpec="MapsTables\SAGIPS2Uni.tec"
+            IsConverterSpecAFile="true"
+            description="SAG TECkit converter between SAG IPA Super font and Unicode"
+            implementType="SIL.tec"
+            conversionType="LegacyToFromUnicode"
+            leftEncoding="SIL-SAG-IPA_Super"
+            rightEncoding="UNICODE"
+            processType="UnicodeEncodingConversion">
+            <AddFont side="left" font="SAG-IPA Super SILCharis"                 codePage="42"/>
+            <AddFont side="left" font="SAG-IPA Super SILCharis Bold"            codePage="42"/>
+            <AddFont side="left" font="SAG-IPA Super SILCharis Bold Italic"     codePage="42"/>
+            <AddFont side="left" font="SAG-IPA Super SILCharis Italic"          codePage="42"/>
+            <AddFont side="left" font="SAG-IPA Super SILDoulos"                 codePage="42"/>
+            <AddFont side="left" font="SAG-IPA Super SILDoulos Italic"          codePage="42"/>
+            <AddFont side="left" font="SAG-IPA Super SILDoulos Bold"            codePage="42"/>
+            <AddFont side="left" font="SAG-IPA Super SILDoulos Bold Italic"     codePage="42"/>
+            <AddFont side="left" font="SAG-IPA Super SILManuscript"             codePage="42"/>
+            <AddFont side="left" font="SAG-IPA Super SILManuscript Italic"      codePage="42"/>
+            <AddFont side="left" font="SAG-IPA Super SILManuscript Bold"        codePage="42"/>
+            <AddFont side="left" font="SAG-IPA Super SILManuscript Bold Italic" codePage="42"/>
+            <AddFont side="left" font="SAG-IPA Super SILSophia"                 codePage="42"/>
+            <AddFont side="left" font="SAG-IPA Super SILSophia Italic"          codePage="42"/>
+            <AddFont side="left" font="SAG-IPA Super SILSophia Bold"            codePage="42"/>
+            <AddFont side="left" font="SAG-IPA Super SILSophia Bold Italic"     codePage="42"/>
+            <AddFontMapping left="SAG-IPA Super SILDoulos"             right="Doulos SIL"/>
+            <AddFontMapping left="SAG-IPA Super SILDoulos Italic"      right="Doulos SIL"/>
+            <AddFontMapping left="SAG-IPA Super SILDoulos Bold"        right="Doulos SIL"/>
+            <AddFontMapping left="SAG-IPA Super SILDoulos Bold Italic" right="Doulos SIL"/>
+            <AddFontMapping left="SAG-IPA Super SILCharis"             right="Charis SIL"/>
+            <AddFontMapping left="SAG-IPA Super SILCharis Bold"        right="Charis SIL"/>
+            <AddFontMapping left="SAG-IPA Super SILCharis Bold Italic" right="Charis SIL"/>
+            <AddFontMapping left="SAG-IPA Super SILCharis Italic"      right="Charis SIL"/>
+        </MapTable>
+        <MapTable
+            mappingName="WinDTS Devanagari&lt;&gt;Unicode"
+            converterSpec="MapsTables\WinDTS.tec"
+            IsConverterSpecAFile="true"
+            description="SAG TECkit converter between WinDTS Devanagari font and Unicode"
+            conversionType="LegacyToFromUnicode"
+            implementType="SIL.tec"
+            sampleData="/„’¶‚Ì/ means 'book' in Hindi">
+        </MapTable>
+        <MapTable
+            mappingName="TransRoman&lt;&gt;UNICODE"
+            converterSpec="MapsTables\TRom2Uni.tec"
+            IsConverterSpecAFile="true"
+            description="SAG TECkit converter between TransRoman font and Unicode"
+            implementType="SIL.tec"
+            conversionType="LegacyToFromUnicode"
+            leftEncoding="SIL-SAG_TransRoman21-2002"
+            rightEncoding="UNICODE"
+            processType="UnicodeEncodingConversion">
+            <AddFont side="left" font="TransRoman2 Charis"                 codePage="1252"/>
+            <AddFont side="left" font="TransRoman2 Charis Bold"            codePage="1252"/>
+            <AddFont side="left" font="TransRoman2 Charis Bold Italic"     codePage="1252"/>
+            <AddFont side="left" font="TransRoman2 Charis Italic"          codePage="1252"/>
+            <AddFont side="left" font="TransRoman2 Doulos"                 codePage="1252"/>
+            <AddFont side="left" font="TransRoman2 Doulos Bold"            codePage="1252"/>
+            <AddFont side="left" font="TransRoman2 Doulos Bold Italic"     codePage="1252"/>
+            <AddFont side="left" font="TransRoman2 Doulos Italic"          codePage="1252"/>
+            <AddFont side="left" font="TransRoman2 Manuscript"             codePage="1252"/>
+            <AddFont side="left" font="TransRoman2 Manuscript Bold"        codePage="1252"/>
+            <AddFont side="left" font="TransRoman2 Manuscript Bold Italic" codePage="1252"/>
+            <AddFont side="left" font="TransRoman2 Manuscript Italic"      codePage="1252"/>
+            <AddFont side="left" font="TransRoman2 Sophia"                 codePage="1252"/>
+            <AddFont side="left" font="TransRoman2 Sophia Bold"            codePage="1252"/>
+            <AddFont side="left" font="TransRoman2 Sophia Bold Italic"     codePage="1252"/>
+            <AddFont side="left" font="TransRoman2 Sophia Italic"          codePage="1252"/>
+            <AddFontMapping left="TransRoman2 Charis"             right="Charis SIL"/>
+            <AddFontMapping left="TransRoman2 Charis Bold"        right="Charis SIL"/>
+            <AddFontMapping left="TransRoman2 Charis Bold Italic" right="Charis SIL"/>
+            <AddFontMapping left="TransRoman2 Charis Italic"      right="Charis SIL"/>
+            <AddFontMapping left="TransRoman2 Doulos"             right="Doulos SIL"/>
+            <AddFontMapping left="TransRoman2 Doulos Bold"        right="Doulos SIL"/>
+            <AddFontMapping left="TransRoman2 Doulos Bold Italic" right="Doulos SIL"/>
+            <AddFontMapping left="TransRoman2 Doulos Italic"      right="Doulos SIL"/>
+        </MapTable>
+        <MapTable
+            filename="MapsTables\Ori2Uni_AkrutiOriSarala99.tec.vbs"
+            mappingName="AkrutiOriSarala99&lt;&gt;UNICODE"
+            converterSpec="MapsTables\Ori2Uni_AkrutiOriSarala99.tec"
+            IsConverterSpecAFile="true"
+            description="SAG TECkit converter between AkrutiOriSarala-99 font and Unicode"
+            implementType="SIL.tec"
+            conversionType="LegacyToFromUnicode"
+            leftEncoding="Oriya-AkrutiOriSarala-99"
+            rightEncoding="Unicode Oriya"
+            processType="UnicodeEncodingConversion"
+            sampleData="IWÿò@û">
+            <AddFont        side="left" font="AkrutiOriSarala-99" codePage="1252"/>
+            <AddFontMapping left="AkrutiOriSarala-99" right="Kalinga"/>
+        </MapTable>
+    </MapsTables>
+</SILConvertersInstallerDetails>
