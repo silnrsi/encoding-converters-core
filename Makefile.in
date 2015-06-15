@@ -49,7 +49,7 @@ debug:
 	@for file in $(PLUGINS); do \
 	  cp -p redist/EC/Plugins/"$$file" $(OUTDIR)/EC/Plugins; \
 	done
-	@if [ -n $(FIELDWORKS) ]; then cp -pR redist/Help $(OUTDIR); fi
+	@if [ -z $(FIELDWORKS) ]; then cp -pR redist/Help $(OUTDIR); fi
 	@cp -p redist/libTECkit*.so $(OUTDIR)
 	@cp -p src/EncCnvtrs/SilEncConverters40.dll.config $(OUTDIR)
 	@cp -p src/CcEC/CcEC.dll.config $(OUTDIR)
@@ -65,7 +65,7 @@ release:
 	@for file in $(PLUGINS); do \
 	  cp -p redist/EC/Plugins/"$$file" $(RELEASEOUT)/EC/Plugins; \
 	done
-	@if [ -n $(FIELDWORKS) ]; then cp -pR redist/Help $(RELEASEOUT); fi
+	@if [ -z $(FIELDWORKS) ]; then cp -pR redist/Help $(RELEASEOUT); fi
 	@cp -p redist/libTECkit*.so $(RELEASEOUT)
 	@cp -p src/EncCnvtrs/SilEncConverters40.dll.config $(RELEASEOUT)
 	@cp -p src/CcEC/CcEC.dll.config $(RELEASEOUT)
@@ -114,7 +114,7 @@ install: release
 	@for file in $(PLUGINS); do \
 	  cp -p redist/EC/Plugins/"$$file" $(DESTDIR)$(LIBDIR)/EC/Plugins; \
 	done
-	@if [ -n $(FIELDWORKS) ]; then cp -pR redist/Help $(DESTDIR)$(LIBDIR); fi
+	@if [ -z $(FIELDWORKS) ]; then cp -pR redist/Help $(DESTDIR)$(LIBDIR); fi
 	@if [ `uname -m` = "x86_64" ]; then \
 	for file in redist/libTECkit*x86_64.so; do \
 	  $(INSTALL) $$file $(DESTDIR)$(LIBDIR); \
@@ -125,6 +125,8 @@ install: release
 	done; \
 	fi
 	@cp -p src/EncCnvtrs/SilEncConverters40.dll.config $(DESTDIR)$(LIBDIR)
+	@cp -p src/CcEC/CcEC.dll.config $(DESTDIR)$(LIBDIR)
+	@cp -p $(RELEASEOUT)/PerlExpressionEC.dll.config $(DESTDIR)$(LIBDIR)
 	# Set up writable directories and keys to use as a registry.
 	@$(INSTALL) -d $(DESTDIR)$(REGROOT) -m +rwxt
 	@mkdir -p $(DESTDIR)$(REGKEY)
