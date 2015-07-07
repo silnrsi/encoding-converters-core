@@ -54,7 +54,7 @@ namespace SilEncConverters40
 
         #region Member Variable Definitions
         private Hashtable       m_mapConverters = new Hashtable();  // map of all TECkit converters being used (usually has only one item)
-        private Int32           m_converter;            // current converter (should be some kind of pointer, but can't do includes in C#)
+        private IntPtr           m_converter;            // current converter (should be some kind of pointer, but can't do includes in C#)
         private byte []         m_baMapping = null;     // have something so 'fixing' it won't crash (it'll be reallocated if loading a true map)
 
         private UInt32          m_nMapSize;
@@ -79,11 +79,11 @@ namespace SilEncConverters40
             Byte				mapForward,
             UInt16				sourceForm,
             UInt16				targetForm,
-            void*   	        converter);
+            out IntPtr   	        converter);
 
         [DllImport("TECkit_x86", SetLastError=true)]
         static extern unsafe int TECkit_ConvertBuffer(
-            Int32	    converter,
+            IntPtr	    converter,
             byte*	    inBuffer,
             UInt32		inLength,
             UInt32*		inUsed,
@@ -94,7 +94,7 @@ namespace SilEncConverters40
 
         [DllImport("TECkit_x86", SetLastError=true)]
         static extern unsafe int TECkit_ResetConverter(
-            Int32   	converter);
+            IntPtr   	converter);
 
         [DllImport("TECkit_Compiler_x86", SetLastError=true)]
         static extern unsafe int TECkit_Compile(
@@ -328,7 +328,7 @@ namespace SilEncConverters40
 
             if( m_mapConverters.ContainsKey(strConverterKey) )
             {
-                m_converter = (Int32)m_mapConverters[strConverterKey];
+                m_converter = (IntPtr)m_mapConverters[strConverterKey];
             }
             else
             {
@@ -343,37 +343,34 @@ namespace SilEncConverters40
                 UInt16 eFormOut = System.Convert.ToUInt16(eFormOut1 | eFormOut2);
 
                 // make a converter for this new combination.
-                fixed(Int32* converter = &m_converter)
+                Util.DebugWriteLine(this, "Creating TECkit converter: in " +
+                                                   eInEncodingForm.ToString() + ", out " +
+                                                   eOutEncodingForm.ToString());
+                if( IsFileLoaded() )
                 {
-                    Util.DebugWriteLine(this, "Creating TECkit converter: in " +
-                                                       eInEncodingForm.ToString() + ", out " +
-                                                       eOutEncodingForm.ToString());
-                    if( IsFileLoaded() )
-                    {
-                        fixed(byte* pbyMapping = m_baMapping)
-                        {
-							status = TECkit_CreateConverter(
-										pbyMapping,
-										m_nMapSize,
-										(byte)((bForward) ? 1 : 0),
-										System.Convert.ToUInt16((int)eInEncodingForm),
-										eFormOut,
-										(void*)converter
-										);
-                        }
-                    }
-                    else
+                    fixed(byte* pbyMapping = m_baMapping)
                     {
 						status = TECkit_CreateConverter(
-                                    (byte*)0,
-                                    m_nMapSize,
-                                    (byte)((bForward) ? 1 : 0),
-                                    System.Convert.ToUInt16((int)eInEncodingForm),
-                                    eFormOut,
-                                    (void*)converter
-                                    );
-					}
+									pbyMapping,
+									m_nMapSize,
+									(byte)((bForward) ? 1 : 0),
+									System.Convert.ToUInt16((int)eInEncodingForm),
+									eFormOut,
+									out m_converter
+									);
+                    }
                 }
+                else
+                {
+					status = TECkit_CreateConverter(
+                                (byte*)0,
+                                m_nMapSize,
+                                (byte)((bForward) ? 1 : 0),
+                                System.Convert.ToUInt16((int)eInEncodingForm),
+                                eFormOut,
+                                out m_converter
+                                );
+				}
 
                 if( status == (int)ErrStatus.NoError )
                 {
