@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+
+<!--
+	<ItemGroup>
+		<FilesToCopy Include="../../redist/**/*"/>
+	</ItemGroup>
+	<Target Name="BeforeBuild">
+		<Copy SourceFiles="@(FilesToCopy)" DestinationFolder="$(OutputPath)/%(RecursiveDir)"
+			  ContinueOnError="true"/>
+	</Target>
+-->
+
+	<ItemGroup>
+		<MoreFilesToCopy Include="$(OutputPath)/EncCnvtrs.tlb"/>
+	</ItemGroup>
+	<Target Name="AfterBuild">
+		<Copy SourceFiles="@(MoreFilesToCopy)" DestinationFolder="../../output/common"
+			  ContinueOnError="true"/>
+	</Target>
+
+	<ItemGroup>
+		<FilesToDelete Include="../../output/common/EncCnvtrs.tlb"/>
+	</ItemGroup>
+	<Target Name="BeforeClean">
+		<Delete Files="@(FilesToDelete)" ContinueOnError="true"/>
+	</Target>
+</Project>

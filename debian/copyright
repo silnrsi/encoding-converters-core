@@ -1,0 +1,47 @@
+This work was packaged for Debian by:
+
+    Stephen McConnel <stephen_mcconnel@sil.org> on Mon, 23 Jan 2012 15:39:47 -0600
+
+It was downloaded from:
+
+    <http://hg.palaso.com/ec-main>
+
+Upstream Author(s):
+
+    Bob Eaton <bob_eaton@sall.com>
+    Jim Kornelson <jim_kornelsen@sil.org>
+
+Copyright:
+
+    Copyright (C) 2012 SIL International
+
+License:
+
+    enc-converters is copyrighted under the SIL Dual License. This can be found
+    at <http://fieldworks.sil.org/License/SIL_open_source_license_frame.htm>.
+
+    This software is free; you can redistribute it and/or modify it under the
+    terms of either:
+
+    a) the "GNU Lesser General Public License version 2.1".
+    b) the "Common Public License Version 1.0".
+
+    This package is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See either the
+    GNU Lesser General Public License or the Common Public License
+    for more details.
+
+    On Debian systems, the complete text of the GNU Lesser General Public
+    License version 2.1 can be found in "/usr/share/common-licenses/LGPL-2.1".
+    If not, see <http://www.gnu.org/licenses/>.
+    
+    The Common Public License Version 1.0 can be found at
+    <http://www.opensource.org/licenses/>.
+
+The Debian packaging is:
+
+    Copyright (C) 2012 SIL International
+
+    and is licensed under the same terms (the SIL Dual License found at
+    <http://fieldworks.sil.org/License/SIL_open_source_license_frame.htm>).

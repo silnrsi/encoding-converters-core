@@ -1,0 +1,96 @@
+# Master Makefile for the PyScriptEC converter library
+# Makefile.in created January 20, 2012 by Stephen McConnel
+#
+# 06-Jun-13 JDK  Remove library version numbers.
+# 16-Jul-13 SMc  Add conditional test for FIELDWORKS (requires GNU Make)
+# 18-Jul-13 SMc  Add $(WIDTH) to distinguish 32-bit from 64-bit output
+# 15-Apr-15 SMc  Add packageclean target
+
+VPATH       = @srcdir@
+CXX         = @CXX@
+CC          = @CC@
+CFLAGS      = @CFLAGS@ @DEFS@ -I. -I..
+INSTALL     = @INSTALL@
+prefix      = @prefix@
+exec_prefix = @exec_prefix@
+ROOTDIR     = @abs_top_srcdir@
+TOPDIR      = @top_srcdir@
+BUILDDIR    = $(ROOTDIR)/build/Obj
+OUTDIR      = $(ROOTDIR)/output/Debug
+RELEASEBLD  = $(ROOTDIR)/build/Obj/Release
+RELEASEOUT  = $(ROOTDIR)/output/Release
+PYTHON_LDFLAGS =@PYTHON_LDFLAGS@
+PYTHON_CPPFLAGS=@PYTHON_CPPFLAGS@
+ECHEADERDIR=../EncCnvtrs/lib
+ECHEADER=$(ECHEADERDIR)/CEncConverter.h
+
+ifeq ($(strip $(FIELDWORKS)),)
+LIBDIR = $(exec_prefix)/lib/encConverters
+else
+LIBDIR = $(exec_prefix)/lib/fieldworks
+endif
+
+# the unmarked case is 32-bit (i686)
+ARCH := $(shell uname -m)
+ifeq ($(ARCH),x86_64)
+WIDTH=_64
+endif
+
+all: $(BUILDDIR) $(OUTDIR)/libPyScriptEncConverter$(WIDTH).so
+
+$(BUILDDIR):
+	mkdir -p $(BUILDDIR)
+	mkdir -p $(OUTDIR)
+
+$(OUTDIR)/libPyScriptEncConverter$(WIDTH).so: $(BUILDDIR)/PyScriptEncConverter.o $(OUTDIR)/PyScriptEC.dll.config
+	g++ -shared -Wl,-soname,libPyScriptEncConverter$(WIDTH).so \
+  -o $(OUTDIR)/libPyScriptEncConverter$(WIDTH).so \
+  $(BUILDDIR)/PyScriptEncConverter.o $(PYTHON_LDFLAGS)
+
+$(BUILDDIR)/PyScriptEncConverter.o: PyScriptEncConverter.cpp PyScriptEncConverter.h $(ECHEADER)
+	g++ -Wall -fPIC -c PyScriptEncConverter.cpp \
+  -o $(BUILDDIR)/PyScriptEncConverter.o \
+  $(PYTHON_CPPFLAGS) -I$(ECHEADERDIR)
+
+$(OUTDIR)/PyScriptEC.dll.config: PyScriptEC.dll.config
+	cp PyScriptEC.dll.config $(OUTDIR)
+
+release: $(RELEASEBLD) $(RELEASEOUT)/libPyScriptEncConverter$(WIDTH).so
+
+$(RELEASEBLD):
+	mkdir -p $(RELEASEBLD)
+	mkdir -p $(RELEASEOUT)
+
+$(RELEASEOUT)/libPyScriptEncConverter$(WIDTH).so: \
+  $(RELEASEBLD)/PyScriptEncConverter.o $(RELEASEOUT)/PyScriptEC.dll.config
+	g++ -shared -Wl,-soname,libPyScriptEncConverter$(WIDTH).so \
+  -o $(RELEASEOUT)/libPyScriptEncConverter$(WIDTH).so \
+  $(RELEASEBLD)/PyScriptEncConverter.o $(PYTHON_LDFLAGS)
+
+$(RELEASEBLD)/PyScriptEncConverter.o: PyScriptEncConverter.cpp \
+  PyScriptEncConverter.h $(ECHEADER)
+	g++ -Wall -fPIC -O -c PyScriptEncConverter.cpp \
+  -o $(RELEASEBLD)/PyScriptEncConverter.o \
+  $(PYTHON_CPPFLAGS) -I$(ECHEADERDIR)
+
+$(RELEASEOUT)/PyScriptEC.dll.config: PyScriptEC.dll.config
+	cp PyScriptEC.dll.config $(RELEASEOUT)
+
+clean:
+	rm -f *~
+	rm -f $(BUILDDIR)/PyScriptEncConverter.o
+	rm -f $(OUTDIR)/libPyScriptEncConverter$(WIDTH).so*
+	rm -f $(RELEASEBLD)/PyScriptEncConverter.o
+	rm -f $(RELEASEOUT)/libPyScriptEncConverter$(WIDTH).so*
+
+packageclean: clean
+
+distclean: packageclean
+	rm -f Makefile
+
+install: release PyScriptEC.dll.config
+	mkdir -p $(DESTDIR)$(LIBDIR)
+	$(INSTALL) -s $(RELEASEOUT)/libPyScriptEncConverter$(WIDTH).so $(DESTDIR)$(LIBDIR)
+	$(INSTALL) PyScriptEC.dll.config $(DESTDIR)$(LIBDIR)
+
+check:

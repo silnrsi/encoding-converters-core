@@ -1,0 +1,12 @@
+obj/
+Obj/
+/output/
+/install*/
+/aclocal.m4
+/autom4te.cache/
+/autogen.err
+/config.log
+/config.status
+/configure
+/src/config.h
+Makefile

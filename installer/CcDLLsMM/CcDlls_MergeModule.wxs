@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+	<Module Id="CcDLLsMM" Language="1033" Version="4.0.0.0">
+		<Package Id="4309d497-9b6f-408d-8ed6-a357ca62145e" Comments="Merge module containing the CC run-time engine DLL" Description="CC DLL" Keywords="Consistent Changes, CC, Encoding Conversion, SILConverters" Manufacturer="SIL International" InstallerVersion="200" />
+
+		<Directory Id="TARGETDIR" Name="SourceDir">
+			<Directory Id="MergeRedirectFolder">
+                <Component Id="CcEC.dll" Guid="{3CC6BA82-6E34-4CD1-BD2F-268F36FC1789}">
+                    <File Id="CcEC.dll" Name="CcEC.dll" KeyPath="yes" Source="..\..\output\release\CcEC.dll"/>
+                </Component>
+                <Directory Id="ECFolder" Name="EC">
+                    <Directory Id="PluginsFolder" Name="Plugins">
+                        <Component Id="CC_4.0.0.0_Plugin_Details.xml" Guid="{4F391A6C-6AEF-47B0-A02A-5B287238C553}">
+                            <File Id="CC_4.0.0.0_Plugin_Details.xml" Name="CC 4.0.0.0 Plugin Details.xml" KeyPath="yes" Source="..\..\redist\EC\Plugins\CC 4.0.0.0 Plugin Details.xml"/>
+                        </Component>
+                    </Directory>
+                </Directory>
+            </Directory>
+            
+            <Directory Id="CommonFilesFolder" SourceName="Common Files Folder">
+                <Directory Id="CcSIL" Name="SIL">
+                    <Component Id="CC32.dll" Guid="29c247e4-c14a-4d76-afce-ccbf1be470a9">
+                        <File Id="CC32.dll" Name="CC32.dll" KeyPath="yes" Source="..\..\output\release\CC32.dll" />
+                    </Component>
+                    <Directory Id="Help" Name="Help">
+                        <Component Id="CCTableHelp" Guid="{302FE1FD-F890-47F6-88BE-0B17F289F8CE}">
+                            <File Id="CCTableHelp" Name="CC Table Plug-in About box.mht" KeyPath="yes" Source="..\..\redist\Help\CC Table Plug-in About box.mht"/>
+                        </Component>
+                    </Directory>
+                </Directory>
+            </Directory>
+
+            <Directory Id="ProgramMenuFolder" Name="Program">
+                <Directory Id="SIL_Converters" Name="SIL Converters">
+                    <Directory Id="CcHelp" Name="Help">
+                        <Component Id="HelpShortcuts" Guid="A84EFA8C-D422-4D5D-B55B-C4FCDD6ECE61" KeyPath="yes">
+                            <Shortcut Id="CCTablePluginHelp" Directory="CcHelp" Name="CC Table Plug-in Help" Target="[#CCTableHelp]" Hotkey="0" IconIndex="0" Show="normal" WorkingDirectory="Help"/>
+                            <!-- The next item is junk to make validation pass on ICE18 -->
+                            <CreateFolder/>
+                        </Component>
+                    </Directory>
+                </Directory>
+            </Directory>
+
+        </Directory>
+	</Module>
+</Wix>
