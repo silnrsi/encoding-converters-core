@@ -115,7 +115,7 @@ namespace SilEncConverters40
 
         [DllImport("TECkit_x86", SetLastError=true)]
         static extern unsafe int TECkit_DisposeConverter(
-            Int32   	converter);
+            IntPtr   	converter);
 
         [DllImport("TECkit_x86", SetLastError=true)]
         static unsafe extern int TECkit_GetMappingName(
@@ -301,7 +301,7 @@ namespace SilEncConverters40
                 if ((timeModified > m_timeModifiedTec) && m_mapConverters.ContainsKey(strConverterKey))
                 {
                     // ... just remove this key if it existed (so we fall thru and do Load)
-                    ResetConverter((Int32)m_mapConverters[strConverterKey]);
+                    ResetConverter((IntPtr)m_mapConverters[strConverterKey]);
                     m_mapConverters.Remove(strConverterKey);
                     bReload = true;
                 }
@@ -320,7 +320,7 @@ namespace SilEncConverters40
                     m_lhsFlags = m_rhsFlags = 0;
 
                     // ... just remove this key if it existed (so we fall thru and do Load)
-                    ResetConverter((Int32)m_mapConverters[strConverterKey]);
+                    ResetConverter((IntPtr)m_mapConverters[strConverterKey]);
                     m_mapConverters.Remove(strConverterKey);
                     bReload = true;
                 }
@@ -644,14 +644,14 @@ namespace SilEncConverters40
 
         protected void ResetConverters()
         {
-            foreach( int converter in m_mapConverters.Values )
+            foreach( IntPtr converter in m_mapConverters.Values )
             {
                 ResetConverter(converter);
             }
             m_mapConverters.Clear();
         }    
 
-        protected void ResetConverter(int converter)
+        protected void ResetConverter(IntPtr converter)
         {
             TECkit_DisposeConverter(converter);
         }    
