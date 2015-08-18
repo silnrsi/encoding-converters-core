@@ -15,6 +15,8 @@ Depends: ${shlibs:Depends}, ${misc:Depends}, mono-sil, libgdiplus-sil,
  libsilcc0, geckofx29
 Suggests: fieldworks
 Conflicts: enc-converters
+Replaces: fieldworks-applications (<< 8.2.0~)
+Breaks: fieldworks-applications (<< 8.2.0~)
 Description: Encoding Converter libraries.
  This provides a uniform interface to a variety of character encoding
  converters.  This is designed to be used with fieldworks, building and
