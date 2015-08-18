@@ -1,10 +1,9 @@
-fieldworks-enc-converters (4.0.5+nmu1) stable; urgency=medium
+fieldworks-enc-converters (4.0.6) stable; urgency=medium
 
-  * Non-maintainer upload.
   * Use HKCU before HKLM
   * Use ICU from /usr/lib/fieldworks
 
- -- Brent McCarthy <brent_mccarthy@sil.org>  Wed, 03 Jun 2015 14:42:41 -0600
+ -- Brent McCarthy <brent_mccarthy@sil.org>  Tue, 18 Aug 2015 11:42:41 -0600
 
 fieldworks-enc-converters (4.0.5) precise; urgency=low
 
