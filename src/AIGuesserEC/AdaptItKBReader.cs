@@ -761,6 +761,77 @@ namespace SilEncConverters40
                 EncConverters.ThrowError(ErrStatus.CantOpenReadMap, m_strKnowledgeBaseFileSpec);
         }
 
+        public void MergeKb(ProgressBar progressBar)
+        {
+            Load(true); // load MapOfMaps if needed
+
+            // create an open file dialog so the user can browse for the file to merge into this one
+            OpenFileDialog dlgOpenFiles = new OpenFileDialog 
+                                                {
+                                                    Filter = "Adapt It Knowledge Base XML files (*.xml)|*.xml", 
+                                                    Title = "Select AdaptIt KB (XML) files you want to merge (Click Cancel when finished)" 
+                                                };
+
+            if ((dlgOpenFiles.ShowDialog() != DialogResult.OK) || !File.Exists(dlgOpenFiles.FileName))
+                return;
+
+            var mapOtherKb = MapOfMaps.LoadXml(dlgOpenFiles.FileName);
+
+            // iterate thru the maps first
+            var mapMaps = mapOtherKb.MapOfSizeToMap;
+            foreach (var kvpMap in mapMaps)
+            {
+                // see if that same map is in 'this'
+                MapOfSourceWordElements mapOfSourceWordElementsThis;
+                if (!MapOfMaps.TryGetValue(kvpMap.Key, out mapOfSourceWordElementsThis))
+                {
+                    // means that the map (1-10) isn't in 'this', so just add it wholesale
+                    MapOfMaps.Add(kvpMap.Value);
+                    continue;
+                }
+
+                // the same map (1-10) exists in 'this', so now iterate over the source words in 'other'
+                //  to see if they are also in 'this'
+                var sourceWordsOther = kvpMap.Value.MapOfSourceWords;
+                if (progressBar != null)
+                {
+                    progressBar.Value = 0;
+                    progressBar.Maximum = sourceWordsOther.Count;
+                }
+
+                var sourceWordElementsThis = mapOfSourceWordElementsThis.MapOfSourceWords;
+                foreach (var kvpSourceWordOther in sourceWordsOther)
+                {
+                    if (progressBar != null)
+                        progressBar.Value++;
+
+                    System.Diagnostics.Debug.WriteLine("Checking for source word: " + kvpSourceWordOther.Key);
+                    if (!sourceWordElementsThis.ContainsKey(kvpSourceWordOther.Key))
+                    {
+                        // means that 'this' didn't have the source word element from 'other', so add it wholesale
+                        mapOfSourceWordElementsThis.Add(kvpSourceWordOther.Value);
+                        continue;
+                    }
+
+                    // the same source word element exists in 'this', so now iterate over the target words in 'other'
+                    //  to see if they are also in 'this'
+                    var sourceWordElementThis = sourceWordElementsThis[kvpSourceWordOther.Key];
+                    var targetWordsThis = sourceWordElementThis.MapOfTargetWords;
+                    foreach (var kvpTargetWordElement in kvpSourceWordOther.Value.MapOfTargetWords)
+                    {
+                        if (!targetWordsThis.ContainsKey(kvpTargetWordElement.Key))
+                        {
+                            // means that 'this' didn't have the 'other' target word... add it wholesale
+                            sourceWordElementThis.Add(kvpTargetWordElement.Value);
+                            continue;
+                        }
+                    }
+                }
+            }
+
+            SaveMapOfMaps(MapOfMaps);
+        }
+
         public void KbReversal(ProgressBar progressBar)
         {
             Load(true); // load MapOfMaps if needed
@@ -796,7 +867,7 @@ namespace SilEncConverters40
                     continue;
 
                 // iterate through all the target word forms in that
-                foreach (var targetWordElement in sourceWordElement.Descendants())
+                foreach (var targetWordElement in sourceWordElement.TargetWords())
                     mapOfMapsReverse.AddCouplet(targetWordElement.TargetWord, sourceWordElement.SourceWord);
             }
 

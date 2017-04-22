@@ -35,14 +35,15 @@
             this.contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.createReversalProjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.mergeProjectsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.textBoxFilter = new System.Windows.Forms.TextBox();
             this.buttonAddNewSourceWord = new System.Windows.Forms.Button();
             this.buttonOK = new System.Windows.Forms.Button();
             this.buttonCancel = new System.Windows.Forms.Button();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.progressBar = new System.Windows.Forms.ProgressBar();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.createReversalProjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.targetFormDisplayControl = new SilEncConverters40.TargetFormDisplayControl();
             this.tableLayoutPanel.SuspendLayout();
             this.contextMenuStrip.SuspendLayout();
@@ -84,9 +85,10 @@
             this.deleteToolStripMenuItem,
             this.editToolStripMenuItem,
             this.toolStripSeparator1,
-            this.createReversalProjectToolStripMenuItem});
+            this.createReversalProjectToolStripMenuItem,
+            this.mergeProjectsToolStripMenuItem});
             this.contextMenuStrip.Name = "contextMenuStrip";
-            this.contextMenuStrip.Size = new System.Drawing.Size(195, 98);
+            this.contextMenuStrip.Size = new System.Drawing.Size(195, 120);
             this.contextMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip_Opening);
             // 
             // deleteToolStripMenuItem
@@ -104,6 +106,27 @@
             this.editToolStripMenuItem.Text = "&Edit";
             this.editToolStripMenuItem.ToolTipText = "Click to edit the selected word";
             this.editToolStripMenuItem.Click += new System.EventHandler(this.editToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(191, 6);
+            // 
+            // createReversalProjectToolStripMenuItem
+            // 
+            this.createReversalProjectToolStripMenuItem.Name = "createReversalProjectToolStripMenuItem";
+            this.createReversalProjectToolStripMenuItem.Size = new System.Drawing.Size(194, 22);
+            this.createReversalProjectToolStripMenuItem.Text = "&Create Reversal Project";
+            this.createReversalProjectToolStripMenuItem.ToolTipText = "Click this menu to create a project for the reverse direction";
+            this.createReversalProjectToolStripMenuItem.Click += new System.EventHandler(this.CreateReversalProjectToolStripMenuItemClick);
+            // 
+            // mergeProjectsToolStripMenuItem
+            // 
+            this.mergeProjectsToolStripMenuItem.Name = "mergeProjectsToolStripMenuItem";
+            this.mergeProjectsToolStripMenuItem.Size = new System.Drawing.Size(194, 22);
+            this.mergeProjectsToolStripMenuItem.Text = "&Merge Projects";
+            this.mergeProjectsToolStripMenuItem.ToolTipText = "Click this menu to merge another project into this project";
+            this.mergeProjectsToolStripMenuItem.Click += new System.EventHandler(this.mergeProjectsToolStripMenuItem_Click);
             // 
             // textBoxFilter
             // 
@@ -154,18 +177,6 @@
             this.progressBar.TabIndex = 3;
             this.progressBar.Visible = false;
             // 
-            // toolStripSeparator1
-            // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(191, 6);
-            // 
-            // createReversalProjectToolStripMenuItem
-            // 
-            this.createReversalProjectToolStripMenuItem.Name = "createReversalProjectToolStripMenuItem";
-            this.createReversalProjectToolStripMenuItem.Size = new System.Drawing.Size(194, 22);
-            this.createReversalProjectToolStripMenuItem.Text = "&Create Reversal Project";
-            this.createReversalProjectToolStripMenuItem.Click += new System.EventHandler(this.CreateReversalProjectToolStripMenuItemClick);
-            // 
             // targetFormDisplayControl
             // 
             this.targetFormDisplayControl.CallToDeleteSourceWord = null;
@@ -177,6 +188,7 @@
             this.targetFormDisplayControl.Size = new System.Drawing.Size(356, 328);
             this.targetFormDisplayControl.TabIndex = 2;
             this.targetFormDisplayControl.TargetWordFont = null;
+            this.targetFormDisplayControl.TargetWordRightToLeft = System.Windows.Forms.RightToLeft.No;
             // 
             // ViewSourceFormsForm
             // 
@@ -216,5 +228,6 @@
         private System.Windows.Forms.ProgressBar progressBar;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripMenuItem createReversalProjectToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem mergeProjectsToolStripMenuItem;
     }
 }

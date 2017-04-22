@@ -198,7 +198,7 @@ namespace SilEncConverters40
         {
             Debug.Assert(!String.IsNullOrEmpty(strRhs));
             // if there's already one...
-            if (Descendants().Any(twe => twe.TargetWord == strRhs))
+            if (TargetWords().Any(twe => twe.TargetWord == strRhs))
             {
                 // just return (I don't care about the "NumberOfOccurrences" that I should
                 //  bump the count and it just seems to make the ChorusMerger go into an
@@ -209,13 +209,21 @@ namespace SilEncConverters40
             // otherwise, add this to the doc
             var targetWordElement = TargetWordElement.CreateNewTargetWordElement(strRhs,
                                                                                  ParentMap.ParentMapOfMaps.IsKbV2);
-            Xml.Add(targetWordElement.Xml);
+            Add(targetWordElement);
         }
 
-        public IEnumerable<TargetWordElement> Descendants()
+        public IEnumerable<TargetWordElement> TargetWords()
         {
             return Xml.Descendants().Select(descendent => 
                 new TargetWordElement(descendent)).ToList();
+        }
+
+        public Dictionary<string, TargetWordElement> MapOfTargetWords
+        {
+            get
+            {
+                return Xml.Elements().Select(e => new TargetWordElement(e)).ToDictionary(e => e.TargetWord, e => e);
+            }
         }
 
         private XElement GetDecendent(string strTargetWord)
@@ -264,6 +272,11 @@ namespace SilEncConverters40
             if (!bFound)
                 Xml.Add(targetWords.Last());
         }
+
+        internal void Add(TargetWordElement targetWordElement)
+        {
+            Xml.Add(targetWordElement.Xml);
+        }
     }
 
     [ClassInterface(ClassInterfaceType.None)]
@@ -305,6 +318,15 @@ namespace SilEncConverters40
             return new MapOfSourceWordElements(elem, nNumOfWordsPerPhrase, mapOfMaps);
         }
 
+        public Dictionary<string,SourceWordElement> MapOfSourceWords
+        {
+            get
+            {
+                return Xml.Elements().ToDictionary(e => e.Attribute(SourceWordElement.CstrAttributeNameSourceWord).Value,
+                                                   e => new SourceWordElement(e, this));
+            }
+        }
+
         public SourceWordElement AddCouplet(string strLhs, string strRhs)
         {
             Debug.Assert(!String.IsNullOrEmpty(strLhs) && !String.IsNullOrEmpty(strRhs));
@@ -336,7 +358,16 @@ namespace SilEncConverters40
             var strXPath = MapOfMaps.FormatXpath(SourceWordElement.CstrElementNameSourceWord,
                                                  SourceWordElement.CstrAttributeNameSourceWord,
                                                  strSourceWord);
-            return Xml.XPathSelectElement(strXPath);
+            try
+            {
+                return Xml.XPathSelectElement(strXPath);
+            }
+            catch (Exception ex)
+            {
+                var strError = ex.Message;
+                Console.WriteLine(String.Format("while searching for '{0}', error occurred: {1}", strSourceWord, strError));
+                throw;
+            }
         }
 
         public void Remove(string strSourceWord)
@@ -350,6 +381,11 @@ namespace SilEncConverters40
         {
             Remove(strSourceWord);
             Xml.Add(elem);
+        }
+
+        internal void Add(SourceWordElement sourceWordElement)
+        {
+            Xml.Add(sourceWordElement.Xml);
         }
     }
 
@@ -454,7 +490,17 @@ namespace SilEncConverters40
             }
         }
 
-        private bool TryGetValue(int nMapValue, out MapOfSourceWordElements mapOfSourceWordElements)
+        public Dictionary<int, MapOfSourceWordElements> MapOfSizeToMap
+        {
+            get
+            {
+                int nSize = 0;
+                return Xml.Elements().ToDictionary(e => (nSize = Int32.Parse(e.Attribute(MapOfSourceWordElements.CstrAttributeNameNumOfWordsPerPhrase).Value)),
+                                                   e => new MapOfSourceWordElements(e, nSize, this));
+            }
+        }
+
+        public bool TryGetValue(int nMapValue, out MapOfSourceWordElements mapOfSourceWordElements)
         {
             var strXPath = FormatXpath(MapOfSourceWordElements.CstrElementNameNumOfWordsPerPhraseMap,
                                        MapOfSourceWordElements.CstrAttributeNameNumOfWordsPerPhrase,
@@ -612,6 +658,11 @@ namespace SilEncConverters40
             return TryGetValue(nMapValue, out mapOfSourceWordElements);
         }
 
+        public void Add(MapOfSourceWordElements elemMap)
+        {
+            Xml.Add(elemMap.Xml);
+        }
+
         /// <summary>
         /// This helper can be used to change the source word to some other value (which
         /// might include it being put into a different map)
@@ -629,7 +680,7 @@ namespace SilEncConverters40
                 SourceWordElement sourceWordElement, sourceWordElementNew = null;
                 if (mapOfSourceWordElements.TryGetValue(strOldSourceWord, out sourceWordElement))
                 {
-                    foreach (var targetWordElement in sourceWordElement.Descendants())
+                    foreach (var targetWordElement in sourceWordElement.TargetWords())
                     {
                         // use AddCouplet since this may involve adding a new map)
                         sourceWordElementNew = AddCouplet(strNewSourceWord,

@@ -33,7 +33,7 @@ namespace SilEncConverters40
             SourceWordElement = sourceWordElement;
             CallToDeleteSourceWord = functionToDeleteSourceWord;
             // TODO: sourceWordElement.Descendants() can be null, which is bad
-            foreach (TargetWordElement strTargetForm in sourceWordElement.Descendants())
+            foreach (TargetWordElement strTargetForm in sourceWordElement.TargetWords())
                 AddToPanel(strTargetForm);
             buttonAdd.Enabled = true;
         }

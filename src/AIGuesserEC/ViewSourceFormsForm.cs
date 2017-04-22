@@ -233,5 +233,12 @@ namespace SilEncConverters40
             Parent.KbReversal(progressBar);
             progressBar.Visible = false;
         }
+
+        private void mergeProjectsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            progressBar.Visible = true;
+            Parent.MergeKb(progressBar);
+            progressBar.Visible = false;
+        }
     }
 }
