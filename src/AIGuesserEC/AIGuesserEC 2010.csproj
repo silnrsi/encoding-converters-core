@@ -276,7 +276,6 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
+    <PostBuildEvent>copy $(TargetPath) C:\Src\StoryEditor\output\$(ConfigurationName)</PostBuildEvent>
   </PropertyGroup>
 </Project>
