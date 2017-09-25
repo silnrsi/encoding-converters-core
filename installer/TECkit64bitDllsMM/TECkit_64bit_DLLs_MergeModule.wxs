@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+	<Module Id="TECkit64bitDLLsMM" Language="1033" Version="4.0.0.0">
+		<Package Id="248494F2-2195-4362-B534-6B1D967D32F3" Comments="Merge module containing the 64bit TECkit run-time engine DLLs" Description="TECkit DLLs" InstallerVersion="200" Keywords="TECkit, Encoding Conversion, SILConverters, 64bit" Manufacturer="SIL International" />
+
+		<Directory Id="TARGETDIR" Name="SourceDir">
+			<Directory Id="MergeRedirectFolder">
+        <Component Id="TECkit_x86.dll" Guid="{2AF5E123-A821-4E35-8324-E1EC5D47E0C1}">
+            <File Id="TECkit_x86.dll" Name="TECkit_x86.dll" KeyPath="yes" Source="..\..\redist\64bit\TECkit_x86.dll" />
+        </Component>
+        <Component Id="TECkit_Compiler_x86.dll" Guid="{7698A235-6417-4D75-988A-15839DBB96E6}">
+            <File Id="TECkit_Compiler_x86.dll" Name="TECkit_Compiler_x86.dll" KeyPath="yes" Source="..\..\redist\64bit\TECkit_Compiler_x86.dll" />
+        </Component>
+        <Component Id="libgcc_s_sjlj_1.dll" Guid="{41D95FD7-5D22-4D42-9F99-BCD1520E3EF7}">
+          <File Id="libgcc_s_sjlj_1.dll" Name="libgcc_s_sjlj-1.dll" KeyPath="yes" Source="..\..\redist\64bit\libgcc_s_seh-1.dll" />
+        </Component>
+        <Component Id="libstdcpp_6.dll" Guid="{705C8678-E424-494D-BDE4-BBF1D78DA806}">
+          <File Id="libstdcpp_6.dll" Name="libstdc++-6.dll" KeyPath="yes" Source="..\..\redist\64bit\libstdc++-6.dll" />
+        </Component>
+      </Directory>
+		</Directory>
+	</Module>
+</Wix>
