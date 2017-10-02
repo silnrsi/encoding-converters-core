@@ -6,7 +6,7 @@
 		<Directory Id="TARGETDIR" Name="SourceDir">
 			<Directory Id="MergeRedirectFolder">
                 <Component Id="CcEC.dll" Guid="{3CC6BA82-6E34-4CD1-BD2F-268F36FC1789}">
-                    <File Id="CcEC.dll" Name="CcEC.dll" KeyPath="yes" Source="..\..\output\release\CcEC.dll"/>
+                    <File Id="CcEC.dll" Name="CcEC.dll" KeyPath="yes" Source="..\..\output\Win32\release\CcEC.dll"/>
                 </Component>
                 <Directory Id="ECFolder" Name="EC">
                     <Directory Id="PluginsFolder" Name="Plugins">
@@ -20,7 +20,7 @@
             <Directory Id="CommonFilesFolder" SourceName="Common Files Folder">
                 <Directory Id="CcSIL" Name="SIL">
                     <Component Id="CC32.dll" Guid="29c247e4-c14a-4d76-afce-ccbf1be470a9">
-                        <File Id="CC32.dll" Name="CC32.dll" KeyPath="yes" Source="..\..\output\release\CC32.dll" />
+                        <File Id="CC32.dll" Name="CC32.dll" KeyPath="yes" Source="..\..\output\Win32\release\CC32.dll" />
                     </Component>
                     <Directory Id="Help" Name="Help">
                         <Component Id="CCTableHelp" Guid="{302FE1FD-F890-47F6-88BE-0B17F289F8CE}">

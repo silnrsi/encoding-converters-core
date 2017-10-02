@@ -8,7 +8,7 @@
             <Directory Id="MergeRedirectFolder">
 
                 <Component Id="PerlExpressionEC.dll" Guid="{7702FA46-2EF5-4D08-8344-AD4E91493558}">
-                    <File Id="PerlExpressionEC.dll" KeyPath="yes" Source="..\..\output\release\PerlExpressionEC.dll" />
+                    <File Id="PerlExpressionEC.dll" KeyPath="yes" Source="..\..\output\Win32\release\PerlExpressionEC.dll" />
                 </Component>
 
                 <Directory Id="PerlECFolder" Name="EC">

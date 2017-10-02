@@ -17,7 +17,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\output\Debug\</OutputPath>
+    <OutputPath>$(SolutionDir)output\Win32\$(Configuration)\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -27,7 +27,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\..\output\Release\</OutputPath>
+    <OutputPath>$(SolutionDir)output\Win32\$(Configuration)\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -69,11 +69,11 @@
     <Compile Include="Resources.Designer.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ECInterfaces\ECInterfaces.csproj">
+    <ProjectReference Include="..\ECInterfaces\ECInterfaces 2010.csproj">
       <Project>{2935E02F-43ED-4670-9A00-A91B0AD3D66C}</Project>
       <Name>ECInterfaces</Name>
     </ProjectReference>
-    <ProjectReference Include="..\EncCnvtrs\EncCnvtrs.csproj">
+    <ProjectReference Include="..\EncCnvtrs\EncCnvtrs 2010.csproj">
       <Project>{3E4B908A-4F96-43C5-981B-1AA4B73CCC26}</Project>
       <Name>EncCnvtrs</Name>
     </ProjectReference>

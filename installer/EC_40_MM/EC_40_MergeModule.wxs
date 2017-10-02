@@ -16,7 +16,7 @@
                     <Class Id="{E8DE7761-7091-38B8-82CD-C67A76F62DC9}" Context="InprocServer32" Description="ECInterfaces.mappingRegistry" ThreadingModel="both" ForeignServer="mscoree.dll">
                         <ProgId Id="ECInterfaces.mappingRegistry" Description="ECInterfaces.mappingRegistry" />
                     </Class>
-                    <File Id="ECInterfaces.dll" Name="ECInterfaces.dll" Vital="yes" KeyPath="yes" AssemblyManifest="ECInterfaces.dll" AssemblyApplication="ECInterfaces.dll" Assembly=".net" Source="..\..\output\release\ECInterfaces.dll"/>
+                    <File Id="ECInterfaces.dll" Name="ECInterfaces.dll" Vital="yes" KeyPath="yes" AssemblyManifest="ECInterfaces.dll" AssemblyApplication="ECInterfaces.dll" Assembly=".net" Source="..\..\output\Win32\release\ECInterfaces.dll"/>
                     <ProgId Id="Record" />
                     <RegistryValue Root="HKCR" Key="CLSID\{E8DE7761-7091-38B8-82CD-C67A76F62DC9}\Implemented Categories\{62C8FE65-4EBB-45e7-B440-6E39B2CDBF29}" Value="" Type="string" Action="write" />
                     <RegistryValue Root="HKCR" Key="CLSID\{E8DE7761-7091-38B8-82CD-C67A76F62DC9}\InprocServer32\4.0.0.0" Name="Class" Value="ECInterfaces.mappingRegistry" Type="string" Action="write" />
@@ -57,7 +57,7 @@
                     <RegistryValue Root="HKCR" Key="Record\{D90586C3-EA5E-3223-A5C5-6CFCA8548B0C}\4.0.0.0" Name="CodeBase" Value="file:///[#ECInterfaces.dll]" Type="string" Action="write" />
                 </Component>
                 <Component Id="ECInterfaces.tlb" Guid="51404655-DB11-4872-8B7F-718AA917ABBA">
-                    <File Id="ECInterfaces.tlb" Name="ECInterfaces.tlb" Vital="yes" KeyPath="yes" Source="..\..\output\release\ECInterfaces.tlb">
+                    <File Id="ECInterfaces.tlb" Name="ECInterfaces.tlb" Vital="yes" KeyPath="yes" Source="..\..\output\Win32\release\ECInterfaces.tlb">
                         <TypeLib Id="{6A977123-92AF-43D2-83A7-B4E853EE42D1}" Description="Encoding Converters Interface definitions for the repository and converter engines" HelpDirectory="MergeRedirectFolder" Language="0" MajorVersion="4" MinorVersion="0">
                             <Interface Id="{0226D822-AFB1-3094-808A-C858AE429A49}" Name="_implementationsRowChangeEvent" ProxyStubClassId32="{00020424-0000-0000-C000-000000000046}" />
                             <Interface Id="{037AD6C6-CD31-3D48-86D4-7E88CE482DE4}" Name="_specPropertyRowChangeEvent" ProxyStubClassId32="{00020424-0000-0000-C000-000000000046}" />
@@ -258,7 +258,7 @@
                     <Class Id="{FBC7B81D-39A4-3DC6-A085-567D325146A2}" Context="InprocServer32" Description="SilEncConverters40.MetaCmpdAutoConfigDialog" ThreadingModel="both" ForeignServer="mscoree.dll">
                         <ProgId Id="SilEncConverters40.MetaCmpdAutoConfigDialog" Description="SilEncConverters40.MetaCmpdAutoConfigDialog" />
                     </Class>
-                    <File Id="SilEncConverters40.dll" KeyPath="yes" Source="..\..\output\release\SilEncConverters40.dll"/>
+                    <File Id="SilEncConverters40.dll" KeyPath="yes" Source="..\..\output\Win32\release\SilEncConverters40.dll"/>
                     <RegistryValue Root="HKCR" Key="CLSID\{0162B174-E479-44CD-BEE8-CFA9BC06BF92}\Implemented Categories\{62C8FE65-4EBB-45e7-B440-6E39B2CDBF29}" Value="" Type="string" Action="write" />
                     <RegistryValue Root="HKCR" Key="CLSID\{0162B174-E479-44CD-BEE8-CFA9BC06BF92}\InprocServer32\4.0.0.0" Name="Class" Value="SilEncConverters40.EncConverters" Type="string" Action="write" />
                     <RegistryValue Root="HKCR" Key="CLSID\{0162B174-E479-44CD-BEE8-CFA9BC06BF92}\InprocServer32\4.0.0.0" Name="Assembly" Value="SilEncConverters40, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" Type="string" Action="write" />
@@ -436,7 +436,7 @@
                     <RegistryValue Root="HKCR" Key="Record\{6EAC0C98-FF43-3780-AE79-B291998FED12}\4.0.0.0" Name="CodeBase" Value="file:///[#SilEncConverters40.dll]" Type="string" Action="write" />
                 </Component>
                 <Component Id="SilEncConverters40.tlb" Guid="513E71DB-F4BA-4B15-B4BD-F2F3883218E6">
-                    <File Id="SilEncConverters40.tlb" Name="SilEncConverters40.tlb" Vital="yes" KeyPath="yes" Source="..\..\output\release\SilEncConverters40.tlb">
+                    <File Id="SilEncConverters40.tlb" Name="SilEncConverters40.tlb" Vital="yes" KeyPath="yes" Source="..\..\output\Win32\release\SilEncConverters40.tlb">
                         <TypeLib Id="{06F10557-EE67-4DAD-B3F5-031568E4DB31}" Description="Encoding Converters Repository and basic converter engine wrappers" HelpDirectory="MergeRedirectFolder" Language="0" MajorVersion="4" MinorVersion="0">
                             <Interface Id="{0D196FF3-5C04-3795-B3B9-3E1344F6F3EC}" Name="_SpellFixerByReflection" ProxyStubClassId32="{00020424-0000-0000-C000-000000000046}" />
                             <Interface Id="{0D423AEA-3380-3DD6-85F3-0AE1D765AAA8}" Name="_EncConverterPlugins" ProxyStubClassId32="{00020424-0000-0000-C000-000000000046}" />
@@ -474,7 +474,7 @@
                     </File>
                 </Component>
                 <Component Id="EncConvertersAppDataMover40.exe" Guid="4F57740F-5033-42f2-A41A-ED8022731CE0">
-                    <File Id="EncConvertersAppDataMover40.exe" Name="EncConvertersAppDataMover40.exe" ReadOnly="yes" KeyPath="yes" Source="..\..\output\release\EncConvertersAppDataMover40.exe" Assembly=".net" AssemblyApplication="EncConvertersAppDataMover40.exe" AssemblyManifest="EncConvertersAppDataMover40.exe"/>
+                    <File Id="EncConvertersAppDataMover40.exe" Name="EncConvertersAppDataMover40.exe" ReadOnly="yes" KeyPath="yes" Source="..\..\output\release\32bit\EncConvertersAppDataMover40.exe" Assembly=".net" AssemblyApplication="EncConvertersAppDataMover40.exe" AssemblyManifest="EncConvertersAppDataMover40.exe"/>
                 </Component>
                 <Component Id="geckofx_core_14.dll" Guid="{39593B07-CD1F-40D0-A5D0-BDDB70F78152}">
                     <File Id="geckofx_core_14.dll" Name="geckofx-core-14.dll" Vital="yes" KeyPath="yes" AssemblyManifest="geckofx_core_14.dll" AssemblyApplication="geckofx_core_14.dll" Assembly=".net" Source="..\..\DistFiles\windows\geckofx\geckofx-core-14.dll"/>
@@ -485,7 +485,7 @@
                 <Directory Id="ECFolder" Name="EC">
                     <Directory Id="PluginsFolder" Name="Plugins">
                         <Component Id="EC4.0.0.0PluginDetails.xml" Guid="579194FE-37AA-47a3-A089-B0F1F17415FB">
-                            <File Id="EC4.0.0.0PluginDetails.xml" Name="EC 4.0.0.0 Plugin Details.xml" KeyPath="yes" Source="..\..\output\release\EC\Plugins\EC 4.0.0.0 Plugin Details.xml"/>
+                            <File Id="EC4.0.0.0PluginDetails.xml" Name="EC 4.0.0.0 Plugin Details.xml" KeyPath="yes" Source="..\..\output\release\Win32\EC\Plugins\EC 4.0.0.0 Plugin Details.xml"/>
                         </Component>
                     </Directory>
                 </Directory>
@@ -493,23 +493,23 @@
                 <Directory Id="CommonFilesFolder" SourceName="Common Files Folder">
                     <Directory Id="EcSIL" Name="SIL">
                         <Component Id="ECDriver.dll" Guid="4c632e67-b66b-4a7b-a6bb-f99d93abdcca">
-                            <File Id="ECDriver.dll" Name="ECDriver.dll" KeyPath="yes" Source="..\..\output\release\ECDriver.dll"/>
+                            <File Id="ECDriver.dll" Name="ECDriver.dll" KeyPath="yes" Source="..\..\output\Win32\release\ECDriver.dll"/>
                         </Component>
                         <Directory Id="Help" Name="Help">
                             <Component Id="CPHelp" Guid="58fac2f3-e469-4e62-a5a1-970647ebe5fc">
-                                <File Id="CPHelp" Name="Code Page Converter Plug-in About box.mht" ReadOnly="yes" KeyPath="yes" Source="..\..\output\release\Help\Code Page Converter Plug-in About box.mht"/>
+                                <File Id="CPHelp" Name="Code Page Converter Plug-in About box.mht" ReadOnly="yes" KeyPath="yes" Source="..\..\output\Win32\release\Help\Code Page Converter Plug-in About box.mht"/>
                             </Component>
                             <Component Id="CmpdHelp" Guid="a2557ea3-3ec1-41aa-8a06-af9fccfd07da">
-                                <File Id="CmpdHelp" Name="Compound Converter Plug-in About box.mht" ReadOnly="yes" KeyPath="yes" Source="..\..\output\release\Help\Compound Converter Plug-in About box.mht"/>
+                                <File Id="CmpdHelp" Name="Compound Converter Plug-in About box.mht" ReadOnly="yes" KeyPath="yes" Source="..\..\output\Win32\release\Help\Compound Converter Plug-in About box.mht"/>
                             </Component>
                             <Component Id="FallBackHelp" Guid="cd14321a-d6c0-44aa-b59d-773e9b060d34">
-                                <File Id="FallBackHelp" Name="Fallback Converter Plug-in About box.mht" ReadOnly="yes" KeyPath="yes" Source="..\..\output\release\Help\Fallback Converter Plug-in About box.mht"/>
+                                <File Id="FallBackHelp" Name="Fallback Converter Plug-in About box.mht" ReadOnly="yes" KeyPath="yes" Source="..\..\output\Win32\release\Help\Fallback Converter Plug-in About box.mht"/>
                             </Component>
                             <Component Id="TECkitHelp" Guid="292dcfa4-3602-4861-ae01-6b4875707dec">
-                                <File Id="TECkitHelp" Name="TECkit Map Plug-in About box.mht" ReadOnly="yes" KeyPath="yes" Source="..\..\output\release\Help\TECkit Map Plug-in About box.mht"/>
+                                <File Id="TECkitHelp" Name="TECkit Map Plug-in About box.mht" ReadOnly="yes" KeyPath="yes" Source="..\..\output\Win32\release\Help\TECkit Map Plug-in About box.mht"/>
                             </Component>
                             <Component Id="CantReadMhtFiles.htm" Guid="{F3B39444-A2B0-40D8-8863-8FE1E8194FF4}">
-                                <File Id="CantReadMhtFiles.htm" Name="CantReadMhtFiles.htm" ReadOnly="yes" KeyPath="yes" Source="..\..\output\release\Help\CantReadMhtFiles.htm"/>
+                                <File Id="CantReadMhtFiles.htm" Name="CantReadMhtFiles.htm" ReadOnly="yes" KeyPath="yes" Source="..\..\output\Win32\release\Help\CantReadMhtFiles.htm"/>
                             </Component>
                         </Directory>
                     </Directory>

@@ -524,9 +524,11 @@ namespace TestEncCnvtrs
 			if (codeBase.StartsWith("file:///") && !filepath.StartsWith("/"))
 				filepath = "/" + filepath;
 #endif
-			var configDir = Path.GetDirectoryName(filepath);
-			var outDir = Path.GetDirectoryName(configDir);
-			return Path.GetDirectoryName(outDir);
+			var pathParts = Path.GetDirectoryName(filepath).Split(Path.DirectorySeparatorChar);
+			var outputFolderIndex = Array.IndexOf(pathParts, "output");
+			Assert.IsTrue(outputFolderIndex > 0, "output folder structure changed, tests will fail finding map files.");
+			var baseDirectory = string.Join(Path.DirectorySeparatorChar.ToString(), pathParts, 0, outputFolderIndex);
+			return baseDirectory;
 		}
 
 		[Test]
