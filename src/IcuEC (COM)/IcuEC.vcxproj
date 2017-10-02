@@ -50,12 +50,12 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Debug\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Debug\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)output\$(Platform)\$(Configuration)</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)\obj\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
     <IgnoreImportLibrary Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</IgnoreImportLibrary>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Release\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Release\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)output\$(Platform)\$(Configuration)</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)\obj\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
     <IgnoreImportLibrary Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</IgnoreImportLibrary>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
     <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
@@ -124,14 +124,14 @@
     <PostBuildEvent>
       <Message>Performing registration</Message>
       <Command>set path=%path%%3b$(SolutionDir)DistFiles\windows\icu\bin
-echo copy $(TargetPath) $(SolutionDir)output\$(Configuration)
-copy $(OutDir)$(TargetFileName) $(SolutionDir)output\$(Configuration)
-echo copy $(OutDir)$(TargetName).tlb $(SolutionDir)output\$(Configuration)
-copy $(OutDir)$(TargetName).tlb $(SolutionDir)output\$(Configuration)
-echo copy $(OutDir)$(TargetName).pdb $(SolutionDir)output\$(Configuration)
-copy $(OutDir)$(TargetName).pdb $(SolutionDir)output\$(Configuration)
-echo regsvr32 /s /c "$(SolutionDir)output\$(Configuration)\$(TargetFileName)"
-regsvr32 /s /c "$(SolutionDir)output\$(Configuration)\$(TargetFileName)"
+echo copy $(TargetPath) $(SolutionDir)output\$(Platform)\$(Configuration)\
+copy $(OutDir)$(TargetFileName) $(SolutionDir)output\$(Platform)\$(Configuration)\
+echo copy $(OutDir)$(TargetName).tlb $(SolutionDir)output\$(Platform)\$(Configuration)\
+copy $(OutDir)$(TargetName).tlb $(SolutionDir)output\$(Platform)\$(Configuration)\
+echo copy $(OutDir)$(TargetName).pdb $(SolutionDir)output\$(Platform)\$(Configuration)\
+copy $(OutDir)$(TargetName).pdb $(SolutionDir)output\$(Platform)\$(Configuration)\
+echo regsvr32 /s /c "$(SolutionDir)output\$(Platform)\$(Configuration)\$(TargetFileName)"
+regsvr32 /s /c "$(SolutionDir)output\$(Platform)\$(Configuration)\$(TargetFileName)"
 
 </Command>
     </PostBuildEvent>

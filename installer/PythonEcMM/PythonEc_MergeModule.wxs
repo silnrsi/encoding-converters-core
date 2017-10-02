@@ -8,11 +8,11 @@
 			<Directory Id="MergeRedirectFolder">
 
                 <Component Id="PyScriptEC.dll" Guid="{65242CE5-8A5E-4D3B-B597-3C422AD0D1AF}">
-                    <File Id="PyScriptEC.dll" KeyPath="yes" Source="..\..\output\release\PyScriptEC.dll" />
+                    <File Id="PyScriptEC.dll" KeyPath="yes" Source="..\..\output\Win32\release\PyScriptEC.dll" />
                 </Component>
 
                 <Component Id="PyScriptEncConverter.dll" Guid="{1FFF8D39-DE10-4A6B-9BE3-19575F82DDBF}">
-                    <File Id="PyScriptEncConverter.dll" KeyPath="yes" Source="..\..\output\release\PyScriptEncConverter.dll" />
+                    <File Id="PyScriptEncConverter.dll" KeyPath="yes" Source="..\..\output\Win32\release\PyScriptEncConverter.dll" />
                 </Component>
 
                 <Directory Id="PyScriptECFolder" Name="EC">
@@ -29,11 +29,11 @@
                 <Directory Id="PythonSIL" Name="SIL">
 
                     <Component Id="python27.dll" Guid="{91F38AA9-5608-42AD-A619-88DDAE377B86}">
-                        <File Id="python27.dll" KeyPath="yes" Source="..\..\lib\windows\python27.dll" />
+                        <File Id="python27.dll" KeyPath="yes" Source="..\..\lib\windows\32bit\python27.dll" />
                     </Component>
 
                     <Component Id="pythoncom27.dll" Guid="{77FC7B02-2D31-44CD-80CB-3CFD3CD44A7A}">
-                        <File Id="pythoncom27.dll" KeyPath="yes" Source="..\..\lib\windows\pythoncom27.dll" />
+                        <File Id="pythoncom27.dll" KeyPath="yes" Source="..\..\lib\windows\32bit\pythoncom27.dll" />
                     </Component>
 
                     <Directory Id="Help" Name="Help">
