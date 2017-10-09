@@ -474,7 +474,7 @@
                     </File>
                 </Component>
                 <Component Id="EncConvertersAppDataMover40.exe" Guid="4F57740F-5033-42f2-A41A-ED8022731CE0">
-                    <File Id="EncConvertersAppDataMover40.exe" Name="EncConvertersAppDataMover40.exe" ReadOnly="yes" KeyPath="yes" Source="..\..\output\release\32bit\EncConvertersAppDataMover40.exe" Assembly=".net" AssemblyApplication="EncConvertersAppDataMover40.exe" AssemblyManifest="EncConvertersAppDataMover40.exe"/>
+                    <File Id="EncConvertersAppDataMover40.exe" Name="EncConvertersAppDataMover40.exe" ReadOnly="yes" KeyPath="yes" Source="..\..\output\Win32\release\EncConvertersAppDataMover40.exe" Assembly=".net" AssemblyApplication="EncConvertersAppDataMover40.exe" AssemblyManifest="EncConvertersAppDataMover40.exe"/>
                 </Component>
                 <Component Id="geckofx_core_14.dll" Guid="{39593B07-CD1F-40D0-A5D0-BDDB70F78152}">
                     <File Id="geckofx_core_14.dll" Name="geckofx-core-14.dll" Vital="yes" KeyPath="yes" AssemblyManifest="geckofx_core_14.dll" AssemblyApplication="geckofx_core_14.dll" Assembly=".net" Source="..\..\DistFiles\windows\geckofx\geckofx-core-14.dll"/>
@@ -485,7 +485,7 @@
                 <Directory Id="ECFolder" Name="EC">
                     <Directory Id="PluginsFolder" Name="Plugins">
                         <Component Id="EC4.0.0.0PluginDetails.xml" Guid="579194FE-37AA-47a3-A089-B0F1F17415FB">
-                            <File Id="EC4.0.0.0PluginDetails.xml" Name="EC 4.0.0.0 Plugin Details.xml" KeyPath="yes" Source="..\..\output\release\Win32\EC\Plugins\EC 4.0.0.0 Plugin Details.xml"/>
+                            <File Id="EC4.0.0.0PluginDetails.xml" Name="EC 4.0.0.0 Plugin Details.xml" KeyPath="yes" Source="..\..\output\Win32\release\EC\Plugins\EC 4.0.0.0 Plugin Details.xml"/>
                         </Component>
                     </Directory>
                 </Directory>
