@@ -476,12 +476,12 @@
                 <Component Id="EncConvertersAppDataMover40.exe" Guid="{10382D5D-6A0D-4FA2-AEE7-B03F98BD973F}">
                     <File Id="EncConvertersAppDataMover40.exe" Name="EncConvertersAppDataMover40.exe" ReadOnly="yes" KeyPath="yes" Source="..\..\output\x64\release\EncConvertersAppDataMover40.exe" Assembly=".net" AssemblyApplication="EncConvertersAppDataMover40.exe" AssemblyManifest="EncConvertersAppDataMover40.exe"/>
                 </Component>
-                <Component Id="geckofx_core_14.dll" Guid="{39593B07-CD1F-40D0-A5D0-BDDB70F78152}">
-                    <File Id="geckofx_core_14.dll" Name="geckofx-core-14.dll" Vital="yes" KeyPath="yes" AssemblyManifest="geckofx_core_14.dll" AssemblyApplication="geckofx_core_14.dll" Assembly=".net" Source="..\..\DistFiles\windows\geckofx\geckofx-core-14.dll"/>
-                </Component>
-                <Component Id="Geckofx_Winforms_14.dll" Guid="{DE143B00-87A2-4DD2-8A73-970B457D7AE4}">
-                    <File Id="Geckofx_Winforms_14.dll" Name="Geckofx-Winforms-14.dll" Vital="yes" KeyPath="yes" AssemblyManifest="Geckofx_Winforms_14.dll" AssemblyApplication="Geckofx_Winforms_14.dll" Assembly=".net" Source="..\..\DistFiles\windows\geckofx\Geckofx-Winforms-14.dll"/>
-                </Component>
+							<Component Id="Geckofx_Core.dll" Guid="{C49DCC6A-B05E-4A28-8421-FBFBB591A233}">
+								<File Id="Geckofx_Core.dll" Name="Geckofx-Core" Vital="yes" KeyPath="yes" AssemblyManifest="Geckofx_Core.dll" AssemblyApplication="Geckofx_Core.dll" Assembly=".net" Source="..\..\DistFiles\windows\x64\geckofx\GeckoFx-Core.dll"/>
+							</Component>
+							<Component Id="Geckofx_Winforms.dll" Guid="{FF439F0E-7A49-4224-8733-8AA642C33D26}">
+								<File Id="Geckofx_Winforms.dll" Name="Geckofx-Winforms.dll" Vital="yes" KeyPath="yes" AssemblyManifest="Geckofx_Winforms.dll" AssemblyApplication="Geckofx_Winforms.dll" Assembly=".net" Source="..\..\DistFiles\windows\x64\geckofx\Geckofx-Winforms.dll"/>
+							</Component>
                 <Directory Id="ECFolder" Name="EC">
                     <Directory Id="PluginsFolder" Name="Plugins">
                         <Component Id="EC4.0.0.0PluginDetails.xml" Guid="579194FE-37AA-47a3-A089-B0F1F17415FB">
