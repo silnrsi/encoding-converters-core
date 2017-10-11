@@ -24,7 +24,9 @@ bld/
 [Oo]bj/
 [Ll]og/
 /[Oo]utput/
-/install*/
+/installer/MergeModules
+/installer/**/bin
+/installer/**/obj
 /aclocal.m4
 /autogen.err
 /config.log

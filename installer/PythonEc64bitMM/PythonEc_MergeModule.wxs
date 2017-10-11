@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+	<Module Id="PythonEc64MM" Language="1033" Version="1.0.0.0">
+		<Package Id="{2013422D-61B2-4CEB-89ED-80E8DD9D7C59}" Keywords="Python, Encoding Conversion, SILConverters, 64bit" Description="Python EncConverter merge module" Comments="Merge module containing the 64bit Python EncConverter DLLs" Manufacturer="SIL International" InstallerVersion="200" Platform="x64"/>
+
+		<Directory Id="TARGETDIR" Name="SourceDir">
+            
+			<Directory Id="MergeRedirectFolder">
+          <Component Id="PyScriptEC.dll" Guid="{D755C1F5-66CC-4443-A803-250368F35130}">
+              <File Id="PyScriptEC.dll" KeyPath="yes" Source="..\..\output\x64\release\PyScriptEC.dll" />
+          </Component>
+          <Component Id="PyScriptEncConverter.dll" Guid="{2BA69E1E-47E8-4B32-A99C-65ED44175BCA}">
+              <File Id="PyScriptEncConverter.dll" KeyPath="yes" Source="..\..\output\x64\release\PyScriptEncConverter.dll" />
+          </Component>
+          <Directory Id="PyScriptECFolder" Name="EC">
+              <Directory Id="PyScriptPluginsFolder" Name="Plugins">
+                  <Component Id="PyScriptEC4.0.0.0PluginDetails.xml" Guid="{8E8CC8F8-E828-4903-A391-8485DF6AED8B}">
+                      <File Id="PyScriptEC4.0.0.0PluginDetails.xml" Name="PythonEC 4.0.0.0 Plugin Details.xml" Vital="yes" KeyPath="yes" Source="..\..\redist\EC\Plugins\PythonEC 4.0.0.0 Plugin Details.xml"/>
+                  </Component>
+              </Directory>
+          </Directory>
+      </Directory>
+
+	    <Directory Id="CommonFiles64Folder" SourceName="Common Files Folder">
+        <Directory Id="PythonSIL" Name="SIL">
+            <Component Id="python27.dll" Guid="{9E71E095-8458-4ADE-95B0-E642920E4CBB}">
+                <File Id="python27.dll" KeyPath="yes" Source="..\..\lib\windows\64bit\python27.dll" />
+            </Component>
+            <Component Id="pythoncom27.dll" Guid="{E8A417F2-7A55-431F-991B-222046C17AFF}">
+                <File Id="pythoncom27.dll" KeyPath="yes" Source="..\..\lib\windows\64bit\pythoncom27.dll" />
+            </Component>
+            <Directory Id="Help" Name="Help">
+                <Component Id="PythonHelp" Guid="{EDD272B3-B6FB-408B-80AD-27F879AF4FEF}">
+                    <File Id="PythonHelp" Name="Python Script Plug-in About box.mht" KeyPath="yes" Source="..\..\redist\Help\Python Script Plug-in About box.mht"/>
+                </Component>
+            </Directory>
+        </Directory>
+			</Directory>
+
+      <Directory Id="ProgramMenuFolder" Name="Program">
+          <Directory Id="SIL_Converters" Name="SIL Converters">
+              <Directory Id="PythonHelp" Name="Help">
+                  <Component Id="HelpShortcuts" Guid="{50C20C9D-9B81-49E5-81E8-AB1F9D510A8D}" KeyPath="yes">
+                      <Shortcut Id="PythonEcPluginHelp" Directory="PythonHelp" Name="Help for Python Script Plug-in" Target="[#PythonHelp]" Hotkey="0" IconIndex="0" Show="normal" WorkingDirectory="Help"/>
+                      <!-- The next item is junk to make validation pass on ICE18 -->
+                      <CreateFolder/>
+                  </Component>
+              </Directory>
+          </Directory>
+      </Directory>
+
+      <Directory Id="CommonAppDataFolder" SourceName="AppData">
+          <Directory Id="SIL" Name="SIL">
+              <Directory Id="MapsTables" Name="MapsTables">
+                  <Component Id="ReverseString.py" Guid="{24ED86BE-479B-4853-BBC2-3D66314182E8}">
+                      <File Id="ReverseString.py" Name="ReverseString.py" KeyPath="yes" Source="..\..\redist\MapsTables\PythonExamples\ReverseString.py" />
+                      <File Id="ToLowerCase.py" Name="ToLowerCase.py" Source="..\..\redist\MapsTables\PythonExamples\ToLowerCase.py" />
+                      <File Id="ToUpperCase.py" Name="ToUpperCase.py" Source="..\..\redist\MapsTables\PythonExamples\ToUpperCase.py" />
+                      <File Id="ToNfc.py" Name="ToNfc.py" Source="..\..\redist\MapsTables\PythonExamples\ToNfc.py" />
+                      <File Id="ToNfd.py" Name="ToNfd.py" Source="..\..\redist\MapsTables\PythonExamples\ToNfd.py" />
+                      <File Id="ToUnicodeNames.py" Name="ToUnicodeNames.py" Source="..\..\redist\MapsTables\PythonExamples\ToUnicodeNames.py" />
+                  </Component>
+              </Directory>
+          </Directory>
+      </Directory>
+
+    </Directory>
+	</Module>
+</Wix>
