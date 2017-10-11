@@ -18,7 +18,7 @@
                 </Directory>
             </Directory>
 
-            <Directory Id="CommonFilesFolder" SourceName="Common Files Folder">
+            <Directory Id="CommonFiles64Folder" SourceName="Common Files Folder">
                 <Directory Id="PerlSIL" Name="SIL">
                     <Directory Id="Help" Name="Help">
                         <Component Id="PerlHelp" Guid="{1809C1DA-A25D-496D-AE09-FF004D9A3CE7}">
