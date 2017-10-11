@@ -6,7 +6,10 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using ECInterfaces;     // for Util
+using ECInterfaces;
+using Gecko;
+
+// for Util
 
 namespace SilEncConverters40
 {
@@ -22,7 +25,7 @@ namespace SilEncConverters40
         public static bool SetUpXulRunner()
         {
             Util.DebugWriteLine(className, "BEGIN");
-	        if (Gecko.Xpcom.IsInitialized)
+	        if (Xpcom.IsInitialized)
 		        return true;
 
             string xulRunnerPath;
@@ -35,7 +38,7 @@ namespace SilEncConverters40
             SetDllDirectory(xulRunnerPath);
 #endif
 
-            Gecko.Xpcom.Initialize(xulRunnerPath);
+            Xpcom.Initialize(xulRunnerPath);
             Util.DebugWriteLine(className, "END");
             return true;
         }
