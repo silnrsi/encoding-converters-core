@@ -111,14 +111,28 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
+  <ItemGroup Condition="'$(Platform)' == 'x64'">
+    <Reference Include="Geckofx-Core">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>.\..\DistFiles\windows\x64\geckofx\Geckofx-Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Geckofx-Winforms">
+      <HintPath>..\..\DistFiles\windows\x64\geckofx\Geckofx-Winforms.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup Condition="'$(Platform)' == 'x86'">
+    <Reference Include="Geckofx-Core">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>.\..\DistFiles\windows\Win32\geckofx\Geckofx-Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Geckofx-Winforms">
+      <HintPath>..\..\DistFiles\windows\Win32\geckofx\Geckofx-Winforms.dll</HintPath>
+    </Reference>
+  </ItemGroup>
   <ItemGroup>
     <Reference Include="ECInterfaces, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\output\release\ECInterfaces.dll</HintPath>
-    </Reference>
-    <Reference Include="Geckofx-Core, Version=45.0.32.0, Culture=neutral, PublicKeyToken=3209ac31600d1857, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\fwroot\fw\packages\Geckofx45.64.45.0.32\lib\net45\Geckofx-Core.dll</HintPath>
     </Reference>
     <Reference Include="System">
       <Name>System</Name>
