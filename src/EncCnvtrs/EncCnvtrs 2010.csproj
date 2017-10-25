@@ -120,7 +120,7 @@
       <HintPath>..\..\DistFiles\windows\x64\geckofx\Geckofx-Winforms.dll</HintPath>
     </Reference>
   </ItemGroup>
-  <ItemGroup Condition="'$(Platform)' == 'x86'">
+  <ItemGroup Condition="'$(Platform)' == 'x86' or '$(Platform)' == 'AnyCPU'">
     <Reference Include="Geckofx-Core">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>.\..\DistFiles\windows\Win32\geckofx\Geckofx-Core.dll</HintPath>
