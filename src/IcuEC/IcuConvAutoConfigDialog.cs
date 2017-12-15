@@ -258,9 +258,11 @@ namespace SilEncConverters40
 		protected override bool OnApply()
 		{
 			Util.DebugWriteLine(this, "BEGIN");
-			
-            // Get the converter identifier from the Setup tab controls.
-		    var strConverter = listBoxConvName.SelectedItem as String;
+
+			if (listBoxConvName.SelectedItem == null)
+				return false;
+			// Get the converter identifier from the Setup tab controls.
+			var strConverter = listBoxConvName.SelectedItem as String;
 		    var nIndex = strConverter.IndexOf(" (aliases: ");
             if (nIndex != -1)
                 strConverter = strConverter.Substring(0, nIndex);
