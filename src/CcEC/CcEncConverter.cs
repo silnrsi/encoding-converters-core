@@ -20,22 +20,61 @@ namespace SilEncConverters40
 	public class CcEncConverter : EncConverter
     {
         #region DLLImport Statements
-        [DllImport("CC32.dll", SetLastError=true)]
-        static extern unsafe int CCLoadTable(byte* lpszCCTableFile,
+        [DllImport("CC32.dll", EntryPoint = "CCLoadTable", SetLastError =true)]
+        static extern unsafe int CCLoadTable32(byte* lpszCCTableFile,
             Int32* hpLoadHandle,
             Int32 hinstCurrent);
 
-        [DllImport("CC32.dll", SetLastError=true)]
-        static extern unsafe int CCUnloadTable(Int32 hUnlHandle);
+        [DllImport("CC32.dll", EntryPoint = "CCUnloadTable", SetLastError =true)]
+        static extern unsafe int CCUnloadTable32(Int32 hUnlHandle);
 
-        [DllImport("CC32.dll", SetLastError=true)]
-        static extern unsafe int CCProcessBuffer(Int32 hProHandle,
+        [DllImport("CC32.dll", EntryPoint = "CCProcessBuffer", SetLastError =true)]
+        static extern unsafe int CCProcessBuffer32(Int32 hProHandle,
             byte* lpInputBuffer, int nInBufLen,
             byte* lpOutputBuffer, int *npOutBufLen);
-        #endregion DLLImport Statements
 
-        #region Member Variable Definitions
-        private Int32       m_hTable = 0;
+	    [DllImport("CC64.dll", EntryPoint = "CCLoadTable", SetLastError = true)]
+	    static extern unsafe int CCLoadTable64(byte* lpszCCTableFile,
+		    Int32* hpLoadHandle,
+		    Int32 hinstCurrent);
+
+	    [DllImport("CC64.dll", EntryPoint = "CCUnloadTable", SetLastError = true)]
+	    static extern unsafe int CCUnloadTable64(Int32 hUnlHandle);
+
+	    [DllImport("CC64.dll", EntryPoint = "CCProcessBuffer", SetLastError = true)]
+	    static extern unsafe int CCProcessBuffer64(Int32 hProHandle,
+		    byte* lpInputBuffer, int nInBufLen,
+		    byte* lpOutputBuffer, int* npOutBufLen);
+
+	    private void CCUnloadTable(int tablehandle)
+	    {
+		    if (Environment.Is64BitProcess)
+		    {
+			    CCUnloadTable64(tablehandle);
+		    }
+		    else
+		    {
+			    CCUnloadTable32(tablehandle);
+		    }
+	    }
+
+	    private unsafe int CCLoadTable(byte* pszTablePath, int* phTable, int hInstanceHandle)
+	    {
+		    return Environment.Is64BitProcess
+			    ? CCLoadTable64(pszTablePath, phTable, hInstanceHandle)
+			    : CCLoadTable32(pszTablePath, phTable, hInstanceHandle);
+	    }
+
+	    private unsafe int CCProcessBuffer(int hTable, byte* lpInBuffer, int nInLen, byte* lpOutBuffer, int* pnOut)
+	    {
+		    return Environment.Is64BitProcess
+			    ? CCProcessBuffer64(hTable, lpInBuffer, nInLen, lpOutBuffer, pnOut)
+			    : CCProcessBuffer32(hTable, lpInBuffer, nInLen, lpOutBuffer, pnOut);
+	    }
+		#endregion DLLImport Statements
+
+		#region Member Variable Definitions
+		private Int32       m_hTable = 0;
         private DateTime    m_timeModified = DateTime.MinValue;
         private bool        m_bUseDelimiters = false;
 
@@ -58,7 +97,7 @@ namespace SilEncConverters40
                 CCUnloadTable(m_hTable);
         }
 
-        public override void Initialize(string converterName, string converterSpec, ref string lhsEncodingID, ref string rhsEncodingID, ref ConvType conversionType, ref Int32 processTypeFlags, Int32 codePageInput, Int32 codePageOutput, bool bAdding)
+		public override void Initialize(string converterName, string converterSpec, ref string lhsEncodingID, ref string rhsEncodingID, ref ConvType conversionType, ref Int32 processTypeFlags, Int32 codePageInput, Int32 codePageOutput, bool bAdding)
         {
             Util.DebugWriteLine(this, "BEGIN");
             // let the base class have first stab at it
@@ -171,7 +210,7 @@ namespace SilEncConverters40
             Util.DebugWriteLine(this, "END");
         }
 
-        protected void    TranslateErrStatus(int status)
+	    protected void    TranslateErrStatus(int status)
         {
             switch(status)
             {
@@ -310,7 +349,7 @@ namespace SilEncConverters40
 #endif
         }
 
-        protected override string   GetConfigTypeName
+	    protected override string   GetConfigTypeName
         {
             get { return typeof(CcEncConverterConfig).AssemblyQualifiedName; }
         }

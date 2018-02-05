@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+	<Module Id="CcDLLs64bitMM" Language="1033" Version="4.0.0.0">
+		<Package Id="{2498A3D7-0058-41C4-B937-F4B1B91D362C}" Comments="Merge module containing the 64bit CC run-time engine DLL" Description="CC DLL" Keywords="Consistent Changes, CC, Encoding Conversion, SILConverters"
+						 Manufacturer="SIL International" InstallerVersion="200" Platform="x64"/>
+
+		<Directory Id="TARGETDIR" Name="SourceDir">
+			<Directory Id="MergeRedirectFolder">
+				<Component Id="CcEC.dll" Guid="{AF58D393-8511-4E81-9634-3080A1F3C737}">
+					<File Id="CcEC.dll" Name="CcEC.dll" KeyPath="yes" Source="..\..\output\x64\Release\CcEC.dll"/>
+				</Component>
+				<Directory Id="ECFolder" Name="EC">
+					<Directory Id="PluginsFolder" Name="Plugins">
+						<Component Id="CC_4.0.0.0_Plugin_Details.xml" Guid="{FB34953E-9013-40F8-BAA5-5ADFFDD8B765}">
+							<File Id="CC_4.0.0.0_Plugin_Details.xml" Name="CC 4.0.0.0 Plugin Details.xml" KeyPath="yes" Source="..\..\redist\EC\Plugins\CC 4.0.0.0 Plugin Details.xml"/>
+						</Component>
+					</Directory>
+				</Directory>
+			</Directory>
+
+			<Directory Id="CommonFiles64Folder" SourceName="Common Files Folder">
+				<Directory Id="CcSIL" Name="SIL">
+					<Component Id="CC64.dll" Guid="{9335AE04-02AA-47BB-85A7-1C41BE71BC1D}">
+						<File Id="CC64.dll" Name="CC64.dll" KeyPath="yes" Source="..\..\redist\Cc64.dll" />
+					</Component>
+					<Directory Id="Help" Name="Help">
+						<Component Id="CCTableHelp" Guid="{302FE1FD-F890-47F6-88BE-0B17F289F8CE}">
+							<File Id="CCTableHelp" Name="CC Table Plug-in About box.mht" KeyPath="yes" Source="..\..\redist\Help\CC Table Plug-in About box.mht"/>
+						</Component>
+					</Directory>
+				</Directory>
+			</Directory>
+
+			<Directory Id="ProgramMenuFolder" Name="Program">
+				<Directory Id="SIL_Converters" Name="SIL Converters">
+					<Directory Id="CcHelp" Name="Help">
+						<Component Id="HelpShortcuts" Guid="A84EFA8C-D422-4D5D-B55B-C4FCDD6ECE61" KeyPath="yes">
+							<Shortcut Id="CCTablePluginHelp" Directory="CcHelp" Name="CC Table Plug-in Help" Target="[#CCTableHelp]" Hotkey="0" IconIndex="0" Show="normal" WorkingDirectory="Help"/>
+							<!-- The next item is junk to make validation pass on ICE18 -->
+							<CreateFolder/>
+						</Component>
+					</Directory>
+				</Directory>
+			</Directory>
+
+		</Directory>
+	</Module>
+</Wix>
