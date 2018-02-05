@@ -1,48 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
 	<Module Id="PerlEcMM" Language="1033" Version="1.0.0.0">
-		<Package Id="9e8a69ef-1379-4fdf-8199-4e53539bb181" Keywords="Perl, Encoding Conversion, SILConverters" Description="Perl EncConverter merge module" Comments="Merge module containing the Perl EncConverter DLLs" Manufacturer="SIL International" InstallerVersion="200" />
+		<Package Id="9e8a69ef-1379-4fdf-8199-4e53539bb181" Keywords="Perl, Encoding Conversion, SILConverters" Description="Perl EncConverter merge module" Comments="Merge module containing the Perl EncConverter DLLs"
+						 Manufacturer="SIL International" InstallerVersion="200" />
 
 		<Directory Id="TARGETDIR" Name="SourceDir">
+			<Directory Id="MergeRedirectFolder">
+				<Component Id="PerlExpressionEC.dll" Guid="{7702FA46-2EF5-4D08-8344-AD4E91493558}">
+					<File Id="PerlExpressionEC.dll" KeyPath="yes" Source="..\..\output\Win32\release\PerlExpressionEC.dll" />
+				</Component>
+				<Directory Id="PerlECFolder" Name="EC">
+					<Directory Id="PerlPluginsFolder" Name="Plugins">
+						<Component Id="PerlEC4.0.0.0PluginDetails.xml" Guid="ED5D4121-0744-4694-A077-355A29EF0C61">
+							<File Id="PerlEC4.0.0.0PluginDetails.xml" Name="PerlEC512 4.0.0.0 Plugin Details.xml" Vital="yes" KeyPath="yes" Source="..\..\redist\EC\Plugins\PerlEC 4.0.0.0 Plugin Details.xml"/>
+						</Component>
+					</Directory>
+				</Directory>
+			</Directory>
 
-            <Directory Id="MergeRedirectFolder">
+			<Directory Id="CommonFilesFolder" SourceName="Common Files Folder">
+				<Directory Id="PerlSIL" Name="SIL">
+					<Directory Id="Help" Name="Help">
+						<Component Id="PerlHelp" Guid="{1809C1DA-A25D-496D-AE09-FF004D9A3CE7}">
+							<File Id="PerlHelp" Name="Perl Expression Plug-in About box.mht" KeyPath="yes" Source="..\..\redist\Help\Perl Expression Plug-in About box.mht"/>
+						</Component>
+					</Directory>
+				</Directory>
+			</Directory>
 
-                <Component Id="PerlExpressionEC.dll" Guid="{7702FA46-2EF5-4D08-8344-AD4E91493558}">
-                    <File Id="PerlExpressionEC.dll" KeyPath="yes" Source="..\..\output\Win32\release\PerlExpressionEC.dll" />
-                </Component>
+			<Directory Id="ProgramMenuFolder" Name="Program">
+				<Directory Id="SIL_Converters" Name="SIL Converters">
+					<Directory Id="PerlHelp" Name="Help">
+						<Component Id="HelpShortcuts" Guid="{A0359AA7-DCA5-4101-9502-D321CB11BFE9}" KeyPath="yes">
+							<Shortcut Id="PerlEcPluginHelp" Directory="PerlHelp" Name="Perl Expression Plug-in Help" Target="[#PerlHelp]" Hotkey="0" IconIndex="0" Show="normal" WorkingDirectory="Help"/>
+							<!-- The next item is junk to make validation pass on ICE18 -->
+							<CreateFolder/>
+						</Component>
+					</Directory>
+				</Directory>
+			</Directory>
 
-                <Directory Id="PerlECFolder" Name="EC">
-                    <Directory Id="PerlPluginsFolder" Name="Plugins">
-                        <Component Id="PerlEC4.0.0.0PluginDetails.xml" Guid="ED5D4121-0744-4694-A077-355A29EF0C61">
-                            <File Id="PerlEC4.0.0.0PluginDetails.xml" Name="PerlEC512 4.0.0.0 Plugin Details.xml" Vital="yes" KeyPath="yes" Source="..\..\redist\EC\Plugins\PerlEC 4.0.0.0 Plugin Details.xml"/>
-                        </Component>
-                    </Directory>
-                </Directory>
-
-            </Directory>
-
-            <Directory Id="CommonFilesFolder" SourceName="Common Files Folder">
-                <Directory Id="PerlSIL" Name="SIL">
-                    <Directory Id="Help" Name="Help">
-                        <Component Id="PerlHelp" Guid="{1809C1DA-A25D-496D-AE09-FF004D9A3CE7}">
-                            <File Id="PerlHelp" Name="Perl Expression Plug-in About box.mht" KeyPath="yes" Source="..\..\redist\Help\Perl Expression Plug-in About box.mht"/>
-                        </Component>
-                    </Directory>
-                </Directory>
-            </Directory>
-
-            <Directory Id="ProgramMenuFolder" Name="Program">
-                <Directory Id="SIL_Converters" Name="SIL Converters">
-                    <Directory Id="PerlHelp" Name="Help">
-                        <Component Id="HelpShortcuts" Guid="{A0359AA7-DCA5-4101-9502-D321CB11BFE9}" KeyPath="yes">
-                            <Shortcut Id="PerlEcPluginHelp" Directory="PerlHelp" Name="Perl Expression Plug-in Help" Target="[#PerlHelp]" Hotkey="0" IconIndex="0" Show="normal" WorkingDirectory="Help"/>
-                            <!-- The next item is junk to make validation pass on ICE18 -->
-                            <CreateFolder/>
-                        </Component>
-                    </Directory>
-                </Directory>
-            </Directory>
-
-        </Directory>
+		</Directory>
 	</Module>
 </Wix>
