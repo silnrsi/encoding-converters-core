@@ -1,52 +1,47 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
-using Microsoft.Win32;                  // for RegistryKey
 using ECInterfaces;                     // for IEncConverter
 
 namespace SilEncConverters40
 {
-    /// <summary>
-    /// Managed CC EncConverter
-    /// </summary>
-    [GuidAttribute("54E0185D-3603-4113-B323-E0222FAD4CCE")]
-    // normally these subclasses are treated as the base class (i.e. the 
-    //  client can use them orthogonally as IEncConverter interface pointers
-    //  so normally these individual subclasses would be invisible), but if 
-    //  we add 'ComVisible = false', then it doesn't get the registry 
-    //  'HKEY_CLASSES_ROOT\SilEncConverters40.TecEncConverter' which is the basis of 
-    //  how it is started (see EncConverters.AddEx).
-    // [ComVisible(false)] 
+	/// <summary>
+	/// Managed CC EncConverter
+	/// </summary>
+	[Guid("54E0185D-3603-4113-B323-E0222FAD4CCE")]
+	// normally these subclasses are treated as the base class (i.e. the
+	//  client can use them orthogonally as IEncConverter interface pointers
+	//  so normally these individual subclasses would be invisible), but if
+	//  we add 'ComVisible = false', then it doesn't get the registry
+	//  'HKEY_CLASSES_ROOT\SilEncConverters40.TecEncConverter' which is the basis of
+	//  how it is started (see EncConverters.AddEx).
+	// [ComVisible(false)]
 	public class CcEncConverter : EncConverter
-    {
-        #region DLLImport Statements
-        [DllImport("CC32.dll", EntryPoint = "CCLoadTable", SetLastError =true)]
-        static extern unsafe int CCLoadTable32(byte* lpszCCTableFile,
-            Int32* hpLoadHandle,
-            Int32 hinstCurrent);
+	{
+		#region DLLImport Statements
+		[DllImport("CC32.dll", EntryPoint = "CCLoadTable", SetLastError = true)]
+		static extern unsafe int CCLoadTable32(byte* lpszCCTableFile, IntPtr* hpLoadHandle, IntPtr hinstCurrent);
 
-        [DllImport("CC32.dll", EntryPoint = "CCUnloadTable", SetLastError =true)]
-        static extern unsafe int CCUnloadTable32(Int32 hUnlHandle);
+		[DllImport("CC32.dll", EntryPoint = "CCUnloadTable", SetLastError =true)]
+        static extern unsafe int CCUnloadTable32(IntPtr hUnlHandle);
 
         [DllImport("CC32.dll", EntryPoint = "CCProcessBuffer", SetLastError =true)]
-        static extern unsafe int CCProcessBuffer32(Int32 hProHandle,
-            byte* lpInputBuffer, int nInBufLen,
+        static extern unsafe int CCProcessBuffer32(IntPtr hProHandle, byte* lpInputBuffer, int nInBufLen,
             byte* lpOutputBuffer, int *npOutBufLen);
 
 	    [DllImport("CC64.dll", EntryPoint = "CCLoadTable", SetLastError = true)]
-	    static extern unsafe int CCLoadTable64(byte* lpszCCTableFile,
-		    Int32* hpLoadHandle,
-		    Int32 hinstCurrent);
+		static extern unsafe int CCLoadTable64(byte* lpszCCTableFile,
+		    IntPtr* hpLoadHandle,
+		    IntPtr hinstCurrent);
 
 	    [DllImport("CC64.dll", EntryPoint = "CCUnloadTable", SetLastError = true)]
-	    static extern unsafe int CCUnloadTable64(Int32 hUnlHandle);
+	    static extern unsafe int CCUnloadTable64(IntPtr hUnlHandle);
 
 	    [DllImport("CC64.dll", EntryPoint = "CCProcessBuffer", SetLastError = true)]
-	    static extern unsafe int CCProcessBuffer64(Int32 hProHandle,
-		    byte* lpInputBuffer, int nInBufLen,
+	    static extern unsafe int CCProcessBuffer64(IntPtr hProHandle, byte* lpInputBuffer, int nInBufLen,
 		    byte* lpOutputBuffer, int* npOutBufLen);
 
-	    private void CCUnloadTable(int tablehandle)
+	    private void CCUnloadTable(IntPtr tablehandle)
 	    {
 		    if (Environment.Is64BitProcess)
 		    {
@@ -58,14 +53,14 @@ namespace SilEncConverters40
 		    }
 	    }
 
-	    private unsafe int CCLoadTable(byte* pszTablePath, int* phTable, int hInstanceHandle)
+	    private unsafe int CCLoadTable(byte* pszTablePath, IntPtr* phTable, IntPtr hInstanceHandle)
 	    {
 		    return Environment.Is64BitProcess
 			    ? CCLoadTable64(pszTablePath, phTable, hInstanceHandle)
 			    : CCLoadTable32(pszTablePath, phTable, hInstanceHandle);
 	    }
 
-	    private unsafe int CCProcessBuffer(int hTable, byte* lpInBuffer, int nInLen, byte* lpOutBuffer, int* pnOut)
+	    private unsafe int CCProcessBuffer(IntPtr hTable, byte* lpInBuffer, int nInLen, byte* lpOutBuffer, int* pnOut)
 	    {
 		    return Environment.Is64BitProcess
 			    ? CCProcessBuffer64(hTable, lpInBuffer, nInLen, lpOutBuffer, pnOut)
@@ -74,9 +69,9 @@ namespace SilEncConverters40
 		#endregion DLLImport Statements
 
 		#region Member Variable Definitions
-		private Int32       m_hTable = 0;
-        private DateTime    m_timeModified = DateTime.MinValue;
-        private bool        m_bUseDelimiters = false;
+		private IntPtr m_hTable = IntPtr.Zero;
+        private DateTime m_timeModified = DateTime.MinValue;
+        private bool m_bUseDelimiters = false;
 
         public const string strDisplayName = "CC Table";
         public const string strHtmlFilename = "CC Table Plug-in About box.mht";
@@ -146,7 +141,7 @@ namespace SilEncConverters40
         #region Misc helpers
         protected bool IsFileLoaded()
         { 
-            return (m_hTable != 0);
+            return (m_hTable != IntPtr.Zero);
         }
 
         protected void Unload()
@@ -155,7 +150,7 @@ namespace SilEncConverters40
             if( IsFileLoaded() )
             {
                 CCUnloadTable(m_hTable);
-                m_hTable = 0;
+                m_hTable = IntPtr.Zero;
             }
         }
 
@@ -185,7 +180,7 @@ namespace SilEncConverters40
                 if( IsFileLoaded() )
                     Unload();
 
-                Int32 hInstanceHandle = 0;  // don't know what else to use here...
+	            IntPtr hInstanceHandle = IntPtr.Zero;  // don't know what else to use here...
 
                 byte [] baTablePathTemp = Encoding.ASCII.GetBytes(strTablePath);
                 byte [] baTablePath     = new byte[baTablePathTemp.Length + 1];
@@ -195,7 +190,7 @@ namespace SilEncConverters40
 
                 Util.DebugWriteLine(this, Util.getDisplayBytes("CC Table Name", baTablePath));
                 fixed(byte* pszTablePath = baTablePath)
-                    fixed(Int32* phTable = &m_hTable)
+                    fixed(IntPtr* phTable = &m_hTable)
                     {
                         Util.DebugWriteLine(this, "Calling CCLoadTable");
                         int status = 0;
