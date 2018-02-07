@@ -4,7 +4,7 @@ Section: libs
 Maintainer: Stephen McConnel <stephen_mcconnel@sil.org>
 Build-Depends: debhelper (>= 7.0.50~), autotools-dev, python-dev (>=2.6),
  dh-autoreconf, lsb-release, devscripts,
- mono-sil, libgdiplus-sil, geckofx29,
+ mono-sil, libgdiplus-sil,
  fieldworks-applications
 Standards-Version: 3.9.6
 Homepage: https://github.com/silnrsi/encoding-converters-core
@@ -12,7 +12,7 @@ Homepage: https://github.com/silnrsi/encoding-converters-core
 Package: fieldworks-enc-converters
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, mono-sil, libgdiplus-sil,
- libsilcc0, geckofx29
+ libsilcc0,
 Suggests: fieldworks
 Conflicts: enc-converters
 Replaces: fieldworks-applications (<< 8.2.0~)
