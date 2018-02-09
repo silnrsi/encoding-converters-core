@@ -28,6 +28,7 @@ LIBDIR      = @libdir@/fieldworks
 REGROOT     = /var/lib/fieldworks
 endif
 REGKEY      = $(REGROOT)/registry/LocalMachine/software/sil/silencconverters40
+TECKITLIBS  = $(shell pkg-config --variable=libdir teckit)
 
 SRCDIRS = src/IcuEC src/PyScriptEC src/ECDriver/linux
 DLLS    = ECInterfaces.dll SilEncConverters40.dll CcEC.dll \
@@ -50,7 +51,8 @@ debug:
 	  cp -p redist/EC/Plugins/"$$file" $(OUTDIR)/EC/Plugins; \
 	done
 	@if [ -z $(FIELDWORKS) ]; then cp -pR redist/Help $(OUTDIR); fi
-	@cp -p redist/libTECkit*.so $(OUTDIR)
+	# For now from libteckit-dev package. A further improvement would be modifying this package or FieldWorks to depend on libteckit0 and find the .so files where libteckit0 installs them.
+	@cp -pL $(TECKITLIBS)/libTECkit.so $(TECKITLIBS)/libTECkit_Compiler.so $(OUTDIR)
 	@cp -p src/EncCnvtrs/SilEncConverters40.dll.config $(OUTDIR)
 	@cp -p src/CcEC/CcEC.dll.config $(OUTDIR)
 	@cp -p src/TestEncCnvtrs/TestEncCnvtrs.dll.config $(OUTDIR)
@@ -66,7 +68,7 @@ release:
 	  cp -p redist/EC/Plugins/"$$file" $(RELEASEOUT)/EC/Plugins; \
 	done
 	@if [ -z $(FIELDWORKS) ]; then cp -pR redist/Help $(RELEASEOUT); fi
-	@cp -p redist/libTECkit*.so $(RELEASEOUT)
+	@cp -pL $(TECKITLIBS)/libTECkit.so $(TECKITLIBS)/libTECkit_Compiler.so $(RELEASEOUT)
 	@cp -p src/EncCnvtrs/SilEncConverters40.dll.config $(RELEASEOUT)
 	@cp -p src/CcEC/CcEC.dll.config $(RELEASEOUT)
 	@cp -p src/TestEncCnvtrs/TestEncCnvtrs.dll.config $(RELEASEOUT)
@@ -115,15 +117,8 @@ install: release
 	  cp -p redist/EC/Plugins/"$$file" $(DESTDIR)$(LIBDIR)/EC/Plugins; \
 	done
 	@if [ -z $(FIELDWORKS) ]; then cp -pR redist/Help $(DESTDIR)$(LIBDIR); fi
-	@if [ `uname -m` = "x86_64" ]; then \
-	for file in redist/libTECkit*x86_64.so; do \
-	  $(INSTALL) $$file $(DESTDIR)$(LIBDIR); \
-	done; \
-	else \
-	for file in redist/libTECkit*x86.so; do \
-	  $(INSTALL) $$file $(DESTDIR)$(LIBDIR); \
-	done; \
-	fi
+	@install $(TECKITLIBS)/libTECkit.so $(DESTDIR)$(LIBDIR)
+	@install $(TECKITLIBS)/libTECkit_Compiler.so $(DESTDIR)$(LIBDIR)
 	@cp -p src/EncCnvtrs/SilEncConverters40.dll.config $(DESTDIR)$(LIBDIR)
 	@cp -p src/CcEC/CcEC.dll.config $(DESTDIR)$(LIBDIR)
 	@cp -p $(RELEASEOUT)/PerlExpressionEC.dll.config $(DESTDIR)$(LIBDIR)
