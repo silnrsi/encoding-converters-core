@@ -31,7 +31,7 @@ override_dh_strip:
 	dh_strip = -k
 
 override_dh_shlibdeps:
-	dh_shlibdeps -l $(MONO_PREFIX)/lib -- -xfieldworks-applications
+	dh_shlibdeps -l$(MONO_PREFIX)/lib:/usr/lib/fieldworks/lib -- -xfieldworks-applications
 
 # don't try to run the tests while packaging!
 override_dh_auto_test:
