@@ -7,7 +7,7 @@ Build-Depends: debhelper (>= 7.0.50~), autotools-dev, python-dev (>=2.6),
  libteckit-dev,
  pkg-config,
  mono-sil, libgdiplus-sil,
- fieldworks-applications
+ icu-dev-fw | fieldworks-applications (<< 9.0.0~)
 Standards-Version: 3.9.6
 Homepage: https://github.com/silnrsi/encoding-converters-core
 
