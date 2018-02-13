@@ -6,6 +6,7 @@ Build-Depends: debhelper (>= 7.0.50~), autotools-dev, python-dev (>=2.6),
  dh-autoreconf, lsb-release, devscripts,
  libteckit-dev,
  pkg-config,
+ mono-runtime,
  mono-sil, libgdiplus-sil,
  icu-dev-fw | fieldworks-applications (<< 9.0.0~)
 Standards-Version: 3.9.6
