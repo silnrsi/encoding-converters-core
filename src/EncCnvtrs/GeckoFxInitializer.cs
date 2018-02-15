@@ -29,8 +29,18 @@ namespace SilEncConverters40
 		        return true;
 
             string xulRunnerPath;
-            if (!XulRunnerDirectoryOfApplicationOrLib(out xulRunnerPath))
-                return false;
+
+            // Use XULRUNNER environment variable if set
+            var xulrunnerLocation = Environment.GetEnvironmentVariable("XULRUNNER");
+            if (xulrunnerLocation != null)
+            {
+                xulRunnerPath = xulrunnerLocation;
+            }
+            else
+            {
+                if (!XulRunnerDirectoryOfApplicationOrLib(out xulRunnerPath))
+                    return false;
+            }
             Util.DebugWriteLine(className, "xulRunnerPath=" + xulRunnerPath);
 
 #if _MSC_VER
