@@ -163,6 +163,7 @@ publish/
 # in these scripts will be unencrypted
 PublishScripts/
 
+build/NuGet.exe
 # NuGet Packages
 *.nupkg
 # The packages folder can be ignored because of Package Restore
