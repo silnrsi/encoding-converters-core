@@ -13,6 +13,9 @@ export DH_OPTIONS=-v
 export MONO_PREFIX=/opt/mono-sil
 export FIELDWORKS=1
 
+# Help nuget by providing a writable settings directory.
+export XDG_CONFIG_HOME=$(shell mktemp -d --tmpdir xdg_config_home.XXXXX)
+
 %:
 	dh --with autoreconf $@
 
