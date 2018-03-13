@@ -143,9 +143,9 @@ namespace PyScriptEC
         {
             char strCmd[1000];
 #ifdef MSC_VER
-            _snprintf_s(strCmd, 1000, "import sys\nsys.path.append('%s')", strScriptDir);
+            _snprintf_s(strCmd, 1000, "import sys\nsys.path.append(r'%s')", strScriptDir);
 #else
-            snprintf(strCmd, 1000, "import sys\nsys.path.append('%s')", strScriptDir);
+            snprintf(strCmd, 1000, "import sys\nsys.path.append(r'%s')", strScriptDir);
 #endif
             strCmd[999] = 0;    // just in case...
             DebugOutput(sprintf(sprintfBuffer, "Running this python command:\n%s\n", strCmd));
