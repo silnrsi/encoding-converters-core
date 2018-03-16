@@ -16,6 +16,11 @@ In Linux,
     ./autogen.sh
     make
 
+In Windows,
+
+1. Open EncConverters 2015.sln in Visual Studio Community 2015.
+* Choose Build > Build Solution.
+
 ## Build NuGet packages
 
 To build new packages:
