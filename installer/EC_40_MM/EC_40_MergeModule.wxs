@@ -488,10 +488,10 @@
 					<File Id="EncConvertersAppDataMover40.exe" Name="EncConvertersAppDataMover40.exe" ReadOnly="yes" KeyPath="yes" Source="..\..\output\Win32\release\EncConvertersAppDataMover40.exe" Assembly=".net" AssemblyApplication="EncConvertersAppDataMover40.exe" AssemblyManifest="EncConvertersAppDataMover40.exe"/>
 				</Component>
 				<Component Id="Geckofx_Core.dll" Guid="{6D593BB5-F2DE-448A-A8A2-AD1F18B660F2}">
-					<File Id="Geckofx_Core.dll" Name="GeckoFx-Core.dll" Vital="yes" KeyPath="yes" AssemblyManifest="Geckofx_Core.dll" AssemblyApplication="Geckofx_Core.dll" Assembly=".net" Source="..\..\DistFiles\windows\Win32\geckofx\GeckoFx-Core.dll"/>
+					<File Id="Geckofx_Core.dll" Name="GeckoFx-Core.dll" Vital="yes" KeyPath="yes" AssemblyManifest="Geckofx_Core.dll" AssemblyApplication="Geckofx_Core.dll" Assembly=".net" Source="..\..\packages\Geckofx45.45.0.33\lib\net45\GeckoFx-Core.dll"/>
 				</Component>
 				<Component Id="Geckofx_Winforms.dll" Guid="{1C2D5110-4E5F-4DC3-9375-DA1D7C6643D0}">
-					<File Id="Geckofx_Winforms.dll" Name="Geckofx-Winforms.dll" Vital="yes" KeyPath="yes" AssemblyManifest="Geckofx_Winforms.dll" AssemblyApplication="Geckofx_Winforms.dll" Assembly=".net" Source="..\..\DistFiles\windows\Win32\geckofx\Geckofx-Winforms.dll"/>
+					<File Id="Geckofx_Winforms.dll" Name="Geckofx-Winforms.dll" Vital="yes" KeyPath="yes" AssemblyManifest="Geckofx_Winforms.dll" AssemblyApplication="Geckofx_Winforms.dll" Assembly=".net" Source="..\..\packages\Geckofx45.45.0.33\lib\net45\Geckofx-Winforms.dll"/>
 				</Component>
 				<Directory Id="ECFolder" Name="EC">
 					<Directory Id="PluginsFolder" Name="Plugins">
