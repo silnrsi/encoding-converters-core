@@ -61,7 +61,7 @@ debug: download_dependencies
 	  cp -p redist/EC/Plugins/"$$file" $(OUTDIR)/EC/Plugins; \
 	done
 	@if [ -z $(FIELDWORKS) ]; then cp -pR redist/Help $(OUTDIR); fi
-	# For now from libteckit-dev package. A further improvement would be modifying this package or FieldWorks to depend on libteckit0 and find the .so files where libteckit0 installs them.
+	@# For now from libteckit-dev package. A further improvement would be modifying this package or FieldWorks to depend on libteckit0 and find the .so files where libteckit0 installs them, and update the filename in SilEncConverters40.dll.config to match what comes from libteckit0.
 	@cp -pL $(TECKITLIBS)/libTECkit.so $(TECKITLIBS)/libTECkit_Compiler.so $(OUTDIR)
 	@cp -p src/EncCnvtrs/SilEncConverters40.dll.config $(OUTDIR)
 	@cp -p src/CcEC/CcEC.dll.config $(OUTDIR)
