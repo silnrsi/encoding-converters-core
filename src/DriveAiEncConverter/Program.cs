@@ -72,6 +72,19 @@ namespace DriveAiEncConverter
             var theEc = theECs[0];
             var strO = theEc.Convert(str);
             */
+
+            const string cstrFriendlyName = "UnitTesting-ThaiWordBreaker";
+            var theEcs = DirectableEncConverter.EncConverters;
+            theEcs.AddConversionMap(cstrFriendlyName, " ", ConvType.Unicode_to_from_Unicode,
+                        IcuBreakIteratorEncConverter.CstrImplementationType, "UNICODE", "UNICODE",
+                        ProcessTypeFlags.DontKnow);
+            var theEc = theEcs[cstrFriendlyName];
+            var inputText = "พักหลังๆนี่เวลาแก๊นจะตัดสินใจซื้ออะไรซักอย่างที่มันมีราคา จะคิดแล้วคิดอีก อย่างน้อยก็ทิ้งเวลาไว้ตั้งแต่";
+            var outputText = "พัก หลังๆ นี่ เวลา แก๊น จะ ตัดสิน ใจ ซื้อ อะไร ซัก อย่าง ที่ มัน มี ราคา จะ คิด แล้ว คิด อีก อย่าง น้อย ก็ ทิ้ง เวลา ไว้ ตั้งแต่";
+            System.Diagnostics.Debug.Assert(theEc.Convert(inputText) == outputText);
+            inputText = "我喜欢吃苹果。";
+            outputText = "我 喜欢 吃 苹果 。";
+            System.Diagnostics.Debug.Assert(theEc.Convert(inputText) == outputText);
         }
     }
 }

@@ -1,0 +1,28 @@
+﻿<!--
+	 Note: Using Microsoft WORD 2003 or later is not a good way to edit this xml file.
+	 Instead, use NotePad or WordPad. -->
+<KB docVersion="4" srcName="Mru" tgtName="Bangla" max="1">
+  <MAP mn="1">
+    <TU f="0" k="kown">
+      <RS n="1" a="ft t" />
+      <RS n="1" a="করব" />
+      <RS n="1" a="হবে" />
+      <RS n="1" a="জন্য" />
+      <RS n="1" a="মত" />
+      <RS n="1" a="দেবেন" />
+      <RS n="1" a="পাবে" />
+      <RS n="1" a="যাব" />
+      <RS n="1" a="যাবে" />
+      <RS n="1" a="করবে" />
+      <RS n="1" a="fut" />
+      <RS n="1" a="দেবে" />
+      <RS n="1" a="" />
+      <RS n="1" a="" />
+    </TU>
+    <TU f="0" k="">
+      <RS n="1" a="ft t" />
+      <RS n="1" a="" />
+      <RS n="1" a="" />
+    </TU>
+  </MAP>
+</KB>

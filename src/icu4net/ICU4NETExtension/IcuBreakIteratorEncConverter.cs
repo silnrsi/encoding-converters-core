@@ -3,7 +3,6 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading;
 using ECInterfaces;
 using ICU4NET;
 using ICU4NETExtension;
@@ -12,11 +11,11 @@ namespace SilEncConverters40
 {
     /// <summary>
     /// IcuBreakIteratorEncConverter implements the EncConverter interface to provide a 
-    /// wrapper for the break iterator project at: http://code.google.com/p/icu4net/
+    /// wrapper for the break iterator project at: https://github.com/niaher/icu-nuget
     /// which itself is a wrapper around ICU break iterator code at:
     /// http://userguide.icu-project.org/boundaryanalysis#TOC-BreakIterator-Boundary-Analysis-Exa
     /// </summary>
-    [GuidAttribute("5265D30D-7402-4D69-A620-D1D1611CAD4A")]
+    [GuidAttribute("325D632A-CC69-444C-9FEC-A663B675EB99")]
     public sealed class IcuBreakIteratorEncConverter : EncConverter
     {
         #region Member Variable Definitions

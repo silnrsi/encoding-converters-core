@@ -11,8 +11,8 @@ using System;                               // for CLSCompliantAttribute
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("SIL")]
 [assembly: AssemblyProduct("AdaptItEC")]
-[assembly: AssemblyCopyright("Copyright © 2003-2010 SIL. All rights reserved.")]
-[assembly: AssemblyTrademark("Copyright © 2003-2010 SIL. All rights reserved.")]
+[assembly: AssemblyCopyright("Copyright © 2003-2018 SIL. All rights reserved.")]
+[assembly: AssemblyTrademark("Copyright © 2003-2018 SIL. All rights reserved.")]
 [assembly: AssemblyCulture("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
@@ -34,4 +34,4 @@ using System;                               // for CLSCompliantAttribute
 // You can specify all the values or you can default the Revision and Build Numbers 
 // by using the '*' as shown below:
 [assembly: AssemblyVersion("4.0.0.0")]
-[assembly: AssemblyFileVersion("4.0.4.0")]
+[assembly: AssemblyFileVersion("4.0.5.0")]

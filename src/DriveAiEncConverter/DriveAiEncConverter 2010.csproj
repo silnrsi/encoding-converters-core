@@ -104,6 +104,16 @@
   <ItemGroup>
     <None Include="app.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\icu4net\ICU4NET\ICU4NET.vcxproj">
+      <Project>{71abf7d1-1b8f-4a39-a58f-2cfb904035ec}</Project>
+      <Name>ICU4NET</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\IcuEC\IcuEC 2010.csproj">
+      <Project>{d1bae593-a552-4f1a-8b08-5a1c27875c2f}</Project>
+      <Name>IcuEC 2010</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

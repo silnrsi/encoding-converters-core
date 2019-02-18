@@ -85,6 +85,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IcuBreakIteratorEncConverter.cs" />
     <Compile Include="IcuConvAutoConfigDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -118,6 +119,10 @@
       <Project>{3E4B908A-4F96-43C5-981B-1AA4B73CCC26}</Project>
       <Name>EncCnvtrs 2010</Name>
       <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\icu4net\ICU4NET\ICU4NET.vcxproj">
+      <Project>{71abf7d1-1b8f-4a39-a58f-2cfb904035ec}</Project>
+      <Name>ICU4NET</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -156,6 +161,41 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\..\DistFiles\windows\icu\bin\icudt57.dll">
+      <Link>icudt57.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\DistFiles\windows\icu\bin\icuin57.dll">
+      <Link>icuin57.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\DistFiles\windows\icu\bin\icuio57.dll">
+      <Link>icuio57.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\DistFiles\windows\icu\bin\icule57.dll">
+      <Link>icule57.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\DistFiles\windows\icu\bin\iculx57.dll">
+      <Link>iculx57.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\DistFiles\windows\icu\bin\icutu57.dll">
+      <Link>icutu57.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\DistFiles\windows\icu\bin\icuuc57.dll">
+      <Link>icuuc57.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\redist\EC\Plugins\IcuEC57 4.0.0.0 Plugin Details.xml">
+      <Link>EC\Plugins\IcuEC57 4.0.0.0 Plugin Details.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
@@ -165,9 +205,7 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>copy $(SolutionDir)DistFiles\windows\icu\bin\icuuc54.dll $(SolutionDir)output\debug
-copy $(SolutionDir)DistFiles\windows\icu\bin\icuin54.dll $(SolutionDir)output\debug
-copy $(SolutionDir)DistFiles\windows\icu\bin\icudt54.dll $(SolutionDir)output\debug
-</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
 </Project>

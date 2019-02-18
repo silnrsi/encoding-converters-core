@@ -35,7 +35,7 @@ namespace TestEncCnvtrs
 		/// ("fixture") is run.
 		/// </summary>
 		/// --------------------------------------------------------------------
-		[TestFixtureSetUp]
+		[SetUp]
 		public void InitForClass()
 		{
 				Util.DebugWriteLine(this, "BEGIN");
@@ -163,7 +163,7 @@ namespace TestEncCnvtrs
 		/// ("fixture") have been run.
 		/// </summary>
 		/// --------------------------------------------------------------------
-		[TestFixtureTearDown]
+		[TearDown]
 		public void CleanupForClass()
 		{
 			m_encConverters = null;

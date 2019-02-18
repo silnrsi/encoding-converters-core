@@ -108,8 +108,13 @@ namespace PyScriptEC
     int Initialize(char * strScriptFile, char * strScriptDir)
     {
         DebugOutput("CppInitialize() BEGIN\n");
-        DebugOutput(sprintf(sprintfBuffer, "strScriptFile '%s'\n", strScriptFile));
+#ifdef _MSC_BUILD
+		DebugOutput(sprintf_s(sprintfBuffer, "strScriptFile '%s'\n", strScriptFile));
+		DebugOutput(sprintf_s(sprintfBuffer, "strScriptDir '%s'\n", strScriptDir));
+#else
+		DebugOutput(sprintf(sprintfBuffer, "strScriptFile '%s'\n", strScriptFile));
         DebugOutput(sprintf(sprintfBuffer, "strScriptDir '%s'\n", strScriptDir));
+#endif
         if (initialized)
         {
             ResetPython();
@@ -142,13 +147,18 @@ namespace PyScriptEC
         if (strScriptDir != NULL)
         {
             char strCmd[1000];
-#ifdef MSC_VER
+#ifdef _MSC_BUILD
             _snprintf_s(strCmd, 1000, "import sys\nsys.path.append(r'%s')", strScriptDir);
 #else
             snprintf(strCmd, 1000, "import sys\nsys.path.append(r'%s')", strScriptDir);
 #endif
             strCmd[999] = 0;    // just in case...
-            DebugOutput(sprintf(sprintfBuffer, "Running this python command:\n%s\n", strCmd));
+
+#ifdef _MSC_BUILD
+			DebugOutput(sprintf_s(sprintfBuffer, "Running this python command:\n%s\n", strCmd));
+#else
+			DebugOutput(sprintf(sprintfBuffer, "Running this python command:\n%s\n", strCmd));
+#endif
 
             PyRun_SimpleString(strCmd);
             DebugOutput("Finished python command.\n");
@@ -156,7 +166,11 @@ namespace PyScriptEC
         }
 
         // turn the filename into a Python object name (Python import doesn't like .py extension)
-        DebugOutput(sprintf(sprintfBuffer, "ScriptFile '%s'\n", strScriptFile));
+#ifdef _MSC_BUILD
+		DebugOutput(sprintf_s(sprintfBuffer, "ScriptFile '%s'\n", strScriptFile));
+#else
+		DebugOutput(sprintf(sprintfBuffer, "ScriptFile '%s'\n", strScriptFile));
+#endif
         m_strScriptFile = _strdup(strScriptFile);   // save name for error messages
         char * strScriptName = _strdup(strScriptFile);
         char * pszExtension = strstr(strScriptName, ".py");
@@ -164,7 +178,11 @@ namespace PyScriptEC
             pszExtension[0] = '\0';  // truncate strScriptName at position of pszExtension
 
         // get the module point by the name
-        DebugOutput(sprintf(sprintfBuffer, "ScriptName '%s'\n", strScriptName));
+#ifdef _MSC_BUILD
+		DebugOutput(sprintf_s(sprintfBuffer, "ScriptName '%s'\n", strScriptName));
+#else
+		DebugOutput(sprintf(sprintfBuffer, "ScriptName '%s'\n", strScriptName));
+#endif
 
         m_pModule = PyImport_ImportModule(strScriptName);
         if( m_pModule == 0 )
@@ -175,7 +193,11 @@ namespace PyScriptEC
             ErrorOccurred();
             Py_Finalize();
 
-            DebugOutput(sprintf(sprintfBuffer, "PyScript: Unable to import script module '%s'! Is it locked? Does it have a syntax error? Is a Python distribution installed?", strScriptFile));
+#ifdef _MSC_BUILD
+			DebugOutput(sprintf_s(sprintfBuffer, "PyScript: Unable to import script module '%s'! Is it locked? Does it have a syntax error? Is a Python distribution installed?", strScriptFile));
+#else
+			DebugOutput(sprintf(sprintfBuffer, "PyScript: Unable to import script module '%s'! Is it locked? Does it have a syntax error? Is a Python distribution installed?", strScriptFile));
+#endif
 
             return /* CantOpenReadMap = */ -11;
         }
@@ -189,8 +211,11 @@ namespace PyScriptEC
         if(!MyPyCallable_Check(m_pFunc))
         {
             // gracefully disconnect from Python
-            DebugOutput(sprintf(sprintfBuffer, "PyScript: no callable function named '%s' in script module '%s'!",
-                                               m_strFuncName, strScriptFile));
+#ifdef _MSC_BUILD
+			DebugOutput(sprintf_s(sprintfBuffer, "PyScript: no callable function named '%s' in script module '%s'!", m_strFuncName, strScriptFile));
+#else
+			DebugOutput(sprintf(sprintfBuffer, "PyScript: no callable function named '%s' in script module '%s'!", m_strFuncName, strScriptFile));
+#endif
 
             ResetPython();
             return /* NameNotFound = */ -7;
@@ -284,8 +309,12 @@ namespace PyScriptEC
     {
         if( PyErr_Occurred() )
         {
-            DebugOutput(sprintf(sprintfBuffer, "Error occurred while executing %s() in %s.\n",
-                                               m_strFuncName, m_strScriptFile));
+#ifdef _MSC_BUILD
+			DebugOutput(sprintf_s(sprintfBuffer, "Error occurred while executing %s() in %s.\n", m_strFuncName, m_strScriptFile));
+#else
+			DebugOutput(sprintf(sprintfBuffer, "Error occurred while executing %s() in %s.\n", m_strFuncName, m_strScriptFile));
+#endif
+                                               
             PyErr_Print();
             PyErr_Clear();
 
@@ -307,8 +336,13 @@ namespace PyScriptEC
     )
     {
         DebugOutput("CppDoConvert() BEGIN\n");
-        DebugOutput(sprintf(sprintfBuffer, "nInLen = %d, rnOutLen = %d\n", nInLen, rnOutLen));
+#ifdef _MSC_BUILD
+		DebugOutput(sprintf_s(sprintfBuffer, "nInLen = %d, rnOutLen = %d\n", nInLen, rnOutLen));
+        DebugOutput(sprintf_s(sprintfBuffer, "sizeof(Py_UNICODE) = %d\n", sizeof(Py_UNICODE)));
+#else
+		DebugOutput(sprintf(sprintfBuffer, "nInLen = %d, rnOutLen = %d\n", nInLen, rnOutLen));
         DebugOutput(sprintf(sprintfBuffer, "sizeof(Py_UNICODE) = %d\n", sizeof(Py_UNICODE)));
+#endif
 
         PyObject* pValue = 0;
         switch(m_eStringDataTypeIn)
@@ -339,8 +373,11 @@ namespace PyScriptEC
         {
             ResetPython();
 
-            DebugOutput(sprintf(sprintfBuffer, "PyScript: Can't convert input data '%s' to a form that Python can read!?\n", 
-                                             lpInBuffer));
+#ifdef _MSC_BUILD
+			DebugOutput(sprintf_s(sprintfBuffer, "PyScript: Can't convert input data '%s' to a form that Python can read!?\n", lpInBuffer));
+#else
+			DebugOutput(sprintf(sprintfBuffer, "PyScript: Can't convert input data '%s' to a form that Python can read!?\n", lpInBuffer));
+#endif
 
             return /* IncompleteChar = */ -8;
         }
@@ -436,22 +473,38 @@ namespace PyScriptEC
         {
             if( nOut > (int)rnOutLen )
             {
-                DebugOutput(sprintf(sprintfBuffer, "Too long: '%s'\n", (char *)lpOutValue));
+#ifdef _MSC_BUILD
+				DebugOutput(sprintf_s(sprintfBuffer, "Too long: '%s'\n", (char *)lpOutValue));
+#else
+				DebugOutput(sprintf(sprintfBuffer, "Too long: '%s'\n", (char *)lpOutValue));
+#endif
 
                 hr = /* NotEnoughBuffer = */ -17;
             }
             else
             {
                 rnOutLen = nOut;
-                DebugOutput(sprintf(sprintfBuffer, "copying to length %d\n", (int)nOut));
+#ifdef _MSC_BUILD
+				DebugOutput(sprintf_s(sprintfBuffer, "copying to length %d\n", (int)nOut));
+#else
+				DebugOutput(sprintf(sprintfBuffer, "copying to length %d\n", (int)nOut));
+#endif
 
                 if( nOut > 0 )
                     memcpy(lpOutBuffer,lpOutValue,nOut);
-                DebugOutput(sprintf(sprintfBuffer, "length of outBuffer = %u\n", (unsigned)strlen(lpOutBuffer)));
+
+#ifdef _MSC_BUILD
+				DebugOutput(sprintf_s(sprintfBuffer, "length of outBuffer = %u\n", (unsigned)strlen(lpOutBuffer)));
+#else
+				DebugOutput(sprintf(sprintfBuffer, "length of outBuffer = %u\n", (unsigned)strlen(lpOutBuffer)));
+#endif
 
                 lpOutBuffer[nOut] = '\0';   // end the string here
-                    DebugOutput(sprintf(sprintfBuffer, "length of outBuffer = %u\n", (unsigned)strlen(lpOutBuffer)));
-
+#ifdef _MSC_BUILD
+				DebugOutput(sprintf_s(sprintfBuffer, "length of outBuffer = %u\n", (unsigned)strlen(lpOutBuffer)));
+#else
+				DebugOutput(sprintf(sprintfBuffer, "length of outBuffer = %u\n", (unsigned)strlen(lpOutBuffer)));
+#endif
             }
         }
 

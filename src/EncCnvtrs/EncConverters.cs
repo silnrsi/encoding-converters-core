@@ -186,6 +186,19 @@ namespace SilEncConverters40
             GetConversionEnginesSupported();
         }
 
+        private string _pathToRepository;
+        public EncConverters(string pathToRepository)
+        {
+            // get the names and prog ids of the supported conversion engine (wrappers)
+            //  from the registry.    
+            _pathToRepository = pathToRepository;
+            GetConversionEnginesSupported();
+
+            // load the "actual converters" (i.e. those supported by implementors of the
+            //  IEncConverter interface)
+            AddActualConverters();
+        }
+
         /// <summary>
         /// Reinitialize()
         /// Re-load everything from the repository data store.
@@ -2543,7 +2556,7 @@ namespace SilEncConverters40
             string sKey = (string)Key.ToString();
             string sValue = (string)Value.ToString();
 
-            mappingRegistry file = GetRepositoryFile();
+            mappingRegistry file = RepositoryFile;
             switch (aECAttributes.Type)
             {
                 case AttributeType.Converter:
@@ -2682,7 +2695,7 @@ namespace SilEncConverters40
             Util.DebugWriteLine(this, "BEGIN");
             string sKey = (string)Key;
             RemoveNonPersist(sKey);
-            mappingRegistry file = EncConverters.GetRepositoryFile();
+            mappingRegistry file = RepositoryFile;
             switch (aECAttributes.Type)
             {
                 case AttributeType.Converter:
@@ -3973,16 +3986,20 @@ namespace SilEncConverters40
         /// that want to access the information in the repository not otherwise available from this interface
         /// </summary>
         /// <returns></returns>
-        public static mappingRegistry GetRepositoryFile()
+        public mappingRegistry GetRepositoryFile()
         {
             Util.DebugWriteLine(className, "BEGIN");
-            string strRepositoryFile = GetRepositoryFileName();
+            
+            // for some ctors, the path to the repo has to be given (e.g. website, where it won't have access to registry keys)
+            string strRepositoryFile = _pathToRepository ?? GetRepositoryFileName();
 
             // create the 'data set' that goes with our schema and read the file
             mappingRegistry file = new mappingRegistry();
 
             try
             {
+                if (!File.Exists(strRepositoryFile))
+                    throw new ApplicationException("can't find " + strRepositoryFile);
                 file.ReadXml(strRepositoryFile);
             }
             catch

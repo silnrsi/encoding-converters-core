@@ -15,7 +15,7 @@ using SilEncConverters40.Properties;
 namespace SilEncConverters40
 {
     [ClassInterface(ClassInterfaceType.None)]
-    internal class TargetWordElement
+    public class TargetWordElement
     {
         public const string CstrElementNameTargetWord = "RS";
         public const string CstrAttributeNameNumberOfOccurrences = "n";
@@ -134,7 +134,7 @@ namespace SilEncConverters40
     }
 
     [ClassInterface(ClassInterfaceType.None)]
-    internal class SourceWordElement
+    public class SourceWordElement
     {
         public const string CstrElementNameSourceWord = "TU";
         public const string CstrAttributeNameForce = "f";
@@ -280,7 +280,7 @@ namespace SilEncConverters40
     }
 
     [ClassInterface(ClassInterfaceType.None)]
-    internal class MapOfSourceWordElements
+    public class MapOfSourceWordElements
     {
         public int NumOfWordsPerPhrase;
 
@@ -390,7 +390,7 @@ namespace SilEncConverters40
     }
 
     [ClassInterface(ClassInterfaceType.None)]
-    internal class MapOfMaps
+    public class MapOfMaps
     {
         public string DocVersion { get; set; }
         public string KbVersion { get; set; }
@@ -433,7 +433,13 @@ namespace SilEncConverters40
             if (!File.Exists(strFilename))
                 EncConverters.ThrowError(ErrStatus.CantOpenReadMap, strFilename);
 
-            var doc = XDocument.Load(strFilename);
+            var contents = File.ReadAllText(strFilename);
+            return ParseXml(contents);
+        }
+
+        public static MapOfMaps ParseXml(string contents)
+        {
+            var doc = XDocument.Parse(contents);
 
             // determine if this is the new or old KB format (old: {docVersion}; 
             //  new: {kbVersion})
@@ -447,16 +453,16 @@ namespace SilEncConverters40
                                      : null;
             attr = elemKb.Attribute(CstrAttributeNameDocVersion);
             var mapOfMaps = new MapOfMaps(elemKb)
-                                {
-                                    XDocument = doc, 
-                                    IsKbV2 = (attr == null),
-                                    SrcLangName = strSrcLanguage,
-                                    TgtLangName = strTgtLanguage
-                                };
+            {
+                XDocument = doc,
+                IsKbV2 = (attr == null),
+                SrcLangName = strSrcLanguage,
+                TgtLangName = strTgtLanguage
+            };
 
             return mapOfMaps;
         }
-        
+
         public SourceWordElement AddCouplet(string strLhs, string strRhs)
         {
             Debug.Assert(!String.IsNullOrEmpty(strLhs) && !String.IsNullOrEmpty(strRhs));
@@ -592,25 +598,16 @@ namespace SilEncConverters40
         private static void CleanUpDocument(ref XDocument doc)
         {
             // get rid of the TU[@k = ""]
-            var strXPath = FormatXpath(SourceWordElement.CstrElementNameSourceWord,
-                                       SourceWordElement.CstrAttributeNameSourceWord,
-                                       String.Empty);
-            PergeXPath(ref doc, strXPath);
-
-            // get rid of the RS[@a = ""]
-            strXPath = FormatXpath(TargetWordElement.CstrElementNameTargetWord,
-                                   TargetWordElement.CstrAttributeNameTargetWord,
-                                   String.Empty);
-            PergeXPath(ref doc, strXPath);
-        }
-
-        private static void PergeXPath(ref XDocument doc, string strXPath)
-        {
-            XElement elem;
-            while ((elem = doc.XPathSelectElement(strXPath)) != null)
+            foreach (var elem in doc.Root.Descendants(SourceWordElement.CstrElementNameSourceWord)
+                                         .Where(e => String.IsNullOrEmpty(e.Attribute(SourceWordElement.CstrAttributeNameSourceWord)?.Value))
+                                         .ToList())
             {
-                Debug.Assert(false, String.Format("oops, found: {0} in the KB... removing",
-                                                  elem));
+                elem.Remove();
+            }
+            foreach (var elem in doc.Root.Descendants(TargetWordElement.CstrElementNameTargetWord)
+                                         .Where(e => String.IsNullOrEmpty(e.Attribute(TargetWordElement.CstrAttributeNameTargetWord)?.Value))
+                                         .ToList())
+            {
                 elem.Remove();
             }
         }

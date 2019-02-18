@@ -751,7 +751,7 @@ namespace SilEncConverters40
             return null;
         }
 
-        internal void SaveMapOfMaps(MapOfMaps mapOfMaps)
+        public void SaveMapOfMaps(MapOfMaps mapOfMaps)
         {
             mapOfMaps.SaveFile(m_strKnowledgeBaseFileSpec);
 

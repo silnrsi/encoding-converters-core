@@ -5,5 +5,5 @@
 #pragma once
 
 #include <unicode/brkiter.h>
-#include <unicode/translit.h>
 #include <vcclr.h>
+
