@@ -28,7 +28,8 @@ ICULIBS = -licuuc -licui18n
 ICUINCLUDE = 
 else
 LIBDIR = $(exec_prefix)/lib/fieldworks
-ICULIBS := -L$(LIBDIR) -licuuc -licui18n
+# icu-config from FW 8.3 (< 9) or icu-fw.
+ICULIBS := $(shell /usr/lib/fieldworks/icu-bin/icu-config --ldflags)
 ICUINCLUDE := -I$(ROOTDIR)/include
 endif
 

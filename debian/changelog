@@ -1,26 +1,36 @@
-enc-converters (4.0.3) precise; urgency=low
+fieldworks-enc-converters (4.0.7) precise; urgency=low
+
+  * Add Replaces and Breaks to ease upgrading fieldworks-applications from 8.1.4.
+
+ -- Brent McCarthy <brent_mccarthy@sil.org>  Tue, 11 Aug 2015 12:54:57 -0600
+
+fieldworks-enc-converters (4.0.6) stable; urgency=medium
+
+  * Use HKCU before HKLM
+  * Use ICU from /usr/lib/fieldworks
+
+ -- Brent McCarthy <brent_mccarthy@sil.org>  Tue, 18 Aug 2015 11:42:41 -0600
+
+fieldworks-enc-converters (4.0.5) precise; urgency=low
+
+  * Fix debian-fieldworks registry value.
+
+ -- Brent McCarthy <brent_mccarthy@sil.org>  Thu, 21 Apr 2015 10:36:00 -0500
+
+fieldworks-enc-converters (4.0.4) precise; urgency=low
+
+  * Update debian-fieldworks to address registry issue.
+
+ -- Brent McCarthy <brent_mccarthy@sil.org>  Thu, 16 Apr 2015 10:36:00 -0500
+
+fieldworks-enc-converters (4.0.3) precise; urgency=low
 
   * Fixed broken postinst script.
 
  -- Stephen McConnel <stephen_mcconnel@sil.org>  Thu, 16 Apr 2015 10:36:00 -0500
 
-enc-converters (4.0.2) precise; urgency=low
+fieldworks-enc-converters (4.0.2) precise; urgency=low
 
-  * Two years worth of minor (?) bugfixes.
-  * Simplified standard debian packaging.
+  * First package built explicitly to go with fieldworks using mono-sil.
 
- -- Stephen McConnel <stephen_mcconnel@sil.org>  Wed, 15 Apr 2015 16:38:32 -0500
-
-enc-converters (4.0.1) precise; urgency=low
-
-  * Fix Mono related bug in AutoConfigDialog.
-  * Tailor the build for FieldWorks 7.0 on Linux.
-
- -- Stephen McConnel <stephen_mcconnel@sil.org>  Mon, 23 Jan 2012 15:39:47 -0600
-
-enc-converters (4.0-1) maverick; urgency=low
-
-  * Initial release (Closes: FWNX-702, getting encoding converters to run on
-    linux)
-
- -- Stephen McConnel <stephen_mcconnel@sil.org>  Mon, 23 Jan 2012 15:39:47 -0600
+ -- Stephen McConnel <stephen_mcconnel@sil.org>  Tue, 14 Apr 2015 17:24:37 -0500

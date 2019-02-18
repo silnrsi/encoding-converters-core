@@ -1,18 +1,27 @@
-Source: enc-converters
+Source: fieldworks-enc-converters
 Priority: optional
+Section: libs
 Maintainer: Stephen McConnel <stephen_mcconnel@sil.org>
 Build-Depends: debhelper (>= 7.0.50~), autotools-dev, python-dev (>=2.6),
- dh-autoreconf, libicu-dev, lsb-release, devscripts, mono-devel,
- mono-gmcs, geckofx29
-Standards-Version: 3.9.1
-Section: libs
-Homepage: http://hg.palaso.org/ec-main
+ dh-autoreconf, lsb-release, devscripts,
+ libteckit-dev,
+ pkg-config,
+ mono-runtime,
+ mono-sil, libgdiplus-sil,
+ icu-dev-fw | fieldworks-applications (<< 9.0.0~),
+ wget
+Standards-Version: 3.9.6
+Homepage: https://github.com/silnrsi/encoding-converters-core
 
-Package: enc-converters
-Section: libs
+Package: fieldworks-enc-converters
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, libsilcc0, geckofx29
-Conflicts: fieldworks-enc-converters
+Depends: ${shlibs:Depends}, ${misc:Depends}, mono-sil, libgdiplus-sil,
+ libsilcc0,
+Suggests: fieldworks
+Conflicts: enc-converters
+Replaces: fieldworks-applications (<< 8.2.0~)
+Breaks: fieldworks-applications (<< 8.2.0~)
 Description: Encoding Converter libraries.
  This provides a uniform interface to a variety of character encoding
- converters.
+ converters.  This is designed to be used with fieldworks, building and
+ running with the special version of mono distributed with fieldworks.

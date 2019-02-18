@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Encoding-Converters-Core</id>
+    <version>0.0.6</version>
+    <authors>Bob Eaton, Jim Kornelson, SIL International</authors>
+    <owners>jnaylor, sillsdev</owners>
+    <licenseUrl>http://www.opensource.org/licenses/mit-license.php</licenseUrl>
+    <projectUrl>https://github.com/silnrsi/encoding-converters-core</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Libraries and merge modules for core encoding converter functionality.</description>
+    <releaseNotes>Include plugin definitions, tlb, and exe files</releaseNotes>
+    <copyright>Copyright 2017</copyright>
+    <tags></tags>
+  </metadata>
+  <files>
+	<file src="ReadMe.md" />
+	<file src="output\Win32\Release\*.dll" target="lib\net40\Win32" />
+	<file src="output\Win32\Release\*.tlb" target="lib\net40\Win32" />
+	<file src="output\Win32\Release\*.exe" target="lib\net40\Win32" />
+	<file src="output\x64\Release\*.dll" target="lib\net40\x64" />
+	<file src="output\x64\Release\*.tlb" target="lib\net40\x64" />
+	<file src="output\x64\Release\*.exe" target="lib\net40\x64" />
+	<file src="installer\MergeModules\*.msm" target="MergeModules" />
+	<file src="redist\EC\Plugins\*.xml" target="Plugins" />
+  </files>
+</package>

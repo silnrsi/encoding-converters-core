@@ -17,6 +17,9 @@ set -e
 # for details, see http://www.debian.org/doc/debian-policy/ or
 # the debian-policy package
 
+FW_LIBDIR=/usr/lib/fieldworks
+VAR_LIBDIR=/var/lib/fieldworks
+
 CONFFILE=/etc/ld.so.conf.d/encConverters.conf
 if [ -f $CONFFILE ]; then
     mv $CONFFILE $CONFFILE.OLD
@@ -28,8 +31,8 @@ fi
 
 case "$1" in
     configure)
-        echo /usr/lib/encConverters>$CONFFILE
-        cd /usr/lib/encConverters
+        echo $FW_LIBDIR>$CONFFILE
+        cd $FW_LIBDIR
         CPU_ARCH=$(uname -m)
         ARCH_EXT=""
         if [ "$CPU_ARCH" = "x86_64" ]; then
@@ -41,8 +44,8 @@ case "$1" in
         done
         # set up the registry for the general case
         mkdir -p $(dirname $GLOBALREGFILE)
-        if [ -f /var/lib/encConverters/registry/LocalMachine/software/sil/silencconverters40/values.xml ]; then
-            cp /var/lib/encConverters/registry/LocalMachine/software/sil/silencconverters40/values.xml $GLOBALREGFILE
+        if [ -f $VAR_LIBDIR/registry/LocalMachine/software/sil/silencconverters40/values.xml ]; then
+            cp $VAR_LIBDIR/registry/LocalMachine/software/sil/silencconverters40/values.xml $GLOBALREGFILE
         fi
     ;;
 

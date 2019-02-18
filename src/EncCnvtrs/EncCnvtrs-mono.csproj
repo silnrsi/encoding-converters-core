@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>..\..\output\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
@@ -9,7 +9,7 @@
     <Optimize>true</Optimize>
     <RegisterForComInterop>true</RegisterForComInterop>
     <DebugType>full</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
     <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
     <ErrorReport>prompt</ErrorReport>
@@ -27,7 +27,7 @@
     <SccProvider>
     </SccProvider>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ApplicationIcon>TRFFC17.ICO</ApplicationIcon>
     <AssemblyKeyContainerName>
     </AssemblyKeyContainerName>
@@ -68,7 +68,7 @@
     <BootstrapperEnabled>true</BootstrapperEnabled>
     <TargetFrameworkProfile />
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>..\..\output\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
@@ -76,7 +76,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <RegisterForComInterop>true</RegisterForComInterop>
     <DebugType>full</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
     <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
     <ErrorReport>prompt</ErrorReport>
@@ -87,13 +87,37 @@
       <Private>False</Private>
       <HintPath>..\..\output\Debug\ECInterfaces.dll</HintPath>
     </Reference>
-    <Reference Include="geckofx-core-14">
-      <HintPath>/usr/lib/cli/geckofx-14.0.1/geckofx-core-14.dll</HintPath>
-      <HintPath>/usr/lib/cli/geckofx-29/Geckofx-Core.dll</HintPath>
+    <Reference Include="Geckofx-Core" Condition="'$(Platform)' == 'x64' and '$(OS)'=='Windows_NT'">
+      <Private>False</Private>
+      <HintPath>../../packages/Geckofx45.64.45.0.33/lib/net40/Geckofx-Core.dll</HintPath>
     </Reference>
-    <Reference Include="Geckofx-Winforms-14">
-      <HintPath>/usr/lib/cli/geckofx-14.0.1/Geckofx-Winforms-14.dll</HintPath>
-      <HintPath>/usr/lib/cli/geckofx-29/Geckofx-Winforms.dll</HintPath>
+    <Reference Include="Geckofx-Winforms" Condition="'$(Platform)' == 'x64' and '$(OS)'=='Windows_NT'">
+      <Private>False</Private>
+      <HintPath>../../packages/Geckofx45.64.45.0.33/lib/net40/Geckofx-Core.dll</HintPath>
+    </Reference>
+      <Reference Include="Geckofx-Core" Condition="('$(Platform)' == 'x86' or '$(Platform)' == 'AnyCPU') and '$(OS)'=='Windows_NT'">
+      <Private>False</Private>
+      <HintPath>../../packages/Geckofx45.45.0.33/lib/net40/Geckofx-Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Geckofx-Winforms" Condition="('$(Platform)' == 'x86' or '$(Platform)' == 'AnyCPU') and '$(OS)'=='Windows_NT'">
+      <Private>False</Private>
+      <HintPath>../../packages/Geckofx45.45.0.33/lib/net40/Geckofx-Core.dll</HintPath>
+    </Reference>
+      <Reference Include="Geckofx-Core" Condition="'$(Platform)' == 'x64' and '$(OS)'!='Windows_NT'">
+      <Private>False</Private>
+      <HintPath>../../packages/Geckofx45.64.Linux.45.0.21.0/lib/net40/Geckofx-Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Geckofx-Winforms" Condition="'$(Platform)' == 'x64' and '$(OS)'!='Windows_NT'">
+      <Private>False</Private>
+      <HintPath>../../packages/Geckofx45.64.Linux.45.0.21.0/lib/net40/Geckofx-Core.dll</HintPath>
+    </Reference>
+      <Reference Include="Geckofx-Core" Condition="('$(Platform)' == 'x86' or '$(Platform)' == 'AnyCPU') and '$(OS)'!='Windows_NT'">
+      <Private>False</Private>
+      <HintPath>../../packages/Geckofx45.32.Linux.45.0.21.0/lib/net40/Geckofx-Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Geckofx-Winforms" Condition="('$(Platform)' == 'x86' or '$(Platform)' == 'AnyCPU') and '$(OS)'!='Windows_NT'">
+      <Private>False</Private>
+      <HintPath>../../packages/Geckofx45.32.Linux.45.0.21.0/lib/net40/Geckofx-Core.dll</HintPath>
     </Reference>
     <Reference Include="System">
       <Name>System</Name>
