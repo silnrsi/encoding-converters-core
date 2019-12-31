@@ -16,4 +16,4 @@ fi
 echo PATH=$PATH
 echo LD_LIBRARY_PATH=$LD_LIBRARY_PATH
 shift 2
-xbuild "$@"
+msbuild "$@"
