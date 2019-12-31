@@ -164,6 +164,7 @@ publish/
 PublishScripts/
 
 build/NuGet.exe
+build/nuget.exe
 # NuGet Packages
 *.nupkg
 # The packages folder can be ignored because of Package Restore

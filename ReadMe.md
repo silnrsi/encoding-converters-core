@@ -46,5 +46,5 @@ In Windows,
 To build new packages:
 1. Run a release build for both 32 and 64bit
 2. Increase the version in Package.nuspec
-3. Run 'NuGet.exe pack' from the root directory of the repository
+3. Run 'nuget.exe pack' from the root directory of the repository
 
