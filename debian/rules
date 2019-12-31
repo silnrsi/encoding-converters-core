@@ -10,7 +10,7 @@
 export DH_VERBOSE=1
 export DH_OPTIONS=-v
 
-export MONO_PREFIX=/opt/mono-sil
+export MONO_PREFIX=/opt/mono5-sil
 export FIELDWORKS=1
 
 # Help nuget by providing a writable settings directory.
