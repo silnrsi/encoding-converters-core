@@ -1,7 +1,7 @@
 # environment settings to build fieldworks encoding converters.
 #
 # Source, not run, this file
-# TODO It would probably be good to combine this with xbuild.sh. And debian/rules.
+# TODO It would probably be good to combine this with msbuild.sh. And debian/rules.
 
 export PATH="/opt/mono5-sil/bin:$PATH"
 export FIELDWORKS=1
