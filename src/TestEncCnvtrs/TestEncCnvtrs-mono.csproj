@@ -59,7 +59,7 @@
       <HintPath>..\..\output\Debug\IcuEC.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework">
-      <HintPath>..\..\..\..\..\..\usr\lib\mono\gac\nunit.framework\2.5.10.0__96d09a1eb7f44a77\nunit.framework.dll</HintPath>
+      <HintPath>../../packages/NUnit.2.6.4/lib/nunit.framework.dll</HintPath>
     </Reference>
   </ItemGroup>
 </Project>
