@@ -19,24 +19,47 @@ namespace SilEncConverters40
 		[DllImport("IcuConvEC.dll", EntryPoint = "IcuConvEC_ConverterNameList_start", CallingConvention = CallingConvention.Cdecl)]
 		static extern unsafe int CppConverterNameList_start();
 
-#if __MonoCS__
-		[DllImport("IcuConvEC.dll", EntryPoint = "IcuConvEC_ConverterNameList_next", CallingConvention = CallingConvention.Cdecl)]
+        static string CppConverterNameList_next()
+        {
+            if (Util.IsUnix)
+            {
+                return CppConverterNameList_next_Linux();
+            }
+            else
+            {
+                return CppConverterNameList_next_Windows();
+            }
+        }
+
+        static string CppGetDisplayName(string strID)
+        {
+            if (Util.IsUnix)
+            {
+                return CppGetDisplayName_Linux(strID);
+            }
+            else
+            {
+                return CppGetDisplayName_Windows(strID);
+            }
+        }
+
+        [DllImport("IcuConvEC.dll", EntryPoint = "IcuConvEC_ConverterNameList_next", CallingConvention = CallingConvention.Cdecl)]
 		[return : MarshalAs(UnmanagedType.LPStr)]
-		static extern string CppConverterNameList_next();
+		static extern string CppConverterNameList_next_Linux();
 
 		[DllImport("IcuConvEC.dll", EntryPoint = "IcuConvEC_GetDisplayName", CallingConvention = CallingConvention.Cdecl)]
 		[return: MarshalAs(UnmanagedType.LPStr)]
-		static extern string CppGetDisplayName(
+		static extern string CppGetDisplayName_Linux(
 			[MarshalAs(UnmanagedType.LPStr)] string strID);
-#else
+
         [DllImport("IcuConvEC.dll", EntryPoint = "IcuConvEC_ConverterNameList_next", CallingConvention = CallingConvention.Cdecl)]
         [return: MarshalAs(UnmanagedType.BStr)]
-        static extern string CppConverterNameList_next();
+        static extern string CppConverterNameList_next_Windows();
 
         [DllImport("IcuConvEC.dll", EntryPoint = "IcuConvEC_GetDisplayName", CallingConvention = CallingConvention.Cdecl)]
         [return: MarshalAs(UnmanagedType.BStr)]
-        static extern string CppGetDisplayName([MarshalAs(UnmanagedType.LPStr)] string strID);
-#endif
+        static extern string CppGetDisplayName_Windows([MarshalAs(UnmanagedType.LPStr)] string strID);
+
         #endregion DLLImport Statements
 
 		public IcuConvAutoConfigDialog (

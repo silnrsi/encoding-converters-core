@@ -67,11 +67,12 @@ namespace SilEncConverters40
             if (Directory.Exists(xulRunnerPath))
                 return true;
 
-#if __MonoCS__
-            xulRunnerPath = "/usr/lib/xulrunner-geckofx";
-            if (Directory.Exists(xulRunnerPath))
-                return true;
-#endif
+            if (Util.IsUnix)
+            {
+                xulRunnerPath = "/usr/lib/xulrunner-geckofx";
+                if (Directory.Exists(xulRunnerPath))
+                    return true;
+            }
 
             //if this is a programmer, go look in the lib directory
             char sep = Path.DirectorySeparatorChar;
@@ -107,13 +108,14 @@ namespace SilEncConverters40
         {
             get
             {
-#if __MonoCS__
-                return new LinkLabel
+                if (Util.IsUnix)
+                {
+                    return new LinkLabel
                     {
                         Text = "To use Mozilla to display the help file, install the firefox-geckofx package.",
                         Dock = DockStyle.Fill
                     };
-#else
+                }
                 const string cstrLinkPrefix = "To use Mozilla to display the help file, download xulRunner from ";
                 const string cstrXulRunnerLink = "http://ftp.mozilla.org/pub/mozilla.org/xulrunner/releases/14.0.1/runtimes";
                 var labelInstructions = new LinkLabel
@@ -135,7 +137,6 @@ namespace SilEncConverters40
                     Process.Start(args.Link.LinkData as string);
                 };
                 return labelInstructions;
-#endif
             }
         }
     }  

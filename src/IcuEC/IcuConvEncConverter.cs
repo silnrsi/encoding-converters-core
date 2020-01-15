@@ -33,24 +33,45 @@ namespace SilEncConverters40
 		[DllImport("IcuConvEC.dll", EntryPoint = "IcuConvEC_ConverterNameList_start", CallingConvention = CallingConvention.Cdecl)]
 		static extern int CppConverterNameList_start();
 
-#if __MonoCS__
-		[DllImport("IcuConvEC.dll", EntryPoint = "IcuConvEC_ConverterNameList_next", CallingConvention = CallingConvention.Cdecl)]
+        static string CppConverterNameList_next()
+        {
+            if (Util.IsUnix)
+            {
+                return CppConverterNameList_next_Linux();
+            }
+            else
+            {
+                return CppConverterNameList_next_Windows();
+            }
+        }
+
+        static string CppGetDisplayName(string strID)
+        {
+            if (Util.IsUnix)
+            { return CppGetDisplayName_Linux(strID); }
+            else
+            {
+                return CppGetDisplayName_Windows(strID);
+            }
+        }
+
+        [DllImport("IcuConvEC.dll", EntryPoint = "IcuConvEC_ConverterNameList_next", CallingConvention = CallingConvention.Cdecl)]
 		[return : MarshalAs(UnmanagedType.LPStr)]
-		static extern string CppConverterNameList_next();
+		static extern string CppConverterNameList_next_Linux();
 
 		[DllImport("IcuConvEC.dll", EntryPoint = "IcuConvEC_GetDisplayName", CallingConvention = CallingConvention.Cdecl)]
 		[return: MarshalAs(UnmanagedType.LPStr)]
-		static extern string CppGetDisplayName(
+		static extern string CppGetDisplayName_Linux(
 			[MarshalAs(UnmanagedType.LPStr)] string strID);
-#else
-		[DllImport("IcuConvEC.dll", EntryPoint = "IcuConvEC_ConverterNameList_next", CallingConvention = CallingConvention.Cdecl)]
-		[return : MarshalAs(UnmanagedType.BStr)]
-		static extern string CppConverterNameList_next();
 
-		[DllImport("IcuConvEC.dll", EntryPoint = "IcuConvEC_GetDisplayName", CallingConvention = CallingConvention.Cdecl)]
-		[return: MarshalAs(UnmanagedType.BStr)]
-		static extern string CppGetDisplayName([MarshalAs(UnmanagedType.LPStr)] string strID);
-#endif
+        [DllImport("IcuConvEC.dll", EntryPoint = "IcuConvEC_ConverterNameList_next", CallingConvention = CallingConvention.Cdecl)]
+        [return: MarshalAs(UnmanagedType.BStr)]
+        static extern string CppConverterNameList_next_Windows();
+
+        [DllImport("IcuConvEC.dll", EntryPoint = "IcuConvEC_GetDisplayName", CallingConvention = CallingConvention.Cdecl)]
+        [return: MarshalAs(UnmanagedType.BStr)]
+        static extern string CppGetDisplayName_Windows([MarshalAs(UnmanagedType.LPStr)] string strID);
+
 		#endregion DLLImport Statements
 
 		#region Member Variable Definitions
@@ -161,30 +182,36 @@ namespace SilEncConverters40
 				ref eNormalizeOutput, bForward);
 
 			if (NormalizeLhsConversionType(ConversionType) == NormConversionType.eUnicode)
-			{
-#if __MonoCS__
-					// returning this value will cause the input Unicode data (of any form,
-					// UTF16, BE, etc.) to be converted to UTF8 narrow bytes before calling
-					// DoConvert.
-					eInFormEngine = EncodingForm.UTF8Bytes;
-#else
-					eInFormEngine = EncodingForm.UTF16;
-#endif
-			}
-			else
-			{
-				// legacy
-				eInFormEngine = EncodingForm.LegacyBytes;
-			}
+            {
+                if (Util.IsUnix)
+                {
+                    // returning this value will cause the input Unicode data (of any form,
+                    // UTF16, BE, etc.) to be converted to UTF8 narrow bytes before calling
+                    // DoConvert.
+                    eInFormEngine = EncodingForm.UTF8Bytes;
+                }
+                else
+                {
+                    eInFormEngine = EncodingForm.UTF16;
+                }
+            }
+            else
+            {
+                // legacy
+                eInFormEngine = EncodingForm.LegacyBytes;
+            }
 
-			if (NormalizeRhsConversionType(ConversionType) == NormConversionType.eUnicode)
-			{
-#if __MonoCS__
-					eOutFormEngine = EncodingForm.UTF8Bytes;
-#else
-					eOutFormEngine = EncodingForm.UTF16;
-#endif
-			}
+            if (NormalizeRhsConversionType(ConversionType) == NormConversionType.eUnicode)
+            {
+                if (Util.IsUnix)
+                {
+                    eOutFormEngine = EncodingForm.UTF8Bytes;
+                }
+                else
+                {
+                    eOutFormEngine = EncodingForm.UTF16;
+                }
+            }
 			else
 			{
 				eOutFormEngine = EncodingForm.LegacyBytes;

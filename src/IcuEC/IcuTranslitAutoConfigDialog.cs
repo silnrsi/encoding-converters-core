@@ -22,23 +22,45 @@ namespace SilEncConverters40
 		[DllImport("IcuTranslitEC.dll", EntryPoint = "IcuTranslitEC_ConverterNameList_start", CallingConvention = CallingConvention.Cdecl)]
         static extern unsafe int CppConverterNameList_start();
 
-#if __MonoCS__
-		[DllImport("IcuTranslitEC.dll", EntryPoint = "IcuTranslitEC_ConverterNameList_next", CallingConvention = CallingConvention.Cdecl)]
-        [return: MarshalAs(UnmanagedType.LPStr)]
-        static extern unsafe string CppConverterNameList_next();
+        static string CppConverterNameList_next()
+        {
+            if (Util.IsUnix)
+            {
+                return CppConverterNameList_next_Linux();
+            }
+            else
+            {
+                return CppConverterNameList_next_Windows();
+            }
+        }
+
+        static string CppGetDisplayName(string strID)
+        {
+            if (Util.IsUnix)
+            { return CppGetDisplayName_Linux(strID); }
+            else
+            {
+                return CppGetDisplayName_Windows(strID);
+            }
+        }
+
+        [DllImport("IcuTranslitEC.dll", EntryPoint = "IcuTranslitEC_ConverterNameList_next", CallingConvention = CallingConvention.Cdecl)]
+		[return : MarshalAs(UnmanagedType.LPStr)]
+		static extern string CppConverterNameList_next_Linux();
 
 		[DllImport("IcuTranslitEC.dll", EntryPoint = "IcuTranslitEC_GetDisplayName", CallingConvention = CallingConvention.Cdecl)]
-        [return: MarshalAs(UnmanagedType.LPStr)]
-        static extern unsafe string CppGetDisplayName(string strID);
-#else
+		[return: MarshalAs(UnmanagedType.LPStr)]
+		static extern string CppGetDisplayName_Linux(
+			[MarshalAs(UnmanagedType.LPStr)] string strID);
+
         [DllImport("IcuTranslitEC.dll", EntryPoint = "IcuTranslitEC_ConverterNameList_next", CallingConvention = CallingConvention.Cdecl)]
         [return: MarshalAs(UnmanagedType.BStr)]
-        static extern unsafe string CppConverterNameList_next();
+        static extern string CppConverterNameList_next_Windows();
 
         [DllImport("IcuTranslitEC.dll", EntryPoint = "IcuTranslitEC_GetDisplayName", CallingConvention = CallingConvention.Cdecl)]
         [return: MarshalAs(UnmanagedType.BStr)]
-        static extern unsafe string CppGetDisplayName(string strID);
-#endif
+        static extern string CppGetDisplayName_Windows([MarshalAs(UnmanagedType.LPStr)] string strID);
+
         #endregion DLLImport Statements
 
         private TableLayoutPanel tableLayoutPanel1;

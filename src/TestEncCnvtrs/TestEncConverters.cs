@@ -38,23 +38,24 @@ namespace TestEncCnvtrs
 		[TestFixtureSetUp]
 		public void InitForClass()
 		{
-				Util.DebugWriteLine(this, "BEGIN");
-#if __MonoCS__
-            // Make sure we get set up to be able to access Registry.LocalMachine.
-            string machine_store = Environment.GetEnvironmentVariable("MONO_REGISTRY_PATH");
-            if (machine_store == null)
-            {
-                Console.WriteLine("First, make sure that " + Util.CommonAppDataPath() +
-                                  " exists and is writeable by everyone.");
-                Console.WriteLine("eg, sudo mkdir -p " + Util.CommonAppDataPath() +
-                                  " && sudo chmod +wt " + Util.CommonAppDataPath());
-                Console.WriteLine("Then add the following line to ~/.profile, logout, and login again.");
-                Console.WriteLine("MONO_REGISTRY_PATH=" + Util.CommonAppDataPath() +
-                                  "/registry; export MONO_REGISTRY_PATH");
-                // doesn't work on Maverick, but try it anyway...
-                Environment.SetEnvironmentVariable("MONO_REGISTRY_PATH", Util.CommonAppDataPath() + "/registry");
-            }
-#endif
+			Util.DebugWriteLine(this, "BEGIN");
+			if (Util.IsUnix)
+			{
+				// Make sure we get set up to be able to access Registry.LocalMachine.
+				string machine_store = Environment.GetEnvironmentVariable("MONO_REGISTRY_PATH");
+				if (machine_store == null)
+				{
+					Console.WriteLine("First, make sure that " + Util.CommonAppDataPath() +
+									  " exists and is writeable by everyone.");
+					Console.WriteLine("eg, sudo mkdir -p " + Util.CommonAppDataPath() +
+									  " && sudo chmod +wt " + Util.CommonAppDataPath());
+					Console.WriteLine("Then add the following line to ~/.profile, logout, and login again.");
+					Console.WriteLine("MONO_REGISTRY_PATH=" + Util.CommonAppDataPath() +
+									  "/registry; export MONO_REGISTRY_PATH");
+					// doesn't work on Maverick, but try it anyway...
+					Environment.SetEnvironmentVariable("MONO_REGISTRY_PATH", Util.CommonAppDataPath() + "/registry");
+				}
+			}
 			m_repoFile = null;
 			RegistryKey key = Registry.CurrentUser.OpenSubKey(EncConverters.HKLM_PATH_TO_XML_FILE, true);
 			if (key != null)
@@ -89,7 +90,7 @@ namespace TestEncCnvtrs
 			{
 				Util.DebugWriteLine(this, e.Message);
 			}
-            Util.DebugWriteLine(this, "END");
+			Util.DebugWriteLine(this, "END");
 		}
 
 		/// --------------------------------------------------------------------
@@ -175,10 +176,10 @@ namespace TestEncCnvtrs
 			if (!String.IsNullOrEmpty(m_repoFile) &&
 				File.Exists(m_repoFile + "-RESTOREME"))
 			{
-                if (File.Exists(m_repoFile))
-                {
-                    File.Delete(m_repoFile); // to overwrite file
-                }
+				if (File.Exists(m_repoFile))
+				{
+					File.Delete(m_repoFile); // to overwrite file
+				}
 				File.Move(m_repoFile + "-RESTOREME", m_repoFile);
 			}
 			if (m_fSetRegistryValue)
@@ -520,10 +521,11 @@ namespace TestEncCnvtrs
 			string filepath;
 			var uri = new Uri(Assembly.GetExecutingAssembly().CodeBase);
 			filepath = uri.GetComponents(UriComponents.Path, UriFormat.Unescaped);
-#if __MonoCS__
-			if (codeBase.StartsWith("file:///") && !filepath.StartsWith("/"))
-				filepath = "/" + filepath;
-#endif
+			if (Util.IsUnix)
+			{
+				if (codeBase.StartsWith("file:///") && !filepath.StartsWith("/"))
+					filepath = "/" + filepath;
+			}
 			var pathParts = Path.GetDirectoryName(filepath).Split(Path.DirectorySeparatorChar);
 			var outputFolderIndex = Array.IndexOf(pathParts, "output");
 			Assert.IsTrue(outputFolderIndex > 0, "output folder structure changed, tests will fail finding map files.");
@@ -697,21 +699,21 @@ namespace TestEncCnvtrs
 		[Test]
 		public void TestPyScriptEncConverters()
 		{
-            Util.DebugWriteLine(this, "BEGIN");
+			Util.DebugWriteLine(this, "BEGIN");
 			int countOrig = m_encConverters.Count;
-            int countCurrent = countOrig;
-            int n = 0;    // the current test number
-            const int TOTAL_PY_TESTS = 9;
-            string[] filenames = new string[TOTAL_PY_TESTS];
-            string[] convnames = new string[TOTAL_PY_TESTS];
+			int countCurrent = countOrig;
+			int n = 0;	// the current test number
+			const int TOTAL_PY_TESTS = 9;
+			string[] filenames = new string[TOTAL_PY_TESTS];
+			string[] convnames = new string[TOTAL_PY_TESTS];
 
 			var dir = GetTestSourceFolder();
 			filenames[n] = "From1252.py";
-            convnames[n] = "UnitTesting-Python-1252-To-Unicode";
+			convnames[n] = "UnitTesting-Python-1252-To-Unicode";
 			m_encConverters.Add(convnames[n], Path.Combine(dir, filenames[n]),
 				ConvType.Legacy_to_from_Unicode,
 				"LEGACY", "UNICODE", ProcessTypeFlags.PythonScript);
-            countCurrent++;
+			countCurrent++;
 			int countNew = m_encConverters.Count;
 			Assert.AreEqual(countCurrent, countNew, "Should have " + countCurrent + " converter(s) now");
 			string[] encodings = m_encConverters.Encodings;
@@ -729,13 +731,13 @@ namespace TestEncCnvtrs
 			string output = ec.Convert(input);
 			Assert.AreEqual(m_1252Converted, output, filenames[n] + " should convert data properly!");
 
-            n++;
+			n++;
 			filenames[n] = "To1252.py";
-            convnames[n] = "UnitTesting-Python-Unicode-To-1252";
+			convnames[n] = "UnitTesting-Python-Unicode-To-1252";
 			m_encConverters.Add(convnames[n], Path.Combine(dir, filenames[n]),
 				ConvType.Unicode_to_from_Legacy,
 				"UNICODE", "LEGACY", ProcessTypeFlags.PythonScript);
-            countCurrent++;
+			countCurrent++;
 			countNew = m_encConverters.Count;
 			Assert.AreEqual(countCurrent, countNew, "Should have " + countCurrent + " converter(s) now");
 			mappings = m_encConverters.Mappings;
@@ -751,15 +753,15 @@ namespace TestEncCnvtrs
 			byte[] outputBytes = TestUtil.GetBytesFromPseudoString(outputRaw);
 			Assert.AreEqual(m_1252bytes, outputBytes, filenames[n] + " should convert data properly!");
 
-		    dir = Path.Combine(GetMapsTablesFolder(), "PythonExamples");
+			dir = Path.Combine(GetMapsTablesFolder(), "PythonExamples");
 
-            n++;
+			n++;
 			filenames[n] = "ReverseString.py";
-            convnames[n] = "UnitTesting-Python-ReverseString-Unicode";
+			convnames[n] = "UnitTesting-Python-ReverseString-Unicode";
 			m_encConverters.Add(convnames[n], Path.Combine(dir, filenames[n]),
 				ConvType.Unicode_to_from_Unicode,
 				"UNICODE", "UNICODE", ProcessTypeFlags.PythonScript);
-            countCurrent++;
+			countCurrent++;
 			countNew = m_encConverters.Count;
 			Assert.AreEqual(countCurrent, countNew, "Should have " + countCurrent + " converter(s) now");
 			ec = m_encConverters[convnames[n]];
@@ -768,13 +770,13 @@ namespace TestEncCnvtrs
 			output = ec.Convert("\u0bae\u0bcb\u0baa");  // Tamil Ma + Oo + Pa
 			Assert.AreEqual("\u0baa\u0bcb\u0bae", output, filenames[n] + " should convert data properly!");
 
-            n++;
+			n++;
 			filenames[n] = "ReverseString.py";
-            convnames[n] = "UnitTesting-Python-ReverseString-Legacy";
+			convnames[n] = "UnitTesting-Python-ReverseString-Legacy";
 			m_encConverters.Add(convnames[n], Path.Combine(dir, filenames[n]),
 				ConvType.Legacy_to_from_Legacy,
 				"LEGACY", "LEGACY", ProcessTypeFlags.PythonScript);
-            countCurrent++;
+			countCurrent++;
 			countNew = m_encConverters.Count;
 			Assert.AreEqual(countCurrent, countNew, "Should have " + countCurrent + " converter(s) now");
 			ec = m_encConverters[convnames[n]];
@@ -783,13 +785,13 @@ namespace TestEncCnvtrs
 			output = ec.Convert("mop");
 			Assert.AreEqual("pom", output, filenames[n] + " should convert data properly!");
 
-            n++;
+			n++;
 			filenames[n] = "ToLowerCase.py";
-            convnames[n] = "UnitTesting-Python-ToLowerCase";
+			convnames[n] = "UnitTesting-Python-ToLowerCase";
 			m_encConverters.Add(convnames[n], Path.Combine(dir, filenames[n]),
 				ConvType.Legacy_to_from_Legacy,
 				"LEGACY", "LEGACY", ProcessTypeFlags.PythonScript);
-            countCurrent++;
+			countCurrent++;
 			countNew = m_encConverters.Count;
 			Assert.AreEqual(countCurrent, countNew, "Should have " + countCurrent + " converter(s) now");
 			ec = m_encConverters[convnames[n]];
@@ -798,13 +800,13 @@ namespace TestEncCnvtrs
 			output = ec.Convert("ASdG");
 			Assert.AreEqual("asdg", output, filenames[n] + " should convert data properly!");
 
-            n++;
+			n++;
 			filenames[n] = "ToUpperCase.py";
-            convnames[n] = "UnitTesting-Python-ToUpperCase";
+			convnames[n] = "UnitTesting-Python-ToUpperCase";
 			m_encConverters.Add(convnames[n], Path.Combine(dir, filenames[n]),
 				ConvType.Legacy_to_from_Legacy,
 				"LEGACY", "LEGACY", ProcessTypeFlags.PythonScript);
-            countCurrent++;
+			countCurrent++;
 			countNew = m_encConverters.Count;
 			Assert.AreEqual(countCurrent, countNew, "Should have " + countCurrent + " converter(s) now");
 			ec = m_encConverters[convnames[n]];
@@ -813,13 +815,13 @@ namespace TestEncCnvtrs
 			output = ec.Convert("asdg");
 			Assert.AreEqual("ASDG", output, filenames[n] + " should convert data properly!");
 
-            n++;
+			n++;
 			filenames[n] = "ToUnicodeNames.py";
-            convnames[n] = "UnitTesting-Python-UnicodeNames";
+			convnames[n] = "UnitTesting-Python-UnicodeNames";
 			m_encConverters.Add(convnames[n], Path.Combine(dir, filenames[n]),
 				ConvType.Unicode_to_from_Legacy,
 				"UNICODE", "LEGACY", ProcessTypeFlags.PythonScript);
-            countCurrent++;
+			countCurrent++;
 			countNew = m_encConverters.Count;
 			Assert.AreEqual(countCurrent, countNew, "Should have " + countCurrent + " converter(s) now");
 			ec = m_encConverters[convnames[n]];
@@ -827,13 +829,13 @@ namespace TestEncCnvtrs
 			ec.CodePageOutput = EncConverters.cnIso8859_1CodePage;
 			output = ec.Convert("\u0915\u093c");
 			Assert.AreEqual("DEVANAGARI LETTER KA; DEVANAGARI SIGN NUKTA; ", output, filenames[n] + " should convert data properly!");
-            n++;
+			n++;
 			filenames[n] = "ToNfc.py";
-            convnames[n] = "UnitTesting-Python-ToNfc";
+			convnames[n] = "UnitTesting-Python-ToNfc";
 			m_encConverters.Add(convnames[n], Path.Combine(dir, filenames[n]),
 				ConvType.Unicode_to_from_Unicode,
 				"UNICODE", "UNICODE", ProcessTypeFlags.PythonScript);
-            countCurrent++;
+			countCurrent++;
 			countNew = m_encConverters.Count;
 			Assert.AreEqual(countCurrent, countNew, "Should have " + countCurrent + " converter(s) now");
 			ec = m_encConverters[convnames[n]];
@@ -842,13 +844,13 @@ namespace TestEncCnvtrs
 			output = ec.Convert("\u0045\u0328");
 			Assert.AreEqual("\u0118", output, filenames[n] + " should convert data properly!");
 
-            n++;
+			n++;
 			filenames[n] = "ToNfd.py";
-            convnames[n] = "UnitTesting-Python-ToNfd";
+			convnames[n] = "UnitTesting-Python-ToNfd";
 			m_encConverters.Add(convnames[n], Path.Combine(dir, filenames[n]),
 				ConvType.Unicode_to_from_Unicode,
 				"UNICODE", "UNICODE", ProcessTypeFlags.PythonScript);
-            countCurrent++;
+			countCurrent++;
 			countNew = m_encConverters.Count;
 			Assert.AreEqual(countCurrent, countNew, "Should have " + countCurrent + " converter(s) now");
 			ec = m_encConverters[convnames[n]];
@@ -857,11 +859,11 @@ namespace TestEncCnvtrs
 			output = ec.Convert("\u0958");
 			Assert.AreEqual("\u0915\u093c", output, filenames[n] + " should convert data properly!");
 
-            for (int i = 0; i < TOTAL_PY_TESTS; i++)
-                m_encConverters.Remove(convnames[i]);
+			for (int i = 0; i < TOTAL_PY_TESTS; i++)
+				m_encConverters.Remove(convnames[i]);
 			int countAfter = m_encConverters.Count;
 			Assert.AreEqual(countOrig, countAfter, "Should have the original number of converters now.");
-            Util.DebugWriteLine(this, "END");
+			Util.DebugWriteLine(this, "END");
 		}
 
 		[Test]

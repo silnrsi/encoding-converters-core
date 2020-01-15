@@ -183,46 +183,50 @@ namespace SilEncConverters40
             ref int     rnOutLen
             )
         {
-#if __MonoCS__
-			byte[] baIn = new byte[nInLen];
-			ECNormalizeData.ByteStarToByteArr(lpInBuffer, nInLen, baIn);
-			Util.DebugWriteLine(this, String.Format("Starting with {0} bytes.", baIn.Length));
-			byte[] baOut;
-#endif
-			if (m_bToWide)
-			{
-#if __MonoCS__
-				// Perform the conversion from one encoding to the other.
-				Encoding encFrom = Encoding.GetEncoding(m_nCodePage);
-				Encoding encTo   = Encoding.Unicode;
-				baOut = Encoding.Convert(encFrom, encTo, baIn);
-#else
-                rnOutLen = MultiByteToWideChar(m_nCodePage, 0, lpInBuffer, nInLen, (char*)lpOutBuffer, rnOutLen/2);
-                rnOutLen *= 2;  // sizeof(WCHAR);	// size in bytes
-#endif
-			}
-			else
-			{
-#if __MonoCS__
-				Encoding encFrom = Encoding.Unicode;
-				Encoding encTo   = Encoding.GetEncoding(m_nCodePage);
-				baOut = Encoding.Convert(encFrom, encTo, baIn);
-#else
-                rnOutLen = WideCharToMultiByte(m_nCodePage, 0, (char*)lpInBuffer, nInLen / 2, lpOutBuffer, rnOutLen, 0, 0);
-#endif
-			}
-#if __MonoCS__
-			Util.DebugWriteLine(this, String.Format("Converted to {0} bytes.", baOut.Length));
-			if (baOut.Length > 0)
-				rnOutLen = Marshal.SizeOf(baOut[0]) * baOut.Length;
-			else
-				rnOutLen = 0;
-			Marshal.Copy(baOut, 0, (IntPtr)lpOutBuffer, baOut.Length);
-			Marshal.WriteByte((IntPtr)lpOutBuffer, rnOutLen, 0); // nul terminate
-#endif
+            if (Util.IsUnix)
+            {
+                byte[] baIn = new byte[nInLen];
+                ECNormalizeData.ByteStarToByteArr(lpInBuffer, nInLen, baIn);
+                Util.DebugWriteLine(this, String.Format("Starting with {0} bytes.", baIn.Length));
+                byte[] baOut;
+                if (m_bToWide)
+                {
+                    // Perform the conversion from one encoding to the other.
+                    Encoding encFrom = Encoding.GetEncoding(m_nCodePage);
+                    Encoding encTo = Encoding.Unicode;
+                    baOut = Encoding.Convert(encFrom, encTo, baIn);
+                }
+                else
+                {
+
+                    Encoding encFrom = Encoding.Unicode;
+                    Encoding encTo = Encoding.GetEncoding(m_nCodePage);
+                    baOut = Encoding.Convert(encFrom, encTo, baIn);
+                }
+
+                Util.DebugWriteLine(this, String.Format("Converted to {0} bytes.", baOut.Length));
+                if (baOut.Length > 0)
+                    rnOutLen = Marshal.SizeOf(baOut[0]) * baOut.Length;
+                else
+                    rnOutLen = 0;
+                Marshal.Copy(baOut, 0, (IntPtr)lpOutBuffer, baOut.Length);
+                Marshal.WriteByte((IntPtr)lpOutBuffer, rnOutLen, 0); // nul terminate
+            }
+            else
+            {
+                if (m_bToWide)
+                {
+                    rnOutLen = MultiByteToWideChar(m_nCodePage, 0, lpInBuffer, nInLen, (char*)lpOutBuffer, rnOutLen / 2);
+                    rnOutLen *= 2;  // sizeof(WCHAR);	// size in bytes
+                }
+                else
+                {
+                    rnOutLen = WideCharToMultiByte(m_nCodePage, 0, (char*)lpInBuffer, nInLen / 2, lpOutBuffer, rnOutLen, 0, 0);
+                }
+            }
         }
 
-        protected override string   GetConfigTypeName
+        protected override string GetConfigTypeName
         {
             get { return typeof(CpEncConverterConfig).AssemblyQualifiedName; }
         }

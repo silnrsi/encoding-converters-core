@@ -34,19 +34,15 @@ namespace SilEncConverters40
         private string      strTempFile      = string.Empty;
 
         public const string strDisplayName = "Perl Script";
-#if __MonoCS__
-        public const string strHtmlFilename = "Perl Expression Plug-in About box.htm";
-#else
-        public const string strHtmlFilename = "Perl Expression Plug-in About box.mht";
-#endif
-        public const string strExeDefPath   = "";
+        public static readonly string strHtmlFilename = "Perl Expression Plug-in About box" + (Util.IsUnix ? ".htm" : ".mht");
+        public const string strExeDefPath = "";
         #endregion Member Variable Definitions
 
         #region Initialization
         /// <summary>
         /// The class constructor. </summary>
         public PerlExpressionEncConverter()
-            : base (
+            : base(
             typeof(PerlExpressionEncConverter).FullName,
             EncConverters.strTypeSILPerlExpression,
             ConvType.Unicode_to_Unicode,             // conversionType
@@ -88,17 +84,17 @@ namespace SilEncConverters40
         {
             get 
             {
+                if (Util.IsUnix)
+                {
+                    return "perl";
+                }
                 return
-#if __MonoCS__
-                        "perl";
-#else
 #if DEBUG
                         File.Exists(@"\temp\perl\bin\perl.exe")
                             ? @"\temp\perl\bin\perl.exe"
                             : "perl.exe";
 #else
                         "perl.exe";
-#endif
 #endif
             }
         }

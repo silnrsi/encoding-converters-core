@@ -146,7 +146,7 @@
     </Reference>
     <Reference Include="ECInterfaces, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\output\release\ECInterfaces.dll</HintPath>
+      <HintPath>..\..\output\$(Configuration)\ECInterfaces.dll</HintPath>
     </Reference>
     <Reference Include="System">
       <Name>System</Name>

@@ -107,11 +107,14 @@ namespace SilEncConverters40
         {
             get
             {
-#if __MonoCS__
-                return true;
-#else
-                return WindowsUserWantsToUseGecko;
-#endif
+                if (Util.IsUnix)
+                {
+                    return true;
+                }
+                else
+                {
+                    return WindowsUserWantsToUseGecko;
+                }
             }
         }
 

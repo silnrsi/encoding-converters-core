@@ -715,10 +715,11 @@ namespace SilEncConverters40
             	var codeBase = Assembly.GetExecutingAssembly().CodeBase;
 				var uri = new Uri(codeBase);
             	var filepath = uri.GetComponents(UriComponents.Path, UriFormat.Unescaped);
-#if __MonoCS__
-				if (codeBase.StartsWith("file:///") && !filepath.StartsWith("/"))
-					return Path.GetDirectoryName("/" + filepath);
-#endif
+                if (Util.IsUnix)
+                {
+                    if (codeBase.StartsWith("file:///") && !filepath.StartsWith("/"))
+                        return Path.GetDirectoryName("/" + filepath);
+                }
 				return Path.GetDirectoryName(filepath);
             }
         }
@@ -3101,8 +3102,11 @@ namespace SilEncConverters40
                 catch (Exception e)
                 {
                     MessageBox.Show("AutoConfigure failed: " + e.Message, traceSwitch.DisplayName);
-#if DEBUG && __MonoCS__
-                    throw;
+#if DEBUG
+                    if (Util.IsUnix)
+                    {
+                        throw;
+                    }
 #endif
                 }
             }
@@ -3259,10 +3263,11 @@ namespace SilEncConverters40
         /// </summary>
         public void MakeSureTheWindowGoesAway()
         {
-#if __MonoCS__
-            Form temp = new Form();
-            temp.Dispose();
-#endif
+            if (Util.IsUnix)
+            {
+                Form temp = new Form();
+                temp.Dispose();
+            }
         }
         #endregion Public Methods
 
@@ -3631,10 +3636,11 @@ namespace SilEncConverters40
             int nPriority = cnDefImplPriority;
             try
             {
-#if __MonoCS__
-                if (m_mapImplementTypesPriority.Contains(implementType))
-#endif // TODO-Linux: look into this further - was causing a segv
-                nPriority = (int)m_mapImplementTypesPriority[implementType];
+                // TODO-Linux: look into this further - was causing a segv
+                if (!Util.IsUnix || m_mapImplementTypesPriority.Contains(implementType))
+                {
+                    nPriority = (int)m_mapImplementTypesPriority[implementType];
+                }
             }
             catch {}    // might throw if the implementType is screwed up.
             return nPriority;
@@ -3841,8 +3847,11 @@ namespace SilEncConverters40
             }
             catch
             {
-#if DEBUG && __MonoCS__
-                throw;
+#if DEBUG
+                if (Util.IsUnix)
+                {
+                    throw;
+                }
 #endif
             }
             finally

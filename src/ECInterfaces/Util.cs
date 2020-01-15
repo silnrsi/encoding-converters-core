@@ -55,19 +55,20 @@ namespace ECInterfaces
             {
                 if (s_CommonAppDataFolder == null)
                 {
-#if __MonoCS__
-                    // COMMON_DATA_FW can be defined during compile time.
-                    // This folder should match REGROOT in the main Makefile.in.
-                    #if (COMMON_DATA_FW)
-                        s_CommonAppDataFolder = "/var/lib/fieldworks";
-                    #else
-                        s_CommonAppDataFolder = "/var/lib/encConverters";
-                    #endif
-                    DebugWriteLine(typeof(Util).ToString(), "CommonAppDataFolder = " + s_CommonAppDataFolder);
-#else
-                    s_CommonAppDataFolder =
-                        Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
-#endif
+                    if (Util.IsUnix)
+                    {
+                        // COMMON_DATA_FW can be defined during compile time.
+                        // This folder should match REGROOT in the main Makefile.in.
+                        #if (COMMON_DATA_FW)
+                            s_CommonAppDataFolder = "/var/lib/fieldworks";
+                        #else
+                            s_CommonAppDataFolder = "/var/lib/encConverters";
+                        #endif
+                        DebugWriteLine(typeof(Util).ToString(), "CommonAppDataFolder = " + s_CommonAppDataFolder);
+                    } else {
+                        s_CommonAppDataFolder =
+                            Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
+                    }
                 }
                 return s_CommonAppDataFolder;
             }
@@ -90,7 +91,11 @@ namespace ECInterfaces
         private static void DebugWriteLine(StackFrame sf, string className, string strMsg)
         {
             // this makes it unbearably slow on Windows...
-#if DEBUG && __MonoCS__
+#if DEBUG
+            if (!Util.IsUnix)
+            {
+                return;
+            }
             System.Reflection.MethodBase mb = sf.GetMethod();
             string methodName = mb != null ? mb.Name : "";
             string fullMethodName = className + "." + methodName;
@@ -114,7 +119,11 @@ namespace ECInterfaces
         // Call this method from static methods.
         public static void DebugWriteLine(string className, string strMsg)
         {
-#if DEBUG && __MonoCS__
+#if DEBUG
+            if (!Util.IsUnix)
+            {
+                return;
+            }
             StackFrame sf = new StackFrame(1, true); // get frame of calling method
             DebugWriteLine(sf, className, strMsg);
 #endif
@@ -123,7 +132,11 @@ namespace ECInterfaces
         // @param caller: "this" pointer of the calling class.
         public static void DebugWriteLine(Object caller, string strMsg)
         {
-#if DEBUG && __MonoCS__
+#if DEBUG
+            if (!Util.IsUnix)
+            {
+                return;
+            }
             StackFrame sf = new StackFrame(1, true); // get frame of calling method
             string className  = caller.GetType().Name;
             DebugWriteLine(sf, className, strMsg);
@@ -133,7 +146,11 @@ namespace ECInterfaces
         // Get a string suitable for displaying.
         static public string getDisplayBytes(string desc, byte[] ba)
         {
-#if DEBUG && __MonoCS__
+#if DEBUG
+            if (!Util.IsUnix)
+            {
+                return "";
+            }
             StringBuilder builder = new StringBuilder();
             builder.Append(desc).Append(": ");
             for (int i = 0; i < ba.Length; i++)
