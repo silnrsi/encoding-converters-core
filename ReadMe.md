@@ -18,7 +18,7 @@ Add packages.sil.org repository by following instructions at https://packages.si
 
 Install build dependencies.
 
-    sudo apt-get install automake g++ python-dev libicu-dev mono-sil
+    sudo apt-get install automake g++ python-dev libicu-dev mono-sil icu-dev-fw
 
 ### First build
 
