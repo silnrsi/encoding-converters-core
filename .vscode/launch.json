@@ -1,0 +1,28 @@
+{
+	// Use IntelliSense to learn about possible attributes.
+	// Hover to view descriptions of existing attributes.
+	// For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"name": "RunTests.exe",
+			"env": {
+				// Use this mono.
+				"PATH": "/opt/mono5-sil/bin:${env:PATH}",
+				// Path to the rest of the environment. Picked up by a mono wrapper script.
+				"MONO_ENVIRON": "${workspaceRoot}/environ"
+			},
+			"type": "mono",
+			"request": "launch",
+			"program": "${workspaceRoot}/output/Debug/RunTests.exe",
+			"cwd": "${workspaceRoot}"
+		},
+		{
+			"name": "Attach",
+			"type": "mono",
+			"request": "attach",
+			"address": "localhost",
+			"port": 55555
+		}
+	]
+}
