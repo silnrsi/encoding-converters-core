@@ -49,18 +49,21 @@ $(BUILDDIR):
 $(OUTDIR)/libIcuTranslitEC$(WIDTH).so: $(BUILDDIR)/IcuTranslitEC.o \
   $(OUTDIR)/IcuEC.dll.config
 	g++ -shared -Wl,-soname,libIcuTranslitEC$(WIDTH).so \
+	$(CFLAGS) \
   -o $(OUTDIR)/libIcuTranslitEC$(WIDTH).so $(BUILDDIR)/IcuTranslitEC.o \
   $(ICULIBS)
 
 $(OUTDIR)/libIcuRegexEC$(WIDTH).so: $(BUILDDIR)/IcuRegexEC.o \
   $(OUTDIR)/IcuEC.dll.config
 	g++ -shared -Wl,-soname,libIcuRegexEC$(WIDTH).so \
+	$(CFLAGS) \
   -o $(OUTDIR)/libIcuRegexEC$(WIDTH).so $(BUILDDIR)/IcuRegexEC.o \
   $(ICULIBS)
 
 $(OUTDIR)/libIcuConvEC$(WIDTH).so: $(BUILDDIR)/IcuConvEC.o \
   $(OUTDIR)/IcuEC.dll.config
 	g++ -shared -Wl,-soname,libIcuConvEC$(WIDTH).so \
+	$(CFLAGS) \
   -o $(OUTDIR)/libIcuConvEC$(WIDTH).so $(BUILDDIR)/IcuConvEC.o \
   $(ICULIBS)
 
@@ -69,14 +72,17 @@ $(OUTDIR)/IcuEC.dll.config: IcuEC.dll.config
 
 $(BUILDDIR)/IcuTranslitEC.o: IcuTranslitEC.cpp IcuTranslitEC.h $(ECHEADER)
 	g++ -Wall -fPIC -c IcuTranslitEC.cpp -o $(BUILDDIR)/IcuTranslitEC.o \
+	$(CFLAGS) \
   -I$(ECHEADERDIR) $(ICUINCLUDE)
 
 $(BUILDDIR)/IcuRegexEC.o: IcuRegexEC.cpp IcuRegexEC.h $(ECHEADER)
 	g++ -Wall -fPIC -c IcuRegexEC.cpp -o $(BUILDDIR)/IcuRegexEC.o \
+	$(CFLAGS) \
   -I$(ECHEADERDIR) $(ICUINCLUDE)
 
 $(BUILDDIR)/IcuConvEC.o: IcuConvEC.cpp IcuConvEC.h $(ECHEADER)
 	g++ -Wall -fPIC -c IcuConvEC.cpp -o $(BUILDDIR)/IcuConvEC.o \
+	$(CFLAGS) \
   -I$(ECHEADERDIR) $(ICUINCLUDE)
 
 release: $(RELEASEBLD) $(RELEASEOUT)/libIcuTranslitEC$(WIDTH).so \
