@@ -267,3 +267,5 @@ paket-files/
 *.sln.iml
 
 autom4te.cache
+/redist/MapsTables/PythonExamples
+/redist/MapsTables/TestEncCnvtrs

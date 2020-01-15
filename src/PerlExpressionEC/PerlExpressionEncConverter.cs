@@ -93,7 +93,9 @@ namespace SilEncConverters40
                         "perl";
 #else
 #if DEBUG
-                        @"\temp\perl\bin\perl.exe";
+                        File.Exists(@"\temp\perl\bin\perl.exe")
+                            ? @"\temp\perl\bin\perl.exe"
+                            : "perl.exe";
 #else
                         "perl.exe";
 #endif

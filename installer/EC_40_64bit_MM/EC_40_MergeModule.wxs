@@ -497,7 +497,7 @@
 				<Directory Id="ECFolder" Name="EC">
 					<Directory Id="PluginsFolder" Name="Plugins">
 						<Component Id="EC4.0.0.0PluginDetails.xml" Guid="579194FE-37AA-47a3-A089-B0F1F17415FB">
-							<File Id="EC4.0.0.0PluginDetails.xml" Name="EC 4.0.0.0 Plugin Details.xml" KeyPath="yes" Source="..\..\output\Win32\release\EC\Plugins\EC 4.0.0.0 Plugin Details.xml"/>
+							<File Id="EC4.0.0.0PluginDetails.xml" Name="EC 4.0.0.0 Plugin Details.xml" KeyPath="yes" Source="..\..\output\x64\release\EC\Plugins\EC 4.0.0.0 Plugin Details.xml"/>
 						</Component>
 					</Directory>
 				</Directory>
@@ -524,36 +524,36 @@
 							<File Id="CantReadMhtFiles.htm" Name="CantReadMhtFiles.htm" ReadOnly="yes" KeyPath="yes" Source="..\..\output\x64\release\Help\CantReadMhtFiles.htm"/>
 						</Component>
 						<Component Id="IcuRegex" Guid="{8A0498CB-71B8-4C0F-AE24-95FDD529BDAB}">
-							<File Id="IcuRegex" Name="ICU Regular Expression Plug-in About box.mht" ReadOnly="yes" KeyPath="yes" Source="..\..\output\Win32\release\Help\ICU Regular Expression Plug-in About box.mht"/>
+							<File Id="IcuRegex" Name="ICU Regular Expression Plug-in About box.mht" ReadOnly="yes" KeyPath="yes" Source="..\..\output\x64\release\Help\ICU Regular Expression Plug-in About box.mht"/>
 						</Component>
 						<Component Id="IcuTranslit" Guid="{E863CC65-432C-4567-B402-BCB70D81A565}">
-							<File Id="IcuTranslit" Name="ICU Transliterators Plug-in About box.mht" ReadOnly="yes" KeyPath="yes" Source="..\..\output\Win32\release\Help\ICU Transliterators Plug-in About box.mht"/>
+							<File Id="IcuTranslit" Name="ICU Transliterators Plug-in About box.mht" ReadOnly="yes" KeyPath="yes" Source="..\..\output\x64\release\Help\ICU Transliterators Plug-in About box.mht"/>
 						</Component>
 						<Component Id="ICU_Converters_Plugin_About_box.htm" Guid="{286A6417-34B7-4A87-B50A-64E24E5FCB91}">
 							<!-- The following File ID has been truncated to suppress ICE03 string overflow in the shortcut that uses it -->
-							<File Id="ICU_Converters_About" Name="ICU Converters Plug-in About box.htm" ReadOnly="yes" KeyPath="yes" Source="..\..\output\Win32\release\Help\ICU Converters Plug-in About box.htm"/>
+							<File Id="ICU_Converters_About" Name="ICU Converters Plug-in About box.htm" ReadOnly="yes" KeyPath="yes" Source="..\..\output\x64\release\Help\ICU Converters Plug-in About box.htm"/>
 						</Component>
 						<Directory Id="ICUConvPlug" Name="ICU Converters Plug-in About box_files">
 							<Component Id="image008.jpg" Guid="{22B4C7D8-C5D8-4020-8E71-66815484188F}">
-								<File Id="image008.jpg" Name="image008.jpg" ReadOnly="yes" KeyPath="yes" Source="..\..\output\Win32\release\Help\ICU Converters Plug-in About box_files\image008.jpg"/>
+								<File Id="image008.jpg" Name="image008.jpg" ReadOnly="yes" KeyPath="yes" Source="..\..\output\x64\release\Help\ICU Converters Plug-in About box_files\image008.jpg"/>
 							</Component>
 							<Component Id="image001.png" Guid="{C1741779-881E-40BC-B08F-B7380AD4768D}">
-								<File Id="image001.png" Name="image001.png" ReadOnly="yes" KeyPath="yes" Source="..\..\output\Win32\release\Help\ICU Converters Plug-in About box_files\image001.png"/>
+								<File Id="image001.png" Name="image001.png" ReadOnly="yes" KeyPath="yes" Source="..\..\output\x64\release\Help\ICU Converters Plug-in About box_files\image001.png"/>
 							</Component>
 							<Component Id="image003.png" Guid="{235136D4-2BA5-4109-8445-BB772B1C736C}">
-								<File Id="image003.png" Name="image003.png" ReadOnly="yes" KeyPath="yes" Source="..\..\output\Win32\release\Help\ICU Converters Plug-in About box_files\image003.png"/>
+								<File Id="image003.png" Name="image003.png" ReadOnly="yes" KeyPath="yes" Source="..\..\output\x64\release\Help\ICU Converters Plug-in About box_files\image003.png"/>
 							</Component>
 							<Component Id="image007.png" Guid="{C485E451-F599-4547-8D31-7ED844184F4B}">
-								<File Id="image007.png" Name="image007.png" ReadOnly="yes" KeyPath="yes" Source="..\..\output\Win32\release\Help\ICU Converters Plug-in About box_files\image007.png"/>
+								<File Id="image007.png" Name="image007.png" ReadOnly="yes" KeyPath="yes" Source="..\..\output\x64\release\Help\ICU Converters Plug-in About box_files\image007.png"/>
 							</Component>
 							<Component Id="image002.jpg" Guid="{40D73995-FCA3-41C1-A207-6CE6694197AB}">
-								<File Id="image002.jpg" Name="image002.jpg" ReadOnly="yes" KeyPath="yes" Source="..\..\output\Win32\release\Help\ICU Converters Plug-in About box_files\image002.jpg"/>
+								<File Id="image002.jpg" Name="image002.jpg" ReadOnly="yes" KeyPath="yes" Source="..\..\output\x64\release\Help\ICU Converters Plug-in About box_files\image002.jpg"/>
 							</Component>
 							<Component Id="image004.jpg" Guid="{BB93ABAD-85AB-46B9-9DA0-96A6D41D019D}">
-								<File Id="image004.jpg" Name="image004.jpg" ReadOnly="yes" KeyPath="yes" Source="..\..\output\Win32\release\Help\ICU Converters Plug-in About box_files\image004.jpg"/>
+								<File Id="image004.jpg" Name="image004.jpg" ReadOnly="yes" KeyPath="yes" Source="..\..\output\x64\release\Help\ICU Converters Plug-in About box_files\image004.jpg"/>
 							</Component>
 							<Component Id="filelist.xml" Guid="{818EF4EC-81AD-4B6D-9258-4784872DA7A1}">
-								<File Id="filelist.xml" Name="filelist.xml" ReadOnly="yes" KeyPath="yes" Source="..\..\output\Win32\release\Help\ICU Converters Plug-in About box_files\filelist.xml"/>
+								<File Id="filelist.xml" Name="filelist.xml" ReadOnly="yes" KeyPath="yes" Source="..\..\output\x64\release\Help\ICU Converters Plug-in About box_files\filelist.xml"/>
 							</Component>
 						</Directory>
 

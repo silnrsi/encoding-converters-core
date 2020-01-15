@@ -119,8 +119,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='LegacyDebug|Win32'">$(SolutionDir)output\Debug\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='LegacyDebug|Win32'">$(SolutionDir)build\Obj\$(Configuration)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='LegacyDebug|Win32'">$(SolutionDir)output\$(Platform)\$(Configuration)</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='LegacyDebug|Win32'">$(SolutionDir)build\Obj\$(Platform)\$(Configuration)\$(ProjectName)</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='LegacyDebug|Win32'">true</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='LegacyDebug|x64'">true</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='LegacyRelease|Win32'">$(SolutionDir)output\release\</OutDir>
