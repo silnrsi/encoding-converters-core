@@ -8,13 +8,33 @@ Encoding converters in this package include IcuRegEx, IcuTransliterator, TecKit,
 
 The NuGet package https://www.nuget.org/packages/Encoding-Converters-Core/ is built from this repository.
 
-## Build FieldWorks Encoding Converters
+## Build Encoding Converters Core
 
-In Linux,
+In Ubuntu Linux,
 
-    . environ
-    ./autogen.sh
-    make
+### Setup
+
+Add packages.sil.org repository by following instructions at https://packages.sil.org/ .
+
+Install build dependencies.
+
+    sudo apt-get install automake g++ python-dev libicu-dev mono-sil
+
+### First build
+
+    (. environ && ./autogen.sh && make)
+
+### Subsequent builds
+
+    (. environ && make)
+
+### Test
+
+    sudo mkdir -p /var/lib/fieldworks && sudo chmod +wt /var/lib/fieldworks
+    (export MONO_REGISTRY_PATH=/var/lib/fieldworks/registry && . environ && mono output/Debug/RunTests.exe)
+
+    # Crashing currently, but also perhaps something like
+    (export MONO_REGISTRY_PATH=/var/lib/fieldworks/registry && . environ && MONO_NO_UNLOAD=1 mono --debug /opt/mono-sil/lib/mono/2.0/nunit-console.exe -noshadow ./output/Debug/TestEncCnvtrs.dll)
 
 In Windows,
 
