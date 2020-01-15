@@ -5,3 +5,4 @@
 
 export PATH="/opt/mono-sil/bin:$PATH"
 export FIELDWORKS=1
+export LD_LIBRARY_PATH="/usr/lib/fieldworks/lib:${LD_LIBRARY_PATH}"
