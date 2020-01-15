@@ -129,13 +129,16 @@ namespace SilEncConverters40
                 // We could use UTF-8 here, but wide data works just fine.
                 // the windows version definitely needs UTF16, but for some reason _MSC_VER is not defined on windows (as I think Jim is expecting)
                 //  so I'll use the opposite logic of 'if not mono'...
-#if !__MonoCS__ // _MSC_VER
-                Util.DebugWriteLine(this, "eInFormEngine UTF16");
-                eInFormEngine = EncodingForm.UTF16;
-#else
-                Util.DebugWriteLine(this, "eInFormEngine UTF32");
-                eInFormEngine = EncodingForm.UTF32;
-#endif
+                if (!Util.IsUnix) // _MSC_VER
+                {
+                    Util.DebugWriteLine(this, "eInFormEngine UTF16");
+                    eInFormEngine = EncodingForm.UTF16;
+                }
+                else
+                {
+                    Util.DebugWriteLine(this, "eInFormEngine UTF32");
+                    eInFormEngine = EncodingForm.UTF32;
+                }
             }
             else
             {
@@ -146,13 +149,16 @@ namespace SilEncConverters40
 
             if( NormalizeRhsConversionType(ConversionType) == NormConversionType.eUnicode )
             {
-#if !__MonoCS__ // _MSC_VER
-                Util.DebugWriteLine(this, "eOutFormEngine UTF16");
-                eOutFormEngine = EncodingForm.UTF16;
-#else
-                Util.DebugWriteLine(this, "eOutFormEngine UTF32");
-                eOutFormEngine = EncodingForm.UTF32;
-#endif
+                if (!Util.IsUnix) // _MSC_VER
+                {
+                    Util.DebugWriteLine(this, "eOutFormEngine UTF16");
+                    eOutFormEngine = EncodingForm.UTF16;
+                }
+                else
+                {
+                    Util.DebugWriteLine(this, "eOutFormEngine UTF32");
+                    eOutFormEngine = EncodingForm.UTF32;
+                }
             }
             else
             {
@@ -211,10 +217,13 @@ namespace SilEncConverters40
             int status = 0;
             fixed(int* pnOut = &rnOutLen)
             {
-#if DEBUG && __MonoCS__
-                byte[] baIn = new byte[nInLen];
-                ECNormalizeData.ByteStarToByteArr(lpInBuffer, nInLen, baIn);
-                Util.DebugWriteLine(this, Util.getDisplayBytes("Sending bytes to CppDoConvert", baIn));
+#if DEBUG
+                if (Util.IsUnix)
+                {
+                    byte[] baIn = new byte[nInLen];
+                    ECNormalizeData.ByteStarToByteArr(lpInBuffer, nInLen, baIn);
+                    Util.DebugWriteLine(this, Util.getDisplayBytes("Sending bytes to CppDoConvert", baIn));
+                }
 #endif
                 status = CppDoConvert(lpInBuffer, nInLen, lpOutBuffer, pnOut);
             }

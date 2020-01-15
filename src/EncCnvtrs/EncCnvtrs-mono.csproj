@@ -85,7 +85,7 @@
   <ItemGroup>
     <Reference Include="ECInterfaces, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485">
       <Private>False</Private>
-      <HintPath>..\..\output\Debug\ECInterfaces.dll</HintPath>
+      <HintPath>..\..\output\$(Configuration)\ECInterfaces.dll</HintPath>
     </Reference>
     <Reference Include="Geckofx-Core" Condition="'$(Platform)' == 'x64' and '$(OS)'=='Windows_NT'">
       <Private>False</Private>

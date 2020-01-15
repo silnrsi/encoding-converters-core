@@ -115,18 +115,14 @@ namespace SilEncConverters40
                         {
                             nCodePageIn = EncConverters.cnSymbolFontCodePage;
                         }
-
-#if __MonoCS__
-                        // Narrowizing by code page 0 doesn't seem to be what we want on Linux.
-                        // Treating it as a symbol font or stripping off the low byte works better.
-                        if (nCodePageIn == 0)
+                        if (Util.IsUnix && nCodePageIn == 0)
                         {
-                            ba = BruteForceNarrowize (strInput, nInLen);
+                            // Narrowizing by code page 0 doesn't seem to be what we want on Linux.
+                            // Treating it as a symbol font or stripping off the low byte works better.
+
+                            ba = BruteForceNarrowize(strInput, nInLen);
                         }
-                        else 
-#else
-                        if (true)
-#endif
+                        else
                         {
                             // if it's a symbol or iso-8859 encoding, then we can handle just 
                             //  taking the low byte (i.e. the catch case)
@@ -360,18 +356,13 @@ namespace SilEncConverters40
                         DisplayDebugCharValues(baOut, "Received (LegacyBytes) back from Converter/DLL (returning as LegacyString)...", ref bDebugDisplayMode);
 
                         nCharsLen = nItems = nOutLen;
-
-#if __MonoCS__
-                        // Narrowizing by code page 0 doesn't seem to be what we want on Linux.
-                        // Treating it as a symbol font or stripping off the low byte works better.
-                        if (nCodePageOut == 0)
+                        if (Util.IsUnix && nCodePageOut == 0)
                         {
-                            caOut = BruteForceWiden (nCodePageOut, baOut, nCharsLen);
+                            // Narrowizing by code page 0 doesn't seem to be what we want on Linux.
+                            // Treating it as a symbol font or stripping off the low byte works better.
+                            caOut = BruteForceWiden(nCodePageOut, baOut, nCharsLen);
                         }
-                        else 
-#else
-                        if (true)
-#endif
+                        else
                         {
                             try
                             {

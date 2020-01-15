@@ -202,10 +202,12 @@ namespace SilEncConverters40
                     //  mentioned here *will* be not visible and yet, we still need to read the 'checked' state of the 
                     //  run-time properties below (which works on Windows). So I'm adding '__MonoCS__' here so I don't
                     //  break the Linux build, but so that the run-time properties will work on Windows
-#if __MonoCS__
-					if (!checkBoxDebug.Visible)
-						return aEC;
-#endif
+                    if (Util.IsUnix)
+                    {
+                        if (!checkBoxDebug.Visible)
+                            return aEC;
+                    }
+
                     // set the options too
                     aEC.DirectionForward = !this.checkBoxReverse.Checked;
                     aEC.Debug = this.checkBoxDebug.Checked;

@@ -239,18 +239,19 @@ namespace SilEncConverters40
             // call the helper that calls the exe
             var strOutput = DoExeCall(strInput);
 
-#if DEBUG && __MonoCS__
-			Util.DebugWriteLine(this, "Got result from system call: " + strOutput);
-            byte[] baOut2 = Encoding.Unicode.GetBytes(strOutput);  // easier to read
-            Util.DebugWriteLine(this, Util.getDisplayBytes("Output UTF16LE", baOut2));
+            if (Util.IsUnix)
+            {
+                Util.DebugWriteLine(this, "Got result from system call: " + strOutput);
+                byte[] baOut2 = Encoding.Unicode.GetBytes(strOutput);  // easier to read
+                Util.DebugWriteLine(this, Util.getDisplayBytes("Output UTF16LE", baOut2));
 
-            string filepath = Path.Combine(Path.GetTempPath(), "returning.txt");
-            Util.DebugWriteLine(this, "See " + filepath);
-			TextWriter tw = new StreamWriter(filepath);
-            tw.WriteLine("input: '"  + strInput + "'");
-            tw.WriteLine("output: '" + strOutput + "'");
-            tw.Close();
-#endif
+                string filepath = Path.Combine(Path.GetTempPath(), "returning.txt");
+                Util.DebugWriteLine(this, "See " + filepath);
+                TextWriter tw = new StreamWriter(filepath);
+                tw.WriteLine("input: '" + strInput + "'");
+                tw.WriteLine("output: '" + strOutput + "'");
+                tw.Close();
+            }
 
             // if there's a response...
             if (String.IsNullOrEmpty(strOutput))

@@ -37,24 +37,45 @@ namespace SilEncConverters40
 		[DllImport("IcuTranslitEC.dll", EntryPoint="IcuTranslitEC_ConverterNameList_start", CallingConvention = CallingConvention.Cdecl)]
 		static extern int CppConverterNameList_start();
 
-#if __MonoCS__
-		[DllImport("IcuTranslitEC.dll", EntryPoint="IcuTranslitEC_ConverterNameList_next", CallingConvention = CallingConvention.Cdecl)]
-		[return: MarshalAs(UnmanagedType.LPStr)]
-		static extern string CppConverterNameList_next();
+        static string CppConverterNameList_next()
+        {
+            if (Util.IsUnix)
+            {
+                return CppConverterNameList_next_Linux();
+            }
+            else
+            {
+                return CppConverterNameList_next_Windows();
+            }
+        }
 
-		[DllImport("IcuTranslitEC.dll", EntryPoint="IcuTranslitEC_GetDisplayName", CallingConvention = CallingConvention.Cdecl)]
+        static string CppGetDisplayName(string strID)
+        {
+            if (Util.IsUnix)
+            { return CppGetDisplayName_Linux(strID); }
+            else
+            {
+                return CppGetDisplayName_Windows(strID);
+            }
+        }
+
+        [DllImport("IcuTranslitEC.dll", EntryPoint = "IcuTranslitEC_ConverterNameList_next", CallingConvention = CallingConvention.Cdecl)]
+		[return : MarshalAs(UnmanagedType.LPStr)]
+		static extern string CppConverterNameList_next_Linux();
+
+		[DllImport("IcuTranslitEC.dll", EntryPoint = "IcuTranslitEC_GetDisplayName", CallingConvention = CallingConvention.Cdecl)]
 		[return: MarshalAs(UnmanagedType.LPStr)]
-		static extern string CppGetDisplayName(
+		static extern string CppGetDisplayName_Linux(
 			[MarshalAs(UnmanagedType.LPStr)] string strID);
-#else
+
         [DllImport("IcuTranslitEC.dll", EntryPoint = "IcuTranslitEC_ConverterNameList_next", CallingConvention = CallingConvention.Cdecl)]
         [return: MarshalAs(UnmanagedType.BStr)]
-        static extern string CppConverterNameList_next();
+        static extern string CppConverterNameList_next_Windows();
 
         [DllImport("IcuTranslitEC.dll", EntryPoint = "IcuTranslitEC_GetDisplayName", CallingConvention = CallingConvention.Cdecl)]
         [return: MarshalAs(UnmanagedType.BStr)]
-        static extern string CppGetDisplayName([MarshalAs(UnmanagedType.LPStr)] string strID);
-#endif
+        static extern string CppGetDisplayName_Windows([MarshalAs(UnmanagedType.LPStr)] string strID);
+
         #endregion DLLImport Statements
 
         #region Member Variable Definitions
@@ -178,13 +199,16 @@ namespace SilEncConverters40
 
             if( NormalizeLhsConversionType(ConversionType) == NormConversionType.eUnicode )
             {
-#if __MonoCS__
+                if (Util.IsUnix)
+                {
                     // returning this value will cause the input Unicode data (of any form, UTF16, BE, etc.)
                     //	to be converted to UTF8 narrow bytes before calling DoConvert.
                     eInFormEngine = EncodingForm.UTF8Bytes;
-#else
+                }
+                else
+                {
                     eInFormEngine = EncodingForm.UTF16;
-#endif
+                }
             }
             else
             {
@@ -196,11 +220,14 @@ namespace SilEncConverters40
             // even though the Perl script is writing UTF8 bytes to output.
             if( NormalizeRhsConversionType(ConversionType) == NormConversionType.eUnicode )
             {
-#if __MonoCS__
+                if (Util.IsUnix)
+                {
                     eOutFormEngine = EncodingForm.UTF8Bytes;
-#else
+                }
+                else
+                {
                     eOutFormEngine = EncodingForm.UTF16;
-#endif
+                }
             }
             else
             {
