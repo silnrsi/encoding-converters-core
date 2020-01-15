@@ -30,11 +30,7 @@ Install build dependencies.
 
 ### Test
 
-    sudo mkdir -p /var/lib/fieldworks && sudo chmod +wt /var/lib/fieldworks
-    (export MONO_REGISTRY_PATH=/var/lib/fieldworks/registry && . environ && mono output/Debug/RunTests.exe)
-
-    # Crashing currently, but also perhaps something like
-    (export MONO_REGISTRY_PATH=/var/lib/fieldworks/registry && . environ && MONO_NO_UNLOAD=1 mono --debug /opt/mono-sil/lib/mono/2.0/nunit-console.exe -noshadow ./output/Debug/TestEncCnvtrs.dll)
+    (. environ && mono output/Debug/RunTests.exe)
 
 In Windows,
 
@@ -47,4 +43,3 @@ To build new packages:
 1. Run a release build for both 32 and 64bit
 2. Increase the version in Package.nuspec
 3. Run 'nuget.exe pack' from the root directory of the repository
-
