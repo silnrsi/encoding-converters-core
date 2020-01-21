@@ -27,28 +27,28 @@ namespace SilEncConverters40
         private const int   CP_UTF8  = 65001;
         private const int   CP_UTF16 = 1200;
 
-        private int     m_nCodePage;    // the code page to convert with
-        private bool    m_bToWide;      // we have to keep track of the direction since it might be different than m_bForward
-        
+        private int m_nCodePage;    // the code page to convert with
+        private bool m_bToWide;      // we have to keep track of the direction since it might be different than m_bForward
+
         public const string strDisplayName = "Code Page Converter";
         public const string strHtmlFilename = "Code Page Converter Plug-in About box.mht";
         #endregion Member Variable Definitions
 
         #region Initialization
-        public CpEncConverter() : base(typeof(CpEncConverter).FullName,EncConverters.strTypeSILcp)
+        public CpEncConverter() : base(typeof(CpEncConverter).FullName, EncConverters.strTypeSILcp)
         {
         }
 
-        public override void Initialize(string converterName, string converterSpec, 
-            ref string lhsEncodingID, ref string rhsEncodingID, ref ConvType conversionType, 
+        public override void Initialize(string converterName, string converterSpec,
+            ref string lhsEncodingID, ref string rhsEncodingID, ref ConvType conversionType,
             ref Int32 processTypeFlags, Int32 codePageInput, Int32 codePageOutput, bool bAdding)
         {
 #if VERBOSE_DEBUGGING
             Console.WriteLine("Cp EC Initialize BEGIN");
 #endif
-			base.Initialize(converterName, converterSpec, ref lhsEncodingID, ref rhsEncodingID, ref conversionType, ref processTypeFlags, codePageInput, codePageOutput, bAdding );
+            base.Initialize(converterName, converterSpec, ref lhsEncodingID, ref rhsEncodingID, ref conversionType, ref processTypeFlags, codePageInput, codePageOutput, bAdding);
             m_nCodePage = System.Convert.ToInt32(ConverterIdentifier);
-            
+
             /* BE: this doesn't make any sense... why would you bother creating a UTF16-UTF16 converter?
             // the UTF16 code page is a special case: ConvType must be Uni <> Uni
             if( m_nCodePage == CP_UTF16 )
@@ -75,19 +75,19 @@ namespace SilEncConverters40
 
             // the rest are all "UnicodeEncodingConversion"s (by definition). Also, use the word 
             // "UNICODE" concatenated to the legacy encoding name
-            else 
+            else
             {
                 processTypeFlags = m_lProcessType |= (int)ProcessTypeFlags.UnicodeEncodingConversion;
-                if( String.IsNullOrEmpty(RightEncodingID) )
+                if (String.IsNullOrEmpty(RightEncodingID))
                 {
                     rhsEncodingID = m_strRhsEncodingID = EncConverters.strDefUnicodeEncoding;
-                    if( !String.IsNullOrEmpty(lhsEncodingID) )
+                    if (!String.IsNullOrEmpty(lhsEncodingID))
                         rhsEncodingID += " " + lhsEncodingID;
                 }
             }
 
             // if it wasn't set above, then it's Legacy <> Unicode
-            if( conversionType == ConvType.Unknown )
+            if (conversionType == ConvType.Unknown)
                 conversionType = m_eConversionType = ConvType.Legacy_to_from_Unicode;
 
             // finally, it is also a "Code Page" conversion process type
@@ -95,13 +95,13 @@ namespace SilEncConverters40
 #if VERBOSE_DEBUGGING
             Console.WriteLine("Cp EC Initialize END");
 #endif
-		}
+        }
 
         protected override EncodingForm DefaultUnicodeEncForm(bool bForward, bool bLHS)
-        { 
+        {
             // the only left-hand-side for forwarding conversion unicode possible is UTF8.
-            if( bLHS )
-                return bForward ? EncodingForm.UTF8String : EncodingForm.UTF16; 
+            if (bLHS)
+                return bForward ? EncodingForm.UTF8String : EncodingForm.UTF16;
 
             // wrt. rhs
             return bForward ? EncodingForm.UTF16 : EncodingForm.UTF8String;
@@ -110,7 +110,7 @@ namespace SilEncConverters40
         #endregion Initialization
 
         #region DLLImport Statements
-        [DllImport("kernel32", SetLastError=true)]
+        [DllImport("kernel32", SetLastError = true)]
         static extern unsafe int MultiByteToWideChar(
             int CodePage,         // code page
             uint dwFlags,         // character-type options
@@ -120,7 +120,7 @@ namespace SilEncConverters40
             int cchWideChar        // size of buffer
             );
 
-        [DllImport("kernel32", SetLastError=true)]
+        [DllImport("kernel32", SetLastError = true)]
         static extern unsafe int WideCharToMultiByte(
             int CodePage,               // code page
             uint dwFlags,               // performance and mapping flags
@@ -145,7 +145,7 @@ namespace SilEncConverters40
             ) 
         {
             // let the base class do it's thing first
-            base.PreConvert( eInEncodingForm, ref eInFormEngine,
+            base.PreConvert(eInEncodingForm, ref eInFormEngine,
                 eOutEncodingForm, ref eOutFormEngine,
                 ref eNormalizeOutput, bForward);
 
@@ -156,12 +156,12 @@ namespace SilEncConverters40
             // check if this is the special UTF8 code page, and if so, request that the engine
             //  form be UTF8Bytes (this is the one code page converter where both sides are 
             //  Unicode.
-            if( m_bToWide )
+            if (m_bToWide)
             {
                 // going "to wide" means the output form required by the engine is UTF16.
                 eOutFormEngine = EncodingForm.UTF16;
 
-                if( m_nCodePage == CP_UTF8 )
+                if (m_nCodePage == CP_UTF8)
                     eInFormEngine = EncodingForm.UTF8Bytes;
             }
             else
@@ -169,7 +169,7 @@ namespace SilEncConverters40
                 // going "from wide" means the input form required by the engine is UTF16.
                 eInFormEngine = EncodingForm.UTF16;
 
-                if( m_nCodePage == CP_UTF8 )
+                if (m_nCodePage == CP_UTF8)
                     eOutFormEngine = EncodingForm.UTF8Bytes;
             }
         }
@@ -233,41 +233,41 @@ namespace SilEncConverters40
 
         #endregion Abstract Base Class Overrides
 
-		#region Additional public methods to access the C++ DLL.
-		static Dictionary<string, EncodingInfo> m_mapNameEncoding = new Dictionary<string, EncodingInfo>();
+        #region Additional public methods to access the C++ DLL.
+        static Dictionary<string, EncodingInfo> m_mapNameEncoding = new Dictionary<string, EncodingInfo>();
 
-		/// <summary>
-		/// Gets the available CodePage converter specifications.
-		/// </summary>
-		public static List<string> GetAvailableConverterSpecs()
-		{
-			var encodings = Encoding.GetEncodings();
-			m_mapNameEncoding.Clear();
-			var count = encodings.Length;
-			var specs = new List<string>(count);
-			for (var i = 0; i < count; ++i)
-			{
-				var name = encodings[i].CodePage.ToString();
-				specs.Add(name);
-				m_mapNameEncoding.Add(name, encodings[i]);
+        /// <summary>
+        /// Gets the available CodePage converter specifications.
+        /// </summary>
+        public static List<string> GetAvailableConverterSpecs()
+        {
+            var encodings = Encoding.GetEncodings();
+            m_mapNameEncoding.Clear();
+            var count = encodings.Length;
+            var specs = new List<string>(count);
+            for (var i = 0; i < count; ++i)
+            {
+                var name = encodings[i].CodePage.ToString();
+                specs.Add(name);
+                m_mapNameEncoding.Add(name, encodings[i]);
 #if VERBOSE_DEBUGGING
 				Console.WriteLine("Converter[{0}]: name = '{1}', displayname = '{2}', codepage = {3}",
 					i, encodings[i].Name, encodings[i].DisplayName, encodings[i].CodePage);
 #endif
-			}
-			return specs;
-		}
-		
-		/// <summary>
-		/// Gets the display name of the given CodePage converter.
-		/// </summary>
-		public static string GetDisplayName(string spec)
-		{
-			EncodingInfo encoding;
-			if (m_mapNameEncoding.TryGetValue(spec, out encoding))
-				return encoding.DisplayName;
-			return null;
-		}
-		#endregion
-	}
+            }
+            return specs;
+        }
+
+        /// <summary>
+        /// Gets the display name of the given CodePage converter.
+        /// </summary>
+        public static string GetDisplayName(string spec)
+        {
+            EncodingInfo encoding;
+            if (m_mapNameEncoding.TryGetValue(spec, out encoding))
+                return encoding.DisplayName;
+            return null;
+        }
+        #endregion
+    }
 }

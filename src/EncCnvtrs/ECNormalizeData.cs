@@ -20,7 +20,7 @@ namespace SilEncConverters40
 
         #region Interface
 
-        static byte[] BruteForceNarrowize (string strInput, int nInLen)
+        static byte[] BruteForceNarrowize(string strInput, int nInLen)
         {
             // for some reason, symbol fonts don't appear to be supported in
             //  .Net... Use cpIso8859 as the fallback
@@ -38,7 +38,7 @@ namespace SilEncConverters40
         internal static unsafe byte* GetBytes(string strInput, int cnCountIn, EncodingForm eEncFormIn, int nCodePageIn, EncodingForm eFormEngineIn, byte* pBuf, ref int nBufSize, ref bool bDebugDisplayMode)
         {
             Util.DebugWriteLine(className, "BEGIN");
-            Util.DebugWriteLine(className, 
+            Util.DebugWriteLine(className,
                 "eEncFormIn " + eEncFormIn.ToString() + ", " +
                 "eFormEngineIn " + eFormEngineIn.ToString());
 
@@ -138,7 +138,7 @@ namespace SilEncConverters40
                                 }
                                 catch
                                 {
-                                    ba = BruteForceNarrowize (strInput, nInLen);
+                                    ba = BruteForceNarrowize(strInput, nInLen);
                                 }
                             }
                             else
@@ -256,12 +256,12 @@ namespace SilEncConverters40
             return pBuf;
         }
 
-        static char[] BruteForceWiden (int nCodePageOut, byte[] baOut, int nCharsLen)
+        static char[] BruteForceWiden(int nCodePageOut, byte[] baOut, int nCharsLen)
         {
             char chMask = (char)0;
             if (nCodePageOut == EncConverters.cnSymbolFontCodePage)
                 chMask = (char)0xF000;
-            
+
             // do it the 'hard way'
             var caOut = new char[nCharsLen];
             for (int i = 0; i < nCharsLen; i++)
@@ -374,7 +374,7 @@ namespace SilEncConverters40
                             {
                                 if ((nCodePageOut == EncConverters.cnSymbolFontCodePage) || (nCodePageOut == EncConverters.cnIso8859_1CodePage))
                                 {
-                                    caOut = BruteForceWiden (nCodePageOut, baOut, nCharsLen);
+                                    caOut = BruteForceWiden(nCodePageOut, baOut, nCharsLen);
                                 }
                                 else
                                     throw;

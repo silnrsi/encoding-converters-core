@@ -21,21 +21,21 @@ namespace SilEncConverters40
     //  'HKEY_CLASSES_ROOT\SilEncConverters40.TecEncConverter' which is the basis of 
     //  how it is started (see EncConverters.AddEx).
     // [ComVisible(false)] 
-	public class IcuTranslitEncConverter : EncConverter
+    public class IcuTranslitEncConverter : EncConverter
     {
         #region DLLImport Statements
         // On Linux looks for libIcuTranslitEC.so (adds lib- and -.so)
-        [DllImport("IcuTranslitEC.dll", EntryPoint="IcuTranslitEC_Initialize", CallingConvention = CallingConvention.Cdecl)]
-        static extern int CppInitialize (
+        [DllImport("IcuTranslitEC.dll", EntryPoint = "IcuTranslitEC_Initialize", CallingConvention = CallingConvention.Cdecl)]
+        static extern int CppInitialize(
             [MarshalAs(UnmanagedType.LPStr)] string strConverterID);
 
-        [DllImport("IcuTranslitEC.dll", EntryPoint="IcuTranslitEC_DoConvert", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("IcuTranslitEC.dll", EntryPoint = "IcuTranslitEC_DoConvert", CallingConvention = CallingConvention.Cdecl)]
         static extern unsafe int CppDoConvert(
             byte* lpInputBuffer, int nInBufLen,
-            byte* lpOutputBuffer, int *npOutBufLen);
+            byte* lpOutputBuffer, int* npOutBufLen);
 
-		[DllImport("IcuTranslitEC.dll", EntryPoint="IcuTranslitEC_ConverterNameList_start", CallingConvention = CallingConvention.Cdecl)]
-		static extern int CppConverterNameList_start();
+        [DllImport("IcuTranslitEC.dll", EntryPoint = "IcuTranslitEC_ConverterNameList_start", CallingConvention = CallingConvention.Cdecl)]
+        static extern int CppConverterNameList_start();
 
         static string CppConverterNameList_next()
         {
@@ -52,7 +52,9 @@ namespace SilEncConverters40
         static string CppGetDisplayName(string strID)
         {
             if (Util.IsUnix)
-            { return CppGetDisplayName_Linux(strID); }
+            {
+                return CppGetDisplayName_Linux(strID);
+            }
             else
             {
                 return CppGetDisplayName_Windows(strID);
@@ -60,13 +62,13 @@ namespace SilEncConverters40
         }
 
         [DllImport("IcuTranslitEC.dll", EntryPoint = "IcuTranslitEC_ConverterNameList_next", CallingConvention = CallingConvention.Cdecl)]
-		[return : MarshalAs(UnmanagedType.LPStr)]
-		static extern string CppConverterNameList_next_Linux();
+        [return: MarshalAs(UnmanagedType.LPStr)]
+        static extern string CppConverterNameList_next_Linux();
 
-		[DllImport("IcuTranslitEC.dll", EntryPoint = "IcuTranslitEC_GetDisplayName", CallingConvention = CallingConvention.Cdecl)]
-		[return: MarshalAs(UnmanagedType.LPStr)]
-		static extern string CppGetDisplayName_Linux(
-			[MarshalAs(UnmanagedType.LPStr)] string strID);
+        [DllImport("IcuTranslitEC.dll", EntryPoint = "IcuTranslitEC_GetDisplayName", CallingConvention = CallingConvention.Cdecl)]
+        [return: MarshalAs(UnmanagedType.LPStr)]
+        static extern string CppGetDisplayName_Linux(
+            [MarshalAs(UnmanagedType.LPStr)] string strID);
 
         [DllImport("IcuTranslitEC.dll", EntryPoint = "IcuTranslitEC_ConverterNameList_next", CallingConvention = CallingConvention.Cdecl)]
         [return: MarshalAs(UnmanagedType.BStr)]
@@ -86,8 +88,8 @@ namespace SilEncConverters40
         #region Initialization
         /// <summary>
         /// The class constructor. </summary>
-        public IcuTranslitEncConverter() : base (
-            typeof(IcuTranslitEncConverter).FullName,EncConverters.strTypeSILicuTrans)
+        public IcuTranslitEncConverter() : base(
+            typeof(IcuTranslitEncConverter).FullName, EncConverters.strTypeSILicuTrans)
         {
         }
 
@@ -110,14 +112,14 @@ namespace SilEncConverters40
             Int32 codePageOutput,
             bool bAdding)
         {
-			Util.DebugWriteLine(this, "BEGIN");
+            Util.DebugWriteLine(this, "BEGIN");
             // let the base class have first stab at it
-            base.Initialize(converterName, converterSpec, ref lhsEncodingID, ref rhsEncodingID, 
-                ref conversionType, ref processTypeFlags, codePageInput, codePageOutput, bAdding );
+            base.Initialize(converterName, converterSpec, ref lhsEncodingID, ref rhsEncodingID,
+                ref conversionType, ref processTypeFlags, codePageInput, codePageOutput, bAdding);
 
             // the only thing we want to add (now that the convType can be less than accurate) 
             //  is to make sure it's unidirectional
-            switch(conversionType)
+            switch (conversionType)
             {
                 case ConvType.Legacy_to_from_Legacy:
                     conversionType = ConvType.Legacy_to_Legacy;
@@ -134,20 +136,20 @@ namespace SilEncConverters40
                 default:
                     break;
             }
-			Util.DebugWriteLine(this, "END");
+            Util.DebugWriteLine(this, "END");
         }
 
         #endregion Initialization
 
         #region Misc helpers
         protected bool IsFileLoaded()
-        { 
+        {
             //return (m_hTable != 0);
             return false;
         }
 
         protected void Unload()
-        { 
+        {
             //Util.DebugWriteLine(this, "BEGIN");
             //if( IsFileLoaded() )
             //{
@@ -156,7 +158,7 @@ namespace SilEncConverters40
             //}
         }
 
-        protected override EncodingForm  DefaultUnicodeEncForm(bool bForward, bool bLHS)
+        protected override EncodingForm DefaultUnicodeEncForm(bool bForward, bool bLHS)
         {
             // if it's unspecified, then we want UTF-16
             return EncodingForm.UTF16;
@@ -166,14 +168,14 @@ namespace SilEncConverters40
         {
             Util.DebugWriteLine(this, "BEGIN");
 
-            if( IsFileLoaded() )
+            if (IsFileLoaded())
                 Unload();
 
             Util.DebugWriteLine(this, "Calling CppInitialize");
             int status = 0;
 
             status = CppInitialize(strTranslitID);
-            if( status != 0 )  
+            if (status != 0)
             {
                 throw new Exception("CppInitialize failed.");
             }
@@ -192,12 +194,12 @@ namespace SilEncConverters40
             bool                bForward
             ) 
         {
-	        // let the base class do its thing first
-            base.PreConvert( eInEncodingForm, ref eInFormEngine,
-							eOutEncodingForm, ref eOutFormEngine,
-							ref eNormalizeOutput, bForward);
+            // let the base class do its thing first
+            base.PreConvert(eInEncodingForm, ref eInFormEngine,
+                            eOutEncodingForm, ref eOutFormEngine,
+                            ref eNormalizeOutput, bForward);
 
-            if( NormalizeLhsConversionType(ConversionType) == NormConversionType.eUnicode )
+            if (NormalizeLhsConversionType(ConversionType) == NormConversionType.eUnicode)
             {
                 if (Util.IsUnix)
                 {
@@ -218,7 +220,7 @@ namespace SilEncConverters40
 
             // Output will be stored in a typical C# string, so eOutFormEngine will be UTF16,
             // even though the Perl script is writing UTF8 bytes to output.
-            if( NormalizeRhsConversionType(ConversionType) == NormConversionType.eUnicode )
+            if (NormalizeRhsConversionType(ConversionType) == NormConversionType.eUnicode)
             {
                 if (Util.IsUnix)
                 {
@@ -248,44 +250,44 @@ namespace SilEncConverters40
         {
             Util.DebugWriteLine(this, "BEGIN");
             int status = 0;
-            fixed(int* pnOut = &rnOutLen)
+            fixed (int* pnOut = &rnOutLen)
             {
                 status = CppDoConvert(lpInBuffer, nInLen, lpOutBuffer, pnOut);
             }
-            if( status != 0 )  
+            if (status != 0)
             {
                 EncConverters.ThrowError(ErrStatus.Exception, "CppDoConvert() failed.");
             }
             Util.DebugWriteLine(this, "END");
         }
 
-        protected override string   GetConfigTypeName
+        protected override string GetConfigTypeName
         {
             get { return typeof(IcuTranslitConfig).AssemblyQualifiedName; }
         }
 
         #endregion Abstract Base Class Overrides
-		
-		#region Additional public methods to access the C++ DLL.
-		/// <summary>
-		/// Gets the available ICU transliterator specifications.
-		/// </summary>
-		public static List<string> GetAvailableConverterSpecs()
-		{
-			int count = CppConverterNameList_start();
-			List<string> specs = new List<string>(count);
-			for (int i = 0; i < count; ++i)
-				specs.Add( CppConverterNameList_next() );
-			return specs;
-		}
-		
-		/// <summary>
-		/// Gets the display name of the given ICU transliterator specification.
-		/// </summary>
-		public static string GetDisplayName(string spec)
-		{
-			return CppGetDisplayName(spec);
-		}
-		#endregion
+
+        #region Additional public methods to access the C++ DLL.
+        /// <summary>
+        /// Gets the available ICU transliterator specifications.
+        /// </summary>
+        public static List<string> GetAvailableConverterSpecs()
+        {
+            int count = CppConverterNameList_start();
+            List<string> specs = new List<string>(count);
+            for (int i = 0; i < count; ++i)
+                specs.Add(CppConverterNameList_next());
+            return specs;
+        }
+
+        /// <summary>
+        /// Gets the display name of the given ICU transliterator specification.
+        /// </summary>
+        public static string GetDisplayName(string spec)
+        {
+            return CppGetDisplayName(spec);
+        }
+        #endregion
     }
 }

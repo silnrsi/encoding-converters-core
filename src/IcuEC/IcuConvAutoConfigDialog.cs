@@ -13,11 +13,11 @@ using ECInterfaces;                     // for IEncConverter
 
 namespace SilEncConverters40
 {
-	public class IcuConvAutoConfigDialog : SilEncConverters40.AutoConfigDialog
-	{
-		#region DLLImport Statements
-		[DllImport("IcuConvEC.dll", EntryPoint = "IcuConvEC_ConverterNameList_start", CallingConvention = CallingConvention.Cdecl)]
-		static extern unsafe int CppConverterNameList_start();
+    public class IcuConvAutoConfigDialog : SilEncConverters40.AutoConfigDialog
+    {
+        #region DLLImport Statements
+        [DllImport("IcuConvEC.dll", EntryPoint = "IcuConvEC_ConverterNameList_start", CallingConvention = CallingConvention.Cdecl)]
+        static extern unsafe int CppConverterNameList_start();
 
         static string CppConverterNameList_next()
         {
@@ -44,13 +44,13 @@ namespace SilEncConverters40
         }
 
         [DllImport("IcuConvEC.dll", EntryPoint = "IcuConvEC_ConverterNameList_next", CallingConvention = CallingConvention.Cdecl)]
-		[return : MarshalAs(UnmanagedType.LPStr)]
-		static extern string CppConverterNameList_next_Linux();
+        [return: MarshalAs(UnmanagedType.LPStr)]
+        static extern string CppConverterNameList_next_Linux();
 
-		[DllImport("IcuConvEC.dll", EntryPoint = "IcuConvEC_GetDisplayName", CallingConvention = CallingConvention.Cdecl)]
-		[return: MarshalAs(UnmanagedType.LPStr)]
-		static extern string CppGetDisplayName_Linux(
-			[MarshalAs(UnmanagedType.LPStr)] string strID);
+        [DllImport("IcuConvEC.dll", EntryPoint = "IcuConvEC_GetDisplayName", CallingConvention = CallingConvention.Cdecl)]
+        [return: MarshalAs(UnmanagedType.LPStr)]
+        static extern string CppGetDisplayName_Linux(
+            [MarshalAs(UnmanagedType.LPStr)] string strID);
 
         [DllImport("IcuConvEC.dll", EntryPoint = "IcuConvEC_ConverterNameList_next", CallingConvention = CallingConvention.Cdecl)]
         [return: MarshalAs(UnmanagedType.BStr)]
@@ -62,75 +62,75 @@ namespace SilEncConverters40
 
         #endregion DLLImport Statements
 
-		public IcuConvAutoConfigDialog (
-			IEncConverters aECs,
-			string strDisplayName,
-			string strFriendlyName,
-			string strConverterIdentifier,
-			ConvType eConversionType,
-			string strLhsEncodingId,
-			string strRhsEncodingId,
-			int lProcessTypeFlags,
-			bool bIsInRepository)
-		{
-			Util.DebugWriteLine(this, "BEGIN");
-			InitializeComponent();
-			fillListBox();
-			Util.DebugWriteLine(this, "Initialized component.");
-			base.Initialize (
-				aECs,
-				IcuConvEncConverter.strHtmlFilename,
-				strDisplayName,
-				strFriendlyName,
-				strConverterIdentifier,
-				eConversionType,
-				strLhsEncodingId,
-				strRhsEncodingId,
-				lProcessTypeFlags | (int)ProcessTypeFlags.ICUConverter,
-				bIsInRepository);
-			Util.DebugWriteLine(this, "Initialized base.");
+        public IcuConvAutoConfigDialog(
+            IEncConverters aECs,
+            string strDisplayName,
+            string strFriendlyName,
+            string strConverterIdentifier,
+            ConvType eConversionType,
+            string strLhsEncodingId,
+            string strRhsEncodingId,
+            int lProcessTypeFlags,
+            bool bIsInRepository)
+        {
+            Util.DebugWriteLine(this, "BEGIN");
+            InitializeComponent();
+            fillListBox();
+            Util.DebugWriteLine(this, "Initialized component.");
+            base.Initialize(
+                aECs,
+                IcuConvEncConverter.strHtmlFilename,
+                strDisplayName,
+                strFriendlyName,
+                strConverterIdentifier,
+                eConversionType,
+                strLhsEncodingId,
+                strRhsEncodingId,
+                lProcessTypeFlags | (int)ProcessTypeFlags.ICUConverter,
+                bIsInRepository);
+            Util.DebugWriteLine(this, "Initialized base.");
 
-			// if we're editing, then set the Converter Spec and say it's unmodified
-			if (m_bEditMode)
-			{
-				Util.DebugWriteLine(this, "Edit mode");
-				System.Diagnostics.Debug.Assert(!String.IsNullOrEmpty(ConverterIdentifier));
-			    var index = listBoxConvName.FindString(ConverterIdentifier);
-			    listBoxConvName.SelectedIndex = index;
-				IsModified = false;
-			}
+            // if we're editing, then set the Converter Spec and say it's unmodified
+            if (m_bEditMode)
+            {
+                Util.DebugWriteLine(this, "Edit mode");
+                System.Diagnostics.Debug.Assert(!String.IsNullOrEmpty(ConverterIdentifier));
+                var index = listBoxConvName.FindString(ConverterIdentifier);
+                listBoxConvName.SelectedIndex = index;
+                IsModified = false;
+            }
 
-			m_bInitialized = true;
-			Util.DebugWriteLine(this, "END");
-		}
+            m_bInitialized = true;
+            Util.DebugWriteLine(this, "END");
+        }
 
-		public IcuConvAutoConfigDialog (
-			IEncConverters aECs,
-			string strFriendlyName,
-			string strConverterIdentifier,
-			ConvType eConversionType,
-			string strTestData)
-		{
-			InitializeComponent();
-			fillListBox();
-			base.Initialize (
-				aECs,
-				strFriendlyName,
-				strConverterIdentifier,
-				eConversionType,
-				strTestData);
-			m_bInitialized = true;
-		}
+        public IcuConvAutoConfigDialog(
+            IEncConverters aECs,
+            string strFriendlyName,
+            string strConverterIdentifier,
+            ConvType eConversionType,
+            string strTestData)
+        {
+            InitializeComponent();
+            fillListBox();
+            base.Initialize(
+                aECs,
+                strFriendlyName,
+                strConverterIdentifier,
+                eConversionType,
+                strTestData);
+            m_bInitialized = true;
+        }
 
-		private System.Windows.Forms.Label labelConvName;
-		private System.Windows.Forms.ListBox listBoxConvName;
+        private System.Windows.Forms.Label labelConvName;
+        private System.Windows.Forms.ListBox listBoxConvName;
 
-		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
 
-		// This code was NOT generated!
-		// So feel free to modify it as needed.
-		private void InitializeComponent()
-		{
+        // This code was NOT generated!
+        // So feel free to modify it as needed.
+        private void InitializeComponent()
+        {
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.labelConvName = new System.Windows.Forms.Label();
             this.listBoxConvName = new System.Windows.Forms.ListBox();
@@ -213,13 +213,13 @@ namespace SilEncConverters40
             this.tableLayoutPanel1.PerformLayout();
             this.ResumeLayout(false);
 
-		}
+        }
 
-		private void fillListBox()
-		{
-			this.listBoxConvName.Items.Clear();
+        private void fillListBox()
+        {
+            this.listBoxConvName.Items.Clear();
 #if true
-		    var list = IcuConvEncConverter.GetAvailableConverterSpecs();
+            var list = IcuConvEncConverter.GetAvailableConverterSpecs();
             list.ForEach(i => listBoxConvName.Items.Add(i));
 #else
 			int count = 0;
@@ -268,76 +268,76 @@ namespace SilEncConverters40
 				while((swapped==true));
 			}
 #endif
-		}
+        }
 
-		protected override void SetConvTypeControls()
-		{
-		}
+        protected override void SetConvTypeControls()
+        {
+        }
 
-		// this method is called either when the user clicks the "Apply" or "OK" buttons *OR*
-		// if she tries to switch to the Test or Advanced tab. This is the dialog's one
-		// opportunity to make sure that the user has correctly configured a legitimate
-		// converter.
-		protected override bool OnApply()
-		{
-			Util.DebugWriteLine(this, "BEGIN");
+        // this method is called either when the user clicks the "Apply" or "OK" buttons *OR*
+        // if she tries to switch to the Test or Advanced tab. This is the dialog's one
+        // opportunity to make sure that the user has correctly configured a legitimate
+        // converter.
+        protected override bool OnApply()
+        {
+            Util.DebugWriteLine(this, "BEGIN");
 
-			if (listBoxConvName.SelectedItem == null)
-				return false;
-			// Get the converter identifier from the Setup tab controls.
-			var strConverter = listBoxConvName.SelectedItem as String;
-		    var nIndex = strConverter.IndexOf(" (aliases: ");
+            if (listBoxConvName.SelectedItem == null)
+                return false;
+            // Get the converter identifier from the Setup tab controls.
+            var strConverter = listBoxConvName.SelectedItem as String;
+            var nIndex = strConverter.IndexOf(" (aliases: ");
             if (nIndex != -1)
                 strConverter = strConverter.Substring(0, nIndex);
-            
+
             ConverterIdentifier = strConverter;
 
-			//SetConvTypeFromRbControls(radioButtonExpectsUnicode, radioButtonExpectsLegacy,
-			//    radioButtonReturnsUnicode, radioButtonReturnsLegacy);
+            //SetConvTypeFromRbControls(radioButtonExpectsUnicode, radioButtonExpectsLegacy,
+            //    radioButtonReturnsUnicode, radioButtonReturnsLegacy);
 
-			// if we're actually on the setup tab, then do some further checking as well.
-			if (tabControl.SelectedTab == tabPageSetup)
-			{
-				// only do these message boxes if we're on the Setup tab itself, because if
-				// this OnApply is being called as a result of the user switching to the Test
-				// tab, that code will already put up an error message and we don't need two
-				// error messages.
-				if (String.IsNullOrEmpty(ConverterIdentifier))
-				{
-					MessageBox.Show(this, "Choose a transliterator first!", EncConverters.cstrCaption);
-					return false;
-				}
-			}
-			Util.DebugWriteLine(this, "END");
-			return base.OnApply();
-		}
+            // if we're actually on the setup tab, then do some further checking as well.
+            if (tabControl.SelectedTab == tabPageSetup)
+            {
+                // only do these message boxes if we're on the Setup tab itself, because if
+                // this OnApply is being called as a result of the user switching to the Test
+                // tab, that code will already put up an error message and we don't need two
+                // error messages.
+                if (String.IsNullOrEmpty(ConverterIdentifier))
+                {
+                    MessageBox.Show(this, "Choose a transliterator first!", EncConverters.cstrCaption);
+                    return false;
+                }
+            }
+            Util.DebugWriteLine(this, "END");
+            return base.OnApply();
+        }
 
-		protected override string ProgID
-		{
-			get { return typeof(IcuConvEncConverter).FullName; }
-		}
+        protected override string ProgID
+        {
+            get { return typeof(IcuConvEncConverter).FullName; }
+        }
 
-		protected override string ImplType
-		{
-			get { return EncConverters.strTypeSILicuTrans; }
-		}
+        protected override string ImplType
+        {
+            get { return EncConverters.strTypeSILicuTrans; }
+        }
 
-		protected override string DefaultFriendlyName
-		{
-			// as the default, make it the same as the table name (w/o extension)
-			get { return ConverterIdentifier; }
-		}
+        protected override string DefaultFriendlyName
+        {
+            // as the default, make it the same as the table name (w/o extension)
+            get { return ConverterIdentifier; }
+        }
 
-		private void listBoxConvName_SelectedIndexChanged (
-			object sender, EventArgs e)
-		{
-			if (m_bInitialized) // but only do this after we're already initialized
-			{
-				ListBox lb = this.listBoxConvName;  // shorter nickname
-				Util.DebugWriteLine(this,
-                    lb.SelectedIndex.ToString() + "\n" + lb.GetItemText(lb.SelectedItem) + "lb_SelectedIndexChanged"); 
-				IsModified = true;
-			}
-		}
-	}
+        private void listBoxConvName_SelectedIndexChanged(
+            object sender, EventArgs e)
+        {
+            if (m_bInitialized) // but only do this after we're already initialized
+            {
+                ListBox lb = this.listBoxConvName;  // shorter nickname
+                Util.DebugWriteLine(this,
+                    lb.SelectedIndex.ToString() + "\n" + lb.GetItemText(lb.SelectedItem) + "lb_SelectedIndexChanged");
+                IsModified = true;
+            }
+        }
+    }
 }

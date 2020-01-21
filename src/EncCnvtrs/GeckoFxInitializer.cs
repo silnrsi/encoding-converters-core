@@ -25,8 +25,8 @@ namespace SilEncConverters40
         public static bool SetUpXulRunner()
         {
             Util.DebugWriteLine(className, "BEGIN");
-	        if (Xpcom.IsInitialized)
-		        return true;
+            if (Xpcom.IsInitialized)
+                return true;
 
             string xulRunnerPath;
 
@@ -139,5 +139,5 @@ namespace SilEncConverters40
                 return labelInstructions;
             }
         }
-    }  
+    }
 }

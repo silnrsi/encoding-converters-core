@@ -21,10 +21,10 @@ namespace ECInterfaces
 
         // The following classes and methods will not be shown in debugging output.
         // Comment out or add as desired.
-        private static readonly string [] DEBUG_EXCLUDE_CLASSES = {
+        private static readonly string[] DEBUG_EXCLUDE_CLASSES = {
             //"EncConverters",
         };
-        private static readonly string [] DEBUG_EXCLUDE_METHODS = {
+        private static readonly string[] DEBUG_EXCLUDE_METHODS = {
             "EncConverters.AddEx",
             "EncConverters.AddToCollection",
             "EncConverters.GetConversionEnginesSupported",
@@ -59,13 +59,15 @@ namespace ECInterfaces
                     {
                         // COMMON_DATA_FW can be defined during compile time.
                         // This folder should match REGROOT in the main Makefile.in.
-                        #if (COMMON_DATA_FW)
-                            s_CommonAppDataFolder = "/var/lib/fieldworks";
-                        #else
-                            s_CommonAppDataFolder = "/var/lib/encConverters";
-                        #endif
+#if (COMMON_DATA_FW)
+                        s_CommonAppDataFolder = "/var/lib/fieldworks";
+#else
+                        s_CommonAppDataFolder = "/var/lib/encConverters";
+#endif
                         DebugWriteLine(typeof(Util).ToString(), "CommonAppDataFolder = " + s_CommonAppDataFolder);
-                    } else {
+                    }
+                    else
+                    {
                         s_CommonAppDataFolder =
                             Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
                     }
@@ -138,7 +140,7 @@ namespace ECInterfaces
                 return;
             }
             StackFrame sf = new StackFrame(1, true); // get frame of calling method
-            string className  = caller.GetType().Name;
+            string className = caller.GetType().Name;
             DebugWriteLine(sf, className, strMsg);
 #endif
         }
@@ -163,12 +165,12 @@ namespace ECInterfaces
 #endif
         }
 
-		/// <summary>
-		/// Test whether we're running on a Unix variant (such as Linux).
-		/// </summary>
-		static public bool IsUnix
-		{
-			get { return Environment.OSVersion.Platform == PlatformID.Unix; }
-		}
+        /// <summary>
+        /// Test whether we're running on a Unix variant (such as Linux).
+        /// </summary>
+        static public bool IsUnix
+        {
+            get { return Environment.OSVersion.Platform == PlatformID.Unix; }
+        }
     }
 }
