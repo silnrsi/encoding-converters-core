@@ -13,7 +13,7 @@
     To show debugging output (Debug.WriteLine) on Linux, enter in terminal:
     export MONO_TRACE_LISTENER=Console.Out
 -->
-<Project DefaultTargets="all" InitialTargets="Setup" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+<Project DefaultTargets="all" InitialTargets="Setup" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
 	<PropertyGroup>
 		<projroot>$(MSBuildProjectDirectory)/..</projroot>
@@ -58,64 +58,55 @@
 	<Target Name="ECInterfaces">
 		<MSBuild Projects="$(projroot)/src/ECInterfaces/ECInterfaces-mono.csproj"
 				 Targets="$(msbuild-target)"
-				 Properties="$(msbuild-props)"
-				 ToolsVersion="15.0"/>
+				 Properties="$(msbuild-props)"/>
 	</Target>
 
 	<Target Name="EncCnvtrs" DependsOnTargets="ECInterfaces">
 		<MSBuild Projects="$(projroot)/src/EncCnvtrs/EncCnvtrs-mono.csproj"
 				 Targets="$(msbuild-target)"
-				 Properties="$(msbuild-props)"
-				 ToolsVersion="15.0"/>
+				 Properties="$(msbuild-props)"/>
 	</Target>
 
 	<Target Name="CcEC" DependsOnTargets="ECInterfaces;EncCnvtrs">
 		<MSBuild Projects="$(projroot)/src/CcEC/CcEC-mono.csproj"
 				 Targets="$(msbuild-target)"
-				 Properties="$(msbuild-props)"
-				 ToolsVersion="15.0"/>
+				 Properties="$(msbuild-props)"/>
 	</Target>
 
 	<Target Name="IcuEC" DependsOnTargets="ECInterfaces;EncCnvtrs">
 		<MSBuild Projects="$(projroot)/src/IcuEC/IcuEC-mono.csproj"
 				 Targets="$(msbuild-target)"
-				 Properties="$(msbuild-props)"
-				 ToolsVersion="15.0"/>
+				 Properties="$(msbuild-props)"/>
 	</Target>
 
 	<Target Name="PerlExpressionEC" DependsOnTargets="ECInterfaces;EncCnvtrs">
 		<MSBuild Projects="$(projroot)/src/PerlExpressionEC/PerlExpressionEC-mono.csproj"
 				 Targets="$(msbuild-target)"
-				 Properties="$(msbuild-props)"
-				 ToolsVersion="15.0"/>
+				 Properties="$(msbuild-props)"/>
 	</Target>
 
 	<Target Name="PyScriptEC" DependsOnTargets="ECInterfaces;EncCnvtrs">
 		<MSBuild Projects="$(projroot)/src/PyScriptEC/PyScriptEC-mono.csproj"
 				 Targets="$(msbuild-target)"
-				 Properties="$(msbuild-props)"
-				 ToolsVersion="15.0"/>
+				 Properties="$(msbuild-props)"/>
 	</Target>
 
 	<Target Name="AIGuesserEC" DependsOnTargets="ECInterfaces;CcEC">
 		<MSBuild Projects="$(projroot)/src/AIGuesserEC/AIGuesserEC-mono.csproj"
 				 Targets="$(msbuild-target)"
-				 Properties="$(msbuild-props)"
-				 ToolsVersion="15.0"/>
+				 Properties="$(msbuild-props)"/>
 	</Target>
 
 	<Target Name="ECFileConverter" DependsOnTargets="ECInterfaces">
 		<MSBuild Projects="$(projroot)/src/ECFileConverter/ECFileConverter-mono.csproj"
 				 Targets="$(msbuild-target)"
-				 Properties="$(msbuild-props)"
-				 ToolsVersion="15.0"/>
+				 Properties="$(msbuild-props)"/>
 	</Target>
 
 	<Target Name="TestEncCnvtrs" DependsOnTargets="ECInterfaces;IcuEC">
 		<MSBuild Projects="$(projroot)/src/TestEncCnvtrs/TestEncCnvtrs-mono.csproj"
 				 Targets="$(msbuild-target)"
-				 Properties="$(msbuild-props)"
-				 ToolsVersion="15.0"/>
+				 Properties="$(msbuild-props)"/>
 	</Target>
 
     <!-- This target is rather useless except for debugging tests/code in MonoDevelop. -->
@@ -123,8 +114,7 @@
 	<Target Name="RunTests" DependsOnTargets="TestEncCnvtrs">
 		<MSBuild Projects="$(projroot)/src/RunTests/RunTests-mono.csproj"
 				 Targets="$(msbuild-target)"
-				 Properties="$(msbuild-props)"
-				 ToolsVersion="15.0"/>
+				 Properties="$(msbuild-props)"/>
 	</Target>
 
     <Target Name="test" DependsOnTargets="TestEncCnvtrs">
