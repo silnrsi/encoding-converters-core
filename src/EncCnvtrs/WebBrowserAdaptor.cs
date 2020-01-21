@@ -73,11 +73,11 @@ namespace SilEncConverters40
                     Util.DebugWriteLine(this, "Could not use GeckoFx");
                     _whichBrowser = WhichBrowser.Instructions;
                     LabelsPanel = new TableLayoutPanel
-                                                 {
-                                                   Dock        = DockStyle.Fill,
-                                                   ColumnCount = 1,
-                                                   RowCount    = 2,
-                                                 };
+                    {
+                        Dock = DockStyle.Fill,
+                        ColumnCount = 1,
+                        RowCount = 2,
+                    };
                     this.Controls.Add(LabelsPanel);
                     LabelsPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 30F));
                     LabelsPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 70F));
@@ -89,15 +89,15 @@ namespace SilEncConverters40
                 Util.DebugWriteLine(this, "Using Internet Explorer");
                 _whichBrowser = WhichBrowser.InternetExplorer;
                 IeWebBrowser = new WebBrowser
-                                   {
-                                       Dock = DockStyle.Fill,
-                                       Location = new Point(3, 3),
-                                       MinimumSize = new Size(20, 20),
-                                       Name = "ieWebBrowser",
-                                       Size = new Size(596, 394),
-                                       TabIndex = 0,
-                                       Url = new Uri("", UriKind.Relative)
-                                   };
+                {
+                    Dock = DockStyle.Fill,
+                    Location = new Point(3, 3),
+                    MinimumSize = new Size(20, 20),
+                    Name = "ieWebBrowser",
+                    Size = new Size(596, 394),
+                    TabIndex = 0,
+                    Url = new Uri("", UriKind.Relative)
+                };
                 Controls.Add(IeWebBrowser);
             }
             Util.DebugWriteLine(this, "END");
@@ -122,7 +122,7 @@ namespace SilEncConverters40
         /// this will return true if the user has set the 'UseGeckoFx' registry key to 'True' AND put the xulRunner folder 
         /// in the target installation dir
         /// </summary>
-        private  static bool WindowsUserWantsToUseGecko
+        private static bool WindowsUserWantsToUseGecko
         {
             get
             {
@@ -168,15 +168,15 @@ namespace SilEncConverters40
                 {
                     string cstrLinkPrefix = "Help file for this converter: " + Environment.NewLine;
                     LinkLabel labelHelpLink = new LinkLabel
-                                                  {
-                                                      Text = cstrLinkPrefix + strXmlFilePath,
-                                                      Dock = DockStyle.Fill,
-                                                  };
+                    {
+                        Text = cstrLinkPrefix + strXmlFilePath,
+                        Dock = DockStyle.Fill,
+                    };
                     labelHelpLink.Links.Add(cstrLinkPrefix.Length, strXmlFilePath.Length, strXmlFilePath);
                     labelHelpLink.LinkClicked += (sender, args) =>
                                                      {
                                                          if (args.Link.LinkData != null)
-                                                            Process.Start("file://" + args.Link.LinkData as string);
+                                                             Process.Start("file://" + args.Link.LinkData as string);
                                                      };
                     LabelsPanel.Controls.Add(labelHelpLink, 0, 1);
                 }

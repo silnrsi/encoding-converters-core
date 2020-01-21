@@ -177,7 +177,7 @@ namespace SilEncConverters40
             {
                 // implemented by the sub-classes
                 string strConfigTypeName = GetConfigTypeName;
-                if( !String.IsNullOrEmpty(strConfigTypeName) )
+                if (!String.IsNullOrEmpty(strConfigTypeName))
                 {
                     Type typeECConfig = Type.GetType(strConfigTypeName);
                     if (typeECConfig != null)
@@ -214,11 +214,11 @@ namespace SilEncConverters40
         }
 
         // [DispId(15)]
-        public virtual string ConvertToUnicode(byte [] baInput)
+        public virtual string ConvertToUnicode(byte[] baInput)
         {
-            if(     (ConversionType != ConvType.Legacy_to_from_Unicode)
-                &&  (ConversionType != ConvType.Unicode_to_from_Legacy)
-                &&  (ConversionType != ConvType.Legacy_to_Unicode)
+            if ((ConversionType != ConvType.Legacy_to_from_Unicode)
+                && (ConversionType != ConvType.Unicode_to_from_Legacy)
+                && (ConversionType != ConvType.Legacy_to_Unicode)
                 )
             {
                 EncConverters.ThrowError(ErrStatus.InvalidConversionType);
@@ -245,9 +245,9 @@ namespace SilEncConverters40
         // [DispId(16)]
         public virtual byte[] ConvertFromUnicode(string sInput)
         {
-            if(     (ConversionType != ConvType.Legacy_to_from_Unicode)
-                &&  (ConversionType != ConvType.Unicode_to_from_Legacy)
-                &&  (ConversionType != ConvType.Unicode_to_Legacy)
+            if ((ConversionType != ConvType.Legacy_to_from_Unicode)
+                && (ConversionType != ConvType.Unicode_to_from_Legacy)
+                && (ConversionType != ConvType.Unicode_to_Legacy)
                 )
             {
                 EncConverters.ThrowError(ErrStatus.InvalidConversionType);
@@ -326,21 +326,21 @@ namespace SilEncConverters40
         }
 
         // [DispId(25)]
-        public string [] AttributeKeys
+        public string[] AttributeKeys
         {
             get
             {
                 // we keep track of the key value pairs for subsequent calls to getAttributeValue
                 //  (in the map, m_mapProperties), so first clear it out in case it was previously
                 //  filled
-                if( m_mapProperties == null )
+                if (m_mapProperties == null)
                     m_mapProperties = new Hashtable();
                 else
                     m_mapProperties.Clear();
 
                 // next create the safearray that the subclass will fill and ask the subclass to
                 //  fill it.
-                string [] rSa = null;
+                string[] rSa = null;
                 GetAttributeKeys(out rSa);
 
                 return rSa;
@@ -350,15 +350,15 @@ namespace SilEncConverters40
         // [DispId(26)]
         public string AttributeValue(string sKey)
         {
-            return (string) m_mapProperties[sKey];
+            return (string)m_mapProperties[sKey];
         }
 
         // [DispId(27)]
-        public string [] ConverterNameEnum
+        public string[] ConverterNameEnum
         {
             get
             {
-                string [] rSa = null;
+                string[] rSa = null;
                 GetConverterNameEnum(out rSa);  // sub-classes fill
                 return rSa;
             }
@@ -372,18 +372,18 @@ namespace SilEncConverters40
             sb.AppendLine("Converter Details:");
 
             // indicate whether it's temporary or not
-            if( !this.IsInRepository )
+            if (!this.IsInRepository)
                 sb.Insert(0, "Temporary ");
 
             sb.AppendLine(String.Format("    Name: '{0}'", Name));
             sb.AppendLine(String.Format("    Identifier: '{0}'", ConverterIdentifier));
             sb.AppendLine(String.Format("    Implementation Type: '{0}'", ImplementType));
             sb.AppendLine(String.Format("    Conversion Type: '{0}'", ConversionType));
-            if( (ProcessTypeFlags)ProcessType != ProcessTypeFlags.DontKnow )
+            if ((ProcessTypeFlags)ProcessType != ProcessTypeFlags.DontKnow)
                 sb.AppendLine(String.Format("    Process Type: '{0}'", strProcessType(ProcessType)));
-            if( !String.IsNullOrEmpty(LeftEncodingID) )
+            if (!String.IsNullOrEmpty(LeftEncodingID))
                 sb.AppendLine(String.Format("    Left side Encoding ID: '{0}'", LeftEncodingID));
-            if( !String.IsNullOrEmpty(RightEncodingID) )
+            if (!String.IsNullOrEmpty(RightEncodingID))
                 sb.AppendLine(String.Format("    Right side Encoding ID: '{0}'", RightEncodingID));
 
             // also include the current conversion option values
@@ -406,29 +406,29 @@ namespace SilEncConverters40
         protected string strProcessType(long lProcessType)
         {
             StringBuilder sb = new StringBuilder();
-            if( (lProcessType & (long)ProcessTypeFlags.UnicodeEncodingConversion) != 0 )
+            if ((lProcessType & (long)ProcessTypeFlags.UnicodeEncodingConversion) != 0)
                 sb.Append("UnicodeEncodingConversion, ");
-            if( (lProcessType & (long)ProcessTypeFlags.Transliteration) != 0 )
+            if ((lProcessType & (long)ProcessTypeFlags.Transliteration) != 0)
                 sb.Append("Transliteration, ");
-            if( (lProcessType & (long)ProcessTypeFlags.ICUTransliteration) != 0 )
+            if ((lProcessType & (long)ProcessTypeFlags.ICUTransliteration) != 0)
                 sb.Append("ICUTransliteration, ");
-            if( (lProcessType & (long)ProcessTypeFlags.ICUConverter) != 0 )
+            if ((lProcessType & (long)ProcessTypeFlags.ICUConverter) != 0)
                 sb.Append("ICUConverter, ");
-            if( (lProcessType & (long)ProcessTypeFlags.ICURegularExpression) != 0 )
+            if ((lProcessType & (long)ProcessTypeFlags.ICURegularExpression) != 0)
                 sb.Append("ICURegularExpression, ");
-            if( (lProcessType & (long)ProcessTypeFlags.CodePageConversion) != 0 )
+            if ((lProcessType & (long)ProcessTypeFlags.CodePageConversion) != 0)
                 sb.Append("CodePageConversion, ");
-            if( (lProcessType & (long)ProcessTypeFlags.NonUnicodeEncodingConversion) != 0 )
+            if ((lProcessType & (long)ProcessTypeFlags.NonUnicodeEncodingConversion) != 0)
                 sb.Append("NonUnicodeEncodingConversion, ");
-            if( (lProcessType & (long)ProcessTypeFlags.SpellingFixerProject) != 0 )
+            if ((lProcessType & (long)ProcessTypeFlags.SpellingFixerProject) != 0)
                 sb.Append("SpellingFixerProject, ");
-            if( (lProcessType & (long)ProcessTypeFlags.PythonScript) != 0 )
+            if ((lProcessType & (long)ProcessTypeFlags.PythonScript) != 0)
                 sb.Append("PythonScript, ");
-            if( (lProcessType & (long)ProcessTypeFlags.PerlExpression) != 0 )
+            if ((lProcessType & (long)ProcessTypeFlags.PerlExpression) != 0)
                 sb.Append("PerlExpression, ");
-            if( (lProcessType & (long)ProcessTypeFlags.UserDefinedSpare1) != 0 )
+            if ((lProcessType & (long)ProcessTypeFlags.UserDefinedSpare1) != 0)
                 sb.Append("UserDefinedSpare #1, ");
-            if( (lProcessType & (long)ProcessTypeFlags.UserDefinedSpare2) != 0 )
+            if ((lProcessType & (long)ProcessTypeFlags.UserDefinedSpare2) != 0)
                 sb.Append("UserDefinedSpare #2, ");
 
             // strip off the final ", "
@@ -443,7 +443,7 @@ namespace SilEncConverters40
             return Environment.NewLine + "    " + String.Format(strFormat, strValue);
         }
 
-        protected abstract string   GetConfigTypeName
+        protected abstract string GetConfigTypeName
         {
             get;
         }
@@ -469,7 +469,7 @@ namespace SilEncConverters40
             //  data. So, pass 0 so that the function will determine the length from the BSTR
             //  itself (just in case the user happens to have a value of 0 in the data (i.e.
             //  it won't necessarily be null terminated...
-            int   ciOutput = 0;
+            int ciOutput = 0;
             return InternalConvertEx
                 (
                 eInEncodingForm,
@@ -492,12 +492,13 @@ namespace SilEncConverters40
             bool bForward)
         {
             Util.DebugWriteLine(className, "(input bytes) BEGIN");
-            Util.DebugWriteLine(className, 
+            Util.DebugWriteLine(className,
                 "eEncFormIn " + eInEncodingForm.ToString() + ", " +
                 "eEncFormOut " + eOutEncodingForm.ToString());
-            if( baInput == null )
+            if (baInput == null)
                 EncConverters.ThrowError(ErrStatus.IncompleteChar);
-            if (baInput.Length == 0) {
+            if (baInput.Length == 0)
+            {
                 rciOutput = 0;
                 return "";
             }
@@ -565,13 +566,14 @@ namespace SilEncConverters40
             bool bForward)
         {
             Util.DebugWriteLine(className, "(output bytes) BEGIN");
-            Util.DebugWriteLine(className, 
+            Util.DebugWriteLine(className,
                 "eEncFormIn " + eInEncodingForm.ToString() + ", " +
                 "eEncFormOut " + eOutEncodingForm.ToString());
-            if( sInput == null )
+            if (sInput == null)
                 EncConverters.ThrowError(ErrStatus.IncompleteChar);
             Util.DebugWriteLine(className, "sInput.Length() is " + sInput.Length.ToString() + ".");
-            if (sInput.Length == 0) {
+            if (sInput.Length == 0)
+            {
                 // this section added 11/10/2011 by Jim K
                 rciOutput = 0;
                 return new byte[0];
@@ -620,7 +622,7 @@ namespace SilEncConverters40
                     Util.DebugWriteLine(className, Util.getDisplayBytes("Output In Bytes", baOut));
                     Util.DebugWriteLine(className, "Returning.");
 #endif
-                	rciOutput = nOutLen;
+                    rciOutput = nOutLen;
                     return baOut;
                 }
             }
@@ -648,22 +650,23 @@ namespace SilEncConverters40
         //
         protected virtual unsafe string InternalConvertEx
             (
-            EncodingForm    eInEncodingForm,
-            string        	sInput,
-            int             ciInput,
-            EncodingForm    eOutEncodingForm,
-            NormalizeFlags  eNormalizeOutput,
-            out int         rciOutput,
-            bool            bForward
+            EncodingForm eInEncodingForm,
+            string sInput,
+            int ciInput,
+            EncodingForm eOutEncodingForm,
+            NormalizeFlags eNormalizeOutput,
+            out int rciOutput,
+            bool bForward
             )
         {
             Util.DebugWriteLine(className, "BEGIN");
-            Util.DebugWriteLine(className, 
+            Util.DebugWriteLine(className,
                 "eEncFormIn " + eInEncodingForm.ToString() + ", " +
                 "eEncFormOut " + eOutEncodingForm.ToString());
-            if( sInput == null )
+            if (sInput == null)
                 EncConverters.ThrowError(ErrStatus.IncompleteChar);
-            if (sInput.Length == 0) {
+            if (sInput.Length == 0)
+            {
                 rciOutput = 0;
                 return "";
             }
@@ -671,7 +674,7 @@ namespace SilEncConverters40
 #if DEBUG
             if (Util.IsUnix)
             {
-// for debugging only BEGIN
+                // for debugging only BEGIN
                 //byte[] baIn = System.Text.Encoding.UTF8.GetBytes(sInput);            // works
                 byte[] baIn = System.Text.Encoding.BigEndianUnicode.GetBytes(sInput);  // easier to read
                 Util.DebugWriteLine(className, Util.getDisplayBytes("Input BigEndianUnicode", baIn));
@@ -679,7 +682,7 @@ namespace SilEncConverters40
                 Util.DebugWriteLine(className, Util.getDisplayBytes("Input Unicode", baIn));
 
                 int nInLen = sInput.Length;
-                byte [] baIn2 = new byte[nInLen];
+                byte[] baIn2 = new byte[nInLen];
                 for (int i = 0; i < nInLen; i++)
                     baIn2[i] = (byte)(sInput[i] & 0xFF);
                 Util.DebugWriteLine(className, Util.getDisplayBytes("Input Narrowized", baIn2));
@@ -694,7 +697,7 @@ namespace SilEncConverters40
                 string resultString = System.Text.Encoding.Default.GetString(baOut2, 0, baOut2.Length);
                 Util.DebugWriteLine(className, "Test output '" + resultString + "'");
     */
-// for debugging only END
+                // for debugging only END
             }
 #endif
 
@@ -731,12 +734,12 @@ namespace SilEncConverters40
                     ((bForward) ? CodePageInput : CodePageOutput), eFormEngineIn, lpInBuffer,
                     ref nBufSize, ref m_bDebugDisplayMode);
 #if DEBUG
-                    if (Util.IsUnix)
-                    {
-                        byte[] baOut = new byte[nBufSize];
-                        ECNormalizeData.ByteStarToByteArr(lpInBuffer, nBufSize, baOut);
-                        Util.DebugWriteLine(className, Util.getDisplayBytes("Input Bytes", baOut));
-                    }
+                if (Util.IsUnix)
+                {
+                    byte[] baOut = new byte[nBufSize];
+                    ECNormalizeData.ByteStarToByteArr(lpInBuffer, nBufSize, baOut);
+                    Util.DebugWriteLine(className, Util.getDisplayBytes("Input Bytes", baOut));
+                }
 #endif
 
                 // get some space for the converter to fill with, but since this is allocated
@@ -788,42 +791,42 @@ namespace SilEncConverters40
             ref EncodingForm    eOutEncodingForm
             )
         {
-            Util.DebugWriteLine(className, 
+            Util.DebugWriteLine(className,
                 "eEncFormIn1 " + eInEncodingForm.ToString() + ", " +
                 "eEncFormOut1 " + eOutEncodingForm.ToString());
             // if the user hasn't specified, then take the default case for the ConversionType:
             //  if L/RHS == eLegacy, then LegacyString
             //  if L/RHS == eUnicode, then UTF16
-            if( eInEncodingForm == EncodingForm.Unspecified )
+            if (eInEncodingForm == EncodingForm.Unspecified)
             {
                 NormConversionType eType;
-                if( bForward )
+                if (bForward)
                     eType = NormalizeLhsConversionType(m_eConversionType);
                 else
                     eType = NormalizeRhsConversionType(m_eConversionType);
 
-                if( eType == NormConversionType.eLegacy )
+                if (eType == NormConversionType.eLegacy)
                     eInEncodingForm = EncodingForm.LegacyString;
                 else // eUnicode
-                    eInEncodingForm = DefaultUnicodeEncForm(bForward,true);
+                    eInEncodingForm = DefaultUnicodeEncForm(bForward, true);
             }
 
             // do the same for the output form
-            if( eOutEncodingForm == EncodingForm.Unspecified )
+            if (eOutEncodingForm == EncodingForm.Unspecified)
             {
                 NormConversionType eType;
-                if( bForward )
+                if (bForward)
                     eType = NormalizeRhsConversionType(m_eConversionType);
                 else
                     eType = NormalizeLhsConversionType(m_eConversionType);
 
-                if( eType == NormConversionType.eLegacy )
+                if (eType == NormConversionType.eLegacy)
                     eOutEncodingForm = EncodingForm.LegacyString;
                 else // eUnicode
-                    eOutEncodingForm = DefaultUnicodeEncForm(bForward,false);
+                    eOutEncodingForm = DefaultUnicodeEncForm(bForward, false);
             }
 
-            Util.DebugWriteLine(className, 
+            Util.DebugWriteLine(className,
                 "eEncFormIn2 " + eInEncodingForm.ToString() + ", " +
                 "eEncFormOut2 " + eOutEncodingForm.ToString());
             CheckForBadForm(bForward, eInEncodingForm, eOutEncodingForm);
@@ -836,7 +839,7 @@ namespace SilEncConverters40
             EncodingForm    outEnc
             )
         {
-            if( EncConverters.IsUnidirectional(m_eConversionType) && !bForward )
+            if (EncConverters.IsUnidirectional(m_eConversionType) && !bForward)
             {
                 EncConverters.ThrowError(ErrStatus.InvalidConversionType);
             }
@@ -844,49 +847,49 @@ namespace SilEncConverters40
             {
                 bool bLhsUnicode = (NormalizeLhsConversionType(m_eConversionType) == NormConversionType.eUnicode);
                 bool bRhsUnicode = (NormalizeRhsConversionType(m_eConversionType) == NormConversionType.eUnicode);
-                if( bForward )
+                if (bForward)
                 {
-                    if( bLhsUnicode )
+                    if (bLhsUnicode)
                     {
-                        if( IsLegacyFormat(inEnc) )
+                        if (IsLegacyFormat(inEnc))
                             EncConverters.ThrowError(ErrStatus.InEncFormNotSupported);
                     }
                     else    // !bLhsUnicode
                     {
-                        if( !IsLegacyFormat(inEnc) )
+                        if (!IsLegacyFormat(inEnc))
                             EncConverters.ThrowError(ErrStatus.InEncFormNotSupported);
                     }
-                    if( bRhsUnicode )
+                    if (bRhsUnicode)
                     {
-                        if( IsLegacyFormat(outEnc) )
+                        if (IsLegacyFormat(outEnc))
                             EncConverters.ThrowError(ErrStatus.OutEncFormNotSupported);
                     }
                     else    // !bRhsUnicode
                     {
-                        if( !IsLegacyFormat(outEnc) )
+                        if (!IsLegacyFormat(outEnc))
                             EncConverters.ThrowError(ErrStatus.OutEncFormNotSupported);
                     }
                 }
                 else    // reverse
                 {
-                    if( bLhsUnicode )
+                    if (bLhsUnicode)
                     {
-                        if( IsLegacyFormat(outEnc) )
+                        if (IsLegacyFormat(outEnc))
                             EncConverters.ThrowError(ErrStatus.OutEncFormNotSupported);
                     }
                     else    // !bLhsUnicode
                     {
-                        if( !IsLegacyFormat(outEnc) )
+                        if (!IsLegacyFormat(outEnc))
                             EncConverters.ThrowError(ErrStatus.OutEncFormNotSupported);
                     }
-                    if( bRhsUnicode )
+                    if (bRhsUnicode)
                     {
-                        if( IsLegacyFormat(inEnc) )
+                        if (IsLegacyFormat(inEnc))
                             EncConverters.ThrowError(ErrStatus.InEncFormNotSupported);
                     }
                     else    // !bRhsUnicode
                     {
-                        if( !IsLegacyFormat(inEnc) )
+                        if (!IsLegacyFormat(inEnc))
                             EncConverters.ThrowError(ErrStatus.InEncFormNotSupported);
                     }
                 }
@@ -896,12 +899,12 @@ namespace SilEncConverters40
         public static bool IsLegacyFormat(EncodingForm eForm)
         {
             return ((eForm == EncodingForm.LegacyString)
-                ||  (eForm == EncodingForm.LegacyBytes));
+                || (eForm == EncodingForm.LegacyBytes));
         }
 
         // C# strings are UTF-16 so we usually want to store UTF-16 data in them.
         // However some converters (e.g. cc??? But the subclass says UTF-16) use a different Unicode form as basic.
-        protected virtual EncodingForm  DefaultUnicodeEncForm(bool bForward, bool bLHS)
+        protected virtual EncodingForm DefaultUnicodeEncForm(bool bForward, bool bLHS)
         {
             return EncodingForm.UTF16;
         }
@@ -927,7 +930,7 @@ namespace SilEncConverters40
         public static NormConversionType NormalizeLhsConversionType(ConvType type)
         {
             NormConversionType eType = NormConversionType.eUnicode;
-            switch(type)
+            switch (type)
             {
                 case ConvType.Unicode_to_from_Legacy:
                 case ConvType.Unicode_to_from_Unicode:
@@ -954,7 +957,7 @@ namespace SilEncConverters40
         public static NormConversionType NormalizeRhsConversionType(ConvType type)
         {
             NormConversionType eType = NormConversionType.eUnicode;
-            switch(type)
+            switch (type)
             {
                 case ConvType.Legacy_to_from_Legacy:
                 case ConvType.Legacy_to_Legacy:
@@ -1016,13 +1019,13 @@ namespace SilEncConverters40
         }
 
         // sub-classes override to add their attributes.
-        protected virtual void GetAttributeKeys(out string [] rSa)
+        protected virtual void GetAttributeKeys(out string[] rSa)
         {
             rSa = null;
         }
 
         // sub-classes override to add their attributes.
-        protected virtual void GetConverterNameEnum(out string [] rSa)
+        protected virtual void GetConverterNameEnum(out string[] rSa)
         {
             rSa = null;
         }

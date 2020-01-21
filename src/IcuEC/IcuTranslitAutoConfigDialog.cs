@@ -19,7 +19,7 @@ namespace SilEncConverters40
     public class IcuTranslitAutoConfigDialog : SilEncConverters40.AutoConfigDialog
     {
         #region DLLImport Statements
-		[DllImport("IcuTranslitEC.dll", EntryPoint = "IcuTranslitEC_ConverterNameList_start", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("IcuTranslitEC.dll", EntryPoint = "IcuTranslitEC_ConverterNameList_start", CallingConvention = CallingConvention.Cdecl)]
         static extern unsafe int CppConverterNameList_start();
 
         static string CppConverterNameList_next()
@@ -45,13 +45,13 @@ namespace SilEncConverters40
         }
 
         [DllImport("IcuTranslitEC.dll", EntryPoint = "IcuTranslitEC_ConverterNameList_next", CallingConvention = CallingConvention.Cdecl)]
-		[return : MarshalAs(UnmanagedType.LPStr)]
-		static extern string CppConverterNameList_next_Linux();
+        [return: MarshalAs(UnmanagedType.LPStr)]
+        static extern string CppConverterNameList_next_Linux();
 
-		[DllImport("IcuTranslitEC.dll", EntryPoint = "IcuTranslitEC_GetDisplayName", CallingConvention = CallingConvention.Cdecl)]
-		[return: MarshalAs(UnmanagedType.LPStr)]
-		static extern string CppGetDisplayName_Linux(
-			[MarshalAs(UnmanagedType.LPStr)] string strID);
+        [DllImport("IcuTranslitEC.dll", EntryPoint = "IcuTranslitEC_GetDisplayName", CallingConvention = CallingConvention.Cdecl)]
+        [return: MarshalAs(UnmanagedType.LPStr)]
+        static extern string CppGetDisplayName_Linux(
+            [MarshalAs(UnmanagedType.LPStr)] string strID);
 
         [DllImport("IcuTranslitEC.dll", EntryPoint = "IcuTranslitEC_ConverterNameList_next", CallingConvention = CallingConvention.Cdecl)]
         [return: MarshalAs(UnmanagedType.BStr)]
@@ -73,7 +73,7 @@ namespace SilEncConverters40
         private Button buttonDeletePreviousCustomTransliterators;  // set at the end of Initialize (to block certain events until we're ready for them)
         private List<string> lstTranslitIDs;
 
-        public IcuTranslitAutoConfigDialog (
+        public IcuTranslitAutoConfigDialog(
             IEncConverters aECs,
             string strDisplayName,
             string strFriendlyName,
@@ -88,7 +88,7 @@ namespace SilEncConverters40
             InitializeComponent();
             fillListBox();
             Util.DebugWriteLine(this, "Initialized component.");
-            base.Initialize (
+            base.Initialize(
                 aECs,
                 IcuTranslitEncConverter.strHtmlFilename,
                 strDisplayName,
@@ -127,7 +127,7 @@ namespace SilEncConverters40
             Util.DebugWriteLine(this, "END");
         }
 
-        public IcuTranslitAutoConfigDialog (
+        public IcuTranslitAutoConfigDialog(
             IEncConverters aECs,
             string strFriendlyName,
             string strConverterIdentifier,
@@ -136,7 +136,7 @@ namespace SilEncConverters40
         {
             InitializeComponent();
             fillListBox();
-            base.Initialize (
+            base.Initialize(
                 aECs,
                 strFriendlyName,
                 strConverterIdentifier,
@@ -331,17 +331,17 @@ namespace SilEncConverters40
                 {
                     int counter = lb.Items.Count - 1;
                     swapped = false;
-                    
+
                     while (counter > 0)
                     {
                         // Compare the items
                         if (String.Compare(lb.Items[counter].ToString(),
-                                           lb.Items[counter-1].ToString()) < 0)
+                                           lb.Items[counter - 1].ToString()) < 0)
                         {
                             // Swap the items.
                             object tempName = lb.Items[counter];
-                            lb.Items[counter]   = lb.Items[counter-1];
-                            lb.Items[counter-1] = tempName;
+                            lb.Items[counter] = lb.Items[counter - 1];
+                            lb.Items[counter - 1] = tempName;
                             string tempID = lstTranslitIDs[counter];
                             lstTranslitIDs[counter] = lstTranslitIDs[counter - 1];
                             lstTranslitIDs[counter - 1] = tempID;
@@ -351,7 +351,7 @@ namespace SilEncConverters40
                         counter -= 1;
                     }
                 }
-                while((swapped==true));
+                while ((swapped == true));
             }
         }
 
@@ -366,7 +366,7 @@ namespace SilEncConverters40
         //  to make sure that the user has correctly configured a legitimate converter.
         protected override bool OnApply()
         {
-			Util.DebugWriteLine(this, "BEGIN");
+            Util.DebugWriteLine(this, "BEGIN");
 
             // Get the converter identifier from the Setup tab controls.
             if (radioButtonBuiltIn.Checked && (listBoxTranslitName.SelectedIndex != -1))
@@ -386,7 +386,7 @@ namespace SilEncConverters40
                     return false;
                 }
 
-                if (radioButtonCustom.Checked && 
+                if (radioButtonCustom.Checked &&
                     !Settings.Default.RecentCustomTransliterators.Contains(ConverterIdentifier))
                 {
                     Settings.Default.RecentCustomTransliterators.Add(ConverterIdentifier);
@@ -432,14 +432,14 @@ namespace SilEncConverters40
             get { return ConverterIdentifier; }
         }
 
-        private void listBoxTranslitName_SelectedIndexChanged (object sender, EventArgs e)
+        private void listBoxTranslitName_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (!m_bInitialized) 
+            if (!m_bInitialized)
                 return;
 
             var lb = this.listBoxTranslitName;  // shorter nickname
             Util.DebugWriteLine(this,
-                                lb.SelectedIndex.ToString() + "\n" + lb.GetItemText(lb.SelectedItem) + "lb_SelectedIndexChanged"); 
+                                lb.SelectedIndex.ToString() + "\n" + lb.GetItemText(lb.SelectedItem) + "lb_SelectedIndexChanged");
             IsModified = true;
         }
 

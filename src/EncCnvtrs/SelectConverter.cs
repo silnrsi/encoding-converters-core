@@ -12,19 +12,19 @@ using System.Text;                      // for Encoding
 
 namespace SilEncConverters40
 {
-	/// <summary>
-	/// Checked list box of IEncConverter objects in the repository for the user to choose from
-	/// </summary>
-	public class SelectConverter : System.Windows.Forms.Form
-	{
+    /// <summary>
+    /// Checked list box of IEncConverter objects in the repository for the user to choose from
+    /// </summary>
+    public class SelectConverter : System.Windows.Forms.Form
+    {
         private System.Windows.Forms.Label labelInstruction;
         private System.Windows.Forms.Button buttonCancel;
         private System.Windows.Forms.Button buttonOK;
         private System.ComponentModel.IContainer components;
 
-        protected string        m_strConverterName = null;
+        protected string m_strConverterName = null;
         private System.Windows.Forms.ToolTip toolTips;
-        protected ConvType      m_eConversionTypeFilter = ConvType.Unknown;
+        protected ConvType m_eConversionTypeFilter = ConvType.Unknown;
         private System.Windows.Forms.GroupBox groupBoxOptions;
         private System.Windows.Forms.CheckBox checkBoxReverse;
         private System.Windows.Forms.RadioButton radioButtonNone;
@@ -33,10 +33,10 @@ namespace SilEncConverters40
         private System.Windows.Forms.Label labelNormalizationType;
         private System.Windows.Forms.CheckBox checkBoxDebug;
         private System.Windows.Forms.Button buttonLaunchOptionsInstaller;
-        protected Dictionary<string, string>    m_mapLbItems2Tooltips = new Dictionary<string,string>();
+        protected Dictionary<string, string> m_mapLbItems2Tooltips = new Dictionary<string, string>();
 
-        static private string strInstallerLocationRegKey    = @"SOFTWARE\SIL\SilEncConverters40\Installer";
-        static private string strInstallerPathKey           = "InstallerPath";
+        static private string strInstallerLocationRegKey = @"SOFTWARE\SIL\SilEncConverters40\Installer";
+        static private string strInstallerPathKey = "InstallerPath";
         private System.Windows.Forms.Button buttonCreateNew;
         private System.Windows.Forms.ContextMenu contextMenu;
         private System.Windows.Forms.MenuItem menuItemEdit;
@@ -99,10 +99,10 @@ namespace SilEncConverters40
 
         public void InitSelectConverter(EncConverters aECs, ConvType eConversionTypeFilter,
             string strChooseConverterDialogTitle, string strFontName)
-		{
+        {
             DirectableEncConverter.EncConverters = aECs;
             m_eConversionTypeFilter = eConversionTypeFilter;
-            
+
             InitializeComponent();
 
             // update the title bar with any potential text strings given by the client
@@ -122,7 +122,7 @@ namespace SilEncConverters40
             // enable the "Launch Options Installer" button (if the NRSI setup program is installed...
             //  it's not visible otherwise)
             RegistryKey keyInstallLocation = Registry.LocalMachine.OpenSubKey(strInstallerLocationRegKey, false);
-            if( keyInstallLocation != null )
+            if (keyInstallLocation != null)
             {
                 string strInstallPath = (string)keyInstallLocation.GetValue(strInstallerPathKey);
                 buttonLaunchOptionsInstaller.Visible = (!String.IsNullOrEmpty(strInstallPath) && File.Exists(strInstallPath));
@@ -140,7 +140,7 @@ namespace SilEncConverters40
             helpProvider.SetHelpString(textBoxCodePageOutput, Properties.Resources.CodePageHelpString);
             helpProvider.SetHelpString(textBoxDataPreview, Properties.Resources.PreviewBoxHelpString);
             Util.DebugWriteLine(this, "FINISHED");
-		}
+        }
 
         // the creation of a Font can throw an exception if, for example, you try to construct one with
         //  the default style 'Regular' when the font itself doesn't have a Regular style. So this method
@@ -184,17 +184,17 @@ namespace SilEncConverters40
 
         void UpdateToolTip(Control ctrl, string strTip)
         {
-            this.toolTips.SetToolTip(ctrl,strTip);
+            this.toolTips.SetToolTip(ctrl, strTip);
         }
 
         // get the IEncConverter corresponding to the selected converter name
-        public  IEncConverter   IEncConverter
+        public IEncConverter IEncConverter
         {
-            get 
-            { 
+            get
+            {
                 Util.DebugWriteLine(this, "BEGIN");
                 IEncConverter aEC = null;
-                if( !String.IsNullOrEmpty(m_strConverterName) )
+                if (!String.IsNullOrEmpty(m_strConverterName))
                 {
                     aEC = DirectableEncConverter.EncConverters[m_strConverterName];
 
@@ -211,9 +211,9 @@ namespace SilEncConverters40
                     // set the options too
                     aEC.DirectionForward = !this.checkBoxReverse.Checked;
                     aEC.Debug = this.checkBoxDebug.Checked;
-                    if( this.radioButtonFullyComposed.Checked )
+                    if (this.radioButtonFullyComposed.Checked)
                         aEC.NormalizeOutput = NormalizeFlags.FullyComposed;
-                    else if( this.radioButtonFullyDecomposed.Checked )
+                    else if (this.radioButtonFullyDecomposed.Checked)
                         aEC.NormalizeOutput = NormalizeFlags.FullyDecomposed;
                     else
                         aEC.NormalizeOutput = NormalizeFlags.None;
@@ -261,32 +261,32 @@ namespace SilEncConverters40
             }
             return nCodePage;
         }
-            
-        /// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing )
-		{
-            Util.DebugWriteLine(this, "BEGIN");
-			if( disposing )
-			{
-                Util.DebugWriteLine(this, "Disposing.");
-				if(components != null)
-				{
-					components.Dispose();
-				}
-			}
-			base.Dispose( disposing );
-            Util.DebugWriteLine(this, "END");
-		}
 
-		#region Windows Form Designer generated code
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
+        /// <summary>
+        /// Clean up any resources being used.
+        /// </summary>
+        protected override void Dispose(bool disposing)
+        {
+            Util.DebugWriteLine(this, "BEGIN");
+            if (disposing)
+            {
+                Util.DebugWriteLine(this, "Disposing.");
+                if (components != null)
+                {
+                    components.Dispose();
+                }
+            }
+            base.Dispose(disposing);
+            Util.DebugWriteLine(this, "END");
+        }
+
+        #region Windows Form Designer generated code
+        /// <summary>
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
             Util.DebugWriteLine(this, "BEGIN");
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SelectConverter));
@@ -776,7 +776,7 @@ namespace SilEncConverters40
 
             Util.DebugWriteLine(this, "END");
         }
-		#endregion
+        #endregion
 
         private void buttonCreateNew_Click(object sender, System.EventArgs e)
         {
@@ -791,7 +791,7 @@ namespace SilEncConverters40
                 &&  (m_strConverterName != null)
                 &&  ((aEC = DirectableEncConverter.EncConverters[m_strConverterName]) != null))
             {
-                if( this.listBoxExistingConverters.Items.Contains(m_strConverterName) )
+                if (this.listBoxExistingConverters.Items.Contains(m_strConverterName))
                     this.listBoxExistingConverters.Items.Remove(m_strConverterName);
 
                 // add this new one to the listbox and make sure it's visible
@@ -831,9 +831,9 @@ namespace SilEncConverters40
             Util.DebugWriteLine(this, "BEGIN");
             int nIndex = this.listBoxExistingConverters.SelectedIndex;
             this.buttonPreview.Enabled = this.buttonOK.Enabled = (nIndex >= 0);
-            
+
             // if it's exactly 1, then enable 'OK' and set the 'last selected' name.
-            if( this.buttonOK.Enabled )
+            if (this.buttonOK.Enabled)
             {
                 m_strConverterName = (string)listBoxExistingConverters.SelectedItem;
                 if (DirectableEncConverter.EncConverters.ContainsKey(m_strConverterName))    // should exist, but sometimes, doesn't!
@@ -842,10 +842,10 @@ namespace SilEncConverters40
                     Debug.Assert(aEC != null);
 
                     // enable the options
-                    this.checkBoxDebug.Enabled = 
-                        this.labelNormalizationType.Enabled = 
-                        this.radioButtonNone.Enabled = 
-                        this.radioButtonFullyComposed.Enabled = 
+                    this.checkBoxDebug.Enabled =
+                        this.labelNormalizationType.Enabled =
+                        this.radioButtonNone.Enabled =
+                        this.radioButtonFullyComposed.Enabled =
                         this.radioButtonFullyDecomposed.Enabled = true;
 
                     // the reverse box is only enabled if the converter is bi-directional
@@ -854,7 +854,7 @@ namespace SilEncConverters40
                     // the check state is dependent on the converter configuration.
                     this.checkBoxReverse.Checked = !aEC.DirectionForward;
                     this.checkBoxDebug.Checked = aEC.Debug;
-                    switch(aEC.NormalizeOutput)
+                    switch (aEC.NormalizeOutput)
                     {
                         case NormalizeFlags.FullyComposed:
                             this.radioButtonFullyComposed.Checked = true;
@@ -878,13 +878,13 @@ namespace SilEncConverters40
             else
             {
                 m_strConverterName = null;
-                this.checkBoxReverse.Enabled = 
-                this.checkBoxDebug.Enabled = 
-                this.labelNormalizationType.Enabled = 
-                this.radioButtonNone.Enabled = 
-                this.radioButtonFullyComposed.Enabled = 
+                this.checkBoxReverse.Enabled =
+                this.checkBoxDebug.Enabled =
+                this.labelNormalizationType.Enabled =
+                this.radioButtonNone.Enabled =
+                this.radioButtonFullyComposed.Enabled =
                 this.radioButtonFullyDecomposed.Enabled =
-                labelCodePageInput.Visible = textBoxCodePageInput.Visible = 
+                labelCodePageInput.Visible = textBoxCodePageInput.Visible =
                 labelCodePageOutput.Visible = textBoxCodePageOutput.Visible = false;
             }
         }
@@ -910,15 +910,15 @@ namespace SilEncConverters40
 
         private void listBoxExistingConverters_DoubleClick(object sender, EventArgs e)
         {
-            if( this.listBoxExistingConverters.SelectedIndex >= 0 )
-                this.buttonOK_Click(sender,e);
+            if (this.listBoxExistingConverters.SelectedIndex >= 0)
+                this.buttonOK_Click(sender, e);
         }
 
         protected int m_nLastTooltipDisplayedIndex = ListBox.NoMatches;
 
         private void listBoxExistingConverters_MouseMove(object sender, MouseEventArgs e)
         {
-            int nIndex = this.listBoxExistingConverters.IndexFromPoint(e.X,e.Y);
+            int nIndex = this.listBoxExistingConverters.IndexFromPoint(e.X, e.Y);
             if (nIndex != m_nLastTooltipDisplayedIndex)
             {
                 m_nLastTooltipDisplayedIndex = nIndex;
@@ -955,16 +955,16 @@ namespace SilEncConverters40
             Util.DebugWriteLine(this, "BEGIN");
             // launch the Setup program (short-cut to add new converters)
             RegistryKey keyInstallLocation = Registry.LocalMachine.OpenSubKey(strInstallerLocationRegKey, false);
-            if( keyInstallLocation != null )
+            if (keyInstallLocation != null)
             {
                 string strInstallPath = (string)keyInstallLocation.GetValue(strInstallerPathKey);
-                if(!String.IsNullOrEmpty(strInstallPath) && File.Exists(strInstallPath))
+                if (!String.IsNullOrEmpty(strInstallPath) && File.Exists(strInstallPath))
                 {
                     bool bTooltipActive = toolTips.Active;
                     toolTips.Active = false;
                     LaunchProgram(strInstallPath, null);
                     toolTips.Active = bTooltipActive;
-                    
+
                     // we have to requery the xml file because something might have changed.
                     DirectableEncConverter.EncConverters.Reinitialize();
                     InitializeConverterList();
@@ -979,12 +979,12 @@ namespace SilEncConverters40
             {
                 Process myProcess = new Process();
 
-                myProcess.StartInfo.FileName = strProgram; 
+                myProcess.StartInfo.FileName = strProgram;
                 myProcess.StartInfo.Arguments = strArguments;
                 myProcess.Start();
                 myProcess.WaitForExit();    // wait until finished, so we can reinitialize when done add/removing
             }
-            catch {}    // we tried...
+            catch { }    // we tried...
         }
 
         // get the point at which the right mouse button was clicked (for subsequent pop-up
@@ -992,14 +992,14 @@ namespace SilEncConverters40
         private Point m_ptRightClicked;
         private void listBoxExistingConverters_MouseUp(object sender, MouseEventArgs e)
         {
-            m_ptRightClicked = new Point(e.X,e.Y);
+            m_ptRightClicked = new Point(e.X, e.Y);
         }
 
         private void menuItemEdit_Click(object sender, System.EventArgs e)
         {
             Util.DebugWriteLine(this, "BEGIN");
             int nIndex = listBoxExistingConverters.IndexFromPoint(m_ptRightClicked);
-            if( nIndex >= 0 )
+            if (nIndex >= 0)
             {
                 // select only the edit'ing item
                 listBoxExistingConverters.SelectedIndex = nIndex;
@@ -1021,9 +1021,9 @@ namespace SilEncConverters40
                     if (DirectableEncConverter.EncConverters.AutoConfigureEx(aEC, aEC.ConversionType, ref strFriendlyName, aEC.LeftEncodingID, aEC.RightEncodingID))
                     {
                         // since even the name could theoretically change, remove the existing one and ...
-                        if( m_mapLbItems2Tooltips.ContainsKey(m_strConverterName) )
+                        if (m_mapLbItems2Tooltips.ContainsKey(m_strConverterName))
                             m_mapLbItems2Tooltips.Remove(m_strConverterName);
-                        if( this.listBoxExistingConverters.Items.Contains(m_strConverterName) )
+                        if (this.listBoxExistingConverters.Items.Contains(m_strConverterName))
                             this.listBoxExistingConverters.Items.Remove(m_strConverterName);
 
                         // ... add the new one (under a possible new name)
@@ -1053,13 +1053,13 @@ namespace SilEncConverters40
         {
             Util.DebugWriteLine(this, "BEGIN");
             int nIndex = listBoxExistingConverters.IndexFromPoint(m_ptRightClicked);
-            if( nIndex >= 0 )
+            if (nIndex >= 0)
             {
                 bool bTooltipActive = toolTips.Active;
                 toolTips.Active = false;
                 // get the name and confirm the deletion
                 string strName = (string)this.listBoxExistingConverters.Items[nIndex];
-                if( MessageBox.Show(String.Format("Are you sure you want to delete the following converter? {1}{1}{0}", strName, Environment.NewLine), EncConverters.cstrCaption, MessageBoxButtons.YesNoCancel) == DialogResult.Yes )
+                if (MessageBox.Show(String.Format("Are you sure you want to delete the following converter? {1}{1}{0}", strName, Environment.NewLine), EncConverters.cstrCaption, MessageBoxButtons.YesNoCancel) == DialogResult.Yes)
                 {
                     listBoxExistingConverters.Items.RemoveAt(nIndex);
 
@@ -1308,7 +1308,7 @@ namespace SilEncConverters40
                         MessageBox.Show("This converter type doesn't support the test feature.", EncConverters.cstrCaption);
                     }
                 }
-                
+
                 toolTips.Active = bTooltipActive;
             }
         }
