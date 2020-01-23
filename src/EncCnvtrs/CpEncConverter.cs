@@ -14,13 +14,13 @@ namespace SilEncConverters40
     /// Managed Code Page EncConverter
     /// </summary>
     //[GuidAttribute("F91EBC49-1019-4ff3-B143-A84E6081A472")]
-    // normally these subclasses are treated as the base class (i.e. the 
+    // normally these subclasses are treated as the base class (i.e. the
     //  client can use them orthogonally as IEncConverter interface pointers
-    //  so normally these individual subclasses would be invisible), but if 
-    //  we add 'ComVisible = false', then it doesn't get the registry 
-    //  'HKEY_CLASSES_ROOT\SilEncConverters40.TecEncConverter' which is the basis of 
+    //  so normally these individual subclasses would be invisible), but if
+    //  we add 'ComVisible = false', then it doesn't get the registry
+    //  'HKEY_CLASSES_ROOT\SilEncConverters40.TecEncConverter' which is the basis of
     //  how it is started (see EncConverters.AddEx).
-    // [ComVisible(false)] 
+    // [ComVisible(false)]
     public class CpEncConverter : EncConverter
     {
         #region Member Variable Definitions
@@ -57,7 +57,7 @@ namespace SilEncConverters40
                     lhsEncodingID = m_strLhsEncodingID = "utf-16";
                 if( String.IsNullOrEmpty(RightEncodingID) )
                     rhsEncodingID = m_strRhsEncodingID = EncConverters.strDefUnicodeEncoding;
-                
+
                 // This only works if we consider UTF16 to be unicode; not legacy
                 conversionType = m_eConversionType = ConvType.Unicode_to_from_Unicode;
             }
@@ -73,7 +73,7 @@ namespace SilEncConverters40
                 conversionType = m_eConversionType = ConvType.Unicode_to_from_Unicode;
             }
 
-            // the rest are all "UnicodeEncodingConversion"s (by definition). Also, use the word 
+            // the rest are all "UnicodeEncodingConversion"s (by definition). Also, use the word
             // "UNICODE" concatenated to the legacy encoding name
             else
             {
@@ -142,7 +142,7 @@ namespace SilEncConverters40
             ref EncodingForm    eOutFormEngine,
             ref NormalizeFlags  eNormalizeOutput,
             bool                bForward
-            ) 
+            )
         {
             // let the base class do it's thing first
             base.PreConvert(eInEncodingForm, ref eInFormEngine,
@@ -154,7 +154,7 @@ namespace SilEncConverters40
             m_bToWide = bForward;
 
             // check if this is the special UTF8 code page, and if so, request that the engine
-            //  form be UTF8Bytes (this is the one code page converter where both sides are 
+            //  form be UTF8Bytes (this is the one code page converter where both sides are
             //  Unicode.
             if (m_bToWide)
             {

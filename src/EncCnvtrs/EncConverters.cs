@@ -64,7 +64,7 @@ namespace SilEncConverters40
         // implement types define in EncCnvtrs.dll (public so users can use them in .Net
         //  code rather than hard-coding the strings)
         public const string strTypeImplCOM              = "COM";
-        public const string strTypeSILcc                = "SIL.cc"; 
+        public const string strTypeSILcc                = "SIL.cc";
         public const string strTypeSILtec               = "SIL.tec";
         public const string strTypeSILtecForm           = "SIL.tecForm";
         public const string strTypeSILmap               = "SIL.map";
@@ -898,7 +898,7 @@ namespace SilEncConverters40
                 }
             }
 
-            if (keyCnvtrsSupported == null) 
+            if (keyCnvtrsSupported == null)
                 keyCnvtrsSupported = Registry.LocalMachine.OpenSubKey(HKLM_CNVTRS_SUPPORTED);
 
             // if it's still not there... then we're done.
@@ -981,7 +981,7 @@ namespace SilEncConverters40
                     m_mapImplementTypesPriority[sImplementType] = priorityReg;
 
                     // we must use only IEncConverter implementations built against this same version
-                    //  of the core assembly (see InstantiateIEncConverter). This will gather which 
+                    //  of the core assembly (see InstantiateIEncConverter). This will gather which
                     //  versions the different .Net implementations are installed.
                     RegistryKey keyAssemVersion = keyConverter.OpenSubKey(typeof(IEncConverter).Assembly.GetName().Version.ToString());
                     if (keyAssemVersion != null)
@@ -997,7 +997,7 @@ namespace SilEncConverters40
                 //  must call the lookup twice (the first time gets you the implementType
                 //  (e.g. ".map"->"SIL.map") and the second lookup gets you the prog id
                 //  (e.g. "SIL.map"->"SilEncConverters40.TecEncConverter"). This is necessary because
-                //  different extensions (e.g. .map and .tec) might go to the same prog id 
+                //  different extensions (e.g. .map and .tec) might go to the same prog id
                 //  and otherwise we couldn't figure out the implement type from the extension.
                 //  (see "Add" method for more details).
             }
@@ -1010,12 +1010,12 @@ namespace SilEncConverters40
         #endregion Initialization
 
         #region Public Methods
-        // The following ought to return a "EncConverter" object rather than the 
-        //  interface but that won't work for plug-ins (which can't be casted as the managed 
+        // The following ought to return a "EncConverter" object rather than the
+        //  interface but that won't work for plug-ins (which can't be casted as the managed
         //  class object--known as the "Interface Identity problem"). So we always collect
         //  and return just the pointers to the interface.
-        // P.S. by convention, if the public interface parameter is called "mapName", then 
-        //  it could equally likely be the mappingName or the combination of mappingName and 
+        // P.S. by convention, if the public interface parameter is called "mapName", then
+        //  it could equally likely be the mappingName or the combination of mappingName and
         //  implementation type (see GetMappingName for details)
         /// <summary>
         /// Retrieve an item from the collection (e.g. 'aECs.Item(\"Annapurna<>UNICODE\")', or 'aECs[\"Annapurna<>UNICODE\"]')
@@ -1093,17 +1093,17 @@ namespace SilEncConverters40
         [Description("Add a converter to the repository (e.g. .Add \"Annapurna<>UNICODE\", \"C:\\Program Files\\Common Files\\SIL\\MapsTables\\Annapurna.tec\", Legacy_to_from_Unicode, \"SIL-ANNAPURNA_05-2002\", \"UNICODE\", ProcessEncodingConversion)"), Category("Data")]
         public void Add(string mappingName, string converterSpec, ConvType conversionType, string leftEncoding, string rightEncoding, ProcessTypeFlags processType)
         {
-            // previously, the process type was dual-use in defining (possibly) the program 
-            //  id of the converter (used by ICU). So, see if that's the case and then we 
+            // previously, the process type was dual-use in defining (possibly) the program
+            //  id of the converter (used by ICU). So, see if that's the case and then we
             //  know what the program id of the com wrapper is for this converter.
-            // first see if it's a 'by process type' converter. (but filter out extraneous 
-            //  process type flags (i.e. those that *aren't* processed by their process type 
+            // first see if it's a 'by process type' converter. (but filter out extraneous
+            //  process type flags (i.e. those that *aren't* processed by their process type
             //  flag)).
             int processTypeFlag = ((int)processType & (int)m_dwProcessTypeConverters);
             string strKey = BY_PROCESS_TYPE + processTypeFlag.ToString();
             string strImplementType = (string)m_mapToImplType[strKey];
 
-            // if we didn't find it above, then look up the implement type based on the 
+            // if we didn't find it above, then look up the implement type based on the
             //  extension
             if (strImplementType == null)
             {
@@ -1135,35 +1135,35 @@ namespace SilEncConverters40
             string rightEncoding, ProcessTypeFlags processType)
         {
             Util.DebugWriteLine(this, "BEGIN");
-            // first, disallow a semi-colon in the mapping name (too many plug-ins use 
+            // first, disallow a semi-colon in the mapping name (too many plug-ins use
             //  those to delimit stuff and we don't want to run into problems.
             if (mappingName.IndexOf(';') != -1)
                 ThrowError(ErrStatus.InvalidMappingName);
 
-            // next, make sure any encodingIDs we're given are parent encodingIDs rather 
+            // next, make sure any encodingIDs we're given are parent encodingIDs rather
             //  than aliases.
             mappingRegistry file = RepositoryFile;
             leftEncoding = GetEncodingName(file, leftEncoding);
             rightEncoding = GetEncodingName(file, rightEncoding);
 
-            // a mapping name by itself will either refer to the single spec of a mapping 
-            //  with only a single spec, or it will refer to the highest priority spec of 
+            // a mapping name by itself will either refer to the single spec of a mapping
+            //  with only a single spec, or it will refer to the highest priority spec of
             //  a multi-spec mapping. First see if this same mapping name already exists.
             string strConverterName = mappingName;
             IEncConverter aNewEC = null, aExistEC = this[mappingName];
             if (aExistEC != null)
             {
-                // if we're adding a second spec to the same mapping, then the original 
+                // if we're adding a second spec to the same mapping, then the original
                 //  spec's name must be adjusted and this new one will also be adjusted
                 strConverterName = AdjustMappingNames(mappingName, implementType, ref aExistEC);
             }
 
             // in either case, now add this new spec to the collection (by calling AddEx
-            //  here). By doing this here before adding the details to the XML file below, 
-            //  we allow the actual COM wrapper to modify the given parameters (e.g. the 
+            //  here). By doing this here before adding the details to the XML file below,
+            //  we allow the actual COM wrapper to modify the given parameters (e.g. the
             //  TECkit wrapper will read the encodingNames from the map in case they weren't
-            //  given by the user at this point). (but use 'try' as this might be an 
-            //  implementation we don't know about) (also, use default code page now and 
+            //  given by the user at this point). (but use 'try' as this might be an
+            //  implementation we don't know about) (also, use default code page now and
             //  update them later).
             try
             {
@@ -1180,8 +1180,8 @@ namespace SilEncConverters40
             }
             catch { }
 
-            // if this is a second converter for the same mapping, then pick the highest 
-            //  priority one and make that also go by the name of the mappingName (so it'll 
+            // if this is a second converter for the same mapping, then pick the highest
+            //  priority one and make that also go by the name of the mappingName (so it'll
             //  get picked by the default mapping name).
             if ((aNewEC != null) && (aExistEC != null))
             {
@@ -1210,9 +1210,9 @@ namespace SilEncConverters40
             GetFontDetails(xmlDoc, nsmgr, rightEncoding, out nCodePageOutput);
 
             // notice that what we're saying here is that the lhsEncoding corresponds to the
-            //  *input* code page (which means for the string we'll be converting). This will 
-            //  only be true if the converter is being run in the forward direction. So the 
-            //  COM wrappers must make sure to use the 'output code page' for the 'input data' 
+            //  *input* code page (which means for the string we'll be converting). This will
+            //  only be true if the converter is being run in the forward direction. So the
+            //  COM wrappers must make sure to use the 'output code page' for the 'input data'
             //  when running in reverse. [We could have called these members 'CodePageLeft',
             //  etc., but that's more confusing to the user.]
             if (nCodePageInput != cnDefCodePage)
@@ -1731,7 +1731,7 @@ namespace SilEncConverters40
             mappingRegistry.fontMappingsRow aFontMappingsRow = aMapRow.GetfontMappingsRows()[0];
             foreach (mappingRegistry.fontMappingRow aFontMappingRow in aFontMappingsRow.GetfontMappingRows())
             {
-                if(     (aFontMappingRow.name == fontName) 
+                if(     (aFontMappingRow.name == fontName)
                     &&  (aFontMappingRow.assocFont == assocFontName) )
                     return; // prego...
             }
@@ -2174,7 +2174,7 @@ namespace SilEncConverters40
                     // otherwise, possibly filter based on the processType
                     else if(    (pt == -1)  // all bits on means get all
                             ||  (processType == ProcessTypeFlags.DontKnow)  // same here
-                            ||  (((int)aEC.ProcessType & pt) != 0) 
+                            ||  (((int)aEC.ProcessType & pt) != 0)
                     )
                     {
                         aECs.Add(aDefMapRows[0].name, aEC);
@@ -2199,7 +2199,7 @@ namespace SilEncConverters40
                 if(     (aEC != null)
                     &&  (   (pt == -1)
                         ||  (processType == ProcessTypeFlags.DontKnow)
-                        ||  (((int)aEC.ProcessType & pt) != 0) 
+                        ||  (((int)aEC.ProcessType & pt) != 0)
                         )
                 )
                 {
@@ -2238,11 +2238,11 @@ namespace SilEncConverters40
                 //  will always get us only the highest priority spec for this mapping name
                 //  (which I think is what we want for these cases)
                 IEncConverter aEC = this[aMapRow.name];
-                
+
                 if(     (aEC != null)   // might be one we don't support (i.e. not in collection)
                     &&  (   (pt == -1)  // all bits on means get all
                         ||  (processType == ProcessTypeFlags.DontKnow)  // same here
-                        ||  (((int)aEC.ProcessType & pt) != 0) 
+                        ||  (((int)aEC.ProcessType & pt) != 0)
                         )
                 )
                 {

@@ -8,7 +8,7 @@ namespace RunTests
 	{
 		static int m_crun;
 		static int m_cfail;
-		
+
 		public static void Main (string[] args)
 		{
 			RunTestEncConverters();
@@ -30,37 +30,37 @@ namespace RunTests
 				catch(Exception e) {Console.WriteLine("TestBasics failed: {0}", e.Message); ++m_cfail;}
 				++m_crun;
 				test.CleanupAfterTest();
-	
+
 				test.InitBeforeTest();
 				try { test.TestIcuConvEncConverters(); Console.WriteLine("TestIcuConvEncConverters succeeded!");}
 				catch(Exception e) {Console.WriteLine("TestIcuConvEncConverters failed: {0}", e.Message); ++m_cfail;}
 				++m_crun;
 				test.CleanupAfterTest();
-	
+
 				test.InitBeforeTest();
 				try { test.TestIcuTransliterators(); Console.WriteLine("TestIcuTransliterators succeeded!");}
 				catch(Exception e) {Console.WriteLine("TestIcuTransliterators failed: {0}", e.Message); ++m_cfail;}
 				++m_crun;
 				test.CleanupAfterTest();
-	
+
 				test.InitBeforeTest();
 				try { test.TestIcuRegexConverters(); Console.WriteLine("TestIcuRegexConverters succeeded!");}
 				catch(Exception e) {Console.WriteLine("TestIcuRegexConverters failed: {0}", e.Message); ++m_cfail;}
 				++m_crun;
 				test.CleanupAfterTest();
-				
+
 				test.InitBeforeTest();
 				try { test.TestTecKitConverters(); Console.WriteLine("TestTecKitConverters succeeded!");}
 				catch(Exception e) {Console.WriteLine("TestTecKitConverters failed: {0}", e.Message); ++m_cfail;}
 				++m_crun;
 				test.CleanupAfterTest();
-				
+
 				test.InitBeforeTest();
 				try { test.TestTecKitMapConverters(); Console.WriteLine("TestTecKitMapConverters succeeded!");}
 				catch(Exception e) {Console.WriteLine("TestTecKitMapConverters failed: {0}", e.Message); ++m_cfail;}
 				++m_crun;
 				test.CleanupAfterTest();
-				
+
 				test.InitBeforeTest();
 				try
 				{
@@ -70,19 +70,19 @@ namespace RunTests
 				catch(Exception e) {Console.WriteLine("TestCcEncConverters failed: {0}", e.Message); ++m_cfail;}
 				++m_crun;
 				test.CleanupAfterTest();
-				
+
 				test.InitBeforeTest();
 				try { test.TestPerlEncConverter(); Console.WriteLine("TestPerlEncConverter succeeded!");}
 				catch(Exception e) {Console.WriteLine("TestPerlEncConverter failed: {0}", e.Message); ++m_cfail;}
 				++m_crun;
 				test.CleanupAfterTest();
-				
+
 				test.InitBeforeTest();
 				try { test.TestPyScriptEncConverters(); Console.WriteLine("TestPyScriptEncConverters succeeded!");}
 				catch(Exception e) {Console.WriteLine("TestPyScriptEncConverters failed: {0}", e.Message); ++m_cfail;}
 				++m_crun;
 				test.CleanupAfterTest();
-				
+
 //				if (TestUtil.IsWindows)
 //				{
 					test.InitBeforeTest();
@@ -96,7 +96,7 @@ namespace RunTests
 			test.CleanupForClass();
 			Console.WriteLine("Done Testing EncConverters");
 		}
-		
+
 		public static void RunTestIcuConvEncConverter()
 		{
 			Console.WriteLine("Begin Testing IcuConvEncConverter");
@@ -134,7 +134,7 @@ namespace RunTests
 			catch(Exception e) { Console.WriteLine("Exception caught during TestIcuConvEncConverter setup or teardown: {0}", e.Message); }
 			Console.WriteLine("Done Testing IcuConvEncConverter");
 		}
-		
+
 		public static void RunTestIcuTranslit()
 		{
 			Console.WriteLine("Begin Testing IcuTranslit");
@@ -154,7 +154,7 @@ namespace RunTests
 			catch(Exception e) { Console.WriteLine("Exception caught during TestIcuTranslit setup or teardown: {0}", e.Message); }
 			Console.WriteLine("Done Testing IcuTranslit");
 		}
-		
+
 		public static void RunTestIcuRegex()
 		{
 			Console.WriteLine("Begin Testing IcuRegex");

@@ -13,13 +13,13 @@ namespace SilEncConverters40
     /// Managed Python script EncConverter
     /// </summary>
     //[GuidAttribute("54E0185D-3603-4113-B323-E0222FAD4CCE")]
-    // normally these subclasses are treated as the base class (i.e. the 
+    // normally these subclasses are treated as the base class (i.e. the
     //  client can use them orthogonally as IEncConverter interface pointers
-    //  so normally these individual subclasses would be invisible), but if 
-    //  we add 'ComVisible = false', then it doesn't get the registry 
-    //  'HKEY_CLASSES_ROOT\SilEncConverters40.TecEncConverter' which is the basis of 
+    //  so normally these individual subclasses would be invisible), but if
+    //  we add 'ComVisible = false', then it doesn't get the registry
+    //  'HKEY_CLASSES_ROOT\SilEncConverters40.TecEncConverter' which is the basis of
     //  how it is started (see EncConverters.AddEx).
-    // [ComVisible(false)] 
+    // [ComVisible(false)]
     public class PyScriptEncConverter : EncConverter
     {
         #region DLLImport Statements
@@ -71,7 +71,7 @@ namespace SilEncConverters40
             base.Initialize(converterName, converterSpec, ref lhsEncodingID, ref rhsEncodingID,
                 ref conversionType, ref processTypeFlags, codePageInput, codePageOutput, bAdding);
 
-            // the only thing we want to add (now that the convType can be less than accurate) 
+            // the only thing we want to add (now that the convType can be less than accurate)
             //  is to make sure it's unidirectional
             switch (conversionType)
             {
@@ -91,9 +91,9 @@ namespace SilEncConverters40
                     break;
             }
 
-            // if we're supposedly adding this one, then clobber our copy of its last modified 
+            // if we're supposedly adding this one, then clobber our copy of its last modified
             // (there was a problem with us instantiating lots of these things in a row and
-            //  not detecting the change because the modified date was within a second of each 
+            //  not detecting the change because the modified date was within a second of each
             //  other)
             if (bAdding)
             {

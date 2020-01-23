@@ -138,33 +138,33 @@ namespace SilEncConverters40
             this.tabPageSetup.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
-            // 
+            //
             // tabPageSetup
-            // 
+            //
             this.tabPageSetup.Controls.Add(this.tableLayoutPanel1);
-            // 
+            //
             // buttonApply
-            // 
+            //
             this.helpProvider.SetHelpString(this.buttonApply, "Click this button to apply the configured values for this converter");
             this.helpProvider.SetShowHelp(this.buttonApply, true);
-            // 
+            //
             // buttonCancel
-            // 
+            //
             this.helpProvider.SetHelpString(this.buttonCancel, "Click this button to cancel this dialog");
             this.helpProvider.SetShowHelp(this.buttonCancel, true);
-            // 
+            //
             // buttonOK
-            // 
+            //
             this.helpProvider.SetHelpString(this.buttonOK, "Click this button to accept the configured values for this converter");
             this.helpProvider.SetShowHelp(this.buttonOK, true);
-            // 
+            //
             // buttonSaveInRepository
-            // 
+            //
             this.helpProvider.SetHelpString(this.buttonSaveInRepository, "\r\nClick to add this converter to the system repository permanently.\r\n    ");
             this.helpProvider.SetShowHelp(this.buttonSaveInRepository, true);
-            // 
+            //
             // tableLayoutPanel1
-            // 
+            //
             this.tableLayoutPanel1.ColumnCount = 2;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
@@ -178,9 +178,9 @@ namespace SilEncConverters40
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(596, 394);
             this.tableLayoutPanel1.TabIndex = 1;
-            // 
+            //
             // labelConvName
-            // 
+            //
             this.labelConvName.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.labelConvName.AutoSize = true;
             this.labelConvName.Location = new System.Drawing.Point(3, 190);
@@ -188,18 +188,18 @@ namespace SilEncConverters40
             this.labelConvName.Size = new System.Drawing.Size(56, 13);
             this.labelConvName.TabIndex = 0;
             this.labelConvName.Text = "Converter:";
-            // 
+            //
             // listBoxConvName
-            // 
+            //
             this.listBoxConvName.Dock = System.Windows.Forms.DockStyle.Fill;
             this.listBoxConvName.Location = new System.Drawing.Point(65, 3);
             this.listBoxConvName.Name = "listBoxConvName";
             this.listBoxConvName.Size = new System.Drawing.Size(528, 388);
             this.listBoxConvName.TabIndex = 1;
             this.listBoxConvName.SelectedIndexChanged += new System.EventHandler(this.listBoxConvName_SelectedIndexChanged);
-            // 
+            //
             // IcuConvAutoConfigDialog
-            // 
+            //
             this.ClientSize = new System.Drawing.Size(634, 479);
             this.Name = "IcuConvAutoConfigDialog";
             this.Controls.SetChildIndex(this.tabControl, 0);
@@ -223,7 +223,7 @@ namespace SilEncConverters40
             list.ForEach(i => listBoxConvName.Items.Add(i));
 #else
 			int count = 0;
-			
+
             count = CppConverterNameList_start();
 
 			// Store the IDs in an array, and put the display names in the
@@ -245,7 +245,7 @@ namespace SilEncConverters40
 				{
 					int counter = lb.Items.Count - 1;
 					swapped = false;
-					
+
 					while (counter > 0)
 					{
 						// Compare the items
