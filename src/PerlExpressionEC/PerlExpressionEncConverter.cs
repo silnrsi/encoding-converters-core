@@ -21,11 +21,11 @@ namespace SilEncConverters40
     /// Managed Perl expression EncConverter
     /// </summary>
     //[GuidAttribute("54E0185D-3603-4113-B323-E0222FAD4CCE")]
-    // normally these subclasses are treated as the base class (i.e. the 
+    // normally these subclasses are treated as the base class (i.e. the
     //  client can use them orthogonally as IEncConverter interface pointers
-    //  so normally these individual subclasses would be invisible), but if 
-    //  we add 'ComVisible = false', then it doesn't get the registry 
-    //  'HKEY_CLASSES_ROOT\SilEncConverters40.TecEncConverter' which is the basis of 
+    //  so normally these individual subclasses would be invisible), but if
+    //  we add 'ComVisible = false', then it doesn't get the registry
+    //  'HKEY_CLASSES_ROOT\SilEncConverters40.TecEncConverter' which is the basis of
     //  how it is started (see EncConverters.AddEx).
     // [ComVisible(false)]
 	public class PerlExpressionEncConverter : ExeEncConverter
@@ -72,7 +72,7 @@ namespace SilEncConverters40
             bool bAdding)
         {
             // let the base class have first stab at it
-            base.Initialize(converterName, converterSpec, ref lhsEncodingID, ref rhsEncodingID, 
+            base.Initialize(converterName, converterSpec, ref lhsEncodingID, ref rhsEncodingID,
                 ref conversionType, ref processTypeFlags, codePageInput, codePageOutput, bAdding );
 
             // this is the only one we support from now on (if the user really wants to do legacy to unicode, they have to deal with the legacy as coming in utf-8 format
@@ -82,7 +82,7 @@ namespace SilEncConverters40
 
         public override string ExeName
         {
-            get 
+            get
             {
                 if (Util.IsUnix)
                 {
@@ -101,7 +101,7 @@ namespace SilEncConverters40
 
         public override string Arguments
         {
-            get 
+            get
             {
                 // put the path to the temp file in quotes
                 return String.Format("\"{0}\" +s", strTempFile);
@@ -110,12 +110,12 @@ namespace SilEncConverters40
 
         #region Misc helpers
         protected bool IsFileLoaded()
-        { 
+        {
             return !string.IsNullOrEmpty(strTempFile);
         }
 
         protected void Unload()
-        { 
+        {
             Util.DebugWriteLine(this, "BEGIN");
             if( IsFileLoaded() )
             {
@@ -242,7 +242,7 @@ namespace SilEncConverters40
             ref EncodingForm    eOutFormEngine,
             ref NormalizeFlags  eNormalizeOutput,
             bool                bForward
-            ) 
+            )
         {
 	        // let the base class do its thing first
             base.PreConvert( eInEncodingForm, ref eInFormEngine,

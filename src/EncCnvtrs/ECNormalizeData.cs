@@ -78,7 +78,7 @@ namespace SilEncConverters40
                             //  from the BSTR length. nInLen will be the # of bytes.
                             nInLen = strInput.Length * 2;
 
-                        // these forms are for C++ apps that want to use the BSTR to transfer 
+                        // these forms are for C++ apps that want to use the BSTR to transfer
                         //  bytes rather than OLECHARs.
                         nInLen = StringToByteStar(strInput, pBuf, nInLen, true);
 
@@ -98,12 +98,12 @@ namespace SilEncConverters40
                         DisplayDebugUCharValues(strInput, "Received (LegacyString) from client...", ref bDebugDisplayMode);
 
                         // use a code page converter to narrowize using the input string
-                        // (but the 'easier' Add method will send 0; if so, then 
+                        // (but the 'easier' Add method will send 0; if so, then
                         //  fallback to the original method.
                         byte[] ba = null;
 
-                        // first check if it's a symbol font (sometimes the user 
-                        //  incorrectly sends a few spaces first, so check the 
+                        // first check if it's a symbol font (sometimes the user
+                        //  incorrectly sends a few spaces first, so check the
                         //  first couple of bytes. If it is (and the code page is 0), then
                         //  change the code page to be CP_SYMBOL
                         if ((nCodePageIn == 0)
@@ -124,7 +124,7 @@ namespace SilEncConverters40
                         }
                         else
                         {
-                            // if it's a symbol or iso-8859 encoding, then we can handle just 
+                            // if it's a symbol or iso-8859 encoding, then we can handle just
                             //  taking the low byte (i.e. the catch case)
                             if ((nCodePageIn == EncConverters.cnSymbolFontCodePage)
                                 || (nCodePageIn == EncConverters.cnIso8859_1CodePage)
@@ -143,7 +143,7 @@ namespace SilEncConverters40
                             }
                             else
                             {
-                                // otherwise, simply use CP_ACP (or the default code page) to 
+                                // otherwise, simply use CP_ACP (or the default code page) to
                                 //  narrowize it.
                                 Util.DebugWriteLine(className, "Narrowizing by given code page.");
                                 Encoding enc = Encoding.GetEncoding(nCodePageIn);
@@ -227,7 +227,7 @@ namespace SilEncConverters40
                         {
                             nInLen = cnCountIn; // item count is the number of Uni chars
 
-                            // for UTF32, the converter's actually expecting the length to be twice 
+                            // for UTF32, the converter's actually expecting the length to be twice
                             //  this much again.
                             if (eEncFormIn != EncodingForm.UTF16BE)
                                 nInLen *= 2;
@@ -279,7 +279,7 @@ namespace SilEncConverters40
             Util.DebugWriteLine(className, Util.getDisplayBytes("byte array", baOut));
 
             // check to see if the engine handled the given output form. If not, then see
-            //  if it's a conversion we can easily do (otherwise we'll ask TEC to do the 
+            //  if it's a conversion we can easily do (otherwise we'll ask TEC to do the
             //  conversion for us (later) so that all engines can handle all possible
             //  output encoding forms.
             Util.DebugWriteLine(className,
@@ -291,8 +291,8 @@ namespace SilEncConverters40
                 {
                     if ((eFormEngineOut == EncodingForm.LegacyBytes) && (eOutEncodingForm == EncodingForm.LegacyString))
                     {
-                        // in this case, just *pretend* the engine outputs LegacyString (the 
-                        //  LegacyString case below really means "convert LegacyBytes to 
+                        // in this case, just *pretend* the engine outputs LegacyString (the
+                        //  LegacyString case below really means "convert LegacyBytes to
                         //  LegacyString)
                         eFormEngineOut = eOutEncodingForm;
                     }
@@ -343,7 +343,7 @@ namespace SilEncConverters40
                         else
                             DisplayDebugUCharValuesFromUTF8(baOut, "Received (UTF8Bytes) back from Converter/DLL (returning as UTF8Bytes)...", ref bDebugDisplayMode);
 
-                        // stuff the returned 'bytes' into the BSTR as narrow characters rather than 
+                        // stuff the returned 'bytes' into the BSTR as narrow characters rather than
                         //  converting to wide
                         nItems = nOutLen;
                         nCharsLen = (nOutLen + 1) / 2;
@@ -450,9 +450,9 @@ namespace SilEncConverters40
             // Also, if the caller wanted something other than "None" for the eNormalizeOutput,
             //  then we also have to call TEC for that as well (but I think this only makes
             //  sense if the output is utf16(be) or utf32(be))
-            // p.s. if this had been a TEC converter, then the eNormalizeOutput flag would 
-            //  ahready have been reset to None (by this point), since we would have directly 
-            //  requested that normalized form when we created the converter--see 
+            // p.s. if this had been a TEC converter, then the eNormalizeOutput flag would
+            //  ahready have been reset to None (by this point), since we would have directly
+            //  requested that normalized form when we created the converter--see
             //  TecEncConverter.PreConvert)
             string strOutput = new string(caOut);
 #if DEBUG
@@ -649,10 +649,10 @@ namespace SilEncConverters40
                     ps++;
                 }
 
-                // dilemma: it's possible that the user didn't make it an even number of 
-                //  bytes, in which case, this is actually one more than the actual 
-                //  length. otoh, apparently it is possible for this data to have '00' 
-                //  as a legitimate value (don't ask). At the very least check if the 
+                // dilemma: it's possible that the user didn't make it an even number of
+                //  bytes, in which case, this is actually one more than the actual
+                //  length. otoh, apparently it is possible for this data to have '00'
+                //  as a legitimate value (don't ask). At the very least check if the
                 //  last byte is zero and if so, then reduce the count by one...
                 if (bCheckFinalByte)
                 {
@@ -803,7 +803,7 @@ namespace SilEncConverters40
                 {
                     strUPiece = String.Format("{0:X}", (int)ch);
 
-                    // left pad with 0's (there may be a better way to do this, but 
+                    // left pad with 0's (there may be a better way to do this, but
                     //  I don't know what it is)
                     while (strUPiece.Length < 4) strUPiece = "0" + strUPiece;
 

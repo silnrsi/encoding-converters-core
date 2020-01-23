@@ -82,13 +82,13 @@ namespace SilEncConverters40
 
             // normally, the sub-classes can specify the encoding ID, but if it's different
             //  go with what the user gives us (unless it's null)
-            if(     !String.IsNullOrEmpty(lhsEncodingID) 
+            if(     !String.IsNullOrEmpty(lhsEncodingID)
                 &&  (String.Compare(m_strLhsEncodingID,lhsEncodingID,true) != 0) )
             {
                 m_strLhsEncodingID = lhsEncodingID;
             }
 
-            if(     !String.IsNullOrEmpty(rhsEncodingID) 
+            if(     !String.IsNullOrEmpty(rhsEncodingID)
                 &&  (String.Compare(m_strRhsEncodingID,rhsEncodingID,true) != 0) )
             {
                 m_strRhsEncodingID = rhsEncodingID;

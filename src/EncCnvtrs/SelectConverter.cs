@@ -199,7 +199,7 @@ namespace SilEncConverters40
                     aEC = DirectableEncConverter.EncConverters[m_strConverterName];
 
                     // BE: UPDATE: if this property is called after this dialog goes away (which it will), then the checkbox
-                    //  mentioned here *will* be not visible and yet, we still need to read the 'checked' state of the 
+                    //  mentioned here *will* be not visible and yet, we still need to read the 'checked' state of the
                     //  run-time properties below (which works on Windows). So I'm adding '__MonoCS__' here so I don't
                     //  break the Linux build, but so that the run-time properties will work on Windows
                     if (Util.IsUnix)
@@ -333,9 +333,9 @@ namespace SilEncConverters40
             this.tableLayoutPanel1.SuspendLayout();
             this.contextMenuStripPreview.SuspendLayout();
             this.SuspendLayout();
-            // 
+            //
             // labelInstruction
-            // 
+            //
             this.labelInstruction.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.tableLayoutPanel1.SetColumnSpan(this.labelInstruction, 4);
             this.labelInstruction.Location = new System.Drawing.Point(3, 0);
@@ -345,9 +345,9 @@ namespace SilEncConverters40
             this.labelInstruction.Text = "Choose an existing converter from the list below or click Add New to add a new on" +
                 "e:";
             this.labelInstruction.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
+            //
             // buttonCancel
-            // 
+            //
             this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.helpProvider.SetHelpString(this.buttonCancel, "Click this button to cancel the selection of a converter and return to the callin" +
                     "g program");
@@ -359,9 +359,9 @@ namespace SilEncConverters40
             this.buttonCancel.Text = "&Cancel";
             this.toolTips.SetToolTip(this.buttonCancel, "Cancel selection");
             this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
-            // 
+            //
             // buttonOK
-            // 
+            //
             this.buttonOK.Enabled = false;
             this.helpProvider.SetHelpString(this.buttonOK, "Click this button to choose the selected converter and return to the calling prog" +
                     "ram");
@@ -373,16 +373,16 @@ namespace SilEncConverters40
             this.buttonOK.Text = "&OK";
             this.toolTips.SetToolTip(this.buttonOK, "Click here to choose the selected converter");
             this.buttonOK.Click += new System.EventHandler(this.buttonOK_Click);
-            // 
+            //
             // toolTips
-            // 
+            //
             this.toolTips.AutomaticDelay = 50;
             this.toolTips.AutoPopDelay = 30000;
             this.toolTips.InitialDelay = 1000;
             this.toolTips.ReshowDelay = 500;
-            // 
+            //
             // checkBoxReverse
-            // 
+            //
             this.checkBoxReverse.Enabled = false;
             this.helpProvider.SetHelpString(this.checkBoxReverse, "Check this option if the reverse conversion is to be performed");
             this.checkBoxReverse.Location = new System.Drawing.Point(26, 24);
@@ -393,9 +393,9 @@ namespace SilEncConverters40
             this.checkBoxReverse.Text = "&Reverse direction (for bidirectional converters)";
             this.toolTips.SetToolTip(this.checkBoxReverse, "Convert in the reverse direction");
             this.checkBoxReverse.CheckedChanged += new System.EventHandler(this.checkBoxReverse_CheckedChanged);
-            // 
+            //
             // labelNormalizationType
-            // 
+            //
             this.labelNormalizationType.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.labelNormalizationType.Enabled = false;
@@ -405,9 +405,9 @@ namespace SilEncConverters40
             this.labelNormalizationType.TabIndex = 4;
             this.labelNormalizationType.Text = "Normalize Output:";
             this.toolTips.SetToolTip(this.labelNormalizationType, "Controls the normalization of the converted data.");
-            // 
+            //
             // checkBoxDebug
-            // 
+            //
             this.checkBoxDebug.Enabled = false;
             this.helpProvider.SetHelpString(this.checkBoxDebug, "This option allows you to troubleshoot the selected converter with respect to the" +
                     " data being send to and received from the underlying conversion engine");
@@ -418,9 +418,9 @@ namespace SilEncConverters40
             this.checkBoxDebug.TabIndex = 5;
             this.checkBoxDebug.Text = "&Debug";
             this.toolTips.SetToolTip(this.checkBoxDebug, "Show debug information during conversion");
-            // 
+            //
             // buttonCreateNew
-            // 
+            //
             this.helpProvider.SetHelpString(this.buttonCreateNew, "Click this button to add a new converter to the list (including existing map file" +
                     "s)");
             this.buttonCreateNew.Location = new System.Drawing.Point(3, 364);
@@ -431,9 +431,9 @@ namespace SilEncConverters40
             this.buttonCreateNew.Text = "&Add New";
             this.toolTips.SetToolTip(this.buttonCreateNew, "Add a new converter to the list (including existing map files)");
             this.buttonCreateNew.Click += new System.EventHandler(this.buttonCreateNew_Click);
-            // 
+            //
             // radioButtonFullyComposed
-            // 
+            //
             this.radioButtonFullyComposed.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.radioButtonFullyComposed.Enabled = false;
@@ -447,9 +447,9 @@ namespace SilEncConverters40
             this.radioButtonFullyComposed.Text = "Fully Co&mposed";
             this.toolTips.SetToolTip(this.radioButtonFullyComposed, "Output of the conversion is returned in Unicode Normalization Form \'Fully Compose" +
                     "d\'");
-            // 
+            //
             // radioButtonFullyDecomposed
-            // 
+            //
             this.radioButtonFullyDecomposed.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.radioButtonFullyDecomposed.Enabled = false;
@@ -462,9 +462,9 @@ namespace SilEncConverters40
             this.radioButtonFullyDecomposed.TabIndex = 2;
             this.radioButtonFullyDecomposed.Text = "&Fully Decomposed";
             this.toolTips.SetToolTip(this.radioButtonFullyDecomposed, "Return data in Unicode Normalization Form \'Fully Decomposed\'");
-            // 
+            //
             // radioButtonNone
-            // 
+            //
             this.radioButtonNone.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.radioButtonNone.Checked = true;
@@ -479,9 +479,9 @@ namespace SilEncConverters40
             this.radioButtonNone.TabStop = true;
             this.radioButtonNone.Text = "&None";
             this.toolTips.SetToolTip(this.radioButtonNone, "Output of the conversion is returned without change");
-            // 
+            //
             // buttonLaunchOptionsInstaller
-            // 
+            //
             this.helpProvider.SetHelpString(this.buttonLaunchOptionsInstaller, "Click this button to launch the Converter Options Installer");
             this.buttonLaunchOptionsInstaller.Location = new System.Drawing.Point(165, 364);
             this.buttonLaunchOptionsInstaller.Name = "buttonLaunchOptionsInstaller";
@@ -492,9 +492,9 @@ namespace SilEncConverters40
             this.toolTips.SetToolTip(this.buttonLaunchOptionsInstaller, "Launch the Converter Options Installer");
             this.buttonLaunchOptionsInstaller.Visible = false;
             this.buttonLaunchOptionsInstaller.Click += new System.EventHandler(this.buttonLaunchOptionsInstaller_Click);
-            // 
+            //
             // checkBoxShowTooltips
-            // 
+            //
             this.checkBoxShowTooltips.AutoSize = true;
             this.checkBoxShowTooltips.Checked = true;
             this.checkBoxShowTooltips.CheckState = System.Windows.Forms.CheckState.Checked;
@@ -508,9 +508,9 @@ namespace SilEncConverters40
             this.toolTips.SetToolTip(this.checkBoxShowTooltips, "Show ToolTips when checked");
             this.checkBoxShowTooltips.UseVisualStyleBackColor = true;
             this.checkBoxShowTooltips.CheckedChanged += new System.EventHandler(this.checkBoxShowTooltips_CheckedChanged);
-            // 
+            //
             // textBoxCodePageInput
-            // 
+            //
             this.textBoxCodePageInput.Location = new System.Drawing.Point(3, 16);
             this.textBoxCodePageInput.Name = "textBoxCodePageInput";
             this.textBoxCodePageInput.Size = new System.Drawing.Size(80, 20);
@@ -520,9 +520,9 @@ namespace SilEncConverters40
                     "s), \'1252\' (English operating systems)");
             this.textBoxCodePageInput.Visible = false;
             this.textBoxCodePageInput.TextChanged += new System.EventHandler(this.textBoxCodePageInput_TextChanged);
-            // 
+            //
             // textBoxCodePageOutput
-            // 
+            //
             this.textBoxCodePageOutput.Location = new System.Drawing.Point(3, 55);
             this.textBoxCodePageOutput.Name = "textBoxCodePageOutput";
             this.textBoxCodePageOutput.Size = new System.Drawing.Size(80, 20);
@@ -532,9 +532,9 @@ namespace SilEncConverters40
                     "ts), \'1252\' (English operating systems)");
             this.textBoxCodePageOutput.Visible = false;
             this.textBoxCodePageOutput.TextChanged += new System.EventHandler(this.textBoxCodePageOutput_TextChanged);
-            // 
+            //
             // buttonPreview
-            // 
+            //
             this.buttonPreview.Enabled = false;
             this.helpProvider.SetHelpString(this.buttonPreview, "Click this button to open a preview window showing the result of the conversion w" +
                     "ith the selected converter.");
@@ -548,9 +548,9 @@ namespace SilEncConverters40
                     "ms)");
             this.buttonPreview.UseVisualStyleBackColor = true;
             this.buttonPreview.Click += new System.EventHandler(this.buttonPreview_Click);
-            // 
+            //
             // groupBoxOptions
-            // 
+            //
             this.tableLayoutPanel1.SetColumnSpan(this.groupBoxOptions, 5);
             this.groupBoxOptions.Controls.Add(this.flowLayoutPanelCodePage);
             this.groupBoxOptions.Controls.Add(this.checkBoxDebug);
@@ -566,9 +566,9 @@ namespace SilEncConverters40
             this.groupBoxOptions.TabIndex = 6;
             this.groupBoxOptions.TabStop = false;
             this.groupBoxOptions.Text = "Conversion Options";
-            // 
+            //
             // flowLayoutPanelCodePage
-            // 
+            //
             this.flowLayoutPanelCodePage.Controls.Add(this.labelCodePageInput);
             this.flowLayoutPanelCodePage.Controls.Add(this.textBoxCodePageInput);
             this.flowLayoutPanelCodePage.Controls.Add(this.labelCodePageOutput);
@@ -578,9 +578,9 @@ namespace SilEncConverters40
             this.flowLayoutPanelCodePage.Name = "flowLayoutPanelCodePage";
             this.flowLayoutPanelCodePage.Size = new System.Drawing.Size(131, 100);
             this.flowLayoutPanelCodePage.TabIndex = 8;
-            // 
+            //
             // labelCodePageInput
-            // 
+            //
             this.labelCodePageInput.AutoSize = true;
             this.labelCodePageInput.Location = new System.Drawing.Point(3, 0);
             this.labelCodePageInput.Name = "labelCodePageInput";
@@ -588,9 +588,9 @@ namespace SilEncConverters40
             this.labelCodePageInput.TabIndex = 6;
             this.labelCodePageInput.Text = "&Input Code Page";
             this.labelCodePageInput.Visible = false;
-            // 
+            //
             // labelCodePageOutput
-            // 
+            //
             this.labelCodePageOutput.AutoSize = true;
             this.labelCodePageOutput.Location = new System.Drawing.Point(3, 39);
             this.labelCodePageOutput.Name = "labelCodePageOutput";
@@ -598,34 +598,34 @@ namespace SilEncConverters40
             this.labelCodePageOutput.TabIndex = 6;
             this.labelCodePageOutput.Text = "Output Code Pa&ge";
             this.labelCodePageOutput.Visible = false;
-            // 
+            //
             // contextMenu
-            // 
+            //
             this.contextMenu.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
             this.menuItemEdit,
             this.menuItemTest,
             this.menuItemDelete});
-            // 
+            //
             // menuItemEdit
-            // 
+            //
             this.menuItemEdit.Index = 0;
             this.menuItemEdit.Text = "&Edit";
             this.menuItemEdit.Click += new System.EventHandler(this.menuItemEdit_Click);
-            // 
+            //
             // menuItemTest
-            // 
+            //
             this.menuItemTest.Index = 1;
             this.menuItemTest.Text = "&Test";
             this.menuItemTest.Click += new System.EventHandler(this.menuItemTest_Click);
-            // 
+            //
             // menuItemDelete
-            // 
+            //
             this.menuItemDelete.Index = 2;
             this.menuItemDelete.Text = "&Delete";
             this.menuItemDelete.Click += new System.EventHandler(this.menuItemDelete_Click);
-            // 
+            //
             // listBoxExistingConverters
-            // 
+            //
             this.tableLayoutPanel1.SetColumnSpan(this.listBoxExistingConverters, 5);
             this.listBoxExistingConverters.Dock = System.Windows.Forms.DockStyle.Fill;
             this.helpProvider.SetHelpString(this.listBoxExistingConverters, "This list shows all of the converters currently in the system repository");
@@ -639,9 +639,9 @@ namespace SilEncConverters40
             this.listBoxExistingConverters.SelectedIndexChanged += new System.EventHandler(this.listBoxExistingConverters_SelectedIndexChanged);
             this.listBoxExistingConverters.DoubleClick += new System.EventHandler(this.listBoxExistingConverters_DoubleClick);
             this.listBoxExistingConverters.MouseMove += new System.Windows.Forms.MouseEventHandler(this.listBoxExistingConverters_MouseMove);
-            // 
+            //
             // tableLayoutPanel1
-            // 
+            //
             this.tableLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                         | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
@@ -671,9 +671,9 @@ namespace SilEncConverters40
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 30F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(548, 478);
             this.tableLayoutPanel1.TabIndex = 10;
-            // 
+            //
             // textBoxDataPreview
-            // 
+            //
             this.tableLayoutPanel1.SetColumnSpan(this.textBoxDataPreview, 5);
             this.textBoxDataPreview.ContextMenuStrip = this.contextMenuStripPreview;
             this.textBoxDataPreview.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -685,9 +685,9 @@ namespace SilEncConverters40
             this.textBoxDataPreview.ScrollBars = System.Windows.Forms.ScrollBars.Both;
             this.textBoxDataPreview.Size = new System.Drawing.Size(542, 82);
             this.textBoxDataPreview.TabIndex = 12;
-            // 
+            //
             // contextMenuStripPreview
-            // 
+            //
             this.contextMenuStripPreview.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.changeFontToolStripMenuItem,
             this.toolStripSeparator1,
@@ -698,64 +698,64 @@ namespace SilEncConverters40
             this.right2LeftToolStripMenuItem});
             this.contextMenuStripPreview.Name = "contextMenuStrip";
             this.contextMenuStripPreview.Size = new System.Drawing.Size(200, 110);
-            // 
+            //
             // changeFontToolStripMenuItem
-            // 
+            //
             this.changeFontToolStripMenuItem.Name = "changeFontToolStripMenuItem";
             this.changeFontToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
             this.changeFontToolStripMenuItem.Text = "Change &Font";
             this.changeFontToolStripMenuItem.ToolTipText = "Click here to change the display font for this text box";
             this.changeFontToolStripMenuItem.Click += new System.EventHandler(this.changeFontToolStripMenuItem_Click);
-            // 
+            //
             // toolStripSeparator1
-            // 
+            //
             this.toolStripSeparator1.Name = "toolStripSeparator1";
             this.toolStripSeparator1.Size = new System.Drawing.Size(196, 6);
-            // 
+            //
             // copyToolStripMenuItem
-            // 
+            //
             this.copyToolStripMenuItem.Name = "copyToolStripMenuItem";
             this.copyToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
             this.copyToolStripMenuItem.Text = "Copy";
             this.copyToolStripMenuItem.Click += new System.EventHandler(this.copyToolStripMenuItem_Click);
-            // 
+            //
             // toolStripSeparator2
-            // 
+            //
             this.toolStripSeparator2.Name = "toolStripSeparator2";
             this.toolStripSeparator2.Size = new System.Drawing.Size(196, 6);
-            // 
+            //
             // selectAllToolStripMenuItem
-            // 
+            //
             this.selectAllToolStripMenuItem.Name = "selectAllToolStripMenuItem";
             this.selectAllToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
             this.selectAllToolStripMenuItem.Text = "Select All";
             this.selectAllToolStripMenuItem.Click += new System.EventHandler(this.selectAllToolStripMenuItem_Click);
-            // 
+            //
             // toolStripSeparator3
-            // 
+            //
             this.toolStripSeparator3.Name = "toolStripSeparator3";
             this.toolStripSeparator3.Size = new System.Drawing.Size(196, 6);
-            // 
+            //
             // right2LeftToolStripMenuItem
-            // 
+            //
             this.right2LeftToolStripMenuItem.CheckOnClick = true;
             this.right2LeftToolStripMenuItem.Name = "right2LeftToolStripMenuItem";
             this.right2LeftToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
             this.right2LeftToolStripMenuItem.Text = "&Right to left reading order";
             this.right2LeftToolStripMenuItem.Click += new System.EventHandler(this.right2LeftToolStripMenuItem_Click);
-            // 
+            //
             // fontDialog
-            // 
+            //
             this.fontDialog.AllowScriptChange = false;
             this.fontDialog.ShowColor = true;
-            // 
+            //
             // timerTooltip
-            // 
+            //
             this.timerTooltip.Interval = 500;
             this.timerTooltip.Tick += new System.EventHandler(this.timerTooltip_Tick);
-            // 
+            //
             // SelectConverter
-            // 
+            //
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
             this.ClientSize = new System.Drawing.Size(572, 502);
             this.Controls.Add(this.tableLayoutPanel1);
@@ -787,7 +787,7 @@ namespace SilEncConverters40
             bool bTooltipActive = toolTips.Active;
             toolTips.Active = false;
             IEncConverter aEC = null;
-            if (    DirectableEncConverter.EncConverters.AutoConfigure(m_eConversionTypeFilter, ref m_strConverterName) 
+            if (    DirectableEncConverter.EncConverters.AutoConfigure(m_eConversionTypeFilter, ref m_strConverterName)
                 &&  (m_strConverterName != null)
                 &&  ((aEC = DirectableEncConverter.EncConverters[m_strConverterName]) != null))
             {
@@ -868,7 +868,7 @@ namespace SilEncConverters40
                             break;
                     };
 
-                    // indicate the code pages we're going to use for legacy encodings so that the 
+                    // indicate the code pages we're going to use for legacy encodings so that the
                     //  user can change it if needed.
                     DirectableEncConverter aDEC = new DirectableEncConverter(aEC);
                     UpdateCodePageDetails(aDEC);
@@ -892,7 +892,7 @@ namespace SilEncConverters40
         protected void UpdateCodePageDetails(DirectableEncConverter aDEC)
         {
             Util.DebugWriteLine(this, "BEGIN");
-            // indicate the code pages we're going to use for legacy encodings so that the 
+            // indicate the code pages we're going to use for legacy encodings so that the
             //  user can change it if needed.
             m_bTurnOffTextChangedEvents = true;
             textBoxCodePageInput.Text = aDEC.CodePageInput.ToString();
@@ -1148,7 +1148,7 @@ namespace SilEncConverters40
                 }
                 else if (!String.IsNullOrEmpty(m_strPreviewData))
                 {
-                    // ... otherwise, the user has already converted it (if legacy) to wide 
+                    // ... otherwise, the user has already converted it (if legacy) to wide
                     //  and we should just show her what she gets.
                     textBoxDataPreview.Text = CallSafeConvert(aDEC, m_strPreviewData);
                 }

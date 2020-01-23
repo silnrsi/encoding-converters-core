@@ -161,33 +161,33 @@ namespace SilEncConverters40
             this.tabPageSetup.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
-            // 
+            //
             // tabPageSetup
-            // 
+            //
             this.tabPageSetup.Controls.Add(this.tableLayoutPanel1);
-            // 
+            //
             // buttonApply
-            // 
+            //
             this.helpProvider.SetHelpString(this.buttonApply, "Click this button to apply the configured values for this converter");
             this.helpProvider.SetShowHelp(this.buttonApply, true);
-            // 
+            //
             // buttonCancel
-            // 
+            //
             this.helpProvider.SetHelpString(this.buttonCancel, "Click this button to cancel this dialog");
             this.helpProvider.SetShowHelp(this.buttonCancel, true);
-            // 
+            //
             // buttonOK
-            // 
+            //
             this.helpProvider.SetHelpString(this.buttonOK, "Click this button to accept the configured values for this converter");
             this.helpProvider.SetShowHelp(this.buttonOK, true);
-            // 
+            //
             // buttonSaveInRepository
-            // 
+            //
             this.helpProvider.SetHelpString(this.buttonSaveInRepository, "\r\nClick to add this converter to the system repository permanently.\r\n    ");
             this.helpProvider.SetShowHelp(this.buttonSaveInRepository, true);
-            // 
+            //
             // tableLayoutPanel1
-            // 
+            //
             this.tableLayoutPanel1.ColumnCount = 3;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
@@ -211,18 +211,18 @@ namespace SilEncConverters40
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 50F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(596, 394);
             this.tableLayoutPanel1.TabIndex = 1;
-            // 
+            //
             // listBoxTranslitName
-            // 
+            //
             this.listBoxTranslitName.Dock = System.Windows.Forms.DockStyle.Fill;
             this.listBoxTranslitName.Location = new System.Drawing.Point(128, 26);
             this.listBoxTranslitName.Name = "listBoxTranslitName";
             this.listBoxTranslitName.Size = new System.Drawing.Size(370, 212);
             this.listBoxTranslitName.TabIndex = 1;
             this.listBoxTranslitName.SelectedIndexChanged += new System.EventHandler(this.listBoxTranslitName_SelectedIndexChanged);
-            // 
+            //
             // radioButtonBuiltIn
-            // 
+            //
             this.radioButtonBuiltIn.AutoSize = true;
             this.radioButtonBuiltIn.Checked = true;
             this.radioButtonBuiltIn.Location = new System.Drawing.Point(128, 3);
@@ -233,9 +233,9 @@ namespace SilEncConverters40
             this.radioButtonBuiltIn.Text = "&Built-in transliterators";
             this.radioButtonBuiltIn.UseVisualStyleBackColor = true;
             this.radioButtonBuiltIn.Click += new System.EventHandler(this.radioButtonBuiltIn_Click);
-            // 
+            //
             // radioButtonCustom
-            // 
+            //
             this.radioButtonCustom.AutoSize = true;
             this.radioButtonCustom.Location = new System.Drawing.Point(128, 244);
             this.radioButtonCustom.Name = "radioButtonCustom";
@@ -245,9 +245,9 @@ namespace SilEncConverters40
             this.radioButtonCustom.Text = "&Custom transliterator";
             this.radioButtonCustom.UseVisualStyleBackColor = true;
             this.radioButtonCustom.Click += new System.EventHandler(this.radioButtonCustom_Click);
-            // 
+            //
             // textBoxCustomTransliterator
-            // 
+            //
             this.textBoxCustomTransliterator.Dock = System.Windows.Forms.DockStyle.Fill;
             this.textBoxCustomTransliterator.Enabled = false;
             this.textBoxCustomTransliterator.Location = new System.Drawing.Point(128, 267);
@@ -255,9 +255,9 @@ namespace SilEncConverters40
             this.textBoxCustomTransliterator.Size = new System.Drawing.Size(370, 20);
             this.textBoxCustomTransliterator.TabIndex = 3;
             this.textBoxCustomTransliterator.TextChanged += new System.EventHandler(this.textBoxCustomTransliterator_TextChanged);
-            // 
+            //
             // comboBoxPreviousCustomTransliterators
-            // 
+            //
             this.comboBoxPreviousCustomTransliterators.Dock = System.Windows.Forms.DockStyle.Fill;
             this.comboBoxPreviousCustomTransliterators.Enabled = false;
             this.comboBoxPreviousCustomTransliterators.FormattingEnabled = true;
@@ -266,9 +266,9 @@ namespace SilEncConverters40
             this.comboBoxPreviousCustomTransliterators.Size = new System.Drawing.Size(370, 21);
             this.comboBoxPreviousCustomTransliterators.TabIndex = 4;
             this.comboBoxPreviousCustomTransliterators.SelectedIndexChanged += new System.EventHandler(this.comboBoxPreviousCustomTransliterators_SelectedIndexChanged);
-            // 
+            //
             // label1
-            // 
+            //
             this.label1.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(3, 322);
@@ -276,9 +276,9 @@ namespace SilEncConverters40
             this.label1.Size = new System.Drawing.Size(119, 13);
             this.label1.TabIndex = 0;
             this.label1.Text = "Previous Custom Rules:";
-            // 
+            //
             // buttonDeletePreviousCustomTransliterators
-            // 
+            //
             this.buttonDeletePreviousCustomTransliterators.Enabled = false;
             this.buttonDeletePreviousCustomTransliterators.Location = new System.Drawing.Point(504, 317);
             this.buttonDeletePreviousCustomTransliterators.Name = "buttonDeletePreviousCustomTransliterators";
@@ -287,9 +287,9 @@ namespace SilEncConverters40
             this.buttonDeletePreviousCustomTransliterators.Text = "Delete";
             this.buttonDeletePreviousCustomTransliterators.UseVisualStyleBackColor = true;
             this.buttonDeletePreviousCustomTransliterators.Click += new System.EventHandler(this.buttonDeletePreviousCustomTransliterators_Click);
-            // 
+            //
             // IcuTranslitAutoConfigDialog
-            // 
+            //
             this.ClientSize = new System.Drawing.Size(634, 479);
             this.Name = "IcuTranslitAutoConfigDialog";
             this.Controls.SetChildIndex(this.tabControl, 0);

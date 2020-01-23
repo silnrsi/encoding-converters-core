@@ -929,7 +929,7 @@ namespace TestEncCnvtrs
 			int countAfter = m_encConverters.Count;
 			Assert.AreEqual(countOrig, countAfter, "Should have the original number of converters now.");
 		}
-		
+
 		[Test]
 		public void TestListingCodePageConverters()
 		{

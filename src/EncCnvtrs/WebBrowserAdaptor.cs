@@ -44,7 +44,7 @@ namespace SilEncConverters40
             //  so on Linux, prefer Gecko, but on Windows, prefer IE.
             if (ShouldUseGecko)
             {
-                // try to initialize 
+                // try to initialize
                 // if GeckoFx was successfully initialized, then use it
 #if LoadGeckoLibs
                 if (GeckoFxInitializer.SetUpXulRunner())
@@ -119,7 +119,7 @@ namespace SilEncConverters40
         }
 
         /// <summary>
-        /// this will return true if the user has set the 'UseGeckoFx' registry key to 'True' AND put the xulRunner folder 
+        /// this will return true if the user has set the 'UseGeckoFx' registry key to 'True' AND put the xulRunner folder
         /// in the target installation dir
         /// </summary>
         private static bool WindowsUserWantsToUseGecko
