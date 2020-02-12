@@ -43,10 +43,10 @@ NUGET_URL = https://dist.nuget.org/win-x86-commandline/v3.4.4/nuget.exe
 all: debug
 
 download_nuget:
-	wget -O build/nuget.exe $(NUGET_URL) || curl -o build/nuget.exe -L $(NUGET_URL)
+	build/multitry wget -O build/nuget.exe $(NUGET_URL) || build/multitry curl -o build/nuget.exe -L $(NUGET_URL)
 
 download_dependencies: download_nuget
-	. ./environ && mono build/nuget.exe restore .nuget/packages.config -NonInteractive -PackagesDirectory "$(ROOTDIR)/packages"
+	. ./environ && build/multitry mono build/nuget.exe restore .nuget/packages.config -NonInteractive -PackagesDirectory "$(ROOTDIR)/packages"
 	cp -a packages/Geckofx45.64.Linux.45.0.21.0/build/Geckofx-Core.dll.config packages/Geckofx45.64.Linux.45.0.21.0/lib/net40
 	cp -a packages/Geckofx45.32.Linux.45.0.21.0/build/Geckofx-Core.dll.config packages/Geckofx45.32.Linux.45.0.21.0/lib/net40
 

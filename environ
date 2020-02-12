@@ -1,8 +1,9 @@
 # Environment settings to build fieldworks encoding converters.
 #
 # Source, not run, this file
-# TODO It would probably be good to combine this with msbuild.sh. And debian/rules.
+# TODO It would probably be good to combine this with msbuild.sh.
 
 export PATH="/opt/mono5-sil/bin:${PATH}"
 export FIELDWORKS=1
 export LD_LIBRARY_PATH="/usr/lib/fieldworks/lib:${LD_LIBRARY_PATH}"
+export PYTHON_VERSION="2.7"
