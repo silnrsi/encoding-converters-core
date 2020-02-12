@@ -1,3 +1,9 @@
+fieldworks-enc-converters (4.0.7.1) focal; urgency=medium
+
+  * Use mono 5.
+
+ -- MarkS <marksvc@gmail.com>  Wed, 12 Feb 2020 10:40:14 -0600
+
 fieldworks-enc-converters (4.0.7) precise; urgency=low
 
   * Add Replaces and Breaks to ease upgrading fieldworks-applications from 8.1.4.

@@ -2,12 +2,12 @@ Source: fieldworks-enc-converters
 Priority: optional
 Section: libs
 Maintainer: Stephen McConnel <stephen_mcconnel@sil.org>
-Build-Depends: debhelper (>= 7.0.50~), autotools-dev, python-dev (>=2.6),
+Build-Depends: debhelper (>= 7.0.50~), autotools-dev, python2-dev (>=2.6) | python-dev (>=2.6),
  dh-autoreconf, lsb-release, devscripts,
  libteckit-dev,
  pkg-config,
  mono-runtime,
- mono-sil, libgdiplus-sil,
+ mono5-sil, libgdiplus5-sil, mono5-sil-msbuild,
  icu-dev-fw | fieldworks-applications (<< 9.0.0~),
  wget
 Standards-Version: 3.9.6
@@ -15,7 +15,7 @@ Homepage: https://github.com/silnrsi/encoding-converters-core
 
 Package: fieldworks-enc-converters
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, mono-sil, libgdiplus-sil,
+Depends: ${shlibs:Depends}, ${misc:Depends}, mono5-sil, libgdiplus5-sil,
  libsilcc0,
 Suggests: fieldworks
 Conflicts: enc-converters

@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# Run a command a few times until it works, pausing between attempts.
+
+delay=${MULTITRY_DELAY:-1m}
+retries=${MULTITRY_ATTEMPTS:-3}
+while ((retries-- > 0)); do
+	"$@" && exit 0
+	if ((retries <= 0)); then
+		echo >&2 "Giving up"
+		exit 1
+	fi
+	echo >&2 "Retrying $retries more time(s)"
+	sleep ${delay}
+done

@@ -1,29 +1,17 @@
 #!/usr/bin/make -f
-# -*- makefile -*-
-# Sample debian/rules that uses debhelper.
-# This file was originally written by Joey Hess and Craig Small.
-# As a special exception, when this file is copied by dh-make into a
-# dh-make output file, you may use that output file without restriction.
-# This special exception was added by Craig Small in version 0.37 of dh-make.
 
-# Uncomment this to turn on verbose mode.
 export DH_VERBOSE=1
 export DH_OPTIONS=-v
-
 export MONO_PREFIX=/opt/mono5-sil
-export FIELDWORKS=1
 
-# Help nuget by providing a writable settings directory.
-export XDG_CONFIG_HOME=$(shell mktemp -d --tmpdir xdg_config_home.XXXXX)
+# NuGet has trouble when Ubuntu 16.04 pbuilder sets the home directory to /nonexistent. Set a HOME for NuGet to use.
+export HOME=`mktemp -d --tmpdir nuget_home.XXXXX`
 
 %:
-	dh --with autoreconf $@
+	. ./environ && dh $@ --with autoreconf
 
 override_dh_auto_clean:
 
-# note that the Makefile determines the installation directory based on the
-# existence/value of the variable FIELDWORKS, so we don't need a --prefix
-# argument for autogen.sh
 override_dh_autoreconf:
 	./autogen.sh
 
