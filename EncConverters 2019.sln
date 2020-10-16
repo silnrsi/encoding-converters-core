@@ -1,8 +1,12 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.1000
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30611.23
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Installer", "Installer", "{D3355CC9-A400-49B7-ADCE-F623A816D1B5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Testing", "Testing", "{652EFEB5-5F0A-4578-A518-D77FEDB0A53C}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ECInterfaces 2010", "src\ECInterfaces\ECInterfaces 2010.csproj", "{2935E02F-43ED-4670-9A00-A91B0AD3D66C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EncCnvtrs 2010", "src\EncCnvtrs\EncCnvtrs 2010.csproj", "{3E4B908A-4F96-43C5-981B-1AA4B73CCC26}"
@@ -109,10 +113,6 @@ Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "AIGuesserMM", "installer\AI
 	EndProjectSection
 EndProject
 Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "TECkitDLLsMM", "installer\TECkitDLLsMM\TECkitDLLsMM.wixproj", "{6EAFDB48-2E2C-4874-9924-2D8B115FA1EF}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Installer", "Installer", "{D3355CC9-A400-49B7-ADCE-F623A816D1B5}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Testing", "Testing", "{652EFEB5-5F0A-4578-A518-D77FEDB0A53C}"
 EndProject
 Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "PerlEcMM", "installer\PerlEcMM\PerlEcMM.wixproj", "{D6A6243C-A7F4-4174-80C5-5EFD39C29D5E}"
 	ProjectSection(ProjectDependencies) = postProject
