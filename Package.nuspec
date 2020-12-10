@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Encoding-Converters-Core</id>
-    <version>0.0.7</version>
+    <version>0.0.8</version>
     <authors>Bob Eaton, Jim Kornelson, SIL International</authors>
     <owners>jnaylor, sillsdev</owners>
     <license type="expression">MIT</license>
@@ -16,12 +16,12 @@
   <files>
 	<file src="ReadMe.md" />
 	<file src="Encoding-Converters-Core.props" target="build" />
-	<file src="output\Win32\Release\*.dll" target="lib\net40\win7-x86" />
-	<file src="output\Win32\Release\*.tlb" target="lib\net40\win7-x86" />
-	<file src="output\Win32\Release\*.exe" target="lib\net40\win7-x86" />
-	<file src="output\x64\Release\*.dll" target="lib\net40\win7-x64" />
-	<file src="output\x64\Release\*.tlb" target="lib\net40\win7-x64" />
-	<file src="output\x64\Release\*.exe" target="lib\net40\win7-x64" />
+	<file src="output\Win32\Release\*.dll" exclude="**\CC32.dll;**\Cc64.dll;**\TEC*.dll;**\python*.dll;**\PyScriptEncConverter.dll;**\lib*.dll;**\icuuc54.dll;**\IcuTranslitEC.dll;**\IcuRegexEC.dll;**\icuin54.dll;**\icudt54.dll;**\IcuConvEC.dll;**\SilFont2Iscii.dll;**\Guesser*.dll;**\ECDriver.dll;**\Mono*.dll;**\nunit.*.dll;**\NUnit.*.dll;**\TestEncCnvtrs.dll" target="lib\net40" />
+	<file src="output\Win32\Release\*.exe" target="lib\net40" />
+	<file src="output\Win32\Release\CC32.dll;output\Win32\Release\Cc64.dll;output\Win32\Release\TEC*.dll;output\Win32\Release\python*.dll;output\Win32\Release\PyScriptEncConverter.dll;output\Win32\Release\lib*.dll;output\Win32\Release\icuuc54.dll;output\Win32\Release\IcuTranslitEC.dll;output\Win32\Release\IcuRegexEC.dll;output\Win32\Release\icuin54.dll;output\Win32\Release\icudt54.dll;output\Win32\Release\IcuConvEC.dll;output\Win32\Release\Guesser*.dll;output\Win32\Release\ECDriver.dll;" target="runtimes\win7-x86\native" />
+	<file src="output\Win32\Release\*.tlb" target="runtimes\win7-x86\native" />
+	<file src="output\x64\Release\CC32.dll;output\x64\Release\Cc64.dll;output\x64\Release\TEC*.dll;output\x64\Release\python*.dll;output\x64\Release\PyScriptEncConverter.dll;output\x64\Release\lib*.dll;output\x64\Release\icuuc54.dll;output\x64\Release\IcuTranslitEC.dll;output\x64\Release\IcuRegexEC.dll;output\x64\Release\icuin54.dll;output\x64\Release\icudt54.dll;output\x64\Release\IcuConvEC.dll;output\x64\Release\Guesser*.dll;output\x64\Release\ECDriver.dll;" target="runtimes\win7-x64\native" />
+	<file src="output\x64\Release\*.tlb" target="runtimes\win7-x64\native" />
 	<file src="installer\MergeModules\*.msm" target="MergeModules" />
 	<file src="redist\EC\Plugins\*.xml" target="Plugins" />
   </files>

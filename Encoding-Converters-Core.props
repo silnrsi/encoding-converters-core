@@ -1,7 +1,7 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 	<PropertyGroup>
-		<EncodingConvertersDir32>$(MSBuildThisFileDirectory)..\lib\win7-x86</EncodingConvertersDir32>
-		<EncodingConvertersDir64>$(MSBuildThisFileDirectory)..\lib\win7-x64</EncodingConvertersDir64>
+		<EncodingConvertersDir32>$(MSBuildThisFileDirectory)..\runtimes\win7-x86\native</EncodingConvertersDir32>
+		<EncodingConvertersDir64>$(MSBuildThisFileDirectory)..\runtimes\win7-x64\native</EncodingConvertersDir64>
 		<EncodingConvertersMergeModuleDir>$(MSBuildThisFileDirectory)..\MergeModules</EncodingConvertersMergeModuleDir>
 		<EncodingConvertersPluginsDir>$(MSBuildThisFileDirectory)..\Plugins</EncodingConvertersPluginsDir>
 	</PropertyGroup>
