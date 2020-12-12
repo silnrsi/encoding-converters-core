@@ -177,35 +177,51 @@ namespace SilEncConverters40
                 // keep track of the modified date, so we can detect a new version to reload
                 m_timeModified = timeModified;
 
-                if( IsFileLoaded() )
+                if (IsFileLoaded())
                     Unload();
 
-	            IntPtr hInstanceHandle = IntPtr.Zero;  // don't know what else to use here...
-
-                byte [] baTablePathTemp = Encoding.ASCII.GetBytes(strTablePath);
-                byte [] baTablePath     = new byte[baTablePathTemp.Length + 1];
-                for (int i = 0; i < baTablePathTemp.Length; i++)
-                    baTablePath[i] = baTablePathTemp[i];
-                baTablePath[baTablePath.Length - 1] = 0;    // null terminate
-
-                Util.DebugWriteLine(this, Util.getDisplayBytes("CC Table Name", baTablePath));
-                fixed(byte* pszTablePath = baTablePath)
-                    fixed(IntPtr* phTable = &m_hTable)
-                    {
-                        Util.DebugWriteLine(this, "Calling CCLoadTable");
-                        int status = 0;
-                        status = CCLoadTable( pszTablePath, phTable, hInstanceHandle );
-                        if( status != 0 )  
-                        {
-                            TranslateErrStatus(status);
-                        }
-                        Util.DebugWriteLine(this, "Finished calling CCLoadTable");
-                    }
+                LoadTable(strTablePath);
             }
             Util.DebugWriteLine(this, "END");
         }
 
-	    protected void    TranslateErrStatus(int status)
+        private unsafe void LoadTable(string strTablePath)
+        {
+            byte[] baTablePath = Encoding.ASCII.GetBytes(strTablePath);
+            Util.DebugWriteLine(this, Util.getDisplayBytes("CC Table Name", baTablePath));
+            Util.DebugWriteLine(this, "Calling CCLoadTable");
+            int status = 0;
+            IntPtr m_hTableTemp = IntPtr.Zero;
+            IntPtr* phTable = &m_hTableTemp;
+            if (Environment.Is64BitProcess)
+            {
+                fixed (byte* pszTablePath = baTablePath)
+                {
+                    IntPtr hInstanceHandle = IntPtr.Zero;  // don't know what else to use here...
+                    status = CCLoadTable64(pszTablePath, phTable, hInstanceHandle);
+                }
+            }
+            else
+            {
+                fixed (byte* pszTablePath = baTablePath)
+                {
+                    IntPtr hInstanceHandle = IntPtr.Zero;  // don't know what else to use here...
+                    status = CCLoadTable32(pszTablePath, phTable, hInstanceHandle);
+                }
+            }
+
+            if (status != 0)
+            {
+                TranslateErrStatus(status);
+            }
+            else
+            {
+                m_hTable = m_hTableTemp;
+            }
+            Util.DebugWriteLine(this, "Finished calling CCLoadTable");
+        }
+
+        protected void    TranslateErrStatus(int status)
         {
             switch(status)
             {

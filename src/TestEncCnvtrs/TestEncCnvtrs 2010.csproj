@@ -100,14 +100,6 @@
       <HintPath>..\..\lib\windows\NUnit\framework\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="SilEncConverters40">
-      <HintPath>..\..\output\Debug\SilEncConverters40.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="ECInterfaces">
-      <HintPath>..\..\output\Debug\ECInterfaces.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.XML" />
@@ -131,8 +123,12 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ECInterfaces\ECInterfaces 2010.csproj">
-      <Project>{2935E02F-43ED-4670-9A00-A91B0AD3D66C}</Project>
+      <Project>{2935e02f-43ed-4670-9a00-a91b0ad3d66c}</Project>
       <Name>ECInterfaces 2010</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EncCnvtrs\EncCnvtrs 2010.csproj">
+      <Project>{3e4b908a-4f96-43c5-981b-1aa4b73ccc26}</Project>
+      <Name>EncCnvtrs 2010</Name>
     </ProjectReference>
     <ProjectReference Include="..\IcuEC\IcuEC 2010.csproj">
       <Project>{D1BAE593-A552-4F1A-8B08-5A1C27875C2F}</Project>

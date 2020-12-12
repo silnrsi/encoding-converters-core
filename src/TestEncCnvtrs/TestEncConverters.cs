@@ -586,59 +586,77 @@ namespace TestEncCnvtrs
 
 		private readonly byte[] m_bytesAnn = new byte[] {0xE9, 0x4C, 0x83, 0xE7, 0xA2 };
 		private const string m_utf16Ann = "\u0915\u093F\u0924\u093E\u092C";
+        private const string CCTableName1 = "ann2unicode.cct";
+		private const string CCTableName2 = "unicode2ann.cct";
 
 		[Test]
 		public void TestCcEncConverters()
-		{
-			int countOrig = m_encConverters.Count;
-			var dir = GetTestSourceFolder();
-			string filename1 = Path.Combine(dir, "ann2unicode.cct");
-			m_encConverters.Add("UnitTesting-Ann-To-Unicode", filename1,
-				ConvType.Legacy_to_from_Unicode,
-				"LEGACY", "UNICODE", ProcessTypeFlags.UnicodeEncodingConversion);
-			int countNew = m_encConverters.Count;
-			Assert.AreEqual(countOrig + 1, countNew, "Should have one new converter (CC) now");
-			string[] encodings = m_encConverters.Encodings;
-			Assert.LessOrEqual(2, encodings.Length, "Should have at least 2 encodings now.");
-			string[] mappings = m_encConverters.Mappings;
-			Assert.LessOrEqual(1, mappings.Length, "Should have at least 1 mapping now.");
-			int countKeys = m_encConverters.Keys.Count;
-			int countValues = m_encConverters.Values.Count;
-			Assert.AreEqual(countKeys, countValues, "Should have same number of keys and values!");
-			Assert.LessOrEqual(1, countKeys, "Should have at least one key now.");
-			IEncConverter ec = m_encConverters["UnitTesting-Ann-To-Unicode"];
-			Assert.IsNotNull(ec, "Added converter UnitTesting-Ann-To-Unicode should exist!");
-			ec.CodePageInput = EncConverters.cnIso8859_1CodePage;
-			string input = TestUtil.GetPseudoStringFromBytes(m_bytesAnn);
-			string output = ec.Convert(input);
-			Assert.AreEqual(m_utf16Ann, output, "ann2unicode.cct should convert data properly!");
+        {
+            int countOrig = m_encConverters.Count;
+            string filename1, filename2;
+            GetCcTablePaths(out filename1, out filename2);
 
-			string filename2 = Path.Combine(dir, "unicode2ann.cct");
-			m_encConverters.Add("UnitTesting-Unicode-To-Ann", filename2,
-				ConvType.Unicode_to_from_Legacy,
-				"UNICODE", "LEGACY", ProcessTypeFlags.UnicodeEncodingConversion);
-			countNew = m_encConverters.Count;
-			Assert.AreEqual(countOrig + 2, countNew, "Should have two new converters now.");
-			mappings = m_encConverters.Mappings;
-			Assert.LessOrEqual(2, mappings.Length, "Should have at least two mappings now.");
-			countKeys = m_encConverters.Keys.Count;
-			countValues = m_encConverters.Values.Count;
-			Assert.AreEqual(countKeys, countValues, "Should have same number of keys and values!");
-			Assert.LessOrEqual(2, countKeys, "Should have at least two keys now.");
-			IEncConverter ecRev = m_encConverters["UnitTesting-Unicode-To-Ann"];
-			Assert.IsNotNull(ecRev);
-			ecRev.CodePageOutput = EncConverters.cnIso8859_1CodePage;
-			string outputRaw = ecRev.Convert(m_utf16Ann);
-			byte[] output2 = TestUtil.GetBytesFromPseudoString(outputRaw);
-			Assert.AreEqual(m_bytesAnn, output2, "unicode2ann.cct should convert data properly!");
+            m_encConverters.Add("UnitTesting-Ann-To-Unicode", filename1,
+                ConvType.Legacy_to_from_Unicode,
+                "LEGACY", "UNICODE", ProcessTypeFlags.UnicodeEncodingConversion);
+            int countNew = m_encConverters.Count;
+            Assert.AreEqual(countOrig + 1, countNew, "Should have one new converter (CC) now");
+            string[] encodings = m_encConverters.Encodings;
+            Assert.LessOrEqual(2, encodings.Length, "Should have at least 2 encodings now.");
+            string[] mappings = m_encConverters.Mappings;
+            Assert.LessOrEqual(1, mappings.Length, "Should have at least 1 mapping now.");
+            int countKeys = m_encConverters.Keys.Count;
+            int countValues = m_encConverters.Values.Count;
+            Assert.AreEqual(countKeys, countValues, "Should have same number of keys and values!");
+            Assert.LessOrEqual(1, countKeys, "Should have at least one key now.");
+            IEncConverter ec = m_encConverters["UnitTesting-Ann-To-Unicode"];
+            Assert.IsNotNull(ec, "Added converter UnitTesting-Ann-To-Unicode should exist!");
+            ec.CodePageInput = EncConverters.cnIso8859_1CodePage;
+            string input = TestUtil.GetPseudoStringFromBytes(m_bytesAnn);
+            string output = ec.Convert(input);
+            Assert.AreEqual(m_utf16Ann, output, "ann2unicode.cct should convert data properly!");
 
-			m_encConverters.Remove("UnitTesting-Ann-To-Unicode");
-			m_encConverters.Remove("UnitTesting-Unicode-To-Ann");
-			int countAfter = m_encConverters.Count;
-			Assert.AreEqual(countOrig, countAfter, "Should have the original number of converters now.");
-		}
+            m_encConverters.Add("UnitTesting-Unicode-To-Ann", filename2,
+                ConvType.Unicode_to_from_Legacy,
+                "UNICODE", "LEGACY", ProcessTypeFlags.UnicodeEncodingConversion);
+            countNew = m_encConverters.Count;
+            Assert.AreEqual(countOrig + 2, countNew, "Should have two new converters now.");
+            mappings = m_encConverters.Mappings;
+            Assert.LessOrEqual(2, mappings.Length, "Should have at least two mappings now.");
+            countKeys = m_encConverters.Keys.Count;
+            countValues = m_encConverters.Values.Count;
+            Assert.AreEqual(countKeys, countValues, "Should have same number of keys and values!");
+            Assert.LessOrEqual(2, countKeys, "Should have at least two keys now.");
+            IEncConverter ecRev = m_encConverters["UnitTesting-Unicode-To-Ann"];
+            Assert.IsNotNull(ecRev);
+            ecRev.CodePageOutput = EncConverters.cnIso8859_1CodePage;
+            string outputRaw = ecRev.Convert(m_utf16Ann);
+            byte[] output2 = TestUtil.GetBytesFromPseudoString(outputRaw);
+            Assert.AreEqual(m_bytesAnn, output2, "unicode2ann.cct should convert data properly!");
 
-		[Test]
+            m_encConverters.Remove("UnitTesting-Ann-To-Unicode");
+            m_encConverters.Remove("UnitTesting-Unicode-To-Ann");
+            int countAfter = m_encConverters.Count;
+            Assert.AreEqual(countOrig, countAfter, "Should have the original number of converters now.");
+        }
+
+        private static void GetCcTablePaths(out string filename1, out string filename2)
+        {
+            var dir = GetTestSourceFolder();
+            filename1 = Path.Combine(dir, CCTableName1);
+            filename2 = Path.Combine(dir, CCTableName2);
+
+            // CC has a file length limit, so move this file to a temporary location and use it from there
+            var tempPath = Path.GetTempPath();
+            var tempFileName1 = Path.Combine(tempPath, CCTableName1);
+            File.Copy(filename1, tempFileName1, true);
+            filename1 = tempFileName1;
+            var tempFileName2 = Path.Combine(tempPath, CCTableName2);
+            File.Copy(filename2, tempFileName2, true);
+            filename2 = tempFileName2;
+        }
+
+        [Test]
 		public void TestPerlEncConverter()
 		{
 			int countOrig = m_encConverters.Count;
