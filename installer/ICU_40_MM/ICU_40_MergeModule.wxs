@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
+	<Module Id="ICU_40_MM" Language="1033" Version="4.0.0.0">
+		<Package Id="97933895-6192-45da-b21d-0489b69d73da" Keywords="IBM Components for Unicode (ICU); SIL; Encoding Conversion; Transliteration; EncConverters"
+             Description="Merge Module for ICU (currently v5.4) corresponding to EncConverter core API v4.0 -- Include in any client application deployment project that wants to include ICU capabilities to EncConverters functionality"
+             Comments="Common installer module for SIL's ICU component for v4.0 of the EncConverter's API" Manufacturer="SIL International" InstallerVersion="200" Languages="1033"
+             SummaryCodepage="1252" />
+
+		<Directory Id="TARGETDIR" Name="SourceDir">
+			<Directory Id="MergeRedirectFolder">
+
+        <!-- note that some of the ICU DLLs are in the EC_40_MergeModule.wxs script, but these are the actual ICU (from IBM) bits -->
+        <Directory Id="CommonFilesFolder" SourceName="Common Files Folder">
+          <Directory Id="IcuSIL" Name="SIL">
+            <Component Id="icudt54.dll" Guid="{C07121B2-0CBF-4CB4-85D3-10A47F947977}">
+              <File Id="icudt54.dll" Name="icudt54.dll" KeyPath="yes" Source="..\..\DistFiles\windows\Win32\icu\bin\icudt54.dll"/>
+            </Component>
+            <Component Id="icuin54.dll" Guid="{E0C16A69-9075-49B6-B5DF-2DF5C427A1B0}">
+              <File Id="icuin54.dll" Name="icuin54.dll" KeyPath="yes" Source="..\..\DistFiles\windows\Win32\icu\bin\icuin54.dll"/>
+            </Component>
+            <Component Id="icuuc54.dll" Guid="{E43C6380-A976-4ADA-A56E-3F7046435F03}">
+              <File Id="icuuc54.dll" Name="icuuc54.dll" KeyPath="yes" Source="..\..\DistFiles\windows\Win32\icu\bin\icuuc54.dll"/>
+            </Component>
+            <!--End of ICU Help files-->
+          </Directory>
+        </Directory>
+
+      </Directory>
+		</Directory>
+	</Module>
+</Wix>
