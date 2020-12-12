@@ -33,8 +33,6 @@ namespace SilEncConverters40
         protected int m_nRhsReturns;
         protected IEncConverter m_aEC = null;
 
-        private string htmlfilename = null;
-
         public AutoConfigDialog()
         {
             Util.DebugWriteLine(this, "AutoConfigDialog (1) BEGIN");
@@ -162,15 +160,14 @@ namespace SilEncConverters40
             tabControl.Controls.Remove(tabPageSetup);
             tabControl.Controls.Remove(tabPageAdvanced);
 
-            // for 'test', it's possible that there may be some font mapping in the repository
-            string strLhsName, strRhsName;
-            if (m_aECs.GetFontMappingFromMapping(strFriendlyName, out strLhsName, out strRhsName))
-            {
-                ecTextBoxInput.Font = CreateFontSafe(strLhsName, ecTextBoxInput.Font);
-                ecTextBoxOutput.Font = CreateFontSafe(strRhsName, ecTextBoxOutput.Font);
-            }
+			// for 'test', it's possible that there may be some font mapping in the repository
+			if (m_aECs.GetFontMappingFromMapping(strFriendlyName, out string strLhsName, out string strRhsName))
+			{
+				ecTextBoxInput.Font = CreateFontSafe(strLhsName, ecTextBoxInput.Font);
+				ecTextBoxOutput.Font = CreateFontSafe(strRhsName, ecTextBoxOutput.Font);
+			}
 
-            ecTextBoxInput.Text = strTestData;
+			ecTextBoxInput.Text = strTestData;
             buttonOK.Visible = buttonApply.Visible = false;
             buttonCancel.Text = "Close";
 
@@ -184,8 +181,8 @@ namespace SilEncConverters40
         protected int cnDefaultFontSize = 14;
         protected Font CreateFontSafe(string strFontName, Font fontDefault)
         {
-            Font font = null;
-            try
+			Font font;
+			try
             {
                 font = new Font(strFontName, cnDefaultFontSize);
             }
@@ -197,6 +194,7 @@ namespace SilEncConverters40
         }
 
         protected void SetConvTypeFromRbControls
+
             (
             RadioButton rbExpectsUnicode,
             RadioButton rbExpectsLegacy,
