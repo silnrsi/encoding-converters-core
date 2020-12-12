@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
 	<Module Id="EC_40_MM" Language="1033" Version="4.0.0.0">
-		<Package Id="ac1e0a8a-7a0d-45d8-8798-f9d9c9e4c776" Keywords="SIL; Encoding Conversion; Transliteration; EncConverters" Description="EncConverter core 4.0 Merge Module -- Include in any client application deployment project which uses the EncConverters objects" Comments="Common installer module for SIL's version 4.0 of the EncConverter's core" Manufacturer="SIL International" InstallerVersion="200" Languages="1033" SummaryCodepage="1252" Platform="x64"/>
+		<Package Id="ac1e0a8a-7a0d-45d8-8798-f9d9c9e4c776" Keywords="SIL; Encoding Conversion; Transliteration; EncConverters" 
+             Description="EncConverter core 4.0 Merge Module -- Include in any client application deployment project which uses the EncConverters objects" 
+             Comments="Common installer module for SIL's version 4.0 of the EncConverter's core" Manufacturer="SIL International" InstallerVersion="200" Languages="1033" 
+             SummaryCodepage="1252" Platform="x64"/>
 
 		<Directory Id="TARGETDIR" Name="SourceDir">
 
@@ -489,10 +492,10 @@
 					<File Id="EncConvertersAppDataMover40.exe" Name="EncConvertersAppDataMover40.exe" ReadOnly="yes" KeyPath="yes" Source="..\..\output\x64\release\EncConvertersAppDataMover40.exe" Assembly=".net" AssemblyApplication="EncConvertersAppDataMover40.exe" AssemblyManifest="EncConvertersAppDataMover40.exe"/>
 				</Component>
 				<Component Id="Geckofx_Core.dll" Guid="{C49DCC6A-B05E-4A28-8421-FBFBB591A233}">
-					<File Id="Geckofx_Core.dll" Name="Geckofx-Core.dll" Vital="yes" KeyPath="yes" AssemblyManifest="Geckofx_Core.dll" AssemblyApplication="Geckofx_Core.dll" Assembly=".net" Source="..\..\packages\Geckofx45.64.45.0.33\lib\net45\GeckoFx-Core.dll"/>
+					<File Id="Geckofx_Core.dll" Name="Geckofx-Core.dll" Vital="yes" KeyPath="yes" AssemblyManifest="Geckofx_Core.dll" AssemblyApplication="Geckofx_Core.dll" Assembly=".net" Source="..\..\packages\Geckofx45.64.45.0.34\lib\net45\GeckoFx-Core.dll"/>
 				</Component>
 				<Component Id="Geckofx_Winforms.dll" Guid="{FF439F0E-7A49-4224-8733-8AA642C33D26}">
-					<File Id="Geckofx_Winforms.dll" Name="Geckofx-Winforms.dll" Vital="yes" KeyPath="yes" AssemblyManifest="Geckofx_Winforms.dll" AssemblyApplication="Geckofx_Winforms.dll" Assembly=".net" Source="..\..\packages\Geckofx45.64.45.0.33\lib\net45\Geckofx-Winforms.dll"/>
+					<File Id="Geckofx_Winforms.dll" Name="Geckofx-Winforms.dll" Vital="yes" KeyPath="yes" AssemblyManifest="Geckofx_Winforms.dll" AssemblyApplication="Geckofx_Winforms.dll" Assembly=".net" Source="..\..\packages\Geckofx45.64.45.0.34\lib\net45\Geckofx-Winforms.dll"/>
 				</Component>
 				<Directory Id="ECFolder" Name="EC">
 					<Directory Id="PluginsFolder" Name="Plugins">

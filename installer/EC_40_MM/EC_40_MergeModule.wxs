@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
 	<Module Id="EC_40_MM" Language="1033" Version="4.0.0.0">
-		<Package Id="ac1e0a8a-7a0d-45d8-8798-f9d9c9e4c776" Keywords="SIL; Encoding Conversion; Transliteration; EncConverters" Description="EncConverter core 4.0 Merge Module -- Include in any client application deployment project which uses the EncConverters objects" Comments="Common installer module for SIL's version 4.0 of the EncConverter's core" Manufacturer="SIL International" InstallerVersion="200" Languages="1033" SummaryCodepage="1252" />
+		<Package Id="ac1e0a8a-7a0d-45d8-8798-f9d9c9e4c776" Keywords="SIL; Encoding Conversion; Transliteration; EncConverters" 
+             Description="EncConverter core 4.0 Merge Module -- Include in any client application deployment project which uses the EncConverters objects" 
+             Comments="Common installer module for SIL's version 4.0 of the EncConverter's core" Manufacturer="SIL International" InstallerVersion="200" Languages="1033" 
+             SummaryCodepage="1252" />
 
 		<Directory Id="TARGETDIR" Name="SourceDir">
 
@@ -488,17 +491,22 @@
 					<File Id="EncConvertersAppDataMover40.exe" Name="EncConvertersAppDataMover40.exe" ReadOnly="yes" KeyPath="yes" Source="..\..\output\Win32\release\EncConvertersAppDataMover40.exe" Assembly=".net" AssemblyApplication="EncConvertersAppDataMover40.exe" AssemblyManifest="EncConvertersAppDataMover40.exe"/>
 				</Component>
 				<Component Id="Geckofx_Core.dll" Guid="{6D593BB5-F2DE-448A-A8A2-AD1F18B660F2}">
-					<File Id="Geckofx_Core.dll" Name="GeckoFx-Core.dll" Vital="yes" KeyPath="yes" AssemblyManifest="Geckofx_Core.dll" AssemblyApplication="Geckofx_Core.dll" Assembly=".net" Source="..\..\packages\Geckofx45.45.0.33\lib\net45\GeckoFx-Core.dll"/>
+					<File Id="Geckofx_Core.dll" Name="GeckoFx-Core.dll" Vital="yes" KeyPath="yes" AssemblyManifest="Geckofx_Core.dll" AssemblyApplication="Geckofx_Core.dll" Assembly=".net" Source="..\..\packages\Geckofx45.45.0.34\lib\net45\GeckoFx-Core.dll"/>
 				</Component>
 				<Component Id="Geckofx_Winforms.dll" Guid="{1C2D5110-4E5F-4DC3-9375-DA1D7C6643D0}">
-					<File Id="Geckofx_Winforms.dll" Name="Geckofx-Winforms.dll" Vital="yes" KeyPath="yes" AssemblyManifest="Geckofx_Winforms.dll" AssemblyApplication="Geckofx_Winforms.dll" Assembly=".net" Source="..\..\packages\Geckofx45.45.0.33\lib\net45\Geckofx-Winforms.dll"/>
+					<File Id="Geckofx_Winforms.dll" Name="Geckofx-Winforms.dll" Vital="yes" KeyPath="yes" AssemblyManifest="Geckofx_Winforms.dll" AssemblyApplication="Geckofx_Winforms.dll" Assembly=".net" Source="..\..\packages\Geckofx45.45.0.34\lib\net45\Geckofx-Winforms.dll"/>
 				</Component>
 				<Directory Id="ECFolder" Name="EC">
 					<Directory Id="PluginsFolder" Name="Plugins">
 						<Component Id="EC4.0.0.0PluginDetails.xml" Guid="579194FE-37AA-47a3-A089-B0F1F17415FB">
-							<File Id="EC4.0.0.0PluginDetails.xml" Name="EC 4.0.0.0 Plugin Details.xml" KeyPath="yes" Source="..\..\output\Win32\release\EC\Plugins\EC 4.0.0.0 Plugin Details.xml"/>
+							<File Id="EC4.0.0.0PluginDetails.xml" Name="EC 4.0.0.0 Plugin Details.xml" KeyPath="yes" Source="..\..\redist\EC\Plugins\EC 4.0.0.0 Plugin Details.xml"/>
 						</Component>
-					</Directory>
+            <!-- this was missing, but it's necessary or the ICU DLLs above won't work 
+								(read: if you're going to put the EC-related ICU DLLs in this MM, then this should go here -->
+            <Component Id="IcuEC_4.0.0.0_PluginDetails.xml" Guid="{7CA84960-2519-461C-8E11-764934F0DBA1}">
+              <File Id="IcuEC_4.0.0.0_PluginDetails.xml" Name="IcuEC 4.0.0.0 Plugin Details.xml" KeyPath="yes" Source="..\..\redist\EC\Plugins\IcuEC 4.0.0.0 Plugin Details.xml"/>
+            </Component>
+          </Directory>
 				</Directory>
 
 				<Directory Id="CommonFilesFolder" SourceName="Common Files Folder">
