@@ -10,7 +10,7 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Libraries and merge modules for core encoding converter functionality.</description>
     <releaseNotes>Include plugin definitions, tlb, and exe files</releaseNotes>
-    <copyright>Copyright 2017</copyright>
+    <copyright>Copyright 2017-2020</copyright>
     <tags></tags>
     <dependencies>
       <group targetFramework=".NETFramework4.5" />
