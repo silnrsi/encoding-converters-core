@@ -68,6 +68,8 @@
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
     <TargetFrameworkProfile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -112,23 +114,18 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-      <Reference Include="Geckofx-Core" Condition="'$(Platform)' == 'x64' and '$(OS)'=='Windows_NT'">
-      <Private>False</Private>
-      <HintPath>../../packages/Geckofx45.64.45.0.33/lib/net45/Geckofx-Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Geckofx-Winforms" Condition="'$(Platform)' == 'x64' and '$(OS)'=='Windows_NT'">
-      <Private>False</Private>
-      <HintPath>../../packages/Geckofx45.64.45.0.33/lib/net45/Geckofx-Winforms.dll</HintPath>
-    </Reference>
-      <Reference Include="Geckofx-Core" Condition="('$(Platform)' == 'x86' or '$(Platform)' == 'AnyCPU') and '$(OS)'=='Windows_NT'">
+    <Reference Include="Geckofx-Core" Condition="('$(Platform)' == 'x86' or '$(Platform)' == 'AnyCPU') and '$(OS)'=='Windows_NT'">
       <Private>False</Private>
       <HintPath>../../packages/Geckofx45.45.0.33/lib/net45/Geckofx-Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Geckofx-Core, Version=45.0.34.0, Culture=neutral, PublicKeyToken=3209ac31600d1857, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Geckofx45.64.45.0.34\lib\net45\Geckofx-Core.dll</HintPath>
     </Reference>
     <Reference Include="Geckofx-Winforms" Condition="('$(Platform)' == 'x86' or '$(Platform)' == 'AnyCPU') and '$(OS)'=='Windows_NT'">
       <Private>False</Private>
       <HintPath>../../packages/Geckofx45.45.0.33/lib/net45/Geckofx-Winforms.dll</HintPath>
     </Reference>
-      <Reference Include="Geckofx-Core" Condition="'$(Platform)' == 'x64' and '$(OS)'!='Windows_NT'">
+    <Reference Include="Geckofx-Core" Condition="'$(Platform)' == 'x64' and '$(OS)'!='Windows_NT'">
       <Private>False</Private>
       <HintPath>../../packages/Geckofx45.64.Linux.45.0.21.0/lib/net40/Geckofx-Core.dll</HintPath>
     </Reference>
@@ -136,7 +133,7 @@
       <Private>False</Private>
       <HintPath>../../packages/Geckofx45.64.Linux.45.0.21.0/lib/net40/Geckofx-Winforms.dll</HintPath>
     </Reference>
-      <Reference Include="Geckofx-Core" Condition="('$(Platform)' == 'x86' or '$(Platform)' == 'AnyCPU') and '$(OS)'!='Windows_NT'">
+    <Reference Include="Geckofx-Core" Condition="('$(Platform)' == 'x86' or '$(Platform)' == 'AnyCPU') and '$(OS)'!='Windows_NT'">
       <Private>False</Private>
       <HintPath>../../packages/Geckofx45.32.Linux.45.0.21.0/lib/net40/Geckofx-Core.dll</HintPath>
     </Reference>
@@ -147,6 +144,9 @@
     <Reference Include="ECInterfaces, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\output\$(Configuration)\ECInterfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="Geckofx-Winforms, Version=45.0.34.0, Culture=neutral, PublicKeyToken=3209ac31600d1857, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Geckofx45.64.45.0.34\lib\net45\Geckofx-Winforms.dll</HintPath>
     </Reference>
     <Reference Include="System">
       <Name>System</Name>
@@ -308,6 +308,25 @@
     <Content Include="buildinclude.xml">
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="Firefox\AccessibleMarshal.dll" />
+    <Content Include="Firefox\breakpadinjector.dll" />
+    <Content Include="Firefox\d3dcompiler_47.dll" />
+    <Content Include="Firefox\freebl3.dll" />
+    <Content Include="Firefox\icudt58.dll" />
+    <Content Include="Firefox\icuin58.dll" />
+    <Content Include="Firefox\icuuc58.dll" />
+    <Content Include="Firefox\lgpllibs.dll" />
+    <Content Include="Firefox\libEGL.dll" />
+    <Content Include="Firefox\libGLESv2.dll" />
+    <Content Include="Firefox\mozglue.dll" />
+    <Content Include="Firefox\nss3.dll" />
+    <Content Include="Firefox\nssckbi.dll" />
+    <Content Include="Firefox\nssdbm3.dll" />
+    <Content Include="Firefox\plugin-container.exe" />
+    <Content Include="Firefox\plugin-hang-ui.exe" />
+    <Content Include="Firefox\sandboxbroker.dll" />
+    <Content Include="Firefox\softokn3.dll" />
+    <Content Include="Firefox\xul.dll" />
     <Content Include="TRFFC17.ICO" />
     <EmbeddedResource Include="WebBrowserAdaptor.resx">
       <DependentUpon>WebBrowserAdaptor.cs</DependentUpon>
@@ -327,6 +346,8 @@
       <DependentUpon>ECPlugins.xsd</DependentUpon>
     </None>
     <None Include="FieldWorks.snk" />
+    <None Include="Firefox\omni.ja" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="lib\" />
@@ -355,4 +376,13 @@
     <PostBuildEvent>
     </PostBuildEvent>
   </PropertyGroup>
+  <Import Project="..\..\packages\Geckofx45.45.0.34\build\Geckofx45.targets" Condition="Exists('..\..\packages\Geckofx45.45.0.34\build\Geckofx45.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\..\packages\Geckofx45.45.0.34\build\Geckofx45.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Geckofx45.45.0.34\build\Geckofx45.targets'))" />
+    <Error Condition="!Exists('..\..\packages\Geckofx45.64.45.0.34\build\Geckofx45.64.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Geckofx45.64.45.0.34\build\Geckofx45.64.targets'))" />
+  </Target>
+  <Import Project="..\..\packages\Geckofx45.64.45.0.34\build\Geckofx45.64.targets" Condition="Exists('..\..\packages\Geckofx45.64.45.0.34\build\Geckofx45.64.targets')" />
 </Project>
