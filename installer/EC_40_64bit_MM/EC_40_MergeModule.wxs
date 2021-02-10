@@ -588,14 +588,14 @@
 				<Directory Id="ProgramMenuFolder" SourceName="Programs">
 					<Directory Id="SIL_Converters" Name="SIL Converters">
 						<Directory Id="SILConvHelp" Name="Help">
-							<Component Id="HelpShortcuts" Guid="5f95a3bb-d7be-4a03-a6e6-07f5b6e38c6d" KeyPath="yes">
-								<Shortcut Id="CPPluginHelp" Directory="SILConvHelp" Name="Code Page Plug-in Help" Target="[#CPHelp]" Hotkey="0" IconIndex="0" Show="normal" WorkingDirectory="Help"/>
-								<Shortcut Id="CmpdPluginHelp" Directory="SILConvHelp" Name="Compound Converter Plug-in Help" Target="[#CmpdHelp]" Hotkey="0" IconIndex="0" Show="normal" WorkingDirectory="Help"/>
-								<Shortcut Id="FallbackPluginHelp" Directory="SILConvHelp" Name="Primary-Fallback Converter Plug-in Help" Target="[#FallBackHelp]" Hotkey="0" IconIndex="0" Show="normal" WorkingDirectory="Help"/>
-								<Shortcut Id="TECkitPluginHelp" Directory="SILConvHelp" Name="TECkit Converter Plug-in Help" Target="[#TECkitHelp]" Hotkey="0" IconIndex="0" Show="normal" WorkingDirectory="Help"/>
-								<Shortcut Id="ICUConvHelp" Directory="SILConvHelp" Name="ICU Converters Help" Target="[#ICU_Converters_About]" Hotkey="0" IconIndex="0" Show="normal" WorkingDirectory="Help"/>
-								<Shortcut Id="ICUTranlitHelp" Directory="SILConvHelp" Name="ICU Transliterators Help" Target="[#IcuTranslit]" Hotkey="0" IconIndex="0" Show="normal" WorkingDirectory="Help"/>
-								<Shortcut Id="ICURegexHelp" Directory="SILConvHelp" Name="ICU Regular Expression Help" Target="[#IcuRegex]" Hotkey="0" IconIndex="0" Show="normal" WorkingDirectory="Help"/>
+							<Component Id="HelpShortcuts" Guid="A84EFA8C-D422-4D5D-B55B-C4FCDD6ECE61" KeyPath="yes">
+								<Shortcut Id="CPPluginHelp" Directory="SILConvHelp" Name="Code Page Plug-in Help" Target="[!CPHelp]" Hotkey="0" IconIndex="0" Show="normal" WorkingDirectory="Help"/>
+								<Shortcut Id="CmpdPluginHelp" Directory="SILConvHelp" Name="Compound Converter Plug-in Help" Target="[!CmpdHelp]" Hotkey="0" IconIndex="0" Show="normal" WorkingDirectory="Help"/>
+								<Shortcut Id="FallbackPluginHelp" Directory="SILConvHelp" Name="Primary-Fallback Converter Plug-in Help" Target="[!FallBackHelp]" Hotkey="0" IconIndex="0" Show="normal" WorkingDirectory="Help"/>
+								<Shortcut Id="TECkitPluginHelp" Directory="SILConvHelp" Name="TECkit Converter Plug-in Help" Target="[!TECkitHelp]" Hotkey="0" IconIndex="0" Show="normal" WorkingDirectory="Help"/>
+								<Shortcut Id="ICUConvHelp" Directory="SILConvHelp" Name="ICU Converters Help" Target="[!ICU_Converters_About]" Hotkey="0" IconIndex="0" Show="normal" WorkingDirectory="Help"/>
+								<Shortcut Id="ICUTranlitHelp" Directory="SILConvHelp" Name="ICU Transliterators Help" Target="[!IcuTranslit]" Hotkey="0" IconIndex="0" Show="normal" WorkingDirectory="Help"/>
+								<Shortcut Id="ICURegexHelp" Directory="SILConvHelp" Name="ICU Regular Expression Help" Target="[!IcuRegex]" Hotkey="0" IconIndex="0" Show="normal" WorkingDirectory="Help"/>
 								<!-- The next item is junk to make validation pass on ICE18 -->
 								<CreateFolder/>
 							</Component>
@@ -606,7 +606,7 @@
 		</Directory>
 
 		<!-- The following section launches the installed file EncConvertersAppDataMover40.exe but hides its DOS window -->
-		<CustomAction Id="SetAppDataMoverData" Return="check" Property="LaunchAppDataMover" Value="[#EncConvertersAppDataMover40.exe]" />
+		<CustomAction Id="SetAppDataMoverData" Return="check" Property="LaunchAppDataMover" Value="[!EncConvertersAppDataMover40.exe]" />
 		<CustomAction Id="LaunchAppDataMover" Return="ignore" Impersonate="no" Execute="deferred" Script="vbscript">
 			<![CDATA[
 dim EncConvertersAppDataMoverPath

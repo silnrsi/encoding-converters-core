@@ -33,6 +33,7 @@ bld/
 /config.status
 /configure
 /src/config.h
+/Ec*DistFiles/**/
 Makefile
 
 # Visual Studio 2015 cache/options directory

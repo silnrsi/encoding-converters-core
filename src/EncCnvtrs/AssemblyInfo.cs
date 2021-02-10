@@ -20,8 +20,8 @@ using System;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("SIL")]
 [assembly: AssemblyProduct("Encoding Converters")]
-[assembly: AssemblyCopyright("Copyright © 2003-2011 SIL. All rights reserved.")]
-[assembly: AssemblyTrademark("Copyright © 2003-2011 SIL. All rights reserved.")]
+[assembly: AssemblyCopyright("Copyright Â© 2003-2021 SIL. All rights reserved.")]
+[assembly: AssemblyTrademark("Copyright Â© 2003-2021 SIL. All rights reserved.")]
 [assembly: AssemblyCulture("")]
 [assembly: NeutralResourcesLanguageAttribute("en")]
 
@@ -38,7 +38,7 @@ using System;
 //  support the new version number and allow for the old one when serializing in
 //  the data.
 [assembly: AssemblyVersion("4.0.0.0")]
-[assembly: AssemblyFileVersionAttribute("4.0.2.0")]
+[assembly: AssemblyFileVersionAttribute("4.1.0.0")]
 
 [assembly: CLSCompliantAttribute(true)]
 

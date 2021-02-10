@@ -33,7 +33,7 @@ namespace SilEncConverters40
         protected int m_nRhsReturns;
         protected IEncConverter m_aEC = null;
 
-        public AutoConfigDialog()
+		public AutoConfigDialog()
         {
             Util.DebugWriteLine(this, "AutoConfigDialog (1) BEGIN");
             InitializeComponent();
@@ -69,7 +69,6 @@ namespace SilEncConverters40
             )
         {
 			Util.DebugWriteLine(this, "AutoConfigDialog (2) BEGIN");
-            htmlfilename = strHtmlFileName;
             m_strOriginalFriendlyName = FriendlyName = strFriendlyName;
             ConverterIdentifier = strConverterIdentifier;
             LhsEncodingId = strLhsEncodingId;
