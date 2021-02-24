@@ -21,4 +21,10 @@
 		DisplayName="Regular Expression Find and Replace (ICU)"
 		ConfiguratorProgId="SilEncConverters40.IcuRegexEncConverterConfig"
 		AssemblyReference="IcuEC, Version=4.0.0.0, Culture=neutral, PublicKeyToken=null" />
+	<ECPluginDetails ImplementationName="ICU.BreakIterator"
+		ImplementationProgId="SilEncConverters40.IcuBreakIteratorEncConverter"
+		Priority="1"
+		DefiningProcessType="1024"
+		DisplayName="ICU Boundary Analysis/Break Iterator"
+		AssemblyReference="IcuEC, Version=4.0.0.0, Culture=neutral, PublicKeyToken=null" />
 </EncConverterPlugins>

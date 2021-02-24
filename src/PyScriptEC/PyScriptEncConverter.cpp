@@ -134,7 +134,8 @@ namespace PyScriptEC
             return hr;
 
         // hook up to the Python DLL
-        DebugOutput("CppInitialize: Initializing python...\n");
+		char* pzPythonHome = Py_GetPythonHome();
+		DebugOutput(sprintf(sprintfBuffer, "CppInitialize: Initializing python in :\n%s\n", pzPythonHome));
         Py_Initialize();
         DebugOutput("CppInitialize: Initialized.\n");
 
@@ -169,6 +170,7 @@ namespace PyScriptEC
         m_pModule = PyImport_ImportModule(strScriptName);
         if( m_pModule == 0 )
         {
+			PyErr_Print();
             // gracefully disconnect from Python
             // This calls PyErr_Clear() if needed, without which Py_Finalize()
             // throws a fatal exception.

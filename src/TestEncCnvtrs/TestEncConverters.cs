@@ -3,9 +3,7 @@
 // 29-Jun-13 JDK  Test all python scripts in MapsTables.
 
 using System;
-using System.Collections;
 using System.IO;
-using System.Text;
 using Microsoft.Win32;
 
 using NUnit.Framework;
@@ -16,12 +14,12 @@ using System.Reflection;
 
 namespace TestEncCnvtrs
 {
-	/// ------------------------------------------------------------------------
-	/// <summary>
-	/// Set of tests to excercise the methods in the EncConverters class.
-	/// </summary>
-	/// ------------------------------------------------------------------------
-	[TestFixture]
+    /// ------------------------------------------------------------------------
+    /// <summary>
+    /// Set of tests to excercise the methods in the EncConverters class.
+    /// </summary>
+    /// ------------------------------------------------------------------------
+    [TestFixture]
 	public class TestEncConverters
 	{
 		EncConverters m_encConverters;
@@ -29,13 +27,17 @@ namespace TestEncCnvtrs
 		bool m_fSetRegistryValue;
 		string m_repoFile;
 
-		/// --------------------------------------------------------------------
-		/// <summary>
-		/// Global initialization, called once before any test in this class
-		/// ("fixture") is run.
-		/// </summary>
-		/// --------------------------------------------------------------------
-		[TestFixtureSetUp]
+		private const string EnvironmentVariableNamePythonHome = "PYTHONHOME";
+		string m_originalPythonHome;
+		string m_testPythonHome;
+
+        /// --------------------------------------------------------------------
+        /// <summary>
+        /// Global initialization, called once before any test in this class
+        /// ("fixture") is run.
+        /// </summary>
+        /// --------------------------------------------------------------------
+        [TestFixtureSetUp]
 		public void InitForClass()
 		{
 			Util.DebugWriteLine(this, "BEGIN");
@@ -56,6 +58,51 @@ namespace TestEncCnvtrs
 					Environment.SetEnvironmentVariable("MONO_REGISTRY_PATH", Util.CommonAppDataPath() + "/registry");
 				}
 			}
+			else
+            {
+				// for Python, we have to use the correct installation (and we need both x86 and x64
+				//  to *be* installed if you want the tests to work in both x86 and x64 configurations)
+				//	I used C:\Python27x86 and C:\Python27x64 for their installation folders respectively,
+				//	the code below should also work if x86 is installed in just the plain c:\Python27 folder too
+				m_originalPythonHome = Environment.GetEnvironmentVariable(EnvironmentVariableNamePythonHome);
+				m_testPythonHome = null;
+
+				if (Environment.Is64BitProcess)
+                {
+					if (!Directory.Exists(@"C:\Python27x64"))						
+					{
+						Assert.Fail("The Python tests below will not work unless you have a x64 version of Python installed");
+					}
+					else 
+                    {
+						m_testPythonHome = @"C:\Python27x64";
+					}
+				}
+				else  // x86
+                {
+					if (!Directory.Exists(@"C:\Python27x86") && !Directory.Exists(@"C:\Python27"))
+					{
+						Assert.Fail("The Python tests below will not work unless you have a x86 version of Python installed");
+					}
+					else if (Directory.Exists(@"C:\Python27x86"))
+					{
+						m_testPythonHome = @"C:\Python27x86";
+					}
+					else if (Directory.Exists(@"C:\Python27"))
+					{
+						m_testPythonHome = @"C:\Python27";
+					}
+				}
+
+				// set the environment variable to the proper installation
+				if (!String.IsNullOrEmpty(m_testPythonHome) && (m_originalPythonHome != m_testPythonHome))
+                {
+					Environment.SetEnvironmentVariable(EnvironmentVariableNamePythonHome, m_testPythonHome);
+				}
+				var path = Environment.GetEnvironmentVariable(EnvironmentVariableNamePythonHome);
+				Assert.True(String.IsNullOrEmpty(m_testPythonHome) || (path == m_testPythonHome));
+			}
+
 			m_repoFile = null;
 			RegistryKey key = Registry.CurrentUser.OpenSubKey(EncConverters.HKLM_PATH_TO_XML_FILE, true);
 			if (key != null)
@@ -118,6 +165,9 @@ namespace TestEncCnvtrs
 		public void CleanupAfterTest()
 		{
 			RemoveAnyAddedConverters();
+
+			// reset the python home env variable back to what it was before testing (if o
+			Environment.SetEnvironmentVariable(EnvironmentVariableNamePythonHome, m_originalPythonHome);
 		}
 
 		/// <summary>
@@ -148,10 +198,22 @@ namespace TestEncCnvtrs
 				m_encConverters.Remove("UnitTesting-Unicode-To-Ann");
 			if (m_encConverters.ContainsKey("UnitTesting-ReverseString"))
 				m_encConverters.Remove("UnitTesting-ReverseString");
+			if (m_encConverters.ContainsKey("UnitTesting-Python-UnicodeNames"))
+				m_encConverters.Remove("UnitTesting-Python-UnicodeNames");
 			if (m_encConverters.ContainsKey("UnitTesting-Python-1252-To-Unicode"))
 				m_encConverters.Remove("UnitTesting-Python-1252-To-Unicode");
 			if (m_encConverters.ContainsKey("UnitTesting-Python-Unicode-To-1252"))
 				m_encConverters.Remove("UnitTesting-Python-Unicode-To-1252");
+
+			if (m_encConverters.ContainsKey("UnitTesting-Python-ReverseString-Unicode"))
+				m_encConverters.Remove("UnitTesting-Python-ReverseString-Unicode");
+			if (m_encConverters.ContainsKey("UnitTesting-Python-ReverseString-Legacy"))
+				m_encConverters.Remove("UnitTesting-Python-ReverseString-Legacy");
+			if (m_encConverters.ContainsKey("UnitTesting-Python-ToLowerCase"))
+				m_encConverters.Remove("UnitTesting-Python-ToLowerCase");
+			if (m_encConverters.ContainsKey("UnitTesting-Python-ToUpperCase"))
+				m_encConverters.Remove("UnitTesting-Python-ToUpperCase");
+
 			if (m_encConverters.ContainsKey("UnitTesting-From-CP_1252"))
 				m_encConverters.Remove("UnitTesting-From-CP_1252");
 			if (m_encConverters.ContainsKey("UnitTesting-To-CP_1252"))
@@ -380,6 +442,23 @@ namespace TestEncCnvtrs
 			m_encConverters.Remove("UnitTesting-Vowels->V");
 			int countAfter = m_encConverters.Count;
 			Assert.AreEqual(countOrig, countAfter, "Should have the original number of converters now.");
+		}
+
+
+		[Test]
+		public void TestIcuBreakIteratorConverter()
+        {
+			const string cstrFriendlyName = "UnitTesting-ThaiWordBreaker";
+			var theEcs = DirectableEncConverter.EncConverters;
+			theEcs.AddConversionMap(cstrFriendlyName, " ", ConvType.Unicode_to_from_Unicode,
+						IcuBreakIteratorEncConverter.CstrImplementationType, "UNICODE", "UNICODE",
+						ProcessTypeFlags.DontKnow);
+			var theEc = theEcs[cstrFriendlyName];
+			string m_thaiInput = "พักหลังๆนี่เวลาแก๊นจะตัดสินใจซื้ออะไรซักอย่างที่มันมีราคา จะคิดแล้วคิดอีก อย่างน้อยก็ทิ้งเวลาไว้ตั้งแต่";
+			string m_thaiOutput = "พัก หลังๆ นี่ เวลา แก๊น จะ ตัดสิน ใจ ซื้อ อะไร ซัก อย่าง ที่ มัน มี ราคา จะ คิด แล้ว คิด อีก อย่าง น้อย ก็ ทิ้ง เวลา ไว้ ตั้งแต่";
+
+			var strOutput = theEc.Convert(m_thaiInput);
+			Assert.AreEqual(strOutput, m_thaiOutput);
 		}
 
 		byte[] m_bytesSenufo = new byte[] {

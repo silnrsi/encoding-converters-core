@@ -17,6 +17,9 @@
 				<Component Id="IcuEC.dll" Guid="{B4FD77A8-402F-421B-81F3-43A3B6295275}">
 					<File Id="IcuEC.dll" Name="IcuEC.dll" Vital="yes" KeyPath="yes" AssemblyManifest="IcuEC.dll" AssemblyApplication="IcuEC.dll" Assembly=".net" Source="..\..\output\Win32\release\IcuEC.dll"/>
 				</Component>
+				<Component Id="ICU4NET.dll" Guid="{69F74803-ED55-43E1-BD96-01AEF534DB2D}">
+					<File Id="ICU4NET.dll" Name="ICU4NET.dll" Vital="yes" KeyPath="yes" AssemblyManifest="ICU4NET.dll" AssemblyApplication="ICU4NET.dll" Assembly=".net" Source="..\..\output\Win32\release\ICU4NET.dll"/>
+				</Component>
 				<Component Id="IcuConvEC.dll" Guid="{8432913F-51EF-417E-A095-F548633FD65E}">
 					<File Id="IcuConvEC.dll" Name="IcuConvEC.dll" Vital="yes" KeyPath="yes" Source="..\..\output\Win32\release\IcuConvEC.dll"/>
 				</Component>

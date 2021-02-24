@@ -124,6 +124,14 @@
       <Name>IcuEC 2010</Name>
       <Private>False</Private>
     </ProjectReference>
+    <ProjectReference Include="..\PerlExpressionEC\PerlExpressionEC 2010.csproj">
+      <Project>{4704f67b-246d-483c-b840-231f42d7a12b}</Project>
+      <Name>PerlExpressionEC 2010</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PyScriptEC\PyScriptEC 2010.csproj">
+      <Project>{0dfdda0b-9ebf-4238-8a2b-d4c2b4f745d7}</Project>
+      <Name>PyScriptEC 2010</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

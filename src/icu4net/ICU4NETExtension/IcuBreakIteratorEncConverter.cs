@@ -1,12 +1,11 @@
-﻿using System;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading;
 using ECInterfaces;
 using ICU4NET;
-using ICU4NETExtension;
 
 namespace SilEncConverters40
 {
@@ -128,12 +127,11 @@ namespace SilEncConverters40
             rnOutLen = nLen;
             ECNormalizeData.StringToByteStar(strOutput, lpOutBuffer, rnOutLen, false);
         }
+		#endregion Abstract Base Class Overrides
 
-        #endregion Abstract Base Class Overrides
+		#region Misc Helpers
 
-        #region Misc Helpers
-
-        private bool IsLoaded
+		private bool IsLoaded
         {
             get
             {
@@ -147,4 +145,19 @@ namespace SilEncConverters40
         }
         #endregion Misc Helpers
     }
+
+	public static class Extension
+	{
+		public static IEnumerable<string> Enumerate(this BreakIterator bi)
+		{
+			var sb = new StringBuilder();
+			string text = bi.GetCLRText();
+			int start = bi.First(), end = bi.Next();
+			while (end != BreakIterator.DONE)
+			{
+				yield return text.Substring(start, end - start);
+				start = end; end = bi.Next();
+			}
+		}
+	}
 }

@@ -98,6 +98,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\icu4net\ICU4NETExtension\IcuBreakIteratorEncConverter.cs">
+      <Link>IcuBreakIteratorEncConverter.cs</Link>
+    </Compile>
     <Compile Include="IcuConvAutoConfigDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -131,6 +134,10 @@
       <Project>{3E4B908A-4F96-43C5-981B-1AA4B73CCC26}</Project>
       <Name>EncCnvtrs 2010</Name>
       <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\icu4net\ICU4NET\ICU4NET.vcxproj">
+      <Project>{2fadfe38-0429-489f-b910-8a5ec9ab5717}</Project>
+      <Name>ICU4NET</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

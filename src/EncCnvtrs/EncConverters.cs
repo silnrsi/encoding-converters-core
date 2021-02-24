@@ -3903,7 +3903,7 @@ namespace SilEncConverters40
             try
             {
                 subkey = Registry.LocalMachine.OpenSubKey(key);
-                result = subkey.GetValue(value);
+                result = subkey?.GetValue(value);
             }
             catch
             {
