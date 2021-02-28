@@ -1,14 +1,16 @@
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-	<PropertyGroup>
-		<EncodingConvertersDir32>$(MSBuildThisFileDirectory)..\runtimes\win7-x86\native</EncodingConvertersDir32>
-		<EncodingConvertersDir64>$(MSBuildThisFileDirectory)..\runtimes\win7-x64\native</EncodingConvertersDir64>
-		<EncodingConvertersMergeModuleDir>$(MSBuildThisFileDirectory)..\MergeModules</EncodingConvertersMergeModuleDir>
-		<EncodingConvertersPluginsDir>$(MSBuildThisFileDirectory)..\Plugins</EncodingConvertersPluginsDir>
-	</PropertyGroup>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 	<ItemGroup>
-		<EncodingConvertersWinLibFiles32 Include="$(EncodingConvertersDir32)\**\*.*" />
-		<EncodingConvertersWinLibFiles64 Include="$(EncodingConvertersDir64)\**\*.*" />
-		<EncodingConvertersMergeModules Include="$(EncodingConvertersMergeModuleDir)\**\*.*" />
-		<EncodingConvertersPlugins Include="$(EncodingConvertersPluginsDir)\**\*.*" />
+		<Reference Include="ECInterfaces" Condition="'$(Platform)' == 'x86'">
+			<HintPath>$(MSBuildThisFileDirectory)..\x86\ECInterfaces.dll</HintPath>
+		</Reference>
+		<Reference Include="ECInterfaces" Condition="'$(Platform)' == 'x64'">
+			<HintPath>$(MSBuildThisFileDirectory)..\x64\ECInterfaces.dll</HintPath>
+		</Reference>
+		<Reference Include="SilEncConverters40" Condition="'$(Platform)' == 'x86'">
+			<HintPath>$(MSBuildThisFileDirectory)..\x86\SilEncConverters40.dll</HintPath>
+		</Reference>
+		<Reference Include="SilEncConverters40" Condition="'$(Platform)' == 'x64'">
+			<HintPath>$(MSBuildThisFileDirectory)..\x64\SilEncConverters40.dll</HintPath>
+		</Reference>
 	</ItemGroup>
 </Project>
