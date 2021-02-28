@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
 	<Module Id="EC_40_MM" Language="1033" Version="4.0.0.0">
-		<Package Id="ac1e0a8a-7a0d-45d8-8798-f9d9c9e4c776" Keywords="SIL; Encoding Conversion; Transliteration; EncConverters" 
-             Description="EncConverter core 4.0 Merge Module -- Include in any client application deployment project which uses the EncConverters objects" 
-             Comments="Common installer module for SIL's version 4.0 of the EncConverter's core" Manufacturer="SIL International" InstallerVersion="200" Languages="1033" 
+		<Package Id="ac1e0a8a-7a0d-45d8-8798-f9d9c9e4c776" Keywords="SIL; Encoding Conversion; Transliteration; EncConverters"
+             Description="EncConverter core 4.0 Merge Module -- Include in any client application deployment project which uses the EncConverters objects"
+             Comments="Common installer module for SIL's version 4.0 of the EncConverter's core" Manufacturer="SIL International" InstallerVersion="200" Languages="1033"
              SummaryCodepage="1252" Platform="x64"/>
 
 		<Directory Id="TARGETDIR" Name="SourceDir">
@@ -14,7 +14,6 @@
 			</Component>
 
 			<Directory Id="MergeRedirectFolder">
-
 				<Component Id="IcuEC.dll" Guid="{4DDD39C7-DE34-416B-9B3A-3766E8BC9954}">
 					<File Id="IcuEC.dll" Name="IcuEC.dll" Vital="yes" KeyPath="yes" AssemblyManifest="IcuEC.dll" AssemblyApplication="IcuEC.dll" Assembly=".net" Source="..\..\output\x64\release\IcuEC.dll"/>
 				</Component>
@@ -503,30 +502,36 @@
 				<Directory Id="ECFolder" Name="EC">
 					<Directory Id="PluginsFolder" Name="Plugins">
 						<Component Id="EC4.0.0.0PluginDetails.xml" Guid="579194FE-37AA-47a3-A089-B0F1F17415FB">
-							<File Id="EC4.0.0.0PluginDetails.xml" Name="EC 4.0.0.0 Plugin Details.xml" KeyPath="yes" Source="..\..\output\x64\release\EC\Plugins\EC 4.0.0.0 Plugin Details.xml"/>
+							<File Id="EC4.0.0.0PluginDetails.xml" Name="EC 4.0.0.0 Plugin Details.xml" KeyPath="yes" Source="..\..\redist\EC\Plugins\EC 4.0.0.0 Plugin Details.xml"/>
+						</Component>
+						<!-- this was missing, but it's necessary or the ICU DLLs above won't work 
+								(read: if you're going to put the EC-related ICU DLLs in this MM, then this should go here -->
+						<Component Id="IcuEC_4.0.0.0_PluginDetails.xml" Guid="{7CA84960-2519-461C-8E11-764934F0DBA1}">
+							<File Id="IcuEC_4.0.0.0_PluginDetails.xml" Name="IcuEC 4.0.0.0 Plugin Details.xml" KeyPath="yes" Source="..\..\redist\EC\Plugins\IcuEC 4.0.0.0 Plugin Details.xml"/>
 						</Component>
 					</Directory>
 				</Directory>
 			</Directory>
+			
 			<Directory Id="CommonFiles64Folder" SourceName="Common Files Folder">
 				<Directory Id="EcSIL" Name="SIL">
-					<Component Id="ECDriver.dll" Guid="4c632e67-b66b-4a7b-a6bb-f99d93abdcca">
+					<Component Id="ECDriver.dll" Guid="{E86A6AA4-0FEB-4AE6-9631-70669DC4AE18}">
 						<File Id="ECDriver.dll" Name="ECDriver.dll" KeyPath="yes" Source="..\..\output\x64\release\ECDriver.dll"/>
 					</Component>
 					<Directory Id="Help" Name="Help">
-						<Component Id="CPHelp" Guid="58fac2f3-e469-4e62-a5a1-970647ebe5fc">
+						<Component Id="CPHelp" Guid="{B0898694-B72B-4E08-B0AF-07DCA798E571}">
 							<File Id="CPHelp" Name="Code Page Converter Plug-in About box.mht" ReadOnly="yes" KeyPath="yes" Source="..\..\output\x64\release\Help\Code Page Converter Plug-in About box.mht"/>
 						</Component>
-						<Component Id="CmpdHelp" Guid="a2557ea3-3ec1-41aa-8a06-af9fccfd07da">
+						<Component Id="CmpdHelp" Guid="{7C573610-E9CF-48F1-B72A-88759180B6F6}">
 							<File Id="CmpdHelp" Name="Compound Converter Plug-in About box.mht" ReadOnly="yes" KeyPath="yes" Source="..\..\output\x64\release\Help\Compound Converter Plug-in About box.mht"/>
 						</Component>
-						<Component Id="FallBackHelp" Guid="cd14321a-d6c0-44aa-b59d-773e9b060d34">
+						<Component Id="FallBackHelp" Guid="{D06FD4FE-DFAF-493C-9002-0E60DDE68AD5}">
 							<File Id="FallBackHelp" Name="Fallback Converter Plug-in About box.mht" ReadOnly="yes" KeyPath="yes" Source="..\..\output\x64\release\Help\Fallback Converter Plug-in About box.mht"/>
 						</Component>
-						<Component Id="TECkitHelp" Guid="292dcfa4-3602-4861-ae01-6b4875707dec">
+						<Component Id="TECkitHelp" Guid="{E96005CD-9793-40A6-8ADA-1D40C0F75509}">
 							<File Id="TECkitHelp" Name="TECkit Map Plug-in About box.mht" ReadOnly="yes" KeyPath="yes" Source="..\..\output\x64\release\Help\TECkit Map Plug-in About box.mht"/>
 						</Component>
-						<Component Id="CantReadMhtFiles.htm" Guid="{F3B39444-A2B0-40D8-8863-8FE1E8194FF4}">
+						<Component Id="CantReadMhtFiles.htm" Guid="{2EA57953-4B0C-4A5D-A887-E9E9D100D20B}">
 							<File Id="CantReadMhtFiles.htm" Name="CantReadMhtFiles.htm" ReadOnly="yes" KeyPath="yes" Source="..\..\output\x64\release\Help\CantReadMhtFiles.htm"/>
 						</Component>
 						<Component Id="IcuRegex" Guid="{8A0498CB-71B8-4C0F-AE24-95FDD529BDAB}">
