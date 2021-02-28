@@ -13,8 +13,8 @@
         <Component Id="TECkit_Compiler_x86.dll" Guid="{7698A235-6417-4D75-988A-15839DBB96E6}">
             <File Id="TECkit_Compiler_x86.dll" Name="TECkit_Compiler_x86.dll" KeyPath="yes" Source="..\..\redist\64bit\TECkit_Compiler_x86.dll" />
         </Component>
-        <Component Id="libgcc_s_sjlj_1.dll" Guid="{41D95FD7-5D22-4D42-9F99-BCD1520E3EF7}">
-          <File Id="libgcc_s_sjlj_1.dll" Name="libgcc_s_sjlj-1.dll" KeyPath="yes" Source="..\..\redist\64bit\libgcc_s_seh-1.dll" />
+        <Component Id="libgcc_s_seh_1.dll" Guid="{41D95FD7-5D22-4D42-9F99-BCD1520E3EF7}">
+          <File Id="libgcc_s_seh_1.dll" Name="libgcc_s_seh-1.dll" KeyPath="yes" Source="..\..\redist\64bit\libgcc_s_seh-1.dll" />
         </Component>
         <Component Id="libstdcpp_6.dll" Guid="{705C8678-E424-494D-BDE4-BBF1D78DA806}">
           <File Id="libstdcpp_6.dll" Name="libstdc++-6.dll" KeyPath="yes" Source="..\..\redist\64bit\libstdc++-6.dll" />
