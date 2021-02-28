@@ -24,7 +24,7 @@
 
             </Directory>
 
-            <Directory Id="CommonFilesFolder" SourceName="Common Files Folder">
+            <Directory Id="CommonFiles64Folder" SourceName="Common Files Folder">
                 <Directory Id="AiSIL" Name="SIL">
 					<!-- I doubt anyone uses this... and I don't think it can be built anymore... so just leave it out
                     <Component Id="GuesserECLegacy.dll" Guid="{D1440DEC-28DD-4169-92F4-AB96B9FDBB6F}">
