@@ -187,13 +187,13 @@
   <PropertyGroup>
     <PostBuildEvent>
       if $(Platform) == x64 (
-      copy $(SolutionDir)DistFiles\windows\x64\icu\bin\icuuc54.dll $(SolutionDir)output\x64\$(ConfigurationName)
-      copy $(SolutionDir)DistFiles\windows\x64\icu\bin\icuin54.dll $(SolutionDir)output\x64\$(ConfigurationName)
-      copy $(SolutionDir)DistFiles\windows\x64\icu\bin\icudt54.dll $(SolutionDir)output\x64\$(ConfigurationName)
+      copy $(SolutionDir)DistFiles\windows\x64\icu\bin\icuuc68.dll $(SolutionDir)output\x64\$(ConfigurationName)
+      copy $(SolutionDir)DistFiles\windows\x64\icu\bin\icuin68.dll $(SolutionDir)output\x64\$(ConfigurationName)
+      copy $(SolutionDir)DistFiles\windows\x64\icu\bin\icudt68.dll $(SolutionDir)output\x64\$(ConfigurationName)
       ) ELSE (
-      copy $(SolutionDir)DistFiles\windows\Win32\icu\bin\icuuc54.dll $(SolutionDir)output\Win32\$(ConfigurationName)
-      copy $(SolutionDir)DistFiles\windows\Win32\icu\bin\icuin54.dll $(SolutionDir)output\Win32\$(ConfigurationName)
-      copy $(SolutionDir)DistFiles\windows\Win32\icu\bin\icudt54.dll $(SolutionDir)output\Win32\$(ConfigurationName)
+      copy $(SolutionDir)DistFiles\windows\Win32\icu\bin\icuuc68.dll $(SolutionDir)output\Win32\$(ConfigurationName)
+      copy $(SolutionDir)DistFiles\windows\Win32\icu\bin\icuin68.dll $(SolutionDir)output\Win32\$(ConfigurationName)
+      copy $(SolutionDir)DistFiles\windows\Win32\icu\bin\icudt68.dll $(SolutionDir)output\Win32\$(ConfigurationName)
       )</PostBuildEvent>
   </PropertyGroup>
 </Project>
