@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
@@ -155,9 +155,10 @@ namespace SilEncConverters40
                 strOutput = _elemInput.InnerText;
             }
 
-            if (!String.IsNullOrEmpty(strOutput))
-                StringToProperByteStar(strOutput, lpOutBuffer, ref rnOutLen);
-        }
+			if (String.IsNullOrEmpty(strOutput))
+				strOutput = "\ufffd";	// pass something back!
+			StringToProperByteStar(strOutput, lpOutBuffer, ref rnOutLen);
+		}
 
         #endregion Abstract Base Class Overrides
 
