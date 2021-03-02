@@ -14,6 +14,7 @@
 // This file is from the ICU library. If you don't have it, you may have to
 // download it or get it from a package such as FieldWorks.
 #include "unicode/regex.h"
+#include "unicode/unistr.h"
 
 #include "CEncConverter.h"
 #include "IcuRegexEC.h"
@@ -30,13 +31,13 @@
 namespace IcuRegexEC
 {
     char *          m_strConverterSpec = NULL;
-    UnicodeString   m_strFind;
-    UnicodeString   m_strReplace;
-    RegexMatcher*   m_pMatcher;
+	icu::UnicodeString   m_strFind;
+	icu::UnicodeString   m_strReplace;
+	icu::RegexMatcher*   m_pMatcher;
 
     // This routine is intended for debugging.
     static void
-    printUnicodeString(const char *announce, const UnicodeString &s)
+    printUnicodeString(const char *announce, const icu::UnicodeString &s)
     {
 #ifdef VERBOSE_DEBUGGING
         static char out[200];
@@ -82,7 +83,7 @@ namespace IcuRegexEC
 
 	// Allocates a utf-8 (on Linux) char * from a UnicodeString.
     // After calling this function, be sure to free the result.
-    char * UniStr_to_CharStar(UnicodeString uniStr, int & len)
+    char * UniStr_to_CharStar(icu::UnicodeString uniStr, int & len)
     {
         len = uniStr.extract(0, uniStr.length(), (char *)NULL);   // "preflight" to get size
         int size = len + 1;
@@ -97,7 +98,7 @@ namespace IcuRegexEC
     }
 
     // Use this wrapper if you don't care about the resulting string's length.
-    char * UniStr_to_CharStar(UnicodeString uniStr)
+    char * UniStr_to_CharStar(icu::UnicodeString uniStr)
     {
         int len;
         return UniStr_to_CharStar(uniStr, len);
@@ -200,7 +201,7 @@ namespace IcuRegexEC
             free(strReplace);
             UErrorCode status = U_ZERO_ERROR;
             printUnicodeString("Creating matcher with: ", m_strFind);
-            m_pMatcher = new RegexMatcher(m_strFind, flags, status);
+            m_pMatcher = new icu::RegexMatcher(m_strFind, flags, status);
 #ifdef VERBOSE_DEBUGGING
             fprintf(stderr, "Created matcher.\n");
 #endif
@@ -292,7 +293,7 @@ namespace IcuRegexEC
         fprintf(stderr, "IcuRegexEC.CppDoConvert() BEGIN\n");
 #endif
         int hr = 0;
-        UnicodeString sInput;
+		icu::UnicodeString sInput;
         //sInput.setTo(lpInBuffer, nInLen / 2); // needed for Windows?
         sInput.setTo(lpInBuffer);
         printUnicodeString("Will transliterate: ", sInput);
@@ -300,7 +301,7 @@ namespace IcuRegexEC
 
         UErrorCode status = U_ZERO_ERROR;
         printUnicodeString("Calling replaceAll with: ", m_strReplace);
-        UnicodeString sOutput = m_pMatcher->replaceAll(m_strReplace, status);
+		icu::UnicodeString sOutput = m_pMatcher->replaceAll(m_strReplace, status);
 #ifdef VERBOSE_DEBUGGING
         fprintf(stderr, "Called replaceAll.\n");
 #endif

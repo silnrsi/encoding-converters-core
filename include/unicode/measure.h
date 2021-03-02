@@ -1,6 +1,8 @@
+// © 2016 and later: Unicode, Inc. and others.
+// License & terms of use: http://www.unicode.org/copyright.html
 /*
 **********************************************************************
-* Copyright (c) 2004-2014, International Business Machines
+* Copyright (c) 2004-2015, International Business Machines
 * Corporation and others.  All Rights Reserved.
 **********************************************************************
 * Author: Alan Liu
@@ -12,6 +14,8 @@
 #define __MEASURE_H__
 
 #include "unicode/utypes.h"
+
+#if U_SHOW_CPLUSPLUS_API
 
 /**
  * \file 
@@ -44,7 +48,7 @@ class U_I18N_API Measure: public UObject {
      * Construct an object with the given numeric amount and the given
      * unit.  After this call, the caller must not delete the given
      * unit object.
-     * @param number a numeric object; amount.isNumeric() must be TRUE
+     * @param number a numeric object; amount.isNumeric() must be true
      * @param adoptedUnit the unit object, which must not be NULL
      * @param ec input-output error code. If the amount or the unit
      * is invalid, then this will be set to a failing value.
@@ -70,7 +74,7 @@ class U_I18N_API Measure: public UObject {
      * have the same class as returned by getDynamicClassID().
      * @stable ICU 3.0
      */
-    virtual UObject* clone() const;
+    virtual Measure* clone() const;
 
     /**
      * Destructor
@@ -108,7 +112,7 @@ class U_I18N_API Measure: public UObject {
      * .       erived::getStaticClassID()) ...
      * </pre>
      * @return          The class ID for all objects of this class.
-     * @draft ICU 53
+     * @stable ICU 53
      */
     static UClassID U_EXPORT2 getStaticClassID(void);
 
@@ -121,7 +125,7 @@ class U_I18N_API Measure: public UObject {
      * @return          The class ID for this object. All objects of a
      *                  given class have the same class ID.  Objects of
      *                  other classes have different class IDs.
-     * @draft ICU 53
+     * @stable ICU 53
      */
     virtual UClassID getDynamicClassID(void) const;
 
@@ -156,4 +160,7 @@ inline const MeasureUnit& Measure::getUnit() const {
 U_NAMESPACE_END
 
 #endif // !UCONFIG_NO_FORMATTING
+
+#endif /* U_SHOW_CPLUSPLUS_API */
+
 #endif // __MEASURE_H__

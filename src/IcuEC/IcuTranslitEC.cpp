@@ -41,8 +41,8 @@ namespace IcuTranslitEC
     char   m_strFriendlyName[MAXNAMESIZE];
 
     bool            m_bLTR        = true; // if true, then use m_pTForwards
-    Transliterator* m_pTForwards  = 0;
-    Transliterator* m_pTBackwards = 0;
+    icu::Transliterator* m_pTForwards  = 0;
+	icu::Transliterator* m_pTBackwards = 0;
 
     char ** m_convNameList;
     int     m_iConvNameCount = -1;
@@ -50,7 +50,7 @@ namespace IcuTranslitEC
 
     // This routine is intended for debugging.
     static void
-    printUnicodeString(const char *announce, const UnicodeString &s)
+    printUnicodeString(const char *announce, const icu::UnicodeString &s)
     {
 #ifdef VERBOSE_DEBUGGING
         static char out[200];
@@ -79,7 +79,7 @@ namespace IcuTranslitEC
 
     // Allocates a utf-8 (on Linux) char * from a UnicodeString.
     // After calling this function, be sure to free the result.
-    char * UniStr_to_CharStar(UnicodeString uniStr, int & len)
+    char * UniStr_to_CharStar(icu::UnicodeString uniStr, int & len)
     {
         len = uniStr.extract(0, uniStr.length(), (char *)NULL);   // "preflight" to get size
         int size = len + 1;
@@ -94,7 +94,7 @@ namespace IcuTranslitEC
     }
 
     // Use this wrapper if you don't care about the resulting string's length.
-    char * UniStr_to_CharStar(UnicodeString uniStr)
+    char * UniStr_to_CharStar(icu::UnicodeString uniStr)
     {
         int len;
         return UniStr_to_CharStar(uniStr, len);
@@ -146,13 +146,13 @@ namespace IcuTranslitEC
 
         // it's not so clear what is a "rule-based" converter and what isn't. So just try to create it from 
         //  the normal approach first and if that fails, then try the createFromRules
-        m_pTForwards = Transliterator::createInstance (
+        m_pTForwards = icu::Transliterator::createInstance (
                        m_strConverterSpec, UTRANS_FORWARD, parseError, status);
 
         if( !m_pTForwards ) // IsRuleBased(strConverterSpec) )
         {
             UErrorCode statusFromRules = U_ZERO_ERROR;
-            m_pTForwards = Transliterator::createFromRules (
+            m_pTForwards = icu::Transliterator::createFromRules (
                             m_strFriendlyName,
                             m_strConverterSpec, UTRANS_FORWARD, parseError,
                             statusFromRules);
@@ -217,7 +217,7 @@ namespace IcuTranslitEC
     int ConverterNameList_start()
     {
 		if (m_iConvNameCount < 0)
-			m_iConvNameCount = Transliterator::countAvailableIDs();
+			m_iConvNameCount = icu::Transliterator::countAvailableIDs();
 #ifdef VERBOSE_DEBUGGING
         fprintf(stderr, "%d converter IDs available.\n", m_iConvNameCount);
 #endif
@@ -233,10 +233,11 @@ namespace IcuTranslitEC
     {
 		if (m_iConvNameIndex >= m_iConvNameCount)
 			return NULL;
-		UnicodeString strID = Transliterator::getAvailableID(m_iConvNameIndex);
+		icu::UnicodeString strID = icu::Transliterator::getAvailableID(m_iConvNameIndex);
 		++m_iConvNameIndex;
 #ifdef _MSC_VER
-		return ::SysAllocString(strID.getTerminatedBuffer());
+		// this may not work for extended planes, but the transliterator names shouldn't be a problem
+		return ::SysAllocString((OLECHAR*)strID.getTerminatedBuffer());
 #else
 		char * name = UniStr_to_CharStar(strID);
 #ifdef VERBOSE_DEBUGGING
@@ -254,10 +255,11 @@ namespace IcuTranslitEC
     const char * GetDisplayName(char * strID)
 #endif
     {
-        UnicodeString strDisplayName;
-        Transliterator::getDisplayName(strID, strDisplayName);
+		icu::UnicodeString strDisplayName;
+		icu::Transliterator::getDisplayName(strID, strDisplayName);
 #ifdef _MSC_VER
-		return ::SysAllocString(strDisplayName.getTerminatedBuffer());
+		// this may not work for extended planes, but the transliterator names shouldn't be a problem
+		return ::SysAllocString((OLECHAR*)strDisplayName.getTerminatedBuffer());
 #else
 		char * name = UniStr_to_CharStar(strDisplayName);
 		return name;
@@ -320,7 +322,7 @@ namespace IcuTranslitEC
         fprintf(stderr, "IcuTranslitEC.CppDoConvert() BEGIN\n");
 #endif
         int hr = 0;
-        UnicodeString sInOut;
+		icu::UnicodeString sInOut;
 #ifdef _MSC_VER
 			sInOut.setTo((UChar *)lpInBuffer, nInLen / 2);
 #else

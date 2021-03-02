@@ -2,8 +2,16 @@
 
 #pragma once
 
+#include <iostream>
+#include <locale>
+#include <memory>
+#include <codecvt>
+#include <string>
+
 using namespace System;
 using namespace System::Collections::Generic;
+using namespace std;
+
 
 namespace ICU4NET {
 
@@ -134,14 +142,34 @@ static const Locale & 	getDefault (void)
 	public ref class BreakIterator
 	{
 	public:
-		System::Boolean IsEqual(BreakIterator^){return TRUE;}
+		System::Boolean IsEqual(BreakIterator^) {return true;}
 		BreakIterator^ Clone(){return gcnew ICU4NET::BreakIterator();}
 		CharacterIterator^ GetText(){return gcnew ICU4NET::CharacterIterator();}
 		System::String^ GetCLRText()
 		{
-			return gcnew System::String(m_bufferedText->getBuffer());
+			// new in ICU68, we need to be able to convert between char16_t (what UnicodeString::getTerminatedBuffer returns to us)
+			//	and wchar_t (what the System.String ctor wants). Generally, they should both represent UTF-16, but I think 
+			//	a diff might exist with extended plane regions of Unicode (e.g. a unicode character like 0x10ffff). It's 
+			//	possible that no language/range supported by this break iterator has an issue here, so it might/could just 
+			//	be casted as this shows (this does work for our Thai test):
+			// const wchar_t* text = (const wchar_t*)m_bufferedText->getTerminatedBuffer();
+			//  ... but just in case, this page shows how to do it properly using std:
+			//	https://stackoverflow.com/questions/8540090/clang-converting-const-char16-t-utf-16-to-wstring-ucs-4
+
+			const std::u16string utf16(m_bufferedText->getTerminatedBuffer());
+
+#ifdef _MSC_VER
+			wstring_convert<codecvt_utf16<wchar_t, 0x10ffff, little_endian>, wchar_t> conv;
+#else
+			// not sure what to do here for linux? (perhaps it doesn't need little_endian?
+			wstring_convert<codecvt_utf16<wchar_t, 0x10ffff, little_endian>, wchar_t> conv;
+#endif
+			wstring ws = conv.from_bytes(
+				reinterpret_cast<const char*> (&utf16[0]),
+				reinterpret_cast<const char*> (&utf16[0] + utf16.size()));
+			return gcnew System::String(ws.c_str());
 		}
-		
+
 		void SetText(String^ text)
 		{
 			// Pin memory so GC can't move it while native function is called
@@ -151,7 +179,7 @@ static const Locale & 	getDefault (void)
 				delete m_bufferedText;
 			
 			// Make a copy
-			m_bufferedText = new UnicodeString(wch);
+			m_bufferedText = new icu::UnicodeString(wch);
 			
 			// Cannot use stack version here
 			// since the text will be freed after 
@@ -175,7 +203,7 @@ static const Locale & 	getDefault (void)
 		
 		System::Int32 Preceding(System::Int32 offset){return m_native->preceding(offset);}
 		
-		System::Boolean IsBoundary(System::Int32 offset){return m_native->isBoundary(offset) == TRUE;}
+		System::Boolean IsBoundary(System::Int32 offset) { return m_native->isBoundary(offset) == 1; }
 
 		System::Int32 Next(System::Int32 n){return m_native->next(n);};
 	

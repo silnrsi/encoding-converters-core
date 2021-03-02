@@ -1,6 +1,8 @@
+// © 2016 and later: Unicode, Inc. and others.
+// License & terms of use: http://www.unicode.org/copyright.html
 /*
 *******************************************************************************
-* Copyright (C) 1997-2014, International Business Machines Corporation and others.
+* Copyright (C) 1997-2015, International Business Machines Corporation and others.
 * All Rights Reserved.
 *******************************************************************************
 */
@@ -9,6 +11,8 @@
 #define RBNF_H
 
 #include "unicode/utypes.h"
+
+#if U_SHOW_CPLUSPLUS_API
 
 /**
  * \file
@@ -38,6 +42,7 @@
 
 U_NAMESPACE_BEGIN
 
+class NFRule;
 class NFRuleSet;
 class LocalizationInfo;
 class PluralFormat;
@@ -53,7 +58,13 @@ enum URBNFRuleSetTag {
     URBNF_ORDINAL,
     URBNF_DURATION,
     URBNF_NUMBERING_SYSTEM,
+#ifndef U_HIDE_DEPRECATED_API
+    /**
+     * One more than the highest normal URBNFRuleSetTag value.
+     * @deprecated ICU 58 The numeric value may change over time, see ICU ticket #12420.
+     */
     URBNF_COUNT
+#endif  // U_HIDE_DEPRECATED_API
 };
 
 /**
@@ -264,15 +275,44 @@ enum URBNFRuleSetTag {
  *   </tr>
  *   <tr>
  *     <td>x.x:</td>
- *     <td>The rule is an <em>improper fraction rule.</em></td>
+ *     <td>The rule is an <em>improper fraction rule</em>. If the full stop in
+ *     the middle of the rule name is replaced with the decimal point
+ *     that is used in the language or DecimalFormatSymbols, then that rule will
+ *     have precedence when formatting and parsing this rule. For example, some
+ *     languages use the comma, and can thus be written as x,x instead. For example,
+ *     you can use "x.x: &lt;&lt; point &gt;&gt;;x,x: &lt;&lt; comma &gt;&gt;;" to
+ *     handle the decimal point that matches the language's natural spelling of
+ *     the punctuation of either the full stop or comma.</td>
  *   </tr>
  *   <tr>
  *     <td>0.x:</td>
- *     <td>The rule is a <em>proper fraction rule.</em></td>
+ *     <td>The rule is a <em>proper fraction rule</em>. If the full stop in
+ *     the middle of the rule name is replaced with the decimal point
+ *     that is used in the language or DecimalFormatSymbols, then that rule will
+ *     have precedence when formatting and parsing this rule. For example, some
+ *     languages use the comma, and can thus be written as 0,x instead. For example,
+ *     you can use "0.x: point &gt;&gt;;0,x: comma &gt;&gt;;" to
+ *     handle the decimal point that matches the language's natural spelling of
+ *     the punctuation of either the full stop or comma.</td>
  *   </tr>
  *   <tr>
  *     <td>x.0:</td>
- *     <td>The rule is a <em>master rule.</em></td>
+ *     <td>The rule is a <em>default rule</em>. If the full stop in
+ *     the middle of the rule name is replaced with the decimal point
+ *     that is used in the language or DecimalFormatSymbols, then that rule will
+ *     have precedence when formatting and parsing this rule. For example, some
+ *     languages use the comma, and can thus be written as x,0 instead. For example,
+ *     you can use "x.0: &lt;&lt; point;x,0: &lt;&lt; comma;" to
+ *     handle the decimal point that matches the language's natural spelling of
+ *     the punctuation of either the full stop or comma.</td>
+ *   </tr>
+ *   <tr>
+ *     <td>Inf:</td>
+ *     <td>The rule for infinity.</td>
+ *   </tr>
+ *   <tr>
+ *     <td>NaN:</td>
+ *     <td>The rule for an IEEE 754 NaN (not a number).</td>
  *   </tr>
  *   <tr>
  *     <td><em>nothing</em></td>
@@ -292,9 +332,9 @@ enum URBNFRuleSetTag {
  * algorithms: If the rule set is a regular rule set, do the following:
  *
  * <ul>
- *   <li>If the rule set includes a master rule (and the number was passed in as a <tt>double</tt>),
- *     use the master rule.&nbsp; (If the number being formatted was passed in as a <tt>long</tt>,
- *     the master rule is ignored.)</li>
+ *   <li>If the rule set includes a default rule (and the number was passed in as a <tt>double</tt>),
+ *     use the default rule.&nbsp; (If the number being formatted was passed in as a <tt>long</tt>,
+ *     the default rule is ignored.)</li>
  *   <li>If the number is negative, use the negative-number rule.</li>
  *   <li>If the number has a fractional part and is greater than 1, use the improper fraction
  *     rule.</li>
@@ -353,7 +393,7 @@ enum URBNFRuleSetTag {
  *   </tr>
  *   <tr>
  *     <td></td>
- *     <td>in fraction or master rule</td>
+ *     <td>in fraction or default rule</td>
  *     <td>Isolate the number's fractional part and format it.</td>
  *   </tr>
  *   <tr>
@@ -385,7 +425,7 @@ enum URBNFRuleSetTag {
  *   </tr>
  *   <tr>
  *     <td></td>
- *     <td>in fraction or master rule</td>
+ *     <td>in fraction or default rule</td>
  *     <td>Isolate the number's integral part and format it.</td>
  *   </tr>
  *   <tr>
@@ -416,7 +456,7 @@ enum URBNFRuleSetTag {
  *   </tr>
  *   <tr>
  *     <td></td>
- *     <td>in master rule</td>
+ *     <td>in default rule</td>
  *     <td>Omit the optional text if the number is an integer (same as specifying both an x.x
  *     rule and an x.0 rule)</td>
  *   </tr>
@@ -619,7 +659,7 @@ public:
    * locale.  There are four legal values: URBNF_SPELLOUT, which creates a formatter that
    * spells out a value in words in the desired language, URBNF_ORDINAL, which attaches
    * an ordinal suffix from the desired language to the end of a number (e.g. "123rd"),
-   * URBNF_DURATION, which formats a duration in seconds as hours, minutes, and seconds,
+   * URBNF_DURATION, which formats a duration in seconds as hours, minutes, and seconds always rounding down,
    * and URBNF_NUMBERING_SYSTEM, which is used to invoke rules for alternate numbering
    * systems such as the Hebrew numbering system, or for Roman Numerals, etc.
    * @param locale The locale for the formatter.
@@ -658,7 +698,7 @@ public:
    * @return  A copy of the object.
    * @stable ICU 2.6
    */
-  virtual Format* clone(void) const;
+  virtual RuleBasedNumberFormat* clone() const;
 
   /**
    * Return true if the given Format objects are semantically equal.
@@ -827,6 +867,30 @@ public:
                                 FieldPosition& pos,
                                 UErrorCode& status) const;
 
+protected:
+    /**
+     * Format a decimal number.
+     * The number is a DigitList wrapper onto a floating point decimal number.
+     * The default implementation in NumberFormat converts the decimal number
+     * to a double and formats that.  Subclasses of NumberFormat that want
+     * to specifically handle big decimal numbers must override this method.
+     * class DecimalFormat does so.
+     *
+     * @param number    The number, a DigitList format Decimal Floating Point.
+     * @param appendTo  Output parameter to receive result.
+     *                  Result is appended to existing contents.
+     * @param pos       On input: an alignment field, if desired.
+     *                  On output: the offsets of the alignment field.
+     * @param status    Output param filled with success/failure status.
+     * @return          Reference to 'appendTo' parameter.
+     * @internal
+     */
+    virtual UnicodeString& format(const number::impl::DecimalQuantity &number,
+                                  UnicodeString& appendTo,
+                                  FieldPosition& pos,
+                                  UErrorCode& status) const;
+public:
+
   using NumberFormat::parse;
 
   /**
@@ -913,7 +977,6 @@ public:
    */
   virtual UnicodeString getDefaultRuleSetName() const;
 
-  /* Cannot use #ifndef U_HIDE_DRAFT_API for the following draft method since it is virtual */
   /**
    * Set a particular UDisplayContext value in the formatter, such as
    * UDISPCTX_CAPITALIZATION_FOR_STANDALONE. Note: For getContext, see
@@ -922,9 +985,23 @@ public:
    * @param status Input/output status. If at entry this indicates a failure
    *               status, the function will do nothing; otherwise this will be
    *               updated with any new status from the function. 
-   * @draft ICU 53
+   * @stable ICU 53
    */
   virtual void setContext(UDisplayContext value, UErrorCode& status);
+
+    /**
+     * Get the rounding mode.
+     * @return A rounding mode
+     * @stable ICU 60
+     */
+    virtual ERoundingMode getRoundingMode(void) const;
+
+    /**
+     * Set the rounding mode.
+     * @param roundingMode A rounding mode
+     * @stable ICU 60
+     */
+    virtual void setRoundingMode(ERoundingMode roundingMode);
 
 public:
     /**
@@ -975,28 +1052,38 @@ private:
     void dispose();
     void stripWhitespace(UnicodeString& src);
     void initDefaultRuleSet();
-    void format(double number, NFRuleSet& ruleSet);
     NFRuleSet* findRuleSet(const UnicodeString& name, UErrorCode& status) const;
 
     /* friend access */
     friend class NFSubstitution;
     friend class NFRule;
+    friend class NFRuleSet;
     friend class FractionalPartSubstitution;
 
     inline NFRuleSet * getDefaultRuleSet() const;
     const RuleBasedCollator * getCollator() const;
-    DecimalFormatSymbols * getDecimalFormatSymbols() const;
+    DecimalFormatSymbols * initializeDecimalFormatSymbols(UErrorCode &status);
+    const DecimalFormatSymbols * getDecimalFormatSymbols() const;
+    NFRule * initializeDefaultInfinityRule(UErrorCode &status);
+    const NFRule * getDefaultInfinityRule() const;
+    NFRule * initializeDefaultNaNRule(UErrorCode &status);
+    const NFRule * getDefaultNaNRule() const;
     PluralFormat *createPluralFormat(UPluralType pluralType, const UnicodeString &pattern, UErrorCode& status) const;
-    UnicodeString& adjustForCapitalizationContext(int32_t startPos, UnicodeString& currentResult) const;
+    UnicodeString& adjustForCapitalizationContext(int32_t startPos, UnicodeString& currentResult, UErrorCode& status) const;
+    UnicodeString& format(int64_t number, NFRuleSet *ruleSet, UnicodeString& toAppendTo, UErrorCode& status) const;
+    void format(double number, NFRuleSet& rs, UnicodeString& toAppendTo, UErrorCode& status) const;
 
 private:
-    NFRuleSet **ruleSets;
+    NFRuleSet **fRuleSets;
     UnicodeString* ruleSetDescriptions;
     int32_t numRuleSets;
     NFRuleSet *defaultRuleSet;
     Locale locale;
     RuleBasedCollator* collator;
     DecimalFormatSymbols* decimalFormatSymbols;
+    NFRule *defaultInfinityRule;
+    NFRule *defaultNaNRule;
+    ERoundingMode fRoundingMode;
     UBool lenient;
     UnicodeString* lenientParseRules;
     LocalizationInfo* localizations;
@@ -1027,6 +1114,8 @@ U_NAMESPACE_END
 
 /* U_HAVE_RBNF */
 #endif
+
+#endif /* U_SHOW_CPLUSPLUS_API */
 
 /* RBNF_H */
 #endif

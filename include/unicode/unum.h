@@ -1,6 +1,8 @@
+// © 2016 and later: Unicode, Inc. and others.
+// License & terms of use: http://www.unicode.org/copyright.html
 /*
 *******************************************************************************
-* Copyright (C) 1997-2014, International Business Machines Corporation and others.
+* Copyright (C) 1997-2015, International Business Machines Corporation and others.
 * All Rights Reserved.
 * Modification History:
 *
@@ -16,19 +18,27 @@
 
 #if !UCONFIG_NO_FORMATTING
 
-#include "unicode/localpointer.h"
 #include "unicode/uloc.h"
 #include "unicode/ucurr.h"
 #include "unicode/umisc.h"
 #include "unicode/parseerr.h"
 #include "unicode/uformattable.h"
 #include "unicode/udisplaycontext.h"
+#include "unicode/ufieldpositer.h"
+
+#if U_SHOW_CPLUSPLUS_API
+#include "unicode/localpointer.h"
+#endif   // U_SHOW_CPLUSPLUS_API
 
 /**
  * \file
- * \brief C API: NumberFormat
+ * \brief C API: Compatibility APIs for number formatting.
  *
  * <h2> Number Format C API </h2>
+ * 
+ * <p><strong>IMPORTANT:</strong> New users with are strongly encouraged to
+ * see if unumberformatter.h fits their use case.  Although not deprecated,
+ * this header is provided for backwards compatibility only.
  *
  * Number Format C API  Provides functions for
  * formatting and parsing a number.  Also provides methods for
@@ -112,7 +122,7 @@
  * <P>
  * You can also control the display of numbers with such function as
  * unum_getAttributes() and unum_setAttributes(), which let you set the
- * miminum fraction digits, grouping, etc.
+ * minimum fraction digits, grouping, etc.
  * @see UNumberFormatAttributes for more details
  * <P>
  * You can also use forms of the parse and format methods with
@@ -123,7 +133,7 @@
  * </ul>
  * <p>
  * It is also possible to change or set the symbols used for a particular
- * locale like the currency symbol, the grouping seperator , monetary seperator
+ * locale like the currency symbol, the grouping separator , monetary separator
  * etc by making use of functions unum_setSymbols() and unum_getSymbols().
  */
 
@@ -148,7 +158,11 @@ typedef enum UNumberFormatStyle {
      */
     UNUM_DECIMAL=1,
     /**
-     * Currency format with a currency symbol, e.g., "$1.00".
+     * Currency format (generic).
+     * Defaults to UNUM_CURRENCY_STANDARD style
+     * (using currency symbol, e.g., "$1.00", with non-accounting
+     * style for negative values e.g. using minus sign).
+     * The specific style may be specified using the -cf- locale key.
      * @stable ICU 2.0
      */
     UNUM_CURRENCY=2,
@@ -202,26 +216,48 @@ typedef enum UNumberFormatStyle {
      * @stable ICU 4.8
      */
     UNUM_CURRENCY_PLURAL=11,
-#ifndef U_HIDE_DRAFT_API
     /**
      * Currency format for accounting, e.g., "($3.00)" for
      * negative currency amount instead of "-$3.00" ({@link #UNUM_CURRENCY}).
-     * @draft ICU 53
+     * Overrides any style specified using -cf- key in locale.
+     * @stable ICU 53
      */
     UNUM_CURRENCY_ACCOUNTING=12,
     /**
      * Currency format with a currency symbol given CASH usage, e.g., 
      * "NT$3" instead of "NT$3.23".
-     * @draft ICU 54
+     * @stable ICU 54
      */
     UNUM_CASH_CURRENCY=13,
-#endif /* U_HIDE_DRAFT_API */
-
     /**
-     * One more than the highest number format style constant.
-     * @stable ICU 4.8
+     * Decimal format expressed using compact notation
+     * (short form, corresponds to UNumberCompactStyle=UNUM_SHORT)
+     * e.g. "23K", "45B"
+     * @stable ICU 56
      */
-    UNUM_FORMAT_STYLE_COUNT=14,
+    UNUM_DECIMAL_COMPACT_SHORT=14,
+    /**
+     * Decimal format expressed using compact notation
+     * (long form, corresponds to UNumberCompactStyle=UNUM_LONG)
+     * e.g. "23 thousand", "45 billion"
+     * @stable ICU 56
+     */
+    UNUM_DECIMAL_COMPACT_LONG=15,
+    /**
+     * Currency format with a currency symbol, e.g., "$1.00",
+     * using non-accounting style for negative values (e.g. minus sign).
+     * Overrides any style specified using -cf- key in locale.
+     * @stable ICU 56
+     */
+    UNUM_CURRENCY_STANDARD=16,
+
+#ifndef U_HIDE_DEPRECATED_API
+    /**
+     * One more than the highest normal UNumberFormatStyle value.
+     * @deprecated ICU 58 The numeric value may change over time, see ICU ticket #12420.
+     */
+    UNUM_FORMAT_STYLE_COUNT=17,
+#endif  /* U_HIDE_DEPRECATED_API */
 
     /**
      * Default format
@@ -235,8 +271,13 @@ typedef enum UNumberFormatStyle {
     UNUM_IGNORE = UNUM_PATTERN_DECIMAL
 } UNumberFormatStyle;
 
-/** The possible number format rounding modes. 
- *  @stable ICU 2.0
+/** The possible number format rounding modes.
+ *
+ * <p>
+ * For more detail on rounding modes, see:
+ * https://unicode-org.github.io/icu/userguide/format_parse/numbers/rounding-modes
+ *
+ * @stable ICU 2.0
  */
 typedef enum UNumberFormatRoundingMode {
     UNUM_ROUND_CEILING,
@@ -297,8 +338,16 @@ enum UCurrencySpacing {
     UNUM_CURRENCY_SURROUNDING_MATCH,
     /** @stable ICU 4.8 */
     UNUM_CURRENCY_INSERT,
-    /** @stable ICU 4.8 */
+
+    /* Do not conditionalize the following with #ifndef U_HIDE_DEPRECATED_API,
+     * it is needed for layout of DecimalFormatSymbols object. */
+#ifndef U_FORCE_HIDE_DEPRECATED_API
+    /**
+     * One more than the highest normal UCurrencySpacing value.
+     * @deprecated ICU 58 The numeric value may change over time, see ICU ticket #12420.
+     */
     UNUM_CURRENCY_SPACING_COUNT
+#endif  // U_FORCE_HIDE_DEPRECATED_API
 };
 typedef enum UCurrencySpacing UCurrencySpacing; /**< @stable ICU 4.8 */
 
@@ -331,10 +380,44 @@ typedef enum UNumberFormatFields {
     UNUM_PERMILL_FIELD,
     /** @stable ICU 49 */
     UNUM_SIGN_FIELD,
-    /** @stable ICU 49 */
-    UNUM_FIELD_COUNT
+    /** @stable ICU 64 */
+    UNUM_MEASURE_UNIT_FIELD,
+    /** @stable ICU 64 */
+    UNUM_COMPACT_FIELD,
+
+#ifndef U_HIDE_DEPRECATED_API
+    /**
+     * One more than the highest normal UNumberFormatFields value.
+     * @deprecated ICU 58 The numeric value may change over time, see ICU ticket #12420.
+     */
+    UNUM_FIELD_COUNT = UNUM_SIGN_FIELD + 3
+#endif  /* U_HIDE_DEPRECATED_API */
 } UNumberFormatFields;
 
+
+#ifndef U_HIDE_DRAFT_API
+/**
+ * Selectors with special numeric values to use locale default minimum grouping
+ * digits for the DecimalFormat/UNumberFormat setMinimumGroupingDigits method.
+ * Do not use these constants with the [U]NumberFormatter API.
+ *
+ * @draft ICU 68
+ */
+typedef enum UNumberFormatMinimumGroupingDigits {
+    /**
+     * Display grouping using the default strategy for all locales.
+     * @draft ICU 68
+     */
+    UNUM_MINIMUM_GROUPING_DIGITS_AUTO = -2,
+    /**
+     * Display grouping using locale defaults, except do not show grouping on
+     * values smaller than 10000 (such that there is a minimum of two digits
+     * before the first separator).
+     * @draft ICU 68
+     */
+    UNUM_MINIMUM_GROUPING_DIGITS_MIN2 = -3,
+} UNumberFormatMinimumGroupingDigits;
+#endif  // U_HIDE_DRAFT_API
 
 /**
  * Create and return a new UNumberFormat for formatting and parsing
@@ -351,6 +434,10 @@ typedef enum UNumberFormatFields {
  * number format is opened using the given pattern, which must conform
  * to the syntax described in DecimalFormat or RuleBasedNumberFormat,
  * respectively.
+ *
+ * <p><strong>NOTE::</strong> New users with are strongly encouraged to
+ * use unumf_openForSkeletonAndLocale instead of unum_open.
+ *
  * @param pattern A pattern specifying the format to use. 
  * This parameter is ignored unless the style is
  * UNUM_PATTERN_DECIMAL or UNUM_PATTERN_RULEBASED.
@@ -369,7 +456,7 @@ typedef enum UNumberFormatFields {
  * @see DecimalFormat
  * @stable ICU 2.0
  */
-U_STABLE UNumberFormat* U_EXPORT2 
+U_CAPI UNumberFormat* U_EXPORT2 
 unum_open(  UNumberFormatStyle    style,
             const    UChar*    pattern,
             int32_t            patternLength,
@@ -384,7 +471,7 @@ unum_open(  UNumberFormatStyle    style,
 * @param fmt The formatter to close.
 * @stable ICU 2.0
 */
-U_STABLE void U_EXPORT2 
+U_CAPI void U_EXPORT2 
 unum_close(UNumberFormat* fmt);
 
 #if U_SHOW_CPLUSPLUS_API
@@ -414,7 +501,7 @@ U_NAMESPACE_END
  * @return A pointer to a UNumberFormat identical to fmt.
  * @stable ICU 2.0
  */
-U_STABLE UNumberFormat* U_EXPORT2 
+U_CAPI UNumberFormat* U_EXPORT2 
 unum_clone(const UNumberFormat *fmt,
        UErrorCode *status);
 
@@ -442,7 +529,7 @@ unum_clone(const UNumberFormat *fmt,
 * @see UFieldPosition
 * @stable ICU 2.0
 */
-U_STABLE int32_t U_EXPORT2 
+U_CAPI int32_t U_EXPORT2 
 unum_format(    const    UNumberFormat*    fmt,
         int32_t            number,
         UChar*            result,
@@ -474,7 +561,7 @@ unum_format(    const    UNumberFormat*    fmt,
 * @see UFieldPosition
 * @stable ICU 2.0
 */
-U_STABLE int32_t U_EXPORT2 
+U_CAPI int32_t U_EXPORT2 
 unum_formatInt64(const UNumberFormat *fmt,
         int64_t         number,
         UChar*          result,
@@ -506,13 +593,64 @@ unum_formatInt64(const UNumberFormat *fmt,
 * @see UFieldPosition
 * @stable ICU 2.0
 */
-U_STABLE int32_t U_EXPORT2 
+U_CAPI int32_t U_EXPORT2 
 unum_formatDouble(    const    UNumberFormat*  fmt,
             double          number,
             UChar*          result,
             int32_t         resultLength,
             UFieldPosition  *pos, /* 0 if ignore */
             UErrorCode*     status);
+
+/**
+* Format a double using a UNumberFormat according to the UNumberFormat's locale,
+* and initialize a UFieldPositionIterator that enumerates the subcomponents of
+* the resulting string.
+*
+* @param format
+*          The formatter to use.
+* @param number
+*          The number to format.
+* @param result
+*          A pointer to a buffer to receive the NULL-terminated formatted
+*          number. If the formatted number fits into dest but cannot be
+*          NULL-terminated (length == resultLength) then the error code is set
+*          to U_STRING_NOT_TERMINATED_WARNING. If the formatted number doesn't
+*          fit into result then the error code is set to
+*          U_BUFFER_OVERFLOW_ERROR.
+* @param resultLength
+*          The maximum size of result.
+* @param fpositer
+*          A pointer to a UFieldPositionIterator created by {@link #ufieldpositer_open}
+*          (may be NULL if field position information is not needed, but in this
+*          case it's preferable to use {@link #unum_formatDouble}). Iteration
+*          information already present in the UFieldPositionIterator is deleted,
+*          and the iterator is reset to apply to the fields in the formatted
+*          string created by this function call. The field values and indexes
+*          returned by {@link #ufieldpositer_next} represent fields denoted by
+*          the UNumberFormatFields enum. Fields are not returned in a guaranteed
+*          order. Fields cannot overlap, but they may nest. For example, 1234
+*          could format as "1,234" which might consist of a grouping separator
+*          field for ',' and an integer field encompassing the entire string.
+* @param status
+*          A pointer to an UErrorCode to receive any errors
+* @return
+*          The total buffer size needed; if greater than resultLength, the
+*          output was truncated.
+* @see unum_formatDouble
+* @see unum_parse
+* @see unum_parseDouble
+* @see UFieldPositionIterator
+* @see UNumberFormatFields
+* @stable ICU 59
+*/
+U_CAPI int32_t U_EXPORT2
+unum_formatDoubleForFields(const UNumberFormat* format,
+                           double number,
+                           UChar* result,
+                           int32_t resultLength,
+                           UFieldPositionIterator* fpositer,
+                           UErrorCode* status);
+
 
 /**
 * Format a decimal number using a UNumberFormat.
@@ -542,7 +680,7 @@ unum_formatDouble(    const    UNumberFormat*  fmt,
 * @see UFieldPosition
 * @stable ICU 4.4 
 */
-U_STABLE int32_t U_EXPORT2 
+U_CAPI int32_t U_EXPORT2 
 unum_formatDecimal(    const    UNumberFormat*  fmt,
             const char *    number,
             int32_t         length,
@@ -575,7 +713,7 @@ unum_formatDecimal(    const    UNumberFormat*  fmt,
  * @see UFieldPosition
  * @stable ICU 3.0
  */
-U_STABLE int32_t U_EXPORT2
+U_CAPI int32_t U_EXPORT2
 unum_formatDoubleCurrency(const UNumberFormat* fmt,
                           double number,
                           UChar* currency,
@@ -604,7 +742,7 @@ unum_formatDoubleCurrency(const UNumberFormat* fmt,
  * @see unum_parseToUFormattable
  * @stable ICU 52
  */
-U_STABLE int32_t U_EXPORT2
+U_CAPI int32_t U_EXPORT2
 unum_formatUFormattable(const UNumberFormat* fmt,
                         const UFormattable *number,
                         UChar *result,
@@ -615,6 +753,8 @@ unum_formatUFormattable(const UNumberFormat* fmt,
 /**
 * Parse a string into an integer using a UNumberFormat.
 * The string will be parsed according to the UNumberFormat's locale.
+* Note: parsing is not supported for styles UNUM_DECIMAL_COMPACT_SHORT
+* and UNUM_DECIMAL_COMPACT_LONG.
 * @param fmt The formatter to use.
 * @param text The text to parse.
 * @param textLength The length of text, or -1 if null-terminated.
@@ -629,7 +769,7 @@ unum_formatUFormattable(const UNumberFormat* fmt,
 * @see unum_formatDouble
 * @stable ICU 2.0
 */
-U_STABLE int32_t U_EXPORT2 
+U_CAPI int32_t U_EXPORT2 
 unum_parse(    const   UNumberFormat*  fmt,
         const   UChar*          text,
         int32_t         textLength,
@@ -639,6 +779,8 @@ unum_parse(    const   UNumberFormat*  fmt,
 /**
 * Parse a string into an int64 using a UNumberFormat.
 * The string will be parsed according to the UNumberFormat's locale.
+* Note: parsing is not supported for styles UNUM_DECIMAL_COMPACT_SHORT
+* and UNUM_DECIMAL_COMPACT_LONG.
 * @param fmt The formatter to use.
 * @param text The text to parse.
 * @param textLength The length of text, or -1 if null-terminated.
@@ -653,7 +795,7 @@ unum_parse(    const   UNumberFormat*  fmt,
 * @see unum_formatDouble
 * @stable ICU 2.8
 */
-U_STABLE int64_t U_EXPORT2 
+U_CAPI int64_t U_EXPORT2 
 unum_parseInt64(const UNumberFormat*  fmt,
         const UChar*  text,
         int32_t       textLength,
@@ -663,6 +805,8 @@ unum_parseInt64(const UNumberFormat*  fmt,
 /**
 * Parse a string into a double using a UNumberFormat.
 * The string will be parsed according to the UNumberFormat's locale.
+* Note: parsing is not supported for styles UNUM_DECIMAL_COMPACT_SHORT
+* and UNUM_DECIMAL_COMPACT_LONG.
 * @param fmt The formatter to use.
 * @param text The text to parse.
 * @param textLength The length of text, or -1 if null-terminated.
@@ -677,7 +821,7 @@ unum_parseInt64(const UNumberFormat*  fmt,
 * @see unum_formatDouble
 * @stable ICU 2.0
 */
-U_STABLE double U_EXPORT2 
+U_CAPI double U_EXPORT2 
 unum_parseDouble(    const   UNumberFormat*  fmt,
             const   UChar*          text,
             int32_t         textLength,
@@ -691,6 +835,8 @@ unum_parseDouble(    const   UNumberFormat*  fmt,
 * The syntax of the output is a "numeric string"
 * as defined in the Decimal Arithmetic Specification, available at
 * http://speleotrove.com/decimal
+* Note: parsing is not supported for styles UNUM_DECIMAL_COMPACT_SHORT
+* and UNUM_DECIMAL_COMPACT_LONG.
 * @param fmt The formatter to use.
 * @param text The text to parse.
 * @param textLength The length of text, or -1 if null-terminated.
@@ -710,7 +856,7 @@ unum_parseDouble(    const   UNumberFormat*  fmt,
 * @see unum_formatDouble
 * @stable ICU 4.4
 */
-U_STABLE int32_t U_EXPORT2 
+U_CAPI int32_t U_EXPORT2 
 unum_parseDecimal(const   UNumberFormat*  fmt,
                  const   UChar*          text,
                          int32_t         textLength,
@@ -738,7 +884,7 @@ unum_parseDecimal(const   UNumberFormat*  fmt,
  * @see unum_formatDoubleCurrency
  * @stable ICU 3.0
  */
-U_STABLE double U_EXPORT2
+U_CAPI double U_EXPORT2
 unum_parseDoubleCurrency(const UNumberFormat* fmt,
                          const UChar* text,
                          int32_t textLength,
@@ -750,6 +896,8 @@ unum_parseDoubleCurrency(const UNumberFormat* fmt,
  * Parse a UChar string into a UFormattable.
  * Example code:
  * \snippet test/cintltst/cnumtst.c unum_parseToUFormattable
+ * Note: parsing is not supported for styles UNUM_DECIMAL_COMPACT_SHORT
+ * and UNUM_DECIMAL_COMPACT_LONG.
  * @param fmt the formatter to use
  * @param result the UFormattable to hold the result. If NULL, a new UFormattable will be allocated (which the caller must close with ufmt_close).
  * @param text the text to parse
@@ -764,7 +912,7 @@ unum_parseDoubleCurrency(const UNumberFormat* fmt,
  * @see ufmt_close
  * @stable ICU 52
  */
-U_STABLE UFormattable* U_EXPORT2
+U_CAPI UFormattable* U_EXPORT2
 unum_parseToUFormattable(const UNumberFormat* fmt,
                          UFormattable *result,
                          const UChar* text,
@@ -777,10 +925,10 @@ unum_parseToUFormattable(const UNumberFormat* fmt,
  * on a DecimalFormat, other formats return U_UNSUPPORTED_ERROR
  * in the status.
  * @param format The formatter to set.
- * @param localized TRUE if the pattern is localized, FALSE otherwise.
+ * @param localized true if the pattern is localized, false otherwise.
  * @param pattern The new pattern
  * @param patternLength The length of pattern, or -1 if null-terminated.
- * @param parseError A pointer to UParseError to recieve information
+ * @param parseError A pointer to UParseError to receive information
  * about errors occurred during parsing, or NULL if no parse error
  * information is desired.
  * @param status A pointer to an input-output UErrorCode.
@@ -788,7 +936,7 @@ unum_parseToUFormattable(const UNumberFormat* fmt,
  * @see DecimalFormat
  * @stable ICU 2.0
  */
-U_STABLE void U_EXPORT2 
+U_CAPI void U_EXPORT2 
 unum_applyPattern(          UNumberFormat  *format,
                             UBool          localized,
                     const   UChar          *pattern,
@@ -807,7 +955,7 @@ unum_applyPattern(          UNumberFormat  *format,
 * @see unum_countAvailable
 * @stable ICU 2.0
 */
-U_STABLE const char* U_EXPORT2 
+U_CAPI const char* U_EXPORT2 
 unum_getAvailable(int32_t localeIndex);
 
 /**
@@ -819,7 +967,7 @@ unum_getAvailable(int32_t localeIndex);
 * @see unum_getAvailable
 * @stable ICU 2.0
 */
-U_STABLE int32_t U_EXPORT2 
+U_CAPI int32_t U_EXPORT2 
 unum_countAvailable(void);
 
 #if UCONFIG_HAVE_PARSEALLINPUT
@@ -835,6 +983,9 @@ typedef enum UNumberFormatAttributeValue {
   UNUM_YES = 1,
   /** @internal */
   UNUM_MAYBE = 2
+#else
+  /** @internal */
+  UNUM_FORMAT_ATTRIBUTE_VALUE_HIDDEN
 #endif /* U_HIDE_INTERNAL_API */
 } UNumberFormatAttributeValue;
 #endif
@@ -891,7 +1042,7 @@ typedef enum UNumberFormatAttribute {
    * This is an internal ICU API. Do not use.
    * @internal
    */
-  UNUM_PARSE_ALL_INPUT = UNUM_LENIENT_PARSE + 1,
+  UNUM_PARSE_ALL_INPUT = 20,
 #endif
   /** 
     * Scale, which adjusts the position of the
@@ -901,30 +1052,35 @@ typedef enum UNumberFormatAttribute {
     * <p>Example: setting the scale to 3, 123 formats as "123,000"
     * <p>Example: setting the scale to -4, 123 formats as "0.0123"
     *
+    * This setting is analogous to getMultiplierScale() and setMultiplierScale() in decimfmt.h.
+    *
    * @stable ICU 51 */
-  UNUM_SCALE = UNUM_LENIENT_PARSE + 2,
+  UNUM_SCALE = 21,
 
-#ifndef U_HIDE_INTERNAL_API
-  /** Count of "regular" numeric attributes.
-   * @internal */
-  UNUM_NUMERIC_ATTRIBUTE_COUNT = UNUM_LENIENT_PARSE + 3,
-#endif  /* U_HIDE_INTERNAL_API */
+  /**
+   * Minimum grouping digits; most commonly set to 2 to print "1000" instead of "1,000".
+   * See DecimalFormat::getMinimumGroupingDigits().
+   *
+   * For better control over grouping strategies, use UNumberFormatter.
+   *
+   * @stable ICU 64
+   */
+  UNUM_MINIMUM_GROUPING_DIGITS = 22,
 
-#ifndef U_HIDE_DRAFT_API
   /** 
    * if this attribute is set to 0, it is set to UNUM_CURRENCY_STANDARD purpose,
    * otherwise it is UNUM_CURRENCY_CASH purpose
    * Default: 0 (UNUM_CURRENCY_STANDARD purpose)
-   * @draft ICU 54
+   * @stable ICU 54
    */
-  UNUM_CURRENCY_USAGE = UNUM_LENIENT_PARSE + 4,
-#endif  /* U_HIDE_DRAFT_API */
+  UNUM_CURRENCY_USAGE = 23,
 
-  /* The following cannot be #ifndef U_HIDE_INTERNAL_API, needed in .h file variable declararions */
+#ifndef U_HIDE_INTERNAL_API
   /** One below the first bitfield-boolean item.
    * All items after this one are stored in boolean form.
    * @internal */
   UNUM_MAX_NONBOOLEAN_ATTRIBUTE = 0x0FFF,
+#endif /* U_HIDE_INTERNAL_API */
 
   /** If 1, specifies that if setting the "max integer digits" attribute would truncate a value, set an error status rather than silently truncating.
    * For example,  formatting the value 1234 with 4 max int digits would succeed, but formatting 12345 would fail. There is no effect on parsing.
@@ -938,24 +1094,41 @@ typedef enum UNumberFormatAttribute {
    * Default: 0 (unset)
    * @stable ICU 50
    */
-  UNUM_PARSE_NO_EXPONENT,
+  UNUM_PARSE_NO_EXPONENT = 0x1001,
 
-#ifndef U_HIDE_DRAFT_API
   /** 
    * if this attribute is set to 1, specifies that, if the pattern contains a 
    * decimal mark the input is required to have one. If this attribute is set to 0,
    * specifies that input does not have to contain a decimal mark.
    * Has no effect on formatting.
    * Default: 0 (unset)
-   * @draft ICU 54
+   * @stable ICU 54
    */
-  UNUM_PARSE_DECIMAL_MARK_REQUIRED = UNUM_PARSE_NO_EXPONENT+1,
-#endif  /* U_HIDE_DRAFT_API */
+  UNUM_PARSE_DECIMAL_MARK_REQUIRED = 0x1002,
 
-  /* The following cannot be #ifndef U_HIDE_INTERNAL_API, needed in .h file variable declararions */
-  /** Limit of boolean attributes.
+  /**
+   * Parsing: if set to 1, parsing is sensitive to case (lowercase/uppercase).
+   *
+   * @stable ICU 64
+   */
+  UNUM_PARSE_CASE_SENSITIVE = 0x1003,
+
+  /**
+   * Formatting: if set to 1, whether to show the plus sign on non-negative numbers.
+   *
+   * For better control over sign display, use UNumberFormatter.
+   *
+   * @stable ICU 64
+   */
+  UNUM_SIGN_ALWAYS_SHOWN = 0x1004,
+
+#ifndef U_HIDE_INTERNAL_API
+  /** Limit of boolean attributes. (value should
+   * not depend on U_HIDE conditionals)
    * @internal */
-  UNUM_LIMIT_BOOLEAN_ATTRIBUTE = UNUM_PARSE_NO_EXPONENT+2
+  UNUM_LIMIT_BOOLEAN_ATTRIBUTE = 0x1005,
+#endif /* U_HIDE_INTERNAL_API */
+
 } UNumberFormatAttribute;
 
 /**
@@ -966,7 +1139,7 @@ typedef enum UNumberFormatAttribute {
 * UNUM_DECIMAL_ALWAYS_SHOWN, UNUM_MAX_INTEGER_DIGITS, UNUM_MIN_INTEGER_DIGITS, UNUM_INTEGER_DIGITS,
 * UNUM_MAX_FRACTION_DIGITS, UNUM_MIN_FRACTION_DIGITS, UNUM_FRACTION_DIGITS, UNUM_MULTIPLIER,
 * UNUM_GROUPING_SIZE, UNUM_ROUNDING_MODE, UNUM_FORMAT_WIDTH, UNUM_PADDING_POSITION, UNUM_SECONDARY_GROUPING_SIZE,
-* UNUM_SCALE.
+* UNUM_SCALE, UNUM_MINIMUM_GROUPING_DIGITS.
 * @return The value of attr.
 * @see unum_setAttribute
 * @see unum_getDoubleAttribute
@@ -975,7 +1148,7 @@ typedef enum UNumberFormatAttribute {
 * @see unum_setTextAttribute
 * @stable ICU 2.0
 */
-U_STABLE int32_t U_EXPORT2 
+U_CAPI int32_t U_EXPORT2 
 unum_getAttribute(const UNumberFormat*          fmt,
           UNumberFormatAttribute  attr);
 
@@ -989,7 +1162,7 @@ unum_getAttribute(const UNumberFormat*          fmt,
 * UNUM_DECIMAL_ALWAYS_SHOWN, UNUM_MAX_INTEGER_DIGITS, UNUM_MIN_INTEGER_DIGITS, UNUM_INTEGER_DIGITS,
 * UNUM_MAX_FRACTION_DIGITS, UNUM_MIN_FRACTION_DIGITS, UNUM_FRACTION_DIGITS, UNUM_MULTIPLIER,
 * UNUM_GROUPING_SIZE, UNUM_ROUNDING_MODE, UNUM_FORMAT_WIDTH, UNUM_PADDING_POSITION, UNUM_SECONDARY_GROUPING_SIZE,
-* UNUM_LENIENT_PARSE, or UNUM_SCALE.
+* UNUM_LENIENT_PARSE, UNUM_SCALE, UNUM_MINIMUM_GROUPING_DIGITS.
 * @param newValue The new value of attr.
 * @see unum_getAttribute
 * @see unum_getDoubleAttribute
@@ -998,7 +1171,7 @@ unum_getAttribute(const UNumberFormat*          fmt,
 * @see unum_setTextAttribute
 * @stable ICU 2.0
 */
-U_STABLE void U_EXPORT2 
+U_CAPI void U_EXPORT2 
 unum_setAttribute(    UNumberFormat*          fmt,
             UNumberFormatAttribute  attr,
             int32_t                 newValue);
@@ -1018,7 +1191,7 @@ unum_setAttribute(    UNumberFormat*          fmt,
 * @see unum_setTextAttribute
 * @stable ICU 2.0
 */
-U_STABLE double U_EXPORT2 
+U_CAPI double U_EXPORT2 
 unum_getDoubleAttribute(const UNumberFormat*          fmt,
           UNumberFormatAttribute  attr);
 
@@ -1036,7 +1209,7 @@ unum_getDoubleAttribute(const UNumberFormat*          fmt,
 * @see unum_setTextAttribute
 * @stable ICU 2.0
 */
-U_STABLE void U_EXPORT2 
+U_CAPI void U_EXPORT2 
 unum_setDoubleAttribute(    UNumberFormat*          fmt,
             UNumberFormatAttribute  attr,
             double                 newValue);
@@ -1093,7 +1266,7 @@ typedef enum UNumberFormatTextAttribute {
 * @see unum_setAttribute
 * @stable ICU 2.0
 */
-U_STABLE int32_t U_EXPORT2 
+U_CAPI int32_t U_EXPORT2 
 unum_getTextAttribute(    const    UNumberFormat*                    fmt,
             UNumberFormatTextAttribute      tag,
             UChar*                            result,
@@ -1116,7 +1289,7 @@ unum_getTextAttribute(    const    UNumberFormat*                    fmt,
 * @see unum_setAttribute
 * @stable ICU 2.0
 */
-U_STABLE void U_EXPORT2 
+U_CAPI void U_EXPORT2 
 unum_setTextAttribute(    UNumberFormat*                    fmt,
             UNumberFormatTextAttribute      tag,
             const    UChar*                            newValue,
@@ -1127,8 +1300,8 @@ unum_setTextAttribute(    UNumberFormat*                    fmt,
  * Extract the pattern from a UNumberFormat.  The pattern will follow
  * the DecimalFormat pattern syntax.
  * @param fmt The formatter to query.
- * @param isPatternLocalized TRUE if the pattern should be localized,
- * FALSE otherwise.  This is ignored if the formatter is a rule-based
+ * @param isPatternLocalized true if the pattern should be localized,
+ * false otherwise.  This is ignored if the formatter is a rule-based
  * formatter.
  * @param result A pointer to a buffer to receive the pattern.
  * @param resultLength The maximum size of result.
@@ -1139,7 +1312,7 @@ unum_setTextAttribute(    UNumberFormat*                    fmt,
  * @see DecimalFormat
  * @stable ICU 2.0
  */
-U_STABLE int32_t U_EXPORT2 
+U_CAPI int32_t U_EXPORT2 
 unum_toPattern(    const    UNumberFormat*          fmt,
         UBool                  isPatternLocalized,
         UChar*                  result,
@@ -1228,15 +1401,18 @@ typedef enum UNumberFormatSymbol {
    */
   UNUM_NINE_DIGIT_SYMBOL = 26,
 
-#ifndef U_HIDE_DRAFT_API
   /** Multiplication sign
-   * @draft ICU 54
+   * @stable ICU 54
    */
   UNUM_EXPONENT_MULTIPLICATION_SYMBOL = 27,
-#endif  /* U_HIDE_DRAFT_API */
 
-  /** count symbol constants */
+#ifndef U_HIDE_DEPRECATED_API
+    /**
+     * One more than the highest normal UNumberFormatSymbol value.
+     * @deprecated ICU 58 The numeric value may change over time, see ICU ticket #12420.
+     */
   UNUM_FORMAT_SYMBOL_COUNT = 28
+#endif  /* U_HIDE_DEPRECATED_API */
 } UNumberFormatSymbol;
 
 /**
@@ -1255,7 +1431,7 @@ typedef enum UNumberFormatSymbol {
 * @see unum_setSymbol
 * @stable ICU 2.0
 */
-U_STABLE int32_t U_EXPORT2
+U_CAPI int32_t U_EXPORT2
 unum_getSymbol(const UNumberFormat *fmt,
                UNumberFormatSymbol symbol,
                UChar *buffer,
@@ -1275,7 +1451,7 @@ unum_getSymbol(const UNumberFormat *fmt,
 * @see unum_getSymbol
 * @stable ICU 2.0
 */
-U_STABLE void U_EXPORT2
+U_CAPI void U_EXPORT2
 unum_setSymbol(UNumberFormat *fmt,
                UNumberFormatSymbol symbol,
                const UChar *value,
@@ -1292,21 +1468,20 @@ unum_setSymbol(UNumberFormat *fmt,
  * @return the locale name
  * @stable ICU 2.8
  */
-U_STABLE const char* U_EXPORT2
+U_CAPI const char* U_EXPORT2
 unum_getLocaleByType(const UNumberFormat *fmt,
                      ULocDataLocaleType type,
                      UErrorCode* status); 
 
-#ifndef U_HIDE_DRAFT_API
 /**
  * Set a particular UDisplayContext value in the formatter, such as
  * UDISPCTX_CAPITALIZATION_FOR_STANDALONE.
  * @param fmt The formatter for which to set a UDisplayContext value.
  * @param value The UDisplayContext value to set.
  * @param status A pointer to an UErrorCode to receive any errors
- * @draft ICU 53
+ * @stable ICU 53
  */
-U_DRAFT void U_EXPORT2
+U_CAPI void U_EXPORT2
 unum_setContext(UNumberFormat* fmt, UDisplayContext value, UErrorCode* status);
 
 /**
@@ -1316,12 +1491,10 @@ unum_setContext(UNumberFormat* fmt, UDisplayContext value, UErrorCode* status);
  * @param type The UDisplayContextType whose value to return
  * @param status A pointer to an UErrorCode to receive any errors
  * @return The UDisplayContextValue for the specified type.
- * @draft ICU 53
+ * @stable ICU 53
  */
-U_DRAFT UDisplayContext U_EXPORT2
+U_CAPI UDisplayContext U_EXPORT2
 unum_getContext(const UNumberFormat *fmt, UDisplayContextType type, UErrorCode* status);
-
-#endif  /* U_HIDE_DRAFT_API */
 
 #endif /* #if !UCONFIG_NO_FORMATTING */
 

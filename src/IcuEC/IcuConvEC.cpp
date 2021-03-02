@@ -86,7 +86,7 @@ namespace IcuConvEC
     // RETURN VALUE
     //    pointer to a dynamically allocated UTF-8 character string
     //
-    char * UniStr_to_CharStar(UnicodeString uniStr, int & len)
+    char * UniStr_to_CharStar(icu::UnicodeString uniStr, int & len)
     {
         // "preflight" to get size
         len = uniStr.extract(0, uniStr.length(), (char *)NULL);
@@ -106,7 +106,7 @@ namespace IcuConvEC
     // RETURN VALUE
     //    pointer to a dynamically allocated UTF-8 character string
     //
-    char * UniStr_to_CharStar(UnicodeString uniStr)
+    char * UniStr_to_CharStar(icu::UnicodeString uniStr)
     {
         int len;
         return UniStr_to_CharStar(uniStr, len);
@@ -376,7 +376,7 @@ namespace IcuConvEC
 #ifdef VERBOSE_DEBUGGING
         fprintf(stderr, "IcuConvEC::GetDisplayName() => \"%s\" END\n", buffer);
 #endif
-        UnicodeString strDisplayName(buffer, length);
+		icu::UnicodeString strDisplayName(buffer, length);
         const char * name = UniStr_to_CharStar(strDisplayName);
         if (conv != m_pConverter)
             ucnv_close(conv);

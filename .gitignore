@@ -20,7 +20,7 @@ x86/
 bld/
 [Bb]in/
 # there's a 'bin' sub-folder in DistFiles that we need to include
-!DistFiles/windows/icu/bin/
+!DistFiles/windows/**/*
 [Oo]bj/
 [Ll]og/
 /[Oo]utput/
