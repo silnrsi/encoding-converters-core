@@ -218,6 +218,11 @@ namespace TestEncCnvtrs
 				m_encConverters.Remove("UnitTesting-From-CP_1252");
 			if (m_encConverters.ContainsKey("UnitTesting-To-CP_1252"))
 				m_encConverters.Remove("UnitTesting-To-CP_1252");
+
+			if (m_encConverters.ContainsKey("UnitTesting-ThaiWordBreaker"))
+				m_encConverters.Remove("UnitTesting-ThaiWordBreaker");
+			if (m_encConverters.ContainsKey("UnitTesting-AiKbConverter"))
+				m_encConverters.Remove("UnitTesting-AiKbConverter");
 		}
 
 		/// --------------------------------------------------------------------
@@ -444,7 +449,6 @@ namespace TestEncCnvtrs
 			Assert.AreEqual(countOrig, countAfter, "Should have the original number of converters now.");
 		}
 
-
 		[Test]
 		public void TestIcuBreakIteratorConverter()
         {
@@ -459,6 +463,26 @@ namespace TestEncCnvtrs
 
 			var strOutput = theEc.Convert(m_thaiInput);
 			Assert.AreEqual(strOutput, m_thaiOutput);
+		}
+
+		[Test]
+		public void TestAdaptItKnowledgebaseConverter()
+		{
+			const string cstrFriendlyName = "UnitTesting-AiKbConverter";
+			var theEcs = DirectableEncConverter.EncConverters;
+
+			var dir = GetTestSourceFolder();
+			var pathToAiKbFile = Path.Combine(Path.Combine(dir, "Hindi to English adaptations"), "Hindi to English adaptations.xml");
+
+			theEcs.AddConversionMap(cstrFriendlyName, pathToAiKbFile, ConvType.Unicode_to_from_Unicode,
+						EncConverters.strTypeSILadaptit, "UNICODE", "UNICODE",
+						ProcessTypeFlags.DontKnow);
+			var theEc = theEcs[cstrFriendlyName];
+			string m_hindiInput = "यह परीक्षा है";
+			string m_englishOutput = "%3%this%she%he% %2%examination%test% %2%PRES%is%";
+
+			var strOutput = theEc.Convert(m_hindiInput);
+			Assert.AreEqual(strOutput, m_englishOutput);
 		}
 
 		byte[] m_bytesSenufo = new byte[] {
@@ -793,6 +817,11 @@ namespace TestEncCnvtrs
 				"\u00E0\u00E1\u00E2\u00E3\u00E4\u00E5\u00E6\u00E7\u00E8\u00E9\u00EA\u00EB\u00EC\u00ED\u00EE\u00EF" +
 				"\u00F0\u00F1\u00F2\u00F3\u00F4\u00F5\u00F6\u00F7\u00F8\u00F9\u00FA\u00FB\u00FC\u00FD\u00FE\u00FF";
 
+		/// <summary>
+		/// If this test fails the first time you run it, just run it again by itself. We're swapping environment
+		/// variables in the init for this test class and if these tests run in parallel, it might skew the results.
+		/// Usually, it runs fine by itself
+		/// </summary>
 		[Test]
 		public void TestPyScriptEncConverters()
 		{
