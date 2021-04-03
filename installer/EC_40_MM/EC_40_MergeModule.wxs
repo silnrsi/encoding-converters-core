@@ -522,54 +522,54 @@
 					</Component>
 					<Directory Id="Help" Name="Help">
 						<Component Id="CPHelp" Guid="58fac2f3-e469-4e62-a5a1-970647ebe5fc">
-							<File Id="CPHelp" Name="Code Page Converter Plug-in About box.mht" ReadOnly="yes" KeyPath="yes" Source="..\..\output\Win32\release\Help\Code Page Converter Plug-in About box.mht"/>
+							<File Id="CPHelp" Name="Code Page Converter Plug-in About box.mht" ReadOnly="yes" KeyPath="yes" Source="..\..\redist\Help\Code Page Converter Plug-in About box.mht"/>
 						</Component>
 						<Component Id="CmpdHelp" Guid="a2557ea3-3ec1-41aa-8a06-af9fccfd07da">
-							<File Id="CmpdHelp" Name="Compound Converter Plug-in About box.mht" ReadOnly="yes" KeyPath="yes" Source="..\..\output\Win32\release\Help\Compound Converter Plug-in About box.mht"/>
+							<File Id="CmpdHelp" Name="Compound Converter Plug-in About box.mht" ReadOnly="yes" KeyPath="yes" Source="..\..\redist\Help\Compound Converter Plug-in About box.mht"/>
 						</Component>
 						<Component Id="FallBackHelp" Guid="cd14321a-d6c0-44aa-b59d-773e9b060d34">
-							<File Id="FallBackHelp" Name="Fallback Converter Plug-in About box.mht" ReadOnly="yes" KeyPath="yes" Source="..\..\output\Win32\release\Help\Fallback Converter Plug-in About box.mht"/>
+							<File Id="FallBackHelp" Name="Fallback Converter Plug-in About box.mht" ReadOnly="yes" KeyPath="yes" Source="..\..\redist\Help\Fallback Converter Plug-in About box.mht"/>
 						</Component>
 						<Component Id="TECkitHelp" Guid="292dcfa4-3602-4861-ae01-6b4875707dec">
-							<File Id="TECkitHelp" Name="TECkit Map Plug-in About box.mht" ReadOnly="yes" KeyPath="yes" Source="..\..\output\Win32\release\Help\TECkit Map Plug-in About box.mht"/>
+							<File Id="TECkitHelp" Name="TECkit Map Plug-in About box.mht" ReadOnly="yes" KeyPath="yes" Source="..\..\redist\Help\TECkit Map Plug-in About box.mht"/>
 						</Component>
 						<Component Id="CantReadMhtFiles.htm" Guid="{F3B39444-A2B0-40D8-8863-8FE1E8194FF4}">
-							<File Id="CantReadMhtFiles.htm" Name="CantReadMhtFiles.htm" ReadOnly="yes" KeyPath="yes" Source="..\..\output\Win32\release\Help\CantReadMhtFiles.htm"/>
+							<File Id="CantReadMhtFiles.htm" Name="CantReadMhtFiles.htm" ReadOnly="yes" KeyPath="yes" Source="..\..\redist\Help\CantReadMhtFiles.htm"/>
 						</Component>
 						<Component Id="IcuRegex" Guid="{786CA242-4204-46B7-86D5-93ED456710B5}">
-							<File Id="IcuRegex" Name="ICU Regular Expression Plug-in About box.mht" ReadOnly="yes" KeyPath="yes" Source="..\..\output\Win32\release\Help\ICU Regular Expression Plug-in About box.mht"/>
+							<File Id="IcuRegex" Name="ICU Regular Expression Plug-in About box.mht" ReadOnly="yes" KeyPath="yes" Source="..\..\redist\Help\ICU Regular Expression Plug-in About box.mht"/>
 						</Component>
 						<Component Id="IcuTranslit" Guid="{024219A1-29EB-4D20-BB9A-DB9E3C3F1743}">
-							<File Id="IcuTranslit" Name="ICU Transliterators Plug-in About box.mht" ReadOnly="yes" KeyPath="yes" Source="..\..\output\Win32\release\Help\ICU Transliterators Plug-in About box.mht"/>
+							<File Id="IcuTranslit" Name="ICU Transliterators Plug-in About box.mht" ReadOnly="yes" KeyPath="yes" Source="..\..\redist\Help\ICU Transliterators Plug-in About box.mht"/>
 						</Component>
 						<Component Id="IcuBreakIterator" Guid="{967FA710-83C4-45B2-8265-68001A9D661B}">
-							<File Id="IcuBreakIterator" Name="ICU Boundary Analysis-Break Iterator Converter About box.mht" ReadOnly="yes" KeyPath="yes" Source="..\..\output\x64\release\Help\ICU Boundary Analysis-Break Iterator Converter About box.mht"/>
+							<File Id="IcuBreakIterator" Name="ICU Boundary Analysis-Break Iterator Converter About box.mht" ReadOnly="yes" KeyPath="yes" Source="..\..\redist\Help\ICU Boundary Analysis-Break Iterator Converter About box.mht"/>
 						</Component>
 						<Component Id="ICU_Converters_Plugin_About_box.htm" Guid="{963A2D88-6CFE-4C91-8830-CD6F8A3872E8}">
 							<!-- The following File ID has been truncated to suppress ICE03 string overflow in the shortcut that uses it -->
-							<File Id="ICU_Converters_About" Name="ICU Converters Plug-in About box.htm" ReadOnly="yes" KeyPath="yes" Source="..\..\output\Win32\release\Help\ICU Converters Plug-in About box.htm"/>
+							<File Id="ICU_Converters_About" Name="ICU Converters Plug-in About box.htm" ReadOnly="yes" KeyPath="yes" Source="..\..\redist\Help\ICU Converters Plug-in About box.htm"/>
 						</Component>
 						<Directory Id="ICUConvPlug" Name="ICU Converters Plug-in About box_files">
 							<Component Id="image008.jpg" Guid="{C3970194-5CAF-44A9-B59E-F7AD6CF3F84D}">
-								<File Id="image008.jpg" Name="image008.jpg" ReadOnly="yes" KeyPath="yes" Source="..\..\output\Win32\release\Help\ICU Converters Plug-in About box_files\image008.jpg"/>
+								<File Id="image008.jpg" Name="image008.jpg" ReadOnly="yes" KeyPath="yes" Source="..\..\redist\Help\ICU Converters Plug-in About box_files\image008.jpg"/>
 							</Component>
 							<Component Id="image001.png" Guid="{F166A049-8724-4EA5-80F0-12B55A48F4BF}">
-								<File Id="image001.png" Name="image001.png" ReadOnly="yes" KeyPath="yes" Source="..\..\output\Win32\release\Help\ICU Converters Plug-in About box_files\image001.png"/>
+								<File Id="image001.png" Name="image001.png" ReadOnly="yes" KeyPath="yes" Source="..\..\redist\Help\ICU Converters Plug-in About box_files\image001.png"/>
 							</Component>
 							<Component Id="image003.png" Guid="{C2DA1740-EDCF-49E2-8E62-C07AB42C476B}">
-								<File Id="image003.png" Name="image003.png" ReadOnly="yes" KeyPath="yes" Source="..\..\output\Win32\release\Help\ICU Converters Plug-in About box_files\image003.png"/>
+								<File Id="image003.png" Name="image003.png" ReadOnly="yes" KeyPath="yes" Source="..\..\redist\Help\ICU Converters Plug-in About box_files\image003.png"/>
 							</Component>
 							<Component Id="image007.png" Guid="{1C4C6530-7E4F-411E-BF80-F3AC653219A6}">
-								<File Id="image007.png" Name="image007.png" ReadOnly="yes" KeyPath="yes" Source="..\..\output\Win32\release\Help\ICU Converters Plug-in About box_files\image007.png"/>
+								<File Id="image007.png" Name="image007.png" ReadOnly="yes" KeyPath="yes" Source="..\..\redist\Help\ICU Converters Plug-in About box_files\image007.png"/>
 							</Component>
 							<Component Id="image002.jpg" Guid="{448BEBF5-5EE0-4474-B92C-CD3B3B22442F}">
-								<File Id="image002.jpg" Name="image002.jpg" ReadOnly="yes" KeyPath="yes" Source="..\..\output\Win32\release\Help\ICU Converters Plug-in About box_files\image002.jpg"/>
+								<File Id="image002.jpg" Name="image002.jpg" ReadOnly="yes" KeyPath="yes" Source="..\..\redist\Help\ICU Converters Plug-in About box_files\image002.jpg"/>
 							</Component>
 							<Component Id="image004.jpg" Guid="{DFF6B368-EF7B-405E-BC57-F25CA8D3B821}">
-								<File Id="image004.jpg" Name="image004.jpg" ReadOnly="yes" KeyPath="yes" Source="..\..\output\Win32\release\Help\ICU Converters Plug-in About box_files\image004.jpg"/>
+								<File Id="image004.jpg" Name="image004.jpg" ReadOnly="yes" KeyPath="yes" Source="..\..\redist\Help\ICU Converters Plug-in About box_files\image004.jpg"/>
 							</Component>
 							<Component Id="filelist.xml" Guid="{E6812F05-9BD4-4DBF-BD33-86E99A7B1A5E}">
-								<File Id="filelist.xml" Name="filelist.xml" ReadOnly="yes" KeyPath="yes" Source="..\..\output\Win32\release\Help\ICU Converters Plug-in About box_files\filelist.xml"/>
+								<File Id="filelist.xml" Name="filelist.xml" ReadOnly="yes" KeyPath="yes" Source="..\..\redist\Help\ICU Converters Plug-in About box_files\filelist.xml"/>
 							</Component>
 						</Directory>
 					</Directory>
