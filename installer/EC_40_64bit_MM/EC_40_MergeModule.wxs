@@ -15,10 +15,12 @@
 
 			<Directory Id="MergeRedirectFolder">
 				<Component Id="IcuEC.dll" Guid="{4DDD39C7-DE34-416B-9B3A-3766E8BC9954}">
-					<File Id="IcuEC.dll" Name="IcuEC.dll" Vital="yes" KeyPath="yes" AssemblyManifest="IcuEC.dll" AssemblyApplication="IcuEC.dll" Assembly=".net" Source="..\..\output\x64\release\IcuEC.dll"/>
+					<File Id="IcuEC.dll" Name="IcuEC.dll" Vital="yes" KeyPath="yes" AssemblyManifest="IcuEC.dll" AssemblyApplication="IcuEC.dll" Assembly=".net"
+						  Source="..\..\output\x64\release\IcuEC.dll"/>
 				</Component>
 				<Component Id="ICU4NET.dll" Guid="{215473A3-0D01-46A2-89DB-BF1FA9DC3D8B}">
-					<File Id="ICU4NET.dll" Name="ICU4NET.dll" Vital="yes" KeyPath="yes" AssemblyManifest="ICU4NET.dll" AssemblyApplication="ICU4NET.dll" Assembly=".net" Source="..\..\output\Win32\release\ICU4NET.dll"/>
+					<File Id="ICU4NET.dll" Name="ICU4NET.dll" Vital="yes" KeyPath="yes" AssemblyManifest="ICU4NET.dll" AssemblyApplication="ICU4NET.dll" Assembly=".net"
+						  Source="..\..\output\x64\release\ICU4NET.dll"/>
 				</Component>
 				<Component Id="IcuConvEC.dll" Guid="{20990390-30F4-4A3F-B016-1BC64551E890}">
 					<File Id="IcuConvEC.dll" Name="IcuConvEC.dll" Vital="yes" KeyPath="yes" Source="..\..\output\x64\release\IcuConvEC.dll"/>
@@ -540,6 +542,9 @@
 						<Component Id="IcuTranslit" Guid="{E863CC65-432C-4567-B402-BCB70D81A565}">
 							<File Id="IcuTranslit" Name="ICU Transliterators Plug-in About box.mht" ReadOnly="yes" KeyPath="yes" Source="..\..\output\x64\release\Help\ICU Transliterators Plug-in About box.mht"/>
 						</Component>
+						<Component Id="IcuBreakIterator" Guid="{D382D337-EB0C-44FD-9FFE-9D14F3263451}">
+							<File Id="IcuBreakIterator" Name="ICU Boundary Analysis-Break Iterator Converter About box.mht" ReadOnly="yes" KeyPath="yes" Source="..\..\output\x64\release\Help\ICU Boundary Analysis-Break Iterator Converter About box.mht"/>
+						</Component>
 						<Component Id="ICU_Converters_Plugin_About_box.htm" Guid="{286A6417-34B7-4A87-B50A-64E24E5FCB91}">
 							<!-- The following File ID has been truncated to suppress ICE03 string overflow in the shortcut that uses it -->
 							<File Id="ICU_Converters_About" Name="ICU Converters Plug-in About box.htm" ReadOnly="yes" KeyPath="yes" Source="..\..\output\x64\release\Help\ICU Converters Plug-in About box.htm"/>
@@ -569,6 +574,11 @@
 						</Directory>
 
 					</Directory>
+					<Component Id="RemoveFile_MoveEcData_Log" Guid="{975EED8B-E878-4C03-A015-42C0ACAFF16C}">
+					  <RemoveFile Id="RemoveFile3" Directory="EcSIL" Name="MoveEcData.log" On="uninstall" />
+					  <!-- The next 2 items are junk to make validation pass on ICE18 and ICE64. -->
+					  <RemoveFolder Id="DelSilFolder" On="uninstall" />
+					</Component>
 				</Directory>
 			</Directory>
 

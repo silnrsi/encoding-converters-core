@@ -24,7 +24,8 @@
 	<ECPluginDetails ImplementationName="ICU.BreakIterator"
 		ImplementationProgId="SilEncConverters40.IcuBreakIteratorEncConverter"
 		Priority="1"
-		DefiningProcessType="1024"
+		DefiningProcessType="0"
 		DisplayName="ICU Boundary Analysis/Break Iterator"
+		ConfiguratorProgId="SilEncConverters40.IcuBreakIteratorConfig"
 		AssemblyReference="IcuEC, Version=4.0.0.0, Culture=neutral, PublicKeyToken=null" />
 </EncConverterPlugins>

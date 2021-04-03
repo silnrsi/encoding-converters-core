@@ -22,7 +22,9 @@ namespace SilEncConverters40
 
         public const string CstrImplementationType = "ICU.BreakIterator";
         public const string CstrDisplayName = "ICU Boundary Analysis/Break Iterator";
-        public const string CstrHtmlFilename = "ICU Boundary Analysis/Break Iterator Converter Plug-in About box.mht";
+        public const string CstrHtmlFilename = "ICU Boundary Analysis-Break Iterator Converter About box.mht";
+
+		public const string DefaultSeparator = " ";
 
         private bool _bForward;
         private BreakIterator _breakIterator;
@@ -35,7 +37,7 @@ namespace SilEncConverters40
             int nType = 0;
             string dontknow = null;
             var convType = ConvType.Unicode_to_from_Unicode;
-            Initialize(null, " ", ref dontknow, ref dontknow, ref convType, ref nType, 0, 0, false);
+            Initialize(CstrDisplayName, DefaultSeparator, ref dontknow, ref dontknow, ref convType, ref nType, 0, 0, false);
         }
         #endregion Initialization
 
@@ -45,11 +47,7 @@ namespace SilEncConverters40
         {
             get
             {
-#if TODO
-                return typeof(TechHindiSiteConfig).AssemblyQualifiedName;
-#else
-                return null;
-#endif
+                return typeof(IcuBreakIteratorConfig).AssemblyQualifiedName;
             }
         }
 
@@ -64,7 +62,6 @@ namespace SilEncConverters40
         }
 
         private Regex _regexForMandarin = new Regex("[3200-D7AF]");
-        private char[] _achSpace = new char[] {' '};
 
         protected override unsafe void DoConvert(byte* lpInBuffer, int nInLen, byte* lpOutBuffer, ref int rnOutLen)
         {
@@ -83,7 +80,7 @@ namespace SilEncConverters40
             string strOutput = null;
             if (_bForward)
             {
-                var bySpace = strInput.Split(_achSpace, StringSplitOptions.RemoveEmptyEntries);
+                var bySpace = strInput.Split(DefaultSeparator.ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
                 _breakIterator.SetText(strInput);
                 var words = _breakIterator.Enumerate().ToList();
                 if (bySpace.Length == words.Count)
