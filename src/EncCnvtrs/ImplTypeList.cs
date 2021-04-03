@@ -17,15 +17,13 @@ namespace SilEncConverters40
 		private System.Windows.Forms.Button buttonAdd;
         private HelpProvider helpProvider;
         private TableLayoutPanel tableLayoutPanel;
-		/// <summary>
-		/// Dialog box with a list of available 'self-configuring' IEncConverter implementation types
-		/// </summary>
-		private System.ComponentModel.Container components = null;
+		private ToolTip toolTip;
+		private IContainer components;
 
-        // it would perhaps be more useful to have this class itself determine the list, but that would
-        //  require iterating thru the registry again and since we already do that elsewhere, ...
-        // (okay, I'm trying to save 3mS)
-		public ImplTypeList(ICollection aDisplayNames)
+		// it would perhaps be more useful to have this class itself determine the list, but that would
+		//  require iterating thru the registry again and since we already do that elsewhere, ...
+		// (okay, I'm trying to save 3mS)
+		public ImplTypeList(ICollection aDisplayNames, string pathToPlugins)
 		{
 			//
 			// Required for Windows Form Designer support
@@ -40,6 +38,8 @@ namespace SilEncConverters40
 
             // disable the add button (until an implementation type is selected)
             this.buttonAdd.Enabled = false;
+
+			toolTip.SetToolTip(this.labelStatic, $"Using plug-ins from the folder: '{pathToPlugins}'");
 		}
 
 		/// <summary>
@@ -64,6 +64,7 @@ namespace SilEncConverters40
 		/// </summary>
 		private void InitializeComponent()
 		{
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ImplTypeList));
             this.listBoxImplTypes = new System.Windows.Forms.ListBox();
             this.labelStatic = new System.Windows.Forms.Label();
@@ -71,17 +72,18 @@ namespace SilEncConverters40
             this.buttonCancel = new System.Windows.Forms.Button();
             this.helpProvider = new System.Windows.Forms.HelpProvider();
             this.tableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
+            this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.tableLayoutPanel.SuspendLayout();
             this.SuspendLayout();
             // 
             // listBoxImplTypes
             // 
-            this.listBoxImplTypes.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.listBoxImplTypes.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tableLayoutPanel.SetColumnSpan(this.listBoxImplTypes, 2);
             this.helpProvider.SetHelpString(this.listBoxImplTypes, "This list displays all of the available transduction engine types currently insta" +
-                    "lled");
+        "lled");
             this.listBoxImplTypes.Location = new System.Drawing.Point(3, 26);
             this.listBoxImplTypes.Name = "listBoxImplTypes";
             this.helpProvider.SetShowHelp(this.listBoxImplTypes, true);
@@ -104,7 +106,7 @@ namespace SilEncConverters40
             // 
             this.buttonAdd.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.helpProvider.SetHelpString(this.buttonAdd, "Click this button to add an existing map or create a new converter based on the s" +
-                    "elected transduction type");
+        "elected transduction type");
             this.buttonAdd.Location = new System.Drawing.Point(56, 257);
             this.buttonAdd.Name = "buttonAdd";
             this.helpProvider.SetShowHelp(this.buttonAdd, true);
@@ -128,9 +130,9 @@ namespace SilEncConverters40
             // 
             // tableLayoutPanel
             // 
-            this.tableLayoutPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.tableLayoutPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tableLayoutPanel.ColumnCount = 2;
             this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));

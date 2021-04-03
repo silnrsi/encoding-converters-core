@@ -1,9 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using System.IO;
 using ECInterfaces;                     // for IEncConverter
@@ -13,8 +8,8 @@ using ECInterfaces;                     // for IEncConverter
 
 namespace SilEncConverters40
 {
-    //[CLSCompliantAttribute(false)]  // because of GeckoWebBrowser
-    public partial class CcAutoConfigDialog : SilEncConverters40.AutoConfigDialog
+	//[CLSCompliantAttribute(false)]  // because of GeckoWebBrowser
+	public partial class CcAutoConfigDialog : SilEncConverters40.AutoConfigDialog
     {
         public CcAutoConfigDialog
             (

@@ -33,6 +33,18 @@ namespace SilEncConverters40
         protected int m_nRhsReturns;
         protected IEncConverter m_aEC = null;
 
+		private string _testData = "Test Data";
+		public string InitialTestData
+		{
+			get { return _testData; }
+			set
+			{
+				if (ecTextBoxInput != null)
+					ecTextBoxInput.Text = value;
+				_testData = value;
+			}
+		}
+
 		public AutoConfigDialog()
         {
             Util.DebugWriteLine(this, "AutoConfigDialog (1) BEGIN");
@@ -127,7 +139,7 @@ namespace SilEncConverters40
                 throw new ApplicationException(@"Can't read the HLKM\SOFTWARE\SIL\SilEncConverters40\[RootDir] registry key, which should get created during installation.");
 #endif
 
-            ecTextBoxInput.Text = "Test Data";
+            ecTextBoxInput.Text = InitialTestData;
             //char[] chinese = {'\u6B22','\u8FCE','\u4F7F','\u7528','\u0020'};
             //ecTextBoxInput.Text = new string(chinese);
             Util.DebugWriteLine(this, "END");

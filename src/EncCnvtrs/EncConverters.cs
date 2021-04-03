@@ -424,15 +424,17 @@ namespace SilEncConverters40
 
             // read the XML details
             mappingRegistry.platformRow aPlatformRow = file.platform.FindByname(strTypeImplCOM);
-            if (aPlatformRow != null)
-                foreach (mappingRegistry.implementRow aImplRow in aPlatformRow.GetimplementRows())
-                {
-                    mapImplementTypesUse[aImplRow.type] = aImplRow.use;
-                    int priority = ((aImplRow.IspriorityNull()) ? cnDefImplPriority : aImplRow.priority);
-                    m_mapImplementTypesPriority[aImplRow.type] = priority;
-                }
+			if (aPlatformRow != null)
+			{
+				foreach (mappingRegistry.implementRow aImplRow in aPlatformRow.GetimplementRows())
+				{
+					mapImplementTypesUse[aImplRow.type] = aImplRow.use;
+					int priority = ((aImplRow.IspriorityNull()) ? cnDefImplPriority : aImplRow.priority);
+					m_mapImplementTypesPriority[aImplRow.type] = priority;
+				}
+			}
 
-            InsureImplementationsRow(file);
+			InsureImplementationsRow(file);
             mappingRegistry.implementationsRow aImplsRow = file.implementations[0];
 
             // now open and read the information about which plug-ins are installed (based on the
@@ -457,19 +459,17 @@ namespace SilEncConverters40
 
             if (String.IsNullOrEmpty(strPluginXmlFilesFolder))
 #if !PluginsInEachFolder
-            {
-                // Argh...
-                //  in v4.0, we have the assemblies in each our own install folders. But the
-                //  Fieldworks instance can't use the instance of this assembly installed as
-                //  part of SEC, for example. So the whole, "Let's try to use the newer version
-                //  of the assembly installed by the other guy" doesn't work. Therefore, we
-                //  also no longer want to. Each client will put the plugins in a
-                //  <running folder>\EC\Plugins folder
-                Console.WriteLine("EncConverters: Falling back to assembly folder");
-                strPluginXmlFilesFolder = Path.Combine(Path.Combine(GetRunningFolder,
-                                                                    CstrDefPluginFolderEc),
-                                                       CstrDefPluginFolderPlugins);
-            }
+			{
+				// Argh...
+				//  in v4.0, we have the assemblies in each our own install folders. But the
+				//  Fieldworks instance can't use the instance of this assembly installed as
+				//  part of SEC, for example. So the whole, "Let's try to use the newer version
+				//  of the assembly installed by the other guy" doesn't work. Therefore, we
+				//  also no longer want to. Each client will put the plugins in a
+				//  <running folder>\EC\Plugins folder
+				Console.WriteLine("EncConverters: Falling back to assembly folder");
+				strPluginXmlFilesFolder = PlugInFolder;
+			}
 #else
             {
                 strPluginXmlFilesFolder = Util.CommonAppDataPath() + strDefPluginFolder;
@@ -477,7 +477,7 @@ namespace SilEncConverters40
 
             strPluginXmlFilesFolder += strDefPluginFolderVersionPrefix + typeof(IEncConverter).Assembly.GetName().Version.ToString();
 #endif
-            Debug.Assert(Directory.Exists(strPluginXmlFilesFolder), String.Format("Can't find the plug-in folder, '{0}'", strPluginXmlFilesFolder));
+			Debug.Assert(Directory.Exists(strPluginXmlFilesFolder), String.Format("Can't find the plug-in folder, '{0}'", strPluginXmlFilesFolder));
             string[] astrPluginXmlFiles = Directory.GetFiles(strPluginXmlFilesFolder, "*.xml");
             Debug.Assert(astrPluginXmlFiles.Length > 0, String.Format(@"You don't have any plug-ins installed (e.g. {0}\SilEncConverters40 Plugin Details.xml)", strPluginXmlFilesFolder));
 
@@ -573,8 +573,10 @@ namespace SilEncConverters40
                         {
                             strProgId = (string)m_mapImplTypeToProgId[strImplementationType];
 
-                            // see if one or the other has a higher priority.
-                            Debug.Assert(m_mapImplementTypesPriority.ContainsKey(strImplementationType));
+							// see if one or the other has a higher priority. (it might not be in there yet, if we're just building an initial repo)
+							if (!m_mapImplementTypesPriority.ContainsKey(strImplementationType))
+								continue;
+
                             int nNewPriority = aDetailsRow.Priority;
                             int nExistingPriority = (int)m_mapImplementTypesPriority[strImplementationType];
                             if (nNewPriority > nExistingPriority)
@@ -616,7 +618,7 @@ namespace SilEncConverters40
                         // then the converters are keyed either based on the process type or the
                         //  extension (these are used by the "Add" method where the user doesn't
                         //  have to specify the implementation type)
-                        if (!aDetailsRow.IsDefiningProcessTypeNull())
+                        if (!aDetailsRow.IsDefiningProcessTypeNull() && (aDetailsRow.DefiningProcessType != 0))	// but not for "Don't know"
                         {
                             int nProcessType = aDetailsRow.DefiningProcessType;
 
@@ -704,12 +706,25 @@ namespace SilEncConverters40
                 WriteRepositoryFile(file);
         }
 
-        /// <summary>
-        /// Get the folder the executing assembly comes from.  On Windows .Net, Location
-        /// will likely point to a "shadow copy".  We want the original location, so we use
-        /// CodeBase instead (even though the URI must be dealt with).
-        /// </summary>
-        protected static string GetRunningFolder
+		/// <summary>
+		/// Returns the folder we expect to find the plug-ins describing which assemblies the various implementations are in
+		/// </summary>
+		private string PlugInFolder
+		{
+			get
+			{
+				return Path.Combine(Path.Combine(GetRunningFolder,
+												 CstrDefPluginFolderEc),
+									CstrDefPluginFolderPlugins);
+			}
+		}
+
+		/// <summary>
+		/// Get the folder the executing assembly comes from.  On Windows .Net, Location
+		/// will likely point to a "shadow copy".  We want the original location, so we use
+		/// CodeBase instead (even though the URI must be dealt with).
+		/// </summary>
+		protected static string GetRunningFolder
         {
             get
             {
@@ -3075,7 +3090,7 @@ namespace SilEncConverters40
         [Description("Launch a dialog to Configure a converter"), Category("Data")]
         public bool AutoConfigure(ConvType eConversionTypeFilter, ref string strFriendlyName)
         {
-            var dlg = new ImplTypeList(m_mapDisplayNameToProgID.Keys);
+            var dlg = new ImplTypeList(m_mapDisplayNameToProgID.Keys, PlugInFolder);
             if (dlg.ShowDialog() == DialogResult.OK)
             {
                 var strProgId = (string)m_mapDisplayNameToProgID[dlg.SelectedDisplayName];
