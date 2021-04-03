@@ -82,6 +82,7 @@
     <Compile Include="TestEncConverters.cs" />
     <Compile Include="TestIcuTranslit.cs" />
     <Compile Include="TestIcuRegex.cs" />
+    <Compile Include="TestPyScriptEncConverters.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="nunit.framework">

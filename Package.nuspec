@@ -2,7 +2,7 @@
 <package >
 	<metadata>
 		<id>Encoding-Converters-Core</id>
-		<version>0.2.16</version>
+		<version>0.2.23</version>
 		<authors>Bob Eaton, Jim Kornelson, SIL International</authors>
 		<owners>jnaylor, sillsdev</owners>
 		<license type="expression">MIT</license>
@@ -18,15 +18,15 @@
 	</metadata>
 	<files>
 		<file src="ReadMe.md" />
-		<!--these are for when you are building specifically for x86 (not AnyCPU)-->
+		<!--these are for when you are building x86 (but these are AnyCPU, so it'll work for all platforms)-->
 		<file src="output\Win32\Release\ECInterfaces.dll" target="lib\net45\x86"/>
 		<file src="output\Win32\Release\SilEncConverters40.dll" target="lib\net45\x86"/>
-		<!--these are for when you are building specifically for x64 (also not AnyCPU)-->
+		<!--these are for when you are building specifically for x64 (these are not AnyCPU)-->
 		<file src="output\x64\Release\ECInterfaces.dll" target="lib\net45\x64"/>
 		<file src="output\x64\Release\SilEncConverters40.dll" target="lib\net45\x64"/>
 		
 		<!--this props file is needed so that when you consume this nuget package, the build will look in the right place for the x86 vs x64
-			depending on the build configured-->
+			depending on the build configured (this only appears to work for msbuild, which I don't use...)-->
 		<file src="Encoding-Converters-Core.props" target="lib\net45" />
 		<!--these are extra bits that any given application might want to use, but aren't specifically referenced by an EncConverters (managed) client
 			for x86 and then for x64-->

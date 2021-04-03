@@ -27,10 +27,6 @@ namespace TestEncCnvtrs
 		bool m_fSetRegistryValue;
 		string m_repoFile;
 
-		private const string EnvironmentVariableNamePythonHome = "PYTHONHOME";
-		string m_originalPythonHome;
-		string m_testPythonHome;
-
         /// --------------------------------------------------------------------
         /// <summary>
         /// Global initialization, called once before any test in this class
@@ -57,50 +53,6 @@ namespace TestEncCnvtrs
 					// doesn't work on Maverick, but try it anyway...
 					Environment.SetEnvironmentVariable("MONO_REGISTRY_PATH", Util.CommonAppDataPath() + "/registry");
 				}
-			}
-			else
-            {
-				// for Python, we have to use the correct installation (and we need both x86 and x64
-				//  to *be* installed if you want the tests to work in both x86 and x64 configurations)
-				//	I used C:\Python27x86 and C:\Python27x64 for their installation folders respectively,
-				//	the code below should also work if x86 is installed in just the plain c:\Python27 folder too
-				m_originalPythonHome = Environment.GetEnvironmentVariable(EnvironmentVariableNamePythonHome);
-				m_testPythonHome = null;
-
-				if (Environment.Is64BitProcess)
-                {
-					if (!Directory.Exists(@"C:\Python27x64"))						
-					{
-						Assert.Fail("The Python tests below will not work unless you have a x64 version of Python installed");
-					}
-					else 
-                    {
-						m_testPythonHome = @"C:\Python27x64";
-					}
-				}
-				else  // x86
-                {
-					if (!Directory.Exists(@"C:\Python27x86") && !Directory.Exists(@"C:\Python27"))
-					{
-						Assert.Fail("The Python tests below will not work unless you have a x86 version of Python installed");
-					}
-					else if (Directory.Exists(@"C:\Python27x86"))
-					{
-						m_testPythonHome = @"C:\Python27x86";
-					}
-					else if (Directory.Exists(@"C:\Python27"))
-					{
-						m_testPythonHome = @"C:\Python27";
-					}
-				}
-
-				// set the environment variable to the proper installation
-				if (!String.IsNullOrEmpty(m_testPythonHome) && (m_originalPythonHome != m_testPythonHome))
-                {
-					Environment.SetEnvironmentVariable(EnvironmentVariableNamePythonHome, m_testPythonHome);
-				}
-				var path = Environment.GetEnvironmentVariable(EnvironmentVariableNamePythonHome);
-				Assert.True(String.IsNullOrEmpty(m_testPythonHome) || (path == m_testPythonHome));
 			}
 
 			m_repoFile = null;
@@ -165,9 +117,6 @@ namespace TestEncCnvtrs
 		public void CleanupAfterTest()
 		{
 			RemoveAnyAddedConverters();
-
-			// reset the python home env variable back to what it was before testing (if o
-			Environment.SetEnvironmentVariable(EnvironmentVariableNamePythonHome, m_originalPythonHome);
 		}
 
 		/// <summary>
@@ -198,21 +147,6 @@ namespace TestEncCnvtrs
 				m_encConverters.Remove("UnitTesting-Unicode-To-Ann");
 			if (m_encConverters.ContainsKey("UnitTesting-ReverseString"))
 				m_encConverters.Remove("UnitTesting-ReverseString");
-			if (m_encConverters.ContainsKey("UnitTesting-Python-UnicodeNames"))
-				m_encConverters.Remove("UnitTesting-Python-UnicodeNames");
-			if (m_encConverters.ContainsKey("UnitTesting-Python-1252-To-Unicode"))
-				m_encConverters.Remove("UnitTesting-Python-1252-To-Unicode");
-			if (m_encConverters.ContainsKey("UnitTesting-Python-Unicode-To-1252"))
-				m_encConverters.Remove("UnitTesting-Python-Unicode-To-1252");
-
-			if (m_encConverters.ContainsKey("UnitTesting-Python-ReverseString-Unicode"))
-				m_encConverters.Remove("UnitTesting-Python-ReverseString-Unicode");
-			if (m_encConverters.ContainsKey("UnitTesting-Python-ReverseString-Legacy"))
-				m_encConverters.Remove("UnitTesting-Python-ReverseString-Legacy");
-			if (m_encConverters.ContainsKey("UnitTesting-Python-ToLowerCase"))
-				m_encConverters.Remove("UnitTesting-Python-ToLowerCase");
-			if (m_encConverters.ContainsKey("UnitTesting-Python-ToUpperCase"))
-				m_encConverters.Remove("UnitTesting-Python-ToUpperCase");
 
 			if (m_encConverters.ContainsKey("UnitTesting-From-CP_1252"))
 				m_encConverters.Remove("UnitTesting-From-CP_1252");
@@ -454,7 +388,7 @@ namespace TestEncCnvtrs
         {
 			const string cstrFriendlyName = "UnitTesting-ThaiWordBreaker";
 			var theEcs = DirectableEncConverter.EncConverters;
-			theEcs.AddConversionMap(cstrFriendlyName, " ", ConvType.Unicode_to_from_Unicode,
+			theEcs.AddConversionMap(cstrFriendlyName, IcuBreakIteratorEncConverter.DefaultSeparator, ConvType.Unicode_to_from_Unicode,
 						IcuBreakIteratorEncConverter.CstrImplementationType, "UNICODE", "UNICODE",
 						ProcessTypeFlags.DontKnow);
 			var theEc = theEcs[cstrFriendlyName];
@@ -602,7 +536,7 @@ namespace TestEncCnvtrs
 			Assert.AreEqual(countOrig, countAfter, "Should have the original number of converters now.");
 		}
 
-		private static string GetTestSourceFolder()
+		public static string GetTestSourceFolder()
 		{
 			var dir = GetMapsTablesFolder();
 			if (dir != null)
@@ -610,7 +544,7 @@ namespace TestEncCnvtrs
 			return dir;
 		}
 
-		private static string GetMapsTablesFolder()
+		public static string GetMapsTablesFolder()
 		{
 			var dir = GetBaseDir();
 			if (dir != null)
@@ -618,7 +552,7 @@ namespace TestEncCnvtrs
 			return dir;
 		}
 
-		private static string GetBaseDir()
+		public static string GetBaseDir()
 		{
 			var codeBase = Assembly.GetExecutingAssembly().CodeBase;
 			string filepath;
@@ -790,7 +724,7 @@ namespace TestEncCnvtrs
 
 		// 0x81, 0x8D, 0x8F, 0x90, and 0x9D are undefined according to the Python cp1252 codec.
 		// And Python codecs appear to bail on undefined characters...
-		byte[] m_1252bytes = new byte[] {
+		public static byte[] m_1252bytes = new byte[] {
 			 32,  33,  34,  35,  36,  37,  38,  39,  40,  41,  42,  43,  44,  45,  46,  47,
 			 48,  49,  50,  51,  52,  53,  54,  55,  56,  57,  58,  59,  60,  61,  62,  63,
 			 64,  65,  66,  67,  68,  69,  70,  71,  72,  73,  74,  75,  76,  77,  78,  79,
@@ -806,7 +740,7 @@ namespace TestEncCnvtrs
 			224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239,
 			240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255
 			};
-		string m_1252Converted = " !\"#$%&'()*+,-./0123456789:;<=>?" +
+		public static string m_1252Converted = " !\"#$%&'()*+,-./0123456789:;<=>?" +
 				"@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\u007F" +
 				"\u20ac\u201a\u0192\u201e\u2026\u2020\u2021\u02c6\u2030\u0160\u2039\u0152\u017d" +
 				"\u2018\u2019\u201c\u201d\u2022\u2013\u2014\u02dc\u2122\u0161\u203a\u0153\u017e\u0178" +
@@ -817,180 +751,6 @@ namespace TestEncCnvtrs
 				"\u00E0\u00E1\u00E2\u00E3\u00E4\u00E5\u00E6\u00E7\u00E8\u00E9\u00EA\u00EB\u00EC\u00ED\u00EE\u00EF" +
 				"\u00F0\u00F1\u00F2\u00F3\u00F4\u00F5\u00F6\u00F7\u00F8\u00F9\u00FA\u00FB\u00FC\u00FD\u00FE\u00FF";
 
-		/// <summary>
-		/// If this test fails the first time you run it, just run it again by itself. We're swapping environment
-		/// variables in the init for this test class and if these tests run in parallel, it might skew the results.
-		/// Usually, it runs fine by itself
-		/// </summary>
-		[Test]
-		public void TestPyScriptEncConverters()
-		{
-			Util.DebugWriteLine(this, "BEGIN");
-			int countOrig = m_encConverters.Count;
-			int countCurrent = countOrig;
-			int n = 0;	// the current test number
-			const int TOTAL_PY_TESTS = 9;
-			string[] filenames = new string[TOTAL_PY_TESTS];
-			string[] convnames = new string[TOTAL_PY_TESTS];
-
-			var dir = GetTestSourceFolder();
-			filenames[n] = "From1252.py";
-			convnames[n] = "UnitTesting-Python-1252-To-Unicode";
-			m_encConverters.Add(convnames[n], Path.Combine(dir, filenames[n]),
-				ConvType.Legacy_to_from_Unicode,
-				"LEGACY", "UNICODE", ProcessTypeFlags.PythonScript);
-			countCurrent++;
-			int countNew = m_encConverters.Count;
-			Assert.AreEqual(countCurrent, countNew, "Should have " + countCurrent + " converter(s) now");
-			string[] encodings = m_encConverters.Encodings;
-			Assert.LessOrEqual(2, encodings.Length, "Should have at least 2 encodings now.");
-			string[] mappings = m_encConverters.Mappings;
-			Assert.LessOrEqual(1, mappings.Length, "Should have at least 1 mapping now.");
-			int countKeys = m_encConverters.Keys.Count;
-			int countValues = m_encConverters.Values.Count;
-			Assert.AreEqual(countKeys, countValues, "Should have same number of keys and values!");
-			Assert.LessOrEqual(1, countKeys, "Should have at least one key now.");
-			IEncConverter ec = m_encConverters[convnames[n]];
-			Assert.IsNotNull(ec, "Added converter " + convnames[n] + " should exist!");
-			ec.CodePageInput = EncConverters.cnIso8859_1CodePage;
-			string input = TestUtil.GetPseudoStringFromBytes(m_1252bytes);
-			string output = ec.Convert(input);
-			Assert.AreEqual(m_1252Converted, output, filenames[n] + " should convert data properly!");
-
-			n++;
-			filenames[n] = "To1252.py";
-			convnames[n] = "UnitTesting-Python-Unicode-To-1252";
-			m_encConverters.Add(convnames[n], Path.Combine(dir, filenames[n]),
-				ConvType.Unicode_to_from_Legacy,
-				"UNICODE", "LEGACY", ProcessTypeFlags.PythonScript);
-			countCurrent++;
-			countNew = m_encConverters.Count;
-			Assert.AreEqual(countCurrent, countNew, "Should have " + countCurrent + " converter(s) now");
-			mappings = m_encConverters.Mappings;
-			Assert.LessOrEqual(2, mappings.Length, "Should have at least two mappings now.");
-			countKeys = m_encConverters.Keys.Count;
-			countValues = m_encConverters.Values.Count;
-			Assert.AreEqual(countKeys, countValues, "Should have same number of keys and values!");
-			Assert.LessOrEqual(2, countKeys, "Should have at least two keys now.");
-			ec = m_encConverters[convnames[n]];
-			Assert.IsNotNull(ec, "Added converter " + convnames[n] + " should exist!");
-			ec.CodePageOutput = EncConverters.cnIso8859_1CodePage;
-			string outputRaw = ec.Convert(m_1252Converted);
-			byte[] outputBytes = TestUtil.GetBytesFromPseudoString(outputRaw);
-			Assert.AreEqual(m_1252bytes, outputBytes, filenames[n] + " should convert data properly!");
-
-			dir = Path.Combine(GetMapsTablesFolder(), "PythonExamples");
-
-			n++;
-			filenames[n] = "ReverseString.py";
-			convnames[n] = "UnitTesting-Python-ReverseString-Unicode";
-			m_encConverters.Add(convnames[n], Path.Combine(dir, filenames[n]),
-				ConvType.Unicode_to_from_Unicode,
-				"UNICODE", "UNICODE", ProcessTypeFlags.PythonScript);
-			countCurrent++;
-			countNew = m_encConverters.Count;
-			Assert.AreEqual(countCurrent, countNew, "Should have " + countCurrent + " converter(s) now");
-			ec = m_encConverters[convnames[n]];
-			Assert.IsNotNull(ec, "Added converter " + convnames[n] + " should exist!");
-			ec.CodePageOutput = EncConverters.cnIso8859_1CodePage;
-			output = ec.Convert("\u0bae\u0bcb\u0baa");  // Tamil Ma + Oo + Pa
-			Assert.AreEqual("\u0baa\u0bcb\u0bae", output, filenames[n] + " should convert data properly!");
-
-			n++;
-			filenames[n] = "ReverseString.py";
-			convnames[n] = "UnitTesting-Python-ReverseString-Legacy";
-			m_encConverters.Add(convnames[n], Path.Combine(dir, filenames[n]),
-				ConvType.Legacy_to_from_Legacy,
-				"LEGACY", "LEGACY", ProcessTypeFlags.PythonScript);
-			countCurrent++;
-			countNew = m_encConverters.Count;
-			Assert.AreEqual(countCurrent, countNew, "Should have " + countCurrent + " converter(s) now");
-			ec = m_encConverters[convnames[n]];
-			Assert.IsNotNull(ec, "Added converter " + convnames[n] + " should exist!");
-			ec.CodePageOutput = EncConverters.cnIso8859_1CodePage;
-			output = ec.Convert("mop");
-			Assert.AreEqual("pom", output, filenames[n] + " should convert data properly!");
-
-			n++;
-			filenames[n] = "ToLowerCase.py";
-			convnames[n] = "UnitTesting-Python-ToLowerCase";
-			m_encConverters.Add(convnames[n], Path.Combine(dir, filenames[n]),
-				ConvType.Legacy_to_from_Legacy,
-				"LEGACY", "LEGACY", ProcessTypeFlags.PythonScript);
-			countCurrent++;
-			countNew = m_encConverters.Count;
-			Assert.AreEqual(countCurrent, countNew, "Should have " + countCurrent + " converter(s) now");
-			ec = m_encConverters[convnames[n]];
-			Assert.IsNotNull(ec, "Added converter " + convnames[n] + " should exist!");
-			ec.CodePageOutput = EncConverters.cnIso8859_1CodePage;
-			output = ec.Convert("ASdG");
-			Assert.AreEqual("asdg", output, filenames[n] + " should convert data properly!");
-
-			n++;
-			filenames[n] = "ToUpperCase.py";
-			convnames[n] = "UnitTesting-Python-ToUpperCase";
-			m_encConverters.Add(convnames[n], Path.Combine(dir, filenames[n]),
-				ConvType.Legacy_to_from_Legacy,
-				"LEGACY", "LEGACY", ProcessTypeFlags.PythonScript);
-			countCurrent++;
-			countNew = m_encConverters.Count;
-			Assert.AreEqual(countCurrent, countNew, "Should have " + countCurrent + " converter(s) now");
-			ec = m_encConverters[convnames[n]];
-			Assert.IsNotNull(ec, "Added converter " + convnames[n] + " should exist!");
-			ec.CodePageOutput = EncConverters.cnIso8859_1CodePage;
-			output = ec.Convert("asdg");
-			Assert.AreEqual("ASDG", output, filenames[n] + " should convert data properly!");
-
-			n++;
-			filenames[n] = "ToUnicodeNames.py";
-			convnames[n] = "UnitTesting-Python-UnicodeNames";
-			m_encConverters.Add(convnames[n], Path.Combine(dir, filenames[n]),
-				ConvType.Unicode_to_from_Legacy,
-				"UNICODE", "LEGACY", ProcessTypeFlags.PythonScript);
-			countCurrent++;
-			countNew = m_encConverters.Count;
-			Assert.AreEqual(countCurrent, countNew, "Should have " + countCurrent + " converter(s) now");
-			ec = m_encConverters[convnames[n]];
-			Assert.IsNotNull(ec, "Added converter " + convnames[n] + " should exist!");
-			ec.CodePageOutput = EncConverters.cnIso8859_1CodePage;
-			output = ec.Convert("\u0915\u093c");
-			Assert.AreEqual("DEVANAGARI LETTER KA; DEVANAGARI SIGN NUKTA; ", output, filenames[n] + " should convert data properly!");
-			n++;
-			filenames[n] = "ToNfc.py";
-			convnames[n] = "UnitTesting-Python-ToNfc";
-			m_encConverters.Add(convnames[n], Path.Combine(dir, filenames[n]),
-				ConvType.Unicode_to_from_Unicode,
-				"UNICODE", "UNICODE", ProcessTypeFlags.PythonScript);
-			countCurrent++;
-			countNew = m_encConverters.Count;
-			Assert.AreEqual(countCurrent, countNew, "Should have " + countCurrent + " converter(s) now");
-			ec = m_encConverters[convnames[n]];
-			Assert.IsNotNull(ec, "Added converter " + convnames[n] + " should exist!");
-			ec.CodePageOutput = EncConverters.cnIso8859_1CodePage;
-			output = ec.Convert("\u0045\u0328");
-			Assert.AreEqual("\u0118", output, filenames[n] + " should convert data properly!");
-
-			n++;
-			filenames[n] = "ToNfd.py";
-			convnames[n] = "UnitTesting-Python-ToNfd";
-			m_encConverters.Add(convnames[n], Path.Combine(dir, filenames[n]),
-				ConvType.Unicode_to_from_Unicode,
-				"UNICODE", "UNICODE", ProcessTypeFlags.PythonScript);
-			countCurrent++;
-			countNew = m_encConverters.Count;
-			Assert.AreEqual(countCurrent, countNew, "Should have " + countCurrent + " converter(s) now");
-			ec = m_encConverters[convnames[n]];
-			Assert.IsNotNull(ec, "Added converter " + convnames[n] + " should exist!");
-			ec.CodePageOutput = EncConverters.cnIso8859_1CodePage;
-			output = ec.Convert("\u0958");
-			Assert.AreEqual("\u0915\u093c", output, filenames[n] + " should convert data properly!");
-
-			for (int i = 0; i < TOTAL_PY_TESTS; i++)
-				m_encConverters.Remove(convnames[i]);
-			int countAfter = m_encConverters.Count;
-			Assert.AreEqual(countOrig, countAfter, "Should have the original number of converters now.");
-			Util.DebugWriteLine(this, "END");
-		}
 
 		[Test]
 		public void Cp1252ShouldConvertHex80()
