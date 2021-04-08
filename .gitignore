@@ -269,5 +269,16 @@ paket-files/
 *.sln.iml
 
 autom4te.cache
+# why would you ignore these? they're needed for the tests /redist/MapsTables/PythonExamples
+# why would you ignore these? they're needed for the tests /redist/MapsTables/TestEncCnvtrs
+/redist/MapsTables/PythonExamples/ToUpperCase.pyc
+/redist/MapsTables/PythonExamples/ToUnicodeNames.pyc
+/redist/MapsTables/PythonExamples/ToNfd.pyc
+/redist/MapsTables/PythonExamples/ToNfc.pyc
+/redist/MapsTables/PythonExamples/ToLowerCase.pyc
+/redist/MapsTables/PythonExamples/ReverseString.pyc
 /redist/MapsTables/PythonExamples
-/redist/MapsTables/TestEncCnvtrs
+/redist/MapsTables/TestEncCnvtrs/To1252.pyc
+/redist/MapsTables/TestEncCnvtrs/From1252.pyc
+/SILConvertersWordML.exe.config
+/SILConvertersWordML.exe

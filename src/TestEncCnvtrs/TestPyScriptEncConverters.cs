@@ -27,8 +27,13 @@ namespace TestEncCnvtrs
 		bool m_fSetRegistryValue;
 		string m_repoFile;
 
+		// best if you use these as the install path for the two flavors of 2.7 Python for these tests
+		private const string PathPython64 = @"C:\Python27x64";
+		private const string PathPython86 = @"C:\Python27";
+
 		private const string EnvironmentVariableNamePythonHome = "PYTHONHOME";
-		string m_originalPythonHome;
+
+        string m_originalPythonHome;
 		string m_testPythonHome;
 
         /// --------------------------------------------------------------------
@@ -69,18 +74,18 @@ namespace TestEncCnvtrs
 
 				if (Environment.Is64BitProcess)
                 {
-					if (!Directory.Exists(@"C:\Python27x64"))						
+					if (!Directory.Exists(PathPython64))						
 					{
 						Assert.Fail("The Python tests below will not work unless you have a x64 version of Python installed");
 					}
 					else 
                     {
-						m_testPythonHome = @"C:\Python27x64";
+						m_testPythonHome = PathPython64;
 					}
 				}
 				else  // x86
                 {
-					if (!Directory.Exists(@"C:\Python27x86") && !Directory.Exists(@"C:\Python27"))
+					if (!Directory.Exists(@"C:\Python27x86") && !Directory.Exists(PathPython86))
 					{
 						Assert.Fail("The Python tests below will not work unless you have a x86 version of Python installed");
 					}
@@ -88,9 +93,9 @@ namespace TestEncCnvtrs
 					{
 						m_testPythonHome = @"C:\Python27x86";
 					}
-					else if (Directory.Exists(@"C:\Python27"))
+					else if (Directory.Exists(PathPython86))
 					{
-						m_testPythonHome = @"C:\Python27";
+						m_testPythonHome = PathPython86;
 					}
 				}
 
