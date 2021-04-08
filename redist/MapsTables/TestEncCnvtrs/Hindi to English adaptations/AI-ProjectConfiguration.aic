@@ -1,0 +1,142 @@
+SourceFont
+Height	-18
+Width	0
+Escapement	0
+Orientation	0
+Weight	700
+Italic	0
+Underline	0
+StrikeOut	0
+FontEncoding	33
+CharSet	0
+OutPrecision	3
+ClipPrecision	2
+Quality	1
+PitchAndFamily	32
+FaceName	Arial Unicode MS
+Color	16711680
+
+TargetFont
+Height	-18
+Width	0
+Escapement	0
+Orientation	0
+Weight	700
+Italic	0
+Underline	0
+StrikeOut	0
+FontEncoding	33
+CharSet	0
+OutPrecision	3
+ClipPrecision	2
+Quality	1
+PitchAndFamily	32
+FaceName	Times New Roman
+Color	0
+
+NavTextFont
+Height	-14
+Width	7
+Escapement	0
+Orientation	0
+Weight	700
+Italic	0
+Underline	0
+StrikeOut	0
+FontEncoding	33
+CharSet	0
+OutPrecision	1
+ClipPrecision	2
+Quality	2
+PitchAndFamily	32
+FaceName	Times New Roman
+Color	65280
+
+ProjectSettings
+SourceLanguageName	Hindi
+TargetLanguageName	English
+GlossesLanguageName	
+FreeTranslationLanguageName	
+SourceLanguageCode	
+TargetLanguageCode	
+GlossesLanguageCode	
+FreeTranslationLanguageCode	
+SentenceFinalPunctuationTriggeringCapitalization	
+UpperCaseAnywhereInFirstWordOfSource	0
+LastDocumentPath	
+LastNewDocumentFolder	C:\Users\BEaton\Documents\Adapt It Unicode Work
+LastInterlinearRTFOutputPath	
+LastSourceTextExportPath	
+LastSourceTextRTFExportPath	
+LastTargetExportPath	
+LastTargetRTFExportPath	
+LastGlossesTextExportPath	
+LastGlossesTextRTFExportPath	
+LastFreeTransExportPath	
+LastFreeTransRTFExportPath	
+LastXhtmlExportPath	
+LastPathwayExportPath	
+LastKBExportPath	
+LastKBLIFTExportPath	
+FoldersProtectedFromNavigation	
+KeepPhraseBoxMidscreen	1
+ExtraPixelsForDiacritics	0
+Enable_ZWSP_Insertion	0
+Support_Slash_As_Word_Separator	0
+PunctuationPairsSourceSet(stores space for an empty cell)	?.,;:"'!()<>{}[]“”‘’…-।~«»
+PunctuationPairsTargetSet(stores space for an empty cell)	?.,;:"'!()<>{}[]“”‘’…-.~«»
+PunctuationTwoCharacterPairsSourceSet(ditto)	
+PunctuationTwoCharacterPairsTargetSet(ditto)	
+SpecialTextColor	255
+RetranslationTextColor	32896
+TargetDifferencesTextColor	2647107
+ColorOfNavigationText	65280
+AutoInsertionsHighlightColor	16750539
+GuessHighlightColor	8434943
+BackupDocumentFlag	0
+WorkflowProfile	0
+CollabAIProjectName	
+CollaboratingWithParatext	0
+CollaboratingWithBibledit	0
+CollabProjectForSourceInputs	
+CollabProjectForTargetExports	
+CollabProjectForFreeTransExports	
+CollaborationEditor	Paratext
+CollabParatextVersionForProject	PTVersion8
+CollabExpectsFreeTrans	0
+CollabSourceLangName	
+CollabTargetLangName	
+CollabBookSelected	
+CollabByChapterOnly	1
+CollabChapterSelected	
+UseAdaptationsGuesser	1
+GuessingLevel	50
+AllowGuesseronUnchangedCCOutput	0
+GuesserMaxPrefixes(99 is 'no limit')	-1
+GuesserMaxSuffixes(99 is 'no limit')	-1
+RTL_Layout	0
+SFMafterNewlines	0
+SourceIsRTL	0
+TargetIsRTL	0
+NavTextIsRTL	0
+LowerCaseSourceLanguageChars	
+UpperCaseSourceLanguageChars	
+LowerCaseTargetLanguageChars	
+UpperCaseTargetLanguageChars	
+LowerCaseGlossLanguageChars	
+UpperCaseGlossLanguageChars	
+AutoCapitalizationFlag	0
+SourceHasUpperCaseAndLowerCase	0
+FontSizeForDialogs(points)	12
+UseSFMarkerSet	UsfmOnly
+UseFilterMarkers	\pro \ca \_footnote_caller \_notes_base \efm \xot \_unknown_para_style \_annotation_text \h1 \__normal \_nav_lang_interlinear \rem \_table_grid \_hdr_ftr_interlinear \_horiz_rule \xt \_dft_para_font \xnt \_peripherals_base \xq \note \cp \mr \ef \_body_text \ib \_header \ide \_double_boxed_para \h3 \_unknown_char_style \fig \vp \_hidden_note \h2 \_tgt_lang_interlinear \restore \_src_lang_interlinear \_list_base \cl \_annotation_ref \_gls_lang_interlinear \ie \free \va \xk \x \r \_intro_base \_small_para_break \_footer \h \xo \_heading_base \_single_boxed_para \lit \sts \rq \bt \_vernacular_base \xdc \_normal_table 
+ChangeFixedSpaceToRegularSpace	0
+BookModeFlag	0
+BookIndexValue	-1
+SilConverterName	
+SilConverterDirectionForward	1
+SilConverterNormalizeOutput	0
+LegacyCopyForPhraseBox	1
+DoAdaptingBeforeGlossing_InVerticalEdit	1
+UseSourceWordBreakFlag	1
+ForceVerseSectioning	0
