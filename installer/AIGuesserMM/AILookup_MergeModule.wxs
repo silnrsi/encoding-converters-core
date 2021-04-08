@@ -7,7 +7,8 @@
 			<Directory Id="MergeRedirectFolder">
 
                 <Component Id="AIGuesserEC.dll" Guid="50092CDC-A19C-406F-B649-47268C66C8EE">
-                    <File Id="AIGuesserEC.dll" Name="AIGuesserEC.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="AIGuesserEC.dll" AssemblyApplication="AIGuesserEC.dll" Source="..\..\output\Win32\release\AIGuesserEC.dll" />
+                    <File Id="AIGuesserEC.dll" Name="AIGuesserEC.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="AIGuesserEC.dll" AssemblyApplication="AIGuesserEC.dll"
+						  Source="..\..\output\Win32\release\AIGuesserEC.dll" />
                 </Component>
 
                 <Directory Id="AiECFolder" Name="EC">
@@ -22,17 +23,21 @@
 
             <Directory Id="CommonFilesFolder" SourceName="Common Files Folder">
                 <Directory Id="AiSIL" Name="SIL">
+					<!-- I doubt anyone uses this... and I don't think it can be built anymore... so just leave it out
                     <Component Id="GuesserECLegacy.dll" Guid="035E0E4D-7C92-4872-8CCA-FED87CF63DB9">
                         <File Id="GuesserECLegacy.dll" Name="GuesserECLegacy.dll" ReadOnly="yes" KeyPath="yes" Source="..\..\output\Win32\release\GuesserECLegacy.dll"/>
                     </Component>
                     <Component Id="GuesserEC.dll" Guid="D6327C7E-A1E0-4DE2-86C9-BD535A7E5324">
                         <File Id="GuesserEC.dll" Name="GuesserEC.dll" ReadOnly="yes" KeyPath="yes" Source="..\..\output\Win32\release\GuesserEC.dll"/>
                     </Component>
+					-->
                     <Directory Id="Help" Name="Help">
+						<!--
                         <Component Id="AdaptItGuesserHelp" Guid="8EA270BD-77D5-42AB-9B53-906310EA60F1">
                             <File Id="AdaptItGuesserHelp" Name="AdaptIt Guesser Plug-in About box.mht" ReadOnly="yes" KeyPath="yes" Source="..\..\redist\Help\AdaptIt Guesser Plug-in About box.mht"/>
                             <Shortcut Id="AdaptItGuesserHelp" Directory="AiHelp" Name="AdaptIt Guesser Plug-in Help" Description="View help document for the AdaptIt Guesser Plug-in" IconIndex="0" Show="normal" Target="[#AdaptItGuesserHelp]" WorkingDirectory="Help" Advertise="no" />
                         </Component>
+						-->
                         <Component Id="AdaptItLookupHelp" Guid="1B1FC8DC-B38E-4DEA-AF0C-58B62AAC8DF0">
                             <File Id="AdaptItLookupHelp" Name="AdaptIt Plug-in About box.mht" ReadOnly="yes" KeyPath="yes" Source="..\..\redist\Help\AdaptIt Plug-in About box.mht"/>
                             <Shortcut Id="AdaptItLookupHelp" Directory="AiHelp" Name="AdaptIt Lookup Plug-in Help" Description="View help document for the AdaptIt Lookup Plug-in" IconIndex="0" Show="normal" Target="[#AdaptItLookupHelp]" WorkingDirectory="Help" Advertise="no" />
