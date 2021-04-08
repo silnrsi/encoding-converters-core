@@ -220,7 +220,7 @@ namespace SilEncConverters40
 
                     // don't get the code page attributes just yet (or they may show an error dialog)
                     // moved to "FormClosing"
-                    // change: do get them as they are legitimate (but don't thru errors)
+                    // change: do get them as they are legitimate (but don't throw errors)
                     if (textBoxCodePageInput.Visible)
                     {
                         try
@@ -870,7 +870,7 @@ namespace SilEncConverters40
 
                     // indicate the code pages we're going to use for legacy encodings so that the
                     //  user can change it if needed.
-                    DirectableEncConverter aDEC = new DirectableEncConverter(aEC);
+                    DirectableEncConverter aDEC = new DirectableEncConverter(aEC, false);
                     UpdateCodePageDetails(aDEC);
                     UpdateDataPreview(aDEC);
                 }
@@ -1095,8 +1095,9 @@ namespace SilEncConverters40
             IEncConverter aEC = IEncConverter;
             if (aEC != null)
             {
-                DirectableEncConverter aDEC = new DirectableEncConverter(aEC);
-                UpdateCodePageDetails(aDEC);
+				DirectableEncConverter aDEC = new DirectableEncConverter(aEC, true);
+				m_mapLbItems2Tooltips[m_strConverterName] = aDEC.ToString();
+				UpdateCodePageDetails(aDEC);
                 UpdateDataPreview(aDEC);
             }
         }
@@ -1198,8 +1199,9 @@ namespace SilEncConverters40
                 IEncConverter aEC = IEncConverter;
                 if (aEC != null)
                 {
-                    DirectableEncConverter aDEC = new DirectableEncConverter(aEC);
-                    UpdateDataPreview(aDEC);
+					DirectableEncConverter aDEC = new DirectableEncConverter(aEC, true);
+					m_mapLbItems2Tooltips[m_strConverterName] = aDEC.ToString();
+					UpdateDataPreview(aDEC);
                 }
             }
             else
@@ -1233,8 +1235,9 @@ namespace SilEncConverters40
                 IEncConverter aEC = IEncConverter;
                 if (aEC != null)
                 {
-                    DirectableEncConverter aDEC = new DirectableEncConverter(aEC);
-                    UpdateDataPreview(aDEC);
+					DirectableEncConverter aDEC = new DirectableEncConverter(aEC, true);
+					m_mapLbItems2Tooltips[m_strConverterName] = aDEC.ToString();
+					UpdateDataPreview(aDEC);
                 }
             }
             catch
@@ -1249,7 +1252,7 @@ namespace SilEncConverters40
 
             try
             {
-                string strCodePage = textBoxCodePageInput.Text;
+                string strCodePage = textBoxCodePageOutput.Text;
                 if (strCodePage == "42")    // symbol code page
                     strCodePage = "28591";  // use ISO 8859_1 instead
 
@@ -1260,8 +1263,9 @@ namespace SilEncConverters40
                 IEncConverter aEC = IEncConverter;
                 if (aEC != null)
                 {
-                    DirectableEncConverter aDEC = new DirectableEncConverter(aEC);
-                    UpdateDataPreview(aDEC);
+					DirectableEncConverter aDEC = new DirectableEncConverter(aEC, true);
+					m_mapLbItems2Tooltips[m_strConverterName] = aDEC.ToString();
+					UpdateDataPreview(aDEC);
                 }
             }
             catch

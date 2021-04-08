@@ -28,16 +28,27 @@ namespace SilEncConverters40
             m_eNormalForm = eNormalForm;
         }
 
-        public DirectableEncConverter(IEncConverter aEC)
+        public DirectableEncConverter(IEncConverter aEC, bool bInputOutputAlreadySet = true)
         {
-            InitFromIEncConverter(aEC);
+            InitFromIEncConverter(aEC, bInputOutputAlreadySet);
         }
 
-        protected void InitFromIEncConverter(IEncConverter aEC)
+        protected void InitFromIEncConverter(IEncConverter aEC, bool bInputOutputAlreadySet)
         {
             m_strEncConverterName = aEC.Name;
             m_bDirectionForward = aEC.DirectionForward;
             m_eNormalForm = aEC.NormalizeOutput;
+
+			// in some cases (e.g. the SelectConverter dialog), the input/ouput code page values
+			//	are already set from the proper perspective and don't need to be reversed as in the other cases
+			//	(see CodePageInput below). So swap them if they need to be (so the later swap will put them
+			//	back to what they were at the start -- sorry, I know this is confusing)
+			if (!m_bDirectionForward && bInputOutputAlreadySet)
+            {
+				var aEcInputCodePage = aEC.CodePageOutput;
+				aEC.CodePageOutput = aEC.CodePageInput;
+				aEC.CodePageInput = aEcInputCodePage;
+			}
 
             // if the user intends for this to be a temporary converter, it won't be available to 
             //  subsequent calls of "GetEncConverter" unless we add it to this particular instance

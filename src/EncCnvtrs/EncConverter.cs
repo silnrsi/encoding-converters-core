@@ -394,7 +394,7 @@ namespace SilEncConverters40
             if (!Util.IsUnix)
             {
                 // this seems to hang in the MonoDevelop debugger for some reason...
-                DirectableEncConverter aDEC = new DirectableEncConverter(this);
+                DirectableEncConverter aDEC = new DirectableEncConverter(this, false);
                 if (aDEC.IsLhsLegacy)
                     sb.Append(String.Format("{1}    Input Code Page: '{0}'", aDEC.CodePageInput, Environment.NewLine));
                 if (aDEC.IsRhsLegacy)
