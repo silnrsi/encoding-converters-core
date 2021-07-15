@@ -25,11 +25,13 @@ ECHEADER=$(ECHEADERDIR)/CEncConverter.h
 ifeq ($(strip $(FIELDWORKS)),)
 LIBDIR = $(exec_prefix)/lib/encConverters
 ICULIBS = -licuuc -licui18n
-ICUINCLUDE = 
+ICUINCLUDE =
 else
 LIBDIR = $(exec_prefix)/lib/fieldworks
-# icu-config from FW 8.3 (< 9) or icu-fw.
-ICULIBS := $(shell /usr/lib/fieldworks/icu-bin/icu-config --ldflags)
+# Note that a directory like /usr/lib/fieldworks/icu-bin will need to be
+# earlier in PATH so that icu-config from FW 8.3 (< 9) or icu-fw will be
+# used.
+ICULIBS := $(shell icu-config --ldflags)
 ICUINCLUDE := -I$(ROOTDIR)/include
 endif
 
