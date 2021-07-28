@@ -55,7 +55,13 @@ namespace ECInterfaces
             {
                 if (s_CommonAppDataFolder == null)
                 {
-                    if (Util.IsUnix)
+                    string envCommonAppDataFolder = Environment.GetEnvironmentVariable("EC_COMMON_APPLICATION_DATA_PATH");
+                    if (envCommonAppDataFolder != null)
+                    {
+                        // Use an overriding environment variable, if present. Such as when running in a flatpak.
+                        s_CommonAppDataFolder = envCommonAppDataFolder;
+                    }
+                    else if (Util.IsUnix)
                     {
                         // COMMON_DATA_FW can be defined during compile time.
                         // This folder should match REGROOT in the main Makefile.in.
@@ -64,13 +70,13 @@ namespace ECInterfaces
 #else
                         s_CommonAppDataFolder = "/var/lib/encConverters";
 #endif
-                        DebugWriteLine(typeof(Util).ToString(), "CommonAppDataFolder = " + s_CommonAppDataFolder);
                     }
                     else
                     {
                         s_CommonAppDataFolder =
                             Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
                     }
+                    DebugWriteLine(typeof(Util).ToString(), $"Using CommonApplicationData path: {s_CommonAppDataFolder}");
                 }
                 return s_CommonAppDataFolder;
             }
