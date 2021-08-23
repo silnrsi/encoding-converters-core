@@ -30,6 +30,10 @@ Install build dependencies.
 
 ### Test
 
+    # Optionally use non-global common dir
+    export EC_COMMON_APPLICATION_DATA_PATH="$(pwd)/ec-common"
+    export MONO_REGISTRY_PATH="${EC_COMMON_APPLICATION_DATA_PATH}/registry"
+
     (. environ && mono output/Debug/RunTests.exe)
 
 In Windows,
