@@ -6,10 +6,4 @@
                    DisplayName="AdaptIt Knowledge Base Converter"
                    ConfiguratorProgId="SilEncConverters40.AdaptItEncConverterConfig"
                    AssemblyReference="AIGuesserEC, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" />
-  <ECPluginDetails ImplementationName="SIL.AdaptItKBGuesser"
-                   ImplementationProgId="SilEncConverters40.AdaptItGuesserEncConverter"
-                   Priority="0"
-                   DisplayName="Target Word Guesser for AdaptIt"
-                   ConfiguratorProgId="SilEncConverters40.AdaptItGuesserEncConverterConfig"
-                   AssemblyReference="AIGuesserEC, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" />
 </EncConverterPlugins>
