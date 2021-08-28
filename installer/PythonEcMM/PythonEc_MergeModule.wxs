@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-	<Module Id="PythonEcMM" Language="1033" Version="1.0.0.0">
+	<Module Id="PythonEcMM" Language="1033" Version="5.0.0.0">
 		<Package Id="97143bf3-ba47-4af3-ba62-344898b064cc" Keywords="Python, Encoding Conversion, SILConverters" Description="Python EncConverter merge module" Comments="Merge module containing the Python EncConverter DLLs" Manufacturer="SIL International" InstallerVersion="200" />
 
 		<Directory Id="TARGETDIR" Name="SourceDir">
@@ -36,11 +36,6 @@
                         <File Id="pythoncom27.dll" KeyPath="yes" Source="..\..\lib\windows\32bit\pythoncom27.dll" />
                     </Component>
 
-                    <Directory Id="Help" Name="Help">
-                        <Component Id="PythonHelp" Guid="{2BA053A7-3C7D-4E7A-BD1E-8487C01982D2}">
-                            <File Id="PythonHelp" Name="Python Script Plug-in About box.mht" KeyPath="yes" Source="..\..\redist\Help\Python Script Plug-in About box.mht"/>
-                        </Component>
-                    </Directory>
                 </Directory>
             </Directory>
 
@@ -68,7 +63,14 @@
                             <File Id="ToUnicodeNames.py" Name="ToUnicodeNames.py" Source="..\..\redist\MapsTables\PythonExamples\ToUnicodeNames.py" />
                         </Component>
                     </Directory>
-                </Directory>
+					<Directory Id="AppDataSILConverters40" Name="SILConverters40">
+						<Directory Id="Help" Name="Help">
+							<Component Id="PythonHelp" Guid="{D699D3FA-12B5-41AC-860D-99E9C2E6A407}">
+								<File Id="PythonHelp" Name="Python_Script_Plug-in_About_box.mht" KeyPath="yes" Source="..\..\redist\Help\Python_Script_Plug-in_About_box.mht"/>
+							</Component>
+						</Directory>
+					</Directory>
+				</Directory>
             </Directory>
 
         </Directory>

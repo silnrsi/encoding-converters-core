@@ -25,7 +25,7 @@ namespace SilEncConverters40
     public class AdaptItEncConverter : AdaptItKBReader
     {
         public const string strDisplayName = "AdaptIt Knowledge Base Converter";
-        public const string strHtmlFilename = "AdaptIt Plug-in About box.mht";
+        public const string strHtmlFilename = "AdaptIt_Plug-in_About_box.mht";
 
         protected const string chNeverUsedChar = "\u001f";  // add to words we replace, so we don't process them again
 

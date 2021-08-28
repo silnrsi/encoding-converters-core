@@ -256,8 +256,8 @@ namespace SilEncConverters40
 
         protected override string DefaultFriendlyName
         {
-            // as the default, make it the same as the table name (w/o extension)
-            get { return Path.GetFileNameWithoutExtension(ConverterIdentifier); }
+            // don't give it a default (bkz it won't be a valid filename)
+            get { return ""; }
         }
 
         private void textBoxExpression_TextChanged(object sender, EventArgs e)

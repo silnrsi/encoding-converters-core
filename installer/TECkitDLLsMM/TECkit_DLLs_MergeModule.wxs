@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-	<Module Id="TECkitDLLsMM" Language="1033" Version="4.0.0.0">
+	<Module Id="TECkitDLLsMM" Language="1033" Version="5.0.0.0">
 		<Package Id="19522a8c-f977-4273-8315-7e20fcaf1e75" Comments="Merge module containing the TECkit run-time engine DLLs" Description="TECkit DLLs" InstallerVersion="200" Keywords="TECkit, Encoding Conversion, SILConverters" Manufacturer="SIL International" />
 
 		<Directory Id="TARGETDIR" Name="SourceDir">

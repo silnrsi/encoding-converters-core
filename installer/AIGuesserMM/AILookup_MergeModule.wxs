@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-	<Module Id="AITransducerMM" Language="1033" Version="4.0.0.0">
+	<Module Id="AITransducerMM" Language="1033" Version="5.0.0.0">
 		<Package Id="88DBA75B-2D22-41F3-8C3C-BB12F0B9153E" Comments="Merge module for the AdaptIt Lookup/Guesser EncConverter" Description="Include in any client application deployment project which uses the EncConverters interface" Manufacturer="SIL International" InstallerVersion="200" Keywords="SIL; AdaptIt; Affix Guessing; EncConverters"  />
 
 		<Directory Id="TARGETDIR" Name="SourceDir">
@@ -21,32 +21,20 @@
 
             </Directory>
 
-            <Directory Id="CommonFilesFolder" SourceName="Common Files Folder">
-                <Directory Id="AiSIL" Name="SIL">
-					<!-- I doubt anyone uses this... and I don't think it can be built anymore... so just leave it out
-                    <Component Id="GuesserECLegacy.dll" Guid="035E0E4D-7C92-4872-8CCA-FED87CF63DB9">
-                        <File Id="GuesserECLegacy.dll" Name="GuesserECLegacy.dll" ReadOnly="yes" KeyPath="yes" Source="..\..\output\Win32\release\GuesserECLegacy.dll"/>
-                    </Component>
-                    <Component Id="GuesserEC.dll" Guid="D6327C7E-A1E0-4DE2-86C9-BD535A7E5324">
-                        <File Id="GuesserEC.dll" Name="GuesserEC.dll" ReadOnly="yes" KeyPath="yes" Source="..\..\output\Win32\release\GuesserEC.dll"/>
-                    </Component>
-					-->
-                    <Directory Id="Help" Name="Help">
-						<!--
-                        <Component Id="AdaptItGuesserHelp" Guid="8EA270BD-77D5-42AB-9B53-906310EA60F1">
-                            <File Id="AdaptItGuesserHelp" Name="AdaptIt Guesser Plug-in About box.mht" ReadOnly="yes" KeyPath="yes" Source="..\..\redist\Help\AdaptIt Guesser Plug-in About box.mht"/>
-                            <Shortcut Id="AdaptItGuesserHelp" Directory="AiHelp" Name="AdaptIt Guesser Plug-in Help" Description="View help document for the AdaptIt Guesser Plug-in" IconIndex="0" Show="normal" Target="[#AdaptItGuesserHelp]" WorkingDirectory="Help" Advertise="no" />
-                        </Component>
-						-->
-                        <Component Id="AdaptItLookupHelp" Guid="1B1FC8DC-B38E-4DEA-AF0C-58B62AAC8DF0">
-                            <File Id="AdaptItLookupHelp" Name="AdaptIt Plug-in About box.mht" ReadOnly="yes" KeyPath="yes" Source="..\..\redist\Help\AdaptIt Plug-in About box.mht"/>
-                            <Shortcut Id="AdaptItLookupHelp" Directory="AiHelp" Name="AdaptIt Lookup Plug-in Help" Description="View help document for the AdaptIt Lookup Plug-in" IconIndex="0" Show="normal" Target="[#AdaptItLookupHelp]" WorkingDirectory="Help" Advertise="no" />
-                        </Component>
-                    </Directory>
-                </Directory>
-            </Directory>
+			<Directory Id="CommonAppDataFolder" SourceName="AppData">
+				<Directory Id="AppDataSIL" Name="SIL">
+					<Directory Id="AppDataSILConverters40" Name="SILConverters40">
+						<Directory Id="Help" Name="Help">
+							<Component Id="AdaptItLookupHelp" Guid="{1D1DBD08-B4D1-4A7A-AECE-D55577D2A5B0}">
+								<File Id="AdaptItLookupHelp" Name="AdaptIt_Plug-in_About_box.mht" ReadOnly="yes" KeyPath="yes" Source="..\..\redist\Help\AdaptIt_Plug-in_About_box.mht"/>
+								<Shortcut Id="AdaptItLookupHelp" Directory="AiHelp" Name="AdaptIt Lookup Plug-in Help" Description="View help document for the AdaptIt Lookup Plug-in" IconIndex="0" Show="normal" Target="[#AdaptItLookupHelp]" WorkingDirectory="Help" Advertise="no" />
+							</Component>
+						</Directory>
+					</Directory>
+				</Directory>
+			</Directory>
 
-            <Directory Id="StartMenuFolder" SourceName="Start Menu">
+			<Directory Id="StartMenuFolder" SourceName="Start Menu">
                 <Directory Id="ProgramMenuFolder" SourceName="Programs">
                     <Directory Id="SILConverters" Name="SIL Converters">
                         <Directory Id="AiHelp" Name="Help" />

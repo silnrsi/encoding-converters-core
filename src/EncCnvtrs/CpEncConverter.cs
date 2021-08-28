@@ -31,7 +31,7 @@ namespace SilEncConverters40
         private bool m_bToWide;      // we have to keep track of the direction since it might be different than m_bForward
 
         public const string strDisplayName = "Code Page Converter";
-        public const string strHtmlFilename = "Code Page Converter Plug-in About box.mht";
+        public const string strHtmlFilename = "Code_Page_Converter_Plug-in_About_box.mht";
         #endregion Member Variable Definitions
 
         #region Initialization

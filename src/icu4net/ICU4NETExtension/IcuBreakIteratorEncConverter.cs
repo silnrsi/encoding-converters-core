@@ -22,7 +22,7 @@ namespace SilEncConverters40
 
         public const string CstrImplementationType = "ICU.BreakIterator";
         public const string CstrDisplayName = "ICU Boundary Analysis/Break Iterator";
-        public const string CstrHtmlFilename = "ICU Boundary Analysis-Break Iterator Converter About box.mht";
+        public const string CstrHtmlFilename = "ICU_Boundary_Analysis-Break_Iterator_Converter_About_box.mht";
 
 		public const string DefaultSeparator = " ";
 

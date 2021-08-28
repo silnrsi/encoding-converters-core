@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-	<Module Id="CcDLLsMM" Language="1033" Version="4.0.0.0">
+	<Module Id="CcDLLsMM" Language="1033" Version="5.0.0.0">
 		<Package Id="4309d497-9b6f-408d-8ed6-a357ca62145e" Comments="Merge module containing the CC run-time engine DLL" Description="CC DLL" Keywords="Consistent Changes, CC, Encoding Conversion, SILConverters" Manufacturer="SIL International" InstallerVersion="200" />
 
 		<Directory Id="TARGETDIR" Name="SourceDir">
@@ -20,17 +20,24 @@
             <Directory Id="CommonFilesFolder" SourceName="Common Files Folder">
                 <Directory Id="CcSIL" Name="SIL">
                     <Component Id="CC32.dll" Guid="29c247e4-c14a-4d76-afce-ccbf1be470a9">
-                        <File Id="CC32.dll" Name="CC32.dll" KeyPath="yes" Source="..\..\output\Win32\release\CC32.dll" />
+                        <File Id="CC32.dll" Name="CC32.dll" KeyPath="yes" Source="..\..\redist\32bit\CC32.dll" />
                     </Component>
-                    <Directory Id="Help" Name="Help">
-                        <Component Id="CCTableHelp" Guid="{302FE1FD-F890-47F6-88BE-0B17F289F8CE}">
-                            <File Id="CCTableHelp" Name="CC Table Plug-in About box.mht" KeyPath="yes" Source="..\..\redist\Help\CC Table Plug-in About box.mht"/>
-                        </Component>
-                    </Directory>
                 </Directory>
             </Directory>
 
-            <Directory Id="ProgramMenuFolder" Name="Program">
+			<Directory Id="CommonAppDataFolder" SourceName="AppData">
+				<Directory Id="AppDataSIL" Name="SIL">
+					<Directory Id="AppDataSILConverters40" Name="SILConverters40">
+						<Directory Id="Help" Name="Help">
+							<Component Id="CCTableHelp" Guid="{C05A861B-E8E6-4B31-8020-67555049AFE7}">
+								<File Id="CCTableHelp" Name="CC_Table_Plug-in_About_box.mht" KeyPath="yes" Source="..\..\redist\Help\CC_Table_Plug-in_About_box.mht"/>
+							</Component>
+						</Directory>
+					</Directory>
+				</Directory>
+			</Directory>
+
+			<Directory Id="ProgramMenuFolder" Name="Program">
                 <Directory Id="SIL_Converters" Name="SIL Converters">
                     <Directory Id="CcHelp" Name="Help">
                         <Component Id="HelpShortcuts" Guid="A84EFA8C-D422-4D5D-B55B-C4FCDD6ECE61" KeyPath="yes">

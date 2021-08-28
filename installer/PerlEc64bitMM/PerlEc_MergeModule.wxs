@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-	<Module Id="PerlEcMM" Language="1033" Version="1.0.0.0">
+	<Module Id="PerlEcMM" Language="1033" Version="5.0.0.0">
 		<Package Id="{14EB97DC-E9E1-47BB-8F06-25D0D5DC988C}" Keywords="Perl, Encoding Conversion, SILConverters, 64bit" Description="Perl EncConverter merge module" Comments="Merge module containing the Perl EncConverter DLLs"
 						 Manufacturer="SIL International" InstallerVersion="200" Platform="x64"/>
 
@@ -18,12 +18,14 @@
 				</Directory>
 			</Directory>
 
-			<Directory Id="CommonFiles64Folder" SourceName="Common Files Folder">
-				<Directory Id="PerlSIL" Name="SIL">
-					<Directory Id="Help" Name="Help">
-						<Component Id="PerlHelp" Guid="{1809C1DA-A25D-496D-AE09-FF004D9A3CE7}">
-							<File Id="PerlHelp" Name="Perl Expression Plug-in About box.mht" KeyPath="yes" Source="..\..\redist\Help\Perl Expression Plug-in About box.mht"/>
-						</Component>
+			<Directory Id="CommonAppDataFolder" SourceName="AppData">
+				<Directory Id="AppDataSIL" Name="SIL">
+					<Directory Id="AppDataSILConverters40" Name="SILConverters40">
+						<Directory Id="Help" Name="Help">
+							<Component Id="PerlHelp" Guid="{FEB46685-5205-4AB9-9586-D89CFB974684}">
+								<File Id="PerlHelp" Name="Perl_Expression_Plug-in_About_box.mht" KeyPath="yes" Source="..\..\redist\Help\Perl_Expression_Plug-in_About_box.mht"/>
+							</Component>
+						</Directory>
 					</Directory>
 				</Directory>
 			</Directory>

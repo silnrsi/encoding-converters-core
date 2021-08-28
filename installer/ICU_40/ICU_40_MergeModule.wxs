@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-  <Module Id="ICU_40MergeModule" Language="1033" Version="1.0.0.0">
+  <Module Id="ICU_40MergeModule" Language="1033" Version="5.0.0.0">
     <Package Id="{CD60A0F5-3469-4F93-931D-DED2529C7B1F}" Keywords="IBM Components for Unicode (ICU); SIL; Encoding Conversion; Transliteration; EncConverters"
              Description="Merge Module for ICU (currently v6.8.2) corresponding to EncConverter core API v4.0 -- Include in any client application deployment project that wants to include ICU capabilities to EncConverters functionality"
              Comments="Common installer module for SIL's ICU component for v4.0 of the EncConverter's API" Manufacturer="SIL International" InstallerVersion="500" Languages="1033"

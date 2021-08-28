@@ -76,7 +76,7 @@ namespace SilEncConverters40
 
         #region Member Variable Definitions
         public const string strDisplayName = "ICU Converter";
-        public const string strHtmlFilename = "ICU Converters Plug-in About box.htm";
+        public const string strHtmlFilename = "ICU_Converters_Plug-in_About_box.htm";
         #endregion Member Variable Definitions
 
         #region Initialization

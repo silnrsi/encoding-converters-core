@@ -9,7 +9,7 @@
 		<Directory Id="TARGETDIR" Name="SourceDir">
 
 			<Component Id="RegisterECFolders" Guid="ba2789b1-93c9-4258-872e-85d91e975db1">
-				<RegistryValue Root="HKLM" Key="Software\SIL\SilEncConverters40" Name="RootDir" Type="string" Value="[EcSIL]"/>
+				<RegistryValue Root="HKLM" Key="Software\SIL\SilEncConverters40" Name="RootDir" Type="string" Value="[AppDataSILConverters40]"/>
 				<RegistryValue Root="HKLM" Key="Software\SIL\SilEncConverters40" Name="UseMozilla" Type="string" Value="False"/>
 			</Component>
 
@@ -520,59 +520,6 @@
 					<Component Id="ECDriver.dll" Guid="4c632e67-b66b-4a7b-a6bb-f99d93abdcca">
 						<File Id="ECDriver.dll" Name="ECDriver.dll" KeyPath="yes" Source="..\..\output\Win32\release\ECDriver.dll"/>
 					</Component>
-					<Directory Id="Help" Name="Help">
-						<Component Id="CPHelp" Guid="58fac2f3-e469-4e62-a5a1-970647ebe5fc">
-							<File Id="CPHelp" Name="Code Page Converter Plug-in About box.mht" ReadOnly="yes" KeyPath="yes" Source="..\..\redist\Help\Code Page Converter Plug-in About box.mht"/>
-						</Component>
-						<Component Id="CmpdHelp" Guid="a2557ea3-3ec1-41aa-8a06-af9fccfd07da">
-							<File Id="CmpdHelp" Name="Compound Converter Plug-in About box.mht" ReadOnly="yes" KeyPath="yes" Source="..\..\redist\Help\Compound Converter Plug-in About box.mht"/>
-						</Component>
-						<Component Id="FallBackHelp" Guid="cd14321a-d6c0-44aa-b59d-773e9b060d34">
-							<File Id="FallBackHelp" Name="Fallback Converter Plug-in About box.mht" ReadOnly="yes" KeyPath="yes" Source="..\..\redist\Help\Fallback Converter Plug-in About box.mht"/>
-						</Component>
-						<Component Id="TECkitHelp" Guid="292dcfa4-3602-4861-ae01-6b4875707dec">
-							<File Id="TECkitHelp" Name="TECkit Map Plug-in About box.mht" ReadOnly="yes" KeyPath="yes" Source="..\..\redist\Help\TECkit Map Plug-in About box.mht"/>
-						</Component>
-						<Component Id="CantReadMhtFiles.htm" Guid="{F3B39444-A2B0-40D8-8863-8FE1E8194FF4}">
-							<File Id="CantReadMhtFiles.htm" Name="CantReadMhtFiles.htm" ReadOnly="yes" KeyPath="yes" Source="..\..\redist\Help\CantReadMhtFiles.htm"/>
-						</Component>
-						<Component Id="IcuRegex" Guid="{786CA242-4204-46B7-86D5-93ED456710B5}">
-							<File Id="IcuRegex" Name="ICU Regular Expression Plug-in About box.mht" ReadOnly="yes" KeyPath="yes" Source="..\..\redist\Help\ICU Regular Expression Plug-in About box.mht"/>
-						</Component>
-						<Component Id="IcuTranslit" Guid="{024219A1-29EB-4D20-BB9A-DB9E3C3F1743}">
-							<File Id="IcuTranslit" Name="ICU Transliterators Plug-in About box.mht" ReadOnly="yes" KeyPath="yes" Source="..\..\redist\Help\ICU Transliterators Plug-in About box.mht"/>
-						</Component>
-						<Component Id="IcuBreakIterator" Guid="{967FA710-83C4-45B2-8265-68001A9D661B}">
-							<File Id="IcuBreakIterator" Name="ICU Boundary Analysis-Break Iterator Converter About box.mht" ReadOnly="yes" KeyPath="yes" Source="..\..\redist\Help\ICU Boundary Analysis-Break Iterator Converter About box.mht"/>
-						</Component>
-						<Component Id="ICU_Converters_Plugin_About_box.htm" Guid="{963A2D88-6CFE-4C91-8830-CD6F8A3872E8}">
-							<!-- The following File ID has been truncated to suppress ICE03 string overflow in the shortcut that uses it -->
-							<File Id="ICU_Converters_About" Name="ICU Converters Plug-in About box.htm" ReadOnly="yes" KeyPath="yes" Source="..\..\redist\Help\ICU Converters Plug-in About box.htm"/>
-						</Component>
-						<Directory Id="ICUConvPlug" Name="ICU Converters Plug-in About box_files">
-							<Component Id="image008.jpg" Guid="{C3970194-5CAF-44A9-B59E-F7AD6CF3F84D}">
-								<File Id="image008.jpg" Name="image008.jpg" ReadOnly="yes" KeyPath="yes" Source="..\..\redist\Help\ICU Converters Plug-in About box_files\image008.jpg"/>
-							</Component>
-							<Component Id="image001.png" Guid="{F166A049-8724-4EA5-80F0-12B55A48F4BF}">
-								<File Id="image001.png" Name="image001.png" ReadOnly="yes" KeyPath="yes" Source="..\..\redist\Help\ICU Converters Plug-in About box_files\image001.png"/>
-							</Component>
-							<Component Id="image003.png" Guid="{C2DA1740-EDCF-49E2-8E62-C07AB42C476B}">
-								<File Id="image003.png" Name="image003.png" ReadOnly="yes" KeyPath="yes" Source="..\..\redist\Help\ICU Converters Plug-in About box_files\image003.png"/>
-							</Component>
-							<Component Id="image007.png" Guid="{1C4C6530-7E4F-411E-BF80-F3AC653219A6}">
-								<File Id="image007.png" Name="image007.png" ReadOnly="yes" KeyPath="yes" Source="..\..\redist\Help\ICU Converters Plug-in About box_files\image007.png"/>
-							</Component>
-							<Component Id="image002.jpg" Guid="{448BEBF5-5EE0-4474-B92C-CD3B3B22442F}">
-								<File Id="image002.jpg" Name="image002.jpg" ReadOnly="yes" KeyPath="yes" Source="..\..\redist\Help\ICU Converters Plug-in About box_files\image002.jpg"/>
-							</Component>
-							<Component Id="image004.jpg" Guid="{DFF6B368-EF7B-405E-BC57-F25CA8D3B821}">
-								<File Id="image004.jpg" Name="image004.jpg" ReadOnly="yes" KeyPath="yes" Source="..\..\redist\Help\ICU Converters Plug-in About box_files\image004.jpg"/>
-							</Component>
-							<Component Id="filelist.xml" Guid="{E6812F05-9BD4-4DBF-BD33-86E99A7B1A5E}">
-								<File Id="filelist.xml" Name="filelist.xml" ReadOnly="yes" KeyPath="yes" Source="..\..\redist\Help\ICU Converters Plug-in About box_files\filelist.xml"/>
-							</Component>
-						</Directory>
-					</Directory>
 					<Component Id="RemoveFile_MoveEcData_Log" Guid="{F08A3C81-9FCD-4C96-840F-583C1BBB1AA9}">
 					  <RemoveFile Id="RemoveFile3" Directory="EcSIL" Name="MoveEcData.log" On="uninstall" />
 					  <!-- The next 2 items are junk to make validation pass on ICE18 and ICE64. -->
@@ -598,6 +545,37 @@
 							</CreateFolder>
 						</Component>
 					</Directory>
+					<Directory Id="AppDataSILConverters40" Name="SILConverters40">
+						<Directory Id="Help" Name="Help">
+							<Component Id="CPHelp" Guid="{B0898694-B72B-4E08-B0AF-07DCA798E571}">
+								<File Id="CPHelp" Name="Code_Page_Converter_Plug-in_About_box.mht" ReadOnly="yes" KeyPath="yes" Source="..\..\redist\Help\Code_Page_Converter_Plug-in_About_box.mht"/>
+							</Component>
+							<Component Id="CmpdHelp" Guid="{7C573610-E9CF-48F1-B72A-88759180B6F6}">
+								<File Id="CmpdHelp" Name="Compound_Converter_Plug-in_About_box.mht" ReadOnly="yes" KeyPath="yes" Source="..\..\redist\Help\Compound_Converter_Plug-in_About_box.mht"/>
+							</Component>
+							<Component Id="FallBackHelp" Guid="{D06FD4FE-DFAF-493C-9002-0E60DDE68AD5}">
+								<File Id="FallBackHelp" Name="Fallback_Converter_Plug-in_About_box.mht" ReadOnly="yes" KeyPath="yes" Source="..\..\redist\Help\Fallback_Converter_Plug-in_About_box.mht"/>
+							</Component>
+							<Component Id="TECkitHelp" Guid="{E96005CD-9793-40A6-8ADA-1D40C0F75509}">
+								<File Id="TECkitHelp" Name="TECkit_Map_Plug-in_About_box.mht" ReadOnly="yes" KeyPath="yes" Source="..\..\redist\Help\TECkit_Map_Plug-in_About_box.mht"/>
+							</Component>
+							<Component Id="CantReadMhtFiles.htm" Guid="{2EA57953-4B0C-4A5D-A887-E9E9D100D20B}">
+								<File Id="CantReadMhtFiles.htm" Name="CantReadMhtFiles.htm" ReadOnly="yes" KeyPath="yes" Source="..\..\redist\Help\CantReadMhtFiles.htm"/>
+							</Component>
+							<Component Id="IcuRegex" Guid="{8A0498CB-71B8-4C0F-AE24-95FDD529BDAB}">
+								<File Id="IcuRegex" Name="ICU_Regular_Expression_Plug-in_About_box.mht" ReadOnly="yes" KeyPath="yes" Source="..\..\redist\Help\ICU_Regular_Expression_Plug-in_About_box.mht"/>
+							</Component>
+							<Component Id="IcuTranslit" Guid="{E863CC65-432C-4567-B402-BCB70D81A565}">
+								<File Id="IcuTranslit" Name="ICU_Transliterators_Plug-in_About_box.mht" ReadOnly="yes" KeyPath="yes" Source="..\..\redist\Help\ICU_Transliterators_Plug-in_About_box.mht"/>
+							</Component>
+							<Component Id="IcuBreakIterator" Guid="{D382D337-EB0C-44FD-9FFE-9D14F3263451}">
+								<File Id="IcuBreakIterator" Name="ICU_Boundary_Analysis-Break_Iterator_Converter_About_box.mht" ReadOnly="yes" KeyPath="yes" Source="..\..\redist\Help\ICU_Boundary_Analysis-Break_Iterator_Converter_About_box.mht"/>
+							</Component>
+							<Component Id="IcuConverters" Guid="{73FB38AF-BFD2-4AB5-9AAA-B2C233789C0B}">
+								<File Id="IcuConverters" Name="ICU_Converters_Plug-in_About_box.mht" ReadOnly="yes" KeyPath="yes" Source="..\..\redist\Help\ICU_Converters_Plug-in_About_box.mht"/>
+							</Component>
+						</Directory>
+					</Directory>
 				</Directory>
 			</Directory>
 
@@ -610,7 +588,7 @@
 								<Shortcut Id="CmpdPluginHelp" Directory="SILConvHelp" Name="Compound Converter Plug-in Help" Target="[!CmpdHelp]" Hotkey="0" IconIndex="0" Show="normal" WorkingDirectory="Help"/>
 								<Shortcut Id="FallbackPluginHelp" Directory="SILConvHelp" Name="Primary-Fallback Converter Plug-in Help" Target="[!FallBackHelp]" Hotkey="0" IconIndex="0" Show="normal" WorkingDirectory="Help"/>
 								<Shortcut Id="TECkitPluginHelp" Directory="SILConvHelp" Name="TECkit Converter Plug-in Help" Target="[!TECkitHelp]" Hotkey="0" IconIndex="0" Show="normal" WorkingDirectory="Help"/>
-								<Shortcut Id="ICUConvHelp" Directory="SILConvHelp" Name="ICU Converters Help" Target="[!ICU_Converters_About]" Hotkey="0" IconIndex="0" Show="normal" WorkingDirectory="Help"/>
+								<Shortcut Id="ICUConvHelp" Directory="SILConvHelp" Name="ICU Converters Help" Target="[!IcuConverters]" Hotkey="0" IconIndex="0" Show="normal" WorkingDirectory="Help"/>
 								<Shortcut Id="ICUTranlitHelp" Directory="SILConvHelp" Name="ICU Transliterators Help" Target="[!IcuTranslit]" Hotkey="0" IconIndex="0" Show="normal" WorkingDirectory="Help"/>
 								<Shortcut Id="ICURegexHelp" Directory="SILConvHelp" Name="ICU Regular Expression Help" Target="[!IcuRegex]" Hotkey="0" IconIndex="0" Show="normal" WorkingDirectory="Help"/>
 								<!-- The next item is junk to make validation pass on ICE18 -->

@@ -44,7 +44,7 @@ namespace SilEncConverters40
         private DateTime m_timeModified = DateTime.MinValue;
 
         public const string strDisplayName = "Python Script";
-        public const string strHtmlFilename = "Python Script Plug-in About box.mht";
+        public const string strHtmlFilename = "Python_Script_Plug-in_About_box.mht";
         #endregion Member Variable Definitions
 
         #region Initialization
