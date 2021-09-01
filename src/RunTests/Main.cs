@@ -71,6 +71,7 @@ namespace RunTests
 				++m_crun;
 				test.CleanupAfterTest();
 
+#if TODO_RESOLVE_TO_NEW_LOCATION
 				test.InitBeforeTest();
 				try { test.TestPerlEncConverter(); Console.WriteLine("TestPerlEncConverter succeeded!");}
 				catch(Exception e) {Console.WriteLine("TestPerlEncConverter failed: {0}", e.Message); ++m_cfail;}
@@ -82,6 +83,7 @@ namespace RunTests
 				catch(Exception e) {Console.WriteLine("TestPyScriptEncConverters failed: {0}", e.Message); ++m_cfail;}
 				++m_crun;
 				test.CleanupAfterTest();
+#endif
 
 //				if (TestUtil.IsWindows)
 //				{

@@ -388,9 +388,11 @@ namespace TestEncCnvtrs
         {
 			const string cstrFriendlyName = "UnitTesting-ThaiWordBreaker";
 			var theEcs = DirectableEncConverter.EncConverters;
+#if TODO_RESOLVE_ICUBREAKITERATORENCCONVERTER
 			theEcs.AddConversionMap(cstrFriendlyName, IcuBreakIteratorEncConverter.DefaultSeparator, ConvType.Unicode_to_from_Unicode,
 						IcuBreakIteratorEncConverter.CstrImplementationType, "UNICODE", "UNICODE",
 						ProcessTypeFlags.DontKnow);
+#endif
 			var theEc = theEcs[cstrFriendlyName];
 			string m_thaiInput = "พักหลังๆนี่เวลาแก๊นจะตัดสินใจซื้ออะไรซักอย่างที่มันมีราคา จะคิดแล้วคิดอีก อย่างน้อยก็ทิ้งเวลาไว้ตั้งแต่";
 			string m_thaiOutput = "พัก หลังๆ นี่ เวลา แก๊น จะ ตัดสิน ใจ ซื้อ อะไร ซัก อย่าง ที่ มัน มี ราคา จะ คิด แล้ว คิด อีก อย่าง น้อย ก็ ทิ้ง เวลา ไว้ ตั้งแต่";
