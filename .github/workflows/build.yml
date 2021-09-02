@@ -1,0 +1,77 @@
+# Build encoding converters and run tests
+
+name: Build
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+  workflow_dispatch:
+
+env:
+  # Path to the solution file relative to the root of the project.
+  SOLUTION_FILE_PATH: "./EncConverters 2019.sln"
+
+jobs:
+  build-windows:
+    runs-on: [windows-latest]
+    strategy:
+       # Keep building other jobs even if another fails, to show what _is_ still working.
+       fail-fast: false
+       matrix:
+         build_configuration: ["Debug", "Release"]
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Add MSBuild to PATH
+      uses: microsoft/setup-msbuild@v1.0.2
+
+    - name: Fetch nuget dependecies
+      run: nuget restore "${{env.SOLUTION_FILE_PATH}}"
+
+    - name: Build
+      working-directory: ${{env.GITHUB_WORKSPACE}}
+      # Add additional options to the MSBuild command line here (like platform or verbosity level).
+      # See https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference
+      run: msbuild /m /p:Configuration=${{matrix.build_configuration}} "${{env.SOLUTION_FILE_PATH}}"
+
+    # TODO Run tests
+    #- name: Test
+    #  run: output/Win32/${{matrix.build_configuration}}/RunTests.exe
+
+  build-linux:
+    runs-on: [ubuntu-latest]
+    strategy:
+       matrix:
+         build_configuration: ["Debug", "Release"]
+
+    steps:
+    - name: Add repo packages.sil.org
+      run: |
+        (wget -O- https://packages.sil.org/keys/pso-keyring-2016.gpg | sudo tee /etc/apt/trusted.gpg.d/pso-keyring-2016.gpg)&>/dev/null
+        (. /etc/os-release && sudo tee /etc/apt/sources.list.d/packages-sil-org.list>/dev/null <<< "deb http://packages.sil.org/$ID $VERSION_CODENAME main")
+        sudo apt-get update
+
+    - name: Install dependencies
+      run: sudo apt-get install --assume-yes automake g++ python-dev libicu-dev mono5-sil icu-dev-fw libteckit-dev
+
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Autogen
+      run: . environ && ./autogen.sh
+
+    - name: Build
+      run: . environ && make
+
+    - name: Test
+      if: matrix.build_configuration == 'Debug'
+      run: |
+        . environ
+        export EC_COMMON_APPLICATION_DATA_PATH="$(pwd)/ec-common"
+        export MONO_REGISTRY_PATH="${EC_COMMON_APPLICATION_DATA_PATH}/registry"
+        # Note that currently, many tests fail and it doesn't fail this build step.
+        mono output/${{matrix.build_configuration}}/RunTests.exe
