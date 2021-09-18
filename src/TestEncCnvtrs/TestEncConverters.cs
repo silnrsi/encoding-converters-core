@@ -835,6 +835,12 @@ namespace TestEncCnvtrs
 			Assert.Less(10, converters.Count, "There should be at least ten CodePage converters available!");
 		}
 
+#if !__MonoCS__	// Edge doesn't work on Mono (presumably)
+		/// <summary>
+		/// install the prerequisite for this test from:
+		/// https://go.microsoft.com/fwlink/p/?LinkId=2124703
+		/// </summary>
+		/// <param name="converterSpecSuffix"></param>
 		[Apartment(ApartmentState.STA)]
 		[Test]
 		[TestCase("legacy_text;unicode_text;convert_to_unicode;Convert_to_Krutidev_010;InternetExplorer")]
@@ -843,19 +849,20 @@ namespace TestEncCnvtrs
 		[TestCase("legacy_text;unicode_text;convert_to_unicode;Edge")]
 		[TestCase("legacy_text;unicode_text;convert_to_unicode;Convert_to_Krutidev_010;GeckoFx")]
 		[TestCase("legacy_text;unicode_text;convert_to_unicode;GeckoFx")]
-		public void TestTechHindiSiteConverter(string converterSpecSuffic)
+		public void TestTechHindiSiteConverter(string converterSpecSuffix)
         {
-            TechHindiSiteConverterCommon(converterSpecSuffic);
+            TechHindiSiteConverterCommon(converterSpecSuffix);
         }
+#endif
 
 		private const string TechHindiSiteConverterFriendlyName = "KrutiDev010 <> Unicode";
 
-		private void TechHindiSiteConverterCommon(string converterSpecSuffic)
+		private void TechHindiSiteConverterCommon(string converterSpecSuffix)
         {
             var dir = GetTestSourceFolder();
             var pathToTechHindiSiteFile = Path.Combine(dir, "Krutidev010-to-Unicode-to-Krutidev010 Converter09.htm");
             // e.g. C:\Users\Bob\Documents\Krutidev010-to-Unicode-to-Krutidev010 Converter09.htm;legacy_text;unicode_text;convert_to_unicode;Convert_to_Krutidev_010
-            var converterSpec = $"{pathToTechHindiSiteFile};{converterSpecSuffic}";
+            var converterSpec = $"{pathToTechHindiSiteFile};{converterSpecSuffix}";
 			m_encConverters.AddConversionMap(TechHindiSiteConverterFriendlyName, converterSpec, ConvType.Legacy_to_from_Unicode,
 											 EncConverters.strTypeSILtechHindiSite, "KRUTIDEV", "UNICODE",
 											 ProcessTypeFlags.UnicodeEncodingConversion);

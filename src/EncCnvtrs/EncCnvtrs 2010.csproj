@@ -136,10 +136,10 @@
       <HintPath>../../packages/Geckofx45.64.Linux.45.0.21.0/lib/net40/Geckofx-Winforms.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Microsoft.Web.WebView2.Core, Version=1.0.902.49, Culture=neutral, PublicKeyToken=2a8ab48044d2601e, processorArchitecture=MSIL">
+    <Reference Include="Microsoft.Web.WebView2.Core, Version=1.0.902.49, Culture=neutral, PublicKeyToken=2a8ab48044d2601e, processorArchitecture=MSIL" Condition="'$(OS)'=='Windows_NT'">
       <HintPath>..\..\packages\Microsoft.Web.WebView2.1.0.902.49\lib\net45\Microsoft.Web.WebView2.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Web.WebView2.WinForms, Version=1.0.902.49, Culture=neutral, PublicKeyToken=2a8ab48044d2601e, processorArchitecture=MSIL">
+    <Reference Include="Microsoft.Web.WebView2.WinForms, Version=1.0.902.49, Culture=neutral, PublicKeyToken=2a8ab48044d2601e, processorArchitecture=MSIL" Condition="'$(OS)'=='Windows_NT'">
       <HintPath>..\..\packages\Microsoft.Web.WebView2.1.0.902.49\lib\net45\Microsoft.Web.WebView2.WinForms.dll</HintPath>
     </Reference>
     <Reference Include="System">
