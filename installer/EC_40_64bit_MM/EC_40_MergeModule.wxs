@@ -501,6 +501,12 @@
 				<Component Id="Geckofx_Winforms.dll" Guid="{FF439F0E-7A49-4224-8733-8AA642C33D26}">
 					<File Id="Geckofx_Winforms.dll" Name="Geckofx-Winforms.dll" Vital="yes" KeyPath="yes" AssemblyManifest="Geckofx_Winforms.dll" AssemblyApplication="Geckofx_Winforms.dll" Assembly=".net" Source="..\..\packages\Geckofx45.64.45.0.34\lib\net45\Geckofx-Winforms.dll"/>
 				</Component>
+				<Component Id="Microsoft_Web_WebView2_Core.dll" Guid="{905D2989-3822-4B36-B602-FCDF7899D895}">
+					<File Id="Microsoft_Web_WebView2_Core.dll" Name="Microsoft.Web.WebView2.Core.dll" Vital="yes" KeyPath="yes" AssemblyManifest="Microsoft_Web_WebView2_Core.dll" AssemblyApplication="Microsoft_Web_WebView2_Core.dll" Assembly=".net" Source="..\..\packages\Microsoft.Web.WebView2.1.0.902.49\lib\net45\Microsoft.Web.WebView2.Core.dll"/>
+				</Component>
+				<Component Id="Microsoft_Web_WebView2_WinForms.dll" Guid="{D9EF1787-63E9-471D-A489-E5880FA4F9A8}">
+					<File Id="Microsoft_Web_WebView2_WinForms.dll" Name="Microsoft.Web.WebView2.WinForms.dll" Vital="yes" KeyPath="yes" AssemblyManifest="Microsoft_Web_WebView2_WinForms.dll" AssemblyApplication="Microsoft_Web_WebView2_WinForms.dll" Assembly=".net" Source="..\..\packages\Microsoft.Web.WebView2.1.0.902.49\lib\net45\Microsoft.Web.WebView2.WinForms.dll"/>
+				</Component>
 				<Directory Id="ECFolder" Name="EC">
 					<Directory Id="PluginsFolder" Name="Plugins">
 						<Component Id="EC4.0.0.0PluginDetails.xml" Guid="579194FE-37AA-47a3-A089-B0F1F17415FB">

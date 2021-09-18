@@ -42,7 +42,7 @@ namespace TestEncCnvtrs
         /// ("fixture") is run.
         /// </summary>
         /// --------------------------------------------------------------------
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
 		public void InitForClass()
 		{
 			Util.DebugWriteLine(this, "BEGIN");
@@ -169,7 +169,8 @@ namespace TestEncCnvtrs
 		[TearDown]
 		public void CleanupAfterTest()
 		{
-			RemoveAnyAddedConverters();
+			if (m_encConverters != null)
+				RemoveAnyAddedConverters();
 
 			// reset the python home env variable back to what it was before testing (if o
 			Environment.SetEnvironmentVariable(EnvironmentVariableNamePythonHome, m_originalPythonHome);
@@ -204,7 +205,7 @@ namespace TestEncCnvtrs
 		/// ("fixture") have been run.
 		/// </summary>
 		/// --------------------------------------------------------------------
-		[TestFixtureTearDown]
+		[OneTimeTearDown]
 		public void CleanupForClass()
 		{
 			m_encConverters = null;

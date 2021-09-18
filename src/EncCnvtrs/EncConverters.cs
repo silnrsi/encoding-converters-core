@@ -60,10 +60,11 @@ namespace SilEncConverters40
         public const string strRegKeyForSelfRegistering = "RegisterSelf";
         internal const string strShowToolTipsStateKey   = "ShowToolTips";
         internal const string CstrUseGeckoRegKey = "UseMozilla";
+		internal const string CstrUseEdgeRegKey = "UseEdge";
 
-        // implement types define in EncCnvtrs.dll (public so users can use them in .Net
-        //  code rather than hard-coding the strings)
-        public const string strTypeImplCOM              = "COM";
+		// implement types define in EncCnvtrs.dll (public so users can use them in .Net
+		//  code rather than hard-coding the strings)
+		public const string strTypeImplCOM              = "COM";
         public const string strTypeSILcc                = "SIL.cc";
         public const string strTypeSILtec               = "SIL.tec";
         public const string strTypeSILtecForm           = "SIL.tecForm";
@@ -78,7 +79,8 @@ namespace SilEncConverters40
         public const string strTypeSILfallback          = "SIL.fallback";
         public const string strTypeSILadaptit           = "SIL.AdaptItKB";
         public const string strTypeSILadaptitGuesser    = "SIL.AdaptItKBGuesser";
-        public const string cstrTempConverterPrefix     = "Temporary Converter";
+		public const string strTypeSILtechHindiSite		= "SIL.TechHindiWebPage";
+		public const string cstrTempConverterPrefix     = "Temporary Converter";
 
         // default values for XML file attributes
         public const string HKLM_PATH_TO_XML_FILE       = @"SOFTWARE\SIL\EncodingConverterRepository";
@@ -311,7 +313,7 @@ namespace SilEncConverters40
                                     "\", Ident = \"" + strConverterIdentifier + "\": " + e.Message, traceSwitch.DisplayName);
 #elif DEBUG
                                 // catch it in Debug mode, so we can check it
-                                System.Diagnostics.Debug.WriteLineIf(traceSwitch.TraceError, "Key = \"" + strConverterKey +
+                                Debug.WriteLineIf(traceSwitch.TraceError, "Key = \"" + strConverterKey +
                                     "\", Ident = \"" + strConverterIdentifier + "\": " + e.Message, traceSwitch.DisplayName);
 #endif
                             }
@@ -467,7 +469,7 @@ namespace SilEncConverters40
 				//  of the assembly installed by the other guy" doesn't work. Therefore, we
 				//  also no longer want to. Each client will put the plugins in a
 				//  <running folder>\EC\Plugins folder
-				Console.WriteLine("EncConverters: Falling back to assembly folder");
+				Debug.WriteLine("EncConverters: Falling back to assembly folder");
 				strPluginXmlFilesFolder = PlugInFolder;
 			}
 #else
@@ -1987,7 +1989,7 @@ namespace SilEncConverters40
         public void RemoveNonPersist(object mapName)
         {
             Util.DebugWriteLine(this, "BEGIN");
-            // first see if this name is a concatenation of mappingName+implementation
+			// first see if this name is a concatenation of mappingName+implementation
             string sImplementType;
             string strMapName = StringMapNameFromObject(mapName);
             string strConverterName = GetMappingName(strMapName, out sImplementType);

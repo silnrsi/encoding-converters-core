@@ -93,53 +93,37 @@ namespace SilEncConverters40
         }
 
 		public override void Initialize(string converterName, string converterSpec, ref string lhsEncodingID, ref string rhsEncodingID, ref ConvType conversionType, ref Int32 processTypeFlags, Int32 codePageInput, Int32 codePageOutput, bool bAdding)
-        {
-            Util.DebugWriteLine(this, "BEGIN");
-            // let the base class have first stab at it
-            base.Initialize(converterName, converterSpec, ref lhsEncodingID, ref rhsEncodingID, 
-                ref conversionType, ref processTypeFlags, codePageInput, codePageOutput, bAdding );
+		{
+			Util.DebugWriteLine(this, "BEGIN");
+			// let the base class have first stab at it
+			base.Initialize(converterName, converterSpec, ref lhsEncodingID, ref rhsEncodingID,
+				ref conversionType, ref processTypeFlags, codePageInput, codePageOutput, bAdding);
 
-            // the only thing we want to add (now that the convType can be less than accurate) 
-            //  is to make sure it's unidirectional
-            switch(conversionType)
-            {
-                case ConvType.Legacy_to_from_Legacy:
-                    conversionType = ConvType.Legacy_to_Legacy;
-                    break;
-                case ConvType.Legacy_to_from_Unicode:
-                    conversionType = ConvType.Legacy_to_Unicode;
-                    break;
-                case ConvType.Unicode_to_from_Legacy:
-                    conversionType = ConvType.Unicode_to_Legacy;
-                    break;
-                case ConvType.Unicode_to_from_Unicode:
-                    conversionType = ConvType.Unicode_to_Unicode;
-                    break;
-                default:
-                    break;
-            }
+			// the only thing we want to add (now that the convType can be less than accurate) 
+			//  is to make sure it's unidirectional
+			m_eConversionType = conversionType = MakeUniDirectional(conversionType);
 
-            // if this is a spelling fixer cc table, then use delimiters around
-            //  the input string so we can do word boundary testing (the delimiter
-            //  will be considered whitespace). This is okay because we know that
-            //  spelling fixer cc tables will not otherwise be looking for the
-            //  delimiter, which might cause us problems.
-            if( (processTypeFlags & (long)ProcessTypeFlags.SpellingFixerProject) != 0 )
-                m_bUseDelimiters = true;
+			// if this is a spelling fixer cc table, then use delimiters around
+			//  the input string so we can do word boundary testing (the delimiter
+			//  will be considered whitespace). This is okay because we know that
+			//  spelling fixer cc tables will not otherwise be looking for the
+			//  delimiter, which might cause us problems.
+			if ((processTypeFlags & (long)ProcessTypeFlags.SpellingFixerProject) != 0)
+				m_bUseDelimiters = true;
 
-            // if we're supposedly adding this one, then clobber our copy of its last modified 
-            // (there was a problem with us instantiating lots of these things in a row and
-            //  not detecting the change because the modified date was within a second of each 
-            //  other)
-            if( bAdding )
-                m_timeModified = DateTime.MinValue;
-            Util.DebugWriteLine(this, "Initialize END");
-        }
+			// if we're supposedly adding this one, then clobber our copy of its last modified 
+			// (there was a problem with us instantiating lots of these things in a row and
+			//  not detecting the change because the modified date was within a second of each 
+			//  other)
+			if (bAdding)
+				m_timeModified = DateTime.MinValue;
+			Util.DebugWriteLine(this, "Initialize END");
+		}
 
-        #endregion Initialization
+		#endregion Initialization
 
-        #region Misc helpers
-        protected bool IsFileLoaded()
+		#region Misc helpers
+		protected bool IsFileLoaded()
         { 
             return (m_hTable != IntPtr.Zero);
         }

@@ -294,8 +294,8 @@ namespace SilEncConverters40
             catch (Exception e)
             {
                 // ReSharper disable LocalizableElement
-                Console.WriteLine("Exception caught: message = '{0}'", e.Message);
-                Console.WriteLine("Exception stack:\n{0}", e.StackTrace);
+                System.Diagnostics.Debug.WriteLine("Exception caught: message = '{0}'", e.Message);
+                System.Diagnostics.Debug.WriteLine("Exception stack:\n{0}", e.StackTrace);
                 // ReSharper restore LocalizableElement
                 throw;
             }

@@ -1,4 +1,4 @@
-﻿namespace SilEncConverters40
+namespace SilEncConverters40
 {
     partial class WebBrowserAdaptor
     {
@@ -13,7 +13,7 @@
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
-            if (disposing && (components != null))
+			if (disposing && (components != null))
             {
                 components.Dispose();
             }
@@ -36,8 +36,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Name = "WebBrowserAdaptor";
             this.Size = new System.Drawing.Size(377, 374);
-            this.ResumeLayout(false);
-
+			this.ResumeLayout(false);
         }
 
         #endregion
