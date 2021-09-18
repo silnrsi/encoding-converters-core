@@ -92,31 +92,23 @@
     </Reference>
     <Reference Include="Geckofx-Winforms" Condition="'$(Platform)' == 'x64' and '$(OS)'=='Windows_NT'">
       <Private>False</Private>
-      <HintPath>../../packages/Geckofx45.64.45.0.33/lib/net40/Geckofx-Core.dll</HintPath>
+      <HintPath>../../packages/Geckofx45.64.45.0.33/lib/net40/Geckofx-Winforms.dll</HintPath>
     </Reference>
-      <Reference Include="Geckofx-Core" Condition="('$(Platform)' == 'x86' or '$(Platform)' == 'AnyCPU') and '$(OS)'=='Windows_NT'">
+    <Reference Include="Geckofx-Core" Condition="('$(Platform)' == 'x86' or '$(Platform)' == 'AnyCPU') and '$(OS)'=='Windows_NT'">
       <Private>False</Private>
       <HintPath>../../packages/Geckofx45.45.0.33/lib/net40/Geckofx-Core.dll</HintPath>
     </Reference>
     <Reference Include="Geckofx-Winforms" Condition="('$(Platform)' == 'x86' or '$(Platform)' == 'AnyCPU') and '$(OS)'=='Windows_NT'">
       <Private>False</Private>
-      <HintPath>../../packages/Geckofx45.45.0.33/lib/net40/Geckofx-Core.dll</HintPath>
+      <HintPath>../../packages/Geckofx45.45.0.33/lib/net40/Geckofx-Winforms.dll</HintPath>
     </Reference>
-      <Reference Include="Geckofx-Core" Condition="'$(Platform)' == 'x64' and '$(OS)'!='Windows_NT'">
+    <Reference Include="Geckofx-Core" Condition="'$(OS)'!='Windows_NT'">
       <Private>False</Private>
       <HintPath>../../packages/Geckofx45.64.Linux.45.0.21.0/lib/net40/Geckofx-Core.dll</HintPath>
     </Reference>
-    <Reference Include="Geckofx-Winforms" Condition="'$(Platform)' == 'x64' and '$(OS)'!='Windows_NT'">
+    <Reference Include="Geckofx-Winforms" Condition="'$(OS)'!='Windows_NT'">
       <Private>False</Private>
-      <HintPath>../../packages/Geckofx45.64.Linux.45.0.21.0/lib/net40/Geckofx-Core.dll</HintPath>
-    </Reference>
-      <Reference Include="Geckofx-Core" Condition="('$(Platform)' == 'x86' or '$(Platform)' == 'AnyCPU') and '$(OS)'!='Windows_NT'">
-      <Private>False</Private>
-      <HintPath>../../packages/Geckofx45.32.Linux.45.0.21.0/lib/net40/Geckofx-Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Geckofx-Winforms" Condition="('$(Platform)' == 'x86' or '$(Platform)' == 'AnyCPU') and '$(OS)'!='Windows_NT'">
-      <Private>False</Private>
-      <HintPath>../../packages/Geckofx45.32.Linux.45.0.21.0/lib/net40/Geckofx-Core.dll</HintPath>
+      <HintPath>../../packages/Geckofx45.64.Linux.45.0.21.0/lib/net40/Geckofx-Winforms.dll</HintPath>
     </Reference>
     <Reference Include="System">
       <Name>System</Name>
