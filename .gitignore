@@ -278,6 +278,8 @@ autom4te.cache
 /redist/MapsTables/PythonExamples/ToLowerCase.pyc
 /redist/MapsTables/PythonExamples/ReverseString.pyc
 /redist/MapsTables/PythonExamples
+/redist/MapsTables/TestEncCnvtrs
+/ec-common
 /redist/MapsTables/TestEncCnvtrs/To1252.pyc
 /redist/MapsTables/TestEncCnvtrs/From1252.pyc
 /SILConvertersWordML.exe.config
