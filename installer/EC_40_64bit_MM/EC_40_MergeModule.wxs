@@ -11,6 +11,7 @@
 			<Component Id="RegisterECFolders" Guid="ba2789b1-93c9-4258-872e-85d91e975db1">
 				<RegistryValue Root="HKLM" Key="Software\SIL\SilEncConverters40" Name="RootDir" Type="string" Value="[AppDataSILConverters40]"/>
 				<RegistryValue Root="HKLM" Key="Software\SIL\SilEncConverters40" Name="UseMozilla" Type="string" Value="False"/>
+				<RegistryValue Root="HKLM" Key="Software\SIL\SilEncConverters40" Name="UseEdge" Type="string" Value="False"/>
 			</Component>
 
 			<Directory Id="MergeRedirectFolder">
