@@ -336,7 +336,6 @@
     <Content Include="Firefox\softokn3.dll" Condition="('$(Platform)' == 'x86' or '$(Platform)' == 'AnyCPU')" />
     <Content Include="Firefox\xul.dll" Condition="('$(Platform)' == 'x86' or '$(Platform)' == 'AnyCPU')" />
     <Content Include="Firefox64\AccessibleMarshal.dll" Condition="('$(Platform)' == 'x64')" />
-    <Content Include="Firefox64\breakpadinjector.dll" Condition="('$(Platform)' == 'x64')" />
     <Content Include="Firefox64\d3dcompiler_47.dll" Condition="('$(Platform)' == 'x64')" />
     <Content Include="Firefox64\freebl3.dll" Condition="('$(Platform)' == 'x64')" />
     <Content Include="Firefox64\icudt58.dll" Condition="('$(Platform)' == 'x64')" />
