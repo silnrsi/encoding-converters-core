@@ -63,7 +63,7 @@ namespace SilEncConverters40
 		public override void Initialize()
 		{
 			base.Initialize();
-			var path = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "EncConverters_WebView2Browser");
+			var path = Path.Combine(Path.GetTempPath(), "EncConverters_WebView2Browser");
 			var env = CoreWebView2Environment.CreateAsync(userDataFolder: path).Result;
 
 			_webBrowser.CoreWebView2InitializationCompleted += WebView_CoreWebView2InitializationCompleted;

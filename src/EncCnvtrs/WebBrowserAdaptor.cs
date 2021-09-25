@@ -69,7 +69,9 @@ namespace SilEncConverters40
 					{
 						try
 						{
-							webBrowserAdaptor = new WebBrowserEdge();
+							webBrowserAdaptor = (WebBrowserEdge.IsWebView2RuntimeInstalled)
+													? new WebBrowserEdge()
+													: new WebBrowserInstructions();
 						}
 						catch (Exception)
 						{
@@ -131,7 +133,7 @@ namespace SilEncConverters40
 				else
 				{
 					// prefer Edge to IE
-					return WebBrowserEdge.IsWebView2RuntimeInstalled || WindowsUserWantsToUseEdge;
+					return WindowsUserWantsToUseEdge;
 				}
 			}
 		}

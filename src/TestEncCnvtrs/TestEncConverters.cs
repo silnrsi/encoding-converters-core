@@ -857,7 +857,7 @@ namespace TestEncCnvtrs
 
 		private const string TechHindiSiteConverterFriendlyName = "KrutiDev010 <> Unicode";
 
-		private void TechHindiSiteConverterCommon(string converterSpecSuffix)
+		public void TechHindiSiteConverterCommon(string converterSpecSuffix)
         {
             var dir = GetTestSourceFolder();
             var pathToTechHindiSiteFile = Path.Combine(dir, "Krutidev010-to-Unicode-to-Krutidev010 Converter09.htm");
