@@ -184,7 +184,12 @@
     </Compile>
     <Compile Include="FallbackEncConverter.cs" />
     <Compile Include="FallbackEncConverterConfig.cs" />
-    <Compile Include="GeckoFxInitializer.cs" />
+    <Compile Include="WebBrowserGecko.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="WebBrowserInstructions.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="IEncConverterConfig.cs">
       <SubType>Code</SubType>
     </Compile>
