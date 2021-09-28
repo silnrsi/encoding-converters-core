@@ -1,7 +1,3 @@
-#if !__MonoCS__
-#define TODO_RESOLVE_ICUBREAKITERATORENCCONVERTER
-#endif
-
 // created by Steve McConnel, Feb 7, 2012.
 // 18-May-13 JDK  Overwrite repo file if it exists.
 // 29-Jun-13 JDK  Test all python scripts in MapsTables.
@@ -399,7 +395,7 @@ namespace TestEncCnvtrs
         {
 			const string cstrFriendlyName = "UnitTesting-ThaiWordBreaker";
 			var theEcs = DirectableEncConverter.EncConverters;
-#if TODO_RESOLVE_ICUBREAKITERATORENCCONVERTER
+#if !NEED_RESOLVE_ICUBREAKITERATORENCCONVERTER
 			theEcs.AddConversionMap(cstrFriendlyName, IcuBreakIteratorEncConverter.DefaultSeparator, ConvType.Unicode_to_from_Unicode,
 						IcuBreakIteratorEncConverter.CstrImplementationType, "UNICODE", "UNICODE",
 						ProcessTypeFlags.DontKnow);
@@ -835,7 +831,6 @@ namespace TestEncCnvtrs
 			Assert.Less(10, converters.Count, "There should be at least ten CodePage converters available!");
 		}
 
-#if !__MonoCS__	// Edge doesn't work on Mono (presumably)
 		/// <summary>
 		/// install the prerequisite for this test from:
 		/// https://go.microsoft.com/fwlink/p/?LinkId=2124703
@@ -853,7 +848,6 @@ namespace TestEncCnvtrs
         {
             TechHindiSiteConverterCommon(converterSpecSuffix);
         }
-#endif
 
 		private const string TechHindiSiteConverterFriendlyName = "KrutiDev010 <> Unicode";
 

@@ -69,9 +69,11 @@ namespace SilEncConverters40
 
 		public async override Task<string> ExecuteScriptFunctionAsync(string functionName)
 		{
-			using AutoJSContext js = new(_webBrowser.Window);
-			js.EvaluateScript($"{functionName}();", out string retVal);
-			return await Task.FromResult(retVal);
+			using (AutoJSContext js = new AutoJSContext(_webBrowser.Window))
+			{
+				js.EvaluateScript($"{functionName}();", out string retVal);
+				return await Task.FromResult(retVal);
+			}
 		}
 
 		public override Task NavigateAsync(string filePath)
@@ -100,12 +102,9 @@ namespace SilEncConverters40
 
 		#region FirefoxInitialization
 
-// #if _MSC_VER this doesn't work anymore in C# (VS 2019)
-#if !__MonoCS__
-        [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        static extern bool SetDllDirectory(string lpPathName);
-#endif
+		[DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		static extern bool SetDllDirectory(string lpPathName);
 
 		public static bool SetUpXulRunner()
 		{
@@ -129,10 +128,8 @@ namespace SilEncConverters40
 			}
 			Util.DebugWriteLine(className, "xulRunnerPath=" + xulRunnerPath);
 
-#if !__MonoCS__
 			//Review: an early tester found that wrong xpcom was being loaded. The following solution is from http://www.geckofx.org/viewtopic.php?id=74&action=new
 			SetDllDirectory(xulRunnerPath);
-#endif
 
 			Xpcom.Initialize(xulRunnerPath);
 			Util.DebugWriteLine(className, "END");

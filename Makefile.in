@@ -49,13 +49,14 @@ endif
 
 download_dependencies: download_nuget
 ifneq ($(EC_DOWNLOAD_DEPS), false)
-	. ./environ && build/multitry mono build/nuget.exe restore .nuget/packages.config -NonInteractive -PackagesDirectory "$(ROOTDIR)/packages"
+	. ./environ && build/multitry mono build/nuget.exe restore src/EncCnvtrs/packages.config -NonInteractive -PackagesDirectory "$(ROOTDIR)/packages"
+	. ./environ && build/multitry mono build/nuget.exe restore src/TestEncCnvtrs/packages.config -NonInteractive -PackagesDirectory "$(ROOTDIR)/packages"
 	cp -a packages/Geckofx45.64.Linux.45.0.21.0/build/Geckofx-Core.dll.config packages/Geckofx45.64.Linux.45.0.21.0/lib/net40
 	cp -a packages/Geckofx45.32.Linux.45.0.21.0/build/Geckofx-Core.dll.config packages/Geckofx45.32.Linux.45.0.21.0/lib/net40
 endif
 
 debug: download_dependencies
-	cd build && ./msbuild.sh $(MONO) $(MONO_LDFLAGS) /property:FIELDWORKS=$(FIELDWORKS)
+	cd build && ./msbuild.sh $(MONO) $(MONO_LDFLAGS) -p:FIELDWORKS=$(FIELDWORKS) -p:DefineConstants=NEED_RESOLVE_ICUBREAKITERATORENCCONVERTER
 	for subdir in $(SRCDIRS); do \
 	  echo making in $$subdir; \
 	  (cd $$subdir && $(MAKE) all FIELDWORKS=$(FIELDWORKS)) || break; \
@@ -72,7 +73,7 @@ debug: download_dependencies
 	cp -p src/TestEncCnvtrs/TestEncCnvtrs.dll.config $(OUTDIR)
 
 release: download_dependencies
-	cd build && ./msbuild.sh $(MONO) $(MONO_LDFLAGS) /property:config=Release /property:FIELDWORKS=$(FIELDWORKS)
+	cd build && ./msbuild.sh $(MONO) $(MONO_LDFLAGS) -p:config=Release -p:FIELDWORKS=$(FIELDWORKS) -p:DefineConstants=NEED_RESOLVE_ICUBREAKITERATORENCCONVERTER
 	for subdir in $(SRCDIRS); do \
 	  echo making in $$subdir; \
 	  (cd $$subdir && $(MAKE) release FIELDWORKS=$(FIELDWORKS)) || break; \
