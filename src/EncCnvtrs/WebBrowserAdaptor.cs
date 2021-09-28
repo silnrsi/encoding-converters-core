@@ -69,9 +69,11 @@ namespace SilEncConverters40
 					{
 						try
 						{
-							webBrowserAdaptor = (WebBrowserEdge.IsWebView2RuntimeInstalled)
-													? new WebBrowserEdge()
-													: new WebBrowserInstructions();
+							if (WebBrowserEdge.IsWebView2RuntimeInstalled){
+								webBrowserAdaptor=  new WebBrowserEdge();
+							} else {
+								webBrowserAdaptor =new WebBrowserInstructions();
+							}
 						}
 						catch (Exception)
 						{
@@ -168,7 +170,6 @@ namespace SilEncConverters40
 		/// </summary>
 		/// <param name="filePath"></param>
 		/// <returns></returns>
-		//	
 		public abstract Task NavigateAsync(string filePath);
 		/// <summary>
 		/// navigate to a page and return when it's finished loading. This shouldn't interfere with user-interface while waiting
@@ -188,7 +189,7 @@ namespace SilEncConverters40
 				Application.DoEvents();
 		}
 
-		protected readonly object documentCompletedEventKey = new();
+		protected readonly object documentCompletedEventKey = new object();
 		protected ManualResetEvent waitForPageLoaded;
 		protected EventHandlerList listEventDelegates = new EventHandlerList();
 		public event EventHandler DocumentCompleted
