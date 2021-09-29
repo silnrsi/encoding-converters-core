@@ -35,7 +35,8 @@
     </SccAuxPath>
     <SignAssembly>true</SignAssembly>
     <OldToolsVersion>3.5</OldToolsVersion>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <TargetFrameworkVersion Condition="('$(OS)'!='Windows_NT')">v4.7.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion Condition="('$(OS)'=='Windows_NT')">v4.8</TargetFrameworkVersion>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -65,7 +66,7 @@
     <RegisterForComInterop>true</RegisterForComInterop>
     <DebugType>full</DebugType>
     <PlatformTarget>x64</PlatformTarget>
-    <LangVersion>latest</LangVersion>
+    <LangVersion>7.3</LangVersion>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>false</Prefer32Bit>
@@ -79,7 +80,7 @@
     <RegisterForComInterop>true</RegisterForComInterop>
     <DebugType>full</DebugType>
     <PlatformTarget>x64</PlatformTarget>
-    <LangVersion>latest</LangVersion>
+    <LangVersion>7.3</LangVersion>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>false</Prefer32Bit>
@@ -94,7 +95,7 @@
     <RegisterForComInterop>true</RegisterForComInterop>
     <DebugType>full</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <LangVersion>latest</LangVersion>
+    <LangVersion>7.3</LangVersion>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
@@ -107,7 +108,34 @@
     <RegisterForComInterop>true</RegisterForComInterop>
     <DebugType>full</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <LangVersion>latest</LangVersion>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="('$(Configuration)|$(Platform)' == 'Debug|AnyCPU') and ('$(OS)'!='Windows_NT')">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>..\..\output\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="('$(Configuration)|$(Platform)' == 'Release|AnyCPU') and ('$(OS)'!='Windows_NT')">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>..\..\output\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Optimize>true</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
@@ -126,15 +154,23 @@
     <Reference Include="Geckofx-Winforms, Version=60.0.55.0, Culture=neutral, PublicKeyToken=3209ac31600d1857, processorArchitecture=MSIL" Condition="('$(Platform)' == 'x64') and ('$(OS)'=='Windows_NT')">
       <HintPath>..\..\packages\Geckofx60.64.60.0.55\lib\net45\Geckofx-Winforms.dll</HintPath>
     </Reference>
+    <Reference Include="Geckofx-Core" Condition="'$(OS)'!='Windows_NT'">
+      <Private>False</Private>
+      <HintPath>../../packages/Geckofx45.64.Linux.45.0.21.0/lib/net40/Geckofx-Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Geckofx-Winforms, Version=45.0.34.0, Culture=neutral, PublicKeyToken=3209ac31600d1857, processorArchitecture=MSIL" Condition="'$(OS)'=='Windows_NT'">
+      <HintPath>..\..\packages\Geckofx45.64.45.0.34\lib\net45\Geckofx-Winforms.dll</HintPath>
+    </Reference>
+    <Reference Include="Geckofx-Winforms" Condition="'$(OS)'!='Windows_NT'">
+      <Private>False</Private>
+      <HintPath>../../packages/Geckofx45.64.Linux.45.0.21.0/lib/net40/Geckofx-Winforms.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Web.WebView2.Core, Version=1.0.992.28, Culture=neutral, PublicKeyToken=2a8ab48044d2601e, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.Web.WebView2.1.0.992.28\lib\net45\Microsoft.Web.WebView2.Core.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Web.WebView2.WinForms, Version=1.0.992.28, Culture=neutral, PublicKeyToken=2a8ab48044d2601e, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.Web.WebView2.1.0.992.28\lib\net45\Microsoft.Web.WebView2.WinForms.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Web.WebView2.Wpf, Version=1.0.992.28, Culture=neutral, PublicKeyToken=2a8ab48044d2601e, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.Web.WebView2.1.0.992.28\lib\net45\Microsoft.Web.WebView2.Wpf.dll</HintPath>
     </Reference>
     <Reference Include="System">
       <Name>System</Name>
@@ -498,8 +534,7 @@
   <Import Project="..\..\packages\Microsoft.Web.WebView2.1.0.992.28\build\Microsoft.Web.WebView2.targets" Condition="Exists('..\..\packages\Microsoft.Web.WebView2.1.0.992.28\build\Microsoft.Web.WebView2.targets')" />
   <!--BE: I had to manually add the extra conditions on these, so it will do the target (which copies files) from the correct package based on the platform.
       Also, I had to manually edit the 64 bit target so that it would now get the files from Firefox64, rather than Firefox it was looking at (which are the 86 binaries)
-      This will all get undone if you update the gecko nuget packages
-  <Import Project="..\..\packages\Geckofx60.32.60.0.55\build\Geckofx60.32.targets" Condition="Exists('..\..\packages\Geckofx60.32.60.0.55\build\Geckofx60.32.targets') and ('$(Platform)' == 'x86') and ('$(OS)'=='Windows_NT')" />
-  <Import Project="..\..\packages\Geckofx60.64.60.0.55\build\Geckofx60.64.targets" Condition="Exists('..\..\packages\Geckofx60.64.60.0.55\build\Geckofx60.64.targets') and ('$(Platform)' == 'x64') and ('$(OS)'=='Windows_NT')" />
-  -->
+      This will all get undone if you update the gecko nuget packages -->
+  <Import Project="..\..\packages\Geckofx60.32.60.0.55\build\Geckofx60.32.targets" Condition="Exists('..\..\packages\Geckofx60.32.60.0.55\build\Geckofx60.32.targets') and ('$(Platform)' == 'x86') and ('$(OS)'!='Windows_NT')" />
+  <Import Project="..\..\packages\Geckofx60.64.60.0.55\build\Geckofx60.64.targets" Condition="Exists('..\..\packages\Geckofx60.64.60.0.55\build\Geckofx60.64.targets') and ('$(Platform)' == 'x64') and ('$(OS)'!='Windows_NT')" />
 </Project>
