@@ -2,20 +2,14 @@ using System;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Collections.Generic;       // for Hashtable
-using System.Windows.Forms;
-using System.Xml;
-using System.Xml.XPath;
-using Microsoft.Win32;                  // for RegistryKey
-using System.Diagnostics;               // for Debug
-using System.IO;                        // for file I/O
 using ECInterfaces;                     // for IEncConverter
 
 namespace SilEncConverters40
 {
-    /// <summary>
-    /// Managed EncConverter for AdaptIt Knowledge Base data
-    /// </summary>
-    [GuidAttribute("2734A74B-6E88-40c4-8D0A-016A421D26CF")] 
+	/// <summary>
+	/// Managed EncConverter for AdaptIt Knowledge Base data
+	/// </summary>
+	[GuidAttribute("2734A74B-6E88-40c4-8D0A-016A421D26CF")] 
     // normally these subclasses are treated as the base class (i.e. the 
     //  client can use them orthogonally as IEncConverter interface pointers
     //  so normally these individual subclasses would be invisible), but if 
@@ -25,7 +19,7 @@ namespace SilEncConverters40
     public class AdaptItEncConverter : AdaptItKBReader
     {
         public const string strDisplayName = "AdaptIt Knowledge Base Converter";
-        public const string strHtmlFilename = "AdaptIt_Plug-in_About_box.mht";
+        public const string strHtmlFilename = "AdaptIt_Plug-in_About_box.htm";
 
         protected const string chNeverUsedChar = "\u001f";  // add to words we replace, so we don't process them again
 

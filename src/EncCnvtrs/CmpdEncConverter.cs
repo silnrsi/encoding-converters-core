@@ -25,7 +25,7 @@ namespace SilEncConverters40
         protected List<NormalizeFlags>  m_aNormalizeOutput;   // and of the normalize output flag
 
         public const string strDisplayName = "Compound (daisy-chained) Converter";
-        public const string strHtmlFilename = "Compound_Converter_Plug-in_About_box.mht";
+        public const string strHtmlFilename = "Compound_Converter_Plug-in_About_box.htm";
 
         #endregion Member Variable Definitions
 

@@ -78,21 +78,12 @@ namespace SilEncConverters40
 
 		public override Task NavigateAsync(string filePath)
 		{
-			if (Path.GetExtension(filePath) == ".mht")
+			if (!File.Exists(filePath))
 			{
-				var strHtm = Path.Combine(Path.GetDirectoryName(filePath),
-										  Path.GetFileNameWithoutExtension(filePath) + ".htm");
-				if (File.Exists(strHtm))
-				{
-					filePath = strHtm;
-				}
-				else
-				{
-					const string cstrFileNameToEditSaveAsHtml = "CantReadMhtFiles.htm";
-					filePath = Path.Combine(Path.GetDirectoryName(filePath),
-											cstrFileNameToEditSaveAsHtml);
-					System.Diagnostics.Debug.Assert(File.Exists(filePath));
-				}
+				const string cstrFileNameToEditSaveAsHtml = "CantReadMhtFiles.htm";
+				filePath = Path.Combine(Path.GetDirectoryName(filePath),
+										cstrFileNameToEditSaveAsHtml);
+				System.Diagnostics.Debug.Assert(File.Exists(filePath));
 			}
 
 			// GeckoWebBrowser.Navigate("file://" + filePath);

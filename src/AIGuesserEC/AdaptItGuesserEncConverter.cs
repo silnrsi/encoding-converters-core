@@ -17,7 +17,7 @@ namespace SilEncConverters40
     public class AdaptItGuesserEncConverter : AdaptItKBReader
     {
         public const string strDisplayName = "Target Word Guesser for AdaptIt";
-        public const string strHtmlFilename = "AdaptIt Guesser Plug-in About box.mht";
+        public const string strHtmlFilename = "AdaptIt Guesser Plug-in About box.htm";
 
         public override string strRegValueForConfigProgId
         {

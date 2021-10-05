@@ -74,7 +74,7 @@ namespace SilEncConverters40
         private bool m_bUseDelimiters = false;
 
         public const string strDisplayName = "CC Table";
-        public const string strHtmlFilename = "CC_Table_Plug-in_About_box.mht";
+        public const string strHtmlFilename = "CC_Table_Plug-in_About_box.htm";
         #endregion Member Variable Definitions
 
         #region Initialization

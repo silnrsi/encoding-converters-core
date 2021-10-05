@@ -30,7 +30,7 @@ namespace SilEncConverters40
 
         public const string CstrImplementationType = "SIL.TechHindiWebPage";
         public const string CstrDisplayName = "Technical Hindi (Google group) Html Converter";
-        public const string CstrHtmlFilename = "Technical_Hindi_(Google_group)_Html_Converter_Plug-in_About_box.mht";
+        public const string CstrHtmlFilename = "Technical_Hindi_(Google_group)_Html_Converter_Plug-in_About_box.htm";
 
         protected string ConverterPageUri;
         protected string InputHtmlElementId;
