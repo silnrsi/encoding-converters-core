@@ -109,31 +109,39 @@ namespace SilEncConverters40
 		public static bool SetUpXulRunner()
 		{
 			var className = typeof(WebBrowserGecko).Name;
-			Util.DebugWriteLine(className, "BEGIN");
-			if (Xpcom.IsInitialized)
+			try
+			{
+				Util.DebugWriteLine(className, "BEGIN");
+				if (Xpcom.IsInitialized)
+					return true;
+
+				string xulRunnerPath;
+
+				// Use XULRUNNER environment variable if set
+				var xulrunnerLocation = Environment.GetEnvironmentVariable("XULRUNNER");
+				if (xulrunnerLocation != null)
+				{
+					xulRunnerPath = xulrunnerLocation;
+				}
+				else
+				{
+					if (!XulRunnerDirectoryOfApplicationOrLib(out xulRunnerPath))
+						return false;
+				}
+				Util.DebugWriteLine(className, "xulRunnerPath=" + xulRunnerPath);
+
+				//Review: an early tester found that wrong xpcom was being loaded. The following solution is from http://www.geckofx.org/viewtopic.php?id=74&action=new
+				SetDllDirectory(xulRunnerPath);
+
+				Xpcom.Initialize(xulRunnerPath);
+				Util.DebugWriteLine(className, "END");
 				return true;
-
-			string xulRunnerPath;
-
-			// Use XULRUNNER environment variable if set
-			var xulrunnerLocation = Environment.GetEnvironmentVariable("XULRUNNER");
-			if (xulrunnerLocation != null)
-			{
-				xulRunnerPath = xulrunnerLocation;
 			}
-			else
+			catch (Exception ex)
 			{
-				if (!XulRunnerDirectoryOfApplicationOrLib(out xulRunnerPath))
-					return false;
+				EncConverter.LogExceptionMessage(className, ex);
+				return false;
 			}
-			Util.DebugWriteLine(className, "xulRunnerPath=" + xulRunnerPath);
-
-			//Review: an early tester found that wrong xpcom was being loaded. The following solution is from http://www.geckofx.org/viewtopic.php?id=74&action=new
-			SetDllDirectory(xulRunnerPath);
-
-			Xpcom.Initialize(xulRunnerPath);
-			Util.DebugWriteLine(className, "END");
-			return true;
 		}
 
 		/// <summary>

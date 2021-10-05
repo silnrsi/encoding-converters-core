@@ -100,7 +100,9 @@ namespace SilEncConverters40
 			return _returnedValue;
 		}
 
+#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously (intentionally)
 		public async override Task<string> GetInnerTextAsync(string htmlElementId)
+#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
 		{
 			var str = CallWebView($"document.getElementById(\"{htmlElementId}\").value");
 			if (!String.IsNullOrEmpty(str) && (str.Length > 2) && (str.First() == '"') && (str.Last() == '"'))
@@ -115,7 +117,9 @@ namespace SilEncConverters40
 			return await GetInnerTextAsync(htmlElementId);
 		}
 
+#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously (intentionally)
 		public async override Task<string> ExecuteScriptFunctionAsync(string functionName)
+#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
 		{
 			return CallWebView($"{functionName}()");
 		}
