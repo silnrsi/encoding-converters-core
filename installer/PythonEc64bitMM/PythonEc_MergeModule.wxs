@@ -29,18 +29,7 @@
 					<Component Id="pythoncom27.dll" Guid="{E8A417F2-7A55-431F-991B-222046C17AFF}">
 						<File Id="pythoncom27.dll" KeyPath="yes" Source="..\..\lib\windows\64bit\pythoncom27.dll" />
 					</Component>
-				</Directory>
-			</Directory>
 
-			<Directory Id="ProgramMenuFolder" Name="Program">
-				<Directory Id="SIL_Converters" Name="SIL Converters">
-					<Directory Id="PythonHelp" Name="Help">
-						<Component Id="HelpShortcuts" Guid="{50C20C9D-9B81-49E5-81E8-AB1F9D510A8D}" KeyPath="yes">
-							<Shortcut Id="PythonEcPluginHelp" Directory="PythonHelp" Name="Help for Python Script Plug-in" Target="[#PythonHelp]" Hotkey="0" IconIndex="0" Show="normal" WorkingDirectory="Help"/>
-							<!-- The next item is junk to make validation pass on ICE18 -->
-							<CreateFolder/>
-						</Component>
-					</Directory>
 				</Directory>
 			</Directory>
 
@@ -58,11 +47,35 @@
 					</Directory>
 					<Directory Id="AppDataSILConverters40" Name="SILConverters40">
 						<Directory Id="Help" Name="Help">
-							<Component Id="PythonHelp" Guid="{D699D3FA-12B5-41AC-860D-99E9C2E6A407}">
-								<File Id="PythonHelp" Name="Python_Script_Plug-in_About_box.mht" KeyPath="yes" Source="..\..\redist\Help\Python_Script_Plug-in_About_box.mht"/>
+
+							<!--Python scripting Help-->
+							<Component Id="PythonHelp.htm" Guid="{8CA9E62A-2DA1-4EE7-B9DE-6637BBC566EA}">
+								<File Id="PythonHelp.htm" Name="Python_Script_Plug-in_About_box.htm" KeyPath="yes" Source="..\..\redist\Help\Python_Script_Plug-in_About_box.htm"/>
+								<Shortcut Id="PythonHelpHtm" Directory="PythonHelp" Name="Help for Python Script Plug-in" Description="View help document for the Python Script Plug-in" IconIndex="0" Show="normal" Target="[#PythonHelp.htm]" WorkingDirectory="Help" Advertise="no" />
 							</Component>
+							<Directory Id="Python_Script_Plugin_About_box" Name="Python_Script_Plug-in_About_box_files">
+								<Component Id="Python_Script_Plugin_About_boxComp" Guid="{A9E81E6F-78DF-4DF2-979B-2E13BA8A2371}">
+									<File Id="py_filelist.xml" Name="filelist.xml" KeyPath="yes" Source="..\..\redist\Help\Python_Script_Plug-in_About_box_files\filelist.xml"/>
+									<File Id="py_header.htm" Name="header.htm" Source="..\..\redist\Help\Python_Script_Plug-in_About_box_files\header.htm"/>
+									<File Id="py_colorschememapping.xml" Name="colorschememapping.xml" Source="..\..\redist\Help\Python_Script_Plug-in_About_box_files\colorschememapping.xml"/>
+									<File Id="py_themedata.thmx" Name="themedata.thmx" Source="..\..\redist\Help\Python_Script_Plug-in_About_box_files\themedata.thmx"/>
+									<File Id="py_image001.png" Name="image001.png" Source="..\..\redist\Help\Python_Script_Plug-in_About_box_files\image001.png"/>
+									<File Id="py_image002.jpg" Name="image002.jpg" Source="..\..\redist\Help\Python_Script_Plug-in_About_box_files\image002.jpg"/>
+									<File Id="py_image003.png" Name="image003.png" Source="..\..\redist\Help\Python_Script_Plug-in_About_box_files\image003.png"/>
+									<File Id="py_image004.jpg" Name="image004.jpg" Source="..\..\redist\Help\Python_Script_Plug-in_About_box_files\image004.jpg"/>
+									<File Id="py_image005.png" Name="image005.png" Source="..\..\redist\Help\Python_Script_Plug-in_About_box_files\image005.png"/>
+									<File Id="py_image006.jpg" Name="image006.jpg" Source="..\..\redist\Help\Python_Script_Plug-in_About_box_files\image006.jpg"/>
+								</Component>
 						</Directory>
+
 					</Directory>
+					</Directory>
+				</Directory>
+            </Directory>
+
+			<Directory Id="ProgramMenuFolder" Name="Program">
+				<Directory Id="SIL_Converters" Name="SIL Converters">
+					<Directory Id="PythonHelp" Name="Help" />
 				</Directory>
 			</Directory>
 

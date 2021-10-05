@@ -29,9 +29,26 @@
 				<Directory Id="AppDataSIL" Name="SIL">
 					<Directory Id="AppDataSILConverters40" Name="SILConverters40">
 						<Directory Id="Help" Name="Help">
-							<Component Id="CCTableHelp" Guid="{C05A861B-E8E6-4B31-8020-67555049AFE7}">
-								<File Id="CCTableHelp" Name="CC_Table_Plug-in_About_box.mht" KeyPath="yes" Source="..\..\redist\Help\CC_Table_Plug-in_About_box.mht"/>
+							
+							<!--CC table Converter Help-->
+							<Component Id="CcTableHelp.htm" Guid="{AB8B9FD4-2152-4F89-A43B-4D985922768B}">
+								<File Id="CcTableHelp.htm" Name="CC_Table_Plug-in_About_box.htm" KeyPath="yes" Source="..\..\redist\Help\CC_Table_Plug-in_About_box.htm"/>
+								<Shortcut Id="CcTableHelpHtm" Directory="CcHelp" Name="CC Table Plug-in Help" Description="View help document for the CC Table Plug-in" IconIndex="0" Show="normal" Target="[#CcTableHelp.htm]" WorkingDirectory="Help" Advertise="no" />
 							</Component>
+							<Directory Id="CC_Table_Plugin_About_box" Name="CC_Table_Plug-in_About_box_files">
+								<Component Id="CC_Table_Plugin_About_boxComp" Guid="{3526F625-39D3-4114-8AC9-88C3D9CB68C4}">
+									<File Id="cc_filelist.xml" Name="filelist.xml" KeyPath="yes" Source="..\..\redist\Help\CC_Table_Plug-in_About_box_files\filelist.xml"/>
+									<File Id="cc_colorschememapping.xml" Name="colorschememapping.xml" Source="..\..\redist\Help\CC_Table_Plug-in_About_box_files\colorschememapping.xml"/>
+									<File Id="cc_themedata.thmx" Name="themedata.thmx" Source="..\..\redist\Help\CC_Table_Plug-in_About_box_files\themedata.thmx"/>
+									<File Id="cc_image001.png" Name="image001.png" Source="..\..\redist\Help\CC_Table_Plug-in_About_box_files\image001.png"/>
+									<File Id="cc_image002.jpg" Name="image002.jpg" Source="..\..\redist\Help\CC_Table_Plug-in_About_box_files\image002.jpg"/>
+									<File Id="cc_image003.png" Name="image003.png" Source="..\..\redist\Help\CC_Table_Plug-in_About_box_files\image003.png"/>
+									<File Id="cc_image004.jpg" Name="image004.jpg" Source="..\..\redist\Help\CC_Table_Plug-in_About_box_files\image004.jpg"/>
+									<File Id="cc_image005.png" Name="image005.png" Source="..\..\redist\Help\CC_Table_Plug-in_About_box_files\image005.png"/>
+									<File Id="cc_image006.jpg" Name="image006.jpg" Source="..\..\redist\Help\CC_Table_Plug-in_About_box_files\image006.jpg"/>
+								</Component>
+							</Directory>
+
 						</Directory>
 					</Directory>
 				</Directory>
@@ -39,13 +56,7 @@
 
 			<Directory Id="ProgramMenuFolder" Name="Program">
                 <Directory Id="SIL_Converters" Name="SIL Converters">
-                    <Directory Id="CcHelp" Name="Help">
-                        <Component Id="HelpShortcuts" Guid="A84EFA8C-D422-4D5D-B55B-C4FCDD6ECE61" KeyPath="yes">
-                            <Shortcut Id="CCTablePluginHelp" Directory="CcHelp" Name="CC Table Plug-in Help" Target="[!CCTableHelp]" Hotkey="0" IconIndex="0" Show="normal" WorkingDirectory="Help"/>
-                            <!-- The next item is junk to make validation pass on ICE18 -->
-                            <CreateFolder/>
-                        </Component>
-                    </Directory>
+                    <Directory Id="CcHelp" Name="Help" />
                 </Directory>
             </Directory>
 

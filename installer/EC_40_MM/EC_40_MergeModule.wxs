@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
-	<Module Id="EC_40_MM" Language="1033" Version="4.0.0.0">
+	<Module Id="EC_40_MM" Language="1033" Version="5.0.0.0">
 		<Package Id="ac1e0a8a-7a0d-45d8-8798-f9d9c9e4c776" Keywords="SIL; Encoding Conversion; Transliteration; EncConverters"
              Description="EncConverter core 4.0 Merge Module -- Include in any client application deployment project which uses the EncConverters objects"
              Comments="Common installer module for SIL's version 4.0 of the EncConverter's core" Manufacturer="SIL International" InstallerVersion="200" Languages="1033"
@@ -497,16 +497,16 @@
 					<File Id="EncConvertersAppDataMover40.exe" Name="EncConvertersAppDataMover40.exe" ReadOnly="yes" KeyPath="yes" Source="..\..\output\Win32\release\EncConvertersAppDataMover40.exe" Assembly=".net" AssemblyApplication="EncConvertersAppDataMover40.exe" AssemblyManifest="EncConvertersAppDataMover40.exe"/>
 				</Component>
 				<Component Id="Geckofx_Core.dll" Guid="{6D593BB5-F2DE-448A-A8A2-AD1F18B660F2}">
-					<File Id="Geckofx_Core.dll" Name="GeckoFx-Core.dll" Vital="yes" KeyPath="yes" AssemblyManifest="Geckofx_Core.dll" AssemblyApplication="Geckofx_Core.dll" Assembly=".net" Source="..\..\packages\Geckofx45.45.0.34\lib\net45\GeckoFx-Core.dll"/>
+					<File Id="Geckofx_Core.dll" Name="GeckoFx-Core.dll" Vital="yes" KeyPath="yes" AssemblyManifest="Geckofx_Core.dll" AssemblyApplication="Geckofx_Core.dll" Assembly=".net" Source="..\..\output\Win32\release\GeckoFx-Core.dll"/>
 				</Component>
 				<Component Id="Geckofx_Winforms.dll" Guid="{1C2D5110-4E5F-4DC3-9375-DA1D7C6643D0}">
-					<File Id="Geckofx_Winforms.dll" Name="Geckofx-Winforms.dll" Vital="yes" KeyPath="yes" AssemblyManifest="Geckofx_Winforms.dll" AssemblyApplication="Geckofx_Winforms.dll" Assembly=".net" Source="..\..\packages\Geckofx45.45.0.34\lib\net45\Geckofx-Winforms.dll"/>
+					<File Id="Geckofx_Winforms.dll" Name="Geckofx-Winforms.dll" Vital="yes" KeyPath="yes" AssemblyManifest="Geckofx_Winforms.dll" AssemblyApplication="Geckofx_Winforms.dll" Assembly=".net" Source="..\..\output\Win32\release\Geckofx-Winforms.dll"/>
 				</Component>
 				<Component Id="Microsoft_Web_WebView2_Core.dll" Guid="{C4BD4D08-EE06-47CC-806F-B93DE307C065}">
-					<File Id="Microsoft_Web_WebView2_Core.dll" Name="Microsoft.Web.WebView2.Core.dll" Vital="yes" KeyPath="yes" AssemblyManifest="Microsoft_Web_WebView2_Core.dll" AssemblyApplication="Microsoft_Web_WebView2_Core.dll" Assembly=".net" Source="..\..\packages\Microsoft.Web.WebView2.1.0.902.49\lib\net45\Microsoft.Web.WebView2.Core.dll"/>
+					<File Id="Microsoft_Web_WebView2_Core.dll" Name="Microsoft.Web.WebView2.Core.dll" Vital="yes" KeyPath="yes" AssemblyManifest="Microsoft_Web_WebView2_Core.dll" AssemblyApplication="Microsoft_Web_WebView2_Core.dll" Assembly=".net" Source="..\..\output\Win32\release\Microsoft.Web.WebView2.Core.dll"/>
 				</Component>
 				<Component Id="Microsoft_Web_WebView2_WinForms.dll" Guid="{F13D171D-379E-4EF2-80DF-1681FD0788AE}">
-					<File Id="Microsoft_Web_WebView2_WinForms.dll" Name="Microsoft.Web.WebView2.WinForms.dll" Vital="yes" KeyPath="yes" AssemblyManifest="Microsoft_Web_WebView2_WinForms.dll" AssemblyApplication="Microsoft_Web_WebView2_WinForms.dll" Assembly=".net" Source="..\..\packages\Microsoft.Web.WebView2.1.0.902.49\lib\net45\Microsoft.Web.WebView2.WinForms.dll"/>
+					<File Id="Microsoft_Web_WebView2_WinForms.dll" Name="Microsoft.Web.WebView2.WinForms.dll" Vital="yes" KeyPath="yes" AssemblyManifest="Microsoft_Web_WebView2_WinForms.dll" AssemblyApplication="Microsoft_Web_WebView2_WinForms.dll" Assembly=".net" Source="..\..\output\Win32\release\Microsoft.Web.WebView2.WinForms.dll"/>
 				</Component>
 				<Directory Id="ECFolder" Name="EC">
 					<Directory Id="PluginsFolder" Name="Plugins">
@@ -554,32 +554,162 @@
 					</Directory>
 					<Directory Id="AppDataSILConverters40" Name="SILConverters40">
 						<Directory Id="Help" Name="Help">
-							<Component Id="CPHelp" Guid="{B0898694-B72B-4E08-B0AF-07DCA798E571}">
-								<File Id="CPHelp" Name="Code_Page_Converter_Plug-in_About_box.mht" ReadOnly="yes" KeyPath="yes" Source="..\..\redist\Help\Code_Page_Converter_Plug-in_About_box.mht"/>
+
+							<!--Code Page Converter Help-->
+							<Component Id="CodePageHelp.htm" Guid="{E8B0105D-25FA-4DCD-9201-FE39A077DCC2}">
+								<File Id="CodePageHelp.htm" Name="Code_Page_Converter_Plug-in_About_box.htm" KeyPath="yes" Source="..\..\redist\Help\Code_Page_Converter_Plug-in_About_box.htm"/>
+								<Shortcut Id="CodePageHelpHtm" Directory="SILConvHelp" Name="Code Page Plug-in Help" Description="View help document for the Code Page Plug-in" IconIndex="0" Show="normal" Target="[#CodePageHelp.htm]" WorkingDirectory="Help" Advertise="no" />
 							</Component>
-							<Component Id="CmpdHelp" Guid="{7C573610-E9CF-48F1-B72A-88759180B6F6}">
-								<File Id="CmpdHelp" Name="Compound_Converter_Plug-in_About_box.mht" ReadOnly="yes" KeyPath="yes" Source="..\..\redist\Help\Compound_Converter_Plug-in_About_box.mht"/>
+							<Directory Id="Code_Page_Converter_Plugin_About_box" Name="Code_Page_Converter_Plug-in_About_box_files">
+								<Component Id="Code_Page_Converter_Plugin_About_boxComp" Guid="{271527E5-91DD-42B3-86E4-ADB80FB77F81}">
+									<File Id="cp_filelist.xml" Name="filelist.xml" KeyPath="yes" Source="..\..\redist\Help\Code_Page_Converter_Plug-in_About_box_files\filelist.xml"/>
+									<File Id="cp_header.htm" Name="header.htm" Source="..\..\redist\Help\Code_Page_Converter_Plug-in_About_box_files\header.htm"/>
+									<File Id="cp_colorschememapping.xml" Name="colorschememapping.xml" Source="..\..\redist\Help\Code_Page_Converter_Plug-in_About_box_files\colorschememapping.xml"/>
+									<File Id="cp_themedata.thmx" Name="themedata.thmx" Source="..\..\redist\Help\Code_Page_Converter_Plug-in_About_box_files\themedata.thmx"/>
+									<File Id="cp_image001.png" Name="image001.png" Source="..\..\redist\Help\Code_Page_Converter_Plug-in_About_box_files\image001.png"/>
+									<File Id="cp_image002.jpg" Name="image002.jpg" Source="..\..\redist\Help\Code_Page_Converter_Plug-in_About_box_files\image002.jpg"/>
+									<File Id="cp_image003.png" Name="image003.png" Source="..\..\redist\Help\Code_Page_Converter_Plug-in_About_box_files\image003.png"/>
+									<File Id="cp_image004.jpg" Name="image004.jpg" Source="..\..\redist\Help\Code_Page_Converter_Plug-in_About_box_files\image004.jpg"/>
+									<File Id="cp_image005.png" Name="image005.png" Source="..\..\redist\Help\Code_Page_Converter_Plug-in_About_box_files\image005.png"/>
+									<File Id="cp_image006.jpg" Name="image006.jpg" Source="..\..\redist\Help\Code_Page_Converter_Plug-in_About_box_files\image006.jpg"/>
+								</Component>
+							</Directory>
+
+							<!--Compound Converter Help-->
+							<Component Id="CompoundHelp.htm" Guid="{DE6A1080-74AC-466E-8E2C-9E323E1A6011}">
+								<File Id="CompoundHelp.htm" Name="Compound_Converter_Plug-in_About_box.htm" KeyPath="yes" Source="..\..\redist\Help\Compound_Converter_Plug-in_About_box.htm"/>
+								<Shortcut Id="CompoundHelpHtm" Directory="SILConvHelp" Name="Compound Converter Plug-in Help" Description="View help document for the Compound (aka. Daisychain) Plug-in" IconIndex="0" Show="normal" Target="[#CompoundHelp.htm]" WorkingDirectory="Help" Advertise="no" />
 							</Component>
-							<Component Id="FallBackHelp" Guid="{D06FD4FE-DFAF-493C-9002-0E60DDE68AD5}">
-								<File Id="FallBackHelp" Name="Fallback_Converter_Plug-in_About_box.mht" ReadOnly="yes" KeyPath="yes" Source="..\..\redist\Help\Fallback_Converter_Plug-in_About_box.mht"/>
+							<Directory Id="Compound_Converter_Plugin_About_box" Name="Compound_Converter_Plug-in_About_box_files">
+								<Component Id="Compound_Converter_Plugin_About_boxComp" Guid="{20A41665-A961-466B-A7C1-EFF1FDF052EC}">
+									<File Id="cmpd_filelist.xml" Name="filelist.xml" KeyPath="yes" Source="..\..\redist\Help\Compound_Converter_Plug-in_About_box_files\filelist.xml"/>
+									<File Id="cmpd_colorschememapping.xml" Name="colorschememapping.xml" Source="..\..\redist\Help\Compound_Converter_Plug-in_About_box_files\colorschememapping.xml"/>
+									<File Id="cmpd_themedata.thmx" Name="themedata.thmx" Source="..\..\redist\Help\Compound_Converter_Plug-in_About_box_files\themedata.thmx"/>
+									<File Id="cmpd_image001.png" Name="image001.png" Source="..\..\redist\Help\Compound_Converter_Plug-in_About_box_files\image001.png"/>
+									<File Id="cmpd_image002.jpg" Name="image002.jpg" Source="..\..\redist\Help\Compound_Converter_Plug-in_About_box_files\image002.jpg"/>
+									<File Id="cmpd_image003.png" Name="image003.png" Source="..\..\redist\Help\Compound_Converter_Plug-in_About_box_files\image003.png"/>
+									<File Id="cmpd_image004.jpg" Name="image004.jpg" Source="..\..\redist\Help\Compound_Converter_Plug-in_About_box_files\image004.jpg"/>
+								</Component>
+							</Directory>
+
+							<!--Primary-Fallback Converter Help-->
+							<Component Id="PrimaryFallbackHelp.htm" Guid="{7F760356-7F4B-4B9F-B584-D6ECC237F5DC}">
+								<File Id="PrimaryFallbackHelp.htm" Name="Fallback_Converter_Plug-in_About_box.htm" KeyPath="yes" Source="..\..\redist\Help\Fallback_Converter_Plug-in_About_box.htm"/>
+								<Shortcut Id="PrimaryFallbackHelpHtm" Directory="SILConvHelp" Name="Primary-Fallback Converter Plug-in Help" Description="View help document for the Primary-Fallback Converter Plug-in" IconIndex="0" Show="normal" Target="[#PrimaryFallbackHelp.htm]" WorkingDirectory="Help" Advertise="no" />
 							</Component>
-							<Component Id="TECkitHelp" Guid="{E96005CD-9793-40A6-8ADA-1D40C0F75509}">
-								<File Id="TECkitHelp" Name="TECkit_Map_Plug-in_About_box.mht" ReadOnly="yes" KeyPath="yes" Source="..\..\redist\Help\TECkit_Map_Plug-in_About_box.mht"/>
+							<Directory Id="Fallback_Converter_Plugin_About_box" Name="Fallback_Converter_Plug-in_About_box_files">
+								<Component Id="Fallback_Converter_Plugin_About_boxComp" Guid="{3C174051-F93F-4835-A021-BB3B690EC869}">
+									<File Id="pf_filelist.xml" Name="filelist.xml" KeyPath="yes" Source="..\..\redist\Help\Fallback_Converter_Plug-in_About_box_files\filelist.xml"/>
+									<File Id="pf_colorschememapping.xml" Name="colorschememapping.xml" Source="..\..\redist\Help\Fallback_Converter_Plug-in_About_box_files\colorschememapping.xml"/>
+									<File Id="pf_themedata.thmx" Name="themedata.thmx" Source="..\..\redist\Help\Fallback_Converter_Plug-in_About_box_files\themedata.thmx"/>
+									<File Id="pf_image001.png" Name="image001.png" Source="..\..\redist\Help\Fallback_Converter_Plug-in_About_box_files\image001.png"/>
+									<File Id="pf_image002.jpg" Name="image002.jpg" Source="..\..\redist\Help\Fallback_Converter_Plug-in_About_box_files\image002.jpg"/>
+									<File Id="pf_image003.png" Name="image003.png" Source="..\..\redist\Help\Fallback_Converter_Plug-in_About_box_files\image003.png"/>
+									<File Id="pf_image004.jpg" Name="image004.jpg" Source="..\..\redist\Help\Fallback_Converter_Plug-in_About_box_files\image004.jpg"/>
+								</Component>
+							</Directory>
+
+							<!--ICU boundary analysis break iterator Help-->
+							<Component Id="IcuBreakIteratorHelp.htm" Guid="{482F91C7-139B-4E80-B823-318C4D6881B2}">
+								<File Id="IcuBreakIteratorHelp.htm" Name="ICU_Boundary_Analysis-Break_Iterator_Converter_About_box.htm" KeyPath="yes" Source="..\..\redist\Help\ICU_Boundary_Analysis-Break_Iterator_Converter_About_box.htm"/>
+								<Shortcut Id="IcuBreakIteratorHelpHtm" Directory="SILConvHelp" Name="ICU Break Iterator Plug-in Help" Description="View help document for the ICU Boundary Analysis Break Iterator Plug-in" IconIndex="0" Show="normal" Target="[#IcuBreakIteratorHelp.htm]" WorkingDirectory="Help" Advertise="no" />
 							</Component>
+							<Directory Id="ICU_Boundary_AnalysisBreak_Iterator_Converter_About_box" Name="ICU_Boundary_Analysis-Break_Iterator_Converter_About_box_files">
+								<Component Id="ICU_Boundary_AnalysisBreak_Iterator_Converter_About_boxComp" Guid="{28123B23-BEE6-4440-8D76-0E7E57F27F8A}">
+									<File Id="icubi_filelist.xml" Name="filelist.xml" KeyPath="yes" Source="..\..\redist\Help\ICU_Boundary_Analysis-Break_Iterator_Converter_About_box_files\filelist.xml"/>
+									<File Id="icubi_colorschememapping.xml" Name="colorschememapping.xml" Source="..\..\redist\Help\ICU_Boundary_Analysis-Break_Iterator_Converter_About_box_files\colorschememapping.xml"/>
+									<File Id="icubi_themedata.thmx" Name="themedata.thmx" Source="..\..\redist\Help\ICU_Boundary_Analysis-Break_Iterator_Converter_About_box_files\themedata.thmx"/>
+									<File Id="icubi_image001.png" Name="image001.png" Source="..\..\redist\Help\ICU_Boundary_Analysis-Break_Iterator_Converter_About_box_files\image001.png"/>
+									<File Id="icubi_image002.jpg" Name="image002.jpg" Source="..\..\redist\Help\ICU_Boundary_Analysis-Break_Iterator_Converter_About_box_files\image002.jpg"/>
+									<File Id="icubi_image003.png" Name="image003.png" Source="..\..\redist\Help\ICU_Boundary_Analysis-Break_Iterator_Converter_About_box_files\image003.png"/>
+									<File Id="icubi_image004.jpg" Name="image004.jpg" Source="..\..\redist\Help\ICU_Boundary_Analysis-Break_Iterator_Converter_About_box_files\image004.jpg"/>
+									<File Id="icubi_image005.png" Name="image005.png" Source="..\..\redist\Help\ICU_Boundary_Analysis-Break_Iterator_Converter_About_box_files\image005.png"/>
+									<File Id="icubi_image006.jpg" Name="image006.jpg" Source="..\..\redist\Help\ICU_Boundary_Analysis-Break_Iterator_Converter_About_box_files\image006.jpg"/>
+									<File Id="icubi_item0012.xml" Name="item0012.xml" Source="..\..\redist\Help\ICU_Boundary_Analysis-Break_Iterator_Converter_About_box_files\item0012.xml"/>
+									<File Id="icubi_props013.xml" Name="props013.xml" Source="..\..\redist\Help\ICU_Boundary_Analysis-Break_Iterator_Converter_About_box_files\props013.xml"/>
+								</Component>
+							</Directory>
+
+							<!--ICU Converter Help-->
+							<Component Id="IcuConvertersHelp.htm" Guid="{DFB951D5-EA7D-41B3-A2C3-CC35B1121663}">
+								<File Id="IcuConvertersHelp.htm" Name="ICU_Converters_Plug-in_About_box.htm" KeyPath="yes" Source="..\..\redist\Help\ICU_Converters_Plug-in_About_box.htm"/>
+								<Shortcut Id="IcuConvertersHelpHtm" Directory="SILConvHelp" Name="ICU Converters Help" Description="View help document for the ICU Converters Plug-in" IconIndex="0" Show="normal" Target="[#IcuConvertersHelp.htm]" WorkingDirectory="Help" Advertise="no" />
+							</Component>
+							<Directory Id="ICU_Converters_Plugin_About_box" Name="ICU_Converters_Plug-in_About_box_files">
+								<Component Id="ICU_Converters_Plugin_About_boxComp" Guid="{C68AB76B-623C-4CC5-BFE5-BC2D0FF7598C}">
+									<File Id="icuc_filelist.xml" Name="filelist.xml" KeyPath="yes" Source="..\..\redist\Help\ICU_Converters_Plug-in_About_box_files\filelist.xml"/>
+									<File Id="icuc_image001.png" Name="image001.png" Source="..\..\redist\Help\ICU_Converters_Plug-in_About_box_files\image001.png"/>
+									<File Id="icuc_image002.jpg" Name="image002.jpg" Source="..\..\redist\Help\ICU_Converters_Plug-in_About_box_files\image002.jpg"/>
+									<File Id="icuc_image003.png" Name="image003.png" Source="..\..\redist\Help\ICU_Converters_Plug-in_About_box_files\image003.png"/>
+									<File Id="icuc_image004.jpg" Name="image004.jpg" Source="..\..\redist\Help\ICU_Converters_Plug-in_About_box_files\image004.jpg"/>
+									<File Id="icuc_image007.png" Name="image007.png" Source="..\..\redist\Help\ICU_Converters_Plug-in_About_box_files\image007.png"/>
+									<File Id="icuc_image008.jpg" Name="image008.jpg" Source="..\..\redist\Help\ICU_Converters_Plug-in_About_box_files\image008.jpg"/>
+								</Component>
+							</Directory>
+
+							<!--ICU Regex Converter Help-->
+							<Component Id="IcuRegexHelp.htm" Guid="{D5DE23D4-F902-4417-82ED-38855B18E601}">
+								<File Id="IcuRegexHelp.htm" Name="ICU_Regular_Expression_Plug-in_About_box.htm" KeyPath="yes" Source="..\..\redist\Help\ICU_Regular_Expression_Plug-in_About_box.htm"/>
+								<Shortcut Id="IcuRegexHelpHtm" Directory="SILConvHelp" Name="ICU Regular Expression Help" Description="View help document for the ICU Regular Expression Plug-in" IconIndex="0" Show="normal" Target="[#IcuRegexHelp.htm]" WorkingDirectory="Help" Advertise="no" />
+							</Component>
+							<Directory Id="ICU_Regular_Expression_Plugin_About_box" Name="ICU_Regular_Expression_Plug-in_About_box_files">
+								<Component Id="ICU_Regular_Expression_Plugin_About_boxComp" Guid="{A5BBA809-2617-4240-A609-8DCDB21AD7D6}">
+									<File Id="icure_filelist.xml" Name="filelist.xml" KeyPath="yes" Source="..\..\redist\Help\ICU_Regular_Expression_Plug-in_About_box_files\filelist.xml"/>
+									<File Id="icure_colorschememapping.xml" Name="colorschememapping.xml" Source="..\..\redist\Help\ICU_Regular_Expression_Plug-in_About_box_files\colorschememapping.xml"/>
+									<File Id="icure_themedata.thmx" Name="themedata.thmx" Source="..\..\redist\Help\ICU_Regular_Expression_Plug-in_About_box_files\themedata.thmx"/>
+									<File Id="icure_image001.png" Name="image001.png" Source="..\..\redist\Help\ICU_Regular_Expression_Plug-in_About_box_files\image001.png"/>
+									<File Id="icure_image002.jpg" Name="image002.jpg" Source="..\..\redist\Help\ICU_Regular_Expression_Plug-in_About_box_files\image002.jpg"/>
+									<File Id="icure_image003.png" Name="image003.png" Source="..\..\redist\Help\ICU_Regular_Expression_Plug-in_About_box_files\image003.png"/>
+									<File Id="icure_image004.jpg" Name="image004.jpg" Source="..\..\redist\Help\ICU_Regular_Expression_Plug-in_About_box_files\image004.jpg"/>
+									<File Id="icure_image005.png" Name="image005.png" Source="..\..\redist\Help\ICU_Regular_Expression_Plug-in_About_box_files\image005.png"/>
+									<File Id="icure_image006.jpg" Name="image006.jpg" Source="..\..\redist\Help\ICU_Regular_Expression_Plug-in_About_box_files\image006.jpg"/>
+									<File Id="icure_image007.png" Name="image007.png" Source="..\..\redist\Help\ICU_Regular_Expression_Plug-in_About_box_files\image007.png"/>
+									<File Id="icure_image008.jpg" Name="image008.jpg" Source="..\..\redist\Help\ICU_Regular_Expression_Plug-in_About_box_files\image008.jpg"/>
+									<File Id="icure_item0014.xml" Name="item0014.xml" Source="..\..\redist\Help\ICU_Regular_Expression_Plug-in_About_box_files\item0014.xml"/>
+									<File Id="icure_props015.xml" Name="props015.xml" Source="..\..\redist\Help\ICU_Regular_Expression_Plug-in_About_box_files\props015.xml"/>
+								</Component>
+							</Directory>
+
+							<!--ICU transliterators Help-->
+							<Component Id="IcuTransliteratorsHelp.htm" Guid="{7E760EFF-D905-425D-851D-49F148628076}">
+								<File Id="IcuTransliteratorsHelp.htm" Name="ICU_Transliterators_Plug-in_About_box.htm" KeyPath="yes" Source="..\..\redist\Help\ICU_Transliterators_Plug-in_About_box.htm"/>
+								<Shortcut Id="IcuTransliteratorsHelpHtm" Directory="SILConvHelp" Name="ICU Transliterators Help" Description="View help document for the ICU Transliterators Plug-in" IconIndex="0" Show="normal" Target="[#IcuTransliteratorsHelp.htm]" WorkingDirectory="Help" Advertise="no" />
+							</Component>
+							<Directory Id="ICU_Transliterators_Plugin_About_box" Name="ICU_Transliterators_Plug-in_About_box_files">
+								<Component Id="ICU_Transliterators_Plugin_About_boxComp" Guid="{175E5C18-D389-46F9-8357-22C13C0EDF6F}">
+									<File Id="icutr_filelist.xml" Name="filelist.xml" KeyPath="yes" Source="..\..\redist\Help\ICU_Transliterators_Plug-in_About_box_files\filelist.xml"/>
+									<File Id="icutr_colorschememapping.xml" Name="colorschememapping.xml" Source="..\..\redist\Help\ICU_Transliterators_Plug-in_About_box_files\colorschememapping.xml"/>
+									<File Id="icutr_themedata.thmx" Name="themedata.thmx" Source="..\..\redist\Help\ICU_Transliterators_Plug-in_About_box_files\themedata.thmx"/>
+									<File Id="icutr_image001.png" Name="image001.png" Source="..\..\redist\Help\ICU_Transliterators_Plug-in_About_box_files\image001.png"/>
+									<File Id="icutr_image002.jpg" Name="image002.jpg" Source="..\..\redist\Help\ICU_Transliterators_Plug-in_About_box_files\image002.jpg"/>
+									<File Id="icutr_image003.png" Name="image003.png" Source="..\..\redist\Help\ICU_Transliterators_Plug-in_About_box_files\image003.png"/>
+									<File Id="icutr_image004.jpg" Name="image004.jpg" Source="..\..\redist\Help\ICU_Transliterators_Plug-in_About_box_files\image004.jpg"/>
+									<File Id="icutr_image005.png" Name="image005.png" Source="..\..\redist\Help\ICU_Transliterators_Plug-in_About_box_files\image005.png"/>
+									<File Id="icutr_image006.jpg" Name="image006.jpg" Source="..\..\redist\Help\ICU_Transliterators_Plug-in_About_box_files\image006.jpg"/>
+								</Component>
+							</Directory>
+
+							<!--TECkit Help-->
+							<Component Id="TECkitHelp.htm" Guid="{5F54B6C7-6E71-438C-BA3B-1AB5D7DBC59E}">
+								<File Id="TECkitHelp.htm" Name="TECkit_Map_Plug-in_About_box.htm" KeyPath="yes" Source="..\..\redist\Help\TECkit_Map_Plug-in_About_box.htm"/>
+								<Shortcut Id="TECkitHelpHtm" Directory="SILConvHelp" Name="ICU Transliterators Help" Description="View help document for the TECkit Plug-in" IconIndex="0" Show="normal" Target="[#TECkitHelp.htm]" WorkingDirectory="Help" Advertise="no" />
+							</Component>
+							<Directory Id="TECkit_Map_Plugin_About_box" Name="TECkit_Map_Plug-in_About_box_files">
+								<Component Id="TECkit_Map_Plugin_About_boxComp" Guid="{02A541BC-9B87-42B4-8387-75BCF0AD0B62}">
+									<File Id="tk_filelist.xml" Name="filelist.xml" KeyPath="yes" Source="..\..\redist\Help\TECkit_Map_Plug-in_About_box_files\filelist.xml"/>
+									<File Id="tk_colorschememapping.xml" Name="colorschememapping.xml" Source="..\..\redist\Help\TECkit_Map_Plug-in_About_box_files\colorschememapping.xml"/>
+									<File Id="tk_themedata.thmx" Name="themedata.thmx" Source="..\..\redist\Help\TECkit_Map_Plug-in_About_box_files\themedata.thmx"/>
+									<File Id="tk_image001.png" Name="image001.png" Source="..\..\redist\Help\TECkit_Map_Plug-in_About_box_files\image001.png"/>
+									<File Id="tk_image002.jpg" Name="image002.jpg" Source="..\..\redist\Help\TECkit_Map_Plug-in_About_box_files\image002.jpg"/>
+									<File Id="tk_image003.png" Name="image003.png" Source="..\..\redist\Help\TECkit_Map_Plug-in_About_box_files\image003.png"/>
+									<File Id="tk_image004.jpg" Name="image004.jpg" Source="..\..\redist\Help\TECkit_Map_Plug-in_About_box_files\image004.jpg"/>
+									<File Id="tk_image005.png" Name="image005.png" Source="..\..\redist\Help\TECkit_Map_Plug-in_About_box_files\image005.png"/>
+									<File Id="tk_image006.jpg" Name="image006.jpg" Source="..\..\redist\Help\TECkit_Map_Plug-in_About_box_files\image006.jpg"/>
+								</Component>
+							</Directory>
+
 							<Component Id="CantReadMhtFiles.htm" Guid="{2EA57953-4B0C-4A5D-A887-E9E9D100D20B}">
 								<File Id="CantReadMhtFiles.htm" Name="CantReadMhtFiles.htm" ReadOnly="yes" KeyPath="yes" Source="..\..\redist\Help\CantReadMhtFiles.htm"/>
-							</Component>
-							<Component Id="IcuRegex" Guid="{8A0498CB-71B8-4C0F-AE24-95FDD529BDAB}">
-								<File Id="IcuRegex" Name="ICU_Regular_Expression_Plug-in_About_box.mht" ReadOnly="yes" KeyPath="yes" Source="..\..\redist\Help\ICU_Regular_Expression_Plug-in_About_box.mht"/>
-							</Component>
-							<Component Id="IcuTranslit" Guid="{E863CC65-432C-4567-B402-BCB70D81A565}">
-								<File Id="IcuTranslit" Name="ICU_Transliterators_Plug-in_About_box.mht" ReadOnly="yes" KeyPath="yes" Source="..\..\redist\Help\ICU_Transliterators_Plug-in_About_box.mht"/>
-							</Component>
-							<Component Id="IcuBreakIterator" Guid="{D382D337-EB0C-44FD-9FFE-9D14F3263451}">
-								<File Id="IcuBreakIterator" Name="ICU_Boundary_Analysis-Break_Iterator_Converter_About_box.mht" ReadOnly="yes" KeyPath="yes" Source="..\..\redist\Help\ICU_Boundary_Analysis-Break_Iterator_Converter_About_box.mht"/>
-							</Component>
-							<Component Id="IcuConverters" Guid="{73FB38AF-BFD2-4AB5-9AAA-B2C233789C0B}">
-								<File Id="IcuConverters" Name="ICU_Converters_Plug-in_About_box.mht" ReadOnly="yes" KeyPath="yes" Source="..\..\redist\Help\ICU_Converters_Plug-in_About_box.mht"/>
 							</Component>
 						</Directory>
 					</Directory>
@@ -589,19 +719,7 @@
 			<Directory Id="StartMenuFolder" SourceName="Start Menu">
 				<Directory Id="ProgramMenuFolder" SourceName="Programs">
 					<Directory Id="SIL_Converters" Name="SIL Converters">
-						<Directory Id="SILConvHelp" Name="Help">
-							<Component Id="HelpShortcuts" Guid="A84EFA8C-D422-4D5D-B55B-C4FCDD6ECE61" KeyPath="yes">
-								<Shortcut Id="CPPluginHelp" Directory="SILConvHelp" Name="Code Page Plug-in Help" Target="[!CPHelp]" Hotkey="0" IconIndex="0" Show="normal" WorkingDirectory="Help"/>
-								<Shortcut Id="CmpdPluginHelp" Directory="SILConvHelp" Name="Compound Converter Plug-in Help" Target="[!CmpdHelp]" Hotkey="0" IconIndex="0" Show="normal" WorkingDirectory="Help"/>
-								<Shortcut Id="FallbackPluginHelp" Directory="SILConvHelp" Name="Primary-Fallback Converter Plug-in Help" Target="[!FallBackHelp]" Hotkey="0" IconIndex="0" Show="normal" WorkingDirectory="Help"/>
-								<Shortcut Id="TECkitPluginHelp" Directory="SILConvHelp" Name="TECkit Converter Plug-in Help" Target="[!TECkitHelp]" Hotkey="0" IconIndex="0" Show="normal" WorkingDirectory="Help"/>
-								<Shortcut Id="ICUConvHelp" Directory="SILConvHelp" Name="ICU Converters Help" Target="[!IcuConverters]" Hotkey="0" IconIndex="0" Show="normal" WorkingDirectory="Help"/>
-								<Shortcut Id="ICUTranlitHelp" Directory="SILConvHelp" Name="ICU Transliterators Help" Target="[!IcuTranslit]" Hotkey="0" IconIndex="0" Show="normal" WorkingDirectory="Help"/>
-								<Shortcut Id="ICURegexHelp" Directory="SILConvHelp" Name="ICU Regular Expression Help" Target="[!IcuRegex]" Hotkey="0" IconIndex="0" Show="normal" WorkingDirectory="Help"/>
-								<!-- The next item is junk to make validation pass on ICE18 -->
-								<CreateFolder/>
-							</Component>
-						</Directory>
+						<Directory Id="SILConvHelp" Name="Help" />
 					</Directory>
 				</Directory>
 			</Directory>

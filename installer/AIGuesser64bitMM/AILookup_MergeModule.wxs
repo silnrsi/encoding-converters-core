@@ -28,10 +28,33 @@
 				<Directory Id="AppDataSIL" Name="SIL">
 					<Directory Id="AppDataSILConverters40" Name="SILConverters40">
 						<Directory Id="Help" Name="Help">
-							<Component Id="AdaptItLookupHelp" Guid="{1D1DBD08-B4D1-4A7A-AECE-D55577D2A5B0}">
-								<File Id="AdaptItLookupHelp" Name="AdaptIt_Plug-in_About_box.mht" ReadOnly="yes" KeyPath="yes" Source="..\..\redist\Help\AdaptIt_Plug-in_About_box.mht"/>
-								<Shortcut Id="AdaptItLookupHelp" Directory="AiHelp" Name="AdaptIt Lookup Plug-in Help" Description="View help document for the AdaptIt Lookup Plug-in" IconIndex="0" Show="normal" Target="[#AdaptItLookupHelp]" WorkingDirectory="Help" Advertise="no" />
+
+							<!--AiLookup Converter Help-->
+							<Component Id="AdaptItLookupHelp.htm" Guid="{BE9E7390-35B3-4A5E-8ED4-FE7BDDEAB99F}">
+								<File Id="AdaptItLookupHelp.htm" Name="AdaptIt_Plug-in_About_box.htm" KeyPath="yes" Source="..\..\redist\Help\AdaptIt_Plug-in_About_box.htm"/>
+								<Shortcut Id="AdaptItLookupHelpHtm" Directory="AiHelp" Name="AdaptIt Lookup Plug-in Help" Description="View help document for the AdaptIt Lookup Plug-in" IconIndex="0" Show="normal" Target="[#AdaptItLookupHelp.htm]" WorkingDirectory="Help" Advertise="no" />
 							</Component>
+							<Directory Id="AdaptIt_Plugin_About_box" Name="AdaptIt_Plug-in_About_box_files">
+								<Component Id="AdaptIt_Plugin_About_boxComp" Guid="{C68152D2-C6CF-4823-8E0F-C60C7BE7A73E}">
+									<File Id="ai_filelist.xml" Name="filelist.xml" KeyPath="yes" Source="..\..\redist\Help\AdaptIt_Plug-in_About_box_files\filelist.xml"/>
+									<File Id="ai_header.htm" Name="header.htm" Source="..\..\redist\Help\AdaptIt_Plug-in_About_box_files\header.htm"/>
+									<File Id="ai_colorschememapping.xml" Name="colorschememapping.xml" Source="..\..\redist\Help\AdaptIt_Plug-in_About_box_files\colorschememapping.xml"/>
+									<File Id="ai_themedata.thmx" Name="themedata.thmx" Source="..\..\redist\Help\AdaptIt_Plug-in_About_box_files\themedata.thmx"/>
+									<File Id="ai_image001.png" Name="image001.png" Source="..\..\redist\Help\AdaptIt_Plug-in_About_box_files\image001.png"/>
+									<File Id="ai_image002.jpg" Name="image002.jpg" Source="..\..\redist\Help\AdaptIt_Plug-in_About_box_files\image002.jpg"/>
+									<File Id="ai_image003.png" Name="image003.png" Source="..\..\redist\Help\AdaptIt_Plug-in_About_box_files\image003.png"/>
+									<File Id="ai_image004.jpg" Name="image004.jpg" Source="..\..\redist\Help\AdaptIt_Plug-in_About_box_files\image004.jpg"/>
+									<File Id="ai_image005.png" Name="image005.png" Source="..\..\redist\Help\AdaptIt_Plug-in_About_box_files\image005.png"/>
+									<File Id="ai_image006.jpg" Name="image006.jpg" Source="..\..\redist\Help\AdaptIt_Plug-in_About_box_files\image006.jpg"/>
+									<File Id="ai_image007.png" Name="image007.png" Source="..\..\redist\Help\AdaptIt_Plug-in_About_box_files\image007.png"/>
+									<File Id="ai_image008.jpg" Name="image008.jpg" Source="..\..\redist\Help\AdaptIt_Plug-in_About_box_files\image008.jpg"/>
+									<File Id="ai_image009.png" Name="image009.png" Source="..\..\redist\Help\AdaptIt_Plug-in_About_box_files\image009.png"/>
+									<File Id="ai_image010.jpg" Name="image010.jpg" Source="..\..\redist\Help\AdaptIt_Plug-in_About_box_files\image010.jpg"/>
+									<File Id="ai_image011.png" Name="image011.png" Source="..\..\redist\Help\AdaptIt_Plug-in_About_box_files\image011.png"/>
+									<File Id="ai_image012.jpg" Name="image012.jpg" Source="..\..\redist\Help\AdaptIt_Plug-in_About_box_files\image012.jpg"/>
+								</Component>
+							</Directory>
+
 						</Directory>
 					</Directory>
 				</Directory>
