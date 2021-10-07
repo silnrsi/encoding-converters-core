@@ -15,8 +15,8 @@ INSTALL     = @INSTALL@
 prefix      = @prefix@
 exec_prefix = @exec_prefix@
 ROOTDIR     = @abs_top_srcdir@
-OUTDIR      = $(ROOTDIR)/output/Debug
-RELEASEOUT  = $(ROOTDIR)/output/Release
+OUTDIR      = $(ROOTDIR)/output/x64/Debug
+RELEASEOUT  = $(ROOTDIR)/output/x64/Release
 MONO        = @MONO@
 MONO_LDFLAGS= @MONO_LDFLAGS@
 # For fieldworks, define COMMON_DATA_FW in ECInterfaces.csproj for Util.cs.
@@ -56,7 +56,7 @@ ifneq ($(EC_DOWNLOAD_DEPS), false)
 endif
 
 debug: download_dependencies
-	cd build && ./msbuild.sh $(MONO) $(MONO_LDFLAGS) -p:FIELDWORKS=$(FIELDWORKS) -p:DefineConstants=NEED_RESOLVE_ICUBREAKITERATORENCCONVERTER
+	cd build && ./msbuild.sh $(MONO) $(MONO_LDFLAGS) -p:SolutionDir=$(ROOTDIR)/ -p:Platform=x64 -p:FIELDWORKS=$(FIELDWORKS) -p:DefineConstants=NEED_RESOLVE_ICUBREAKITERATORENCCONVERTER
 	for subdir in $(SRCDIRS); do \
 	  echo making in $$subdir; \
 	  (cd $$subdir && $(MAKE) all FIELDWORKS=$(FIELDWORKS)) || break; \
@@ -73,7 +73,7 @@ debug: download_dependencies
 	cp -p src/TestEncCnvtrs/TestEncCnvtrs.dll.config $(OUTDIR)
 
 release: download_dependencies
-	cd build && ./msbuild.sh $(MONO) $(MONO_LDFLAGS) -p:config=Release -p:FIELDWORKS=$(FIELDWORKS) -p:DefineConstants=NEED_RESOLVE_ICUBREAKITERATORENCCONVERTER
+	cd build && ./msbuild.sh $(MONO) $(MONO_LDFLAGS) -p:SolutionDir=$(ROOTDIR)/ -p:Platform=x64 -p:config=Release -p:FIELDWORKS=$(FIELDWORKS) -p:DefineConstants=NEED_RESOLVE_ICUBREAKITERATORENCCONVERTER
 	for subdir in $(SRCDIRS); do \
 	  echo making in $$subdir; \
 	  (cd $$subdir && $(MAKE) release FIELDWORKS=$(FIELDWORKS)) || break; \
