@@ -51,8 +51,8 @@ download_dependencies: download_nuget
 ifneq ($(EC_DOWNLOAD_DEPS), false)
 	. ./environ && build/multitry mono build/nuget.exe restore src/EncCnvtrs/packages.config -NonInteractive -PackagesDirectory "$(ROOTDIR)/packages"
 	. ./environ && build/multitry mono build/nuget.exe restore src/TestEncCnvtrs/packages.config -NonInteractive -PackagesDirectory "$(ROOTDIR)/packages"
-	cp -a packages/Geckofx45.64.Linux.45.0.21.0/build/Geckofx-Core.dll.config packages/Geckofx45.64.Linux.45.0.21.0/lib/net40
-	cp -a packages/Geckofx45.32.Linux.45.0.21.0/build/Geckofx-Core.dll.config packages/Geckofx45.32.Linux.45.0.21.0/lib/net40
+	cp -a packages/Geckofx60.64.Linux.60.0.51/build/Geckofx-Core.dll.config packages/Geckofx60.64.Linux.60.0.51/lib/net40
+	cp -a packages/Geckofx60.32.Linux.60.0.49/build/Geckofx-Core.dll.config packages/Geckofx60.32.Linux.60.0.49/lib/net40
 endif
 
 debug: download_dependencies
