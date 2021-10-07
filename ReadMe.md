@@ -34,12 +34,14 @@ Install build dependencies.
     export EC_COMMON_APPLICATION_DATA_PATH="$(pwd)/ec-common"
     export MONO_REGISTRY_PATH="${EC_COMMON_APPLICATION_DATA_PATH}/registry"
 
-    (. environ && mono output/Debug/RunTests.exe)
+    # Copy RunTests.exe to directory with the other DLLs to be found.
+    (cp -a src/RunTests/bin/x64/Debug/RunTests.exe output/x64/Debug/ &&
+      . environ && mono output/x64/Debug/RunTests.exe)
 
 In Windows,
 
 1. Open EncConverters 2015.sln in Visual Studio Community 2015.
-* Choose Build > Build Solution.
+2. Choose Build > Build Solution.
 
 ## Build NuGet packages
 

@@ -73,5 +73,6 @@ jobs:
         . environ
         export EC_COMMON_APPLICATION_DATA_PATH="$(pwd)/ec-common"
         export MONO_REGISTRY_PATH="${EC_COMMON_APPLICATION_DATA_PATH}/registry"
+        cp -a src/RunTests/bin/x64/${{matrix.build_configuration}}/RunTests.exe output/x64/${{matrix.build_configuration}}/
         # Note that currently, many tests fail and it doesn't fail this build step.
-        mono output/${{matrix.build_configuration}}/RunTests.exe
+        mono output/x64/${{matrix.build_configuration}}/RunTests.exe

@@ -19,7 +19,7 @@
 		<projroot>$(MSBuildProjectDirectory)/..</projroot>
 		<config Condition="'$(config)'==''">Debug</config>
 		<action Condition="'$(action)'==''">build</action>
-		<dir-output>$(projroot)/output/$(config)</dir-output>
+		<dir-output>$(projroot)/output/x64/$(config)</dir-output>
 	</PropertyGroup>
 
 	<Choose>
@@ -130,7 +130,7 @@
 	</Target>
 
     <Target Name="test" DependsOnTargets="TestEncCnvtrs">
-        <Message text="Please execute $(dir-output)/RunTests.exe manually."/>
+        <Message text="Please execute RunTests.exe manually."/>
         <!--
         <CreateItem Include="$(dir-output)/TestEncCnvtrs.dll">
             <Output TaskParameter="Include" ItemName="TestAssembly" />
