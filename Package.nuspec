@@ -2,44 +2,59 @@
 <package >
 	<metadata>
 		<id>Encoding-Converters-Core</id>
-		<version>0.3.9</version>
+		<version>0.3.23</version>
 		<authors>Bob Eaton, Jim Kornelson, SIL International</authors>
 		<owners>jnaylor, sillsdev</owners>
 		<license type="expression">MIT</license>
 		<projectUrl>https://github.com/silnrsi/encoding-converters-core</projectUrl>
 		<requireLicenseAcceptance>false</requireLicenseAcceptance>
 		<description>Libraries and merge modules for core encoding converter functionality.</description>
-		<releaseNotes>Includes managed DLL (for including in projects as nuget artifacts) in the .\lib\net45\... folder, and other managed and non-managed (read: non-nuget) resources that optionally may be manually added to projects or at least in installers in the .\runtimes\... folder -- including plugin definitions, tlb, and exe files for both Win32/x86 and x64. Some of the resources are also included in various merge modules in the .\installer\MergeModules... folder</releaseNotes>
+		<releaseNotes>Includes managed DLL (for including in projects as nuget artifacts) in the .\lib\net48\... folder, and other managed and non-managed (read: non-nuget) resources that optionally may be manually added to projects or at least in installers in the .\runtimes\... folder -- including plugin definitions, tlb, and exe files for both Win32/x86 and x64. Some of the resources are also included in various merge modules in the .\installer\MergeModules... folder</releaseNotes>
 		<copyright>Copyright 2017-2021</copyright>
 		<tags></tags>
 		<dependencies>
-			<group targetFramework=".NETFramework4.5" />
+			<group targetFramework=".NETFramework4.8" />
 		</dependencies>
 	</metadata>
 	<files>
 		<file src="ReadMe.md" />
 		<!--these are for when you are building x86 (but these are AnyCPU, so it'll work for all platforms)-->
-		<file src="output\Win32\Release\ECInterfaces.dll" target="lib\net45\x86"/>
-		<file src="output\Win32\Release\SilEncConverters40.dll" target="lib\net45\x86"/>
+		<file src="output\Win32\Release\ECInterfaces.dll" target="lib\net48\x86"/>
+		<file src="output\Win32\Release\SilEncConverters40.dll" target="lib\net48\x86"/>
+		
 		<!--these are for when you are building specifically for x64 (these are not AnyCPU)-->
-		<file src="output\x64\Release\ECInterfaces.dll" target="lib\net45\x64"/>
-		<file src="output\x64\Release\SilEncConverters40.dll" target="lib\net45\x64"/>
+		<file src="output\x64\Release\ECInterfaces.dll" target="lib\net48\x64"/>
+		<file src="output\x64\Release\SilEncConverters40.dll" target="lib\net48\x64"/>
 		
 		<!--this props file is needed so that when you consume this nuget package, the build will look in the right place for the x86 vs x64
 			depending on the build configured (this only appears to work for msbuild, which I don't use...)-->
-		<file src="build\Encoding-Converters-Core.props" target="lib\net45" />
+		<file src="build\Encoding-Converters-Core.props" target="build" />
 
-		<file src="build\Init.ps1" target="tools\Init.ps1" />
-		
 		<!--these are extra bits that any given application might want to use, but aren't specifically referenced by an EncConverters (managed) client
-			for x86 and then for x64-->
+			for x86 and then for x64. For the managed ones, if you do want to include one of them specifically (most frequently, AIGuesserEc or CcEc),
+			you can add something like this to the csproj file:
+			
+				<Reference Include="AIGuesserEC">
+					<HintPath>$(EcDistFilesPath)\win-x86\native\AIGuesserEC.dll</HintPath>
+				</Reference>
+				
+			NB: by not putting them in runtimes\win-x86\native, which would be more standard, it leaves them just in the
+				project folder, so it won't copy them to each project. But they want to be copied to the output folder,
+				so add (to a main project) a Pre-build event like this:
+
+				xcopy /y "$(EcDistFilesPath)\win-$(PlatformName)\native\*.*" "$(SolutionDir)output\$(PlatformName)\$(ConfigurationName)\"
+				xcopy /s /y "$(EcDistFilesPath)\redist\*.*" "$(SolutionDir)output\$(PlatformName)\$(ConfigurationName)\"
+			-->
+		
 		<file src="output\Win32\Release\*.dll" target="runtimes\EcDistFiles\win-x86\native" />
 		<file src="output\Win32\Release\*.tlb" target="runtimes\EcDistFiles\win-x86\native" />
 		<file src="output\Win32\Release\*.exe" target="runtimes\EcDistFiles\win-x86\native" />
 		<file src="output\x64\Release\*.dll" target="runtimes\EcDistFiles\win-x64\native" />
 		<file src="output\x64\Release\*.tlb" target="runtimes\EcDistFiles\win-x64\native" />
 		<file src="output\x64\Release\*.exe" target="runtimes\EcDistFiles\win-x64\native" />
-		<!--these are bits for including in an installer (merge modules, plug-ins, and help files-->
+
+		<!--these are bits for including in an installer (merge modules, plug-ins, and help files. But these don't need
+			to be in each project and make it take forever. Just put them in runtimes so they don't get copied-->
 		<file src="installer\MergeModules\**\*.*" target="runtimes\EcDistFiles\MergeModules" exclude="**\*.wixpdb"/>
 		<file src="redist\EC\Plugins\*.xml" target="runtimes\EcDistFiles\redist\EC\Plugins" />
 		<file src="redist\Help\**\*.*" target="runtimes\EcDistFiles\redist\Help" />
