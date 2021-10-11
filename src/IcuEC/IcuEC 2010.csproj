@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -101,11 +101,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IcuBreakIteratorEncConverter.cs" Condition="'$(OS)'=='Windows_NT'"/>
+    <Compile Include="IcuBreakIteratorEncConverter.cs" Condition="'$(OS)'=='Windows_NT'" />
     <Compile Include="IcuBreakIteratorAutoConfigDialog.cs" Condition="'$(OS)'=='Windows_NT'">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="IcuBreakIteratorConfig.cs" Condition="'$(OS)'=='Windows_NT'"/>
+    <Compile Include="IcuBreakIteratorConfig.cs" Condition="'$(OS)'=='Windows_NT'" />
     <Compile Include="IcuConvAutoConfigDialog.cs">
       <SubType>Form</SubType>
     </Compile>
