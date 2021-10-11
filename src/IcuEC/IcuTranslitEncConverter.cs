@@ -2,26 +2,23 @@
 //
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Runtime.InteropServices;
-using System.Text;
-using Microsoft.Win32;                  // for RegistryKey
 using ECInterfaces;                     // for IEncConverter
 
 namespace SilEncConverters40
 {
-    /// <summary>
-    /// Managed ICU transliterator EncConverter
-    /// </summary>
-    //[GuidAttribute("54E0185D-3603-4113-B323-E0222FAD4CCE")]
-    // normally these subclasses are treated as the base class (i.e. the
-    //  client can use them orthogonally as IEncConverter interface pointers
-    //  so normally these individual subclasses would be invisible), but if
-    //  we add 'ComVisible = false', then it doesn't get the registry
-    //  'HKEY_CLASSES_ROOT\SilEncConverters40.TecEncConverter' which is the basis of
-    //  how it is started (see EncConverters.AddEx).
-    // [ComVisible(false)]
-    public class IcuTranslitEncConverter : EncConverter
+	/// <summary>
+	/// Managed ICU transliterator EncConverter
+	/// </summary>
+	//[GuidAttribute("54E0185D-3603-4113-B323-E0222FAD4CCE")]
+	// normally these subclasses are treated as the base class (i.e. the
+	//  client can use them orthogonally as IEncConverter interface pointers
+	//  so normally these individual subclasses would be invisible), but if
+	//  we add 'ComVisible = false', then it doesn't get the registry
+	//  'HKEY_CLASSES_ROOT\SilEncConverters40.TecEncConverter' which is the basis of
+	//  how it is started (see EncConverters.AddEx).
+	// [ComVisible(false)]
+	public class IcuTranslitEncConverter : EncConverter
     {
         #region DLLImport Statements
         // On Linux looks for libIcuTranslitEC.so (adds lib- and -.so)
@@ -119,7 +116,9 @@ namespace SilEncConverters40
 
 			// the only thing we want to add (now that the convType can be less than accurate)
 			//  is to make sure it's unidirectional
-			m_eConversionType = conversionType = MakeUniDirectional(conversionType);
+			// UPDATE: but something like Devanagari-Latin is bi-directional? Maybe only do this if it has 'Any' in it, which isn't
+			if (converterSpec.Contains("Any"))
+				m_eConversionType = conversionType = MakeUniDirectional(conversionType);
 
             Util.DebugWriteLine(this, "END");
         }
