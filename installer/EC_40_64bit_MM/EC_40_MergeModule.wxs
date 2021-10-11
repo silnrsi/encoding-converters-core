@@ -508,6 +508,9 @@
 				<Component Id="Microsoft_Web_WebView2_WinForms.dll" Guid="{D9EF1787-63E9-471D-A489-E5880FA4F9A8}">
 					<File Id="Microsoft_Web_WebView2_WinForms.dll" Name="Microsoft.Web.WebView2.WinForms.dll" Vital="yes" KeyPath="yes" AssemblyManifest="Microsoft_Web_WebView2_WinForms.dll" AssemblyApplication="Microsoft_Web_WebView2_WinForms.dll" Assembly=".net" Source="..\..\output\x64\release\Microsoft.Web.WebView2.WinForms.dll"/>
 				</Component>
+				<Component Id="WebView2Loader.dll" Guid="{7BD04F19-E8FB-4777-8268-70710C58AEA3}">
+					<File Id="WebView2Loader.dll" Name="WebView2Loader.dll" KeyPath="yes" Source="..\..\output\x64\release\runtimes\win-x64\native\WebView2Loader.dll"/>
+				</Component>
 				<Directory Id="ECFolder" Name="EC">
 					<Directory Id="PluginsFolder" Name="Plugins">
 						<Component Id="EC4.0.0.0PluginDetails.xml" Guid="579194FE-37AA-47a3-A089-B0F1F17415FB">

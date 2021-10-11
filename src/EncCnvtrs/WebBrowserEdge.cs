@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
 using System.Linq;
+using ECInterfaces;
+using Microsoft.Win32;
 
 namespace SilEncConverters40
 {
@@ -21,15 +23,53 @@ namespace SilEncConverters40
 			InitializeComponent();
 		}
 
+		public static bool ShouldUseBrowser
+		{
+			get
+			{
+				if (Util.IsUnix)
+				{
+					return false;
+				}
+				else
+				{
+					// prefer Edge to IE
+					return WindowsUserWantsToUseEdge;
+				}
+			}
+		}
+
+		/// <summary>
+		/// this will return true if the user has set the 'UseEdge' registry key to 'True'
+		/// </summary>
+		private static bool WindowsUserWantsToUseEdge
+		{
+			get
+			{
+				var regKeySecRoot = Registry.LocalMachine.OpenSubKey(EncConverters.SEC_ROOT_KEY);
+				return (regKeySecRoot != null) &&
+					   (regKeySecRoot.GetValue(EncConverters.CstrUseEdgeRegKey, "False") as string == "True");
+			}
+		}
+
 		public static bool IsWebView2RuntimeInstalled
+		{
+			get { return !String.IsNullOrEmpty(EdgeAvailableBrowserVersion); }
+		}
+
+		public static string EdgeAvailableBrowserVersion
 		{
 			get
 			{
 				try
 				{
-					return (CoreWebView2Environment.GetAvailableBrowserVersionString() != null);
+					return CoreWebView2Environment.GetAvailableBrowserVersionString();
 				}
-				catch (Exception) { return false; }
+				catch (Exception ex)
+				{
+					EncConverter.LogExceptionMessage("EdgeAvailableBrowserVersion", ex);
+					return null;
+				}
 			}
 		}
 

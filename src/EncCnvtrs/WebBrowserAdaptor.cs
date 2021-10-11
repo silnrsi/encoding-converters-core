@@ -54,7 +54,7 @@ namespace SilEncConverters40
 					// means for us to figure it out based on OS and reg settings
 					// on linux, only Gecko works (on Windows, either Gecko or IE will work, but using IE saves us from having to redistribute too much)
 					//  so on Linux, prefer Gecko, but on Windows, prefer IE.
-					if (ShouldUseGecko)
+					if (WebBrowserGecko.ShouldUseBrowser)
 					{
 						try
 						{
@@ -65,14 +65,17 @@ namespace SilEncConverters40
 							webBrowserAdaptor = new WebBrowserInstructions();
 						}
 					}
-					else if (ShouldUseEdge)
+					else if (WebBrowserEdge.ShouldUseBrowser)
 					{
 						try
 						{
-							if (WebBrowserEdge.IsWebView2RuntimeInstalled){
+							if (WebBrowserEdge.IsWebView2RuntimeInstalled)
+							{
 								webBrowserAdaptor=  new WebBrowserEdge();
-							} else {
-								webBrowserAdaptor =new WebBrowserInstructions();
+							}
+							else
+							{
+								webBrowserAdaptor = new WebBrowserInstructions();
 							}
 						}
 						catch (Exception)
@@ -93,64 +96,6 @@ namespace SilEncConverters40
 			}
 
 			return webBrowserAdaptor;
-		}
-
-		private static bool ShouldUseGecko
-        {
-            get
-            {
-                if (Util.IsUnix)
-                {
-                    return true;
-                }
-                else
-                {
-                    return WindowsUserWantsToUseGecko;
-                }
-            }
-        }
-
-        /// <summary>
-        /// this will return true if the user has set the 'UseGeckoFx' registry key to 'True' AND put the xulRunner folder
-        /// in the target installation dir
-        /// </summary>
-        private static bool WindowsUserWantsToUseGecko
-        {
-            get
-            {
-                var regKeySecRoot = Registry.LocalMachine.OpenSubKey(EncConverters.SEC_ROOT_KEY);
-                return (regKeySecRoot != null) &&
-                       (regKeySecRoot.GetValue(EncConverters.CstrUseGeckoRegKey, "False") as string == "True");
-            }
-        }
-
-		private static bool ShouldUseEdge
-		{
-			get
-			{
-				if (Util.IsUnix)
-				{
-					return false;
-				}
-				else
-				{
-					// prefer Edge to IE
-					return WindowsUserWantsToUseEdge;
-				}
-			}
-		}
-
-		/// <summary>
-		/// this will return true if the user has set the 'UseEdge' registry key to 'True'
-		/// </summary>
-		private static bool WindowsUserWantsToUseEdge
-		{
-			get
-			{
-				var regKeySecRoot = Registry.LocalMachine.OpenSubKey(EncConverters.SEC_ROOT_KEY);
-				return (regKeySecRoot != null) &&
-					   (regKeySecRoot.GetValue(EncConverters.CstrUseEdgeRegKey, "False") as string == "True");
-			}
 		}
 
 		public virtual void Initialize()

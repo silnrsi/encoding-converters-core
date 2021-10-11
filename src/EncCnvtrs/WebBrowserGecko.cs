@@ -2,6 +2,7 @@ using ECInterfaces;
 using Gecko;
 using Gecko.DOM;
 using Gecko.Events;
+using Microsoft.Win32;
 using System;
 using System.Drawing;
 using System.IO;
@@ -39,6 +40,35 @@ namespace SilEncConverters40
 			}
 			else
 				throw new ApplicationException($"Unable to initialize Gecko installation!");
+		}
+
+		public static bool ShouldUseBrowser
+		{
+			get
+			{
+				if (Util.IsUnix)
+				{
+					return true;
+				}
+				else
+				{
+					return WindowsUserWantsToUseGecko;
+				}
+			}
+		}
+
+		/// <summary>
+		/// this will return true if the user has set the 'UseGeckoFx' registry key to 'True' AND put the xulRunner folder
+		/// in the target installation dir
+		/// </summary>
+		private static bool WindowsUserWantsToUseGecko
+		{
+			get
+			{
+				var regKeySecRoot = Registry.LocalMachine.OpenSubKey(EncConverters.SEC_ROOT_KEY);
+				return (regKeySecRoot != null) &&
+					   (regKeySecRoot.GetValue(EncConverters.CstrUseGeckoRegKey, "False") as string == "True");
+			}
 		}
 
 		private void GeckoDocumentCompleted(object sender, GeckoDocumentCompletedEventArgs e)

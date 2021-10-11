@@ -25,7 +25,7 @@ namespace SilEncConverters40
 			};
 			LabelsPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 30F));
 			LabelsPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 35F));
-			LabelsPanel.Controls.Add(InstructionsLinkLabel, 0, 1);
+			LabelsPanel.Controls.Add(InstructionsForFireFox, 0, 1);
 			if (!Util.IsUnix)
 			{
 				LabelsPanel.RowCount = 3;
@@ -36,47 +36,31 @@ namespace SilEncConverters40
 		}
 
 
-		public static LinkLabel InstructionsLinkLabel
+		public static Label InstructionsForFireFox
 		{
 			get
 			{
+				string strInstructions;
 				if (Util.IsUnix)
 				{
-					return new LinkLabel
-					{
-						Text = "To use Mozilla to display the help file, install the firefox-geckofx package.",
-						Dock = DockStyle.Fill
-					};
+					strInstructions = "To use Mozilla to display the help file, install the firefox-geckofx package.";
 				}
-
-				const string cstrLinkPrefix = "To use Firefox/Mozilla to display the help file, download xulRunner from ";
-				const string cstrXulRunnerLink = "https://archive.mozilla.org/pub/xulrunner/releases/latest/runtimes/";
-
-				var runDirectory = DirectoryOfTheApplicationExecutable;
-
-				var labelInstructions = new LinkLabel
+				else
 				{
-					Text =
-						cstrLinkPrefix + cstrXulRunnerLink + " and put the xulrunner folder as a subfolder in the " +
-						runDirectory + string.Format(@" folder. Otherwise, change the registry key 'HKLM\{0}\{1}' to False",
+					strInstructions = "You seem to be missing the Firefox native DLLs that are usually in the \"<Install Directory>\\Firefox\" folder. You should re-run the installer and make sure Firefox is selected to be installed,"
+										+ string.Format(@" or change the registry key 'HKLM\{0}\{1}' to False",
 #if X64
 													 EncConverters.SEC_ROOT_KEY,
 #else
 													 EncConverters.SEC_ROOT_KEY.Replace("SOFTWARE", @"SOFTWARE\WOW6432Node"),
 #endif
-													 EncConverters.CstrUseGeckoRegKey),
-					Dock = DockStyle.Fill
-				};
+													 EncConverters.CstrUseGeckoRegKey);
+				}
 
-				labelInstructions.Links.Add(cstrLinkPrefix.Length, cstrXulRunnerLink.Length, cstrXulRunnerLink);
-				labelInstructions.Links.Add(labelInstructions.Text.IndexOf(runDirectory),
-											runDirectory.Length,
-											runDirectory);
-
-				labelInstructions.LinkClicked += (sender, args) =>
+				var labelInstructions = new Label
 				{
-					if (args.Link.LinkData != null)
-						Process.Start(args.Link.LinkData as string);
+					Text = strInstructions,						
+					Dock = DockStyle.Fill
 				};
 
 				return labelInstructions;
@@ -88,20 +72,21 @@ namespace SilEncConverters40
 		{
 			get
 			{
-				const string cstrLinkPrefix = "To use Microsoft Edge to display the help file, download and install its runtime from: ";
+				const string cstrLinkPrefix = "To use Microsoft Edge to display the help files, download and install its runtime from: ";
 				const string cstrEvergreenEdgeLink = "https://go.microsoft.com/fwlink/p/?LinkId=2124703";
 
 				var runDirectory = DirectoryOfTheApplicationExecutable;
 
 				var labelInstructions = new LinkLabel
 				{
-					Text = cstrLinkPrefix + cstrEvergreenEdgeLink + string.Format(@". Otherwise, change the registry key 'HKLM\{0}\{1}' to False",
+					Text = cstrLinkPrefix + cstrEvergreenEdgeLink + string.Format(@". Otherwise, change the registry key 'HKLM\{0}\{1}' to False (currently, CoreWebView2Environment.GetAvailableBrowserVersionString() = '{2}'",
 #if X64
 													 EncConverters.SEC_ROOT_KEY,
 #else
 													 EncConverters.SEC_ROOT_KEY.Replace("SOFTWARE", @"SOFTWARE\WOW6432Node"),
 #endif
-													 EncConverters.CstrUseEdgeRegKey),
+													 EncConverters.CstrUseEdgeRegKey,
+													 WebBrowserEdge.EdgeAvailableBrowserVersion),
 					Dock = DockStyle.Fill
 				};
 
