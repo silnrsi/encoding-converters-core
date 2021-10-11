@@ -152,7 +152,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{AE15D9B7-3CAA-44E7-8CB8-8943DF1AA069}"
 	ProjectSection(SolutionItems) = preProject
 		build\Encoding-Converters-Core.props = build\Encoding-Converters-Core.props
-		build\Init.ps1 = build\Init.ps1
 		Package.nuspec = Package.nuspec
 	EndProjectSection
 EndProject
