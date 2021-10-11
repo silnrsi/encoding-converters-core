@@ -68,28 +68,6 @@ namespace SilEncConverters40
             base.Initialize(converterName, converterSpec, ref lhsEncodingID, ref rhsEncodingID, 
                 ref conversionType, ref processTypeFlags, codePageInput, codePageOutput, bAdding );
 
-/*
-            // the only thing we want to add (now that the convType can be less than accurate) 
-            //  is to make sure it's unidirectional
-            switch(conversionType)
-            {
-                case ConvType.Legacy_to_from_Legacy:
-                    conversionType = ConvType.Legacy_to_Legacy;
-                    break;
-                case ConvType.Legacy_to_from_Unicode:
-                    conversionType = ConvType.Legacy_to_Unicode;
-                    break;
-                case ConvType.Unicode_to_from_Legacy:
-                    conversionType = ConvType.Unicode_to_Legacy;
-                    break;
-                //case ConvType.Unicode_to_from_Unicode:
-                //    conversionType = ConvType.Unicode_to_Unicode;
-                //    break;
-                default:
-                    break;
-            }
-*/
-
             Util.DebugWriteLine(this, "END");
         }
         #endregion Initialization
@@ -106,11 +84,11 @@ namespace SilEncConverters40
 
         protected override EncodingForm  DefaultUnicodeEncForm(bool bForward, bool bLHS)
         {
-            // if it's unspecified, then we want UTF-16 on Windows.
-            // Probably UTF8 for Linux?
-            //return EncodingForm.UTF16;
-            return EncodingForm.UTF8String;
-        }
+			// if it's unspecified, then we want UTF-16 on Windows.
+			// Probably UTF8 for Linux?
+			//return EncodingForm.UTF16;
+			return (Util.IsUnix) ? EncodingForm.UTF8String : EncodingForm.UTF16;
+		}
 
         protected unsafe void Load(string strExpression)
         {
@@ -134,8 +112,8 @@ namespace SilEncConverters40
             status = CppInitialize(strExpression);
             if( status != 0 )  
             {
-                throw new Exception("CppInitialize failed.");
-            }
+                throw new Exception($"CppInitialize failed w/ error code '{status}'.");
+			}
             Util.DebugWriteLine(this, "END");
         }
         #endregion Misc helpers

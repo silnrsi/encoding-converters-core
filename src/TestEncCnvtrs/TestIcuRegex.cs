@@ -35,6 +35,21 @@ namespace TestEncCnvtrs
 			Assert.AreEqual("VCCCVCCCVCCCCCVCCCCCVCCCCC", output2,
 				"reinitialized ICU regex converter should work properly!");
 		}
+
+		[Test]
+		public void TestRegexForNonAnsiRange()
+		{
+			IcuRegexEncConverter rec = new IcuRegexEncConverter();
+			string lhsEncoding = "UNICODE";
+			string rhsEncoding = "UNICODE";
+			ConvType convType = ConvType.Unicode_to_from_Unicode;
+			int procFlags = (int)ProcessTypeFlags.ICURegularExpression;
+			rec.Initialize("RemoveDigits", "\\d->",
+				ref lhsEncoding, ref rhsEncoding, ref convType, ref procFlags, 0, 0, false);
+			string output = rec.Convert("पोथी रे ते मियाः 1234567890123456789057 हेनाः");
+			Assert.AreEqual("पोथी रे ते मियाः  हेनाः", output,
+				"ICU regex converter should work properly for non-latin ranges of unicode also (for which UTF8String won't work on Windows)!");
+		}
 	}
 }
 

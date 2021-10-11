@@ -163,11 +163,14 @@ namespace RunTests
 			var test = new TestIcuRegex();
 			try
 			{
-			try { test.TestRegexToVandC(); Console.WriteLine("TestRegexToVandC succeeded!");}
-			catch(Exception e) {Console.WriteLine("TestRegexToVandC failed: {0}", e.Message); ++m_cfail;}
-			++m_crun;
+				try { test.TestRegexToVandC(); Console.WriteLine("TestRegexToVandC succeeded!");}
+				catch(Exception e) {Console.WriteLine("TestRegexToVandC failed: {0}", e.Message); ++m_cfail;}
+				++m_crun;
+				try { test.TestRegexForNonAnsiRange(); Console.WriteLine("TestRegexForNonAnsiRange succeeded!"); }
+				catch (Exception e) { Console.WriteLine("TestRegexForNonAnsiRange failed: {0}", e.Message); ++m_cfail; }
+				++m_crun;
 			}
-			catch(Exception e) { Console.WriteLine("Exception caught during TestIcuRegex setup or teardown: {0}", e.Message); }
+			catch (Exception e) { Console.WriteLine("Exception caught during TestIcuRegex setup or teardown: {0}", e.Message); }
 			Console.WriteLine("Done Testing IcuRegex");
 		}
 	}
