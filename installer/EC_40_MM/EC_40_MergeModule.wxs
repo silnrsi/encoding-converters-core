@@ -558,6 +558,18 @@
 					<Directory Id="AppDataSILConverters40" Name="SILConverters40">
 						<Directory Id="Help" Name="Help">
 
+							<!--License-->
+							<Component Id="License.htm" Guid="{961BEC04-A8B7-4C76-ACF4-185C1C899A48}">
+								<File Id="License.htm" Name="License.htm" KeyPath="yes" Source="..\..\redist\Help\License.htm"/>
+							</Component>
+							<Directory Id="License" Name="License_files">
+								<Component Id="LicenseComp" Guid="{ADFACEA6-97A0-4923-B95E-34C234FBA04E}">
+									<File Id="lic_filelist.xml" Name="filelist.xml" KeyPath="yes" Source="..\..\redist\Help\License_files\filelist.xml"/>
+									<File Id="lic_colorschememapping.xml" Name="colorschememapping.xml" Source="..\..\redist\Help\License_files\colorschememapping.xml"/>
+									<File Id="lic_themedata.thmx" Name="themedata.thmx" Source="..\..\redist\Help\License_files\themedata.thmx"/>
+								</Component>
+							</Directory>
+
 							<!--Code Page Converter Help-->
 							<Component Id="CodePageHelp.htm" Guid="{E8B0105D-25FA-4DCD-9201-FE39A077DCC2}">
 								<File Id="CodePageHelp.htm" Name="Code_Page_Converter_Plug-in_About_box.htm" KeyPath="yes" Source="..\..\redist\Help\Code_Page_Converter_Plug-in_About_box.htm"/>
