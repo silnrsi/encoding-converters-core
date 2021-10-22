@@ -21,13 +21,20 @@ BUILDDIR    = $(ROOTDIR)/build/Obj
 OUTDIR      = $(ROOTDIR)/output/Debug
 RELEASEBLD  = $(ROOTDIR)/build/Obj/Release
 RELEASEOUT  = $(ROOTDIR)/output/Release
-ifeq ($(strip $(FIELDWORKS)),)
-LIBDIR      = @libdir@/encConverters
-REGROOT     = /var/lib/encConverters
-else
-LIBDIR      = @libdir@/fieldworks
-REGROOT     = /var/lib/fieldworks
+
+ifeq ($(origin REGROOT), undefined)
+  ifeq ($(strip $(FIELDWORKS)),)
+    REGROOT     = /var/lib/encConverters
+  else
+    REGROOT     = /var/lib/fieldworks
+  endif
 endif
+ifeq ($(strip $(FIELDWORKS)),)
+  LIBDIR      = @libdir@/encConverters
+else
+  LIBDIR      = @libdir@/fieldworks
+endif
+
 MONO_INCLUDE= @MONO_CPPFLAGS@
 MONO_LDFLAGS= @MONO_LDFLAGS@
 
