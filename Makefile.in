@@ -19,15 +19,24 @@ OUTDIR      = $(ROOTDIR)/output/x64/Debug
 RELEASEOUT  = $(ROOTDIR)/output/x64/Release
 MONO        = @MONO@
 MONO_LDFLAGS= @MONO_LDFLAGS@
-# For fieldworks, define COMMON_DATA_FW in ECInterfaces.csproj for Util.cs.
-# Also change REGROOT in ECDriver Makefile.in.
-ifeq ($(strip $(FIELDWORKS)),)
-LIBDIR      = @libdir@/encConverters
-REGROOT     = /var/lib/encConverters
-else
-LIBDIR      = @libdir@/fieldworks
-REGROOT     = /var/lib/fieldworks
+
+# Allow REGROOT to be specified externally (such as when building Flatpak
+# FieldWorks). Otherwise, set it according to FIELDWORKS.
+ifeq ($(origin REGROOT), undefined)
+  # For fieldworks, define COMMON_DATA_FW in ECInterfaces.csproj for Util.cs.
+  # Also change REGROOT in ECDriver Makefile.in.
+  ifeq ($(strip $(FIELDWORKS)),)
+    REGROOT     = /var/lib/encConverters
+  else
+    REGROOT     = /var/lib/fieldworks
+  endif
 endif
+ifeq ($(strip $(FIELDWORKS)),)
+  LIBDIR      = @libdir@/encConverters
+else
+  LIBDIR      = @libdir@/fieldworks
+endif
+
 REGKEY      = $(REGROOT)/registry/LocalMachine/software/sil/silencconverters40
 TECKITLIBS  = $(shell pkg-config --variable=libdir teckit)
 
