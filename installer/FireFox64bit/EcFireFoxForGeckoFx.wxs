@@ -1,81 +1,81 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-	<Module Id="FireFox" Language="1033" Version="1.0.0.0">
-		<Package Id="A2AB4119-9367-4821-87E5-4EDF5AF20153" Keywords="FireFox; GeckoFx; WebBrowser for Encoding Converters"
-				 Description="Merge Module for the Firefox (x86) files needed to support GeckoFx in EncConverters' configuration dialogs and IndicConverters"
-				 Manufacturer="SIL International" InstallerVersion="500" 
-				 Platform="x64" />
+    <Module Id="FireFox" Language="1033" Version="1.0.0.0">
+        <Package Id="A2AB4119-9367-4821-87E5-4EDF5AF20153" Keywords="FireFox; GeckoFx; WebBrowser for Encoding Converters"
+                 Description="Merge Module for the Firefox (x86) files needed to support GeckoFx in EncConverters' configuration dialogs and IndicConverters"
+                 Manufacturer="SIL International" InstallerVersion="500"
+                 Platform="x64" />
 
-		<Directory Id="TARGETDIR" Name="SourceDir">
-			
-			<Component Id="RegisterECFolders" Guid="{E6BF9E6F-3F67-44A9-9660-BA68D9AE901E}">
-				<RegistryValue Root="HKLM" Key="Software\SIL\SilEncConverters40" Name="UseMozilla" Type="string" Value="True"/>
-			</Component>
+        <Directory Id="TARGETDIR" Name="SourceDir">
 
-			<Directory Id="MergeRedirectFolder">
+            <Component Id="RegisterECFolders" Guid="{E6BF9E6F-3F67-44A9-9660-BA68D9AE901E}">
+                <RegistryValue Root="HKLM" Key="Software\SIL\SilEncConverters40" Name="UseMozilla" Type="string" Value="True"/>
+            </Component>
 
-				<Component Id="AccessibleHandler.dll" Guid="{DCCAE298-8162-4F45-A8F1-576B44FFEC2B}">
-					<File Id="AccessibleHandler.dll" Name="AccessibleHandler.dll" KeyPath="yes" Source="..\..\src\EncCnvtrs\Firefox64\AccessibleHandler.dll"/>
-				</Component>
-				<Component Id="AccessibleMarshal.dll" Guid="{870F43E6-2ADB-4EE3-87B1-81BEFC9A8752}">
-					<File Id="AccessibleMarshal.dll" Name="AccessibleMarshal.dll" KeyPath="yes" Source="..\..\src\EncCnvtrs\Firefox64\AccessibleMarshal.dll"/>
-				</Component>
-				<Component Id="d3dcompiler_47.dll" Guid="{AB84A065-C004-4B99-B52D-99B6777AB869}">
-					<File Id="d3dcompiler_47.dll" Name="d3dcompiler_47.dll" KeyPath="yes" Source="..\..\src\EncCnvtrs\Firefox64\d3dcompiler_47.dll"/>
-				</Component>
-				<Component Id="freebl3.dll" Guid="{A17F4493-341F-4568-A7B9-AF8D56B06F98}">
-					<File Id="freebl3.dll" Name="freebl3.dll" KeyPath="yes" Source="..\..\src\EncCnvtrs\Firefox64\freebl3.dll"/>
-				</Component>
-				<Component Id="IA2Marshal.dll" Guid="{9B7BDBE8-49F8-4E24-9A49-AB6D89266ED9}">
-					<File Id="IA2Marshal.dll" Name="IA2Marshal.dll" KeyPath="yes" Source="..\..\src\EncCnvtrs\Firefox64\IA2Marshal.dll"/>
-				</Component>
-				<Component Id="lgpllibs.dll" Guid="{C6DCC47A-F72A-40F2-8833-D92B8A341D08}">
-					<File Id="lgpllibs.dll" Name="lgpllibs.dll" KeyPath="yes" Source="..\..\src\EncCnvtrs\Firefox64\lgpllibs.dll"/>
-				</Component>
-				<Component Id="libEGL.dll" Guid="{95FCA722-7600-4A6E-90FB-98E96F235844}">
-					<File Id="libEGL.dll" Name="libEGL.dll" KeyPath="yes" Source="..\..\src\EncCnvtrs\Firefox64\libEGL.dll"/>
-				</Component>
-				<Component Id="libGLESv2.dll" Guid="{EE2D9750-801F-416E-A818-44765BBFE073}">
-					<File Id="libGLESv2.dll" Name="libGLESv2.dll" KeyPath="yes" Source="..\..\src\EncCnvtrs\Firefox64\libGLESv2.dll"/>
-				</Component>
-				<Component Id="mozavcodec.dll" Guid="{318A7B35-553B-4172-9BAE-7D5032FF727B}">
-					<File Id="mozavcodec.dll" Name="mozavcodec.dll" KeyPath="yes" Source="..\..\src\EncCnvtrs\Firefox64\mozavcodec.dll"/>
-				</Component>
-				<Component Id="mozavutil.dll" Guid="{3899D987-91EC-4A69-9702-B825E2D15969}">
-					<File Id="mozavutil.dll" Name="mozavutil.dll" KeyPath="yes" Source="..\..\src\EncCnvtrs\Firefox64\mozavutil.dll"/>
-				</Component>
-				<Component Id="mozglue.dll" Guid="{9DAFBC82-B57D-4000-AA3A-3C9979509217}">
-					<File Id="mozglue.dll" Name="mozglue.dll" KeyPath="yes" Source="..\..\src\EncCnvtrs\Firefox64\mozglue.dll"/>
-				</Component>
-				<Component Id="nss3.dll" Guid="{3FDA98AF-EC87-4421-B587-1A1B1B1E984F}">
-					<File Id="nss3.dll" Name="nss3.dll" KeyPath="yes" Source="..\..\src\EncCnvtrs\Firefox64\nss3.dll"/>
-				</Component>
-				<Component Id="nssckbi.dll" Guid="{533F95D4-E536-4D8A-9009-509BACF44B77}">
-					<File Id="nssckbi.dll" Name="nssckbi.dll" KeyPath="yes" Source="..\..\src\EncCnvtrs\Firefox64\nssckbi.dll"/>
-				</Component>
-				<Component Id="nssdbm3.dll" Guid="{DD6B7C56-1974-4EC9-B1A7-6EC296B7C7CD}">
-					<File Id="nssdbm3.dll" Name="nssdbm3.dll" KeyPath="yes" Source="..\..\src\EncCnvtrs\Firefox64\nssdbm3.dll"/>
-				</Component>
-				<Component Id="omni.ja" Guid="{0F82FCDD-6E58-4AF6-95E8-C178C2FA7F79}">
-					<File Id="omni.ja" Name="omni.ja" KeyPath="yes" Source="..\..\src\EncCnvtrs\Firefox64\omni.ja"/>
-				</Component>
-				<Component Id="plugincontainer.exe" Guid="{37A646AF-1770-4E91-B97C-C97F241BD5CC}">
-					<File Id="plugincontainer.exe" Name="plugin-container.exe" KeyPath="yes" Source="..\..\src\EncCnvtrs\Firefox64\plugin-container.exe"/>
-				</Component>
-				<Component Id="pluginhangui.exe" Guid="{5F198EB3-4C61-43B8-BA81-C9AE83B0E597}">
-					<File Id="pluginhangui.exe" Name="plugin-hang-ui.exe" KeyPath="yes" Source="..\..\src\EncCnvtrs\Firefox64\plugin-hang-ui.exe"/>
-				</Component>
-				<Component Id="qipcap64.dll" Guid="{E07AB4D3-DCC9-456E-AEF5-C1D1C8E881B9}">
-					<File Id="qipcap64.dll" Name="qipcap64.dll" KeyPath="yes" Source="..\..\src\EncCnvtrs\Firefox64\qipcap64.dll"/>
-				</Component>
-				<Component Id="softokn3.dll" Guid="{DD40CCC3-7C15-4522-865F-86D5C586286E}">
-					<File Id="softokn3.dll" Name="softokn3.dll" KeyPath="yes" Source="..\..\src\EncCnvtrs\Firefox64\softokn3.dll"/>
-				</Component>
-				<Component Id="xul.dll" Guid="{BFFE1F31-0C90-4669-91EF-14313E2A9551}">
-					<File Id="xul.dll" Name="xul.dll" KeyPath="yes" Source="..\..\src\EncCnvtrs\Firefox64\xul.dll"/>
-				</Component>
+            <Directory Id="MergeRedirectFolder">
 
-			</Directory>
-		</Directory>
-	</Module>
+                <Component Id="AccessibleHandler.dll" Guid="{DCCAE298-8162-4F45-A8F1-576B44FFEC2B}">
+                    <File Id="AccessibleHandler.dll" Name="AccessibleHandler.dll" KeyPath="yes" Source="..\..\src\EncCnvtrs\Firefox64\AccessibleHandler.dll"/>
+                </Component>
+                <Component Id="AccessibleMarshal.dll" Guid="{870F43E6-2ADB-4EE3-87B1-81BEFC9A8752}">
+                    <File Id="AccessibleMarshal.dll" Name="AccessibleMarshal.dll" KeyPath="yes" Source="..\..\src\EncCnvtrs\Firefox64\AccessibleMarshal.dll"/>
+                </Component>
+                <Component Id="d3dcompiler_47.dll" Guid="{AB84A065-C004-4B99-B52D-99B6777AB869}">
+                    <File Id="d3dcompiler_47.dll" Name="d3dcompiler_47.dll" KeyPath="yes" Source="..\..\src\EncCnvtrs\Firefox64\d3dcompiler_47.dll"/>
+                </Component>
+                <Component Id="freebl3.dll" Guid="{A17F4493-341F-4568-A7B9-AF8D56B06F98}">
+                    <File Id="freebl3.dll" Name="freebl3.dll" KeyPath="yes" Source="..\..\src\EncCnvtrs\Firefox64\freebl3.dll"/>
+                </Component>
+                <Component Id="IA2Marshal.dll" Guid="{9B7BDBE8-49F8-4E24-9A49-AB6D89266ED9}">
+                    <File Id="IA2Marshal.dll" Name="IA2Marshal.dll" KeyPath="yes" Source="..\..\src\EncCnvtrs\Firefox64\IA2Marshal.dll"/>
+                </Component>
+                <Component Id="lgpllibs.dll" Guid="{C6DCC47A-F72A-40F2-8833-D92B8A341D08}">
+                    <File Id="lgpllibs.dll" Name="lgpllibs.dll" KeyPath="yes" Source="..\..\src\EncCnvtrs\Firefox64\lgpllibs.dll"/>
+                </Component>
+                <Component Id="libEGL.dll" Guid="{95FCA722-7600-4A6E-90FB-98E96F235844}">
+                    <File Id="libEGL.dll" Name="libEGL.dll" KeyPath="yes" Source="..\..\src\EncCnvtrs\Firefox64\libEGL.dll"/>
+                </Component>
+                <Component Id="libGLESv2.dll" Guid="{EE2D9750-801F-416E-A818-44765BBFE073}">
+                    <File Id="libGLESv2.dll" Name="libGLESv2.dll" KeyPath="yes" Source="..\..\src\EncCnvtrs\Firefox64\libGLESv2.dll"/>
+                </Component>
+                <Component Id="mozavcodec.dll" Guid="{318A7B35-553B-4172-9BAE-7D5032FF727B}">
+                    <File Id="mozavcodec.dll" Name="mozavcodec.dll" KeyPath="yes" Source="..\..\src\EncCnvtrs\Firefox64\mozavcodec.dll"/>
+                </Component>
+                <Component Id="mozavutil.dll" Guid="{3899D987-91EC-4A69-9702-B825E2D15969}">
+                    <File Id="mozavutil.dll" Name="mozavutil.dll" KeyPath="yes" Source="..\..\src\EncCnvtrs\Firefox64\mozavutil.dll"/>
+                </Component>
+                <Component Id="mozglue.dll" Guid="{9DAFBC82-B57D-4000-AA3A-3C9979509217}">
+                    <File Id="mozglue.dll" Name="mozglue.dll" KeyPath="yes" Source="..\..\src\EncCnvtrs\Firefox64\mozglue.dll"/>
+                </Component>
+                <Component Id="nss3.dll" Guid="{3FDA98AF-EC87-4421-B587-1A1B1B1E984F}">
+                    <File Id="nss3.dll" Name="nss3.dll" KeyPath="yes" Source="..\..\src\EncCnvtrs\Firefox64\nss3.dll"/>
+                </Component>
+                <Component Id="nssckbi.dll" Guid="{533F95D4-E536-4D8A-9009-509BACF44B77}">
+                    <File Id="nssckbi.dll" Name="nssckbi.dll" KeyPath="yes" Source="..\..\src\EncCnvtrs\Firefox64\nssckbi.dll"/>
+                </Component>
+                <Component Id="nssdbm3.dll" Guid="{DD6B7C56-1974-4EC9-B1A7-6EC296B7C7CD}">
+                    <File Id="nssdbm3.dll" Name="nssdbm3.dll" KeyPath="yes" Source="..\..\src\EncCnvtrs\Firefox64\nssdbm3.dll"/>
+                </Component>
+                <Component Id="omni.ja" Guid="{0F82FCDD-6E58-4AF6-95E8-C178C2FA7F79}">
+                    <File Id="omni.ja" Name="omni.ja" KeyPath="yes" Source="..\..\src\EncCnvtrs\Firefox64\omni.ja"/>
+                </Component>
+                <Component Id="plugincontainer.exe" Guid="{37A646AF-1770-4E91-B97C-C97F241BD5CC}">
+                    <File Id="plugincontainer.exe" Name="plugin-container.exe" KeyPath="yes" Source="..\..\src\EncCnvtrs\Firefox64\plugin-container.exe"/>
+                </Component>
+                <Component Id="pluginhangui.exe" Guid="{5F198EB3-4C61-43B8-BA81-C9AE83B0E597}">
+                    <File Id="pluginhangui.exe" Name="plugin-hang-ui.exe" KeyPath="yes" Source="..\..\src\EncCnvtrs\Firefox64\plugin-hang-ui.exe"/>
+                </Component>
+                <Component Id="qipcap64.dll" Guid="{E07AB4D3-DCC9-456E-AEF5-C1D1C8E881B9}">
+                    <File Id="qipcap64.dll" Name="qipcap64.dll" KeyPath="yes" Source="..\..\src\EncCnvtrs\Firefox64\qipcap64.dll"/>
+                </Component>
+                <Component Id="softokn3.dll" Guid="{DD40CCC3-7C15-4522-865F-86D5C586286E}">
+                    <File Id="softokn3.dll" Name="softokn3.dll" KeyPath="yes" Source="..\..\src\EncCnvtrs\Firefox64\softokn3.dll"/>
+                </Component>
+                <Component Id="xul.dll" Guid="{BFFE1F31-0C90-4669-91EF-14313E2A9551}">
+                    <File Id="xul.dll" Name="xul.dll" KeyPath="yes" Source="..\..\src\EncCnvtrs\Firefox64\xul.dll"/>
+                </Component>
+
+            </Directory>
+        </Directory>
+    </Module>
 </Wix>

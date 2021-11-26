@@ -1,84 +1,84 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-	<Module Id="PythonEc64MM" Language="1033" Version="5.0.0.0">
-		<Package Id="{2013422D-61B2-4CEB-89ED-80E8DD9D7C59}" Keywords="Python, Encoding Conversion, SILConverters, 64bit" Description="Python EncConverter merge module" Comments="Merge module containing the 64bit Python EncConverter DLLs" Manufacturer="SIL International" InstallerVersion="200" Platform="x64"/>
+    <Module Id="PythonEc64MM" Language="1033" Version="5.0.0.0">
+        <Package Id="{2013422D-61B2-4CEB-89ED-80E8DD9D7C59}" Keywords="Python, Encoding Conversion, SILConverters, 64bit" Description="Python EncConverter merge module" Comments="Merge module containing the 64bit Python EncConverter DLLs" Manufacturer="SIL International" InstallerVersion="200" Platform="x64"/>
 
-		<Directory Id="TARGETDIR" Name="SourceDir">
+        <Directory Id="TARGETDIR" Name="SourceDir">
 
-			<Directory Id="MergeRedirectFolder">
-				<Component Id="PyScriptEC.dll" Guid="{D755C1F5-66CC-4443-A803-250368F35130}">
-					<File Id="PyScriptEC.dll" KeyPath="yes" Source="..\..\output\x64\release\PyScriptEC.dll" />
-				</Component>
-				<Component Id="PyScriptEncConverter.dll" Guid="{2BA69E1E-47E8-4B32-A99C-65ED44175BCA}">
-					<File Id="PyScriptEncConverter.dll" KeyPath="yes" Source="..\..\output\x64\release\PyScriptEncConverter.dll" />
-				</Component>
-				<Directory Id="PyScriptECFolder" Name="EC">
-					<Directory Id="PyScriptPluginsFolder" Name="Plugins">
-						<Component Id="PyScriptEC4.0.0.0PluginDetails.xml" Guid="{8E8CC8F8-E828-4903-A391-8485DF6AED8B}">
-							<File Id="PyScriptEC4.0.0.0PluginDetails.xml" Name="PythonEC 4.0.0.0 Plugin Details.xml" Vital="yes" KeyPath="yes" Source="..\..\redist\EC\Plugins\PythonEC 4.0.0.0 Plugin Details.xml"/>
-						</Component>
-					</Directory>
-				</Directory>
-			</Directory>
-
-			<Directory Id="CommonFiles64Folder" SourceName="Common Files Folder">
-				<Directory Id="PythonSIL" Name="SIL">
-					<Component Id="python27.dll" Guid="{9E71E095-8458-4ADE-95B0-E642920E4CBB}">
-						<File Id="python27.dll" KeyPath="yes" Source="..\..\lib\windows\64bit\python27.dll" />
-					</Component>
-					<Component Id="pythoncom27.dll" Guid="{E8A417F2-7A55-431F-991B-222046C17AFF}">
-						<File Id="pythoncom27.dll" KeyPath="yes" Source="..\..\lib\windows\64bit\pythoncom27.dll" />
-					</Component>
-
-				</Directory>
-			</Directory>
-
-			<Directory Id="CommonAppDataFolder" SourceName="AppData">
-				<Directory Id="SIL" Name="SIL">
-					<Directory Id="MapsTables" Name="MapsTables">
-						<Component Id="ReverseString.py" Guid="{24ED86BE-479B-4853-BBC2-3D66314182E8}">
-							<File Id="ReverseString.py" Name="ReverseString.py" KeyPath="yes" Source="..\..\redist\MapsTables\PythonExamples\ReverseString.py" />
-							<File Id="ToLowerCase.py" Name="ToLowerCase.py" Source="..\..\redist\MapsTables\PythonExamples\ToLowerCase.py" />
-							<File Id="ToUpperCase.py" Name="ToUpperCase.py" Source="..\..\redist\MapsTables\PythonExamples\ToUpperCase.py" />
-							<File Id="ToNfc.py" Name="ToNfc.py" Source="..\..\redist\MapsTables\PythonExamples\ToNfc.py" />
-							<File Id="ToNfd.py" Name="ToNfd.py" Source="..\..\redist\MapsTables\PythonExamples\ToNfd.py" />
-							<File Id="ToUnicodeNames.py" Name="ToUnicodeNames.py" Source="..\..\redist\MapsTables\PythonExamples\ToUnicodeNames.py" />
-						</Component>
-					</Directory>
-					<Directory Id="AppDataSILConverters40" Name="SILConverters40">
-						<Directory Id="Help" Name="Help">
-
-							<!--Python scripting Help-->
-							<Component Id="PythonHelp.htm" Guid="{8CA9E62A-2DA1-4EE7-B9DE-6637BBC566EA}">
-								<File Id="PythonHelp.htm" Name="Python_Script_Plug-in_About_box.htm" KeyPath="yes" Source="..\..\redist\Help\Python_Script_Plug-in_About_box.htm"/>
-								<Shortcut Id="PythonHelpHtm" Directory="PythonHelp" Name="Help for Python Script Plug-in" Description="View help document for the Python Script Plug-in" IconIndex="0" Show="normal" Target="[#PythonHelp.htm]" WorkingDirectory="Help" Advertise="no" />
-							</Component>
-							<Directory Id="Python_Script_Plugin_About_box" Name="Python_Script_Plug-in_About_box_files">
-								<Component Id="Python_Script_Plugin_About_boxComp" Guid="{A9E81E6F-78DF-4DF2-979B-2E13BA8A2371}">
-									<File Id="py_filelist.xml" Name="filelist.xml" KeyPath="yes" Source="..\..\redist\Help\Python_Script_Plug-in_About_box_files\filelist.xml"/>
-									<File Id="py_header.htm" Name="header.htm" Source="..\..\redist\Help\Python_Script_Plug-in_About_box_files\header.htm"/>
-									<File Id="py_colorschememapping.xml" Name="colorschememapping.xml" Source="..\..\redist\Help\Python_Script_Plug-in_About_box_files\colorschememapping.xml"/>
-									<File Id="py_themedata.thmx" Name="themedata.thmx" Source="..\..\redist\Help\Python_Script_Plug-in_About_box_files\themedata.thmx"/>
-									<File Id="py_image001.png" Name="image001.png" Source="..\..\redist\Help\Python_Script_Plug-in_About_box_files\image001.png"/>
-									<File Id="py_image002.jpg" Name="image002.jpg" Source="..\..\redist\Help\Python_Script_Plug-in_About_box_files\image002.jpg"/>
-									<File Id="py_image003.png" Name="image003.png" Source="..\..\redist\Help\Python_Script_Plug-in_About_box_files\image003.png"/>
-									<File Id="py_image004.jpg" Name="image004.jpg" Source="..\..\redist\Help\Python_Script_Plug-in_About_box_files\image004.jpg"/>
-									<File Id="py_image005.png" Name="image005.png" Source="..\..\redist\Help\Python_Script_Plug-in_About_box_files\image005.png"/>
-									<File Id="py_image006.jpg" Name="image006.jpg" Source="..\..\redist\Help\Python_Script_Plug-in_About_box_files\image006.jpg"/>
-								</Component>
-						</Directory>
-
-					</Directory>
-					</Directory>
-				</Directory>
+            <Directory Id="MergeRedirectFolder">
+                <Component Id="PyScriptEC.dll" Guid="{D755C1F5-66CC-4443-A803-250368F35130}">
+                    <File Id="PyScriptEC.dll" KeyPath="yes" Source="..\..\output\x64\release\PyScriptEC.dll" />
+                </Component>
+                <Component Id="PyScriptEncConverter.dll" Guid="{2BA69E1E-47E8-4B32-A99C-65ED44175BCA}">
+                    <File Id="PyScriptEncConverter.dll" KeyPath="yes" Source="..\..\output\x64\release\PyScriptEncConverter.dll" />
+                </Component>
+                <Directory Id="PyScriptECFolder" Name="EC">
+                    <Directory Id="PyScriptPluginsFolder" Name="Plugins">
+                        <Component Id="PyScriptEC4.0.0.0PluginDetails.xml" Guid="{8E8CC8F8-E828-4903-A391-8485DF6AED8B}">
+                            <File Id="PyScriptEC4.0.0.0PluginDetails.xml" Name="PythonEC 4.0.0.0 Plugin Details.xml" Vital="yes" KeyPath="yes" Source="..\..\redist\EC\Plugins\PythonEC 4.0.0.0 Plugin Details.xml"/>
+                        </Component>
+                    </Directory>
+                </Directory>
             </Directory>
 
-			<Directory Id="ProgramMenuFolder" Name="Program">
-				<Directory Id="SIL_Converters" Name="SIL Converters">
-					<Directory Id="PythonHelp" Name="Help" />
-				</Directory>
-			</Directory>
+            <Directory Id="CommonFiles64Folder" SourceName="Common Files Folder">
+                <Directory Id="PythonSIL" Name="SIL">
+                    <Component Id="python27.dll" Guid="{9E71E095-8458-4ADE-95B0-E642920E4CBB}">
+                        <File Id="python27.dll" KeyPath="yes" Source="..\..\lib\windows\64bit\python27.dll" />
+                    </Component>
+                    <Component Id="pythoncom27.dll" Guid="{E8A417F2-7A55-431F-991B-222046C17AFF}">
+                        <File Id="pythoncom27.dll" KeyPath="yes" Source="..\..\lib\windows\64bit\pythoncom27.dll" />
+                    </Component>
 
-		</Directory>
-	</Module>
+                </Directory>
+            </Directory>
+
+            <Directory Id="CommonAppDataFolder" SourceName="AppData">
+                <Directory Id="SIL" Name="SIL">
+                    <Directory Id="MapsTables" Name="MapsTables">
+                        <Component Id="ReverseString.py" Guid="{24ED86BE-479B-4853-BBC2-3D66314182E8}">
+                            <File Id="ReverseString.py" Name="ReverseString.py" KeyPath="yes" Source="..\..\redist\MapsTables\PythonExamples\ReverseString.py" />
+                            <File Id="ToLowerCase.py" Name="ToLowerCase.py" Source="..\..\redist\MapsTables\PythonExamples\ToLowerCase.py" />
+                            <File Id="ToUpperCase.py" Name="ToUpperCase.py" Source="..\..\redist\MapsTables\PythonExamples\ToUpperCase.py" />
+                            <File Id="ToNfc.py" Name="ToNfc.py" Source="..\..\redist\MapsTables\PythonExamples\ToNfc.py" />
+                            <File Id="ToNfd.py" Name="ToNfd.py" Source="..\..\redist\MapsTables\PythonExamples\ToNfd.py" />
+                            <File Id="ToUnicodeNames.py" Name="ToUnicodeNames.py" Source="..\..\redist\MapsTables\PythonExamples\ToUnicodeNames.py" />
+                        </Component>
+                    </Directory>
+                    <Directory Id="AppDataSILConverters40" Name="SILConverters40">
+                        <Directory Id="Help" Name="Help">
+
+                            <!--Python scripting Help-->
+                            <Component Id="PythonHelp.htm" Guid="{8CA9E62A-2DA1-4EE7-B9DE-6637BBC566EA}">
+                                <File Id="PythonHelp.htm" Name="Python_Script_Plug-in_About_box.htm" KeyPath="yes" Source="..\..\redist\Help\Python_Script_Plug-in_About_box.htm"/>
+                                <Shortcut Id="PythonHelpHtm" Directory="PythonHelp" Name="Help for Python Script Plug-in" Description="View help document for the Python Script Plug-in" IconIndex="0" Show="normal" Target="[#PythonHelp.htm]" WorkingDirectory="Help" Advertise="no" />
+                            </Component>
+                            <Directory Id="Python_Script_Plugin_About_box" Name="Python_Script_Plug-in_About_box_files">
+                                <Component Id="Python_Script_Plugin_About_boxComp" Guid="{A9E81E6F-78DF-4DF2-979B-2E13BA8A2371}">
+                                    <File Id="py_filelist.xml" Name="filelist.xml" KeyPath="yes" Source="..\..\redist\Help\Python_Script_Plug-in_About_box_files\filelist.xml"/>
+                                    <File Id="py_header.htm" Name="header.htm" Source="..\..\redist\Help\Python_Script_Plug-in_About_box_files\header.htm"/>
+                                    <File Id="py_colorschememapping.xml" Name="colorschememapping.xml" Source="..\..\redist\Help\Python_Script_Plug-in_About_box_files\colorschememapping.xml"/>
+                                    <File Id="py_themedata.thmx" Name="themedata.thmx" Source="..\..\redist\Help\Python_Script_Plug-in_About_box_files\themedata.thmx"/>
+                                    <File Id="py_image001.png" Name="image001.png" Source="..\..\redist\Help\Python_Script_Plug-in_About_box_files\image001.png"/>
+                                    <File Id="py_image002.jpg" Name="image002.jpg" Source="..\..\redist\Help\Python_Script_Plug-in_About_box_files\image002.jpg"/>
+                                    <File Id="py_image003.png" Name="image003.png" Source="..\..\redist\Help\Python_Script_Plug-in_About_box_files\image003.png"/>
+                                    <File Id="py_image004.jpg" Name="image004.jpg" Source="..\..\redist\Help\Python_Script_Plug-in_About_box_files\image004.jpg"/>
+                                    <File Id="py_image005.png" Name="image005.png" Source="..\..\redist\Help\Python_Script_Plug-in_About_box_files\image005.png"/>
+                                    <File Id="py_image006.jpg" Name="image006.jpg" Source="..\..\redist\Help\Python_Script_Plug-in_About_box_files\image006.jpg"/>
+                                </Component>
+                            </Directory>
+
+                        </Directory>
+                    </Directory>
+                </Directory>
+            </Directory>
+
+            <Directory Id="ProgramMenuFolder" Name="Program">
+                <Directory Id="SIL_Converters" Name="SIL Converters">
+                    <Directory Id="PythonHelp" Name="Help" />
+                </Directory>
+            </Directory>
+
+        </Directory>
+    </Module>
 </Wix>
