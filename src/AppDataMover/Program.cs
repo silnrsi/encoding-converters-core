@@ -39,12 +39,21 @@ namespace AppDataMover
 			}
 			catch (Exception ex)
 			{
-				string strMsg = String.Format("Unable to move data because:{0}{1}", Environment.NewLine, ex.Message);
-				if (ex.InnerException != null)
-					strMsg += String.Format("{0}because: {1}", Environment.NewLine, ex.InnerException.Message);
-
-				Log(strMsg);
+				var msg = String.Format("Unable to move data because:{0}{1}", Environment.NewLine, GetExceptionMessage(ex));
+				Log(msg);
 			}
+		}
+
+		public static string GetExceptionMessage(Exception ex)
+		{
+			string msg = "Could not call script: " + ex.Message;
+			while (ex.InnerException != null)
+			{
+				ex = ex.InnerException;
+				msg += $"{Environment.NewLine}because: (InnerException): {ex.Message}";
+			}
+
+			return msg;
 		}
 
 		static void DoMain(string[] args)
@@ -230,11 +239,8 @@ namespace AppDataMover
 			catch (Exception ex)
 			{
 				// this may fail if for some reason, this user can't see the target folder
-				string strMsg = String.Format("Unable to copy file because:{0}{1}", Environment.NewLine, ex.Message);
-				if (ex.InnerException != null)
-					strMsg += String.Format("{0}because: {1}", Environment.NewLine, ex.InnerException.Message);
-
-				Log(strMsg);
+				var msg = String.Format("Unable to copy file because:{0}{1}", Environment.NewLine, GetExceptionMessage(ex));
+				Log(msg);
 			}
 			finally
 			{

@@ -1,25 +1,19 @@
-﻿using System;
+using System;
 using System.Drawing;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
 using System.Collections.Generic;       // for Dictionary<>
 using System.Windows.Forms;
 using System.Xml.Linq;
-using Microsoft.Win32;                  // for RegistryKey
-using System.Diagnostics;               // for Debug
 using System.IO;                        // for file I/O
 using System.Xml;                       // for XMLDocument
 using System.Xml.XPath;                 // for XPathNavigator
-using SilEncConverters40;               // for EncConverter (base-class) definition
 using ECInterfaces;                     // for IEncConverter
 
 namespace SilEncConverters40
 {
-    /// <summary>
-    /// Base class for an AdaptIt Knowledge Base EncConverter
-    /// </summary>
-    public abstract class AdaptItKBReader : EncConverter
+	/// <summary>
+	/// Base class for an AdaptIt Knowledge Base EncConverter
+	/// </summary>
+	public abstract class AdaptItKBReader : EncConverter
     {
         #region Member Variable Definitions
 

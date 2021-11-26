@@ -1,9 +1,10 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using ECInterfaces;
+using static SilEncConverters40.WebBrowserAdaptor;
 
 namespace SilEncConverters40
 {
@@ -29,18 +30,16 @@ namespace SilEncConverters40
 
         public const string CstrImplementationType = "SIL.TechHindiWebPage";
         public const string CstrDisplayName = "Technical Hindi (Google group) Html Converter";
-        public const string CstrHtmlFilename = "Technical_Hindi_(Google_group)_Html_Converter_Plug-in_About_box.mht";
+        public const string CstrHtmlFilename = "Technical_Hindi_(Google_group)_Html_Converter_Plug-in_About_box.htm";
 
         protected string ConverterPageUri;
         protected string InputHtmlElementId;
         protected string OutputHtmlElementId;
         protected string ConvertFunctionName;
         protected string ConvertReverseFunctionName;
+		protected WhichBrowser WebBrowserType;
 
-        private WebBrowser _webBrowser;
-        private HtmlDocument _docHtml;
-        private HtmlElement _elemInput;
-        private HtmlElement _elemOutput;
+        private WebBrowserAdaptor _webBrowser;
 
         private bool _bForward;
         #endregion Member Variable Definitions
@@ -56,36 +55,52 @@ namespace SilEncConverters40
             base.Initialize(converterName, converterSpec, ref lhsEncodingID, ref rhsEncodingID, ref conversionType, ref processTypeFlags, codePageInput, codePageOutput, bAdding);
 
             if (!ParseConverterIdentifier(converterSpec, out ConverterPageUri, out InputHtmlElementId,
-                out OutputHtmlElementId, out ConvertFunctionName, out ConvertReverseFunctionName))
+                out OutputHtmlElementId, out ConvertFunctionName, out ConvertReverseFunctionName, out WebBrowserType))
             {
                 throw new ApplicationException(String.Format("{0} not properly configured!", CstrDisplayName));
             }
-        }
+
+			// if we don't have a reverse function, then don't allow it to be 'to_from'
+			if (String.IsNullOrEmpty(ConvertReverseFunctionName))
+			{
+				m_eConversionType = conversionType = MakeUniDirectional(conversionType);
+			}
+		}
 
         internal static bool ParseConverterIdentifier(string converterSpec, out string strConverterPageUri, 
             out string strInputHtmlElementId, out string strOutputHtmlElementId,
-            out string strConvertFunctionName, out string strConvertReverseFunctionName)
+            out string strConvertFunctionName, out string strConvertReverseFunctionName, out WhichBrowser browserType)
         {
             strConverterPageUri = strInputHtmlElementId = strOutputHtmlElementId =
                 strConvertFunctionName = strConvertReverseFunctionName = null;
+			browserType = WhichBrowser.Undefined;	// means figure it out from the registry and OS type
 
-            string[] astrs = converterSpec.Split(new [] {';'}, StringSplitOptions.RemoveEmptyEntries);
-            if ((astrs.Length != 4) && (astrs.Length != 5))
+			string[] astrs = converterSpec.Split(new [] {';'}, StringSplitOptions.RemoveEmptyEntries);
+            if (astrs.Length < 4)
                  return false;
 
             strConverterPageUri = astrs[0];
             strInputHtmlElementId = astrs[1];
             strOutputHtmlElementId = astrs[2];
             strConvertFunctionName = astrs[3];
-            if (astrs.Length == 5)
-                strConvertReverseFunctionName = astrs[4];
-            return true;
+			if (astrs.Length == 5)
+			{
+				if (!Enum.TryParse(astrs[4], out browserType))
+					strConvertReverseFunctionName = astrs[4];
+			}
+			else if(astrs.Length == 6)
+			{
+				strConvertReverseFunctionName = astrs[4];
+				Enum.TryParse(astrs[5], out browserType);
+			}
+			return true;
         }
-        #endregion Initialization
 
-        #region Abstract Base Class Overrides
+		#endregion Initialization
 
-        protected override string GetConfigTypeName
+		#region Abstract Base Class Overrides
+
+		protected override string GetConfigTypeName
         {
             get { return typeof(TechHindiSiteConfig).AssemblyQualifiedName; }
         }
@@ -109,7 +124,7 @@ namespace SilEncConverters40
             //  quantity and no other EncConverter does it that way. Besides, I'm afraid I'll break smtg ;-]
             byte[] baIn = new byte[nInLen];
             ECNormalizeData.ByteStarToByteArr(lpInBuffer, nInLen, baIn);
-            string strOutput;
+            string strOutput = null;
             Encoding enc;
             bool bInputLegacy = ((_bForward &&
                                   (NormalizeLhsConversionType(ConversionType) == NormConversionType.eLegacy))
@@ -136,90 +151,73 @@ namespace SilEncConverters40
             // here's our input string
             string strInput = new string(caIn);
 
-            if (_bForward)
-            {
-                _elemInput.InnerText = strInput;
+			strOutput = ConvertAsync(strInput, strOutput).Result;
 
-                // TODO: catch errors?
-                _docHtml.InvokeScript(ConvertFunctionName);
-
-                strOutput = _elemOutput.InnerText;
-            }
-            else
-            {
-                _elemOutput.InnerText = strInput;
-
-                // TODO: catch errors?
-                _docHtml.InvokeScript(ConvertReverseFunctionName);
-
-                strOutput = _elemInput.InnerText;
-            }
-
-			if (String.IsNullOrEmpty(strOutput))
-				strOutput = "\ufffd";	// pass something back!
 			StringToProperByteStar(strOutput, lpOutBuffer, ref rnOutLen);
 		}
 
-        #endregion Abstract Base Class Overrides
+		private async Task<string> ConvertAsync(string strInput, string strOutput)
+		{
+			if (_bForward)
+			{
+				try
+				{
+					await _webBrowser.SetInnerTextAsync(InputHtmlElementId, strInput);
+#if DebugWithMessageBoxes
+					MessageBox.Show($"strInput: {strInput}, innerText: {innerText}");
+#endif // DebugWithMessageBoxes
 
-        #region Misc Helpers
-        protected bool IsLoaded
+					await _webBrowser.ExecuteScriptFunctionAsync(ConvertFunctionName);
+					strOutput = await _webBrowser.GetInnerTextAsync(OutputHtmlElementId);
+				}
+				catch (Exception ex)
+				{
+					ShowExceptionMessage(ex);
+				}
+			}
+			else
+			{
+				try
+				{
+					await _webBrowser.SetInnerTextAsync(OutputHtmlElementId, strInput);
+					await _webBrowser.ExecuteScriptFunctionAsync(ConvertReverseFunctionName);
+					strOutput = await _webBrowser.GetInnerTextAsync(InputHtmlElementId);
+				}
+				catch (Exception ex)
+				{
+					ShowExceptionMessage(ex);
+				}
+			}
+
+			if (String.IsNullOrEmpty(strOutput))
+				strOutput = "\ufffd";   // pass something back!
+
+			return strOutput;
+		}
+
+		#endregion Abstract Base Class Overrides
+
+		#region Misc Helpers
+		protected bool IsLoaded
         {
             get
             {
                 return
                     !( (_webBrowser == null)
-                    || (_docHtml == null)
-                    || (_elemInput == null)
-                    || (_elemOutput == null)
                     || (String.IsNullOrEmpty(ConvertFunctionName)));
             }
         }
 
-        public static ManualResetEvent waitForPageLoaded = new ManualResetEvent(false);
         protected void Load()
         {
             System.Diagnostics.Debug.Assert(!String.IsNullOrEmpty(ConverterPageUri));
             if (_webBrowser == null)
             {
-                _webBrowser = new WebBrowser();
-                _webBrowser.DocumentCompleted += WebBrowserDocumentCompleted;
+                _webBrowser = CreateBrowser(WebBrowserType);
+				_webBrowser.Initialize();
             }
 
-            _webBrowser.Url = new Uri(ConverterPageUri);
-            Application.DoEvents();
-            waitForPageLoaded.WaitOne();
-
-            // check that our configuration is correct
-            _docHtml = _webBrowser.Document;
-            if (_docHtml == null)
-                EncConverters.ThrowError(ErrStatus.NameNotFound, ConverterPageUri);
-
-            _elemInput = _docHtml.GetElementById(InputHtmlElementId);
-            if (_elemInput == null)
-                EncConverters.ThrowError(ErrStatus.NameNotFound, InputHtmlElementId);
-
-            _elemOutput = _docHtml.GetElementById(OutputHtmlElementId);
-            if (_elemOutput == null)
-                EncConverters.ThrowError(ErrStatus.NameNotFound, OutputHtmlElementId);
-
-            HtmlElementCollection elemScripts = _docHtml.GetElementsByTagName("script");
-            if (elemScripts.Count <= 0)
-                EncConverters.ThrowError(ErrStatus.NameNotFound, ConvertFunctionName);
-
-            HtmlElement elemScript = elemScripts[0];
-            if (elemScript.InnerHtml.IndexOf(ConvertFunctionName) == -1)
-                EncConverters.ThrowError(ErrStatus.NameNotFound, ConvertFunctionName);
-
-            if (!String.IsNullOrEmpty(ConvertReverseFunctionName))
-                if (elemScript.InnerHtml.IndexOf(ConvertReverseFunctionName) == -1)
-                    EncConverters.ThrowError(ErrStatus.NameNotFound, ConvertReverseFunctionName);
-        }
-
-        static void WebBrowserDocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
-        {
-            // TODO: check for bad URL
-            waitForPageLoaded.Set();
+            _webBrowser.Navigate(ConverterPageUri);
         }
 
         protected unsafe void StringToProperByteStar(string strOutput, byte* lpOutBuffer, ref int rnOutLen)
@@ -244,6 +242,17 @@ namespace SilEncConverters40
                 ECNormalizeData.StringToByteStar(strOutput, lpOutBuffer, rnOutLen, false);
             }
         }
-        #endregion Misc Helpers
-    }
+		public static void ShowExceptionMessage(Exception ex)
+		{
+			string msg = "Could not call script: " + ex.Message;
+			while (ex.InnerException != null)
+			{
+				ex = ex.InnerException;
+				msg += $"{Environment.NewLine}because: (InnerException): {ex.Message}";
+			}
+
+			MessageBox.Show(msg);
+		}
+		#endregion Misc Helpers
+	}
 }

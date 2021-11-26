@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -365,7 +365,7 @@ namespace SilEncConverters40
             catch (Exception ex)
             {
                 var strError = ex.Message;
-                Console.WriteLine(String.Format("while searching for '{0}', error occurred: {1}", strSourceWord, strError));
+				Debug.WriteLine(String.Format("while searching for '{0}', error occurred: {1}", strSourceWord, strError));
                 throw;
             }
         }

@@ -34,7 +34,7 @@ namespace SilEncConverters40
         public const string strRegisName       = "Registration Name";
         public const string strCopyright       = "Copyright";
         public const string strDisplayName     = "TECkit map";
-        internal const string strHtmlFilename  = "TECkit_Map_Plug-in_About_box.mht";
+        internal const string strHtmlFilename  = "TECkit_Map_Plug-in_About_box.htm";
 
         // from TECkit_Engine.h (how to include .h files in C#???)
         private const int kFlags_Unicode = 0x00010000;  // from TECkit_Engine.h

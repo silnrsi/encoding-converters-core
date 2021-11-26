@@ -18,9 +18,9 @@ exec_prefix = @exec_prefix@
 ROOTDIR     = @abs_top_srcdir@
 TOPDIR      = @top_srcdir@
 BUILDDIR    = $(ROOTDIR)/build/Obj
-OUTDIR      = $(ROOTDIR)/output/Debug
+OUTDIR      = $(ROOTDIR)/output/x64/Debug
 RELEASEBLD  = $(ROOTDIR)/build/Obj/Release
-RELEASEOUT  = $(ROOTDIR)/output/Release
+RELEASEOUT  = $(ROOTDIR)/output/x64/Release
 
 ifeq ($(origin REGROOT), undefined)
   ifeq ($(strip $(FIELDWORKS)),)
@@ -29,6 +29,7 @@ ifeq ($(origin REGROOT), undefined)
     REGROOT     = /var/lib/fieldworks
   endif
 endif
+
 ifeq ($(strip $(FIELDWORKS)),)
   LIBDIR      = @libdir@/encConverters
 else

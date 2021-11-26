@@ -32,7 +32,7 @@ namespace SilEncConverters40
 	{
         #region Member Variable Definitions
         public new const string strDisplayName = "Primary-Fallback Converter";
-        public new const string strHtmlFilename = "Fallback_Converter_Plug-in_About_box.mht";
+        public new const string strHtmlFilename = "Fallback_Converter_Plug-in_About_box.htm";
         #endregion Member Variable Definitions
 
         #region Initialization

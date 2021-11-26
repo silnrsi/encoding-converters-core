@@ -48,7 +48,9 @@ namespace SilEncConverters40
 		public AutoConfigDialog()
         {
             Util.DebugWriteLine(this, "AutoConfigDialog (1) BEGIN");
-            InitializeComponent();
+			var webBrowser = WebBrowserAdaptor.CreateBrowser();
+			webBrowser.Initialize();
+			InitializeComponent(webBrowser);
             Util.DebugWriteLine(this, "finished InitializeComponent");
 	        this.tabControl.Selecting += new System.Windows.Forms.TabControlCancelEventHandler(tabControl_Selecting);
 

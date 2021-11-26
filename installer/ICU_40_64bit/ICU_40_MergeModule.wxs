@@ -1,28 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-  <Module Id="SEC_ICU_40_64bit_MergeModule" Language="1033" Version="5.0.0.0">
-    <Package Id="{82BC045F-3FCC-4C1F-96E5-61CFFDA93D16}" Keywords="IBM Components for Unicode (ICU); SIL; Encoding Conversion; Transliteration; EncConverters"
-             Description="Merge Module for ICU (currently v6.8.2) corresponding to EncConverter core API v4.0 -- Include in any client application deployment project that wants to include ICU capabilities to EncConverters functionality"
-             Comments="Common installer module for SIL's ICU component for v4.0 of the EncConverter's API" Manufacturer="SIL International" InstallerVersion="500" Languages="1033"
-             SummaryCodepage="1252" 
-             Platform="x64" />
+    <Module Id="SEC_ICU_40_64bit_MergeModule" Language="1033" Version="5.0.0.0">
+        <Package Id="{82BC045F-3FCC-4C1F-96E5-61CFFDA93D16}" Keywords="IBM Components for Unicode (ICU); SIL; Encoding Conversion; Transliteration; EncConverters"
+                 Description="Merge Module for ICU (currently v6.8.2) corresponding to EncConverter core API v4.0 -- Include in any client application deployment project that wants to include ICU capabilities to EncConverters functionality"
+                 Comments="Common installer module for SIL's ICU component for v4.0 of the EncConverter's API" Manufacturer="SIL International" InstallerVersion="500" Languages="1033"
+                 SummaryCodepage="1252"
+                 Platform="x64" />
 
-    <Directory Id="TARGETDIR" Name="SourceDir">
-      <Directory Id="MergeRedirectFolder">
+        <Directory Id="TARGETDIR" Name="SourceDir">
+            <Directory Id="MergeRedirectFolder">
 
-        <!-- note that the EC-related ICU DLLs (now) are in the EC_40_MergeModule.wxs script, but these are the actual ICU (from IBM) bits -->
-        <Component Id="icudt68.dll" Guid="{861A4B9D-790A-4AA5-A13A-A95C0F50471D}">
-          <File Id="icudt68.dll" Name="icudt68.dll" KeyPath="yes" Source="..\..\DistFiles\windows\x64\icu\bin\icudt68.dll"/>
-        </Component>
-        <Component Id="icuin68.dll" Guid="{6178B60C-D0BB-4E22-9529-6A7957F0E639}">
-          <File Id="icuin68.dll" Name="icuin68.dll" KeyPath="yes" Source="..\..\DistFiles\windows\x64\icu\bin\icuin68.dll"/>
-        </Component>
-        <Component Id="icuuc68.dll" Guid="{A33CD74F-D4F0-4C1A-89F2-D537DFB4B390}">
-          <File Id="icuuc68.dll" Name="icuuc68.dll" KeyPath="yes" Source="..\..\DistFiles\windows\x64\icu\bin\icuuc68.dll"/>
-        </Component>
+                <!-- note that the EC-related ICU DLLs (now) are in the EC_40_MergeModule.wxs script, but these are the actual ICU (from IBM) bits -->
+                <Component Id="icudt68.dll" Guid="{861A4B9D-790A-4AA5-A13A-A95C0F50471D}">
+                    <File Id="icudt68.dll" Name="icudt68.dll" KeyPath="yes" Source="..\..\DistFiles\windows\x64\icu\bin\icudt68.dll"/>
+                </Component>
+                <Component Id="icuin68.dll" Guid="{6178B60C-D0BB-4E22-9529-6A7957F0E639}">
+                    <File Id="icuin68.dll" Name="icuin68.dll" KeyPath="yes" Source="..\..\DistFiles\windows\x64\icu\bin\icuin68.dll"/>
+                </Component>
+                <Component Id="icuuc68.dll" Guid="{A33CD74F-D4F0-4C1A-89F2-D537DFB4B390}">
+                    <File Id="icuuc68.dll" Name="icuuc68.dll" KeyPath="yes" Source="..\..\DistFiles\windows\x64\icu\bin\icuuc68.dll"/>
+                </Component>
 
-      </Directory>
+            </Directory>
 
-    </Directory>
-  </Module>
+        </Directory>
+    </Module>
 </Wix>

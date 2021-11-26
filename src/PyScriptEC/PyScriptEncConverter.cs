@@ -44,7 +44,7 @@ namespace SilEncConverters40
         private DateTime m_timeModified = DateTime.MinValue;
 
         public const string strDisplayName = "Python Script";
-        public const string strHtmlFilename = "Python_Script_Plug-in_About_box.mht";
+        public const string strHtmlFilename = "Python_Script_Plug-in_About_box.htm";
         #endregion Member Variable Definitions
 
         #region Initialization
@@ -71,25 +71,9 @@ namespace SilEncConverters40
             base.Initialize(converterName, converterSpec, ref lhsEncodingID, ref rhsEncodingID,
                 ref conversionType, ref processTypeFlags, codePageInput, codePageOutput, bAdding);
 
-            // the only thing we want to add (now that the convType can be less than accurate)
-            //  is to make sure it's unidirectional
-            switch (conversionType)
-            {
-                case ConvType.Legacy_to_from_Legacy:
-                    conversionType = ConvType.Legacy_to_Legacy;
-                    break;
-                case ConvType.Legacy_to_from_Unicode:
-                    conversionType = ConvType.Legacy_to_Unicode;
-                    break;
-                case ConvType.Unicode_to_from_Legacy:
-                    conversionType = ConvType.Unicode_to_Legacy;
-                    break;
-                case ConvType.Unicode_to_from_Unicode:
-                    conversionType = ConvType.Unicode_to_Unicode;
-                    break;
-                default:
-                    break;
-            }
+			// the only thing we want to add (now that the convType can be less than accurate)
+			//  is to make sure it's unidirectional
+			m_eConversionType = conversionType = MakeUniDirectional(conversionType);
 
             // if we're supposedly adding this one, then clobber our copy of its last modified
             // (there was a problem with us instantiating lots of these things in a row and

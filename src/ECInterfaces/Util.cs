@@ -116,16 +116,15 @@ namespace ECInterfaces
             // Should we use System.Diagnostics.Debug or Console.Error here?
             // Using Debug is nice because it can be turned on or off with an environment variable.
             // However Debug.Flush() doesn't have any effect, which means that the messages can
-            // get out of order relative to C++ output.
+            // get out of order relative to C++ output. But Console will write out even on an enduser's machine
 
-            //System.Diagnostics.Debug.WriteLine(output);
-            Console.WriteLine(output);
-            //Console.Error.WriteLine(output);
+            System.Diagnostics.Debug.WriteLine(output);
+			//Console.WriteLine(output);
 #endif
-        }
+		}
 
-        // Call this method from static methods.
-        public static void DebugWriteLine(string className, string strMsg)
+		// Call this method from static methods.
+		public static void DebugWriteLine(string className, string strMsg)
         {
 #if DEBUG
             if (!Util.IsUnix)

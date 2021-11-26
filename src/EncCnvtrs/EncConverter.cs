@@ -3,11 +3,7 @@
 using System;
 using System.Runtime.InteropServices;   // for the class attributes
 using System.Collections;               // for Hashtable
-using System.Resources;                 // for ResourceManager
 using System.IO;
-using System.ComponentModel;
-using System.Diagnostics;               // for Debug.Assert
-using System.Runtime.Remoting;
 using System.Text;
 using ECInterfaces;                     // for IEncConverter
 
@@ -16,27 +12,27 @@ using ECInterfaces;                     // for IEncConverter
 //  is defined by the EncConverter class).
 namespace SilEncConverters40
 {
-    /// <summary>
-    /// Definition of the base managed class of EncConverter.
-    /// </summary>
-    // by not making this 'AutoDual', the "EncConverter" members don't surface in VBA clients
-    //  which encourages people to use the "IEncConverter" interface instead. This is a good
-    //  thing, because if the object implementing that interface is really from an unmanaged
-    //  DLL (e.g. as it is currently with the ICU plug-ins), then treating it as an
-    //  "EncConverter" (a managed class) will usually fail anyway. But managed clients can
-    //  still use this guy if they want--even without the 'AutoDual' attribute.
-    // [ClassInterface(ClassInterfaceType.AutoDual)]
-    /// <summary>
-    /// Base class implementation of the IEncConverter interface.</summary>
-    /// <remarks>
-    /// This is the base class that implements most of the IEncConverter interface methods.
-    /// All .Net transducer implementations should derive from this class or one of its
-    /// base classes and implement their specializations in the required virtual functions.
-    /// For C++/MFC/ATL implementations of IEncConverter, derive from the <seealso>CECEncConverter</seealso>
-    /// class in the file ECEncConverters.h</remarks>
-    [Guid("4D9C56D5-BA0B-4a5e-B8CA-BA4DD5F321CA")]
+	/// <summary>
+	/// Definition of the base managed class of EncConverter.
+	/// </summary>
+	// by not making this 'AutoDual', the "EncConverter" members don't surface in VBA clients
+	//  which encourages people to use the "IEncConverter" interface instead. This is a good
+	//  thing, because if the object implementing that interface is really from an unmanaged
+	//  DLL (e.g. as it is currently with the ICU plug-ins), then treating it as an
+	//  "EncConverter" (a managed class) will usually fail anyway. But managed clients can
+	//  still use this guy if they want--even without the 'AutoDual' attribute.
+	// [ClassInterface(ClassInterfaceType.AutoDual)]
+	/// <summary>
+	/// Base class implementation of the IEncConverter interface.</summary>
+	/// <remarks>
+	/// This is the base class that implements most of the IEncConverter interface methods.
+	/// All .Net transducer implementations should derive from this class or one of its
+	/// base classes and implement their specializations in the required virtual functions.
+	/// For C++/MFC/ATL implementations of IEncConverter, derive from the <seealso>CECEncConverter</seealso>
+	/// class in the file ECEncConverters.h</remarks>
+	[Guid("4D9C56D5-BA0B-4a5e-B8CA-BA4DD5F321CA")]
     public abstract class EncConverter : IEncConverter
-    {
+	{
         #region Member Variable Definitions
         private string          m_strProgramID;         // indicates the Program ID from the registry (e.g. "SilEncConverters40.TecEncConverter")
         protected string        m_strImplementType;     // eg. "SIL.tec" rather than the program ID
@@ -80,8 +76,8 @@ namespace SilEncConverters40
             m_bIsInRepository = false;
         }
 
-        // [DispId(0)]
-        public string Name
+		// [DispId(0)]
+		public string Name
         {
             get { return m_strName; }
             set { m_strName = value; }
@@ -213,8 +209,31 @@ namespace SilEncConverters40
             set { m_bIsInRepository = value; }
         }
 
-        // [DispId(15)]
-        public virtual string ConvertToUnicode(byte[] baInput)
+		protected static ConvType MakeUniDirectional(ConvType conversionType)
+		{
+			switch (conversionType)
+			{
+				case ConvType.Legacy_to_from_Legacy:
+					conversionType = ConvType.Legacy_to_Legacy;
+					break;
+				case ConvType.Legacy_to_from_Unicode:
+					conversionType = ConvType.Legacy_to_Unicode;
+					break;
+				case ConvType.Unicode_to_from_Legacy:
+					conversionType = ConvType.Unicode_to_Legacy;
+					break;
+				case ConvType.Unicode_to_from_Unicode:
+					conversionType = ConvType.Unicode_to_Unicode;
+					break;
+				default:
+					break;
+			}
+
+			return conversionType;
+		}
+
+		// [DispId(15)]
+		public virtual string ConvertToUnicode(byte[] baInput)
         {
             if ((ConversionType != ConvType.Legacy_to_from_Unicode)
                 && (ConversionType != ConvType.Unicode_to_from_Legacy)
@@ -294,7 +313,14 @@ namespace SilEncConverters40
         public bool DirectionForward
         {
             get { return m_bForward; }
-            set { m_bForward = value; }
+            set
+			{
+				if (EncConverters.IsUnidirectional(m_eConversionType) && !value)
+				{
+					EncConverters.ThrowError(ErrStatus.InvalidConversionType);
+				}
+				m_bForward = value;
+			}
         }
 
         // [DispId(21)]
@@ -980,10 +1006,22 @@ namespace SilEncConverters40
 
             return eType;
         }
-        #endregion Internal Helpers
 
-        #region Virtual Functions implemented by subclasses
-        protected virtual void PreConvert
+		public static void LogExceptionMessage(string className, Exception ex)
+		{
+			string msg = "Could not call script: " + ex.Message;
+			while (ex.InnerException != null)
+			{
+				ex = ex.InnerException;
+				msg += $"{Environment.NewLine}because: (InnerException): {ex.Message}";
+			}
+
+			Util.DebugWriteLine(className, msg);
+		}
+		#endregion Internal Helpers
+
+		#region Virtual Functions implemented by subclasses
+		protected virtual void PreConvert
             (
             EncodingForm        eInEncodingForm,
             ref EncodingForm    eInFormEngine,
@@ -1029,6 +1067,6 @@ namespace SilEncConverters40
         {
             rSa = null;
         }
-        #endregion Virtual Functions implemented by subclasses
-    }
+		#endregion Virtual Functions implemented by subclasses
+	}
 }

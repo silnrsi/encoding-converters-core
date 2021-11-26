@@ -1,7 +1,5 @@
-﻿using System;
+using System;
 using System.IO;
-using System.Net;
-using System.Text;
 using System.Windows.Forms;
 using ECInterfaces;
 
@@ -48,7 +46,7 @@ namespace SilEncConverters40
                     strConvertFunctionName, strConvertReverseFunctionName;
                 TechHindiSiteEncConverter.ParseConverterIdentifier(ConverterIdentifier, out strConverterPageUri, 
                     out strInputHtmlElementId, out strOutputHtmlElementId, out strConvertFunctionName, out 
-                    strConvertReverseFunctionName);
+                    strConvertReverseFunctionName, out WebBrowserAdaptor.WhichBrowser browserType);
                 textBoxFileSpec.Text = strConverterPageUri;
                 textBoxInputId.Text = strInputHtmlElementId;
                 textBoxOutputId.Text = strOutputHtmlElementId;

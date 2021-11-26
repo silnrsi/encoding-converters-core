@@ -200,7 +200,7 @@ namespace SilEncConverters40
 
                     // BE: UPDATE: if this property is called after this dialog goes away (which it will), then the checkbox
                     //  mentioned here *will* be not visible and yet, we still need to read the 'checked' state of the
-                    //  run-time properties below (which works on Windows). So I'm adding '__MonoCS__' here so I don't
+                    //  run-time properties below (which works on Windows). So it's being made conditional on Mono here so I don't
                     //  break the Linux build, but so that the run-time properties will work on Windows
                     if (Util.IsUnix)
                     {

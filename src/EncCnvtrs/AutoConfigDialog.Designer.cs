@@ -29,7 +29,7 @@ namespace SilEncConverters40
         /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
-        private void InitializeComponent()
+        private void InitializeComponent(SilEncConverters40.WebBrowserAdaptor webBrowser)
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AutoConfigDialog));
@@ -92,7 +92,7 @@ namespace SilEncConverters40
             this.buttonSaveInRepository = new System.Windows.Forms.Button();
             this.helpProvider = new System.Windows.Forms.HelpProvider();
             this.fontDialog = new System.Windows.Forms.FontDialog();
-            this.webBrowser = new SilEncConverters40.WebBrowserAdaptor();
+            this.webBrowser = webBrowser;
             this.ecTextBoxInput = new SilEncConverters40.EcTextBox();
             this.ecTextBoxOutput = new SilEncConverters40.EcTextBox();
             this.tabControl.SuspendLayout();

@@ -2,26 +2,23 @@
 //
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Runtime.InteropServices;
-using System.Text;
-using Microsoft.Win32;                  // for RegistryKey
 using ECInterfaces;                     // for IEncConverter
 
 namespace SilEncConverters40
 {
-    /// <summary>
-    /// Managed ICU transliterator EncConverter
-    /// </summary>
-    //[GuidAttribute("54E0185D-3603-4113-B323-E0222FAD4CCE")]
-    // normally these subclasses are treated as the base class (i.e. the
-    //  client can use them orthogonally as IEncConverter interface pointers
-    //  so normally these individual subclasses would be invisible), but if
-    //  we add 'ComVisible = false', then it doesn't get the registry
-    //  'HKEY_CLASSES_ROOT\SilEncConverters40.TecEncConverter' which is the basis of
-    //  how it is started (see EncConverters.AddEx).
-    // [ComVisible(false)]
-    public class IcuTranslitEncConverter : EncConverter
+	/// <summary>
+	/// Managed ICU transliterator EncConverter
+	/// </summary>
+	//[GuidAttribute("54E0185D-3603-4113-B323-E0222FAD4CCE")]
+	// normally these subclasses are treated as the base class (i.e. the
+	//  client can use them orthogonally as IEncConverter interface pointers
+	//  so normally these individual subclasses would be invisible), but if
+	//  we add 'ComVisible = false', then it doesn't get the registry
+	//  'HKEY_CLASSES_ROOT\SilEncConverters40.TecEncConverter' which is the basis of
+	//  how it is started (see EncConverters.AddEx).
+	// [ComVisible(false)]
+	public class IcuTranslitEncConverter : EncConverter
     {
         #region DLLImport Statements
         // On Linux looks for libIcuTranslitEC.so (adds lib- and -.so)
@@ -82,7 +79,7 @@ namespace SilEncConverters40
 
         #region Member Variable Definitions
         public const string strDisplayName = "ICU Transliterator";
-        public const string strHtmlFilename = "ICU_Transliterators_Plug-in_About_box.mht";
+        public const string strHtmlFilename = "ICU_Transliterators_Plug-in_About_box.htm";
         #endregion Member Variable Definitions
 
         #region Initialization
@@ -117,25 +114,12 @@ namespace SilEncConverters40
             base.Initialize(converterName, converterSpec, ref lhsEncodingID, ref rhsEncodingID,
                 ref conversionType, ref processTypeFlags, codePageInput, codePageOutput, bAdding);
 
-            // the only thing we want to add (now that the convType can be less than accurate)
-            //  is to make sure it's unidirectional
-            switch (conversionType)
-            {
-                case ConvType.Legacy_to_from_Legacy:
-                    conversionType = ConvType.Legacy_to_Legacy;
-                    break;
-                case ConvType.Legacy_to_from_Unicode:
-                    conversionType = ConvType.Legacy_to_Unicode;
-                    break;
-                case ConvType.Unicode_to_from_Legacy:
-                    conversionType = ConvType.Unicode_to_Legacy;
-                    break;
-                case ConvType.Unicode_to_from_Unicode:
-                    conversionType = ConvType.Unicode_to_Unicode;
-                    break;
-                default:
-                    break;
-            }
+			// the only thing we want to add (now that the convType can be less than accurate)
+			//  is to make sure it's unidirectional
+			// UPDATE: but something like Devanagari-Latin is bi-directional? Maybe only do this if it has 'Any' in it, which isn't
+			if (converterSpec.Contains("Any"))
+				m_eConversionType = conversionType = MakeUniDirectional(conversionType);
+
             Util.DebugWriteLine(this, "END");
         }
 
@@ -160,8 +144,10 @@ namespace SilEncConverters40
 
         protected override EncodingForm DefaultUnicodeEncForm(bool bForward, bool bLHS)
         {
-            // if it's unspecified, then we want UTF-16
-            return EncodingForm.UTF16;
+			// if it's unspecified, then we want UTF-16
+			// shouldn't this be:
+			// return (Util.IsUnix) ? EncodingForm.UTF8String : EncodingForm.UTF16;
+			return EncodingForm.UTF16;
         }
 
         protected unsafe void Load(string strTranslitID)

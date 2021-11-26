@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="12.0">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
     <ProductVersion>9.0.21022</ProductVersion>
@@ -12,7 +12,7 @@
     <SccProvider>
     </SccProvider>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
     <ApplicationIcon>TRFFC17.ICO</ApplicationIcon>
     <AssemblyKeyContainerName>
     </AssemblyKeyContainerName>
@@ -35,7 +35,8 @@
     </SccAuxPath>
     <SignAssembly>true</SignAssembly>
     <OldToolsVersion>3.5</OldToolsVersion>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion Condition="('$(OS)'!='Windows_NT')">v4.7.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion Condition="('$(OS)'=='Windows_NT')">v4.8</TargetFrameworkVersion>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -52,19 +53,21 @@
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
     <TargetFrameworkProfile />
+    <RegisterForComInterop Condition="('$(OS)'=='Windows_NT')">true</RegisterForComInterop>
+    <RegisterForComInterop Condition="('$(OS)'!='Windows_NT')">false</RegisterForComInterop>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>$(SolutionDir)output\$(Platform)\$(Configuration)\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>TRACE;LoadGeckoLibs;X64</DefineConstants>
     <BaseAddress>285212672</BaseAddress>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Optimize>true</Optimize>
-    <RegisterForComInterop>true</RegisterForComInterop>
     <DebugType>full</DebugType>
     <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>false</Prefer32Bit>
@@ -72,12 +75,12 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>$(SolutionDir)output\$(Platform)\$(Configuration)\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;LoadGeckoLibs;X64</DefineConstants>
     <BaseAddress>285212672</BaseAddress>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <RegisterForComInterop>true</RegisterForComInterop>
     <DebugType>full</DebugType>
     <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>false</Prefer32Bit>
@@ -85,11 +88,10 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>$(SolutionDir)output\Win32\$(Configuration)\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>TRACE;LoadGeckoLibs</DefineConstants>
     <BaseAddress>285212672</BaseAddress>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Optimize>true</Optimize>
-    <RegisterForComInterop>true</RegisterForComInterop>
     <DebugType>full</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <LangVersion>7.3</LangVersion>
@@ -99,34 +101,49 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>$(SolutionDir)output\Win32\$(Configuration)\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;LoadGeckoLibs</DefineConstants>
     <BaseAddress>285212672</BaseAddress>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <RegisterForComInterop>true</RegisterForComInterop>
     <DebugType>full</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <LangVersion>7.3</LangVersion>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Geckofx-Core, Version=45.0.34.0, Culture=neutral, PublicKeyToken=3209ac31600d1857, processorArchitecture=MSIL" Condition="'$(OS)'=='Windows_NT'">
-      <HintPath>..\..\packages\Geckofx45.64.45.0.34\lib\net45\Geckofx-Core.dll</HintPath>
+    <!--BE: I had to manually add the conditions on these Geckofx dlls, so it will include the correct dlls based on the platform
+      This will all get undone if you update the gecko nuget packages-->
+    <Reference Include="Geckofx-Core, Version=60.0.55.0, Culture=neutral, PublicKeyToken=3209ac31600d1857, processorArchitecture=x86" Condition="('$(Platform)' == 'x86') and ('$(OS)'=='Windows_NT')">
+      <HintPath>..\..\packages\Geckofx60.32.60.0.55\lib\net45\Geckofx-Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Geckofx-Winforms, Version=60.0.55.0, Culture=neutral, PublicKeyToken=3209ac31600d1857, processorArchitecture=x86" Condition="('$(Platform)' == 'x86') and ('$(OS)'=='Windows_NT')">
+      <HintPath>..\..\packages\Geckofx60.32.60.0.55\lib\net45\Geckofx-Winforms.dll</HintPath>
+    </Reference>
+    <Reference Include="Geckofx-Core, Version=60.0.55.0, Culture=neutral, PublicKeyToken=3209ac31600d1857, processorArchitecture=MSIL" Condition="('$(Platform)' == 'x64') and ('$(OS)'=='Windows_NT')">
+      <HintPath>..\..\packages\Geckofx60.64.60.0.55\lib\net45\Geckofx-Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Geckofx-Winforms, Version=60.0.55.0, Culture=neutral, PublicKeyToken=3209ac31600d1857, processorArchitecture=MSIL" Condition="('$(Platform)' == 'x64') and ('$(OS)'=='Windows_NT')">
+      <HintPath>..\..\packages\Geckofx60.64.60.0.55\lib\net45\Geckofx-Winforms.dll</HintPath>
     </Reference>
     <Reference Include="Geckofx-Core" Condition="'$(OS)'!='Windows_NT'">
       <Private>False</Private>
-      <HintPath>../../packages/Geckofx45.64.Linux.45.0.21.0/lib/net40/Geckofx-Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Geckofx-Winforms, Version=45.0.34.0, Culture=neutral, PublicKeyToken=3209ac31600d1857, processorArchitecture=MSIL" Condition="'$(OS)'=='Windows_NT'">
-      <HintPath>..\..\packages\Geckofx45.64.45.0.34\lib\net45\Geckofx-Winforms.dll</HintPath>
+      <HintPath>../../packages/Geckofx60.64.Linux.60.0.51/lib/net40/Geckofx-Core.dll</HintPath>
     </Reference>
     <Reference Include="Geckofx-Winforms" Condition="'$(OS)'!='Windows_NT'">
       <Private>False</Private>
-      <HintPath>../../packages/Geckofx45.64.Linux.45.0.21.0/lib/net40/Geckofx-Winforms.dll</HintPath>
+      <HintPath>../../packages/Geckofx60.64.Linux.60.0.51/lib/net40/Geckofx-Winforms.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Web.WebView2.Core, Version=1.0.992.28, Culture=neutral, PublicKeyToken=2a8ab48044d2601e, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Web.WebView2.1.0.992.28\lib\net45\Microsoft.Web.WebView2.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Web.WebView2.WinForms, Version=1.0.992.28, Culture=neutral, PublicKeyToken=2a8ab48044d2601e, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Web.WebView2.1.0.992.28\lib\net45\Microsoft.Web.WebView2.WinForms.dll</HintPath>
     </Reference>
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
+    <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL" />
     <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -137,6 +154,8 @@
     <Reference Include="System.Drawing">
       <Name>System.Drawing</Name>
     </Reference>
+    <Reference Include="System.Memory, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51" />
+    <Reference Include="System.Text.Json, Version=4.0.1.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL" />
     <Reference Include="System.Windows.Forms">
       <Name>System.Windows.Forms</Name>
     </Reference>
@@ -199,9 +218,20 @@
     </Compile>
     <Compile Include="FallbackEncConverter.cs" />
     <Compile Include="FallbackEncConverterConfig.cs" />
-    <Compile Include="GeckoFxInitializer.cs" />
     <Compile Include="IEncConverterConfig.cs">
       <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="WebBrowserGecko.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="WebBrowserEdge.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="WebBrowserInstructions.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="WebBrowserIE.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="ImplTypeList.cs">
       <SubType>Form</SubType>
@@ -284,33 +314,137 @@
     <Content Include="buildinclude.xml">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="Firefox\AccessibleMarshal.dll" />
-    <Content Include="Firefox\breakpadinjector.dll" />
-    <Content Include="Firefox\d3dcompiler_47.dll" />
-    <Content Include="Firefox\freebl3.dll" />
-    <Content Include="Firefox\icudt58.dll" />
-    <Content Include="Firefox\icuin58.dll" />
-    <Content Include="Firefox\icuuc58.dll" />
-    <Content Include="Firefox\lgpllibs.dll" />
-    <Content Include="Firefox\libEGL.dll" />
-    <Content Include="Firefox\libGLESv2.dll" />
-    <Content Include="Firefox\mozglue.dll" />
-    <Content Include="Firefox\nss3.dll" />
-    <Content Include="Firefox\nssckbi.dll" />
-    <Content Include="Firefox\nssdbm3.dll" />
-    <Content Include="Firefox\plugin-container.exe" />
-    <Content Include="Firefox\plugin-hang-ui.exe" />
-    <Content Include="Firefox\sandboxbroker.dll" />
-    <Content Include="Firefox\softokn3.dll" />
-    <Content Include="Firefox\xul.dll" />
-    <Content Include="TRFFC17.ICO" />
+    <!--BE: I had to manually add the conditions on these Geckofx dlls, so it will include the correct dlls based on the platform.
+        the nuget will try to put them both in the 'Firefox' folder, so you have to make sure to manually copy the files from
+        packages to these different (manually created) folders. This will all get undone if you update the gecko nuget packages-->
+    <Content Include="Firefox64\AccessibleHandler.dll" Condition="('$(Platform)' == 'x64') and ('$(OS)'=='Windows_NT')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Firefox64\AccessibleMarshal.dll" Condition="('$(Platform)' == 'x64') and ('$(OS)'=='Windows_NT')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Firefox64\d3dcompiler_47.dll" Condition="('$(Platform)' == 'x64') and ('$(OS)'=='Windows_NT')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Firefox64\freebl3.dll" Condition="('$(Platform)' == 'x64') and ('$(OS)'=='Windows_NT')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Firefox64\IA2Marshal.dll" Condition="('$(Platform)' == 'x64') and ('$(OS)'=='Windows_NT')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Firefox64\lgpllibs.dll" Condition="('$(Platform)' == 'x64') and ('$(OS)'=='Windows_NT')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Firefox64\libEGL.dll" Condition="('$(Platform)' == 'x64') and ('$(OS)'=='Windows_NT')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Firefox64\libGLESv2.dll" Condition="('$(Platform)' == 'x64') and ('$(OS)'=='Windows_NT')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Firefox64\mozavcodec.dll" Condition="('$(Platform)' == 'x64') and ('$(OS)'=='Windows_NT')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Firefox64\mozavutil.dll" Condition="('$(Platform)' == 'x64') and ('$(OS)'=='Windows_NT')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Firefox64\mozglue.dll" Condition="('$(Platform)' == 'x64') and ('$(OS)'=='Windows_NT')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Firefox64\nss3.dll" Condition="('$(Platform)' == 'x64') and ('$(OS)'=='Windows_NT')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Firefox64\nssckbi.dll" Condition="('$(Platform)' == 'x64') and ('$(OS)'=='Windows_NT')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Firefox64\nssdbm3.dll" Condition="('$(Platform)' == 'x64') and ('$(OS)'=='Windows_NT')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Firefox64\omni.ja" Condition="('$(Platform)' == 'x64') and ('$(OS)'=='Windows_NT')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Firefox64\plugin-container.exe" Condition="('$(Platform)' == 'x64') and ('$(OS)'=='Windows_NT')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Firefox64\plugin-hang-ui.exe" Condition="('$(Platform)' == 'x64') and ('$(OS)'=='Windows_NT')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Firefox64\qipcap64.dll" Condition="('$(Platform)' == 'x64') and ('$(OS)'=='Windows_NT')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Firefox64\softokn3.dll" Condition="('$(Platform)' == 'x64') and ('$(OS)'=='Windows_NT')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Firefox64\xul.dll" Condition="('$(Platform)' == 'x64') and ('$(OS)'=='Windows_NT')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Firefox\AccessibleHandler.dll" Condition="('$(Platform)' == 'x86') and ('$(OS)'=='Windows_NT')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Firefox\AccessibleMarshal.dll" Condition="('$(Platform)' == 'x86') and ('$(OS)'=='Windows_NT')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Firefox\breakpadinjector.dll" Condition="('$(Platform)' == 'x86') and ('$(OS)'=='Windows_NT')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Firefox\d3dcompiler_47.dll" Condition="('$(Platform)' == 'x86') and ('$(OS)'=='Windows_NT')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Firefox\freebl3.dll" Condition="('$(Platform)' == 'x86') and ('$(OS)'=='Windows_NT')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Firefox\IA2Marshal.dll" Condition="('$(Platform)' == 'x86') and ('$(OS)'=='Windows_NT')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Firefox\lgpllibs.dll" Condition="('$(Platform)' == 'x86') and ('$(OS)'=='Windows_NT')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Firefox\libEGL.dll" Condition="('$(Platform)' == 'x86') and ('$(OS)'=='Windows_NT')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Firefox\libGLESv2.dll" Condition="('$(Platform)' == 'x86') and ('$(OS)'=='Windows_NT')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Firefox\mozavcodec.dll" Condition="('$(Platform)' == 'x86') and ('$(OS)'=='Windows_NT')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Firefox\mozavutil.dll" Condition="('$(Platform)' == 'x86') and ('$(OS)'=='Windows_NT')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Firefox\mozglue.dll" Condition="('$(Platform)' == 'x86') and ('$(OS)'=='Windows_NT')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Firefox\nss3.dll" Condition="('$(Platform)' == 'x86') and ('$(OS)'=='Windows_NT')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Firefox\nssckbi.dll" Condition="('$(Platform)' == 'x86') and ('$(OS)'=='Windows_NT')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Firefox\nssdbm3.dll" Condition="('$(Platform)' == 'x86') and ('$(OS)'=='Windows_NT')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Firefox\omni.ja" Condition="('$(Platform)' == 'x86') and ('$(OS)'=='Windows_NT')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Firefox\plugin-container.exe" Condition="('$(Platform)' == 'x86') and ('$(OS)'=='Windows_NT')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Firefox\plugin-hang-ui.exe" Condition="('$(Platform)' == 'x86') and ('$(OS)'=='Windows_NT')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Firefox\qipcap.dll" Condition="('$(Platform)' == 'x86') and ('$(OS)'=='Windows_NT')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Firefox\softokn3.dll" Condition="('$(Platform)' == 'x86') and ('$(OS)'=='Windows_NT')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Firefox\xul.dll" Condition="('$(Platform)' == 'x86') and ('$(OS)'=='Windows_NT')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TRFFC17.ICO" Condition="('$(Platform)' == 'x86') and ('$(OS)'=='Windows_NT')" />
     <EmbeddedResource Include="WebBrowserAdaptor.resx">
       <DependentUpon>WebBrowserAdaptor.cs</DependentUpon>
     </EmbeddedResource>
-    <None Include="..\..\installer\EC_40.mm.wxs">
-      <Link>EC_40.mm.wxs</Link>
-      <SubType>Designer</SubType>
-    </None>
+    <None Include="app.config" />
     <None Include="app.manifest" />
     <None Include="ECPlugins.xsc">
       <DependentUpon>ECPlugins.xsd</DependentUpon>
@@ -322,7 +456,6 @@
       <DependentUpon>ECPlugins.xsd</DependentUpon>
     </None>
     <None Include="FieldWorks.snk" />
-    <None Include="Firefox\omni.ja" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -358,13 +491,18 @@
     <PostBuildEvent>
     </PostBuildEvent>
   </PropertyGroup>
-  <Import Project="..\..\packages\Geckofx45.45.0.34\build\Geckofx45.targets" Condition="Exists('..\..\packages\Geckofx45.45.0.34\build\Geckofx45.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\..\packages\Geckofx45.45.0.34\build\Geckofx45.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Geckofx45.45.0.34\build\Geckofx45.targets'))" />
-    <Error Condition="!Exists('..\..\packages\Geckofx45.64.45.0.34\build\Geckofx45.64.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Geckofx45.64.45.0.34\build\Geckofx45.64.targets'))" />
+    <Error Condition="!Exists('..\..\packages\Microsoft.Web.WebView2.1.0.992.28\build\Microsoft.Web.WebView2.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.Web.WebView2.1.0.992.28\build\Microsoft.Web.WebView2.targets'))" />
+    <Error Condition="!Exists('..\..\packages\Geckofx60.32.60.0.55\build\Geckofx60.32.targets') and ('$(Platform)' == 'x86') and ('$(OS)'=='Windows_NT')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Geckofx60.32.60.0.55\build\Geckofx60.32.targets'))" />
+    <Error Condition="!Exists('..\..\packages\Geckofx60.64.60.0.55\build\Geckofx60.64.targets') and ('$(Platform)' == 'x64') and ('$(OS)'=='Windows_NT')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Geckofx60.64.60.0.55\build\Geckofx60.64.targets'))" />
   </Target>
-  <Import Project="..\..\packages\Geckofx45.64.45.0.34\build\Geckofx45.64.targets" Condition="Exists('..\..\packages\Geckofx45.64.45.0.34\build\Geckofx45.64.targets')" />
+  <Import Project="..\..\packages\Microsoft.Web.WebView2.1.0.992.28\build\Microsoft.Web.WebView2.targets" Condition="Exists('..\..\packages\Microsoft.Web.WebView2.1.0.992.28\build\Microsoft.Web.WebView2.targets')" />
+  <!--BE: I had to manually add the extra conditions on these, so it will do the target (which copies files) from the correct package based on the platform.
+      Also, I had to manually edit the 64 bit target so that it would now get the files from Firefox64, rather than Firefox it was looking at (which are the 86 binaries)
+      This will all get undone if you update the gecko nuget packages -->
+  <Import Project="..\..\packages\Geckofx60.32.60.0.55\build\Geckofx60.32.targets" Condition="Exists('..\..\packages\Geckofx60.32.60.0.55\build\Geckofx60.32.targets') and ('$(Platform)' == 'x86') and ('$(OS)'!='Windows_NT')" />
+  <Import Project="..\..\packages\Geckofx60.64.60.0.55\build\Geckofx60.64.targets" Condition="Exists('..\..\packages\Geckofx60.64.60.0.55\build\Geckofx60.64.targets') and ('$(Platform)' == 'x64') and ('$(OS)'!='Windows_NT')" />
 </Project>

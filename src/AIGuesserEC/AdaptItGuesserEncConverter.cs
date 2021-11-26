@@ -17,7 +17,7 @@ namespace SilEncConverters40
     public class AdaptItGuesserEncConverter : AdaptItKBReader
     {
         public const string strDisplayName = "Target Word Guesser for AdaptIt";
-        public const string strHtmlFilename = "AdaptIt Guesser Plug-in About box.mht";
+        public const string strHtmlFilename = "AdaptIt Guesser Plug-in About box.htm";
 
         public override string strRegValueForConfigProgId
         {
@@ -39,27 +39,11 @@ namespace SilEncConverters40
             {
                 // the only thing we want to add (now that the convType can be less than accurate) 
                 //  is to make sure it's bidirectional)
-                if (!EncConverters.IsUnidirectional(conversionType))
+                if (EncConverters.IsUnidirectional(conversionType))
                 {
-                    switch (conversionType)
-                    {
-                        case ConvType.Legacy_to_from_Legacy:
-                            conversionType = ConvType.Legacy_to_Legacy;
-                            break;
-                        case ConvType.Legacy_to_from_Unicode:
-                            conversionType = ConvType.Legacy_to_Unicode;
-                            break;
-                        case ConvType.Unicode_to_from_Legacy:
-                            conversionType = ConvType.Unicode_to_Legacy;
-                            break;
-                        case ConvType.Unicode_to_from_Unicode:
-                            conversionType = ConvType.Unicode_to_Unicode;
-                            break;
-                        default:
-                            break;
-                    }
-                }
-            }
+					m_eConversionType = conversionType = MakeUniDirectional(conversionType);
+				}
+			}
         }
 
         protected unsafe bool Load()

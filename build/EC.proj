@@ -19,7 +19,7 @@
 		<projroot>$(MSBuildProjectDirectory)/..</projroot>
 		<config Condition="'$(config)'==''">Debug</config>
 		<action Condition="'$(action)'==''">build</action>
-		<dir-output>$(projroot)/output/$(config)</dir-output>
+		<dir-output>$(projroot)/output/x64/$(config)</dir-output>
 	</PropertyGroup>
 
 	<Choose>
@@ -45,7 +45,7 @@
         </Otherwise>
 	</Choose>
 
-	<Target Name="all" DependsOnTargets="ECInterfaces;EncCnvtrs;CcEC;IcuEC;PerlExpressionEC;PyScriptEC;AIGuesserEC;ECFileConverter;RunTests"/>
+	<Target Name="all" DependsOnTargets="ECInterfaces;EncCnvtrs;CcEC;IcuEC;SilIndicEncConverters;DriveAiEncConverter;PerlExpressionEC;PyScriptEC;AIGuesserEC;ECFileConverter;RunTests"/>
 
 	<Target Name="Setup">
 		<CreateProperty Value="Configuration=$(config);ReferencePath=$(dir-output);FIELDWORKS=$(FIELDWORKS)">
@@ -56,55 +56,67 @@
 	</Target>
 
 	<Target Name="ECInterfaces">
-		<MSBuild Projects="$(projroot)/src/ECInterfaces/ECInterfaces-mono.csproj"
+		<MSBuild Projects="$(projroot)/src/ECInterfaces/ECInterfaces 2010.csproj"
 				 Targets="$(msbuild-target)"
 				 Properties="$(msbuild-props)"/>
 	</Target>
 
 	<Target Name="EncCnvtrs" DependsOnTargets="ECInterfaces">
-		<MSBuild Projects="$(projroot)/src/EncCnvtrs/EncCnvtrs-mono.csproj"
+		<MSBuild Projects="$(projroot)/src/EncCnvtrs/EncCnvtrs 2010.csproj"
 				 Targets="$(msbuild-target)"
 				 Properties="$(msbuild-props)"/>
 	</Target>
 
 	<Target Name="CcEC" DependsOnTargets="ECInterfaces;EncCnvtrs">
-		<MSBuild Projects="$(projroot)/src/CcEC/CcEC-mono.csproj"
+		<MSBuild Projects="$(projroot)/src/CcEC/CcEC 2010.csproj"
 				 Targets="$(msbuild-target)"
 				 Properties="$(msbuild-props)"/>
 	</Target>
 
 	<Target Name="IcuEC" DependsOnTargets="ECInterfaces;EncCnvtrs">
-		<MSBuild Projects="$(projroot)/src/IcuEC/IcuEC-mono.csproj"
+		<MSBuild Projects="$(projroot)/src/IcuEC/IcuEC 2010.csproj"
+				 Targets="$(msbuild-target)"
+				 Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="SilIndicEncConverters" DependsOnTargets="ECInterfaces;EncCnvtrs">
+		<MSBuild Projects="$(projroot)/src/SilIndicEncConverters/SilIndicEncConverters 2010.csproj"
+				 Targets="$(msbuild-target)"
+				 Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="DriveAiEncConverter" DependsOnTargets="ECInterfaces;EncCnvtrs">
+		<MSBuild Projects="$(projroot)/src/DriveAiEncConverter/DriveAiEncConverter 2010.csproj"
 				 Targets="$(msbuild-target)"
 				 Properties="$(msbuild-props)"/>
 	</Target>
 
 	<Target Name="PerlExpressionEC" DependsOnTargets="ECInterfaces;EncCnvtrs">
-		<MSBuild Projects="$(projroot)/src/PerlExpressionEC/PerlExpressionEC-mono.csproj"
+		<MSBuild Projects="$(projroot)/src/PerlExpressionEC/PerlExpressionEC 2010.csproj"
 				 Targets="$(msbuild-target)"
 				 Properties="$(msbuild-props)"/>
 	</Target>
 
 	<Target Name="PyScriptEC" DependsOnTargets="ECInterfaces;EncCnvtrs">
-		<MSBuild Projects="$(projroot)/src/PyScriptEC/PyScriptEC-mono.csproj"
+		<MSBuild Projects="$(projroot)/src/PyScriptEC/PyScriptEC 2010.csproj"
 				 Targets="$(msbuild-target)"
 				 Properties="$(msbuild-props)"/>
 	</Target>
 
 	<Target Name="AIGuesserEC" DependsOnTargets="ECInterfaces;CcEC">
-		<MSBuild Projects="$(projroot)/src/AIGuesserEC/AIGuesserEC-mono.csproj"
+		<MSBuild Projects="$(projroot)/src/AIGuesserEC/AIGuesserEC 2010.csproj"
 				 Targets="$(msbuild-target)"
 				 Properties="$(msbuild-props)"/>
 	</Target>
 
 	<Target Name="ECFileConverter" DependsOnTargets="ECInterfaces">
-		<MSBuild Projects="$(projroot)/src/ECFileConverter/ECFileConverter-mono.csproj"
+		<MSBuild Projects="$(projroot)/src/ECFileConverter/ECFileConverter 2010.csproj"
 				 Targets="$(msbuild-target)"
 				 Properties="$(msbuild-props)"/>
 	</Target>
 
 	<Target Name="TestEncCnvtrs" DependsOnTargets="ECInterfaces;IcuEC">
-		<MSBuild Projects="$(projroot)/src/TestEncCnvtrs/TestEncCnvtrs-mono.csproj"
+		<MSBuild Projects="$(projroot)/src/TestEncCnvtrs/TestEncCnvtrs 2010.csproj"
 				 Targets="$(msbuild-target)"
 				 Properties="$(msbuild-props)"/>
 	</Target>
@@ -112,13 +124,13 @@
     <!-- This target is rather useless except for debugging tests/code in MonoDevelop. -->
     <!-- MonoDevelop doesn't run NUnit tests reliably in my experience.  :-( -->
 	<Target Name="RunTests" DependsOnTargets="TestEncCnvtrs">
-		<MSBuild Projects="$(projroot)/src/RunTests/RunTests-mono.csproj"
+		<MSBuild Projects="$(projroot)/src/RunTests/RunTests 2010.csproj"
 				 Targets="$(msbuild-target)"
 				 Properties="$(msbuild-props)"/>
 	</Target>
 
     <Target Name="test" DependsOnTargets="TestEncCnvtrs">
-        <Message text="Please execute $(dir-output)/RunTests.exe manually."/>
+        <Message text="Please execute RunTests.exe manually."/>
         <!--
         <CreateItem Include="$(dir-output)/TestEncCnvtrs.dll">
             <Output TaskParameter="Include" ItemName="TestAssembly" />

@@ -34,7 +34,7 @@ namespace SilEncConverters40
         private string      strTempFile      = string.Empty;
 
         public const string strDisplayName = "Perl Script";
-        public static readonly string strHtmlFilename = "Perl_Expression_Plug-in_About_box" + (Util.IsUnix ? ".htm" : ".mht");
+        public static readonly string strHtmlFilename = "Perl_Expression_Plug-in_About_box.htm";
         public const string strExeDefPath = "";
         #endregion Member Variable Definitions
 

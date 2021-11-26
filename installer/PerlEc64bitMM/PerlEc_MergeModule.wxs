@@ -22,9 +22,25 @@
 				<Directory Id="AppDataSIL" Name="SIL">
 					<Directory Id="AppDataSILConverters40" Name="SILConverters40">
 						<Directory Id="Help" Name="Help">
-							<Component Id="PerlHelp" Guid="{FEB46685-5205-4AB9-9586-D89CFB974684}">
-								<File Id="PerlHelp" Name="Perl_Expression_Plug-in_About_box.mht" KeyPath="yes" Source="..\..\redist\Help\Perl_Expression_Plug-in_About_box.mht"/>
+
+							<!--Perl Expression Plug-in Help-->
+							<Component Id="PerlHelp.htm" Guid="{2785223F-BD09-4B83-A53A-10E03425A1BA}">
+								<File Id="PerlHelp.htm" Name="Perl_Expression_Plug-in_About_box.htm" KeyPath="yes" Source="..\..\redist\Help\Perl_Expression_Plug-in_About_box.htm"/>
+								<Shortcut Id="PerlHelpHtm" Directory="PerlHelp" Name="Perl Expression Plug-in Help" Description="View help document for the Perl Expression Plug-in" IconIndex="0" Show="normal" Target="[#PerlHelp.htm]" WorkingDirectory="Help" Advertise="no" />
 							</Component>
+							<Directory Id="Perl_Expression_Plugin_About_box" Name="Perl_Expression_Plug-in_About_box_files">
+								<Component Id="Perl_Expression_Plugin_About_boxComp" Guid="{99EC5C24-C410-4CA6-873E-B11E5B10BE53}">
+									<File Id="ai_filelist.xml" Name="filelist.xml" KeyPath="yes" Source="..\..\redist\Help\Perl_Expression_Plug-in_About_box_files\filelist.xml"/>
+									<File Id="ai_header.htm" Name="header.htm" Source="..\..\redist\Help\Perl_Expression_Plug-in_About_box_files\header.htm"/>
+									<File Id="ai_image001.png" Name="image001.png" Source="..\..\redist\Help\Perl_Expression_Plug-in_About_box_files\image001.png"/>
+									<File Id="ai_image003.png" Name="image003.png" Source="..\..\redist\Help\Perl_Expression_Plug-in_About_box_files\image003.png"/>
+									<File Id="ai_image004.jpg" Name="image004.jpg" Source="..\..\redist\Help\Perl_Expression_Plug-in_About_box_files\image004.jpg"/>
+									<File Id="ai_image005.png" Name="image005.png" Source="..\..\redist\Help\Perl_Expression_Plug-in_About_box_files\image005.png"/>
+									<File Id="ai_image006.jpg" Name="image006.jpg" Source="..\..\redist\Help\Perl_Expression_Plug-in_About_box_files\image006.jpg"/>
+									<File Id="ai_image007.jpg" Name="image007.jpg" Source="..\..\redist\Help\Perl_Expression_Plug-in_About_box_files\image007.jpg"/>
+								</Component>
+							</Directory>
+
 						</Directory>
 					</Directory>
 				</Directory>
@@ -32,13 +48,7 @@
 
 			<Directory Id="ProgramMenuFolder" Name="Program">
 				<Directory Id="SIL_Converters" Name="SIL Converters">
-					<Directory Id="PerlHelp" Name="Help">
-						<Component Id="HelpShortcuts" Guid="{A0359AA7-DCA5-4101-9502-D321CB11BFE9}" KeyPath="yes">
-							<Shortcut Id="PerlEcPluginHelp" Directory="PerlHelp" Name="Perl Expression Plug-in Help" Target="[#PerlHelp]" Hotkey="0" IconIndex="0" Show="normal" WorkingDirectory="Help"/>
-							<!-- The next item is junk to make validation pass on ICE18 -->
-							<CreateFolder/>
-						</Component>
-					</Directory>
+					<Directory Id="PerlHelp" Name="Help" />
 				</Directory>
 			</Directory>
 

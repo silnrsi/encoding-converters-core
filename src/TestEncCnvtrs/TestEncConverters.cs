@@ -1,7 +1,3 @@
-#if !__MonoCS__
-#define TODO_RESOLVE_ICUBREAKITERATORENCCONVERTER
-#endif
-
 // created by Steve McConnel, Feb 7, 2012.
 // 18-May-13 JDK  Overwrite repo file if it exists.
 // 29-Jun-13 JDK  Test all python scripts in MapsTables.
@@ -15,15 +11,16 @@ using NUnit.Framework;
 using ECInterfaces;
 using SilEncConverters40;
 using System.Reflection;
+using System.Threading;
 
 namespace TestEncCnvtrs
 {
-    /// ------------------------------------------------------------------------
-    /// <summary>
-    /// Set of tests to excercise the methods in the EncConverters class.
-    /// </summary>
-    /// ------------------------------------------------------------------------
-    [TestFixture]
+	/// ------------------------------------------------------------------------
+	/// <summary>
+	/// Set of tests to excercise the methods in the EncConverters class.
+	/// </summary>
+	/// ------------------------------------------------------------------------
+	[TestFixture]
 	public class TestEncConverters
 	{
 		EncConverters m_encConverters;
@@ -31,13 +28,13 @@ namespace TestEncCnvtrs
 		bool m_fSetRegistryValue;
 		string m_repoFile;
 
-        /// --------------------------------------------------------------------
-        /// <summary>
-        /// Global initialization, called once before any test in this class
-        /// ("fixture") is run.
-        /// </summary>
-        /// --------------------------------------------------------------------
-        [TestFixtureSetUp]
+		/// --------------------------------------------------------------------
+		/// <summary>
+		/// Global initialization, called once before any test in this class
+		/// ("fixture") is run.
+		/// </summary>
+		/// --------------------------------------------------------------------
+		[OneTimeSetUp]
 		public void InitForClass()
 		{
 			Util.DebugWriteLine(this, "BEGIN");
@@ -120,7 +117,10 @@ namespace TestEncCnvtrs
 		[TearDown]
 		public void CleanupAfterTest()
 		{
-			RemoveAnyAddedConverters();
+			if (m_encConverters != null)
+			{
+				RemoveAnyAddedConverters();
+			}
 		}
 
 		/// <summary>
@@ -161,6 +161,9 @@ namespace TestEncCnvtrs
 				m_encConverters.Remove("UnitTesting-ThaiWordBreaker");
 			if (m_encConverters.ContainsKey("UnitTesting-AiKbConverter"))
 				m_encConverters.Remove("UnitTesting-AiKbConverter");
+
+			if (m_encConverters.ContainsKey(TechHindiSiteConverterFriendlyName))
+				m_encConverters.Remove(TechHindiSiteConverterFriendlyName);
 		}
 
 		/// --------------------------------------------------------------------
@@ -169,7 +172,7 @@ namespace TestEncCnvtrs
 		/// ("fixture") have been run.
 		/// </summary>
 		/// --------------------------------------------------------------------
-		[TestFixtureTearDown]
+		[OneTimeTearDown]
 		public void CleanupForClass()
 		{
 			m_encConverters = null;
@@ -392,7 +395,7 @@ namespace TestEncCnvtrs
         {
 			const string cstrFriendlyName = "UnitTesting-ThaiWordBreaker";
 			var theEcs = DirectableEncConverter.EncConverters;
-#if TODO_RESOLVE_ICUBREAKITERATORENCCONVERTER
+#if !NEED_RESOLVE_ICUBREAKITERATORENCCONVERTER
 			theEcs.AddConversionMap(cstrFriendlyName, IcuBreakIteratorEncConverter.DefaultSeparator, ConvType.Unicode_to_from_Unicode,
 						IcuBreakIteratorEncConverter.CstrImplementationType, "UNICODE", "UNICODE",
 						ProcessTypeFlags.DontKnow);
@@ -757,7 +760,6 @@ namespace TestEncCnvtrs
 				"\u00E0\u00E1\u00E2\u00E3\u00E4\u00E5\u00E6\u00E7\u00E8\u00E9\u00EA\u00EB\u00EC\u00ED\u00EE\u00EF" +
 				"\u00F0\u00F1\u00F2\u00F3\u00F4\u00F5\u00F6\u00F7\u00F8\u00F9\u00FA\u00FB\u00FC\u00FD\u00FE\u00FF";
 
-
 		[Test]
 		public void Cp1252ShouldConvertHex80()
 		{
@@ -828,6 +830,55 @@ namespace TestEncCnvtrs
 			var converters = CpEncConverter.GetAvailableConverterSpecs();
 			Assert.Less(10, converters.Count, "There should be at least ten CodePage converters available!");
 		}
+
+		/// <summary>
+		/// install the prerequisite for this test from:
+		/// https://go.microsoft.com/fwlink/p/?LinkId=2124703
+		/// </summary>
+		/// <param name="converterSpecSuffix"></param>
+		[Apartment(ApartmentState.STA)]
+		[Test]
+		[TestCase("legacy_text;unicode_text;convert_to_unicode;Convert_to_Krutidev_010;InternetExplorer")]
+		[TestCase("legacy_text;unicode_text;convert_to_unicode;InternetExplorer")]
+		[TestCase("legacy_text;unicode_text;convert_to_unicode;Convert_to_Krutidev_010;Edge")]
+		[TestCase("legacy_text;unicode_text;convert_to_unicode;Edge")]
+		[TestCase("legacy_text;unicode_text;convert_to_unicode;Convert_to_Krutidev_010;GeckoFx")]
+		[TestCase("legacy_text;unicode_text;convert_to_unicode;GeckoFx")]
+		public void TestTechHindiSiteConverter(string converterSpecSuffix)
+        {
+            TechHindiSiteConverterCommon(converterSpecSuffix);
+        }
+
+		private const string TechHindiSiteConverterFriendlyName = "KrutiDev010 <> Unicode";
+
+		public void TechHindiSiteConverterCommon(string converterSpecSuffix)
+        {
+            var dir = GetTestSourceFolder();
+            var pathToTechHindiSiteFile = Path.Combine(dir, "Krutidev010-to-Unicode-to-Krutidev010 Converter09.htm");
+            // e.g. C:\Users\Bob\Documents\Krutidev010-to-Unicode-to-Krutidev010 Converter09.htm;legacy_text;unicode_text;convert_to_unicode;Convert_to_Krutidev_010
+            var converterSpec = $"{pathToTechHindiSiteFile};{converterSpecSuffix}";
+			m_encConverters.AddConversionMap(TechHindiSiteConverterFriendlyName, converterSpec, ConvType.Legacy_to_from_Unicode,
+											 EncConverters.strTypeSILtechHindiSite, "KRUTIDEV", "UNICODE",
+											 ProcessTypeFlags.UnicodeEncodingConversion);
+
+            var theEc = m_encConverters[TechHindiSiteConverterFriendlyName];
+
+			// do a forward conversion
+            var strOutput = theEc.Convert("ej");
+            Assert.AreEqual("मर", strOutput);
+
+			// do a subsequent forward conversion (as though we're going to do a bunch in a row)
+			strOutput = theEc.Convert("eje");
+			Assert.AreEqual("मरम", strOutput);
+
+			// try the reverse conversion (if the converter is bi-directional
+			if (!EncConverters.IsUnidirectional(theEc.ConversionType))
+			{
+				theEc.DirectionForward = false;
+				strOutput = theEc.Convert("मर");
+				Assert.AreEqual("ej", strOutput);
+			}
+        }
 	}
 
 	/// <summary>
