@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
-    <ProductVersion>3.10</ProductVersion>
+    <ProductVersion>3.11</ProductVersion>
     <ProjectGuid>823FD7A4-C5F9-4600-A9B8-49EF274BF5B8</ProjectGuid>
     <SchemaVersion>2.0</SchemaVersion>
     <OutputName>EcFireFox64</OutputName>

@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
-    <ProductVersion>3.10</ProductVersion>
+    <ProductVersion>3.11</ProductVersion>
     <ProjectGuid>f7483cf4-5ab5-4e62-b87e-a6a88ec228dc</ProjectGuid>
     <SchemaVersion>2.0</SchemaVersion>
     <OutputName>EcFolderACLsMM</OutputName>
