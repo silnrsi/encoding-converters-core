@@ -49,3 +49,7 @@ To build new packages:
 1. Run a release build for both 32 and 64bit
 2. Increase the version in Package.nuspec
 3. Run 'nuget.exe pack' from the root directory of the repository
+
+## Developer notes
+
+See [this](https://software.sil.org/silconverters/silconverters-developer/) webpage for hints on using the EncConverters core in your application
