@@ -80,7 +80,8 @@ namespace SilEncConverters40
         public const string strTypeSILadaptit           = "SIL.AdaptItKB";
         public const string strTypeSILadaptitGuesser    = "SIL.AdaptItKBGuesser";
 		public const string strTypeSILtechHindiSite		= "SIL.TechHindiWebPage";
-		public const string cstrTempConverterPrefix     = "Temporary Converter";
+        public const string strTypeSILBingTranslator	= "SIL.BingTranslator";
+        public const string cstrTempConverterPrefix     = "Temporary Converter";
 
         // default values for XML file attributes
         public const string HKLM_PATH_TO_XML_FILE       = @"SOFTWARE\SIL\EncodingConverterRepository";

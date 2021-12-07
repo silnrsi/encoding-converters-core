@@ -1,0 +1,15 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="SilEncConverters40.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="AzureTranslatorKey" Type="System.String" Scope="User">
+      <Value Profile="(Default)">18b3904a5b0641698a4149a2db81aa92</Value>
+    </Setting>
+    <Setting Name="AzureTranslatorRegion" Type="System.String" Scope="User">
+      <Value Profile="(Default)">global</Value>
+    </Setting>
+    <Setting Name="AzureTranslatorTextTranslationEndpoint" Type="System.String" Scope="User">
+      <Value Profile="(Default)">https://api.cognitive.microsofttranslator.com/</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

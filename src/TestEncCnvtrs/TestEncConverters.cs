@@ -12,6 +12,7 @@ using ECInterfaces;
 using SilEncConverters40;
 using System.Reflection;
 using System.Threading;
+using System.Linq;
 
 namespace TestEncCnvtrs
 {
@@ -879,6 +880,45 @@ namespace TestEncCnvtrs
 				Assert.AreEqual("ej", strOutput);
 			}
         }
+
+		private const string BingTranslatorConverterFriendlyName = "BingTranslator";
+
+		[Test]
+		[TestCase("Translate;hi;en", "यीशु ने यह भी कहा,", "Jesus also said,")]
+		[TestCase("Translate;;en", "यीशु ने यह भी कहा,", "Jesus also said,")]
+		[TestCase("TranslateWithTransliterate;en;ar;;Latn", "God", "alleh")]
+		[TestCase("TranslateWithTransliterate;;ar;;Latn", "God", "alleh")]
+		// [TestCase("TranslateWithTransliterate;;en;;Deva", "नहीं", "not")]	// can't transliterate from an language=en result
+		// [TestCase("TranslateWithTransliterate;en;ar;;Arab", "God", "الله")] // you *can* do this, but there is no transliteration part of it (since the result is already in Arab script)
+		[TestCase("Transliterate;hi;;Deva;Latn", "संसार", "sansar")]
+		[TestCase("Transliterate;hi;;Latn;Deva", "sansar", "संसार")]
+		[TestCase("Transliterate;ar;;Arab;Latn", "الله", "alleh")]
+		[TestCase("Transliterate;ar;;Latn;Arab", "alleh", "علية")]  // الله (apparently, the transliteration isn't round-trippable)
+		// [TestCase("Transliterate;ar;;;Latn", "الله", "alleh")]		// this doesn't work, because with Transliterate, you must specify the fromScript
+		[TestCase("DictionaryLookup;en;hi", "with", "साथ")]
+		[TestCase("DictionaryLookup;hi;en", "से", "%2%from%than%")]	// when multiple results, return the ample disambiguation syntax (cf. AdaptIt lookup converter)
+		[TestCase("DictionaryLookup;en;hi", "schmaboogle", "")]		// when there are no translations, it returns empty string
+		public void TestBingTransliteratorConverter(string converterSpec, string testInput, string testOutput)
+		{
+			m_encConverters.AddConversionMap(BingTranslatorConverterFriendlyName, converterSpec, ConvType.Unicode_to_Unicode,
+											 EncConverters.strTypeSILBingTranslator, "UNICODE", "UNICODE",
+											 ProcessTypeFlags.DontKnow);
+
+			var theEc = m_encConverters[BingTranslatorConverterFriendlyName];
+
+			// do a forward conversion
+			var strOutput = theEc.Convert(testInput);
+			Assert.AreEqual(testOutput, strOutput);
+		}
+
+		[Test]
+		public void TestBingTranslatorGetCapabilities()
+        {
+			var res = BingTranslatorEncConverter.GetCapabilities();
+			Assert.Contains("Arabic|العربية (ar)", res.translations.Select(t => t.ToString()).ToList());
+			Assert.Contains("Hindi|हिन्दी (hi) => (Latin|लैटिन (Latn)) OR (Devanagari|देवनागरी (Deva))", res.transliterations.Select(t => t.ToString()).ToList());
+			Assert.Contains("Bulgarian|Български (bg) => English (en)", res.dictionaryOptions.Select(t => t.ToString()).ToList());
+		}
 	}
 
 	/// <summary>

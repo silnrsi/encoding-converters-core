@@ -98,22 +98,40 @@ namespace SilEncConverters40
 						};
 				};
 
+				InitializeComboBoxFromCode(comboBoxSourceLanguages, fromLanguage);
+				InitializeComboBoxFromCode(comboBoxTargetLanguages, toLanguage);
+				InitializeComboBoxFromCode(comboBoxTargetScripts, toScript);
+				InitializeSourceScriptBasedOnComboBoxValuesAndTransductionType();
 				IsModified = false;
 			}
 			else
 			{
-				radioButtonTranslate.Checked = true;	// to trigger the loading of the combo boxes
-			}
+				radioButtonTranslate.Checked = true;    // to trigger the loading of the combo boxes
 
-			comboBoxSourceLanguages.SelectedItem = fromLanguage;
-			comboBoxTargetLanguages.SelectedItem = toLanguage;
+				comboBoxSourceLanguages.SelectedItem = fromLanguage;
+				comboBoxTargetLanguages.SelectedItem = toLanguage;
+			}
 
 			m_bInitialized = true;
 
             Util.DebugWriteLine(this, "END");
         }
 
-        public BingTranslatorAutoConfigDialog
+		private void InitializeComboBoxFromCode(ComboBox comboBox, string code)
+		{
+			if (String.IsNullOrEmpty(code))
+				return;
+
+			string value = $"({code})";
+			var item = comboBox.Items.Cast<string>().FirstOrDefault(i => i.Contains(value));
+
+			if (item == null)
+				item = (string)comboBox.Items[0];
+
+			comboBox.SelectedItem = item;
+		}
+
+		public BingTranslatorAutoConfigDialog
             (
             IEncConverters aECs,
             string strFriendlyName,
@@ -144,8 +162,15 @@ namespace SilEncConverters40
 			var selectedToLanguage = (string)comboBoxTargetLanguages.SelectedItem;
 			if (TargetLanguageNameMustBeConfigure == selectedToLanguage)
 			{
-				MessageBox.Show(this, "The Target Language must be selected!", EncConverters.cstrCaption);
-				return false;
+				if (transductionSelected == TransductionType.Transliterate)
+				{
+					selectedToLanguage = null;
+				}
+				else
+				{
+					MessageBox.Show(this, "The Target Language must be selected!", EncConverters.cstrCaption);
+					return false;
+				}
 			}
 
 			var selectedFromLanguage = (string)comboBoxSourceLanguages.SelectedItem;
@@ -157,7 +182,7 @@ namespace SilEncConverters40
 				transductionSelected.ToString(),
 				ExtractCode(selectedFromLanguage),
 				ExtractCode(selectedToLanguage),
-				ExtractCode((string)comboBoxSourceScripts.SelectedItem),
+				ExtractCode(textBoxSourceScript.Text),
 				ExtractCode((string)comboBoxTargetScripts.SelectedItem));
 
             return base.OnApply();
@@ -209,10 +234,10 @@ namespace SilEncConverters40
 						defaultName = $"{comboBoxSourceLanguages.SelectedItem} to {comboBoxTargetLanguages.SelectedItem}";
 						break;
 					case TransductionType.TranslateWithTransliterate:
-						defaultName = $"{comboBoxSourceLanguages.SelectedItem} to {comboBoxTargetLanguages.SelectedItem} in {comboBoxTargetScripts.SelectedItem}";
+						defaultName = $"{comboBoxSourceLanguages.SelectedItem} to {comboBoxTargetLanguages.SelectedItem} in {comboBoxTargetScripts.SelectedItem} script";
 						break;
 					case TransductionType.Transliterate:
-						defaultName = $"{comboBoxSourceLanguages.SelectedItem} in {comboBoxSourceScripts.SelectedItem} to {comboBoxTargetScripts.SelectedItem}";
+						defaultName = $"{comboBoxSourceLanguages.SelectedItem} in {textBoxSourceScript.Text} script to {comboBoxTargetScripts.SelectedItem} script";
 						break;
 					case TransductionType.DictionaryLookup:
 						defaultName = $"Lookup of {comboBoxSourceLanguages.SelectedItem} to {comboBoxTargetLanguages.SelectedItem}";
@@ -233,7 +258,6 @@ namespace SilEncConverters40
 
 		private bool _sourceLanguagesInitialized = false;
 		private bool _targetLanguagesInitialized = false;
-		private bool _sourceScriptLanguagesInitialized = false;
 		private bool _targetScriptLanguagesInitialized = false;
 
 		/// <summary>
@@ -255,39 +279,29 @@ namespace SilEncConverters40
 
 			if (!_targetLanguagesInitialized && initializeTargetLanguageAlso)
 			{
+				_targetLanguagesInitialized = true;
+
 				comboBoxTargetLanguages.Items.Clear();
 				comboBoxTargetLanguages.Items.Add(TargetLanguageNameMustBeConfigure);
 				comboBoxTargetLanguages.Items.AddRange(translationLanguagesPossible);
 			}
 		}
 
-		private void InitializeSourceScriptLanguages()
+		/// <summary>
+		/// This method will search the transliteration list using either the source language (for Transliterate)
+		/// or target language name (for TranslateWithTransliterate)
+		/// </summary>
+		/// <param name="relevantSelectedItem">the selected language name to search for the 0th script name from</param>
+		private void InitializeSourceScript(string relevantSelectedItem, string currentTargetScript)
 		{
-			if (_sourceScriptLanguagesInitialized)
-				return;
-
-			// the scripts we can transliterate *from* are dependent on the source language.
-			var selectedSourceLanguage = (string)comboBoxSourceLanguages.SelectedItem;
-			if (selectedSourceLanguage == SourceLanguageNameAutoDetect)
-			{
-				// if the source language name hasn't been configured yet, the we don't want to allow
-				//	selection (or loading) of the comboboxes yet
-				comboBoxSourceScripts.Enabled = false;
-				return;
-			}
-			else
-				comboBoxSourceScripts.Enabled = true;
-
-			_sourceScriptLanguagesInitialized = true;
-
-			var possibleSourceScripts = transliterationsPossible.FirstOrDefault(t => t.ToString().Contains(selectedSourceLanguage))?
-																.ScriptsSupported
-																.Select(s => s.ToString())
-																.ToArray();
-
-			comboBoxSourceScripts.Items.Clear();
-			comboBoxSourceScripts.Items.AddRange(possibleSourceScripts);
-			comboBoxSourceScripts.SelectedIndex = 0;
+			textBoxSourceScript.Text = ((relevantSelectedItem == null) || (relevantSelectedItem == SourceLanguageNameAutoDetect) ||
+										(relevantSelectedItem == TargetLanguageNameMustBeConfigure))
+										? null
+										: transliterationsPossible.FirstOrDefault(t => t.ToString().Contains(relevantSelectedItem))?
+																  .ScriptsSupported
+																  .FirstOrDefault(s => String.IsNullOrEmpty(currentTargetScript) ||
+																					   !s.ToString().Contains(currentTargetScript))?
+																  .ToString();
 		}
 
 		private void InitializeTargetScriptLanguages()
@@ -295,51 +309,64 @@ namespace SilEncConverters40
 			if (_targetScriptLanguagesInitialized)
 				return;
 
-			// the scripts we can transliterate *from* are dependent on the target language and the source script
-			//  (or just the target language if doing TranslateWithTransliterate)
-			var selectedTargetLanguage = (string)comboBoxTargetLanguages.SelectedItem;
-			if (selectedTargetLanguage == TargetLanguageNameMustBeConfigure)
-			{
-				// if the target language name hasn't been configured yet, the we don't want to allow
-				//	selection (or even loading) of the script combo boxes yet
-				comboBoxTargetScripts.Enabled = false;
-				return;
-			}
+			// remove any previous contents
+			comboBoxTargetScripts.Items.Clear();
 
-			comboBoxTargetScripts.Enabled = true;
-
-			// the scripts we can transliterate *to* are dependent on the source script also (for plain Transliterate)
+			// the scripts we can transliterate *to* are dependent on the transduction type...
 			string[] possibleTargetScripts;
 			switch (transductionSelected)
 			{
 				case TransductionType.Transliterate:
-					var selectedSourceScriptLanguage = (string)comboBoxSourceScripts.SelectedItem;
-					comboBoxTargetScripts.Enabled = true;
-					possibleTargetScripts = transliterationsPossible.FirstOrDefault(t => t.ToString().Contains(selectedTargetLanguage))?
-																	.ScriptsSupported
-																	.FirstOrDefault(s => s.ToString().Contains(selectedSourceScriptLanguage))?
-																	.ToScripts
-																	.Select(s => s.ToString())
-																	.ToArray();
-					break;
-				case TransductionType.TranslateWithTransliterate:
-					possibleTargetScripts = transliterationsPossible.FirstOrDefault(t => t.ToString().Contains(selectedTargetLanguage))?
+					// for the Transliterate case, it's dependent on the source language
+					var sourceLanguage = (string)comboBoxSourceLanguages.SelectedItem;
+					if ((sourceLanguage == null) || (sourceLanguage == SourceLanguageNameAutoDetect))
+					{
+						// if the source language name hasn't been configured yet, the we don't want to allow
+						//	selection (or even loading) of the target script combo box yet
+						comboBoxTargetScripts.Enabled = false;
+						return;
+					}
+
+					// for Transliterate, the target script options are all of the toScripts in the source language's Translateration
+					possibleTargetScripts = transliterationsPossible.FirstOrDefault(t => t.ToString().Contains(sourceLanguage))?
 																	.ScriptsSupported
 																	.SelectMany(s => s.ToScripts.Select(ts => ts.ToString()))
 																	.ToArray();
-
-					// TODO: probably want to remove the 1st entry (no need to do transliteration to self script)
 					break;
+
+				case TransductionType.TranslateWithTransliterate:
+					// for the TranslateWithTransliterate case, it's dependent on the target language
+					var targetLanguage = (string)comboBoxTargetLanguages.SelectedItem;
+					if ((targetLanguage == null) || (targetLanguage == TargetLanguageNameMustBeConfigure))
+					{
+						// if the target language name hasn't been configured yet, the we don't want to allow
+						//	selection (or even loading) of the target script combo box yet
+						comboBoxTargetScripts.Enabled = false;
+						return;
+					}
+
+					// for TranslateWithTransliterate, the only option for target script is the toScripts of the 1st script
+					possibleTargetScripts = transliterationsPossible.FirstOrDefault(t => t.ToString().Contains(targetLanguage))?
+																	.ScriptsSupported
+																	.FirstOrDefault()?
+																	.ToScripts.Select(ts => ts.ToString())
+																	.ToArray();
+					break;
+
 				default:
 					System.Diagnostics.Debug.Fail($"Not expecting a transductionSelected of {transductionSelected} here!");
 					return;
 			}
 
-			_targetScriptLanguagesInitialized = true;
+			// enable it and load it with all but the 1st of the supported scripts for the source language (the 1st one
+			//	being the native one for the language, so not a valid target script (there'd be nothing to do)
+			// not every language supports transliteration
+			if (possibleTargetScripts == null)
+				return;
 
-			comboBoxTargetScripts.Items.Clear();
 			comboBoxTargetScripts.Items.AddRange(possibleTargetScripts);
-			comboBoxTargetScripts.SelectedIndex = possibleTargetScripts.Length - 1;
+			comboBoxTargetScripts.SelectedIndex = 0;
+			comboBoxTargetScripts.Enabled = _targetScriptLanguagesInitialized = true;
 		}
 
 		private void radioButtonTranslate_CheckedChanged(object sender, EventArgs e)
@@ -347,16 +374,17 @@ namespace SilEncConverters40
 			if (!(sender as RadioButton).Checked)
 				return; // means it was unchecked
 
+			transductionSelected = TransductionType.Translate;
+
 			comboBoxTargetLanguages.Visible = labelTargetLanguage.Visible = true;
 
 			InitializeSourceAndTargetLanguages(initializeTargetLanguageAlso: true);
 
-			comboBoxSourceScripts.Visible = comboBoxTargetScripts.Visible =
-				labelSourceScript.Visible = labelTargetScript.Visible = false;
+			_targetScriptLanguagesInitialized = comboBoxTargetScripts.Visible = labelTargetScript.Visible =
+				labelSourceScript.Visible = textBoxSourceScript.Visible = false;
 
-			comboBoxSourceScripts.SelectedItem = comboBoxTargetScripts.SelectedItem = null;
+			comboBoxTargetScripts.SelectedItem = textBoxSourceScript.Text = null;
 
-			transductionSelected = TransductionType.Translate;
 			IsModified = true;
 		}
 
@@ -365,18 +393,21 @@ namespace SilEncConverters40
 			if (!(sender as RadioButton).Checked)
 				return; // means it was unchecked
 
+			transductionSelected = TransductionType.TranslateWithTransliterate;
+
 			comboBoxTargetLanguages.Visible = labelTargetLanguage.Visible = true;
 
 			InitializeSourceAndTargetLanguages(initializeTargetLanguageAlso: true);
 
-			comboBoxTargetScripts.Visible = labelTargetScript.Visible = true;
+			InitializeSourceScript(comboBoxTargetLanguages.SelectedItem as string, null);
+
+			comboBoxTargetScripts.Visible = labelTargetScript.Visible =
+				labelSourceScript.Visible = textBoxSourceScript.Visible = true;
+
+			_targetScriptLanguagesInitialized = false;	// so it's recalculated
 
 			InitializeTargetScriptLanguages();
 
-			comboBoxSourceScripts.Visible = labelSourceScript.Visible = false;
-			comboBoxSourceScripts.SelectedItem = null;
-
-			transductionSelected = TransductionType.TranslateWithTransliterate;
 			IsModified = true;
 		}
 
@@ -385,19 +416,20 @@ namespace SilEncConverters40
 			if (!(sender as RadioButton).Checked)
 				return; // means it was unchecked
 
+			transductionSelected = TransductionType.Transliterate;
+
 			// for transliterate, we don't care about the target language
-			comboBoxTargetLanguages.Visible = labelTargetLanguage.Visible = false;
+			_targetScriptLanguagesInitialized = comboBoxTargetLanguages.Visible = labelTargetLanguage.Visible = false;
+			comboBoxTargetLanguages.SelectedItem = TargetLanguageNameMustBeConfigure;
 
 			InitializeSourceAndTargetLanguages(initializeTargetLanguageAlso: false);
 
-			comboBoxTargetScripts.Visible = comboBoxSourceScripts.Visible = 
-				labelTargetScript.Visible = labelSourceScript.Visible = true;
-			comboBoxSourceScripts.Enabled = false;	// not editable
+			comboBoxTargetScripts.Visible = labelTargetScript.Visible =
+				labelSourceScript.Visible = textBoxSourceScript.Visible = true;
 
-			InitializeSourceScriptLanguages();
+			InitializeSourceScript(comboBoxSourceLanguages.SelectedItem as string, null);
 			InitializeTargetScriptLanguages();
 
-			transductionSelected = TransductionType.Transliterate;
 			IsModified = true;
 		}
 
@@ -406,20 +438,23 @@ namespace SilEncConverters40
 			if (!(sender as RadioButton).Checked)
 				return; // means it was unchecked
 
+			transductionSelected = TransductionType.DictionaryLookup;
+
+			comboBoxTargetLanguages.Visible = labelTargetLanguage.Visible = true;
+
 			InitializeSourceAndTargetLanguages(initializeTargetLanguageAlso: true);
 
-			comboBoxSourceScripts.Visible = comboBoxTargetScripts.Visible =
-				labelSourceScript.Visible = labelTargetScript.Visible = false;
+			_targetScriptLanguagesInitialized = comboBoxTargetScripts.Visible = labelTargetScript.Visible =
+				labelSourceScript.Visible = textBoxSourceScript.Visible = false;
 
-			comboBoxSourceScripts.SelectedItem = comboBoxTargetScripts.SelectedItem = null;
+			comboBoxTargetScripts.SelectedItem = textBoxSourceScript.Text = null;
 
-			transductionSelected = TransductionType.DictionaryLookup;
 			IsModified = true;
 		}
 
 		private void comboBoxTargetLanguages_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			// we don't initialize the script language(s) unless a target language is selected and we're in one of the transliterate modes
+			// we don't initialize the script language(s) based on the target language changing unless we're in one of the transliterate modes
 			string selectedItem = (string)comboBoxTargetLanguages.SelectedItem;
 			if ((TargetLanguageNameMustBeConfigure == selectedItem) ||
 				(transductionSelected == TransductionType.Translate) ||
@@ -429,34 +464,68 @@ namespace SilEncConverters40
 			}
 
 			// reinitialize these so they get updated if/whenever the target language changes
-			_sourceScriptLanguagesInitialized = _targetScriptLanguagesInitialized = false;
-			if (transductionSelected == TransductionType.Transliterate)
-			{
-				InitializeSourceScriptLanguages();
-			}
-			else
-			{
-				InitializeTargetScriptLanguages();
-			}
+			InitializeSourceScriptBasedOnComboBoxValuesAndTransductionType();
+
+			_targetScriptLanguagesInitialized = false;
+			InitializeTargetScriptLanguages();
 
 			IsModified = true;
+		}
+
+		private void InitializeSourceScriptBasedOnComboBoxValuesAndTransductionType()
+		{
+			string relevantSelectedItem, possibleTargetScript = null;
+			if (transductionSelected == TransductionType.Transliterate)
+			{
+				relevantSelectedItem = (string)comboBoxSourceLanguages.SelectedItem;
+				possibleTargetScript = (string)comboBoxTargetScripts.SelectedItem;
+			}
+			else
+				relevantSelectedItem = (string)comboBoxTargetLanguages.SelectedItem;
+
+			InitializeSourceScript(relevantSelectedItem, possibleTargetScript);
 		}
 
 		private void comboBoxSourceLanguages_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			IsModified = true;
-		}
+			// we don't initialize the script language(s) based on the source language changing unless we're in the Transliterate mode
+			string selectedItem = (string)comboBoxSourceLanguages.SelectedItem;
+			if ((SourceLanguageNameAutoDetect == selectedItem) ||
+				(transductionSelected != TransductionType.Transliterate))
+			{
+				return;
+			}
 
-		private void comboBoxSourceScripts_SelectedIndexChanged(object sender, EventArgs e)
-		{
+			// reinitialize these so they get updated if/whenever the target language changes
 			_targetScriptLanguagesInitialized = false;
+
+			InitializeSourceScript(comboBoxSourceLanguages.SelectedItem as string, comboBoxTargetScripts.SelectedItem as string);
+
 			InitializeTargetScriptLanguages();
+
 			IsModified = true;
 		}
 
 		private void comboBoxTargetScripts_SelectedIndexChanged(object sender, EventArgs e)
 		{
+			if (transductionSelected == TransductionType.Transliterate)
+			{
+				// if we're doing transliterate, then if the target script is changed, it means we need to change the
+				//	source script also. As of now, now translation
+				InitializeSourceScript(comboBoxSourceLanguages.SelectedItem as string, comboBoxTargetScripts.SelectedItem as string);
+			}
 			IsModified = true;
+		}
+
+		private void buttonSetBingTranslateApiKey_Click(object sender, EventArgs e)
+		{
+			var newKey = Microsoft.VisualBasic.Interaction.InputBox(String.Format("Enter your Azure Translator Api Key:{0}see https://docs.microsoft.com/en-us/azure/cognitive-services/translator/quickstart-translator",
+														Environment.NewLine));
+			if (!String.IsNullOrEmpty(newKey))
+			{
+				Properties.Settings.Default.AzureTranslatorKey = newKey;
+				Properties.Settings.Default.Save();
+			}
 		}
 	}
 }

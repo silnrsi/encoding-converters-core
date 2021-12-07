@@ -1007,7 +1007,7 @@ namespace SilEncConverters40
             return eType;
         }
 
-		public static void LogExceptionMessage(string className, Exception ex)
+		public static string LogExceptionMessage(string className, Exception ex)
 		{
 			string msg = "Could not call script: " + ex.Message;
 			while (ex.InnerException != null)
@@ -1017,6 +1017,7 @@ namespace SilEncConverters40
 			}
 
 			Util.DebugWriteLine(className, msg);
+			return msg;
 		}
 		#endregion Internal Helpers
 
