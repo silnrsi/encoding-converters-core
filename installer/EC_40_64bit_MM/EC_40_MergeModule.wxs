@@ -221,7 +221,13 @@
                     </File>
                 </Component>
                 <Component Id="SilEncConverters40.dll" Guid="A1F02AE5-132B-4025-B744-478C44CBBFA2">
-                    <Class Id="{0162B174-E479-44CD-BEE8-CFA9BC06BF92}" Context="InprocServer32" Description="SilEncConverters40.EncConverters" ThreadingModel="both" ForeignServer="mscoree.dll">
+					<Class Id="{73742D80-5508-4500-9FAA-AF82E4756C35}" Context="InprocServer32" Description="SilEncConverters40.BingTranslatorEncConverter" ThreadingModel="both" ForeignServer="mscoree.dll">
+						<ProgId Id="SilEncConverters40.BingTranslatorEncConverter" Description="SilEncConverters40.BingTranslatorEncConverter" />
+					</Class>
+					<Class Id="{A2AF4AB1-CBDD-419F-9713-9332D51AB75B}" Context="InprocServer32" Description="SilEncConverters40.BingTranslatorEncConverterConfig" ThreadingModel="both" ForeignServer="mscoree.dll">
+						<ProgId Id="SilEncConverters40.BingTranslatorEncConverterConfig" Description="SilEncConverters40.BingTranslatorEncConverterConfig" />
+					</Class>
+					<Class Id="{0162B174-E479-44CD-BEE8-CFA9BC06BF92}" Context="InprocServer32" Description="SilEncConverters40.EncConverters" ThreadingModel="both" ForeignServer="mscoree.dll">
                         <ProgId Id="SilEncConverters40.EncConverters" Description="SilEncConverters40.EncConverters" />
                     </Class>
                     <Class Id="{0A3C9F1C-0DB6-384F-B01A-B17C4D23D79F}" Context="InprocServer32" Description="SilEncConverters40.EcTextBox" ThreadingModel="both" ForeignServer="mscoree.dll">
@@ -279,7 +285,25 @@
                         <ProgId Id="SilEncConverters40.MetaCmpdAutoConfigDialog" Description="SilEncConverters40.MetaCmpdAutoConfigDialog" />
                     </Class>
                     <File Id="SilEncConverters40.dll" KeyPath="yes" Source="..\..\output\x64\release\SilEncConverters40.dll"/>
-                    <RegistryValue Root="HKCR" Key="CLSID\{0162B174-E479-44CD-BEE8-CFA9BC06BF92}\Implemented Categories\{62C8FE65-4EBB-45e7-B440-6E39B2CDBF29}" Value="" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{73742D80-5508-4500-9FAA-AF82E4756C35}\Implemented Categories\{62C8FE65-4EBB-45e7-B440-6E39B2CDBF29}" Value="" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{73742D80-5508-4500-9FAA-AF82E4756C35}\InprocServer32\4.0.0.0" Name="Class" Value="SilEncConverters40.BingTranslatorEncConverter" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{73742D80-5508-4500-9FAA-AF82E4756C35}\InprocServer32\4.0.0.0" Name="Assembly" Value="SilEncConverters40, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{73742D80-5508-4500-9FAA-AF82E4756C35}\InprocServer32\4.0.0.0" Name="RuntimeVersion" Value="v4.0.30319" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{73742D80-5508-4500-9FAA-AF82E4756C35}\InprocServer32\4.0.0.0" Name="CodeBase" Value="file:///[#SilEncConverters40.dll]" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{73742D80-5508-4500-9FAA-AF82E4756C35}\InprocServer32" Name="Class" Value="SilEncConverters40.BingTranslatorEncConverter" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{73742D80-5508-4500-9FAA-AF82E4756C35}\InprocServer32" Name="Assembly" Value="SilEncConverters40, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{73742D80-5508-4500-9FAA-AF82E4756C35}\InprocServer32" Name="RuntimeVersion" Value="v4.0.30319" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{73742D80-5508-4500-9FAA-AF82E4756C35}\InprocServer32" Name="CodeBase" Value="file:///[#SilEncConverters40.dll]" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{A2AF4AB1-CBDD-419F-9713-9332D51AB75B}\Implemented Categories\{62C8FE65-4EBB-45e7-B440-6E39B2CDBF29}" Value="" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{A2AF4AB1-CBDD-419F-9713-9332D51AB75B}\InprocServer32\4.0.0.0" Name="Class" Value="SilEncConverters40.BingTranslatorEncConverterConfig" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{A2AF4AB1-CBDD-419F-9713-9332D51AB75B}\InprocServer32\4.0.0.0" Name="Assembly" Value="SilEncConverters40, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{A2AF4AB1-CBDD-419F-9713-9332D51AB75B}\InprocServer32\4.0.0.0" Name="RuntimeVersion" Value="v4.0.30319" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{A2AF4AB1-CBDD-419F-9713-9332D51AB75B}\InprocServer32\4.0.0.0" Name="CodeBase" Value="file:///[#SilEncConverters40.dll]" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{A2AF4AB1-CBDD-419F-9713-9332D51AB75B}\InprocServer32" Name="Class" Value="SilEncConverters40.BingTranslatorEncConverterConfig" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{A2AF4AB1-CBDD-419F-9713-9332D51AB75B}\InprocServer32" Name="Assembly" Value="SilEncConverters40, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{A2AF4AB1-CBDD-419F-9713-9332D51AB75B}\InprocServer32" Name="RuntimeVersion" Value="v4.0.30319" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{A2AF4AB1-CBDD-419F-9713-9332D51AB75B}\InprocServer32" Name="CodeBase" Value="file:///[#SilEncConverters40.dll]" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{0162B174-E479-44CD-BEE8-CFA9BC06BF92}\Implemented Categories\{62C8FE65-4EBB-45e7-B440-6E39B2CDBF29}" Value="" Type="string" Action="write" />
                     <RegistryValue Root="HKCR" Key="CLSID\{0162B174-E479-44CD-BEE8-CFA9BC06BF92}\InprocServer32\4.0.0.0" Name="Class" Value="SilEncConverters40.EncConverters" Type="string" Action="write" />
                     <RegistryValue Root="HKCR" Key="CLSID\{0162B174-E479-44CD-BEE8-CFA9BC06BF92}\InprocServer32\4.0.0.0" Name="Assembly" Value="SilEncConverters40, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" Type="string" Action="write" />
                     <RegistryValue Root="HKCR" Key="CLSID\{0162B174-E479-44CD-BEE8-CFA9BC06BF92}\InprocServer32\4.0.0.0" Name="RuntimeVersion" Value="v4.0.30319" Type="string" Action="write" />
@@ -461,13 +485,15 @@
                             <Interface Id="{0D196FF3-5C04-3795-B3B9-3E1344F6F3EC}" Name="_SpellFixerByReflection" ProxyStubClassId32="{00020424-0000-0000-C000-000000000046}" />
                             <Interface Id="{0D423AEA-3380-3DD6-85F3-0AE1D765AAA8}" Name="_EncConverterPlugins" ProxyStubClassId32="{00020424-0000-0000-C000-000000000046}" />
                             <Interface Id="{1069857B-350B-3C9C-9CDF-92AFAEE78EA3}" Name="_FallbackEncConverter" ProxyStubClassId32="{00020424-0000-0000-C000-000000000046}" />
-                            <Interface Id="{12D56241-4819-3CCA-B7F9-4DF7768F0532}" Name="_TecAutoConfigDialog" ProxyStubClassId32="{00020424-0000-0000-C000-000000000046}" />
+							<Interface Id="{B14C265D-404B-49B6-A627-8686065C0A3B}" Name="_BingTranslatorEncConverter" ProxyStubClassId32="{00020424-0000-0000-C000-000000000046}" />
+							<Interface Id="{12D56241-4819-3CCA-B7F9-4DF7768F0532}" Name="_TecAutoConfigDialog" ProxyStubClassId32="{00020424-0000-0000-C000-000000000046}" />
                             <Interface Id="{19403C00-D997-39A5-93B4-93E905FFDF43}" Name="_CmpdEncConverterConfig" ProxyStubClassId32="{00020424-0000-0000-C000-000000000046}" />
                             <Interface Id="{3F65B586-C917-321A-A563-CA0B3D81083D}" Name="_SelectConverter" ProxyStubClassId32="{00020424-0000-0000-C000-000000000046}" />
                             <Interface Id="{40CEA31E-5DD7-3E66-8217-0D305C090A1A}" Name="_EncConverter" ProxyStubClassId32="{00020424-0000-0000-C000-000000000046}" />
                             <Interface Id="{45F4A60E-0244-3664-9A97-D80D7E8FE430}" Name="_MetaCmpdAutoConfigDialog" ProxyStubClassId32="{00020424-0000-0000-C000-000000000046}" />
                             <Interface Id="{48022EFB-200B-3C32-A6F7-E4F8DFAC11BF}" Name="_FallbackEncConverterConfig" ProxyStubClassId32="{00020424-0000-0000-C000-000000000046}" />
-                            <Interface Id="{5C23AECB-78F5-35DF-AB3C-C1BAFB382D8A}" Name="_ECPluginDetailsRowChangeEvent" ProxyStubClassId32="{00020424-0000-0000-C000-000000000046}" />
+							<Interface Id="{CF5DAABA-F025-4557-8031-A1F1394BB0BF}" Name="_BingTranslatorEncConverterConfig" ProxyStubClassId32="{00020424-0000-0000-C000-000000000046}" />
+							<Interface Id="{5C23AECB-78F5-35DF-AB3C-C1BAFB382D8A}" Name="_ECPluginDetailsRowChangeEvent" ProxyStubClassId32="{00020424-0000-0000-C000-000000000046}" />
                             <Interface Id="{6504711E-E829-3C32-9FCE-FEEA3EF5012E}" Name="_ECException" ProxyStubClassId32="{00020424-0000-0000-C000-000000000046}" />
                             <Interface Id="{6780F7C5-7136-3A76-B626-D27970A49F4D}" Name="_ECPluginDetailsRowChangeEventHandler" ProxyStubClassId32="{00020424-0000-0000-C000-000000000046}" />
                             <Interface Id="{6CE13449-3D58-3BF9-BF49-2FD68F302562}" Name="_ExeEncConverter" ProxyStubClassId32="{00020424-0000-0000-C000-000000000046}" />
@@ -489,7 +515,8 @@
                             <Interface Id="{E15BF28A-0D43-3873-A2D2-A496D2AB85E8}" Name="_DirectableEncConverterDeserializationBinder" ProxyStubClassId32="{00020424-0000-0000-C000-000000000046}" />
                             <Interface Id="{E5E9D505-BCF2-38CD-8F8D-CC03AA2AA6DD}" Name="_CpEncConverterConfig" ProxyStubClassId32="{00020424-0000-0000-C000-000000000046}" />
                             <Interface Id="{E689642F-2ADC-3D0A-8D4D-98687FB94DA7}" Name="_FallbackAutoConfigDialog" ProxyStubClassId32="{00020424-0000-0000-C000-000000000046}" />
-                            <Interface Id="{FB89216B-03BE-30FC-B2FD-1AD0A6B75F7A}" Name="_TecEncConverterConfig" ProxyStubClassId32="{00020424-0000-0000-C000-000000000046}" />
+							<Interface Id="{1ABEDB65-35ED-4C07-860C-7D472F247C28}" Name="_BingTranslatorAutoConfigDialog" ProxyStubClassId32="{00020424-0000-0000-C000-000000000046}" />
+							<Interface Id="{FB89216B-03BE-30FC-B2FD-1AD0A6B75F7A}" Name="_TecEncConverterConfig" ProxyStubClassId32="{00020424-0000-0000-C000-000000000046}" />
                         </TypeLib>
                     </File>
                 </Component>
@@ -511,7 +538,10 @@
                 <Component Id="WebView2Loader.dll" Guid="{7BD04F19-E8FB-4777-8268-70710C58AEA3}">
                     <File Id="WebView2Loader.dll" Name="WebView2Loader.dll" KeyPath="yes" Source="..\..\output\x64\release\runtimes\win-x64\native\WebView2Loader.dll"/>
                 </Component>
-                <Directory Id="ECFolder" Name="EC">
+				<Component Id="Newtonsoft.Json.dll" Guid="{5FA81FB4-A4E2-4A7E-8E3F-06CBD0169C7A}">
+					<File Id="Newtonsoft.Json.dll" Name="Newtonsoft.Json.dll" KeyPath="yes" Source="..\..\output\x64\release\Newtonsoft.Json.dll"/>
+				</Component>
+				<Directory Id="ECFolder" Name="EC">
                     <Directory Id="PluginsFolder" Name="Plugins">
                         <Component Id="EC4.0.0.0PluginDetails.xml" Guid="579194FE-37AA-47a3-A089-B0F1F17415FB">
                             <File Id="EC4.0.0.0PluginDetails.xml" Name="EC 4.0.0.0 Plugin Details.xml" KeyPath="yes" Source="..\..\redist\EC\Plugins\EC 4.0.0.0 Plugin Details.xml"/>
@@ -723,7 +753,29 @@
                                 </Component>
                             </Directory>
 
-                            <Component Id="CantReadMhtFiles.htm" Guid="{2EA57953-4B0C-4A5D-A887-E9E9D100D20B}">
+							<!--Bing Translator Help-->
+							<Component Id="BingTranslatorHelp.htm" Guid="{547BF037-BFFC-4DB4-B4DC-5EE8D48767AE}">
+								<File Id="BingTranslatorHelp.htm" Name="Bing_Translator_Plug-in_About_box.htm" KeyPath="yes" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box.htm"/>
+								<Shortcut Id="BingTranslatorHelpHtm" Directory="SILConvHelp" Name="Bing Translator Plug-in Help" Description="View help document for the Bing Translator Plug-in" IconIndex="0" Show="normal" Target="[#BingTranslatorHelp.htm]" WorkingDirectory="Help" Advertise="no" />
+							</Component>
+							<Directory Id="Bing_Translator_Plugin_About_box" Name="Bing_Translator_Plug-in_About_box_files">
+								<Component Id="Bing_Translator_Plugin_About_boxComp" Guid="{383E7F8F-5BA0-43F8-A1E8-353C998FFEFB}">
+									<File Id="bt_filelist.xml" Name="filelist.xml" KeyPath="yes" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\filelist.xml"/>
+									<File Id="bt_colorschememapping.xml" Name="colorschememapping.xml" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\colorschememapping.xml"/>
+									<File Id="bt_themedata.thmx" Name="themedata.thmx" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\themedata.thmx"/>
+									<File Id="bt_header.htm" Name="header.htm" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\header.htm"/>
+									<File Id="bt_image001.png" Name="image001.png" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\image001.png"/>
+									<File Id="bt_image002.jpg" Name="image002.jpg" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\image002.jpg"/>
+									<File Id="bt_image003.jpg" Name="image003.jpg" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\image003.jpg"/>
+									<File Id="bt_image004.png" Name="image004.png" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\image004.png"/>
+									<File Id="bt_image006.jpg" Name="image006.jpg" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\image006.jpg"/>
+									<File Id="bt_image008.png" Name="image008.png" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\image008.png"/>
+									<File Id="bt_item0013.xml" Name="item0013.xml" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\item0013.xml"/>
+									<File Id="bt_props014.xml" Name="props014.xml" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\props014.xml"/>
+								</Component>
+							</Directory>
+
+							<Component Id="CantReadMhtFiles.htm" Guid="{2EA57953-4B0C-4A5D-A887-E9E9D100D20B}">
                                 <File Id="CantReadMhtFiles.htm" Name="CantReadMhtFiles.htm" ReadOnly="yes" KeyPath="yes" Source="..\..\redist\Help\CantReadMhtFiles.htm"/>
                             </Component>
                         </Directory>

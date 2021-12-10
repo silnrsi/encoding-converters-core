@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Runtime.InteropServices;   // for the class attributes
 using System.Text;                      // for ASCIIEncoding
@@ -29,7 +30,7 @@ namespace SilEncConverters40
 		//  resource, and enter their own key in the file (or the UI to have us set it in the file) and get their own 2E6 chars free
 		//	(or pay for as much as they want)
 		// see https://docs.microsoft.com/en-us/azure/cognitive-services/translator/quickstart-translator
-		private static readonly string subscriptionKey = Properties.Settings.Default.AzureTranslatorKey;
+		public static string AzureTranslatorSubscriptionKey = Properties.Settings.Default.AzureTranslatorKey;
 		private static readonly string endpointTranslator = Properties.Settings.Default.AzureTranslatorTextTranslationEndpoint;
 		private static readonly string endpointCapabilities = $"{endpointTranslator}languages?api-version=3.0";
 
@@ -63,7 +64,10 @@ namespace SilEncConverters40
 		#region Initialization
 		public BingTranslatorEncConverter() : base(typeof(BingTranslatorEncConverter).FullName,EncConverters.strTypeSILBingTranslator)
         {
-        }
+			// this is needed to be able to use the Azure Translator (https call) from Word. If you don't have it, you just get this error:
+			//	Unable to read data from the transport connection: An existing connection was forcibly closed by the remote host
+			ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+		}
 
 		public override void Initialize(string converterName, string converterSpec,
 			ref string lhsEncodingID, ref string rhsEncodingID, ref ConvType conversionType,
@@ -77,24 +81,32 @@ namespace SilEncConverters40
                 ref conversionType, ref processTypeFlags, codePageInput, codePageOutput, bAdding );
 
 			if (!ParseConverterIdentifier(converterSpec, out transductionRequested,
-										  out fromLanguage, out toLanguage, out fromScript, out toScript))
+										  ref fromLanguage, out toLanguage, out fromScript, out toScript))
 			{
 				throw new ApplicationException($"{CstrDisplayName} not properly configured! converterName: {converterName}");
 			}
 
+			if (conversionType == ConvType.Unknown)
+				conversionType = ConvType.Unicode_to_Unicode;
+
 			// I'm assuming that we'd have to/want to set up a different one to go the other direction
 			m_eConversionType = conversionType = MakeUniDirectional(conversionType);
+
+			if (String.IsNullOrEmpty(lhsEncodingID))
+				lhsEncodingID = m_strLhsEncodingID = EncConverters.strDefUnicodeEncoding;
+			if (String.IsNullOrEmpty(rhsEncodingID))
+				rhsEncodingID = m_strRhsEncodingID = EncConverters.strDefUnicodeEncoding;
 
 			Util.DebugWriteLine(this, "END");
 		}
 
 		internal static bool ParseConverterIdentifier(string converterSpec,
 			out TransductionType transductionRequested,
-			out string fromLanguage, out string toLanguage,
+			ref string fromLanguage, out string toLanguage,
 			out string fromScript, out string toScript)
 		{
 			transductionRequested = TransductionType.Unknown;
-			fromLanguage = toLanguage = fromScript = toScript = null;
+			toLanguage = fromScript = toScript = null;
 
 			string[] astrs = converterSpec.Split(new[] { ';' });
 
@@ -105,7 +117,9 @@ namespace SilEncConverters40
 			if (!Enum.TryParse(astrs[0], out transductionRequested))
 				return false;
 
-			fromLanguage = astrs[1];
+			if (!String.IsNullOrEmpty(astrs[1]))
+				fromLanguage = astrs[1];	// don't change it (from Auto-Detect) if it was saved as empty space
+
 			toLanguage = astrs[2];
 			fromScript = (astrs.Length >= 4) ? astrs[3] : null;
 			toScript = (astrs.Length >= 5) ? astrs[4] : null;
@@ -204,7 +218,7 @@ namespace SilEncConverters40
 			{
 				// Input and output languages are defined as parameters.
 				var routeSuffix = route;
-				var body = new object[] { new { Text = strInput } };
+				var body = new object[] { new { Text = CleanDictionaryLookupInputString(strInput) } };
 				var requestBody = JsonConvert.SerializeObject(body);
 
 				using (var client = new HttpClient())
@@ -214,7 +228,7 @@ namespace SilEncConverters40
 					request.Method = HttpMethod.Post;
 					request.RequestUri = new Uri(endpointTranslator + routeSuffix);
 					request.Content = new StringContent(requestBody, Encoding.UTF8, "application/json");
-					request.Headers.Add("Ocp-Apim-Subscription-Key", subscriptionKey);
+					request.Headers.Add("Ocp-Apim-Subscription-Key", AzureTranslatorSubscriptionKey);
 					request.Headers.Add("Ocp-Apim-Subscription-Region", location);
 
 					// Send the request and get response.
@@ -235,33 +249,59 @@ namespace SilEncConverters40
 			}
 		}
 
+		private string CleanDictionaryLookupInputString(string strInput)
+		{
+			// for dictionary lookup, make sure there's only a single word (or the lookup will return no translations)
+			if (transductionRequested == TransductionType.DictionaryLookup)
+			{
+				strInput = strInput?.Trim();
+				var nIndex = strInput?.IndexOf(' ');
+				if (nIndex > 0)
+					strInput = strInput.Substring(0, (int)nIndex);
+			}
+
+			return strInput;
+		}
+
 		private string HarvestResult(string jsonResult)
 		{
 			JArray json = JArray.Parse(jsonResult);
-			string path = null;
+			string path = null, output = null;
 			switch (transductionRequested)
 			{
 				case TransductionType.Translate:
-					path = $"$..translations[?(@.to == '{toLanguage}')].text";
-					return json.SelectToken(path)?.ToString();
+					output = ExtractTranslation(json);
+					break;
 				case TransductionType.TranslateWithTransliterate:
 					path = $"$..translations[?(@.to == '{toLanguage}')].transliteration.text";
-					return json.SelectToken(path)?.ToString();
+					output = json.SelectToken(path)?.ToString();
+
+					// not all languages support Transliteration. If this one doesn't, then see if simple 'Translation' works
+					if (String.IsNullOrEmpty(output))
+						output = ExtractTranslation(json);
+					break;
 				case TransductionType.Transliterate:
 					path = $"[?(@.script == '{toScript}')].text";
-					return json.SelectToken(path)?.ToString();
+					output = json.SelectToken(path)?.ToString();
+					break;
 				case TransductionType.DictionaryLookup:
 					path = "$..translations[?(@displayTarget != null)].displayTarget";
 					var translations = json.SelectTokens(path)?.ToList();
-					var retval = (translations.Count == 0)
-									? String.Empty
-									: (translations.Count == 1)
-										? translations.First().ToString()
-										: translations.Aggregate($"%{translations.Count}%", (c, n) => { return c + $"{n}%"; });
-					return retval;
-				default:
-					return null;
+					output = (translations.Count == 0)
+								? String.Empty
+								: (translations.Count == 1)
+									? translations.First().ToString()
+									: translations.Aggregate($"%{translations.Count}%", (c, n) => { return c + $"{n}%"; });
+					break;
 			};
+			return output ?? String.Empty;
+		}
+
+		private string ExtractTranslation(JArray json)
+		{
+			var path = $"$..translations[?(@.to == '{toLanguage}')].text";
+			var output = json.SelectToken(path)?.ToString();
+			return output;
 		}
 
 		#endregion Abstract Base Class Overrides

@@ -44,9 +44,9 @@ namespace SilEncConverters40
             this.comboBoxTargetLanguages = new System.Windows.Forms.ComboBox();
             this.labelTargetScript = new System.Windows.Forms.Label();
             this.comboBoxTargetScripts = new System.Windows.Forms.ComboBox();
-            this.buttonSetBingTranslateApiKey = new System.Windows.Forms.Button();
             this.labelSourceScript = new System.Windows.Forms.Label();
             this.textBoxSourceScript = new System.Windows.Forms.TextBox();
+            this.buttonSetBingTranslateApiKey = new System.Windows.Forms.Button();
             this.openFileDialogBrowse = new System.Windows.Forms.OpenFileDialog();
             this.tabControl.SuspendLayout();
             this.tabPageSetup.SuspendLayout();
@@ -115,7 +115,8 @@ namespace SilEncConverters40
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 50F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 50F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 50F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(596, 394);
             this.tableLayoutPanel1.TabIndex = 1;
             // 
@@ -245,17 +246,6 @@ namespace SilEncConverters40
             this.comboBoxTargetScripts.TabIndex = 13;
             this.comboBoxTargetScripts.SelectedIndexChanged += new System.EventHandler(this.comboBoxTargetScripts_SelectedIndexChanged);
             // 
-            // buttonSetBingTranslateApiKey
-            // 
-            this.buttonSetBingTranslateApiKey.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonSetBingTranslateApiKey.Location = new System.Drawing.Point(100, 368);
-            this.buttonSetBingTranslateApiKey.Name = "buttonSetBingTranslateApiKey";
-            this.buttonSetBingTranslateApiKey.Size = new System.Drawing.Size(214, 23);
-            this.buttonSetBingTranslateApiKey.TabIndex = 14;
-            this.buttonSetBingTranslateApiKey.Text = "Enter your own Azure Translate Api Key";
-            this.buttonSetBingTranslateApiKey.UseVisualStyleBackColor = true;
-            this.buttonSetBingTranslateApiKey.Click += new System.EventHandler(this.buttonSetBingTranslateApiKey_Click);
-            // 
             // labelSourceScript
             // 
             this.labelSourceScript.Anchor = System.Windows.Forms.AnchorStyles.Right;
@@ -274,6 +264,17 @@ namespace SilEncConverters40
             this.textBoxSourceScript.ReadOnly = true;
             this.textBoxSourceScript.Size = new System.Drawing.Size(493, 20);
             this.textBoxSourceScript.TabIndex = 11;
+            // 
+            // buttonSetBingTranslateApiKey
+            // 
+            this.buttonSetBingTranslateApiKey.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.buttonSetBingTranslateApiKey.Location = new System.Drawing.Point(100, 368);
+            this.buttonSetBingTranslateApiKey.Name = "buttonSetBingTranslateApiKey";
+            this.buttonSetBingTranslateApiKey.Size = new System.Drawing.Size(214, 23);
+            this.buttonSetBingTranslateApiKey.TabIndex = 14;
+            this.buttonSetBingTranslateApiKey.Text = "Enter your own Azure Translate Api Key";
+            this.buttonSetBingTranslateApiKey.UseVisualStyleBackColor = true;
+            this.buttonSetBingTranslateApiKey.Click += new System.EventHandler(this.buttonSetBingTranslateApiKey_Click);
             // 
             // openFileDialogBrowse
             // 

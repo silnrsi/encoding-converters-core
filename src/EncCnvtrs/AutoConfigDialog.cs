@@ -543,6 +543,7 @@ namespace SilEncConverters40
                 lProcessTypes |= (checkBoxICURegularExpression.Checked) ? (int)ProcessTypeFlags.ICURegularExpression : 0;
                 lProcessTypes |= (checkBoxPythonScript.Checked) ? (int)ProcessTypeFlags.PythonScript : 0;
                 lProcessTypes |= (checkBoxPerlExpression.Checked) ? (int)ProcessTypeFlags.PerlExpression : 0;
+                lProcessTypes |= (checkBoxTranslation.Checked) ? (int)ProcessTypeFlags.Translation : 0;
                 lProcessTypes |= (checkBoxSpare1.Checked) ? (int)ProcessTypeFlags.UserDefinedSpare1 : 0;
                 lProcessTypes |= (checkBoxSpare2.Checked) ? (int)ProcessTypeFlags.UserDefinedSpare2 : 0;
                 return lProcessTypes;
@@ -706,6 +707,7 @@ namespace SilEncConverters40
                             checkBoxICURegularExpression.Checked = ((ProcessType & (int)ProcessTypeFlags.ICURegularExpression) != 0);
                             checkBoxPythonScript.Checked = ((ProcessType & (int)ProcessTypeFlags.PythonScript) != 0);
                             checkBoxPerlExpression.Checked = ((ProcessType & (int)ProcessTypeFlags.PerlExpression) != 0);
+							checkBoxTranslation.Checked = ((ProcessType & (int)ProcessTypeFlags.Translation) != 0);
                             checkBoxSpare1.Checked = ((ProcessType & (int)ProcessTypeFlags.UserDefinedSpare1) != 0);
                             checkBoxSpare2.Checked = ((ProcessType & (int)ProcessTypeFlags.UserDefinedSpare2) != 0);
                         }
@@ -777,7 +779,10 @@ namespace SilEncConverters40
                     aEC.DirectionForward = !checkBoxTestReverse.Checked;
                     //ecTextBoxOutput.Text = aEC.Convert(ecTextBoxInput.Text);
                     string result = aEC.Convert(ecTextBoxInput.Text);
-                    Util.DebugWriteLine(this, "Putting in text box: '" + result + "'");
+					if (String.IsNullOrEmpty(result))
+						result = "<empty result returned>";
+
+					Util.DebugWriteLine(this, "Putting in text box: '" + result + "'");
                     ecTextBoxOutput.Text = result;
                     //ecTextBoxOutput.Text = "Hello there!";
                 }

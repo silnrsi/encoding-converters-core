@@ -1,4 +1,5 @@
 using System;
+using System.Net;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -48,9 +49,12 @@ namespace SilEncConverters40
         public TechHindiSiteEncConverter()
             : base(typeof(TechHindiSiteEncConverter).FullName, CstrImplementationType)
         {
-        }
+			// this was needed for the Bing Translator to hit the Azure Translator (https call) endpoint from Word. There's some permutation of
+			//  this enc Converter to not work from w/in word (which are html based)... so I'm just wondering if this is needed here too
+			ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+		}
 
-        public override void Initialize(string converterName, string converterSpec, ref string lhsEncodingID, ref string rhsEncodingID, ref ECInterfaces.ConvType conversionType, ref int processTypeFlags, int codePageInput, int codePageOutput, bool bAdding)
+		public override void Initialize(string converterName, string converterSpec, ref string lhsEncodingID, ref string rhsEncodingID, ref ECInterfaces.ConvType conversionType, ref int processTypeFlags, int codePageInput, int codePageOutput, bool bAdding)
         {
             base.Initialize(converterName, converterSpec, ref lhsEncodingID, ref rhsEncodingID, ref conversionType, ref processTypeFlags, codePageInput, codePageOutput, bAdding);
 
