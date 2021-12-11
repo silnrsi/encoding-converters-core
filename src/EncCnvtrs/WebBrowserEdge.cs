@@ -67,7 +67,7 @@ namespace SilEncConverters40
 				}
 				catch (Exception ex)
 				{
-					EncConverter.LogExceptionMessage("EdgeAvailableBrowserVersion", ex);
+					LogExceptionMessage("EdgeAvailableBrowserVersion", ex);
 					return null;
 				}
 			}

@@ -1008,19 +1008,6 @@ namespace SilEncConverters40
 
             return eType;
         }
-
-		public static string LogExceptionMessage(string className, Exception ex)
-		{
-			string msg = "Error occurred: " + ex.Message;
-			while (ex.InnerException != null)
-			{
-				ex = ex.InnerException;
-				msg += $"{Environment.NewLine}because: (InnerException): {ex.Message}";
-			}
-
-			Util.DebugWriteLine(className, msg);
-			return msg;
-		}
 		#endregion Internal Helpers
 
 		#region Virtual Functions implemented by subclasses

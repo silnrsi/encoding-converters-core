@@ -174,5 +174,18 @@ namespace SilEncConverters40
 				return Directory.GetParent(path).FullName;
 			}
 		}
+
+		public static string LogExceptionMessage(string className, Exception ex)
+		{
+			string msg = "Error occurred: " + ex.Message;
+			while (ex.InnerException != null)
+			{
+				ex = ex.InnerException;
+				msg += $"{Environment.NewLine}because: (InnerException): {ex.Message}";
+			}
+
+			Util.DebugWriteLine(className, msg);
+			return msg;
+		}
 	}
 }
