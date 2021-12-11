@@ -22,41 +22,5 @@ namespace SilEncConverters40.Properties {
                 return defaultInstance;
             }
         }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("18b3904a5b0641698a4149a2db81aa92")]
-        public string AzureTranslatorKey {
-            get {
-                return ((string)(this["AzureTranslatorKey"]));
-            }
-            set {
-                this["AzureTranslatorKey"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("global")]
-        public string AzureTranslatorRegion {
-            get {
-                return ((string)(this["AzureTranslatorRegion"]));
-            }
-            set {
-                this["AzureTranslatorRegion"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://api.cognitive.microsofttranslator.com/")]
-        public string AzureTranslatorTextTranslationEndpoint {
-            get {
-                return ((string)(this["AzureTranslatorTextTranslationEndpoint"]));
-            }
-            set {
-                this["AzureTranslatorTextTranslationEndpoint"] = value;
-            }
-        }
     }
 }

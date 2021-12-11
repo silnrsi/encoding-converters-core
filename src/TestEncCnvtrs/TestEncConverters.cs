@@ -13,6 +13,7 @@ using SilEncConverters40;
 using System.Reflection;
 using System.Threading;
 using System.Linq;
+using SilEncConverters40.EcTranslators;
 
 namespace TestEncCnvtrs
 {
@@ -884,6 +885,7 @@ namespace TestEncCnvtrs
 		private const string BingTranslatorConverterFriendlyName = "BingTranslator";
 
 		[Test]
+		[TestCase(ProcessTypeFlags.Translation, "Translate;hi;en", "", "")]
 		[TestCase(ProcessTypeFlags.Translation, "Translate;hi;en", "यीशु ने यह भी कहा,", "Jesus also said,")]
 		[TestCase(ProcessTypeFlags.Translation, "Translate;;en", "यीशु ने यह भी कहा,", "Jesus also said,")]
 		[TestCase(ProcessTypeFlags.Translation | ProcessTypeFlags.Transliteration, "TranslateWithTransliterate;en;ar;;Latn", "God", "alleh")]

@@ -1,7 +1,7 @@
 using System;
 using ECInterfaces;     // for Util
 
-namespace SilEncConverters40
+namespace SilEncConverters40.EcTranslators
 {
     partial class BingTranslatorAutoConfigDialog
     {

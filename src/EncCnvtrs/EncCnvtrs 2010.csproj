@@ -141,9 +141,6 @@
     <Reference Include="Microsoft.Web.WebView2.WinForms, Version=1.0.992.28, Culture=neutral, PublicKeyToken=2a8ab48044d2601e, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.Web.WebView2.1.0.992.28\lib\net45\Microsoft.Web.WebView2.WinForms.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
@@ -178,7 +175,6 @@
     <Compile Include="AutoConfigDialog.Designer.cs">
       <DependentUpon>AutoConfigDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="BingTranslatorSchemas.cs" />
     <Compile Include="CmpdAutoConfigDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -226,14 +222,6 @@
     <Compile Include="FallbackEncConverterConfig.cs" />
     <Compile Include="IEncConverterConfig.cs">
       <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="BingTranslatorEncConverter.cs" />
-    <Compile Include="BingTranslatorEncConverterConfig.cs" />
-    <Compile Include="BingTranslatorAutoConfigDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="BingTranslatorAutoConfigDialog.designer.cs">
-      <DependentUpon>BingTranslatorAutoConfigDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -324,10 +312,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="SelectConverter.resx">
       <DependentUpon>SelectConverter.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="BingTranslatorAutoConfigDialog.resx">
-      <DependentUpon>BingTranslatorAutoConfigDialog.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="TecAutoConfigDialog.resx">

@@ -1,20 +1,17 @@
 using System;
 using System.Windows.Forms;
-using System.IO;
 using ECInterfaces;                     // for IEncConverter
-using static SilEncConverters40.BingTranslatorEncConverter;
+using static SilEncConverters40.EcTranslators.BingTranslatorEncConverter;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace SilEncConverters40
+namespace SilEncConverters40.EcTranslators
 {
-	//[CLSCompliantAttribute(false)]  // because of GeckoWebBrowser
 	public partial class BingTranslatorAutoConfigDialog : AutoConfigDialog
 	{
 		private const string SourceLanguageNameAutoDetect = "Auto-Detect";
 		private const string TargetLanguageNameMustBeConfigure = "Select Target Language";
-		private const string TargetScriptNameMustBeConfigure = "Select Target Script";
 
 		protected TransductionType transductionSelected;
 		protected List<TranslationLanguage> translationsPossible;

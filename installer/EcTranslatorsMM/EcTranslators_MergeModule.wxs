@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+    <Module Id="EcTranslatorsMM" Language="1033" Version="5.0.0.0">
+        <Package Id="{A781DF84-7CBE-4889-B8B2-09334FE96276}" Comments="Merge module for the Translator EncConverters (e.g. Bing, etc)"
+				 Description="Include in any client application deployment project which uses the EncConverters interface" Manufacturer="SIL International"
+				 InstallerVersion="200" Keywords="SIL; Bing Translator; EncConverters"  />
+
+        <Directory Id="TARGETDIR" Name="SourceDir">
+            <Directory Id="MergeRedirectFolder">
+
+                <Component Id="EcTranslators.dll" Guid="{1D6BA109-D723-46F1-83D5-7D4B8CC86BE6}">
+					<Class Id="{73742D80-5508-4500-9FAA-AF82E4756C35}" Context="InprocServer32" Description="SilEncConverters40.EcTranslators.BingTranslatorEncConverter" ThreadingModel="both" ForeignServer="mscoree.dll">
+						<ProgId Id="SilEncConverters40.EcTranslators.BingTranslatorEncConverter" Description="SilEncConverters40.EcTranslators.BingTranslatorEncConverter" />
+					</Class>
+					<Class Id="{A2AF4AB1-CBDD-419F-9713-9332D51AB75B}" Context="InprocServer32" Description="SilEncConverters40.EcTranslators.BingTranslatorEncConverterConfig" ThreadingModel="both" ForeignServer="mscoree.dll">
+						<ProgId Id="SilEncConverters40.EcTranslators.BingTranslatorEncConverterConfig" Description="SilEncConverters40.EcTranslators.BingTranslatorEncConverterConfig" />
+					</Class>
+					<File Id="EcTranslators.dll" Name="EcTranslators.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="EcTranslators.dll" AssemblyApplication="EcTranslators.dll"
+                          Source="..\..\output\Win32\release\EcTranslators.dll" />
+					<RegistryValue Root="HKCR" Key="CLSID\{73742D80-5508-4500-9FAA-AF82E4756C35}\Implemented Categories\{62C8FE65-4EBB-45e7-B440-6E39B2CDBF29}" Value="" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{73742D80-5508-4500-9FAA-AF82E4756C35}\InprocServer32\4.0.0.0" Name="Class" Value="SilEncConverters40.EcTranslators.BingTranslatorEncConverter" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{73742D80-5508-4500-9FAA-AF82E4756C35}\InprocServer32\4.0.0.0" Name="Assembly" Value="SilEncConverters40, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{73742D80-5508-4500-9FAA-AF82E4756C35}\InprocServer32\4.0.0.0" Name="RuntimeVersion" Value="v4.0.30319" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{73742D80-5508-4500-9FAA-AF82E4756C35}\InprocServer32\4.0.0.0" Name="CodeBase" Value="file:///[#EcTranslators.dll]" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{73742D80-5508-4500-9FAA-AF82E4756C35}\InprocServer32" Name="Class" Value="SilEncConverters40.EcTranslators.BingTranslatorEncConverter" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{73742D80-5508-4500-9FAA-AF82E4756C35}\InprocServer32" Name="Assembly" Value="SilEncConverters40, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{73742D80-5508-4500-9FAA-AF82E4756C35}\InprocServer32" Name="RuntimeVersion" Value="v4.0.30319" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{73742D80-5508-4500-9FAA-AF82E4756C35}\InprocServer32" Name="CodeBase" Value="file:///[#EcTranslators.dll]" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{A2AF4AB1-CBDD-419F-9713-9332D51AB75B}\Implemented Categories\{62C8FE65-4EBB-45e7-B440-6E39B2CDBF29}" Value="" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{A2AF4AB1-CBDD-419F-9713-9332D51AB75B}\InprocServer32\4.0.0.0" Name="Class" Value="SilEncConverters40.EcTranslators.BingTranslatorEncConverterConfig" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{A2AF4AB1-CBDD-419F-9713-9332D51AB75B}\InprocServer32\4.0.0.0" Name="Assembly" Value="SilEncConverters40, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{A2AF4AB1-CBDD-419F-9713-9332D51AB75B}\InprocServer32\4.0.0.0" Name="RuntimeVersion" Value="v4.0.30319" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{A2AF4AB1-CBDD-419F-9713-9332D51AB75B}\InprocServer32\4.0.0.0" Name="CodeBase" Value="file:///[#EcTranslators.dll]" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{A2AF4AB1-CBDD-419F-9713-9332D51AB75B}\InprocServer32" Name="Class" Value="SilEncConverters40.EcTranslators.BingTranslatorEncConverterConfig" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{A2AF4AB1-CBDD-419F-9713-9332D51AB75B}\InprocServer32" Name="Assembly" Value="SilEncConverters40, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{A2AF4AB1-CBDD-419F-9713-9332D51AB75B}\InprocServer32" Name="RuntimeVersion" Value="v4.0.30319" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{A2AF4AB1-CBDD-419F-9713-9332D51AB75B}\InprocServer32" Name="CodeBase" Value="file:///[#EcTranslators.dll]" Type="string" Action="write" />
+				</Component>
+
+				<Component Id="EcTranslators.dll.config" Guid="{74D8E8A8-4AFB-44A3-8771-C21FC7B4DA6E}">
+					<File Id="EcTranslators.dll.config" Name="EcTranslators.dll.config" Vital="yes" KeyPath="yes" Source="..\..\output\Win32\release\EcTranslators.dll.config" />
+				</Component>
+
+				<Component Id="EcTranslators.tlb" Guid="{9DBA08BD-ADE6-4F8E-9E5E-558738B2D985}">
+					<File Id="EcTranslators.tlb" Name="EcTranslators.tlb" Vital="yes" KeyPath="yes" Source="..\..\output\Win32\release\EcTranslators.tlb">
+						<TypeLib Id="{C4D0AA5B-F319-4E06-A982-A52E79EB57DC}" Description="Translating Encoding Converters Library" HelpDirectory="MergeRedirectFolder" Language="0" MajorVersion="4" MinorVersion="0">
+							<Interface Id="{B14C265D-404B-49B6-A627-8686065C0A3B}" Name="_BingTranslatorEncConverter" ProxyStubClassId32="{00020424-0000-0000-C000-000000000046}" />
+							<Interface Id="{CF5DAABA-F025-4557-8031-A1F1394BB0BF}" Name="_BingTranslatorEncConverterConfig" ProxyStubClassId32="{00020424-0000-0000-C000-000000000046}" />
+							<Interface Id="{1ABEDB65-35ED-4C07-860C-7D472F247C28}" Name="_BingTranslatorAutoConfigDialog" ProxyStubClassId32="{00020424-0000-0000-C000-000000000046}" />
+						</TypeLib>
+					</File>
+				</Component>
+
+				<Component Id="Newtonsoft.Json.dll" Guid="{93150D29-0DC5-45FC-A10B-35C6B71C1F85}">
+					<File Id="Newtonsoft.Json.dll" Name="Newtonsoft.Json.dll" KeyPath="yes" Source="..\..\output\Win32\release\Newtonsoft.Json.dll"/>
+				</Component>
+
+				<Directory Id="EcTranslatorsECFolder" Name="EC">
+                    <Directory Id="EcTranslatorsPluginsFolder" Name="Plugins">
+                        <Component Id="Translators4.0.0.0PluginDetails.xml" Guid="{0EA6F96A-F273-4254-8367-20C87BA6663B}">
+                            <File Id="Translators4.0.0.0PluginDetails.xml" Name="Translators 4.0.0.0 Plugin Details.xml" KeyPath="yes" Source="..\..\redist\EC\Plugins\Translators 4.0.0.0 Plugin Details.xml"/>
+                        </Component>
+                    </Directory>
+                </Directory>
+
+            </Directory>
+
+            <Directory Id="CommonAppDataFolder" SourceName="AppData">
+                <Directory Id="AppDataSIL" Name="SIL">
+                    <Directory Id="AppDataSILConverters40" Name="SILConverters40">
+                        <Directory Id="Help" Name="Help">
+
+							<!--Bing Translator Help-->
+							<Component Id="BingTranslatorHelp.htm" Guid="{547BF037-BFFC-4DB4-B4DC-5EE8D48767AE}">
+								<File Id="BingTranslatorHelp.htm" Name="Bing_Translator_Plug-in_About_box.htm" KeyPath="yes" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box.htm"/>
+								<Shortcut Id="BingTranslatorHelpHtm" Directory="EcTranslatorsHelp" Name="Bing Translator Plug-in Help" Description="View help document for the Bing Translator Plug-in" IconIndex="0" Show="normal" Target="[#BingTranslatorHelp.htm]" WorkingDirectory="Help" Advertise="no" />
+							</Component>
+							<Directory Id="Bing_Translator_Plugin_About_box" Name="Bing_Translator_Plug-in_About_box_files">
+								<Component Id="Bing_Translator_Plugin_About_boxComp" Guid="{383E7F8F-5BA0-43F8-A1E8-353C998FFEFB}">
+									<File Id="bt_filelist.xml" Name="filelist.xml" KeyPath="yes" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\filelist.xml"/>
+									<File Id="bt_colorschememapping.xml" Name="colorschememapping.xml" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\colorschememapping.xml"/>
+									<File Id="bt_themedata.thmx" Name="themedata.thmx" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\themedata.thmx"/>
+									<File Id="bt_header.htm" Name="header.htm" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\header.htm"/>
+									<File Id="bt_image001.png" Name="image001.png" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\image001.png"/>
+									<File Id="bt_image002.jpg" Name="image002.jpg" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\image002.jpg"/>
+									<File Id="bt_image003.jpg" Name="image003.jpg" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\image003.jpg"/>
+									<File Id="bt_image004.png" Name="image004.png" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\image004.png"/>
+									<File Id="bt_image006.jpg" Name="image006.jpg" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\image006.jpg"/>
+									<File Id="bt_image008.png" Name="image008.png" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\image008.png"/>
+									<File Id="bt_item0013.xml" Name="item0013.xml" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\item0013.xml"/>
+									<File Id="bt_props014.xml" Name="props014.xml" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\props014.xml"/>
+								</Component>
+							</Directory>
+
+                        </Directory>
+                    </Directory>
+                </Directory>
+            </Directory>
+
+            <Directory Id="StartMenuFolder" SourceName="Start Menu">
+                <Directory Id="ProgramMenuFolder" SourceName="Programs">
+                    <Directory Id="SILConverters" Name="SIL Converters">
+                        <Directory Id="EcTranslatorsHelp" Name="Help" />
+                    </Directory>
+                </Directory>
+            </Directory>
+
+        </Directory>
+    </Module>
+</Wix>

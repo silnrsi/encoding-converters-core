@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace SilEncConverters40
+namespace SilEncConverters40.EcTranslators
 {
 	public class TranslationLanguage
 	{

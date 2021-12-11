@@ -10,18 +10,18 @@ using ECInterfaces;                     // for ConvType
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace SilEncConverters40
+namespace SilEncConverters40.EcTranslators
 {
 	/// <summary>
 	/// Managed Bing Translator EncConverter.
 	/// </summary>
 	[GuidAttribute("73742D80-5508-4500-9FAA-AF82E4756C35")]
-    // normally these subclasses are treated as the base class (i.e. the 
-    //  client can use them orthogonally as IEncConverter interface pointers
-    //  so normally these individual subclasses would be invisible), but if 
-    //  we add 'ComVisible = false', then it doesn't get the registry 
-    //  'HKEY_CLASSES_ROOT\SilEncConverters40.TecEncConverter' which is the basis of 
-    //  how it is started (see EncConverters.AddEx).
+	// normally these subclasses are treated as the base class (i.e. the 
+	//  client can use them orthogonally as IEncConverter interface pointers
+	//  so normally these individual subclasses would be invisible), but if 
+	//  we add 'ComVisible = false', then it doesn't get the registry 
+	//  'HKEY_CLASSES_ROOT\SilEncConverters40.EcTranslators.BingTranslatorEncConverter' which is the basis of 
+	//  how it is started (see EncConverters.AddEx).
 	// [ComVisible(false)] 
 	public class BingTranslatorEncConverter : EncConverter
     {
@@ -205,7 +205,7 @@ namespace SilEncConverters40
 			char[] caIn = enc.GetChars(baIn);
 
 			// here's our input string
-			string strInput = new string(caIn);
+			var strInput = new string(caIn);
 
 			strOutput = CallBingTranslator(strInput).Result;
 
@@ -353,6 +353,19 @@ namespace SilEncConverters40
             Util.DebugWriteLine(this, "END");
         }
 
-        #endregion Misc helpers
-    }
+		public static string LogExceptionMessage(string className, Exception ex)
+		{
+			string msg = "Error occurred: " + ex.Message;
+			while (ex.InnerException != null)
+			{
+				ex = ex.InnerException;
+				msg += $"{Environment.NewLine}because: (InnerException): {ex.Message}";
+			}
+
+			Util.DebugWriteLine(className, msg);
+			return msg;
+		}
+
+		#endregion Misc helpers
+	}
 }

@@ -4,7 +4,7 @@ using ECInterfaces;                     // for IEncConverter
 //uncomment the following line for verbose debugging output using Console.WriteLine
 //#define VERBOSE_DEBUGGING
 
-namespace SilEncConverters40
+namespace SilEncConverters40.EcTranslators
 {
 	public class BingTranslatorEncConverterConfig : EncConverterConfig
     {
