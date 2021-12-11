@@ -282,7 +282,4 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-  <PropertyGroup>
-    <PostBuildEvent Condition="Exists('C:\Src\StoryEditor\')">copy $(TargetPath) C:\Src\StoryEditor\output\$(ConfigurationName)</PostBuildEvent>
-  </PropertyGroup>
 </Project>
