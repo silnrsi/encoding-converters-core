@@ -65,11 +65,11 @@ namespace SilEncConverters40
 							webBrowserAdaptor = new WebBrowserInstructions();
 						}
 					}
-					else if (WebBrowserEdge.ShouldUseBrowser)
+					else if (WebBrowserEdgeInfo.ShouldUseBrowser)
 					{
 						try
 						{
-							if (WebBrowserEdge.IsWebView2RuntimeInstalled)
+							if (WebBrowserEdgeInfo.IsWebView2RuntimeInstalled)
 							{
 								webBrowserAdaptor = CreateWebBrowserEdge();
 							}

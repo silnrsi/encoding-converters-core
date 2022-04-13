@@ -42,20 +42,7 @@ namespace SilEncConverters40
 				throw new ApplicationException($"Unable to initialize Gecko installation!");
 		}
 
-		public static bool ShouldUseBrowser
-		{
-			get
-			{
-				if (Util.IsUnix)
-				{
-					return true;
-				}
-				else
-				{
-					return WindowsUserWantsToUseGecko;
-				}
-			}
-		}
+		public static bool ShouldUseBrowser => Util.IsUnix || WindowsUserWantsToUseGecko;
 
 		/// <summary>
 		/// this will return true if the user has set the 'UseGeckoFx' registry key to 'True' AND put the xulRunner folder
