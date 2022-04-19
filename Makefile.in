@@ -64,7 +64,11 @@ ifneq ($(EC_DOWNLOAD_DEPS), false)
 	cp -a packages/Geckofx60.32.Linux.60.0.49/build/Geckofx-Core.dll.config packages/Geckofx60.32.Linux.60.0.49/lib/net40
 endif
 
-debug: download_dependencies
+hack_icu_to_70:
+	sed -i 's/U_ICU_VERSION_MAJOR_NUM 68/U_ICU_VERSION_MAJOR_NUM 70/g' include/unicode/uvernum.h
+	sed -i 's/U_ICU_VERSION_SUFFIX 68/U_ICU_VERSION_SUFFIX 70/g' include/unicode/uvernum.h
+
+debug: download_dependencies hack_icu_to_70
 	cd build && ./msbuild.sh $(MONO) $(MONO_LDFLAGS) -p:SolutionDir=$(ROOTDIR)/ -p:Platform=x64 -p:FIELDWORKS=$(FIELDWORKS) -p:DefineConstants=NEED_RESOLVE_ICUBREAKITERATORENCCONVERTER
 	for subdir in $(SRCDIRS); do \
 	  echo making in $$subdir; \
@@ -81,7 +85,7 @@ debug: download_dependencies
 	cp -p src/CcEC/CcEC.dll.config $(OUTDIR)
 	cp -p src/TestEncCnvtrs/TestEncCnvtrs.dll.config $(OUTDIR)
 
-release: download_dependencies
+release: download_dependencies hack_icu_to_70
 	cd build && ./msbuild.sh $(MONO) $(MONO_LDFLAGS) -p:SolutionDir=$(ROOTDIR)/ -p:Platform=x64 -p:config=Release -p:FIELDWORKS=$(FIELDWORKS) -p:DefineConstants=NEED_RESOLVE_ICUBREAKITERATORENCCONVERTER
 	for subdir in $(SRCDIRS); do \
 	  echo making in $$subdir; \
