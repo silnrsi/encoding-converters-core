@@ -32,7 +32,7 @@ LIBDIR = $(exec_prefix)/lib/fieldworks
 # earlier in PATH so that icu-config from FW 8.3 (< 9) or icu-fw will be
 # used.
 ICULIBS := $(shell icu-config --ldflags)
-ICUINCLUDE := -I$(ROOTDIR)/include
+ICUINCLUDE := $(shell icu-config --cppflags)
 endif
 
 # the unmarked case is 32-bit (i686)
