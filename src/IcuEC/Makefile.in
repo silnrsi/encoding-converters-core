@@ -41,7 +41,9 @@ ifeq ($(ARCH),x86_64)
 WIDTH=_64
 endif
 
-all: $(BUILDDIR) $(OUTDIR)/libIcuTranslitEC$(WIDTH).so \
+all: debug
+
+debug: $(BUILDDIR) $(OUTDIR)/libIcuTranslitEC$(WIDTH).so \
   $(OUTDIR)/libIcuRegexEC$(WIDTH).so $(OUTDIR)/libIcuConvEC$(WIDTH).so
 
 $(BUILDDIR):

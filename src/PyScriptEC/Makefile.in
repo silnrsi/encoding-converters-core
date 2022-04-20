@@ -36,7 +36,9 @@ ifeq ($(ARCH),x86_64)
 WIDTH=_64
 endif
 
-all: $(BUILDDIR) $(OUTDIR)/libPyScriptEncConverter$(WIDTH).so
+all: debug
+
+debug: $(BUILDDIR) $(OUTDIR)/libPyScriptEncConverter$(WIDTH).so
 
 $(BUILDDIR):
 	mkdir -p $(BUILDDIR)
