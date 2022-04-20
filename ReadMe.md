@@ -38,6 +38,18 @@ Install build dependencies.
     (cp -a src/RunTests/bin/x64/Debug/RunTests.exe output/x64/Debug/ &&
       . environ && mono output/x64/Debug/RunTests.exe)
 
+
+### Test install
+
+The installer can be somewhat tested by doing the following.
+
+```bash
+rm -rf test_install &&
+  (source environ &&
+    ./autogen.sh &&
+    DESTDIR="$(pwd)/test_install" make install)
+```
+
 In Windows,
 
 1. Open EncConverters 2015.sln in Visual Studio Community 2015.
