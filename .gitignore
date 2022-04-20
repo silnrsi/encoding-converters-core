@@ -284,3 +284,5 @@ autom4te.cache
 /redist/MapsTables/TestEncCnvtrs/From1252.pyc
 /SILConvertersWordML.exe.config
 /SILConvertersWordML.exe
+
+/test_install/
