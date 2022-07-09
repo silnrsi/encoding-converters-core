@@ -59,10 +59,6 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.VisualBasic" />
-    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -75,15 +71,29 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BingTranslatorAutoConfigDialog.cs">
+    <Compile Include="BingTranslator\BingTranslatorAutoConfigDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="BingTranslatorAutoConfigDialog.designer.cs">
+    <Compile Include="BingTranslator\BingTranslatorAutoConfigDialog.designer.cs">
       <DependentUpon>BingTranslatorAutoConfigDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="BingTranslatorEncConverter.cs" />
-    <Compile Include="BingTranslatorEncConverterConfig.cs" />
-    <Compile Include="BingTranslatorSchemas.cs" />
+    <Compile Include="BingTranslator\BingTranslatorEncConverter.cs" />
+    <Compile Include="BingTranslator\BingTranslatorEncConverterConfig.cs" />
+    <Compile Include="BingTranslator\BingTranslatorSchemas.cs" />
+    <Compile Include="BingTranslator\QueryForAzureKeyAndLocation.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="BingTranslator\QueryForAzureKeyAndLocation.Designer.cs">
+      <DependentUpon>QueryForAzureKeyAndLocation.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GoogleTranslator\GoogleTranslatorAutoConfigDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GoogleTranslator\GoogleTranslatorAutoConfigDialog.designer.cs">
+      <DependentUpon>GoogleTranslatorAutoConfigDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GoogleTranslator\GoogleTranslatorEncConverter.cs" />
+    <Compile Include="GoogleTranslator\GoogleTranslatorEncConverterConfig.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -107,7 +117,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="BingTranslatorAutoConfigDialog.resx" />
+    <EmbeddedResource Include="BingTranslator\BingTranslatorAutoConfigDialog.resx" />
+    <EmbeddedResource Include="BingTranslator\QueryForAzureKeyAndLocation.resx">
+      <DependentUpon>QueryForAzureKeyAndLocation.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

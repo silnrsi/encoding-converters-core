@@ -1,12 +1,12 @@
 using System;
 using System.Windows.Forms;
 using ECInterfaces;                     // for IEncConverter
-using static SilEncConverters40.EcTranslators.BingTranslatorEncConverter;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using static SilEncConverters40.EcTranslators.BingTranslator.BingTranslatorEncConverter;
 
-namespace SilEncConverters40.EcTranslators
+namespace SilEncConverters40.EcTranslators.BingTranslator
 {
 	public partial class BingTranslatorAutoConfigDialog : AutoConfigDialog
 	{
@@ -195,14 +195,15 @@ namespace SilEncConverters40.EcTranslators
             return base.OnApply();
         }
 
-		private Regex _regexExtractCode = new Regex(@"\(([a-zA-Z]{2,})\)");
+		// use $ at the end, for lgs like Chinese simplified, which have their own () value (we want the one at the end)
+		private static Regex _regexExtractCode = new Regex(@"\(([-a-zA-Z]{2,}?)\)$");
 
 		/// <summary>
-		/// turn something like Hindi|हिन्दी (hi) into just 'hi'
+		/// turn something like Hindi हिन्दी (hi) into just 'hi'
 		/// </summary>
 		/// <param name="languageName"></param>
 		/// <returns></returns>
-		private string ExtractCode(string languageName)
+		public static string ExtractCode(string languageName)
 		{
 			if (String.IsNullOrEmpty(languageName))
 				return String.Empty;
@@ -529,13 +530,13 @@ namespace SilEncConverters40.EcTranslators
 
 		private void buttonSetBingTranslateApiKey_Click(object sender, EventArgs e)
 		{
-			var newKey = Microsoft.VisualBasic.Interaction.InputBox(String.Format("Enter your Azure Translator Api Key:{0}see https://docs.microsoft.com/en-us/azure/cognitive-services/translator/quickstart-translator",
-														Environment.NewLine));
-			if (!String.IsNullOrEmpty(newKey))
+			// only send the key if it's already the override key (so we don't expose ours)
+			var dlg = new QueryForAzureKeyAndLocation(Properties.Settings.Default.AzureTranslatorKeyOverride, Properties.Settings.Default.AzureTranslatorRegion);
+			if (dlg.ShowDialog() == DialogResult.Yes)
 			{
-				Properties.Settings.Default.AzureTranslatorKey = newKey;
+				Properties.Settings.Default.AzureTranslatorKey = AzureTranslatorSubscriptionKey = dlg.AzureTranslatorKey;
+				Properties.Settings.Default.AzureTranslatorRegion = AzureTranslatorLocation = dlg.AzureTranslatorLocation;
 				Properties.Settings.Default.Save();
-				BingTranslatorEncConverter.AzureTranslatorSubscriptionKey = newKey;
 			}
 		}
 	}

@@ -172,6 +172,7 @@ namespace SilEncConverters40
 #endif // DebugWithMessageBoxes
 
 					await _webBrowser.ExecuteScriptFunctionAsync(ConvertFunctionName);
+					Application.DoEvents();
 					strOutput = await _webBrowser.GetInnerTextAsync(OutputHtmlElementId);
 				}
 				catch (Exception ex)

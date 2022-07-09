@@ -25,7 +25,7 @@ namespace SilEncConverters40.EcTranslators.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("18b3904a5b0641698a4149a2db81aa92")]
+        [global::System.Configuration.DefaultSettingValueAttribute("2acbbf831c1b4417895dc80969d6a203")]
         public string AzureTranslatorKey {
             get {
                 return ((string)(this["AzureTranslatorKey"]));
@@ -56,6 +56,31 @@ namespace SilEncConverters40.EcTranslators.Properties {
             }
             set {
                 this["AzureTranslatorTextTranslationEndpoint"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://docs.microsoft.com/en-us/azure/cognitive-services/translator/quickstart-t" +
+            "ranslator")]
+        public string AzureTranslatorKeyLocationDialogInstructionUrl {
+            get {
+                return ((string)(this["AzureTranslatorKeyLocationDialogInstructionUrl"]));
+            }
+            set {
+                this["AzureTranslatorKeyLocationDialogInstructionUrl"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string AzureTranslatorKeyOverride {
+            get {
+                return ((string)(this["AzureTranslatorKeyOverride"]));
+            }
+            set {
+                this["AzureTranslatorKeyOverride"] = value;
             }
         }
     }

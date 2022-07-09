@@ -14,6 +14,7 @@ using System.Reflection;
 using System.Threading;
 using System.Linq;
 using SilEncConverters40.EcTranslators;
+using SilEncConverters40.EcTranslators.BingTranslator;
 
 namespace TestEncCnvtrs
 {
@@ -882,8 +883,37 @@ namespace TestEncCnvtrs
 			}
         }
 
+		/*
+		[Apartment(ApartmentState.STA)]
+		[Test]
+		[TestCase("tta_input_ta;tta_output_ta;Delay;;GeckoFx")]
+		public void TestBingTranslatorAsHtmlSite(string converterSpecSuffix)
+		{
+			BingTranslatorAsHtmlSite(converterSpecSuffix);
+		}
+
+		private const string BingTranslatorSiteConverterFriendlyName = "BingHindi>English";
+
+		public void BingTranslatorAsHtmlSite(string converterSpecSuffix)
+        {
+			var dir = @"C:\btmp\SILConverter test files";	// GetTestSourceFolder();
+            var pathToTechHindiSiteFile = Path.Combine(dir, "BingTranslatorHindiToEnglish.html");
+            var converterSpec = $"{pathToTechHindiSiteFile};{converterSpecSuffix}";
+			m_encConverters.AddConversionMap(BingTranslatorSiteConverterFriendlyName, converterSpec, ConvType.Unicode_to_Unicode,
+											 EncConverters.strTypeSILtechHindiSite, "UNICODE", "UNICODE",
+											 ProcessTypeFlags.Translation);
+
+            var theEc = m_encConverters[BingTranslatorSiteConverterFriendlyName];
+
+			// do a forward conversion
+            var strOutput = theEc.Convert("पुराने युग के संत-महात्‍माओं का जैसा पहनावा होता था, वैसे युहन्‍ना के कपड़े भी ऊँटों के बालों के बने हुए होते थे।");
+            Assert.AreEqual("Just like the saint-mahatmas of the ancient era used to dress, yuhanna's clothes were also made of camel hair.", strOutput);
+        }
+		*/
+
 		private const string BingTranslatorConverterFriendlyName = "BingTranslator";
 
+		// these tests may fail if the Bing Translator resource no longer has any remaining juice...
 		[Test]
 		[TestCase(ProcessTypeFlags.Translation, "Translate;hi;en", "", "")]
 		[TestCase(ProcessTypeFlags.Translation, "Translate;hi;en", "यीशु ने यह भी कहा,", "Jesus also said,")]
@@ -920,6 +950,24 @@ namespace TestEncCnvtrs
 			Assert.Contains("Arabic العربية (ar)", res.translations.Select(t => t.ToString()).ToList());
 			Assert.Contains("Hindi हिन्दी (hi) => (Latin लैटिन (Latn)) OR (Devanagari देवनागरी (Deva))", res.transliterations.Select(t => t.ToString()).ToList());
 			Assert.Contains("Bulgarian Български (bg) => English (en)", res.dictionaryOptions.Select(t => t.ToString()).ToList());
+		}
+
+		[Test]
+		[TestCase("Hindi हिन्दी (hi)", "hi")]
+		[TestCase("French (Canada) Français (Canada) (fr-CA)", "fr-CA")]
+		[TestCase("Arabic العربية (ar)", "ar")]
+		[TestCase("Chinese Simplified 中文 (简体) (zh-Hans)", "zh-Hans")]
+		[TestCase("Fijian Na Vosa Vakaviti (fj)", "fj")]
+		[TestCase("Hmong Daw (mww)", "mww")]
+		[TestCase("Inuktitut (Latin) (iu-Latn)", "iu-Latn")]
+		[TestCase("Klingon (pIqaD) (tlh-Piqd)", "tlh-Piqd")]
+		[TestCase("Kurdish (Northern) Kurdî (Bakur) (kmr)", "kmr")]
+		[TestCase("Mongolian (Traditional) ᠮᠣᠩᠭᠣᠯ ᠬᠡᠯᠡ (mn-Mong)", "mn-Mong")]
+		[TestCase("Serbian (Cyrillic) Српски (ћирилица) (sr-Cyrl)", "sr-Cyrl")]
+		public void TestExtractingLangCode(string menuItem, string languageCodeExpected)
+        {
+			var languageCodeActual = BingTranslatorAutoConfigDialog.ExtractCode(menuItem);
+			Assert.AreEqual(languageCodeExpected, languageCodeActual);
 		}
 	}
 

@@ -9,29 +9,29 @@
             <Directory Id="MergeRedirectFolder">
 
                 <Component Id="EcTranslators.dll" Guid="{1D6BA109-D723-46F1-83D5-7D4B8CC86BE6}">
-					<Class Id="{73742D80-5508-4500-9FAA-AF82E4756C35}" Context="InprocServer32" Description="SilEncConverters40.EcTranslators.BingTranslatorEncConverter" ThreadingModel="both" ForeignServer="mscoree.dll">
-						<ProgId Id="SilEncConverters40.EcTranslators.BingTranslatorEncConverter" Description="SilEncConverters40.EcTranslators.BingTranslatorEncConverter" />
+					<Class Id="{73742D80-5508-4500-9FAA-AF82E4756C35}" Context="InprocServer32" Description="SilEncConverters40.EcTranslators.BingTranslator.BingTranslatorEncConverter" ThreadingModel="both" ForeignServer="mscoree.dll">
+						<ProgId Id="SilEncConverters40.EcTranslators.BingTranslator.BingTranslatorEncConverter" Description="SilEncConverters40.EcTranslators.BingTranslator.BingTranslatorEncConverter" />
 					</Class>
-					<Class Id="{A2AF4AB1-CBDD-419F-9713-9332D51AB75B}" Context="InprocServer32" Description="SilEncConverters40.EcTranslators.BingTranslatorEncConverterConfig" ThreadingModel="both" ForeignServer="mscoree.dll">
-						<ProgId Id="SilEncConverters40.EcTranslators.BingTranslatorEncConverterConfig" Description="SilEncConverters40.EcTranslators.BingTranslatorEncConverterConfig" />
+					<Class Id="{A2AF4AB1-CBDD-419F-9713-9332D51AB75B}" Context="InprocServer32" Description="SilEncConverters40.EcTranslators.BingTranslator.BingTranslatorEncConverterConfig" ThreadingModel="both" ForeignServer="mscoree.dll">
+						<ProgId Id="SilEncConverters40.EcTranslators.BingTranslator.BingTranslatorEncConverterConfig" Description="SilEncConverters40.EcTranslators.BingTranslator.BingTranslatorEncConverterConfig" />
 					</Class>
 					<File Id="EcTranslators.dll" Name="EcTranslators.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="EcTranslators.dll" AssemblyApplication="EcTranslators.dll"
                           Source="..\..\output\Win32\release\EcTranslators.dll" />
 					<RegistryValue Root="HKCR" Key="CLSID\{73742D80-5508-4500-9FAA-AF82E4756C35}\Implemented Categories\{62C8FE65-4EBB-45e7-B440-6E39B2CDBF29}" Value="" Type="string" Action="write" />
-					<RegistryValue Root="HKCR" Key="CLSID\{73742D80-5508-4500-9FAA-AF82E4756C35}\InprocServer32\4.0.0.0" Name="Class" Value="SilEncConverters40.EcTranslators.BingTranslatorEncConverter" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{73742D80-5508-4500-9FAA-AF82E4756C35}\InprocServer32\4.0.0.0" Name="Class" Value="SilEncConverters40.EcTranslators.BingTranslator.BingTranslatorEncConverter" Type="string" Action="write" />
 					<RegistryValue Root="HKCR" Key="CLSID\{73742D80-5508-4500-9FAA-AF82E4756C35}\InprocServer32\4.0.0.0" Name="Assembly" Value="SilEncConverters40, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" Type="string" Action="write" />
 					<RegistryValue Root="HKCR" Key="CLSID\{73742D80-5508-4500-9FAA-AF82E4756C35}\InprocServer32\4.0.0.0" Name="RuntimeVersion" Value="v4.0.30319" Type="string" Action="write" />
 					<RegistryValue Root="HKCR" Key="CLSID\{73742D80-5508-4500-9FAA-AF82E4756C35}\InprocServer32\4.0.0.0" Name="CodeBase" Value="file:///[#EcTranslators.dll]" Type="string" Action="write" />
-					<RegistryValue Root="HKCR" Key="CLSID\{73742D80-5508-4500-9FAA-AF82E4756C35}\InprocServer32" Name="Class" Value="SilEncConverters40.EcTranslators.BingTranslatorEncConverter" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{73742D80-5508-4500-9FAA-AF82E4756C35}\InprocServer32" Name="Class" Value="SilEncConverters40.EcTranslators.BingTranslator.BingTranslatorEncConverter" Type="string" Action="write" />
 					<RegistryValue Root="HKCR" Key="CLSID\{73742D80-5508-4500-9FAA-AF82E4756C35}\InprocServer32" Name="Assembly" Value="SilEncConverters40, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" Type="string" Action="write" />
 					<RegistryValue Root="HKCR" Key="CLSID\{73742D80-5508-4500-9FAA-AF82E4756C35}\InprocServer32" Name="RuntimeVersion" Value="v4.0.30319" Type="string" Action="write" />
 					<RegistryValue Root="HKCR" Key="CLSID\{73742D80-5508-4500-9FAA-AF82E4756C35}\InprocServer32" Name="CodeBase" Value="file:///[#EcTranslators.dll]" Type="string" Action="write" />
 					<RegistryValue Root="HKCR" Key="CLSID\{A2AF4AB1-CBDD-419F-9713-9332D51AB75B}\Implemented Categories\{62C8FE65-4EBB-45e7-B440-6E39B2CDBF29}" Value="" Type="string" Action="write" />
-					<RegistryValue Root="HKCR" Key="CLSID\{A2AF4AB1-CBDD-419F-9713-9332D51AB75B}\InprocServer32\4.0.0.0" Name="Class" Value="SilEncConverters40.EcTranslators.BingTranslatorEncConverterConfig" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{A2AF4AB1-CBDD-419F-9713-9332D51AB75B}\InprocServer32\4.0.0.0" Name="Class" Value="SilEncConverters40.EcTranslators.BingTranslator.BingTranslatorEncConverterConfig" Type="string" Action="write" />
 					<RegistryValue Root="HKCR" Key="CLSID\{A2AF4AB1-CBDD-419F-9713-9332D51AB75B}\InprocServer32\4.0.0.0" Name="Assembly" Value="SilEncConverters40, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" Type="string" Action="write" />
 					<RegistryValue Root="HKCR" Key="CLSID\{A2AF4AB1-CBDD-419F-9713-9332D51AB75B}\InprocServer32\4.0.0.0" Name="RuntimeVersion" Value="v4.0.30319" Type="string" Action="write" />
 					<RegistryValue Root="HKCR" Key="CLSID\{A2AF4AB1-CBDD-419F-9713-9332D51AB75B}\InprocServer32\4.0.0.0" Name="CodeBase" Value="file:///[#EcTranslators.dll]" Type="string" Action="write" />
-					<RegistryValue Root="HKCR" Key="CLSID\{A2AF4AB1-CBDD-419F-9713-9332D51AB75B}\InprocServer32" Name="Class" Value="SilEncConverters40.EcTranslators.BingTranslatorEncConverterConfig" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{A2AF4AB1-CBDD-419F-9713-9332D51AB75B}\InprocServer32" Name="Class" Value="SilEncConverters40.EcTranslators.BingTranslator.BingTranslatorEncConverterConfig" Type="string" Action="write" />
 					<RegistryValue Root="HKCR" Key="CLSID\{A2AF4AB1-CBDD-419F-9713-9332D51AB75B}\InprocServer32" Name="Assembly" Value="SilEncConverters40, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" Type="string" Action="write" />
 					<RegistryValue Root="HKCR" Key="CLSID\{A2AF4AB1-CBDD-419F-9713-9332D51AB75B}\InprocServer32" Name="RuntimeVersion" Value="v4.0.30319" Type="string" Action="write" />
 					<RegistryValue Root="HKCR" Key="CLSID\{A2AF4AB1-CBDD-419F-9713-9332D51AB75B}\InprocServer32" Name="CodeBase" Value="file:///[#EcTranslators.dll]" Type="string" Action="write" />
@@ -86,9 +86,14 @@
 									<File Id="bt_image003.jpg" Name="image003.jpg" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\image003.jpg"/>
 									<File Id="bt_image004.png" Name="image004.png" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\image004.png"/>
 									<File Id="bt_image006.jpg" Name="image006.jpg" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\image006.jpg"/>
+									<File Id="bt_image007.png" Name="image007.png" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\image007.png"/>
 									<File Id="bt_image008.png" Name="image008.png" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\image008.png"/>
-									<File Id="bt_item0013.xml" Name="item0013.xml" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\item0013.xml"/>
-									<File Id="bt_props014.xml" Name="props014.xml" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\props014.xml"/>
+									<File Id="bt_image010.png" Name="image010.png" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\image010.png"/>
+									<File Id="bt_image014.jpg" Name="image014.jpg" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\image014.jpg"/>
+									<File Id="bt_image015.jpg" Name="image015.jpg" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\image015.jpg"/>
+									<File Id="bt_item0018.xml" Name="item0018.xml" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\item0018.xml"/>
+									<File Id="bt_oledata.mso" Name="oledata.mso" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\oledata.mso"/>
+									<File Id="bt_props019.xml" Name="props019.xml" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\props019.xml"/>
 								</Component>
 							</Directory>
 

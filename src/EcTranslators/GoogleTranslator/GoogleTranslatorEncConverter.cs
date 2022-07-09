@@ -10,33 +10,47 @@ using ECInterfaces;                     // for ConvType
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace SilEncConverters40.EcTranslators
+namespace SilEncConverters40.EcTranslators.GoogleTranslator
 {
 	/// <summary>
-	/// Managed Bing Translator EncConverter.
+	/// Managed Google Translator EncConverter.
 	/// </summary>
-	[GuidAttribute("73742D80-5508-4500-9FAA-AF82E4756C35")]
+	[GuidAttribute("A2C80989-EBBD-4257-9006-31FADC88646F")]
 	// normally these subclasses are treated as the base class (i.e. the 
 	//  client can use them orthogonally as IEncConverter interface pointers
 	//  so normally these individual subclasses would be invisible), but if 
 	//  we add 'ComVisible = false', then it doesn't get the registry 
-	//  'HKEY_CLASSES_ROOT\SilEncConverters40.EcTranslators.BingTranslatorEncConverter' which is the basis of 
+	//  'HKEY_CLASSES_ROOT\SilEncConverters40.EcTranslators.GoogleTranslatorEncConverter' which is the basis of 
 	//  how it is started (see EncConverters.AddEx).
 	// [ComVisible(false)] 
-	public class BingTranslatorEncConverter : EncConverter
+	public class GoogleTranslatorEncConverter : EncConverter
     {
 		#region Const Definitions
 		// by putting the azure key in a settings file, users can get their own free azure account, create their own 'Translator'
 		//  resource, and enter their own key in the file (or the UI to have us set it in the file) and get their own 2E6 chars free
 		//	(or pay for as much as they want)
 		// see https://docs.microsoft.com/en-us/azure/cognitive-services/translator/quickstart-translator
-		public static string AzureTranslatorSubscriptionKey = Properties.Settings.Default.AzureTranslatorKey;
+		public static string AzureTranslatorSubscriptionKey
+		{
+			get
+			{
+				var overrideKey = Properties.Settings.Default.AzureTranslatorKeyOverride;
+				return (!String.IsNullOrEmpty(overrideKey))
+							? overrideKey
+							: Properties.Settings.Default.AzureTranslatorKey;
+			}
+			set
+			{
+				Properties.Settings.Default.AzureTranslatorKeyOverride = value;
+			}
+		}
+
 		private static readonly string endpointTranslator = Properties.Settings.Default.AzureTranslatorTextTranslationEndpoint;
 		private static readonly string endpointCapabilities = $"{endpointTranslator}languages?api-version=3.0";
 
 		// Add your location, also known as region. The default is global.
 		// This is required if using a Cognitive Services resource.
-		private static readonly string location = Properties.Settings.Default.AzureTranslatorRegion;
+		public static string AzureTranslatorLocation = Properties.Settings.Default.AzureTranslatorRegion;
 
 		public enum TransductionType
 		{
@@ -47,8 +61,8 @@ namespace SilEncConverters40.EcTranslators
 			DictionaryLookup
 		};
 
-        public const string CstrDisplayName = "Bing Translator";
-        internal const string strHtmlFilename  = "Bing_Translator_Plug-in_About_box.htm";
+        public const string CstrDisplayName = "Google Translator";
+        internal const string strHtmlFilename  = "Google_Translator_Plug-in_About_box.htm";
 		#endregion Const Definitions
 
 		#region Member Variable Definitions
@@ -62,7 +76,7 @@ namespace SilEncConverters40.EcTranslators
 		#endregion Member Variable Definitions
 
 		#region Initialization
-		public BingTranslatorEncConverter() : base(typeof(BingTranslatorEncConverter).FullName,EncConverters.strTypeSILBingTranslator)
+		public GoogleTranslatorEncConverter() : base(typeof(GoogleTranslatorEncConverter).FullName,EncConverters.strTypeSILGoogleTranslator)
         {
 			// this is needed to be able to use the Azure Translator (https call) from Word. If you don't have it, you just get this error:
 			//	Unable to read data from the transport connection: An existing connection was forcibly closed by the remote host
@@ -148,6 +162,7 @@ namespace SilEncConverters40.EcTranslators
 			}
 		}
 
+		/*
 		public static (List<TranslationLanguage> translations, List<TransliterationLanguage> transliterations, List<DictionaryLanguage> dictionaryOptions) GetCapabilities()
 		{
 			var jsonCapabilities = GetTranslationCapabilities().Result;
@@ -163,7 +178,7 @@ namespace SilEncConverters40.EcTranslators
 
 			return (translations, transliterations, dictionaryOptions);
 		}
-
+		*/
 		#endregion Initialization
 
 		#region Abstract Base Class Overrides
@@ -207,12 +222,12 @@ namespace SilEncConverters40.EcTranslators
 			// here's our input string
 			var strInput = new string(caIn);
 
-			strOutput = CallBingTranslator(strInput).Result;
+			strOutput = CallGoogleTranslator(strInput).Result;
 
 			StringToProperByteStar(strOutput, lpOutBuffer, ref rnOutLen);
 		}
 
-		private async Task<string> CallBingTranslator(string strInput)
+		private async Task<string> CallGoogleTranslator(string strInput)
 		{
 			try
 			{
@@ -229,7 +244,7 @@ namespace SilEncConverters40.EcTranslators
 					request.RequestUri = new Uri(endpointTranslator + routeSuffix);
 					request.Content = new StringContent(requestBody, Encoding.UTF8, "application/json");
 					request.Headers.Add("Ocp-Apim-Subscription-Key", AzureTranslatorSubscriptionKey);
-					request.Headers.Add("Ocp-Apim-Subscription-Region", location);
+					request.Headers.Add("Ocp-Apim-Subscription-Region", AzureTranslatorLocation);
 
 					// Send the request and get response.
 					var response = await client.SendAsync(request).ConfigureAwait(false);
@@ -317,17 +332,17 @@ namespace SilEncConverters40.EcTranslators
 				switch (transductionRequested)
 				{
 					case TransductionType.Translate:
-						return $"/translate?api-version=3.0{fromIndicated}{toIndicated}";
+						return $"translate?api-version=3.0{fromIndicated}{toIndicated}";
 					case TransductionType.Transliterate:
 						// transliterate has a special form for the from language
 						fromIndicated = (!String.IsNullOrEmpty(fromLanguage)) ? $"&language={fromLanguage}" : String.Empty;
-						return $"/transliterate?api-version=3.0{fromIndicated}&fromScript={fromScript}&toScript={toScript}";
+						return $"transliterate?api-version=3.0{fromIndicated}&fromScript={fromScript}&toScript={toScript}";
 					case TransductionType.TranslateWithTransliterate:
-						return $"/translate?api-version=3.0{fromIndicated}{toIndicated}&toScript={toScript}";
+						return $"translate?api-version=3.0{fromIndicated}{toIndicated}&toScript={toScript}";
 					case TransductionType.DictionaryLookup:
-						return $"/dictionary/lookup?api-version=3.0{fromIndicated}{toIndicated}";
+						return $"dictionary/lookup?api-version=3.0{fromIndicated}{toIndicated}";
 					default:
-						throw new ApplicationException($"Unknown TransductionRequested for BingTranslatorEncConverter: '{transductionRequested}'");
+						throw new ApplicationException($"Unknown TransductionRequested for GoogleTranslatorEncConverter: '{transductionRequested}'");
 				};
 			}
 		}
@@ -344,7 +359,7 @@ namespace SilEncConverters40.EcTranslators
 
 		protected override string GetConfigTypeName
 		{
-			get { return typeof(BingTranslatorEncConverterConfig).AssemblyQualifiedName; }
+			get { return typeof(GoogleTranslatorEncConverterConfig).AssemblyQualifiedName; }
 		}
 
 		protected unsafe void Load(bool bReload)
