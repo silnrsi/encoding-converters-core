@@ -47,7 +47,7 @@ namespace SilEncConverters40
 					webBrowserAdaptor = new WebBrowserGecko();
 					break;
 				case WhichBrowser.Edge:
-					webBrowserAdaptor = new WebBrowserEdge();
+					webBrowserAdaptor = CreateWebBrowserEdge();
 					break;
 
 				default:
@@ -65,13 +65,13 @@ namespace SilEncConverters40
 							webBrowserAdaptor = new WebBrowserInstructions();
 						}
 					}
-					else if (WebBrowserEdge.ShouldUseBrowser)
+					else if (WebBrowserEdgeInfo.ShouldUseBrowser)
 					{
 						try
 						{
-							if (WebBrowserEdge.IsWebView2RuntimeInstalled)
+							if (WebBrowserEdgeInfo.IsWebView2RuntimeInstalled)
 							{
-								webBrowserAdaptor=  new WebBrowserEdge();
+								webBrowserAdaptor = CreateWebBrowserEdge();
 							}
 							else
 							{
@@ -95,6 +95,22 @@ namespace SilEncConverters40
 					break;
 			}
 
+			return webBrowserAdaptor;
+		}
+
+		/// <summary>
+		/// Reflectively load WebBrowserEdge so that Mono won't crash.
+		/// The loading of types in Mono is not JIT so even though it never needs to construct a WebView2 crashes
+		/// trying to find the types for it.
+		/// </summary>
+		/// <returns></returns>
+		private static WebBrowserAdaptor CreateWebBrowserEdge()
+		{
+			WebBrowserAdaptor webBrowserAdaptor;
+			var browserEdgeType = Assembly.GetExecutingAssembly()
+				.GetType("SilEncConverters40.WebBrowserEdge");
+			var defaultConstructor = browserEdgeType.GetConstructor(new Type[] { });
+			webBrowserAdaptor = (WebBrowserAdaptor)defaultConstructor?.Invoke(new object[] { });
 			return webBrowserAdaptor;
 		}
 

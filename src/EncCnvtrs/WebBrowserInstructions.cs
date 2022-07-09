@@ -86,7 +86,7 @@ namespace SilEncConverters40
 													 EncConverters.SEC_ROOT_KEY.Replace("SOFTWARE", @"SOFTWARE\WOW6432Node"),
 #endif
 													 EncConverters.CstrUseEdgeRegKey,
-													 WebBrowserEdge.EdgeAvailableBrowserVersion),
+													 WebBrowserEdgeInfo.EdgeAvailableBrowserVersion),
 					Dock = DockStyle.Fill
 				};
 

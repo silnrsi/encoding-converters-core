@@ -11,6 +11,8 @@ using Microsoft.Win32;
 
 namespace SilEncConverters40
 {
+	// ReSharper disable once UnusedMember.Global
+	/// <remarks>This class is instantiated only by reflection to avoid runtime errors on Mono</remarks>
 	public class WebBrowserEdge : WebBrowserAdaptor
 	{
 		private WebView2 _webBrowser { get; set; }
@@ -21,56 +23,6 @@ namespace SilEncConverters40
 			: base(WhichBrowser.Edge)
 		{
 			InitializeComponent();
-		}
-
-		public static bool ShouldUseBrowser
-		{
-			get
-			{
-				if (Util.IsUnix)
-				{
-					return false;
-				}
-				else
-				{
-					// prefer Edge to IE
-					return WindowsUserWantsToUseEdge;
-				}
-			}
-		}
-
-		/// <summary>
-		/// this will return true if the user has set the 'UseEdge' registry key to 'True'
-		/// </summary>
-		private static bool WindowsUserWantsToUseEdge
-		{
-			get
-			{
-				var regKeySecRoot = Registry.LocalMachine.OpenSubKey(EncConverters.SEC_ROOT_KEY);
-				return (regKeySecRoot != null) &&
-					   (regKeySecRoot.GetValue(EncConverters.CstrUseEdgeRegKey, "False") as string == "True");
-			}
-		}
-
-		public static bool IsWebView2RuntimeInstalled
-		{
-			get { return !String.IsNullOrEmpty(EdgeAvailableBrowserVersion); }
-		}
-
-		public static string EdgeAvailableBrowserVersion
-		{
-			get
-			{
-				try
-				{
-					return CoreWebView2Environment.GetAvailableBrowserVersionString();
-				}
-				catch (Exception ex)
-				{
-					LogExceptionMessage("EdgeAvailableBrowserVersion", ex);
-					return null;
-				}
-			}
 		}
 
 		private void InitializeComponent()
@@ -168,6 +120,46 @@ namespace SilEncConverters40
 		{
 			_webBrowser.CoreWebView2.Navigate(filePath);
 			return Task.Delay(0);
+		}
+	}
+
+	/// <summary>
+	/// This class holds static methods extracted from WebBrowserEdge so we don't need reflective calls to avoid Mono runtime problems.
+	/// </summary>
+	public static class WebBrowserEdgeInfo
+	{
+		// prefer Edge to IE
+		public static bool ShouldUseBrowser => !Util.IsUnix && WindowsUserWantsToUseEdge;
+
+		/// <summary>
+		/// this will return true if the user has set the 'UseEdge' registry key to 'True'
+		/// </summary>
+		private static bool WindowsUserWantsToUseEdge
+		{
+			get
+			{
+				var regKeySecRoot = Registry.LocalMachine.OpenSubKey(EncConverters.SEC_ROOT_KEY);
+				return regKeySecRoot != null &&
+					regKeySecRoot.GetValue(EncConverters.CstrUseEdgeRegKey, "False") as string == "True";
+			}
+		}
+
+		public static bool IsWebView2RuntimeInstalled => !string.IsNullOrEmpty(EdgeAvailableBrowserVersion);
+
+		public static string EdgeAvailableBrowserVersion
+		{
+			get
+			{
+				try
+				{
+					return CoreWebView2Environment.GetAvailableBrowserVersionString();
+				}
+				catch (Exception ex)
+				{
+					EncConverter.LogExceptionMessage("EdgeAvailableBrowserVersion", ex);
+					return null;
+				}
+			}
 		}
 	}
 }

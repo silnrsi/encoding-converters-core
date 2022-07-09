@@ -45,7 +45,9 @@ ifeq ($(ARCH),x86_64)
 WIDTH=_64
 endif
 
-all: $(BUILDDIR) $(OUTDIR)/libecdriver$(WIDTH).so
+all: debug
+
+debug: $(BUILDDIR) $(OUTDIR)/libecdriver$(WIDTH).so
 
 $(BUILDDIR):
 	mkdir -p $(BUILDDIR)
