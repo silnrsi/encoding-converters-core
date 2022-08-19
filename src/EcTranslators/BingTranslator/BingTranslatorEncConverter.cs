@@ -111,6 +111,8 @@ namespace SilEncConverters40.EcTranslators.BingTranslator
 			if (String.IsNullOrEmpty(rhsEncodingID))
 				rhsEncodingID = m_strRhsEncodingID = EncConverters.strDefUnicodeEncoding;
 
+			processTypeFlags |= (int)ProcessTypeFlags.Translation;	// this is a Translation process type by definition
+
 			Util.DebugWriteLine(this, "END");
 		}
 

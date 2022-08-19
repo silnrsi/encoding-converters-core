@@ -83,5 +83,41 @@ namespace SilEncConverters40.EcTranslators.Properties {
                 this["AzureTranslatorKeyOverride"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("e3c2646f-2132-7cea-9c24-ea35f259474b:fx")]
+        public string DeepLTranslatorKey {
+            get {
+                return ((string)(this["DeepLTranslatorKey"]));
+            }
+            set {
+                this["DeepLTranslatorKey"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string DeepLTranslatorKeyOverride {
+            get {
+                return ((string)(this["DeepLTranslatorKeyOverride"]));
+            }
+            set {
+                this["DeepLTranslatorKeyOverride"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://www.deepl.com/pro?cta=header-pro/")]
+        public string DeepLTranslatorKeyDialogInstructionUrl {
+            get {
+                return ((string)(this["DeepLTranslatorKeyDialogInstructionUrl"]));
+            }
+            set {
+                this["DeepLTranslatorKeyDialogInstructionUrl"] = value;
+            }
+        }
     }
 }

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="12.0">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
@@ -11,7 +11,7 @@
     <AssemblyKeyContainerName>
     </AssemblyKeyContainerName>
     <AssemblyName>SilIndicEncConverters40</AssemblyName>
-    <AssemblyOriginatorKeyFile>FieldWorks.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>..\FieldWorks.snk</AssemblyOriginatorKeyFile>
     <DefaultClientScript>VBScript</DefaultClientScript>
     <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
     <DefaultTargetSchema>IE50</DefaultTargetSchema>
@@ -144,8 +144,10 @@
     <Compile Include="TechHindiSiteEncConverter.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\FieldWorks.snk">
+      <Link>FieldWorks.snk</Link>
+    </None>
     <None Include="app.config" />
-    <None Include="FieldWorks.snk" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="..\..\redist\EC\Plugins\SIEC 4.0.0.0 Plugin Details.xml">

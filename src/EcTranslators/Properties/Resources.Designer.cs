@@ -144,5 +144,41 @@ namespace SilEncConverters40.EcTranslators.Properties {
                 return ResourceManager.GetString("HelpForBingTranslatorTargetScriptsComboBox", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Click this button to enter your own API key from DeepL. See the &quot;Find your perfect plan&quot; section on the page, https://www.deepl.com/pro?cta=header-pro, for how to get your own key (e.g. if the default API key has run out of translation support -- note: the default API key is using the free pricing tier and is limited to 500K characters/month for all users).
+        /// </summary>
+        internal static string HelpForDeepLTranslatorAddYourOwnApiKey {
+            get {
+                return ResourceManager.GetString("HelpForDeepLTranslatorAddYourOwnApiKey", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to If the language you want to translate into (i.e. Target language) supports formality, then these radio buttons will be enabled allowing you to choose between more or less formality during translation..
+        /// </summary>
+        internal static string HelpForDeepLTranslatorFormalityLevel {
+            get {
+                return ResourceManager.GetString("HelpForDeepLTranslatorFormalityLevel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Choose the language you want to translate or transliterate from. Choose &apos;Auto-Detect&apos; if you want the underlying DeepL Translator to attempt to determine the input language..
+        /// </summary>
+        internal static string HelpForDeepLTranslatorSourceLanguagesComboBox {
+            get {
+                return ResourceManager.GetString("HelpForDeepLTranslatorSourceLanguagesComboBox", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Choose the language you want the input text to be translated into..
+        /// </summary>
+        internal static string HelpForDeepLTranslatorTargetLanguagesComboBox {
+            get {
+                return ResourceManager.GetString("HelpForDeepLTranslatorTargetLanguagesComboBox", resourceCulture);
+            }
+        }
     }
 }

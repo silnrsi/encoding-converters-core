@@ -2,7 +2,7 @@
 <package >
 	<metadata>
 		<id>Encoding-Converters-Core</id>
-		<version>0.5.0</version>
+		<version>0.5.1</version>
 		<authors>Bob Eaton, Jim Kornelson, SIL International</authors>
 		<owners>jnaylor, sillsdev</owners>
 		<license type="expression">MIT</license>
@@ -47,9 +47,11 @@
 			-->
 		
 		<file src="output\Win32\Release\*.dll" target="runtimes\EcDistFiles\win-x86\native" />
+		<file src="output\Win32\Release\*.dll.config" target="runtimes\EcDistFiles\win-x86\native" />
 		<file src="output\Win32\Release\*.tlb" target="runtimes\EcDistFiles\win-x86\native" />
 		<file src="output\Win32\Release\*.exe" target="runtimes\EcDistFiles\win-x86\native" />
 		<file src="output\x64\Release\*.dll" target="runtimes\EcDistFiles\win-x64\native" />
+		<file src="output\x64\Release\*.dll.config" target="runtimes\EcDistFiles\win-x64\native" />
 		<file src="output\x64\Release\*.tlb" target="runtimes\EcDistFiles\win-x64\native" />
 		<file src="output\x64\Release\*.exe" target="runtimes\EcDistFiles\win-x64\native" />
 

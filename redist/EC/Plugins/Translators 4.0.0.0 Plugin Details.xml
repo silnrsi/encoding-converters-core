@@ -6,4 +6,10 @@
                    DisplayName="Bing Translator"
                    ConfiguratorProgId="SilEncConverters40.EcTranslators.BingTranslator.BingTranslatorEncConverterConfig"
                    AssemblyReference="EcTranslators, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" />
+  <ECPluginDetails ImplementationName="SIL.DeepLTranslator"
+                   ImplementationProgId="SilEncConverters40.EcTranslators.DeepLTranslator.DeepLTranslatorEncConverter"
+                   Priority="0"
+                   DisplayName="DeepL Translator"
+                   ConfiguratorProgId="SilEncConverters40.EcTranslators.DeepLTranslator.DeepLTranslatorEncConverterConfig"
+                   AssemblyReference="EcTranslators, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" />
 </EncConverterPlugins>

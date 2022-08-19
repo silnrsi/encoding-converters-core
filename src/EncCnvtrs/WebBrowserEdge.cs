@@ -60,13 +60,24 @@ namespace SilEncConverters40
 
 			_webBrowser.CoreWebView2InitializationCompleted += WebView_CoreWebView2InitializationCompleted;
 			waitForCoreWebView2Loaded = new ManualResetEvent(false);
-			_webBrowser.EnsureCoreWebView2Async(env);   // calling w/o await (and letting do events happen until CoreWebView2InitializationCompleted)
+			InitializeAsync(env);   // calling w/o await (and letting do events happen until CoreWebView2InitializationCompleted)
 			while (!waitForCoreWebView2Loaded.WaitOne(200))
 				Application.DoEvents();
 		}
 
+		private async Task InitializeAsync(CoreWebView2Environment env)
+		{
+			await Task.Run(async delegate
+			{
+				await _webBrowser.EnsureCoreWebView2Async(env);
+			}).ConfigureAwait(false);			
+		}
+
 		private void WebView_CoreWebView2InitializationCompleted(object sender, CoreWebView2InitializationCompletedEventArgs e)
 		{
+			// this event, which should indicate that CoreWebView2 is non-null, seems to not work in some versions...
+			//  workaround: if it's still null, then keep waiting (but note, we won't get this event again, so wait in
+			//	the line above...
 			waitForCoreWebView2Loaded.Set();
 		}
 
@@ -118,6 +129,12 @@ namespace SilEncConverters40
 
 		public override Task NavigateAsync(string filePath)
 		{
+			// if the test fails at this line (bkz CoreWebView2 is null), chances are you don't have
+			//	the webview2 runtime installed or up to date.
+			// To install or update the WebView2 Runtime: Go to page https://developer.microsoft.com/en-us/microsoft-edge/webview2/
+			if (_webBrowser.CoreWebView2 == null)
+				throw new ApplicationException("the WebView2 runtime appears to not match the version of the Edge controller we're using");
+
 			_webBrowser.CoreWebView2.Navigate(filePath);
 			return Task.Delay(0);
 		}
@@ -156,10 +173,23 @@ namespace SilEncConverters40
 				}
 				catch (Exception ex)
 				{
-					EncConverter.LogExceptionMessage("EdgeAvailableBrowserVersion", ex);
+					LogExceptionMessage("EdgeAvailableBrowserVersion", ex);
 					return null;
 				}
 			}
+		}
+
+		public static string LogExceptionMessage(string className, Exception ex)
+		{
+			string msg = "Error occurred: " + ex.Message;
+			while (ex.InnerException != null)
+			{
+				ex = ex.InnerException;
+				msg += $"{Environment.NewLine}because: (InnerException): {ex.Message}";
+			}
+
+			Util.DebugWriteLine(className, msg);
+			return msg;
 		}
 	}
 }

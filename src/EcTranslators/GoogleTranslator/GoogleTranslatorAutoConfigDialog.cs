@@ -328,7 +328,6 @@ namespace SilEncConverters40.EcTranslators.GoogleTranslator
 			comboBoxTargetScripts.Items.Clear();
 
 			// the scripts we can transliterate *to* are dependent on the transduction type...
-			string[] possibleTargetScripts;
 			switch (transductionSelected)
 			{
 				case TransductionType.Transliterate:

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="12.0">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -12,7 +12,7 @@
     <AssemblyName>AIGuesserEC</AssemblyName>
     <ApplicationIcon>TRFFC17.ICO</ApplicationIcon>
     <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>FieldWorks.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>..\FieldWorks.snk</AssemblyOriginatorKeyFile>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <UpgradeBackupLocation>
@@ -180,6 +180,9 @@
     <Content Include="..\..\redist\EC\Plugins\AI 4.0.0.0 Plugin Details.xml">
       <Link>AI 4.0.0.0 Plugin Details.xml</Link>
     </Content>
+    <None Include="..\FieldWorks.snk">
+      <Link>FieldWorks.snk</Link>
+    </None>
     <None Include="AdaptIt KB.xsc">
       <DependentUpon>AdaptIt KB.xsd</DependentUpon>
     </None>
@@ -202,7 +205,6 @@
       <DependentUpon>AdaptIt KB.xsd</DependentUpon>
     </None>
     <None Include="app.manifest" />
-    <None Include="FieldWorks.snk" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="AdaptItAutoConfigDialog.resx">

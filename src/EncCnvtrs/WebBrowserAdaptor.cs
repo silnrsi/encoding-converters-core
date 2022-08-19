@@ -168,7 +168,8 @@ namespace SilEncConverters40
 
 		protected void OnDocumentCompleted(EventArgs e)
 		{
-			waitForPageLoaded.Set();
+			if (waitForPageLoaded != null)
+				waitForPageLoaded.Set();
 			((EventHandler)listEventDelegates[documentCompletedEventKey])?.Invoke(this, e);
 		}
 

@@ -14,7 +14,7 @@ namespace SilEncConverters40.EcTranslators.BingTranslator
             typeof(BingTranslatorEncConverter).FullName,
             BingTranslatorEncConverter.CstrDisplayName,
             BingTranslatorEncConverter.strHtmlFilename,
-            ProcessTypeFlags.DontKnow
+            ProcessTypeFlags.Translation
             )
             {
             }

@@ -13,8 +13,9 @@ using SilEncConverters40;
 using System.Reflection;
 using System.Threading;
 using System.Linq;
-using SilEncConverters40.EcTranslators;
 using SilEncConverters40.EcTranslators.BingTranslator;
+using SilEncConverters40.EcTranslators.DeepLTranslator;
+using System.Threading.Tasks;
 
 namespace TestEncCnvtrs
 {
@@ -918,6 +919,7 @@ namespace TestEncCnvtrs
 		[TestCase(ProcessTypeFlags.Translation, "Translate;hi;en", "", "")]
 		[TestCase(ProcessTypeFlags.Translation, "Translate;hi;en", "यीशु ने यह भी कहा,", "Jesus also said,")]
 		[TestCase(ProcessTypeFlags.Translation, "Translate;;en", "यीशु ने यह भी कहा,", "Jesus also said,")]
+		[TestCase(ProcessTypeFlags.Translation, "Translate;en;zh-Hans", "This Israel Field Guide has been developed to help you get to know the beautiful country of Israel and also to encourage you to learn and experience the incredible Word of God and the truth of the events and doctrines that it presents.", "本以色列实地指南旨在帮助您了解美丽的以色列国家，并鼓励您学习和体验上帝令人难以置信的话语以及它所呈现的事件和教义的真理。")]
 		[TestCase(ProcessTypeFlags.Translation | ProcessTypeFlags.Transliteration, "TranslateWithTransliterate;en;ar;;Latn", "God", "alleh")]
 		[TestCase(ProcessTypeFlags.Translation | ProcessTypeFlags.Transliteration, "TranslateWithTransliterate;;ar;;Latn", "God", "alleh")]
 		// [TestCase("TranslateWithTransliterate;;en;;Deva", "नहीं", "not")]	// can't transliterate from an language=en result
@@ -925,7 +927,7 @@ namespace TestEncCnvtrs
 		[TestCase(ProcessTypeFlags.Transliteration, "Transliterate;hi;;Deva;Latn", "संसार", "sansar")]
 		[TestCase(ProcessTypeFlags.Transliteration, "Transliterate;hi;;Latn;Deva", "sansar", "संसार")]
 		[TestCase(ProcessTypeFlags.Transliteration, "Transliterate;ar;;Arab;Latn", "الله", "alleh")]
-		[TestCase(ProcessTypeFlags.Transliteration, "Transliterate;ar;;Latn;Arab", "alleh", "علية")]  // الله (apparently, the transliteration isn't round-trippable)
+		[TestCase(ProcessTypeFlags.Transliteration, "Transliterate;ar;;Latn;Arab", "alleh", "الله")]
 		// [TestCase("Transliterate;ar;;;Latn", "الله", "alleh")]		// this doesn't work, because with Transliterate, you must specify the fromScript
 		[TestCase(ProcessTypeFlags.Translation, "DictionaryLookup;en;hi", "with", "साथ")]
 		[TestCase(ProcessTypeFlags.Translation, "DictionaryLookup;hi;en", "से", "%2%from%than%")]	// when multiple results, return the ample disambiguation syntax (cf. AdaptIt lookup converter)
@@ -968,6 +970,39 @@ namespace TestEncCnvtrs
         {
 			var languageCodeActual = BingTranslatorAutoConfigDialog.ExtractCode(menuItem);
 			Assert.AreEqual(languageCodeExpected, languageCodeActual);
+		}
+
+		private const string DeepLTranslatorConverterFriendlyName = "DeepLTranslator";
+
+		// these tests may fail if the DeepL Translator resource no longer has any remaining juice...
+		[Test]
+		[TestCase(ProcessTypeFlags.Translation, "Translate;en;fr", "Hello, world!", "Bonjour, le monde !")]
+		[TestCase(ProcessTypeFlags.Translation, "Translate;en;zh", "This Israel Field Guide has been developed to help you get to know the beautiful country of Israel.", "这本《以色列实地指南》是为了帮助你了解以色列这个美丽的国家而编写的。")]
+		[TestCase(ProcessTypeFlags.Translation, "Translate;en;de;Less", "How are you?", "Wie geht es dir?")]
+		[TestCase(ProcessTypeFlags.Translation, "Translate;en;de;More", "How are you?", "Wie geht es Ihnen?")]
+		public void TestDeepLConverter(ProcessTypeFlags processType, string converterSpec, string testInput, string testOutput)
+		{
+			m_encConverters.AddConversionMap(DeepLTranslatorConverterFriendlyName, converterSpec, ConvType.Unicode_to_Unicode,
+											 EncConverters.strTypeSILDeepLTranslator, "UNICODE", "UNICODE",
+											 processType);
+
+			var theEc = m_encConverters[DeepLTranslatorConverterFriendlyName];
+
+			// do a forward conversion
+			var strOutput = theEc.Convert(testInput);
+			Assert.AreEqual(testOutput, strOutput);
+		}
+
+		[Test]
+		public async Task TestDeeplTranslatorGetCapabilities()
+		{
+            var res = await DeepLTranslatorEncConverter.GetCapabilities();
+            Assert.IsNotNull(res);
+			Assert.Contains("en", res.languagesSource.Select(l => l.Code).ToList());
+			Assert.Contains("fr", res.languagesTarget.Select(l => l.Code).ToList());
+			Assert.Contains("fr", res.glossaryLanguagePairs.Select(l => l.SourceLanguageCode).ToList());
+			Assert.Contains("de", res.glossaryLanguagePairs.Select(l => l.TargetLanguageCode).ToList());
+			Assert.NotNull(res.usageLeft);
 		}
 	}
 

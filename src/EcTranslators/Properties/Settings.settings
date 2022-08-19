@@ -17,5 +17,14 @@
     <Setting Name="AzureTranslatorKeyOverride" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
+    <Setting Name="DeepLTranslatorKey" Type="System.String" Scope="User">
+      <Value Profile="(Default)">e3c2646f-2132-7cea-9c24-ea35f259474b:fx</Value>
+    </Setting>
+    <Setting Name="DeepLTranslatorKeyOverride" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="DeepLTranslatorKeyDialogInstructionUrl" Type="System.String" Scope="User">
+      <Value Profile="(Default)">https://www.deepl.com/pro?cta=header-pro/</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

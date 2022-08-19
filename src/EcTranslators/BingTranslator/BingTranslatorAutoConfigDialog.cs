@@ -132,10 +132,13 @@ namespace SilEncConverters40.EcTranslators.BingTranslator
 			string value = $"({code})";
 			var item = comboBox.Items.Cast<string>().FirstOrDefault(i => i.Contains(value));
 
-			if (item == null)
+			if ((item == null) && (comboBox.Items.Count > 0))
+			{
 				item = (string)comboBox.Items[0];
+			}
 
-			comboBox.SelectedItem = item;
+			if (item != null)
+				comboBox.SelectedItem = item;
 		}
 
 		public BingTranslatorAutoConfigDialog
@@ -241,13 +244,13 @@ namespace SilEncConverters40.EcTranslators.BingTranslator
 				switch (transductionSelected)
 				{
 					case TransductionType.Translate:
-						return $"Translate {selectedSourceLanguage} to {comboBoxTargetLanguages.SelectedItem}";
+						return $"Bing Translate {selectedSourceLanguage} to {comboBoxTargetLanguages.SelectedItem}";
 					case TransductionType.TranslateWithTransliterate:
-						return $"Translate {selectedSourceLanguage} to {comboBoxTargetLanguages.SelectedItem} + Transliterate to {comboBoxTargetScripts.SelectedItem} script";
+						return $"Bing Translate {selectedSourceLanguage} to {comboBoxTargetLanguages.SelectedItem} + Transliterate to {comboBoxTargetScripts.SelectedItem} script";
 					case TransductionType.Transliterate:
-						return $"Transliterate {selectedSourceLanguage} from {textBoxSourceScript.Text} script to {comboBoxTargetScripts.SelectedItem} script";
+						return $"Bing Transliterate {selectedSourceLanguage} from {textBoxSourceScript.Text} script to {comboBoxTargetScripts.SelectedItem} script";
 					case TransductionType.DictionaryLookup:
-						return $"Dictionary Lookup of {selectedSourceLanguage} words in {comboBoxTargetLanguages.SelectedItem}";
+						return $"Bing Dictionary Lookup of {selectedSourceLanguage} words in {comboBoxTargetLanguages.SelectedItem}";
 					default:
 						return ConverterIdentifier;
 				};
