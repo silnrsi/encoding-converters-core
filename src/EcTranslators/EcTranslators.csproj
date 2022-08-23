@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -91,37 +91,37 @@
     <Compile Include="BingTranslator\QueryForAzureKeyAndLocation.Designer.cs">
       <DependentUpon>QueryForAzureKeyAndLocation.cs</DependentUpon>
     </Compile>
-    <Compile Include="DeepLTranslator\DeepLTranslatorEncConverterConfig.cs" />
-    <Compile Include="DeepLTranslator\DeepLTranslatorAutoConfigDialog.cs">
+    <Compile Include="DeepLTranslator\DeepLTranslatorEncConverterConfig.cs" Condition="('$(OS)'=='Windows_NT')" />
+    <Compile Include="DeepLTranslator\DeepLTranslatorAutoConfigDialog.cs" Condition="('$(OS)'=='Windows_NT')">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="DeepLTranslator\DeepLTranslatorAutoConfigDialog.designer.cs">
+    <Compile Include="DeepLTranslator\DeepLTranslatorAutoConfigDialog.designer.cs" Condition="('$(OS)'=='Windows_NT')">
       <DependentUpon>DeepLTranslatorAutoConfigDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="DeepLTranslator\DeepLTranslatorEncConverter.cs" />
-    <Compile Include="DeepLTranslator\DeepL\DeepLException.cs" />
-    <Compile Include="DeepLTranslator\DeepL\DocumentTranslateOptions.cs" />
-    <Compile Include="DeepLTranslator\DeepL\Formality.cs" />
-    <Compile Include="DeepLTranslator\DeepL\GlossaryEntries.cs" />
-    <Compile Include="DeepLTranslator\DeepL\Internal\DeepLClient.cs" />
-    <Compile Include="DeepLTranslator\DeepL\Internal\JsonUtils.cs" />
-    <Compile Include="DeepLTranslator\DeepL\Internal\LargeFormUrlEncodedContent.cs" />
-    <Compile Include="DeepLTranslator\DeepL\LanguageCode.cs" />
-    <Compile Include="DeepLTranslator\DeepL\Model\DocumentHandle.cs" />
-    <Compile Include="DeepLTranslator\DeepL\Model\DocumentStatus.cs" />
-    <Compile Include="DeepLTranslator\DeepL\Model\GlossaryInfo.cs" />
-    <Compile Include="DeepLTranslator\DeepL\Model\GlossaryLanguagePair.cs" />
-    <Compile Include="DeepLTranslator\DeepL\Model\Language.cs" />
-    <Compile Include="DeepLTranslator\DeepL\Model\TextResult.cs" />
-    <Compile Include="DeepLTranslator\DeepL\Model\Usage.cs" />
-    <Compile Include="DeepLTranslator\DeepL\SentenceSplittingMode.cs" />
-    <Compile Include="DeepLTranslator\DeepL\TextTranslateOptions.cs" />
-    <Compile Include="DeepLTranslator\DeepL\Translator.cs" />
-    <Compile Include="DeepLTranslator\DeepL\TranslatorOptions.cs" />
-    <Compile Include="DeepLTranslator\QueryForDeepLKey.cs">
+    <Compile Include="DeepLTranslator\DeepLTranslatorEncConverter.cs" Condition="('$(OS)'=='Windows_NT')" />
+    <Compile Include="DeepLTranslator\DeepL\DeepLException.cs" Condition="('$(OS)'=='Windows_NT')" />
+    <Compile Include="DeepLTranslator\DeepL\DocumentTranslateOptions.cs" Condition="('$(OS)'=='Windows_NT')" />
+    <Compile Include="DeepLTranslator\DeepL\Formality.cs" Condition="('$(OS)'=='Windows_NT')" />
+    <Compile Include="DeepLTranslator\DeepL\GlossaryEntries.cs" Condition="('$(OS)'=='Windows_NT')" />
+    <Compile Include="DeepLTranslator\DeepL\Internal\DeepLClient.cs" Condition="('$(OS)'=='Windows_NT')" />
+    <Compile Include="DeepLTranslator\DeepL\Internal\JsonUtils.cs" Condition="('$(OS)'=='Windows_NT')" />
+    <Compile Include="DeepLTranslator\DeepL\Internal\LargeFormUrlEncodedContent.cs" Condition="('$(OS)'=='Windows_NT')" />
+    <Compile Include="DeepLTranslator\DeepL\LanguageCode.cs" Condition="('$(OS)'=='Windows_NT')" />
+    <Compile Include="DeepLTranslator\DeepL\Model\DocumentHandle.cs" Condition="('$(OS)'=='Windows_NT')" />
+    <Compile Include="DeepLTranslator\DeepL\Model\DocumentStatus.cs" Condition="('$(OS)'=='Windows_NT')" />
+    <Compile Include="DeepLTranslator\DeepL\Model\GlossaryInfo.cs" Condition="('$(OS)'=='Windows_NT')" />
+    <Compile Include="DeepLTranslator\DeepL\Model\GlossaryLanguagePair.cs" Condition="('$(OS)'=='Windows_NT')" />
+    <Compile Include="DeepLTranslator\DeepL\Model\Language.cs" Condition="('$(OS)'=='Windows_NT')" />
+    <Compile Include="DeepLTranslator\DeepL\Model\TextResult.cs" Condition="('$(OS)'=='Windows_NT')" />
+    <Compile Include="DeepLTranslator\DeepL\Model\Usage.cs" Condition="('$(OS)'=='Windows_NT')" />
+    <Compile Include="DeepLTranslator\DeepL\SentenceSplittingMode.cs" Condition="('$(OS)'=='Windows_NT')" />
+    <Compile Include="DeepLTranslator\DeepL\TextTranslateOptions.cs" Condition="('$(OS)'=='Windows_NT')" />
+    <Compile Include="DeepLTranslator\DeepL\Translator.cs" Condition="('$(OS)'=='Windows_NT')" />
+    <Compile Include="DeepLTranslator\DeepL\TranslatorOptions.cs" Condition="('$(OS)'=='Windows_NT')" />
+    <Compile Include="DeepLTranslator\QueryForDeepLKey.cs" Condition="('$(OS)'=='Windows_NT')">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="DeepLTranslator\QueryForDeepLKey.Designer.cs">
+    <Compile Include="DeepLTranslator\QueryForDeepLKey.Designer.cs" Condition="('$(OS)'=='Windows_NT')">
       <DependentUpon>QueryForDeepLKey.cs</DependentUpon>
     </Compile>
     <Compile Include="GoogleTranslator\GoogleTranslatorAutoConfigDialog.cs">
@@ -159,8 +159,8 @@
     <EmbeddedResource Include="BingTranslator\QueryForAzureKeyAndLocation.resx">
       <DependentUpon>QueryForAzureKeyAndLocation.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="DeepLTranslator\DeepLTranslatorAutoConfigDialog.resx" />
-    <EmbeddedResource Include="DeepLTranslator\QueryForDeepLKey.resx">
+    <EmbeddedResource Include="DeepLTranslator\DeepLTranslatorAutoConfigDialog.resx" Condition="('$(OS)'=='Windows_NT')" />
+    <EmbeddedResource Include="DeepLTranslator\QueryForDeepLKey.resx" Condition="('$(OS)'=='Windows_NT')">
       <DependentUpon>QueryForDeepLKey.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -184,7 +184,7 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
-  <ItemGroup>
+  <ItemGroup Condition="('$(OS)'=='Windows_NT')">
     <PackageReference Include="Microsoft.Extensions.Configuration">
       <Version>7.0.0-preview.6.22324.4</Version>
     </PackageReference>
