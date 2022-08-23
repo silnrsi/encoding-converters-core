@@ -74,18 +74,18 @@ $(OUTDIR)/libIcuConvEC$(WIDTH).so: $(BUILDDIR)/IcuConvEC.o \
 $(OUTDIR)/IcuEC.dll.config: IcuEC.dll.config
 	cp IcuEC.dll.config $(OUTDIR)
 
-$(BUILDDIR)/IcuTranslitEC.o: IcuTranslitEC.cpp IcuTranslitEC.h $(ECHEADER)
-	g++ -Wall -fPIC -c IcuTranslitEC.cpp -o $(BUILDDIR)/IcuTranslitEC.o \
+$(BUILDDIR)/IcuTranslitEC.o: IcuTransitCpp/IcuTranslitEC.cpp IcuTransitCpp/IcuTranslitEC.h $(ECHEADER)
+	g++ -Wall -fPIC -c IcuTransitCpp/IcuTranslitEC.cpp -o $(BUILDDIR)/IcuTranslitEC.o \
 	$(CFLAGS) \
   -I$(ECHEADERDIR) $(ICUINCLUDE)
 
-$(BUILDDIR)/IcuRegexEC.o: IcuRegexEC.cpp IcuRegexEC.h $(ECHEADER)
-	g++ -Wall -fPIC -c IcuRegexEC.cpp -o $(BUILDDIR)/IcuRegexEC.o \
+$(BUILDDIR)/IcuRegexEC.o: IcuRegexCpp/IcuRegexEC.cpp IcuRegexCpp/IcuRegexEC.h $(ECHEADER)
+	g++ -Wall -fPIC -c IcuRegexCpp/IcuRegexEC.cpp -o $(BUILDDIR)/IcuRegexEC.o \
 	$(CFLAGS) \
   -I$(ECHEADERDIR) $(ICUINCLUDE)
 
-$(BUILDDIR)/IcuConvEC.o: IcuConvEC.cpp IcuConvEC.h $(ECHEADER)
-	g++ -Wall -fPIC -c IcuConvEC.cpp -o $(BUILDDIR)/IcuConvEC.o \
+$(BUILDDIR)/IcuConvEC.o: IcuConvCpp/IcuConvEC.cpp IcuConvCpp/IcuConvEC.h $(ECHEADER)
+	g++ -Wall -fPIC -c IcuConvCpp/IcuConvEC.cpp -o $(BUILDDIR)/IcuConvEC.o \
 	$(CFLAGS) \
   -I$(ECHEADERDIR) $(ICUINCLUDE)
 
@@ -117,16 +117,16 @@ $(RELEASEOUT)/libIcuConvEC$(WIDTH).so: $(RELEASEBLD)/IcuConvEC.o \
 $(RELEASEOUT)/IcuEC.dll.config: IcuEC.dll.config
 	cp IcuEC.dll.config $(RELEASEOUT)
 
-$(RELEASEBLD)/IcuTranslitEC.o: IcuTranslitEC.cpp IcuTranslitEC.h $(ECHEADER)
-	g++ -Wall -fPIC -O -I$(ECHEADERDIR) $(ICUINCLUDE) -c IcuTranslitEC.cpp \
+$(RELEASEBLD)/IcuTranslitEC.o: IcuTransitCpp/IcuTranslitEC.cpp IcuTransitCpp/IcuTranslitEC.h $(ECHEADER)
+	g++ -Wall -fPIC -O -I$(ECHEADERDIR) $(ICUINCLUDE) -c IcuTransitCpp/IcuTranslitEC.cpp \
   -o $(RELEASEBLD)/IcuTranslitEC.o
 
-$(RELEASEBLD)/IcuRegexEC.o: IcuRegexEC.cpp IcuRegexEC.h $(ECHEADER)
-	g++ -Wall -fPIC -O -I$(ECHEADERDIR) $(ICUINCLUDE) -c IcuRegexEC.cpp \
+$(RELEASEBLD)/IcuRegexEC.o: IcuRegexCpp/IcuRegexEC.cpp IcuRegexCpp/IcuRegexEC.h $(ECHEADER)
+	g++ -Wall -fPIC -O -I$(ECHEADERDIR) $(ICUINCLUDE) -c IcuRegexCpp/IcuRegexEC.cpp \
   -o $(RELEASEBLD)/IcuRegexEC.o
 
-$(RELEASEBLD)/IcuConvEC.o: IcuConvEC.cpp IcuConvEC.h $(ECHEADER)
-	g++ -Wall -fPIC -O -I$(ECHEADERDIR) $(ICUINCLUDE) -c IcuConvEC.cpp \
+$(RELEASEBLD)/IcuConvEC.o: IcuConvCpp/IcuConvEC.cpp IcuConvCpp/IcuConvEC.h $(ECHEADER)
+	g++ -Wall -fPIC -O -I$(ECHEADERDIR) $(ICUINCLUDE) -c IcuConvCpp/IcuConvEC.cpp \
   -o $(RELEASEBLD)/IcuConvEC.o
 
 clean:
