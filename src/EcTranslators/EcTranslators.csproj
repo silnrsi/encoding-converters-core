@@ -184,32 +184,32 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
-  <ItemGroup Condition="('$(OS)'=='Windows_NT')">
-    <PackageReference Include="Microsoft.Extensions.Configuration">
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Configuration" Condition="('$(OS)'=='Windows_NT')" >
       <Version>7.0.0-preview.6.22324.4</Version>
     </PackageReference>
-    <PackageReference Include="Microsoft.Extensions.Configuration.Binder">
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Condition="('$(OS)'=='Windows_NT')">
       <Version>7.0.0-preview.6.22324.4</Version>
     </PackageReference>
-    <PackageReference Include="Microsoft.Extensions.Http.Polly">
+    <PackageReference Include="Microsoft.Extensions.Http.Polly" Condition="('$(OS)'=='Windows_NT')">
       <Version>7.0.0-preview.6.22330.3</Version>
     </PackageReference>
-    <PackageReference Include="Newtonsoft.Json">
+    <PackageReference Include="Newtonsoft.Json" Condition="('$(OS)'=='Windows_NT')">
       <Version>13.0.1</Version>
     </PackageReference>
-    <PackageReference Include="System.ComponentModel.Annotations">
+    <PackageReference Include="System.ComponentModel.Annotations" Condition="('$(OS)'=='Windows_NT')">
       <Version>6.0.0-preview.4.21253.7</Version>
     </PackageReference>
-    <PackageReference Include="System.Memory">
+    <PackageReference Include="System.Memory" Condition="('$(OS)'=='Windows_NT')">
       <Version>4.5.5</Version>
     </PackageReference>
-    <PackageReference Include="System.Net.Http.WinHttpHandler">
+    <PackageReference Include="System.Net.Http.WinHttpHandler" Condition="('$(OS)'=='Windows_NT')">
       <Version>7.0.0-preview.6.22324.4</Version>
     </PackageReference>
-    <PackageReference Include="System.Runtime.CompilerServices.Unsafe">
+    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Condition="('$(OS)'=='Windows_NT')">
       <Version>7.0.0-preview.2.22152.2</Version>
     </PackageReference>
-    <PackageReference Include="System.Text.Json">
+    <PackageReference Include="System.Text.Json" Condition="('$(OS)'=='Windows_NT')">
       <Version>7.0.0-preview.6.22324.4</Version>
     </PackageReference>
   </ItemGroup>
