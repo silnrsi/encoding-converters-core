@@ -169,8 +169,7 @@
     </PropertyGroup>
   </Target>
   <PropertyGroup>
-    <PostBuildEvent>copy /Y $(TargetDir)$(TargetName).* $(SolutionDir)..\silconverters\packages\Encoding-Converters-Core.0.5.1\runtimes\EcDistFiles\win-$(PlatformName)\native
-copy /Y $(TargetDir)$(TargetName).* $(SolutionDir)..\silconverters\output\$(PlatformName)\$(ConfigurationName)
-</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
 </Project>
