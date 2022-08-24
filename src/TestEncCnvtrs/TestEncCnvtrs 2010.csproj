@@ -196,7 +196,7 @@
       <Project>{2935e02f-43ed-4670-9a00-a91b0ad3d66c}</Project>
       <Name>ECInterfaces 2010</Name>
     </ProjectReference>
-    <ProjectReference Include="..\EcTranslators\EcTranslators.csproj">
+    <ProjectReference Include="..\EcTranslators\EcTranslators.csproj" Condition="('$(OS)'=='Windows_NT')">
       <Project>{c4d0aa5b-f319-4e06-a982-a52e79eb57dc}</Project>
       <Name>EcTranslators</Name>
     </ProjectReference>
