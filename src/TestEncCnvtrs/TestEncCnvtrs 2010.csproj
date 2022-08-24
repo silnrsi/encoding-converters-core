@@ -84,6 +84,7 @@
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
+    <Compile Include="TestUtil.cs" />
     <Compile Include="TestIcuConvEncConverter.cs" />
     <Compile Include="TestEncConverters.cs" />
     <Compile Include="TestIcuTranslit.cs" />
