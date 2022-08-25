@@ -851,7 +851,7 @@ namespace TestEncCnvtrs
             TechHindiSiteConverterCommon(converterSpecSuffix);
         }
 
-		private const string TechHindiSiteConverterFriendlyName = "KrutiDev010 <> Unicode";
+		public const string TechHindiSiteConverterFriendlyName = "KrutiDev010 <> Unicode";
 
 		public void TechHindiSiteConverterCommon(string converterSpecSuffix)
         {

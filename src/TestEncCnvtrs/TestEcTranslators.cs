@@ -157,8 +157,8 @@ namespace TestEncCnvtrs
 			if (m_encConverters.ContainsKey("UnitTesting-AiKbConverter"))
 				m_encConverters.Remove("UnitTesting-AiKbConverter");
 
-			if (m_encConverters.ContainsKey(TechHindiSiteConverterFriendlyName))
-				m_encConverters.Remove(TechHindiSiteConverterFriendlyName);
+			if (m_encConverters.ContainsKey(TestEncConverters.TechHindiSiteConverterFriendlyName))
+				m_encConverters.Remove(TestEncConverters.TechHindiSiteConverterFriendlyName);
 		}
 
 		/// --------------------------------------------------------------------
