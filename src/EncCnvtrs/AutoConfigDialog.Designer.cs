@@ -81,7 +81,8 @@ namespace SilEncConverters40
             this.checkBoxPerlExpression = new System.Windows.Forms.CheckBox();
             this.checkBoxSpare1 = new System.Windows.Forms.CheckBox();
             this.checkBoxSpare2 = new System.Windows.Forms.CheckBox();
-            this.labelProperties = new System.Windows.Forms.Label();
+			this.checkBoxTranslation = new System.Windows.Forms.CheckBox();
+			this.labelProperties = new System.Windows.Forms.Label();
             this.dataGridViewProperties = new System.Windows.Forms.DataGridView();
             this.ColumnKey = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ColumnValue = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -352,8 +353,7 @@ namespace SilEncConverters40
             // buttonTest
             // 
             this.buttonTest.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.helpProvider.SetHelpString(this.buttonTest, "Click this button to test the configured converter with the data in the Input box" +
-        "");
+            this.helpProvider.SetHelpString(this.buttonTest, "Click this button to test the configured converter with the data in the Input box");
             this.buttonTest.Location = new System.Drawing.Point(130, 192);
             this.buttonTest.Name = "buttonTest";
             this.helpProvider.SetShowHelp(this.buttonTest, true);
@@ -407,8 +407,8 @@ namespace SilEncConverters40
             this.tableLayoutPanelTransductionTypes.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanelTransductionTypes.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanelTransductionTypes.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanelTransductionTypes.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanelTransductionTypes.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanelTransductionTypes.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 60F));
+            this.tableLayoutPanelTransductionTypes.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 40F));
             this.tableLayoutPanelTransductionTypes.Size = new System.Drawing.Size(596, 394);
             this.tableLayoutPanelTransductionTypes.TabIndex = 4;
             // 
@@ -500,13 +500,14 @@ namespace SilEncConverters40
             this.flowLayoutPanelTransductionTypes.Controls.Add(this.checkBoxSpellingFixerProject);
             this.flowLayoutPanelTransductionTypes.Controls.Add(this.checkBoxPythonScript);
             this.flowLayoutPanelTransductionTypes.Controls.Add(this.checkBoxPerlExpression);
+            this.flowLayoutPanelTransductionTypes.Controls.Add(this.checkBoxTranslation);
             this.flowLayoutPanelTransductionTypes.Controls.Add(this.checkBoxSpare1);
             this.flowLayoutPanelTransductionTypes.Controls.Add(this.checkBoxSpare2);
             this.flowLayoutPanelTransductionTypes.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutPanelTransductionTypes.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
             this.flowLayoutPanelTransductionTypes.Location = new System.Drawing.Point(123, 83);
             this.flowLayoutPanelTransductionTypes.Name = "flowLayoutPanelTransductionTypes";
-            this.flowLayoutPanelTransductionTypes.Size = new System.Drawing.Size(470, 151);
+            this.flowLayoutPanelTransductionTypes.Size = new System.Drawing.Size(470, 168);
             this.flowLayoutPanelTransductionTypes.TabIndex = 9;
             // 
             // checkBoxUnicodeEncodingConversion
@@ -640,6 +641,17 @@ namespace SilEncConverters40
             this.checkBoxSpare2.Text = "Spare &2 (user-definable)";
             this.checkBoxSpare2.UseVisualStyleBackColor = true;
             this.checkBoxSpare2.CheckedChanged += new System.EventHandler(this.SomethingChanged);
+			// 
+			// checkBoxTranslation
+			// 
+			this.checkBoxTranslation.AutoSize = true;
+            this.checkBoxTranslation.Location = new System.Drawing.Point(179, 118);
+            this.checkBoxTranslation.Name = "checkBoxTranslation";
+            this.checkBoxTranslation.Size = new System.Drawing.Size(138, 17);
+            this.checkBoxTranslation.TabIndex = 11;
+            this.checkBoxTranslation.Text = "Translation";
+            this.checkBoxTranslation.UseVisualStyleBackColor = true;
+            this.checkBoxTranslation.CheckedChanged += new System.EventHandler(this.SomethingChanged);
             // 
             // labelProperties
             // 
@@ -844,7 +856,8 @@ namespace SilEncConverters40
         private System.Windows.Forms.CheckBox checkBoxPerlExpression;
         private System.Windows.Forms.CheckBox checkBoxSpare1;
         private System.Windows.Forms.CheckBox checkBoxSpare2;
-        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanelTransductionTypes;
+		private System.Windows.Forms.CheckBox checkBoxTranslation;
+		private System.Windows.Forms.FlowLayoutPanel flowLayoutPanelTransductionTypes;
         private System.Windows.Forms.Label labelTransductionType;
         private System.Windows.Forms.Label labelProperties;
         private System.Windows.Forms.DataGridView dataGridViewProperties;

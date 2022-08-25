@@ -11,7 +11,7 @@
     <AssemblyKeyContainerName>
     </AssemblyKeyContainerName>
     <AssemblyName>SilIndicEncConverters40</AssemblyName>
-    <AssemblyOriginatorKeyFile>FieldWorks.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>..\FieldWorks.snk</AssemblyOriginatorKeyFile>
     <DefaultClientScript>VBScript</DefaultClientScript>
     <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
     <DefaultTargetSchema>IE50</DefaultTargetSchema>
@@ -101,8 +101,6 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
@@ -144,8 +142,10 @@
     <Compile Include="TechHindiSiteEncConverter.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\FieldWorks.snk">
+      <Link>FieldWorks.snk</Link>
+    </None>
     <None Include="app.config" />
-    <None Include="FieldWorks.snk" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="..\..\redist\EC\Plugins\SIEC 4.0.0.0 Plugin Details.xml">

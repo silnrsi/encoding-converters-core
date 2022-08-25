@@ -49,8 +49,8 @@ $(OUTDIR)/libPyScriptEncConverter$(WIDTH).so: $(BUILDDIR)/PyScriptEncConverter.o
   -o $(OUTDIR)/libPyScriptEncConverter$(WIDTH).so \
   $(BUILDDIR)/PyScriptEncConverter.o $(PYTHON_LDFLAGS)
 
-$(BUILDDIR)/PyScriptEncConverter.o: PyScriptEncConverter.cpp PyScriptEncConverter.h $(ECHEADER)
-	g++ -Wall -fPIC -c PyScriptEncConverter.cpp \
+$(BUILDDIR)/PyScriptEncConverter.o: PyScriptCpp/PyScriptEncConverter.cpp PyScriptCpp/PyScriptEncConverter.h $(ECHEADER)
+	g++ -Wall -fPIC -c PyScriptCpp/PyScriptEncConverter.cpp \
   -o $(BUILDDIR)/PyScriptEncConverter.o \
   $(PYTHON_CPPFLAGS) -I$(ECHEADERDIR)
 
@@ -69,9 +69,9 @@ $(RELEASEOUT)/libPyScriptEncConverter$(WIDTH).so: \
   -o $(RELEASEOUT)/libPyScriptEncConverter$(WIDTH).so \
   $(RELEASEBLD)/PyScriptEncConverter.o $(PYTHON_LDFLAGS)
 
-$(RELEASEBLD)/PyScriptEncConverter.o: PyScriptEncConverter.cpp \
-  PyScriptEncConverter.h $(ECHEADER)
-	g++ -Wall -fPIC -O -c PyScriptEncConverter.cpp \
+$(RELEASEBLD)/PyScriptEncConverter.o: PyScriptCpp/PyScriptEncConverter.cpp \
+  PyScriptCpp/PyScriptEncConverter.h $(ECHEADER)
+	g++ -Wall -fPIC -O -c PyScriptCpp/PyScriptEncConverter.cpp \
   -o $(RELEASEBLD)/PyScriptEncConverter.o \
   $(PYTHON_CPPFLAGS) -I$(ECHEADERDIR)
 

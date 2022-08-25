@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProjectGuid>{C4D0AA5B-F319-4E06-A982-A52E79EB57DC}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>SilEncConverters40.EcTranslators</RootNamespace>
+    <AssemblyName>EcTranslators</AssemblyName>
+    <TargetFrameworkVersion Condition="('$(OS)'!='Windows_NT')">v4.7.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion Condition="('$(OS)'=='Windows_NT')">v4.8</TargetFrameworkVersion>
+    <RegisterForComInterop Condition="('$(OS)'=='Windows_NT')">true</RegisterForComInterop>
+    <RegisterForComInterop Condition="('$(OS)'!='Windows_NT')">false</RegisterForComInterop>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\FieldWorks.snk</AssemblyOriginatorKeyFile>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>TRFFC17.ICO</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>$(SolutionDir)output\$(Platform)\$(Configuration)\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>8.0</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>$(SolutionDir)output\$(Platform)\$(Configuration)\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>8.0</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>$(SolutionDir)output\Win32\$(Configuration)\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <LangVersion>8.0</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>..\..\output\Win32\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <LangVersion>8.0</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="BingTranslator\BingTranslatorAutoConfigDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="BingTranslator\BingTranslatorAutoConfigDialog.designer.cs">
+      <DependentUpon>BingTranslatorAutoConfigDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="BingTranslator\BingTranslatorEncConverter.cs" />
+    <Compile Include="BingTranslator\BingTranslatorEncConverterConfig.cs" />
+    <Compile Include="BingTranslator\BingTranslatorSchemas.cs" />
+    <Compile Include="BingTranslator\QueryForAzureKeyAndLocation.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="BingTranslator\QueryForAzureKeyAndLocation.Designer.cs">
+      <DependentUpon>QueryForAzureKeyAndLocation.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DeepLTranslator\DeepLTranslatorEncConverterConfig.cs" Condition="('$(OS)'=='Windows_NT')" />
+    <Compile Include="DeepLTranslator\DeepLTranslatorAutoConfigDialog.cs" Condition="('$(OS)'=='Windows_NT')">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DeepLTranslator\DeepLTranslatorAutoConfigDialog.designer.cs" Condition="('$(OS)'=='Windows_NT')">
+      <DependentUpon>DeepLTranslatorAutoConfigDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DeepLTranslator\DeepLTranslatorEncConverter.cs" Condition="('$(OS)'=='Windows_NT')" />
+    <Compile Include="DeepLTranslator\DeepL\DeepLException.cs" Condition="('$(OS)'=='Windows_NT')" />
+    <Compile Include="DeepLTranslator\DeepL\DocumentTranslateOptions.cs" Condition="('$(OS)'=='Windows_NT')" />
+    <Compile Include="DeepLTranslator\DeepL\Formality.cs" Condition="('$(OS)'=='Windows_NT')" />
+    <Compile Include="DeepLTranslator\DeepL\GlossaryEntries.cs" Condition="('$(OS)'=='Windows_NT')" />
+    <Compile Include="DeepLTranslator\DeepL\Internal\DeepLClient.cs" Condition="('$(OS)'=='Windows_NT')" />
+    <Compile Include="DeepLTranslator\DeepL\Internal\JsonUtils.cs" Condition="('$(OS)'=='Windows_NT')" />
+    <Compile Include="DeepLTranslator\DeepL\Internal\LargeFormUrlEncodedContent.cs" Condition="('$(OS)'=='Windows_NT')" />
+    <Compile Include="DeepLTranslator\DeepL\LanguageCode.cs" Condition="('$(OS)'=='Windows_NT')" />
+    <Compile Include="DeepLTranslator\DeepL\Model\DocumentHandle.cs" Condition="('$(OS)'=='Windows_NT')" />
+    <Compile Include="DeepLTranslator\DeepL\Model\DocumentStatus.cs" Condition="('$(OS)'=='Windows_NT')" />
+    <Compile Include="DeepLTranslator\DeepL\Model\GlossaryInfo.cs" Condition="('$(OS)'=='Windows_NT')" />
+    <Compile Include="DeepLTranslator\DeepL\Model\GlossaryLanguagePair.cs" Condition="('$(OS)'=='Windows_NT')" />
+    <Compile Include="DeepLTranslator\DeepL\Model\Language.cs" Condition="('$(OS)'=='Windows_NT')" />
+    <Compile Include="DeepLTranslator\DeepL\Model\TextResult.cs" Condition="('$(OS)'=='Windows_NT')" />
+    <Compile Include="DeepLTranslator\DeepL\Model\Usage.cs" Condition="('$(OS)'=='Windows_NT')" />
+    <Compile Include="DeepLTranslator\DeepL\SentenceSplittingMode.cs" Condition="('$(OS)'=='Windows_NT')" />
+    <Compile Include="DeepLTranslator\DeepL\TextTranslateOptions.cs" Condition="('$(OS)'=='Windows_NT')" />
+    <Compile Include="DeepLTranslator\DeepL\Translator.cs" Condition="('$(OS)'=='Windows_NT')" />
+    <Compile Include="DeepLTranslator\DeepL\TranslatorOptions.cs" Condition="('$(OS)'=='Windows_NT')" />
+    <Compile Include="DeepLTranslator\QueryForDeepLKey.cs" Condition="('$(OS)'=='Windows_NT')">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DeepLTranslator\QueryForDeepLKey.Designer.cs" Condition="('$(OS)'=='Windows_NT')">
+      <DependentUpon>QueryForDeepLKey.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GoogleTranslator\GoogleTranslatorAutoConfigDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GoogleTranslator\GoogleTranslatorAutoConfigDialog.designer.cs">
+      <DependentUpon>GoogleTranslatorAutoConfigDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GoogleTranslator\GoogleTranslatorEncConverter.cs" />
+    <Compile Include="GoogleTranslator\GoogleTranslatorEncConverterConfig.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ECInterfaces\ECInterfaces 2010.csproj">
+      <Project>{2935e02f-43ed-4670-9a00-a91b0ad3d66c}</Project>
+      <Name>ECInterfaces 2010</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EncCnvtrs\EncCnvtrs 2010.csproj">
+      <Project>{3e4b908a-4f96-43c5-981b-1aa4b73ccc26}</Project>
+      <Name>EncCnvtrs 2010</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="BingTranslator\BingTranslatorAutoConfigDialog.resx" />
+    <EmbeddedResource Include="BingTranslator\QueryForAzureKeyAndLocation.resx">
+      <DependentUpon>QueryForAzureKeyAndLocation.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DeepLTranslator\DeepLTranslatorAutoConfigDialog.resx" Condition="('$(OS)'=='Windows_NT')" />
+    <EmbeddedResource Include="DeepLTranslator\QueryForDeepLKey.resx" Condition="('$(OS)'=='Windows_NT')">
+      <DependentUpon>QueryForDeepLKey.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\redist\EC\Plugins\Translators 4.0.0.0 Plugin Details.xml">
+      <Link>PlugIn\Translators 4.0.0.0 Plugin Details.xml</Link>
+    </None>
+    <Content Include="TRFFC17.ICO" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\FieldWorks.snk">
+      <Link>FieldWorks.snk</Link>
+    </None>
+    <None Include="app.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Configuration" Condition="('$(OS)'=='Windows_NT')" >
+      <Version>7.0.0-preview.6.22324.4</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Condition="('$(OS)'=='Windows_NT')">
+      <Version>7.0.0-preview.6.22324.4</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Http.Polly" Condition="('$(OS)'=='Windows_NT')">
+      <Version>7.0.0-preview.6.22330.3</Version>
+    </PackageReference>
+    <PackageReference Include="Newtonsoft.Json" Condition="('$(OS)'=='Windows_NT')">
+      <Version>13.0.1</Version>
+    </PackageReference>
+    <PackageReference Include="System.ComponentModel.Annotations" Condition="('$(OS)'=='Windows_NT')">
+      <Version>6.0.0-preview.4.21253.7</Version>
+    </PackageReference>
+    <PackageReference Include="System.Memory" Condition="('$(OS)'=='Windows_NT')">
+      <Version>4.5.5</Version>
+    </PackageReference>
+    <PackageReference Include="System.Net.Http.WinHttpHandler" Condition="('$(OS)'=='Windows_NT')">
+      <Version>7.0.0-preview.6.22324.4</Version>
+    </PackageReference>
+    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Condition="('$(OS)'=='Windows_NT')">
+      <Version>7.0.0-preview.2.22152.2</Version>
+    </PackageReference>
+    <PackageReference Include="System.Text.Json" Condition="('$(OS)'=='Windows_NT')">
+      <Version>7.0.0-preview.6.22324.4</Version>
+    </PackageReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

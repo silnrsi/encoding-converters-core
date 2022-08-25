@@ -452,6 +452,8 @@ namespace SilEncConverters40
                 sb.Append("PythonScript, ");
             if ((lProcessType & (long)ProcessTypeFlags.PerlExpression) != 0)
                 sb.Append("PerlExpression, ");
+            if ((lProcessType & (long)ProcessTypeFlags.Translation) != 0)
+                sb.Append("Translation, ");
             if ((lProcessType & (long)ProcessTypeFlags.UserDefinedSpare1) != 0)
                 sb.Append("UserDefinedSpare #1, ");
             if ((lProcessType & (long)ProcessTypeFlags.UserDefinedSpare2) != 0)
@@ -1006,18 +1008,6 @@ namespace SilEncConverters40
 
             return eType;
         }
-
-		public static void LogExceptionMessage(string className, Exception ex)
-		{
-			string msg = "Could not call script: " + ex.Message;
-			while (ex.InnerException != null)
-			{
-				ex = ex.InnerException;
-				msg += $"{Environment.NewLine}because: (InnerException): {ex.Message}";
-			}
-
-			Util.DebugWriteLine(className, msg);
-		}
 		#endregion Internal Helpers
 
 		#region Virtual Functions implemented by subclasses

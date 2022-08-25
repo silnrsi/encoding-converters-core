@@ -38,9 +38,9 @@ namespace SilEncConverters40
         static private string strInstallerLocationRegKey = @"SOFTWARE\SIL\SilEncConverters40\Installer";
         static private string strInstallerPathKey = "InstallerPath";
         private System.Windows.Forms.Button buttonCreateNew;
-        private System.Windows.Forms.ContextMenu contextMenu;
-        private System.Windows.Forms.MenuItem menuItemEdit;
-        private System.Windows.Forms.MenuItem menuItemDelete;
+        private System.Windows.Forms.ContextMenuStrip contextMenu;
+        private System.Windows.Forms.ToolStripItem menuItemEdit;
+        private System.Windows.Forms.ToolStripItem menuItemDelete;
         private System.Windows.Forms.ListBox listBoxExistingConverters;
         private TableLayoutPanel tableLayoutPanel1;
         private CheckBox checkBoxShowTooltips;
@@ -54,7 +54,7 @@ namespace SilEncConverters40
         private TextBox textBoxDataPreview;
 
         protected byte[] m_byPreviewData = null;
-        private MenuItem menuItemTest;
+        private ToolStripItem menuItemTest;
         protected internal ContextMenuStrip contextMenuStripPreview;
         private ToolStripMenuItem changeFontToolStripMenuItem;
         private ToolStripSeparator toolStripSeparator1;
@@ -130,7 +130,7 @@ namespace SilEncConverters40
 
             InitializeConverterList();
 
-            this.listBoxExistingConverters.ContextMenu = this.contextMenu;
+            this.listBoxExistingConverters.ContextMenuStrip = this.contextMenu;
 
             RegistryKey keyLastTooltipState = Registry.LocalMachine.OpenSubKey(EncConverters.SEC_ROOT_KEY, false);
             if (keyLastTooltipState != null)
@@ -310,10 +310,10 @@ namespace SilEncConverters40
             this.flowLayoutPanelCodePage = new System.Windows.Forms.FlowLayoutPanel();
             this.labelCodePageInput = new System.Windows.Forms.Label();
             this.labelCodePageOutput = new System.Windows.Forms.Label();
-            this.contextMenu = new System.Windows.Forms.ContextMenu();
-            this.menuItemEdit = new System.Windows.Forms.MenuItem();
-            this.menuItemTest = new System.Windows.Forms.MenuItem();
-            this.menuItemDelete = new System.Windows.Forms.MenuItem();
+            this.contextMenu = new System.Windows.Forms.ContextMenuStrip();
+            this.menuItemEdit = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuItemTest = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuItemDelete = new System.Windows.Forms.ToolStripMenuItem();
             this.listBoxExistingConverters = new System.Windows.Forms.ListBox();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.textBoxDataPreview = new System.Windows.Forms.TextBox();
@@ -601,26 +601,23 @@ namespace SilEncConverters40
             //
             // contextMenu
             //
-            this.contextMenu.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+            this.contextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.menuItemEdit,
             this.menuItemTest,
             this.menuItemDelete});
             //
             // menuItemEdit
             //
-            this.menuItemEdit.Index = 0;
             this.menuItemEdit.Text = "&Edit";
             this.menuItemEdit.Click += new System.EventHandler(this.menuItemEdit_Click);
             //
             // menuItemTest
             //
-            this.menuItemTest.Index = 1;
             this.menuItemTest.Text = "&Test";
             this.menuItemTest.Click += new System.EventHandler(this.menuItemTest_Click);
             //
             // menuItemDelete
             //
-            this.menuItemDelete.Index = 2;
             this.menuItemDelete.Text = "&Delete";
             this.menuItemDelete.Click += new System.EventHandler(this.menuItemDelete_Click);
             //

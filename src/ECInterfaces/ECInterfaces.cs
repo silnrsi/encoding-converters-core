@@ -26,15 +26,8 @@ namespace ECInterfaces
         PythonScript = 0x0100,
         PerlExpression = 0x0200,
         UserDefinedSpare1 = 0x0400,
-        UserDefinedSpare2 = 0x0800
-        // this can be added to by anyone (the enum is just for convenience), but should 
-        //  always represent a bit field. If you add to here, than start adding at 
-        //  UserDefinedSpare1 (i.e. move it down so that it always represents the first 
-        //  spare), and then be sure to update these two things:
-        //      1)  the strProcessType implementation below (for ToString to display ProcessType 
-        //          details) 
-        //      2)  the ECAdvConfigDlg.cpp dialog (in project fw\lib\src\EC\CppEncConverterCommon)
-        //          which is there to allow user-selection of process type
+        UserDefinedSpare2 = 0x0800,
+		Translation = 0x1000,
     };
     #endregion Enum Definitions
 

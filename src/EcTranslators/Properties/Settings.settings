@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="SilEncConverters40.EcTranslators.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="AzureTranslatorKey" Type="System.String" Scope="User">
+      <Value Profile="(Default)">2acbbf831c1b4417895dc80969d6a203</Value>
+    </Setting>
+    <Setting Name="AzureTranslatorRegion" Type="System.String" Scope="User">
+      <Value Profile="(Default)">global</Value>
+    </Setting>
+    <Setting Name="AzureTranslatorTextTranslationEndpoint" Type="System.String" Scope="User">
+      <Value Profile="(Default)">https://api.cognitive.microsofttranslator.com/</Value>
+    </Setting>
+    <Setting Name="AzureTranslatorKeyLocationDialogInstructionUrl" Type="System.String" Scope="User">
+      <Value Profile="(Default)">https://docs.microsoft.com/en-us/azure/cognitive-services/translator/quickstart-translator</Value>
+    </Setting>
+    <Setting Name="AzureTranslatorKeyOverride" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="DeepLTranslatorKey" Type="System.String" Scope="User">
+      <Value Profile="(Default)">e3c2646f-2132-7cea-9c24-ea35f259474b:fx</Value>
+    </Setting>
+    <Setting Name="DeepLTranslatorKeyOverride" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="DeepLTranslatorKeyDialogInstructionUrl" Type="System.String" Scope="User">
+      <Value Profile="(Default)">https://www.deepl.com/pro?cta=header-pro/</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

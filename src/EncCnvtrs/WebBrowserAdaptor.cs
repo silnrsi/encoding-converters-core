@@ -168,7 +168,8 @@ namespace SilEncConverters40
 
 		protected void OnDocumentCompleted(EventArgs e)
 		{
-			waitForPageLoaded.Set();
+			if (waitForPageLoaded != null)
+				waitForPageLoaded.Set();
 			((EventHandler)listEventDelegates[documentCompletedEventKey])?.Invoke(this, e);
 		}
 
@@ -189,6 +190,19 @@ namespace SilEncConverters40
 				}
 				return Directory.GetParent(path).FullName;
 			}
+		}
+
+		public static string LogExceptionMessage(string className, Exception ex)
+		{
+			string msg = "Error occurred: " + ex.Message;
+			while (ex.InnerException != null)
+			{
+				ex = ex.InnerException;
+				msg += $"{Environment.NewLine}because: (InnerException): {ex.Message}";
+			}
+
+			Util.DebugWriteLine(className, msg);
+			return msg;
 		}
 	}
 }

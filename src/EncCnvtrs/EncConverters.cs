@@ -37,8 +37,10 @@ namespace SilEncConverters40
         #region Const Definitions
         // private registry access key string constants
         public const string BY_PROCESS_TYPE = "ByProcessType";
+		public const string strInstallerLocationRegKey = @"SOFTWARE\SIL\SilEncConverters40\Installer";
+		public const string strInstallerPathKey = "InstallerPath";
 #if UseXmlFilesForPlugins
-        public const string SEC_ROOT_KEY = @"SOFTWARE\SIL\SilEncConverters40";
+		public const string SEC_ROOT_KEY = @"SOFTWARE\SIL\SilEncConverters40";
 #if !PluginsInEachFolder
         public const string CstrDefPluginFolderEc = "EC";
         public const string CstrDefPluginFolderPlugins = "Plugins";
@@ -80,6 +82,10 @@ namespace SilEncConverters40
         public const string strTypeSILadaptit           = "SIL.AdaptItKB";
         public const string strTypeSILadaptitGuesser    = "SIL.AdaptItKBGuesser";
 		public const string strTypeSILtechHindiSite		= "SIL.TechHindiWebPage";
+        public const string strTypeSILBingTranslator	= "SIL.BingTranslator";
+		public const string strTypeSILGoogleTranslator  = "SIL.GoogleTranslator";
+		public const string strTypeSILDeepLTranslator	= "SIL.DeepLTranslator";
+
 		public const string cstrTempConverterPrefix     = "Temporary Converter";
 
         // default values for XML file attributes
@@ -2413,8 +2419,32 @@ namespace SilEncConverters40
             {
                 Util.DebugWriteLine(this, "Getting from assembly.");
 
-                ObjectHandle ohndl = Activator.CreateInstance(strAssemblySpec, strProgID);
-                rConverter = (IEncConverter)ohndl.Unwrap();
+				ObjectHandle ohndl;
+				try
+				{
+					ohndl = Activator.CreateInstance(strAssemblySpec, strProgID);
+					rConverter = (IEncConverter)ohndl.Unwrap();
+				}
+				catch (Exception ex)
+				{
+					// see if we can load the assembly from an installation of SILConverters
+					//	strAssemblySpec = e.g. "SilEncConverters40, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485"
+					var index = strAssemblySpec.IndexOf(',');
+					if (index > 0)
+					{
+						var assemblyName = strAssemblySpec.Substring(0, index);
+						var keyInstallLocation = Registry.LocalMachine.OpenSubKey(strInstallerLocationRegKey);
+						if (keyInstallLocation != null)
+						{
+							var installPath = (string)keyInstallLocation.GetValue(strInstallerPathKey);
+							var assemblyFileSpec = Path.Combine(Path.GetDirectoryName(installPath), $"{assemblyName}.dll");
+							var assembly = Assembly.LoadFrom(assemblyFileSpec);
+							var type = assembly.GetType(strProgID);
+							Util.DebugWriteLine(this, ex.Message + $" So trying to get {strProgID} from {assemblyFileSpec} instead");
+							rConverter = (IEncConverter) Activator.CreateInstance(type);
+						}
+					}
+				}
                 if (rConverter == null)
                 {
                     Util.DebugWriteLine(this, "Returning null.");
@@ -3126,9 +3156,11 @@ namespace SilEncConverters40
                 }
                 catch (Exception e)
                 {
-                    MessageBox.Show("AutoConfigure failed: " + e.Message, traceSwitch.DisplayName);
+					var error = LogExceptionMessage("AutoConfigure", e);
+
+					MessageBox.Show($"AutoConfigure failed: {error}", traceSwitch.DisplayName);
 #if DEBUG
-                    if (Util.IsUnix)
+					if (Util.IsUnix)
                     {
                         throw;
                     }
@@ -3138,7 +3170,20 @@ namespace SilEncConverters40
             return false;
         }
 
-        public bool AutoConfigureEx
+		public static string LogExceptionMessage(string className, Exception ex)
+		{
+			string msg = "Error occurred: " + ex.Message;
+			while (ex.InnerException != null)
+			{
+				ex = ex.InnerException;
+				msg += $"{Environment.NewLine}because: (InnerException): {ex.Message}";
+			}
+
+			Util.DebugWriteLine(className, msg);
+			return msg;
+		}
+
+		public bool AutoConfigureEx
             (
             IEncConverter rIEncConverter,
             ConvType eConversionTypeFilter,

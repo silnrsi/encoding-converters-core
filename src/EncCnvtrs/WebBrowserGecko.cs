@@ -147,7 +147,7 @@ namespace SilEncConverters40
 			}
 			catch (Exception ex)
 			{
-				EncConverter.LogExceptionMessage(className, ex);
+				LogExceptionMessage(className, ex);
 				return false;
 			}
 		}

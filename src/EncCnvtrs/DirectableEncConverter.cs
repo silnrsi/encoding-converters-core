@@ -1,19 +1,15 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Drawing;
 using System.Runtime.Serialization;                 // for SerializationBinder
-using System.Runtime.InteropServices;               // for ClassInterface attribute (for VBA)
-using Microsoft.Win32;                              // for Registry
 using System.IO;                                    // for FileInfo
 using System.Reflection;                            // for Assembly
 using ECInterfaces;                                 // for ConvType
 
 namespace SilEncConverters40
 {
-    // create a wrapper on the IEncConverter interface so we can specify a different direction
-    // (among other run-time properties of a converter).
-    [Serializable()]
+	// create a wrapper on the IEncConverter interface so we can specify a different direction
+	// (among other run-time properties of a converter).
+	[Serializable()]
     public class DirectableEncConverter
     {
         protected string m_strEncConverterName = null;

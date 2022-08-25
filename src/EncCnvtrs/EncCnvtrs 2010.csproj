@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="12.0">
+  <Import Project="..\..\packages\NUnit3TestAdapter.4.2.1\build\net35\NUnit3TestAdapter.props" Condition="Exists('..\..\packages\NUnit3TestAdapter.4.2.1\build\net35\NUnit3TestAdapter.props')" />
+  <Import Project="..\..\packages\NUnit.3.13.3\build\NUnit.props" Condition="Exists('..\..\packages\NUnit.3.13.3\build\NUnit.props')" />
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
     <ProductVersion>9.0.21022</ProductVersion>
@@ -17,7 +19,7 @@
     <AssemblyKeyContainerName>
     </AssemblyKeyContainerName>
     <AssemblyName>SilEncConverters40</AssemblyName>
-    <AssemblyOriginatorKeyFile>FieldWorks.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>..\FieldWorks.snk</AssemblyOriginatorKeyFile>
     <DefaultClientScript>VBScript</DefaultClientScript>
     <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
     <DefaultTargetSchema>IE50</DefaultTargetSchema>
@@ -134,16 +136,25 @@
       <HintPath>../../packages/Geckofx60.64.Linux.60.0.51/lib/net40/Geckofx-Winforms.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Microsoft.Web.WebView2.Core, Version=1.0.992.28, Culture=neutral, PublicKeyToken=2a8ab48044d2601e, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.Web.WebView2.1.0.992.28\lib\net45\Microsoft.Web.WebView2.Core.dll</HintPath>
+    <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="Microsoft.Web.WebView2.Core, Version=1.0.1305.0, Culture=neutral, PublicKeyToken=2a8ab48044d2601e, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Web.WebView2.1.0.1305-prerelease\lib\net45\Microsoft.Web.WebView2.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Web.WebView2.WinForms, Version=1.0.992.28, Culture=neutral, PublicKeyToken=2a8ab48044d2601e, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.Web.WebView2.1.0.992.28\lib\net45\Microsoft.Web.WebView2.WinForms.dll</HintPath>
+    <Reference Include="Microsoft.Web.WebView2.WinForms, Version=1.0.1305.0, Culture=neutral, PublicKeyToken=2a8ab48044d2601e, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Web.WebView2.1.0.1305-prerelease\lib\net45\Microsoft.Web.WebView2.WinForms.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Web.WebView2.Wpf, Version=1.0.1305.0, Culture=neutral, PublicKeyToken=2a8ab48044d2601e, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Web.WebView2.1.0.1305-prerelease\lib\net45\Microsoft.Web.WebView2.Wpf.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework, Version=3.13.3.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\NUnit.3.13.3\lib\net45\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
-    <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL" />
     <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -154,8 +165,6 @@
     <Reference Include="System.Drawing">
       <Name>System.Drawing</Name>
     </Reference>
-    <Reference Include="System.Memory, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51" />
-    <Reference Include="System.Text.Json, Version=4.0.1.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL" />
     <Reference Include="System.Windows.Forms">
       <Name>System.Windows.Forms</Name>
     </Reference>
@@ -220,6 +229,11 @@
     <Compile Include="FallbackEncConverterConfig.cs" />
     <Compile Include="IEncConverterConfig.cs">
       <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="WebBrowserGecko.cs">
       <SubType>UserControl</SubType>
@@ -444,6 +458,9 @@
     <EmbeddedResource Include="WebBrowserAdaptor.resx">
       <DependentUpon>WebBrowserAdaptor.cs</DependentUpon>
     </EmbeddedResource>
+    <None Include="..\FieldWorks.snk">
+      <Link>FieldWorks.snk</Link>
+    </None>
     <None Include="app.config" />
     <None Include="app.manifest" />
     <None Include="ECPlugins.xsc">
@@ -455,8 +472,11 @@
     <None Include="ECPlugins.xsx">
       <DependentUpon>ECPlugins.xsd</DependentUpon>
     </None>
-    <None Include="FieldWorks.snk" />
     <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="lib\" />
@@ -495,14 +515,16 @@
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\..\packages\Microsoft.Web.WebView2.1.0.992.28\build\Microsoft.Web.WebView2.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.Web.WebView2.1.0.992.28\build\Microsoft.Web.WebView2.targets'))" />
     <Error Condition="!Exists('..\..\packages\Geckofx60.32.60.0.55\build\Geckofx60.32.targets') and ('$(Platform)' == 'x86') and ('$(OS)'=='Windows_NT')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Geckofx60.32.60.0.55\build\Geckofx60.32.targets'))" />
     <Error Condition="!Exists('..\..\packages\Geckofx60.64.60.0.55\build\Geckofx60.64.targets') and ('$(Platform)' == 'x64') and ('$(OS)'=='Windows_NT')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Geckofx60.64.60.0.55\build\Geckofx60.64.targets'))" />
+    <Error Condition="!Exists('..\..\packages\NUnit.3.13.3\build\NUnit.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\NUnit.3.13.3\build\NUnit.props'))" />
+    <Error Condition="!Exists('..\..\packages\NUnit3TestAdapter.4.2.1\build\net35\NUnit3TestAdapter.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\NUnit3TestAdapter.4.2.1\build\net35\NUnit3TestAdapter.props'))" />
+    <Error Condition="!Exists('..\..\packages\Microsoft.Web.WebView2.1.0.1305-prerelease\build\Microsoft.Web.WebView2.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.Web.WebView2.1.0.1305-prerelease\build\Microsoft.Web.WebView2.targets'))" />
   </Target>
-  <Import Project="..\..\packages\Microsoft.Web.WebView2.1.0.992.28\build\Microsoft.Web.WebView2.targets" Condition="Exists('..\..\packages\Microsoft.Web.WebView2.1.0.992.28\build\Microsoft.Web.WebView2.targets')" />
   <!--BE: I had to manually add the extra conditions on these, so it will do the target (which copies files) from the correct package based on the platform.
       Also, I had to manually edit the 64 bit target so that it would now get the files from Firefox64, rather than Firefox it was looking at (which are the 86 binaries)
       This will all get undone if you update the gecko nuget packages -->
   <Import Project="..\..\packages\Geckofx60.32.60.0.55\build\Geckofx60.32.targets" Condition="Exists('..\..\packages\Geckofx60.32.60.0.55\build\Geckofx60.32.targets') and ('$(Platform)' == 'x86') and ('$(OS)'!='Windows_NT')" />
   <Import Project="..\..\packages\Geckofx60.64.60.0.55\build\Geckofx60.64.targets" Condition="Exists('..\..\packages\Geckofx60.64.60.0.55\build\Geckofx60.64.targets') and ('$(Platform)' == 'x64') and ('$(OS)'!='Windows_NT')" />
+  <Import Project="..\..\packages\Microsoft.Web.WebView2.1.0.1305-prerelease\build\Microsoft.Web.WebView2.targets" Condition="Exists('..\..\packages\Microsoft.Web.WebView2.1.0.1305-prerelease\build\Microsoft.Web.WebView2.targets')" />
 </Project>
