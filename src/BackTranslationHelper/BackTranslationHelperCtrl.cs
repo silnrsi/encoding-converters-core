@@ -38,21 +38,29 @@ namespace BackTranslationHelper
             hideColumn1LabelsToolStripMenuItem.Checked = Properties.Settings.Default.HideLabels;
             InitializeLabelHiding();
 
-            labelSourceData.Font = BackTranslationHelperDataSource.SourceLanguageFont;
-            if (displayExistingTargetTranslation)
-            {
-                labelForExistingTargetData.Visible = !hideColumn1LabelsToolStripMenuItem.Checked;
-                labelTargetTextExisting.Visible = buttonFillExistingTargetText.Visible = true;
-                labelTargetTextExisting.Font = BackTranslationHelperDataSource.TargetLanguageFont;
-            }
-            else
-                labelTargetTextExisting.Visible = labelForExistingTargetData.Visible = buttonFillExistingTargetText.Visible = false;
+			var nRowStyleOffset = 1;	// the offset to the row we're dealing w/ below
+
+            textBoxSourceData.Font = BackTranslationHelperDataSource.SourceLanguageFont;
+			if (displayExistingTargetTranslation)
+			{
+				var rowStyle = tableLayoutPanel.RowStyles[nRowStyleOffset++];
+				rowStyle.SizeType = SizeType.Percent;	// gives it real estate
+				rowStyle.Height = 20F;
+				labelForExistingTargetData.Visible = !hideColumn1LabelsToolStripMenuItem.Checked;
+				textBoxTargetTextExisting.Visible = buttonFillExistingTargetText.Visible = true;
+				textBoxTargetTextExisting.Font = BackTranslationHelperDataSource.TargetLanguageFont;
+			}
+			else
+			{
+				tableLayoutPanel.RowStyles[nRowStyleOffset++].SizeType = SizeType.AutoSize;	// makes it disappear
+				textBoxTargetTextExisting.Visible = labelForExistingTargetData.Visible = buttonFillExistingTargetText.Visible = false;
+			}
 
             textBoxTargetBackTranslation.Font = BackTranslationHelperDataSource.TargetLanguageFont;
 
             // we're either showing the target translated suggestion in a textbox (if there's only 1 converter)
             //  or in labels above it to choose from (if there are more than one converter)
-            var labelsPossibleTargetTranslations = tableLayoutPanel.Controls.OfType<Label>().Where(l => l.Name.Contains("labelPossibleTargetTranslation")).ToList();
+            var textBoxesPossibleTargetTranslations = tableLayoutPanel.Controls.OfType<TextBox>().Where(l => l.Name.Contains("textBoxPossibleTargetTranslation")).ToList();
             var buttonsFillTargetOption = tableLayoutPanel.Controls.OfType<Button>().Where(b => b.Name.Contains("buttonFillTargetTextOption")).ToList();
             var numOfTranslators = TheTranslators.Count;
 
@@ -67,11 +75,12 @@ namespace BackTranslationHelper
                 // hide them all
                 for (; i < MaxPossibleTargetTranslations; i++)
                 {
-                    var label = labelsPossibleTargetTranslations[i];
+                    var textBox = textBoxesPossibleTargetTranslations[i];
                     var button = buttonsFillTargetOption[i];
-                    label.Visible = button.Visible = false;
-                }
-                labelForTargetDataOptions.Visible = false;
+                    textBox.Visible = button.Visible = false;
+					tableLayoutPanel.RowStyles[nRowStyleOffset + i].SizeType = SizeType.AutoSize;
+				}
+				labelForTargetDataOptions.Visible = false;
             }
             else
             {
@@ -84,21 +93,25 @@ namespace BackTranslationHelper
 
                 for (; i < numOfTranslators; i++)
                 {
-                    var label = labelsPossibleTargetTranslations[i];
+                    var textBox = textBoxesPossibleTargetTranslations[i];
                     var button = buttonsFillTargetOption[i];
 					button.Text = $" &{mnemonicChar++}";
-					label.Visible = button.Visible = true;
-                    label.Font = labelTargetTextExisting.Font;
-                    toolTip.SetToolTip(label, $"This is the translation from the {TheTranslators[i].Name} Translator");
+					textBox.Visible = button.Visible = true;
+                    textBox.Font = textBoxTargetTextExisting.Font;
+					var rowStyle = tableLayoutPanel.RowStyles[nRowStyleOffset + i];
+					rowStyle.SizeType = SizeType.Percent;   // gives it real estate
+					rowStyle.Height = 20F;
+					toolTip.SetToolTip(textBox, $"This is the translation from the {TheTranslators[i].Name} Translator");
                 }
 
                 for (; i < MaxPossibleTargetTranslations; i++)
                 {
-                    var label = labelsPossibleTargetTranslations[i];
+                    var textBox = textBoxesPossibleTargetTranslations[i];
                     var button = buttonsFillTargetOption[i];
-                    label.Visible = button.Visible = false;
-                }
-            }
+                    textBox.Visible = button.Visible = false;
+					tableLayoutPanel.RowStyles[nRowStyleOffset + i].SizeType = SizeType.AutoSize;
+				}
+			}
 
             tableLayoutPanel.ResumeLayout(false);
             tableLayoutPanel.PerformLayout();
@@ -173,15 +186,15 @@ namespace BackTranslationHelper
 
             set
             {
-				var labelsPossibleTargetTranslations = tableLayoutPanel.Controls.OfType<Label>().Where(l => l.Name.Contains("labelPossibleTargetTranslation")).ToList();
+				var textBoxesPossibleTargetTranslations = tableLayoutPanel.Controls.OfType<TextBox>().Where(l => l.Name.Contains("textBoxPossibleTargetTranslation")).ToList();
 				System.Diagnostics.Debug.Assert(value.Count == TheTranslators.Count);
-				System.Diagnostics.Debug.Assert(labelsPossibleTargetTranslations.Where(l => l.Visible).Take(value.Count).ToList().All(l => l.Visible));
+				System.Diagnostics.Debug.Assert(textBoxesPossibleTargetTranslations.Where(l => l.Visible).Take(value.Count).ToList().All(l => l.Visible));
 
 				for (var i = 0; i < TheTranslators.Count; i++)
 				{
-					var label = labelsPossibleTargetTranslations[i];
-					if (label.Visible)
-						label.Text = value[i].TargetData;
+					var textBox = textBoxesPossibleTargetTranslations[i];
+					if (textBox.Visible)
+						textBox.Text = value[i].TargetData;
 				}
 
 				// now update the actual editable box w/ the first possibility (if it isn't already filled,
@@ -215,14 +228,14 @@ namespace BackTranslationHelper
 
         public void UpdateData(BackTranslationHelperModel model)
         {
-            labelSourceData.Text = model.SourceData;
+            textBoxSourceData.Text = model.SourceData;
 			textBoxTargetBackTranslation.Text = model.TargetData;   // may be null, in which case, setting NewTargetTexts below will fill it with the 1st translation
 
 			// if we're keeping track of what was originally in the Target Project (i.e. Paratext usage), then put the current value in the label for
 			//	the existing target field (just in case the user starts to edit or choose one of the other possibilities and then wants to revert it
 			//	(it has a fill button also).
 			if (_model.TargetDataPreExisting)
-				labelTargetTextExisting.Text = model.TargetData;
+				textBoxTargetTextExisting.Text = model.TargetData;
 
             // some clients (i.e. Word) only pass 1 translated target text (bkz it only knows about 1 EncConverter/Translator)
             //  if we have fewer than the number of possible target translations (i.e. we added 1 or more addl Translators),
@@ -247,7 +260,7 @@ namespace BackTranslationHelper
         private void buttonWriteTextToTarget_Click(object sender, System.EventArgs e)
         {
             BackTranslationHelperDataSource.ButtonPressed(ButtonPressed.WriteToTarget);
-            BackTranslationHelperDataSource.Log($"change target text from '{labelTargetTextExisting.Text}' to '{textBoxTargetBackTranslation.Text}'");
+            BackTranslationHelperDataSource.Log($"change target text from '{textBoxTargetTextExisting.Text}' to '{textBoxTargetBackTranslation.Text}'");
             BackTranslationHelperDataSource.WriteToTarget(textBoxTargetBackTranslation.Text);
         }
 
@@ -265,7 +278,7 @@ namespace BackTranslationHelper
                 return;
             }
             BackTranslationHelperDataSource.ButtonPressed(ButtonPressed.MoveToNext);
-            var existingTargetText = labelTargetTextExisting.Text;
+            var existingTargetText = textBoxTargetTextExisting.Text;
             var newTargetText = textBoxTargetBackTranslation.Text;
             var modified = existingTargetText != newTargetText;
 
@@ -354,22 +367,22 @@ namespace BackTranslationHelper
 
         private void buttonFillExistingTargetText_Click(object sender, EventArgs e)
         {
-            textBoxTargetBackTranslation.Text = labelTargetTextExisting.Text;
+            textBoxTargetBackTranslation.Text = textBoxTargetTextExisting.Text;
         }
 
         private void buttonFillTargetTextOption1_Click(object sender, EventArgs e)
         {
-            textBoxTargetBackTranslation.Text = labelPossibleTargetTranslation1.Text;
+            textBoxTargetBackTranslation.Text = textBoxPossibleTargetTranslation1.Text;
         }
 
         private void buttonFillTargetTextOption2_Click(object sender, EventArgs e)
         {
-            textBoxTargetBackTranslation.Text = labelPossibleTargetTranslation2.Text;
+            textBoxTargetBackTranslation.Text = textBoxPossibleTargetTranslation2.Text;
         }
 
         private void buttonFillTargetTextOption3_Click(object sender, EventArgs e)
         {
-            textBoxTargetBackTranslation.Text = labelPossibleTargetTranslation3.Text;
+            textBoxTargetBackTranslation.Text = textBoxPossibleTargetTranslation3.Text;
         }
 
         private void textBoxTargetBackTranslation_Enter(object sender, EventArgs e)
@@ -394,7 +407,7 @@ namespace BackTranslationHelper
                 Properties.Settings.Default.Save();
                 if (_model != null)
                 {
-                    Initialize(labelTargetTextExisting.Visible);
+                    Initialize(textBoxTargetTextExisting.Visible);
                     UpdateData(_model);
                 }
             }
@@ -458,7 +471,7 @@ namespace BackTranslationHelper
 					fontDialog.Font.SizeInPoints.ToString()
 				};
 
-				labelSourceData.Font = fontDialog.Font;
+				textBoxSourceData.Font = fontDialog.Font;
 				mapProjectNameToSourceFontOverride.Add(projectName, fontOverride);
 				Properties.Settings.Default.MapProjectNameToSourceFontOverride = SettingFromDictionary(mapProjectNameToSourceFontOverride);
 				Properties.Settings.Default.Save();
