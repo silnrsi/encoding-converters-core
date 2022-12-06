@@ -231,7 +231,7 @@ namespace TestEncCnvtrs
 		[TestCase(ProcessTypeFlags.Translation, "Translate;hi;en", "", "")]
 		[TestCase(ProcessTypeFlags.Translation, "Translate;hi;en", "यीशु ने यह भी कहा,", "Jesus also said,")]
 		[TestCase(ProcessTypeFlags.Translation, "Translate;;en", "यीशु ने यह भी कहा,", "Jesus also said,")]
-		[TestCase(ProcessTypeFlags.Translation, "Translate;en;zh-Hans", "This Israel Field Guide has been developed to help you get to know the beautiful country of Israel and also to encourage you to learn and experience the incredible Word of God and the truth of the events and doctrines that it presents.", "本以色列实地指南旨在帮助您了解美丽的以色列国，并鼓励您学习和体验上帝令人难以置信的话语以及它所呈现的事件和教义的真理。")]
+		[TestCase(ProcessTypeFlags.Translation, "Translate;en;zh-Hans", "This Israel Field Guide has been developed to help you get to know the beautiful country of Israel and also to encourage you to learn and experience the incredible Word of God and the truth of the events and doctrines that it presents.", "本以色列实地指南旨在帮助您了解美丽的以色列国家，并鼓励您学习和体验上帝令人难以置信的话语以及它所呈现的事件和教义的真相。")]
 		[TestCase(ProcessTypeFlags.Translation | ProcessTypeFlags.Transliteration, "TranslateWithTransliterate;en;ar;;Latn", "God", "alleh")]
 		[TestCase(ProcessTypeFlags.Translation | ProcessTypeFlags.Transliteration, "TranslateWithTransliterate;;ar;;Latn", "God", "alleh")]
 		// [TestCase("TranslateWithTransliterate;;en;;Deva", "नहीं", "not")]	// can't transliterate from an language=en result
