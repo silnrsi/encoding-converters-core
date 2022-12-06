@@ -28,7 +28,7 @@ namespace BackTranslationHelper
 		/// to keep it in another field (as well as the editable field associated w/ the TargetData property) in case the
 		/// user wants to revert to it.
 		/// </summary>
-        public bool TargetDataPreExisting { get; set; }
+        public string TargetDataPreExisting { get; set; }
     }
 
 	[Serializable]

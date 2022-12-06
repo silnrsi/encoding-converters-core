@@ -54,13 +54,13 @@ namespace BackTranslationHelper
             this.labelForSourceData = new System.Windows.Forms.Label();
             this.buttonFillExistingTargetText = new System.Windows.Forms.Button();
             this.buttonSkip = new System.Windows.Forms.Button();
-            this.toolTip = new System.Windows.Forms.ToolTip(this.components);
-            this.fontDialog = new System.Windows.Forms.FontDialog();
             this.textBoxTargetTextExisting = new System.Windows.Forms.TextBox();
             this.textBoxSourceData = new System.Windows.Forms.TextBox();
             this.textBoxPossibleTargetTranslation1 = new System.Windows.Forms.TextBox();
             this.textBoxPossibleTargetTranslation2 = new System.Windows.Forms.TextBox();
             this.textBoxPossibleTargetTranslation3 = new System.Windows.Forms.TextBox();
+            this.toolTip = new System.Windows.Forms.ToolTip(this.components);
+            this.fontDialog = new System.Windows.Forms.FontDialog();
             this.menuStrip.SuspendLayout();
             this.tableLayoutPanel.SuspendLayout();
             this.SuspendLayout();
@@ -95,7 +95,7 @@ namespace BackTranslationHelper
             this.removeEncConverterToolStripMenuItem.Text = "Remove &Translator/EncConverter";
             this.removeEncConverterToolStripMenuItem.ToolTipText = "Click to bring up a dialog to remove a Translator/EncConverter used to generate o" +
     "ne of the translated draft of the source text (e.g. Bing Translator)";
-            this.removeEncConverterToolStripMenuItem.Click += new System.EventHandler(this.changeEncConverterToolStripMenuItem_Click);
+            this.removeEncConverterToolStripMenuItem.Click += new System.EventHandler(this.ChangeEncConverterToolStripMenuItem_Click);
             // 
             // addEncConverterToolStripMenuItem
             // 
@@ -104,7 +104,7 @@ namespace BackTranslationHelper
             this.addEncConverterToolStripMenuItem.Text = "&Add Translator/EncConverter";
             this.addEncConverterToolStripMenuItem.ToolTipText = "Click to add an additional Translator/EncConverter to give multiple options for t" +
     "he translated draft of the source text (e.g. DeepL Translator)";
-            this.addEncConverterToolStripMenuItem.Click += new System.EventHandler(this.addEncConverterToolStripMenuItem_Click);
+            this.addEncConverterToolStripMenuItem.Click += new System.EventHandler(this.AddEncConverterToolStripMenuItem_Click);
             // 
             // fontsToolStripMenuItem
             // 
@@ -120,7 +120,7 @@ namespace BackTranslationHelper
             this.sourceTextToolStripMenuItem.Name = "sourceTextToolStripMenuItem";
             this.sourceTextToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
             this.sourceTextToolStripMenuItem.Text = "&Source text";
-            this.sourceTextToolStripMenuItem.Click += new System.EventHandler(this.sourceTextToolStripMenuItem_Click);
+            this.sourceTextToolStripMenuItem.Click += new System.EventHandler(this.SourceTextToolStripMenuItem_Click);
             // 
             // targetTextToolStripMenuItem
             // 
@@ -147,7 +147,7 @@ namespace BackTranslationHelper
             this.hideColumn1LabelsToolStripMenuItem.Text = "&Hide column1 labels";
             this.hideColumn1LabelsToolStripMenuItem.ToolTipText = "Check this menu item to hide the column 1 labels to make more room for the transl" +
     "ated text options";
-            this.hideColumn1LabelsToolStripMenuItem.CheckStateChanged += new System.EventHandler(this.hideColumn1LabelsToolStripMenuItem_CheckStateChanged);
+            this.hideColumn1LabelsToolStripMenuItem.CheckStateChanged += new System.EventHandler(this.HideColumn1LabelsToolStripMenuItem_CheckStateChanged);
             // 
             // tableLayoutPanel
             // 
@@ -207,7 +207,7 @@ namespace BackTranslationHelper
             this.toolTip.SetToolTip(this.buttonFillTargetTextOption1, "Click on this button to transfer this translated text to the editable text box be" +
         "low (e.g. if this is the better option to start with).");
             this.buttonFillTargetTextOption1.UseVisualStyleBackColor = true;
-            this.buttonFillTargetTextOption1.Click += new System.EventHandler(this.buttonFillTargetTextOption1_Click);
+            this.buttonFillTargetTextOption1.Click += new System.EventHandler(this.ButtonFillTargetTextOption1_Click);
             // 
             // textBoxTargetBackTranslation
             // 
@@ -219,7 +219,8 @@ namespace BackTranslationHelper
             this.textBoxTargetBackTranslation.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.textBoxTargetBackTranslation.Size = new System.Drawing.Size(577, 65);
             this.textBoxTargetBackTranslation.TabIndex = 1;
-            this.textBoxTargetBackTranslation.Enter += new System.EventHandler(this.textBoxTargetBackTranslation_Enter);
+            this.textBoxTargetBackTranslation.Enter += new System.EventHandler(this.TextBoxTargetBackTranslation_Enter);
+            this.textBoxTargetBackTranslation.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.TextBoxTargetBackTranslation_PreviewKeyDown);
             // 
             // buttonClose
             // 
@@ -231,7 +232,7 @@ namespace BackTranslationHelper
             this.buttonClose.Text = "Close";
             this.toolTip.SetToolTip(this.buttonClose, "Click to close this dialog");
             this.buttonClose.UseVisualStyleBackColor = true;
-            this.buttonClose.Click += new System.EventHandler(this.buttonClose_Click);
+            this.buttonClose.Click += new System.EventHandler(this.ButtonClose_Click);
             // 
             // buttonWriteTextToTarget
             // 
@@ -243,7 +244,7 @@ namespace BackTranslationHelper
             this.buttonWriteTextToTarget.Text = "&Save Changes";
             this.toolTip.SetToolTip(this.buttonWriteTextToTarget, "Click to save/write out the changes to the translated text");
             this.buttonWriteTextToTarget.UseVisualStyleBackColor = true;
-            this.buttonWriteTextToTarget.Click += new System.EventHandler(this.buttonWriteTextToTarget_Click);
+            this.buttonWriteTextToTarget.Click += new System.EventHandler(this.ButtonWriteTextToTarget_Click);
             // 
             // buttonCopyToClipboard
             // 
@@ -256,7 +257,7 @@ namespace BackTranslationHelper
             this.buttonCopyToClipboard.Text = "&Copy";
             this.toolTip.SetToolTip(this.buttonCopyToClipboard, "Click to copy the translated text to the clipboard");
             this.buttonCopyToClipboard.UseVisualStyleBackColor = true;
-            this.buttonCopyToClipboard.Click += new System.EventHandler(this.buttonCopyToClipboard_Click);
+            this.buttonCopyToClipboard.Click += new System.EventHandler(this.ButtonCopyToClipboard_Click);
             // 
             // buttonNextSection
             // 
@@ -268,7 +269,7 @@ namespace BackTranslationHelper
             this.buttonNextSection.TabIndex = 3;
             this.buttonNextSection.Text = "&Next";
             this.buttonNextSection.UseVisualStyleBackColor = true;
-            this.buttonNextSection.Click += new System.EventHandler(this.buttonNextSection_Click);
+            this.buttonNextSection.Click += new System.EventHandler(this.ButtonNextSection_Click);
             // 
             // buttonFillTargetTextOption2
             // 
@@ -278,7 +279,7 @@ namespace BackTranslationHelper
             this.buttonFillTargetTextOption2.Size = new System.Drawing.Size(23, 23);
             this.buttonFillTargetTextOption2.TabIndex = 8;
             this.buttonFillTargetTextOption2.UseVisualStyleBackColor = true;
-            this.buttonFillTargetTextOption2.Click += new System.EventHandler(this.buttonFillTargetTextOption2_Click);
+            this.buttonFillTargetTextOption2.Click += new System.EventHandler(this.ButtonFillTargetTextOption2_Click);
             // 
             // buttonFillTargetTextOption3
             // 
@@ -288,7 +289,7 @@ namespace BackTranslationHelper
             this.buttonFillTargetTextOption3.Size = new System.Drawing.Size(23, 23);
             this.buttonFillTargetTextOption3.TabIndex = 8;
             this.buttonFillTargetTextOption3.UseVisualStyleBackColor = true;
-            this.buttonFillTargetTextOption3.Click += new System.EventHandler(this.buttonFillTargetTextOption3_Click);
+            this.buttonFillTargetTextOption3.Click += new System.EventHandler(this.ButtonFillTargetTextOption3_Click);
             // 
             // labelForExistingTargetData
             // 
@@ -343,7 +344,7 @@ namespace BackTranslationHelper
             this.buttonFillExistingTargetText.TabIndex = 8;
             this.buttonFillExistingTargetText.Text = "  &1";
             this.buttonFillExistingTargetText.UseVisualStyleBackColor = true;
-            this.buttonFillExistingTargetText.Click += new System.EventHandler(this.buttonFillExistingTargetText_Click);
+            this.buttonFillExistingTargetText.Click += new System.EventHandler(this.ButtonFillExistingTargetText_Click);
             // 
             // buttonSkip
             // 
@@ -354,12 +355,7 @@ namespace BackTranslationHelper
             this.buttonSkip.TabIndex = 10;
             this.buttonSkip.Text = "&Skip";
             this.buttonSkip.UseVisualStyleBackColor = true;
-            this.buttonSkip.Click += new System.EventHandler(this.buttonSkip_Click);
-            // 
-            // fontDialog
-            // 
-            this.fontDialog.Font = new System.Drawing.Font("Arial Unicode MS", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.fontDialog.ShowColor = true;
+            this.buttonSkip.Click += new System.EventHandler(this.ButtonSkip_Click);
             // 
             // textBoxTargetTextExisting
             // 
@@ -425,6 +421,11 @@ namespace BackTranslationHelper
             this.textBoxPossibleTargetTranslation3.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.textBoxPossibleTargetTranslation3.Size = new System.Drawing.Size(548, 65);
             this.textBoxPossibleTargetTranslation3.TabIndex = 11;
+            // 
+            // fontDialog
+            // 
+            this.fontDialog.Font = new System.Drawing.Font("Arial Unicode MS", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.fontDialog.ShowColor = true;
             // 
             // BackTranslationHelperCtrl
             // 
