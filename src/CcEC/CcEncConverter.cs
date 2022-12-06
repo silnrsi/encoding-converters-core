@@ -276,32 +276,41 @@ namespace SilEncConverters40
             byte*       lpOutBuffer,
             ref int     rnOutLen
             )
-        {
-/*          rde1.2.1.0 don't pad with space anymore
-            rde2.2.0.0 Ahh... now I remember why this was there before: if you use boundary
-            condition testing in CC (e.g. "prec(ws) 'i' fol(ws)", where  'ws' contains things 
-            like spaces, nl, tabs, punctuation, etc) then those tests will fail on the first 
-            and last character in the stream (which are at a boundary conditions, but can't be 
-            detected by CC). Anyway, so I want to put back in the stream delimiting, but the 
-            reason this was originally taken out was because someone had a CC table which was 
-            eating spaces, so I'll use 'd10' (which never comes in on an Windows system by itself)
-            to delimit the stream AND only then if it's a spelling fixer cc table (see Initialize)
-*/
-#if !rde220
-            // the delimiter (if used) is actually '\n', but this normally isn't received by CC 
-            // without '\r' as well, so it makes a good delimiter in that CC tables aren't likely 
-            // to be looking to eat it up (which was the problem we had when we delimited with
-            // a space).
-            const byte byDelim = 10;
-            if( m_bUseDelimiters )
-            {
-                // move the input data down to make room for the initial delimiter
-                ECNormalizeData.MemMove(lpInBuffer+1, lpInBuffer, nInLen);
+		{
+			// 2022-11-29 BE: it seems that CC eats '\r's... if the input has any '\r\n' sequences
+			//	and the output has just '\n's, then insert the '\r's back in
+			// I was thinking we probably don't want to do this on Linux (if so, add "&& !Util.IsUnix")
+			//	but if Linux doesn't use CRs, then this function will return false anyway (and if it does
+			//	then CC will probably (wrongly) strip them out and we (probably) want them put back in.
+			//	worst case, add a parameter to the converter Specification to indicate whether you want
+			//	this to be done or not.
+			var bContainsCrLfs = ContainsCrLfs(lpInBuffer, nInLen);
 
-                lpInBuffer[0] = byDelim;
-                lpInBuffer[nInLen + 1] = byDelim;
-                nInLen += 2;
-            }
+			/*          rde1.2.1.0 don't pad with space anymore
+						rde2.2.0.0 Ahh... now I remember why this was there before: if you use boundary
+						condition testing in CC (e.g. "prec(ws) 'i' fol(ws)", where  'ws' contains things 
+						like spaces, nl, tabs, punctuation, etc) then those tests will fail on the first 
+						and last character in the stream (which are at a boundary conditions, but can't be 
+						detected by CC). Anyway, so I want to put back in the stream delimiting, but the 
+						reason this was originally taken out was because someone had a CC table which was 
+						eating spaces, so I'll use 'd10' (which never comes in on an Windows system by itself)
+						to delimit the stream AND only then if it's a spelling fixer cc table (see Initialize)
+			*/
+#if !rde220
+			// the delimiter (if used) is actually '\n', but this normally isn't received by CC 
+			// without '\r' as well, so it makes a good delimiter in that CC tables aren't likely 
+			// to be looking to eat it up (which was the problem we had when we delimited with
+			// a space).
+			const byte byDelim = 10;
+			if (m_bUseDelimiters)
+			{
+				// move the input data down to make room for the initial delimiter
+				ECNormalizeData.MemMove(lpInBuffer + 1, lpInBuffer, nInLen);
+
+				lpInBuffer[0] = byDelim;
+				lpInBuffer[nInLen + 1] = byDelim;
+				nInLen += 2;
+			}
 #else
             bool bLastWasD10 = false;
             if( lpInBuffer[nInLen-1] == ' ' )
@@ -315,24 +324,37 @@ namespace SilEncConverters40
             }
 #endif
 
-            int status = 0;
-            fixed(int* pnOut = &rnOutLen)
-            {
-                status = CCProcessBuffer(m_hTable, lpInBuffer, nInLen, lpOutBuffer, pnOut);
-            }
+			int status = 0;
+			fixed (int* pnOut = &rnOutLen)
+			{
+				status = CCProcessBuffer(m_hTable, lpInBuffer, nInLen, lpOutBuffer, pnOut);
+			}
 
-            if( status != 0 )  
-            {
-                TranslateErrStatus(status);
-            }
+			if (status != 0)
+			{
+				TranslateErrStatus(status);
+			}
 #if !rde220
-            else if( m_bUseDelimiters )
-            {
-                if( lpOutBuffer[0] == byDelim )
-                    ECNormalizeData.MemMove(lpOutBuffer, lpOutBuffer + 1, --rnOutLen);
-                if( lpOutBuffer[rnOutLen - 1] == byDelim )
-                    rnOutLen--;                
-            }
+			else if (m_bUseDelimiters)
+			{
+				if (lpOutBuffer[0] == byDelim)
+					ECNormalizeData.MemMove(lpOutBuffer, lpOutBuffer + 1, --rnOutLen);
+				if (lpOutBuffer[rnOutLen - 1] == byDelim)
+					rnOutLen--;
+			}
+
+			if (bContainsCrLfs && !ContainsCrLfs(lpOutBuffer, rnOutLen))
+			{
+				// need to put the '\r's back in
+				for (int i = 0; i < rnOutLen; i++)
+				{
+					if ((lpOutBuffer[i] == '\n') && ((i == 0) || (lpOutBuffer[i - 1] != '\r')))
+					{
+						ECNormalizeData.MemMove(lpOutBuffer + i + 1, lpOutBuffer + i, rnOutLen++ - i);
+						lpOutBuffer[i] = (byte)'\r';
+					}
+				}
+			}
 #else
             // otherwise strip out that final space we added (sometimes it goes away by itself!!??, 
             //  so check first...)
@@ -342,9 +364,21 @@ namespace SilEncConverters40
                 rnOutLen--;
             }
 #endif
-        }
+		}
 
-	    protected override string   GetConfigTypeName
+		private static unsafe bool ContainsCrLfs(byte* lpInBuffer, int nInLen)
+		{
+			var bContainsCrLfs = false;
+			for (int i = 0; (i < nInLen) && !bContainsCrLfs; i++)
+			{
+				if ((lpInBuffer[i] == '\r') && (lpInBuffer[i + 1] == '\n'))
+					bContainsCrLfs = true;
+			}
+
+			return bContainsCrLfs;
+		}
+
+		protected override string   GetConfigTypeName
         {
             get { return typeof(CcEncConverterConfig).AssemblyQualifiedName; }
         }
