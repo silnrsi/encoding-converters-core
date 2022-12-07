@@ -1,5 +1,4 @@
 using ECInterfaces;
-using Newtonsoft.Json.Linq;
 using SilEncConverters40;
 using System;
 using System.Collections.Generic;
