@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
@@ -45,100 +46,163 @@ namespace BackTranslationHelper
 		}
 
 		public void Initialize(bool displayExistingTargetTranslation)
-        {
-            BackTranslationHelperDataSource.SetDataUpdateProc(UpdateData);
+		{
+			BackTranslationHelperDataSource.SetDataUpdateProc(UpdateData);
 
-            // get the last used converter names from settings 
-            InitializeTheTranslators();
+			// get the last used converter names from settings 
+			InitializeTheTranslators();
 
-            tableLayoutPanel.SuspendLayout();
-            SuspendLayout();
+			tableLayoutPanel.SuspendLayout();
+			SuspendLayout();
 
-            hideColumn1LabelsToolStripMenuItem.Checked = Properties.Settings.Default.HideLabels;
-            InitializeLabelHiding();
+			hideColumn1LabelsToolStripMenuItem.Checked = Properties.Settings.Default.HideLabels;
+			InitializeLabelHiding();
 
-			var nRowStyleOffset = 1;	// the offset to the row we're dealing w/ below
+			var nRowStyleOffset = 1;    // the offset to the row we're dealing w/ below
 
-            textBoxSourceData.Font = BackTranslationHelperDataSource.SourceLanguageFont;
+			var projectName = BackTranslationHelperDataSource.ProjectName;
+			textBoxSourceData.Font = GetSourceLanguageFontForProject(projectName);
+			textBoxSourceData.RightToLeft = GetSourceLanguageRightToLeftForProject(projectName);
+			var targetLanguageFont = GetTargetLanguageFontForProject(projectName);
+			var targetLanguageRightToLeft = GetTargetLanguageRightToLeftForProject(projectName);
 			if (displayExistingTargetTranslation)
 			{
 				var rowStyle = tableLayoutPanel.RowStyles[nRowStyleOffset++];
-				rowStyle.SizeType = SizeType.Percent;	// gives it real estate
+				rowStyle.SizeType = SizeType.Percent;   // gives it real estate
 				rowStyle.Height = 20F;
 				labelForExistingTargetData.Visible = !hideColumn1LabelsToolStripMenuItem.Checked;
 				textBoxTargetTextExisting.Visible = buttonFillExistingTargetText.Visible = true;
-				textBoxTargetTextExisting.Font = BackTranslationHelperDataSource.TargetLanguageFont;
+				textBoxTargetTextExisting.Font = targetLanguageFont;
+				textBoxTargetTextExisting.RightToLeft = targetLanguageRightToLeft;
 			}
 			else
 			{
-				tableLayoutPanel.RowStyles[nRowStyleOffset++].SizeType = SizeType.AutoSize;	// makes it disappear
+				tableLayoutPanel.RowStyles[nRowStyleOffset++].SizeType = SizeType.AutoSize; // makes it disappear
 				textBoxTargetTextExisting.Visible = labelForExistingTargetData.Visible = buttonFillExistingTargetText.Visible = false;
 			}
 
-            textBoxTargetBackTranslation.Font = BackTranslationHelperDataSource.TargetLanguageFont;
+			textBoxTargetBackTranslation.Font = targetLanguageFont;
+			textBoxTargetBackTranslation.RightToLeft = targetLanguageRightToLeft;
 
-            // we're either showing the target translated suggestion in a textbox (if there's only 1 converter)
-            //  or in readonly textboxes (so they can have scroll bars) above it to choose from (if there are more than one converter)
-            var textBoxesPossibleTargetTranslations = tableLayoutPanel.Controls.OfType<TextBox>().Where(l => l.Name.Contains("textBoxPossibleTargetTranslation")).ToList();
-            var buttonsFillTargetOption = tableLayoutPanel.Controls.OfType<Button>().Where(b => b.Name.Contains("buttonFillTargetTextOption")).ToList();
-            var numOfTranslators = TheTranslators.Count;
+			// we're either showing the target translated suggestion in a textbox (if there's only 1 converter)
+			//  or in readonly textboxes (so they can have scroll bars) above it to choose from (if there are more than one converter)
+			var textBoxesPossibleTargetTranslations = tableLayoutPanel.Controls.OfType<TextBox>().Where(l => l.Name.Contains("textBoxPossibleTargetTranslation")).ToList();
+			var buttonsFillTargetOption = tableLayoutPanel.Controls.OfType<Button>().Where(b => b.Name.Contains("buttonFillTargetTextOption")).ToList();
+			var numOfTranslators = TheTranslators.Count;
 
-            // if there's only one, then we don't need to display the 'possible' translations to start with.
+			// if there's only one, then we don't need to display the 'possible' translations to start with.
 			// NB: but only if we're not displaying any pre-existing target translations. If we are (i.e. Paratext),
 			//	then we need to display even the one as an option, bkz the editable textbox will contain the
 			//	existing translation, which if it's not correct, we want to be able to fill it from the converted
 			//	value (which will be in the 1st targetoption box)
-            var i = 0;
-            if ((numOfTranslators == 1) && !displayExistingTargetTranslation)
+			var i = 0;
+			if ((numOfTranslators == 1) && !displayExistingTargetTranslation)
 			{
-                // hide them all
-                for (; i < MaxPossibleTargetTranslations; i++)
-                {
-                    var textBox = textBoxesPossibleTargetTranslations[i];
-                    var button = buttonsFillTargetOption[i];
-                    textBox.Visible = button.Visible = false;
+				// hide them all
+				for (; i < MaxPossibleTargetTranslations; i++)
+				{
+					var textBox = textBoxesPossibleTargetTranslations[i];
+					var button = buttonsFillTargetOption[i];
+					textBox.Visible = button.Visible = false;
 					tableLayoutPanel.RowStyles[nRowStyleOffset + i].SizeType = SizeType.AutoSize;
 				}
 				labelForTargetDataOptions.Visible = false;
-            }
-            else
-            {
-                labelForTargetDataOptions.Visible = !Properties.Settings.Default.HideLabels;
+			}
+			else
+			{
+				labelForTargetDataOptions.Visible = !Properties.Settings.Default.HideLabels;
 
 				// set up mnemonics for the buttons to make it easier to trigger
 				var mnemonicChar = 1;
 				if (displayExistingTargetTranslation)
-					buttonFillExistingTargetText.Text = $" &{mnemonicChar++}";	// so that Alt+1 will trigger the button (and space so the text won't show over the icon)
+					buttonFillExistingTargetText.Text = $" &{mnemonicChar++}";  // so that Alt+1 will trigger the button (and space so the text won't show over the icon)
 
-                for (; i < numOfTranslators; i++)
-                {
-                    var textBox = textBoxesPossibleTargetTranslations[i];
-                    var button = buttonsFillTargetOption[i];
+				for (; i < numOfTranslators; i++)
+				{
+					var textBox = textBoxesPossibleTargetTranslations[i];
+					var button = buttonsFillTargetOption[i];
 					button.Text = $" &{mnemonicChar++}";
 					textBox.Visible = button.Visible = true;
-                    textBox.Font = textBoxTargetTextExisting.Font;
+					textBox.Font = textBoxTargetTextExisting.Font;
+					textBox.RightToLeft = targetLanguageRightToLeft;
 					var rowStyle = tableLayoutPanel.RowStyles[nRowStyleOffset + i];
 					rowStyle.SizeType = SizeType.Percent;   // gives it real estate
 					rowStyle.Height = 20F;
 					toolTip.SetToolTip(textBox, $"This is the translation from the {TheTranslators[i].Name} Translator");
-                }
+				}
 
-                for (; i < MaxPossibleTargetTranslations; i++)
-                {
-                    var textBox = textBoxesPossibleTargetTranslations[i];
-                    var button = buttonsFillTargetOption[i];
-                    textBox.Visible = button.Visible = false;
+				for (; i < MaxPossibleTargetTranslations; i++)
+				{
+					var textBox = textBoxesPossibleTargetTranslations[i];
+					var button = buttonsFillTargetOption[i];
+					textBox.Visible = button.Visible = false;
 					tableLayoutPanel.RowStyles[nRowStyleOffset + i].SizeType = SizeType.AutoSize;
 				}
 			}
 
-            tableLayoutPanel.ResumeLayout(false);
-            tableLayoutPanel.PerformLayout();
-            ResumeLayout(false);
-            PerformLayout();
-        }
+			tableLayoutPanel.ResumeLayout(false);
+			tableLayoutPanel.PerformLayout();
+			ResumeLayout(false);
+			PerformLayout();
+		}
 
-        private void InitializeTheTranslators()
+		private RightToLeft GetSourceLanguageRightToLeftForProject(string projectName)
+		{
+			var languageRightToLeft = BackTranslationHelperDataSource.SourceLanguageRightToLeft;
+			if (Properties.Settings.Default.MapProjectNameToSourceRtLOverride != null)
+			{
+				var rtlOverrides = SettingToDictionary(Properties.Settings.Default.MapProjectNameToSourceRtLOverride);
+				if (rtlOverrides.TryGetValue(projectName, out List<string> rtlOverride))
+				{
+					languageRightToLeft = rtlOverride[0] == "true";
+				}
+			}
+			return languageRightToLeft ? RightToLeft.Yes : RightToLeft.No;
+		}
+
+		private RightToLeft GetTargetLanguageRightToLeftForProject(string projectName)
+		{
+			var languageRightToLeft = BackTranslationHelperDataSource.TargetLanguageRightToLeft;
+			if (Properties.Settings.Default.MapProjectNameToTargetRtLOverride != null)
+			{
+				var rtlOverrides = SettingToDictionary(Properties.Settings.Default.MapProjectNameToTargetRtLOverride);
+				if (rtlOverrides.TryGetValue(projectName, out List<string> rtlOverride))
+				{
+					languageRightToLeft = rtlOverride[0] == "true";
+				}
+			}
+			return languageRightToLeft ? RightToLeft.Yes : RightToLeft.No;
+		}
+
+		private Font GetSourceLanguageFontForProject(string projectName)
+		{
+			// see if there's an override
+			if (Properties.Settings.Default.MapProjectNameToSourceFontOverride != null)
+			{
+				var fontOverrides = SettingToDictionary(Properties.Settings.Default.MapProjectNameToSourceFontOverride);
+				if (fontOverrides.TryGetValue(projectName, out List<string> fontOverride))
+				{
+					return new System.Drawing.Font(fontOverride[0], float.Parse(fontOverride[1]));
+				}
+			}
+			return BackTranslationHelperDataSource.SourceLanguageFont;
+		}
+
+		private Font GetTargetLanguageFontForProject(string projectName)
+		{
+			// see if there's an override
+			if (Properties.Settings.Default.MapProjectNameToTargetFontOverride != null)
+			{
+				var fontOverrides = SettingToDictionary(Properties.Settings.Default.MapProjectNameToTargetFontOverride);
+				if (fontOverrides.TryGetValue(projectName, out List<string> fontOverride))
+				{
+					return new System.Drawing.Font(fontOverride[0], float.Parse(fontOverride[1]));
+				}
+			}
+			return BackTranslationHelperDataSource.TargetLanguageFont;
+		}
+
+		private void InitializeTheTranslators()
         {
             if (Properties.Settings.Default.MapProjectNameToEcTranslators == null)
                 Properties.Settings.Default.MapProjectNameToEcTranslators = new StringCollection();
@@ -498,6 +562,88 @@ namespace BackTranslationHelper
 			}
 		}
 
+		private void TargetTextToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			if (Properties.Settings.Default.MapProjectNameToTargetFontOverride == null)
+				Properties.Settings.Default.MapProjectNameToTargetFontOverride = new StringCollection();
+
+			var projectName = BackTranslationHelperDataSource.ProjectName;
+			fontDialog.Font = GetTargetLanguageFontForProject(projectName);
+			var mapProjectNameToTargetFontOverride = SettingToDictionary(Properties.Settings.Default.MapProjectNameToTargetFontOverride);
+			if (mapProjectNameToTargetFontOverride.TryGetValue(projectName, out List<string> fontOverride))
+			{
+				fontDialog.Font = new System.Drawing.Font(fontOverride[0], float.Parse(fontOverride[1]));
+			}
+
+			if (fontDialog.ShowDialog() == DialogResult.OK)
+			{
+				fontOverride = new List<string>
+				{
+					fontDialog.Font.Name,
+					fontDialog.Font.SizeInPoints.ToString()
+				};
+
+				textBoxTargetTextExisting.Font =
+					textBoxPossibleTargetTranslation1.Font =
+					textBoxPossibleTargetTranslation2.Font =
+					textBoxPossibleTargetTranslation3.Font =
+					textBoxTargetBackTranslation.Font = fontDialog.Font;
+				mapProjectNameToTargetFontOverride.Add(projectName, fontOverride);
+				Properties.Settings.Default.MapProjectNameToTargetFontOverride = SettingFromDictionary(mapProjectNameToTargetFontOverride);
+				Properties.Settings.Default.Save();
+			}
+		}
+
+		private void SourceRtlOverrideToolStripMenuItem_CheckedChanged(object sender, EventArgs e)
+		{
+			if (_ignoreChange)
+				return;
+
+			if (Properties.Settings.Default.MapProjectNameToSourceRtLOverride == null)
+				Properties.Settings.Default.MapProjectNameToSourceRtLOverride = new StringCollection();
+
+			var projectName = BackTranslationHelperDataSource.ProjectName;
+			var rtlOverride = sourceRightToLeftToolStripMenuItem.Checked ? RightToLeft.Yes : RightToLeft.No;
+
+			textBoxSourceData.RightToLeft = rtlOverride;
+			var mapProjectNameToSourceRtLOverride = SettingToDictionary(Properties.Settings.Default.MapProjectNameToSourceRtLOverride);
+			var value = new List<string> { sourceRightToLeftToolStripMenuItem.Checked ? "true" : "false" };
+			if (mapProjectNameToSourceRtLOverride.ContainsKey(projectName))
+				mapProjectNameToSourceRtLOverride[projectName] = value;
+			else
+				mapProjectNameToSourceRtLOverride.Add(projectName, value);
+
+			Properties.Settings.Default.MapProjectNameToSourceRtLOverride = SettingFromDictionary(mapProjectNameToSourceRtLOverride);
+			Properties.Settings.Default.Save();
+		}
+
+		private void TargetRtlOverrideToolRightToLeftStripMenuItem_CheckedChanged(object sender, EventArgs e)
+		{
+			if (_ignoreChange)
+				return;
+
+			if (Properties.Settings.Default.MapProjectNameToTargetRtLOverride == null)
+				Properties.Settings.Default.MapProjectNameToTargetRtLOverride = new StringCollection();
+
+			var projectName = BackTranslationHelperDataSource.ProjectName;
+			var rtlOverride = targetRightToLeftToolStripMenuItem.Checked ? RightToLeft.Yes : RightToLeft.No;
+
+			textBoxTargetTextExisting.RightToLeft =
+				textBoxPossibleTargetTranslation1.RightToLeft =
+				textBoxPossibleTargetTranslation2.RightToLeft =
+				textBoxPossibleTargetTranslation3.RightToLeft =
+				textBoxTargetBackTranslation.RightToLeft = rtlOverride;
+			var mapProjectNameToTargetRtLOverride = SettingToDictionary(Properties.Settings.Default.MapProjectNameToTargetRtLOverride);
+			var value = new List<string> { targetRightToLeftToolStripMenuItem.Checked ? "true" : "false" };
+			if (mapProjectNameToTargetRtLOverride.ContainsKey(projectName))
+				mapProjectNameToTargetRtLOverride[projectName] = value;
+			else
+				mapProjectNameToTargetRtLOverride.Add(projectName, value);
+
+			Properties.Settings.Default.MapProjectNameToTargetRtLOverride = SettingFromDictionary(mapProjectNameToTargetRtLOverride);
+			Properties.Settings.Default.Save();
+		}
+
 		private void BroadCastKey(string keyToSend)
 		{
 			SendKeyToControl(textBoxSourceData, keyToSend);
@@ -560,6 +706,15 @@ namespace BackTranslationHelper
 				BroadCastKey(keyToSend);
 				textBoxTargetBackTranslation.Focus();	// reset input focus back to the editable text box
 			}
+		}
+
+		private static bool _ignoreChange;
+		private void DisplayRighttoleftToolStripMenuItem_DropDownOpening(object sender, EventArgs e)
+		{
+			_ignoreChange = true;
+			sourceRightToLeftToolStripMenuItem.Checked = textBoxSourceData.RightToLeft == RightToLeft.Yes;
+			targetRightToLeftToolStripMenuItem.Checked = textBoxTargetBackTranslation.RightToLeft == RightToLeft.Yes;
+			_ignoreChange = false;
 		}
 	}
 }

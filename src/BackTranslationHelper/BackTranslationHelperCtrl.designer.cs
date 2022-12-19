@@ -37,6 +37,9 @@ namespace BackTranslationHelper
             this.fontsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.sourceTextToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.targetTextToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.displayRighttoleftToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.sourceRightToLeftToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.targetRightToLeftToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.autoSaveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.hideColumn1LabelsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
@@ -72,7 +75,7 @@ namespace BackTranslationHelper
             this.settingsToolStripMenuItem});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
-            this.menuStrip.Size = new System.Drawing.Size(69, 24);
+            this.menuStrip.Size = new System.Drawing.Size(189, 24);
             this.menuStrip.TabIndex = 0;
             this.menuStrip.Text = "menuStrip1";
             // 
@@ -82,6 +85,7 @@ namespace BackTranslationHelper
             this.removeEncConverterToolStripMenuItem,
             this.addEncConverterToolStripMenuItem,
             this.fontsToolStripMenuItem,
+            this.displayRighttoleftToolStripMenuItem,
             this.autoSaveToolStripMenuItem,
             this.hideColumn1LabelsToolStripMenuItem});
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
@@ -127,6 +131,33 @@ namespace BackTranslationHelper
             this.targetTextToolStripMenuItem.Name = "targetTextToolStripMenuItem";
             this.targetTextToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
             this.targetTextToolStripMenuItem.Text = "&Target text";
+            this.targetTextToolStripMenuItem.Click += new System.EventHandler(this.TargetTextToolStripMenuItem_Click);
+            // 
+            // displayRighttoleftToolStripMenuItem
+            // 
+            this.displayRighttoleftToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.sourceRightToLeftToolStripMenuItem,
+            this.targetRightToLeftToolStripMenuItem});
+            this.displayRighttoleftToolStripMenuItem.Name = "displayRighttoleftToolStripMenuItem";
+            this.displayRighttoleftToolStripMenuItem.Size = new System.Drawing.Size(247, 22);
+            this.displayRighttoleftToolStripMenuItem.Text = "&Display right-to-left";
+            this.displayRighttoleftToolStripMenuItem.DropDownOpening += new System.EventHandler(this.DisplayRighttoleftToolStripMenuItem_DropDownOpening);
+            // 
+            // sourceRightToLeftToolStripMenuItem
+            // 
+            this.sourceRightToLeftToolStripMenuItem.CheckOnClick = true;
+            this.sourceRightToLeftToolStripMenuItem.Name = "sourceRightToLeftToolStripMenuItem";
+            this.sourceRightToLeftToolStripMenuItem.Size = new System.Drawing.Size(110, 22);
+            this.sourceRightToLeftToolStripMenuItem.Text = "&Source";
+            this.sourceRightToLeftToolStripMenuItem.CheckedChanged += new System.EventHandler(this.SourceRtlOverrideToolStripMenuItem_CheckedChanged);
+            // 
+            // targetRightToLeftToolStripMenuItem
+            // 
+            this.targetRightToLeftToolStripMenuItem.CheckOnClick = true;
+            this.targetRightToLeftToolStripMenuItem.Name = "targetRightToLeftToolStripMenuItem";
+            this.targetRightToLeftToolStripMenuItem.Size = new System.Drawing.Size(110, 22);
+            this.targetRightToLeftToolStripMenuItem.Text = "&Target";
+            this.targetRightToLeftToolStripMenuItem.CheckedChanged += new System.EventHandler(this.TargetRtlOverrideToolRightToLeftStripMenuItem_CheckedChanged);
             // 
             // autoSaveToolStripMenuItem
             // 
@@ -242,7 +273,8 @@ namespace BackTranslationHelper
             this.buttonWriteTextToTarget.Size = new System.Drawing.Size(104, 23);
             this.buttonWriteTextToTarget.TabIndex = 2;
             this.buttonWriteTextToTarget.Text = "&Save Changes";
-            this.toolTip.SetToolTip(this.buttonWriteTextToTarget, "Click to save/write out the changes to the translated text");
+            this.toolTip.SetToolTip(this.buttonWriteTextToTarget, "Click to save/write out the translated text back to the main program (e.g. Parate" +
+        "xt or Word).");
             this.buttonWriteTextToTarget.UseVisualStyleBackColor = true;
             this.buttonWriteTextToTarget.Click += new System.EventHandler(this.ButtonWriteTextToTarget_Click);
             // 
@@ -268,6 +300,8 @@ namespace BackTranslationHelper
             this.buttonNextSection.Size = new System.Drawing.Size(75, 23);
             this.buttonNextSection.TabIndex = 3;
             this.buttonNextSection.Text = "&Next";
+            this.toolTip.SetToolTip(this.buttonNextSection, "Click to save/write out the translated text back to the main program and move to " +
+        "the next verse (Paratext) or paragraph (Word).");
             this.buttonNextSection.UseVisualStyleBackColor = true;
             this.buttonNextSection.Click += new System.EventHandler(this.ButtonNextSection_Click);
             // 
@@ -278,6 +312,7 @@ namespace BackTranslationHelper
             this.buttonFillTargetTextOption2.Name = "buttonFillTargetTextOption2";
             this.buttonFillTargetTextOption2.Size = new System.Drawing.Size(23, 23);
             this.buttonFillTargetTextOption2.TabIndex = 8;
+            this.toolTip.SetToolTip(this.buttonFillTargetTextOption2, "Click to copy this version to the editable box below.");
             this.buttonFillTargetTextOption2.UseVisualStyleBackColor = true;
             this.buttonFillTargetTextOption2.Click += new System.EventHandler(this.ButtonFillTargetTextOption2_Click);
             // 
@@ -288,6 +323,7 @@ namespace BackTranslationHelper
             this.buttonFillTargetTextOption3.Name = "buttonFillTargetTextOption3";
             this.buttonFillTargetTextOption3.Size = new System.Drawing.Size(23, 23);
             this.buttonFillTargetTextOption3.TabIndex = 8;
+            this.toolTip.SetToolTip(this.buttonFillTargetTextOption3, "Click to copy this version to the editable box below.");
             this.buttonFillTargetTextOption3.UseVisualStyleBackColor = true;
             this.buttonFillTargetTextOption3.Click += new System.EventHandler(this.ButtonFillTargetTextOption3_Click);
             // 
@@ -354,6 +390,8 @@ namespace BackTranslationHelper
             this.buttonSkip.Size = new System.Drawing.Size(75, 23);
             this.buttonSkip.TabIndex = 10;
             this.buttonSkip.Text = "&Skip";
+            this.toolTip.SetToolTip(this.buttonSkip, "Click to move to the next verse (Paratext) or paragraph (Word) without saving/wri" +
+        "ting out the translated text.");
             this.buttonSkip.UseVisualStyleBackColor = true;
             this.buttonSkip.Click += new System.EventHandler(this.ButtonSkip_Click);
             // 
@@ -461,7 +499,9 @@ namespace BackTranslationHelper
         private System.Windows.Forms.ToolStripMenuItem fontsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem sourceTextToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem targetTextToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem autoSaveToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem sourceRightToLeftToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem targetRightToLeftToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem autoSaveToolStripMenuItem;
         private System.Windows.Forms.Button buttonFillTargetTextOption1;
         private System.Windows.Forms.ToolStripMenuItem addEncConverterToolStripMenuItem;
         private System.Windows.Forms.Button buttonFillTargetTextOption2;
@@ -479,5 +519,6 @@ namespace BackTranslationHelper
         private System.Windows.Forms.TextBox textBoxPossibleTargetTranslation1;
         private System.Windows.Forms.TextBox textBoxPossibleTargetTranslation2;
         private System.Windows.Forms.TextBox textBoxPossibleTargetTranslation3;
-    }
+		private System.Windows.Forms.ToolStripMenuItem displayRighttoleftToolStripMenuItem;
+	}
 }

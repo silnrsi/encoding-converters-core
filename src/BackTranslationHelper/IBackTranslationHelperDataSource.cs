@@ -19,8 +19,10 @@ namespace BackTranslationHelper
     public interface IBackTranslationHelperDataSource
     {
         Font SourceLanguageFont { get; }
+		bool SourceLanguageRightToLeft { get; }
         Font TargetLanguageFont { get; }
-        BackTranslationHelperModel Model { get; }
+		bool TargetLanguageRightToLeft { get; }
+		BackTranslationHelperModel Model { get; }
         string ProjectName { get; }
 
         void ActivateKeyboard();
