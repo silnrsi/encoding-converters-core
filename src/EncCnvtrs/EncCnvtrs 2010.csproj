@@ -230,6 +230,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="RsaEncryptionClass.cs" />
     <Compile Include="WebBrowserGecko.cs">
       <SubType>UserControl</SubType>
     </Compile>

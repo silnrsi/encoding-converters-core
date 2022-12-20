@@ -62,12 +62,14 @@ namespace SilEncConverters40.EcTranslators.DeepLTranslator
 			get
 			{
 				var overrideKey = Properties.Settings.Default.DeepLTranslatorKeyOverride;
-				return (!String.IsNullOrEmpty(overrideKey))
+				var key = (!String.IsNullOrEmpty(overrideKey))
 							? overrideKey
 							: Properties.Settings.Default.DeepLTranslatorKey;
+				return EncryptionClass.Decrypt(key);
 			}
 			set
 			{
+				// the value is already encrypted by the time it gets here
 				Properties.Settings.Default.DeepLTranslatorKeyOverride = value;
 			}
 		}

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using static SilEncConverters40.EcTranslators.BingTranslator.BingTranslatorEncConverter;
+using SilEncConverters40;
 
 namespace SilEncConverters40.EcTranslators.BingTranslator
 {
@@ -533,11 +534,20 @@ namespace SilEncConverters40.EcTranslators.BingTranslator
 
 		private void buttonSetBingTranslateApiKey_Click(object sender, EventArgs e)
 		{
-			// only send the key if it's already the override key (so we don't expose ours)
-			var dlg = new QueryForAzureKeyAndLocation(Properties.Settings.Default.AzureTranslatorKeyOverride, Properties.Settings.Default.AzureTranslatorRegion);
-			if (dlg.ShowDialog() == DialogResult.Yes)
+#if encryptingNewCredentials
+			var azureTranslatorKeyHide = Properties.Settings.Default.AzureTranslatorKey;
+			var clientId = EncryptionClass.Encrypt(azureTranslatorKeyHide);
+#endif
+
+			// only send the key if it's already the override key (so we don't expose ours to the UI)
+			var azureTranslatorKeyOverride = Properties.Settings.Default.AzureTranslatorKeyOverride;
+			if (!String.IsNullOrEmpty(azureTranslatorKeyOverride))
+				azureTranslatorKeyOverride = EncryptionClass.Decrypt(azureTranslatorKeyOverride);
+			var dlg = new QueryForAzureKeyAndLocation(azureTranslatorKeyOverride, Properties.Settings.Default.AzureTranslatorRegion);
+			if (dlg.ShowDialog() == DialogResult.OK)
 			{
-				Properties.Settings.Default.AzureTranslatorKey = AzureTranslatorSubscriptionKey = dlg.AzureTranslatorKey;
+				azureTranslatorKeyOverride = EncryptionClass.Encrypt(dlg.AzureTranslatorKey);
+				AzureTranslatorSubscriptionKey = azureTranslatorKeyOverride;
 				Properties.Settings.Default.AzureTranslatorRegion = AzureTranslatorLocation = dlg.AzureTranslatorLocation;
 				Properties.Settings.Default.Save();
 			}

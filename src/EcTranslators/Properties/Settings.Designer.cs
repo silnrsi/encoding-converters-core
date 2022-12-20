@@ -12,7 +12,7 @@ namespace SilEncConverters40.EcTranslators.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "16.8.1.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.3.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -25,7 +25,7 @@ namespace SilEncConverters40.EcTranslators.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("2acbbf831c1b4417895dc80969d6a203")]
+        [global::System.Configuration.DefaultSettingValueAttribute("1V3jbcZwZT29xj2OKc0Win8d2+jpuRNmUGldl12p8PUsP3sh9YM+Yw==")]
         public string AzureTranslatorKey {
             get {
                 return ((string)(this["AzureTranslatorKey"]));
@@ -86,7 +86,7 @@ namespace SilEncConverters40.EcTranslators.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("e3c2646f-2132-7cea-9c24-ea35f259474b:fx")]
+        [global::System.Configuration.DefaultSettingValueAttribute("X1jOy3rXKfQl20lvyoj7LYlLtEuaRITqjY+oGo4BYCpE6/4MQ9kQFA==")]
         public string DeepLTranslatorKey {
             get {
                 return ((string)(this["DeepLTranslatorKey"]));

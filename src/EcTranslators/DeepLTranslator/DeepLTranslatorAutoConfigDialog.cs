@@ -319,11 +319,20 @@ namespace SilEncConverters40.EcTranslators.DeepLTranslator
 
 		private void buttonSetDeepLTranslateApiKey_Click(object sender, EventArgs e)
 		{
+#if encryptingNewCredentials
+			var deepLTranslatorKeyHide = Properties.Settings.Default.DeepLTranslatorKey;
+			var clientId = EncryptionClass.Encrypt(deepLTranslatorKeyHide);
+#endif
+
 			// only send the key if it's already the override key (so we don't expose ours)
-			var dlg = new QueryForDeepLKey(Properties.Settings.Default.DeepLTranslatorKeyOverride);
-			if (dlg.ShowDialog() == DialogResult.Yes)
+			var deepLTranslatorKeyOverride = Properties.Settings.Default.DeepLTranslatorKeyOverride;
+			if (!String.IsNullOrEmpty(deepLTranslatorKeyOverride))
+				deepLTranslatorKeyOverride = EncryptionClass.Decrypt(deepLTranslatorKeyOverride);
+			var dlg = new QueryForDeepLKey(deepLTranslatorKeyOverride);
+			if (dlg.ShowDialog() == DialogResult.OK)
 			{
-				Properties.Settings.Default.DeepLTranslatorKeyOverride = DeepLTranslatorSubscriptionKey = dlg.TranslatorKey;
+				var translatorKey = EncryptionClass.Encrypt(dlg.TranslatorKey);
+				DeepLTranslatorSubscriptionKey = translatorKey;
 				Properties.Settings.Default.Save();
 			}
 		}

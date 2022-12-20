@@ -35,12 +35,14 @@ namespace SilEncConverters40.EcTranslators.BingTranslator
 			get
 			{
 				var overrideKey = Properties.Settings.Default.AzureTranslatorKeyOverride;
-				return (!String.IsNullOrEmpty(overrideKey))
+				var key = (!String.IsNullOrEmpty(overrideKey))
 							? overrideKey
 							: Properties.Settings.Default.AzureTranslatorKey;
+				return EncryptionClass.Decrypt(key);
 			}
 			set
 			{
+				// the value is already encrypted by the time it gets here
 				Properties.Settings.Default.AzureTranslatorKeyOverride = value;
 			}
 		}

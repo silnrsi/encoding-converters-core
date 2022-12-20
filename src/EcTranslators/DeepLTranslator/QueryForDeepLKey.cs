@@ -30,5 +30,11 @@ namespace SilEncConverters40.EcTranslators.DeepLTranslator
 		{
 			Process.Start(Properties.Settings.Default.DeepLTranslatorKeyDialogInstructionUrl);
 		}
+
+		private void buttonOK_Click(object sender, System.EventArgs e)
+		{
+			DialogResult = DialogResult.OK;
+			Close();
+		}
 	}
 }

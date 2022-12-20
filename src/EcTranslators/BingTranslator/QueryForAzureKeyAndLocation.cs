@@ -39,5 +39,11 @@ namespace SilEncConverters40.EcTranslators.BingTranslator
 		{
 			Process.Start("https://docs.microsoft.com/en-us/azure/cognitive-services/translator/quickstart-translator");
 		}
+
+		private void buttonOK_Click(object sender, System.EventArgs e)
+		{
+			DialogResult = DialogResult.OK;
+			Close();
+		}
 	}
 }

@@ -75,6 +75,7 @@ namespace SilEncConverters40.EcTranslators.BingTranslator
             this.buttonOK.TabIndex = 6;
             this.buttonOK.Text = "&OK";
             this.buttonOK.UseVisualStyleBackColor = true;
+            this.buttonOK.Click += new System.EventHandler(this.buttonOK_Click);
             // 
             // buttonCancel
             // 
@@ -133,6 +134,7 @@ namespace SilEncConverters40.EcTranslators.BingTranslator
             this.linkLabelInstructions.Name = "linkLabelInstructions";
             this.linkLabelInstructions.Size = new System.Drawing.Size(343, 13);
             this.linkLabelInstructions.TabIndex = 5;
+            this.linkLabelInstructions.TabStop = true;
             this.linkLabelInstructions.Text = "see {0} for instructions on creating your own Azure Translator Resource";
             this.linkLabelInstructions.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelInstructions_LinkClicked);
             // 
