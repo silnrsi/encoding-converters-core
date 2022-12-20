@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using static SilEncConverters40.EcTranslators.BingTranslator.BingTranslatorEncConverter;
-using SilEncConverters40;
 
 namespace SilEncConverters40.EcTranslators.BingTranslator
 {

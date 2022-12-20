@@ -3,7 +3,7 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace SilEncConverters40
+namespace SilEncConverters40.EcTranslators
 {
     public class EncryptionClass
     {

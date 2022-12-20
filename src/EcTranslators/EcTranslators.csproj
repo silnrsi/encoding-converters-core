@@ -143,6 +143,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="RsaEncryptionClass.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ECInterfaces\ECInterfaces 2010.csproj">
