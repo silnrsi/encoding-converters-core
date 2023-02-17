@@ -103,6 +103,7 @@
       <DependentUpon>BackTranslationHelperCtrl.cs</DependentUpon>
     </Compile>
     <Compile Include="BackTranslationHelperModel.cs" />
+    <Compile Include="FindReplaceHelper.cs" />
     <Compile Include="IBackTranslationHelperDataSource.cs" />
     <Compile Include="TranslatorListForm.cs">
       <SubType>Form</SubType>

@@ -19,11 +19,20 @@ namespace BackTranslationHelper
         // the form in which this UserControl is embedded will initialize these
         public IBackTranslationHelperDataSource BackTranslationHelperDataSource;
         public List<IEncConverter> TheTranslators = new List<IEncConverter>();
+		public FindReplaceHelper TheFindReplaceProject;
+		public DirectableEncConverter TheFindReplaceConverter;
+		public BackTranslationHelperModel _model;
 
-        public BackTranslationHelperModel _model;
-        #endregion
+		/// <summary>
+		/// keep track of some recently translated portions, so we can avoid calling to Bing again for the same input data
+		/// (which happens if the user is switching back and forth to an existing verse editing things manually in Ptx)
+		/// key it by the converter name (bkz there may be multiple of these running each w/ the same source portion, but
+		/// different target languages)
+		/// </summary>
+		protected static Dictionary<string, Dictionary<string, string>> _mapOfRecentTranslations = new Dictionary<string, Dictionary<string, string>>();
+		#endregion
 
-        public BackTranslationHelperCtrl()
+		public BackTranslationHelperCtrl()
         {
             InitializeComponent();
 
@@ -304,14 +313,39 @@ namespace BackTranslationHelper
             for (var i = _model.TargetsPossible.Count; i < TheTranslators.Count; i++)
             {
                 var theTranslator = TheTranslators[i];
-                var translatedText = theTranslator.Convert(_model.SourceData);
-                _model.TargetsPossible.Add(new TargetPossible { TargetData = translatedText, PossibleIndex = i, TranslatorName = theTranslator.Name });
+				var translatedText = ConvertText(theTranslator, _model.SourceData);
+				_model.TargetsPossible.Add(new TargetPossible { TargetData = translatedText, PossibleIndex = i, TranslatorName = theTranslator.Name });
             }
 
             model = _model;
         }
 
-        public void UpdateData(BackTranslationHelperModel model)
+		private string ConvertText(IEncConverter theTranslator, string sourceData)
+		{
+			if (!_mapOfRecentTranslations.TryGetValue(theTranslator.Name, out Dictionary<string, string> mapRecentTranslations))
+			{
+				mapRecentTranslations = new Dictionary<string, string>();
+				_mapOfRecentTranslations.Add(theTranslator.Name, mapRecentTranslations);
+			}
+
+			if (!mapRecentTranslations.TryGetValue(sourceData, out string targetData))
+			{
+				try
+				{
+					targetData = theTranslator.Convert(sourceData);
+				}
+				catch (Exception ex)
+				{
+					MessageBox.Show(ex.Message, EncConverters.cstrCaption);
+				}
+
+				mapRecentTranslations.Add(sourceData, targetData);
+			}
+
+			return targetData;
+		}
+
+		public void UpdateData(BackTranslationHelperModel model)
         {
             textBoxSourceData.Text = model.SourceData;
 			textBoxTargetBackTranslation.Text = model.TargetData;   // may be null, in which case, setting NewTargetTexts below will fill it with the 1st translation
@@ -328,20 +362,68 @@ namespace BackTranslationHelper
             for (var i = model.TargetsPossible.Count; i < numOfTranslators; i++)
             {
                 var theTranslator = TheTranslators[i];
-                var translatedText = theTranslator.Convert(model.SourceData);
-                model.TargetsPossible.Add(new TargetPossible { TargetData = translatedText, PossibleIndex = i, TranslatorName = theTranslator.Name });
+				var translatedText = ConvertText(theTranslator, model.SourceData);
+				model.TargetsPossible.Add(new TargetPossible { TargetData = translatedText, PossibleIndex = i, TranslatorName = theTranslator.Name });
             }
 
             NewTargetTexts = model.TargetsPossible;
         }
 
-        #endregion
+		private string PreprocessTargetData(string targetDataOrig)
+		{
+			// if we have a FindReplaceHelper attached to this project, then use it before writing the result
+			string difference = null, targetData = targetDataOrig;
+			if (TheFindReplaceConverter != null)
+			{
+				targetData = ConvertText(TheFindReplaceConverter.GetEncConverter, targetDataOrig);
 
-        #region Private helper methods
+				if (targetData != targetDataOrig)
+				{
+					difference = Difference(targetData, targetDataOrig);
+				}
+			}
 
-        #endregion
+#if !fix
+			if (String.IsNullOrEmpty(difference))
+			{
+				toolStripTextBoxStatus.Text = String.Empty;
+				toolStripTextBoxStatus.BackColor = System.Drawing.SystemColors.Control;
+			}
+			else
+			{
+				toolStripTextBoxStatus.Text = $"substitutions made: {difference}";
+				toolStripTextBoxStatus.BackColor = System.Drawing.SystemColors.ButtonShadow;
+			}
+#endif
+			return targetData;
+		}
 
-        private void ButtonWriteTextToTarget_Click(object sender, System.EventArgs e)
+		public static string Difference(string str1, string str2)
+		{
+			if (str1 == null)
+			{
+				return str2;
+			}
+			if (str2 == null)
+			{
+				return str1;
+			}
+
+			List<string> set1 = str1.Split(' ').Distinct().ToList();
+			List<string> set2 = str2.Split(' ').Distinct().ToList();
+
+			var diff = set2.Count() > set1.Count() ? set2.Except(set1).ToList() : set1.Except(set2).ToList();
+
+			return $"'{string.Join("','", diff)}'";
+		}
+
+#endregion
+
+#region Private helper methods
+
+#endregion
+
+		private void ButtonWriteTextToTarget_Click(object sender, System.EventArgs e)
         {
             BackTranslationHelperDataSource.ButtonPressed(ButtonPressed.WriteToTarget);
             BackTranslationHelperDataSource.Log($"change target text from '{textBoxTargetTextExisting.Text}' to '{textBoxTargetBackTranslation.Text}'");
