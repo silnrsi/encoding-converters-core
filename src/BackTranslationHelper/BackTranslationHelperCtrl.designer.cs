@@ -64,6 +64,7 @@ namespace BackTranslationHelper
             this.textBoxPossibleTargetTranslation3 = new System.Windows.Forms.TextBox();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.fontDialog = new System.Windows.Forms.FontDialog();
+            this.toolStripTextBoxStatus = new System.Windows.Forms.ToolStripTextBox();
             this.menuStrip.SuspendLayout();
             this.tableLayoutPanel.SuspendLayout();
             this.SuspendLayout();
@@ -72,10 +73,11 @@ namespace BackTranslationHelper
             // 
             this.menuStrip.Dock = System.Windows.Forms.DockStyle.None;
             this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.settingsToolStripMenuItem});
+            this.settingsToolStripMenuItem,
+            this.toolStripTextBoxStatus});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
-            this.menuStrip.Size = new System.Drawing.Size(189, 24);
+            this.menuStrip.Size = new System.Drawing.Size(691, 27);
             this.menuStrip.TabIndex = 0;
             this.menuStrip.Text = "menuStrip1";
             // 
@@ -89,7 +91,7 @@ namespace BackTranslationHelper
             this.autoSaveToolStripMenuItem,
             this.hideColumn1LabelsToolStripMenuItem});
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(61, 23);
             this.settingsToolStripMenuItem.Text = "&Settings";
             // 
             // removeEncConverterToolStripMenuItem
@@ -465,6 +467,17 @@ namespace BackTranslationHelper
             this.fontDialog.Font = new System.Drawing.Font("Arial Unicode MS", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.fontDialog.ShowColor = true;
             // 
+            // toolStripTextBoxStatus
+            // 
+            this.toolStripTextBoxStatus.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.toolStripTextBoxStatus.BackColor = System.Drawing.SystemColors.ButtonShadow;
+            this.toolStripTextBoxStatus.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.toolStripTextBoxStatus.Name = "toolStripTextBoxStatus";
+            this.toolStripTextBoxStatus.ReadOnly = true;
+            this.toolStripTextBoxStatus.Size = new System.Drawing.Size(500, 23);
+            this.toolStripTextBoxStatus.ToolTipText = "This shows if any substitutions were made when processing the text in the \'Target" +
+    " Translation\' edit box";
+            // 
             // BackTranslationHelperCtrl
             // 
             this.AutoSize = true;
@@ -518,5 +531,6 @@ namespace BackTranslationHelper
         private System.Windows.Forms.TextBox textBoxPossibleTargetTranslation2;
         private System.Windows.Forms.TextBox textBoxPossibleTargetTranslation3;
 		private System.Windows.Forms.ToolStripMenuItem displayRighttoleftToolStripMenuItem;
+		private System.Windows.Forms.ToolStripTextBox toolStripTextBoxStatus;
 	}
 }

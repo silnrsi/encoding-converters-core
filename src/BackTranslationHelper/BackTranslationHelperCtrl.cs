@@ -72,6 +72,7 @@ namespace BackTranslationHelper
 			var projectName = BackTranslationHelperDataSource.ProjectName;
 			textBoxSourceData.Font = GetSourceLanguageFontForProject(projectName);
 			textBoxSourceData.RightToLeft = GetSourceLanguageRightToLeftForProject(projectName);
+			toolStripTextBoxStatus.Size = CalculateStatusLineSize(toolStripTextBoxStatus, settingsToolStripMenuItem);
 			var targetLanguageFont = GetTargetLanguageFontForProject(projectName);
 			var targetLanguageRightToLeft = GetTargetLanguageRightToLeftForProject(projectName);
 			if (displayExistingTargetTranslation)
@@ -153,6 +154,12 @@ namespace BackTranslationHelper
 			tableLayoutPanel.PerformLayout();
 			ResumeLayout(false);
 			PerformLayout();
+		}
+
+		private Size CalculateStatusLineSize(ToolStripTextBox toolStripTextBoxStatus, ToolStripMenuItem settingsToolStripMenuItem)
+		{
+			var width = this.Width - settingsToolStripMenuItem.Width - 50;  // Padding;
+			return new Size(width, toolStripTextBoxStatus.Height);
 		}
 
 		private RightToLeft GetSourceLanguageRightToLeftForProject(string projectName)
@@ -347,9 +354,11 @@ namespace BackTranslationHelper
 
 		public void UpdateData(BackTranslationHelperModel model)
         {
-            textBoxSourceData.Text = model.SourceData;
-			textBoxTargetBackTranslation.Text = model.TargetData;   // may be null, in which case, setting NewTargetTexts below will fill it with the 1st translation
-
+			textBoxSourceData.Text = model.SourceData;
+			var targetData = PreprocessTargetData(model.TargetData);
+			textBoxTargetBackTranslation.Text = targetData;     // may be null, in which case, setting NewTargetTexts below will fill it with the 1st translation
+			textBoxTargetBackTranslation.SelectedText = null;   // it shouldn't be pre-selected (which it seems to do)
+			
 			// if we're keeping track of what was originally in the Target Project (i.e. Paratext usage), then put the current value in the label for
 			//	the existing target field (just in case the user starts to edit or choose one of the other possibilities and then wants to revert it
 			//	(it has a fill button also).
@@ -383,7 +392,6 @@ namespace BackTranslationHelper
 				}
 			}
 
-#if !fix
 			if (String.IsNullOrEmpty(difference))
 			{
 				toolStripTextBoxStatus.Text = String.Empty;
@@ -394,7 +402,7 @@ namespace BackTranslationHelper
 				toolStripTextBoxStatus.Text = $"substitutions made: {difference}";
 				toolStripTextBoxStatus.BackColor = System.Drawing.SystemColors.ButtonShadow;
 			}
-#endif
+
 			return targetData;
 		}
 
@@ -531,27 +539,32 @@ namespace BackTranslationHelper
             UpdateData(_model);
         }
 
-        private void ButtonFillExistingTargetText_Click(object sender, EventArgs e)
-        {
-            textBoxTargetBackTranslation.Text = textBoxTargetTextExisting.Text;
-        }
+		private void UpdateEditableTextBox(TextBox textBoxFrom)
+		{
+			textBoxTargetBackTranslation.Text = PreprocessTargetData(textBoxFrom.Text);
+		}
 
-        private void ButtonFillTargetTextOption1_Click(object sender, EventArgs e)
-        {
-            textBoxTargetBackTranslation.Text = textBoxPossibleTargetTranslation1.Text;
-        }
+		private void ButtonFillExistingTargetText_Click(object sender, EventArgs e)
+		{
+			UpdateEditableTextBox(textBoxTargetTextExisting);
+		}
 
-        private void ButtonFillTargetTextOption2_Click(object sender, EventArgs e)
-        {
-            textBoxTargetBackTranslation.Text = textBoxPossibleTargetTranslation2.Text;
-        }
+		private void ButtonFillTargetTextOption1_Click(object sender, EventArgs e)
+		{
+			UpdateEditableTextBox(textBoxPossibleTargetTranslation1);
+		}
 
-        private void ButtonFillTargetTextOption3_Click(object sender, EventArgs e)
-        {
-            textBoxTargetBackTranslation.Text = textBoxPossibleTargetTranslation3.Text;
-        }
+		private void ButtonFillTargetTextOption2_Click(object sender, EventArgs e)
+		{
+			UpdateEditableTextBox(textBoxPossibleTargetTranslation2);
+		}
 
-        private void TextBoxTargetBackTranslation_Enter(object sender, EventArgs e)
+		private void ButtonFillTargetTextOption3_Click(object sender, EventArgs e)
+		{
+			UpdateEditableTextBox(textBoxPossibleTargetTranslation3);
+		}
+
+		private void TextBoxTargetBackTranslation_Enter(object sender, EventArgs e)
         {
             BackTranslationHelperDataSource?.ActivateKeyboard();
         }
