@@ -23,6 +23,7 @@ namespace BackTranslationHelper
 		public DirectableEncConverter TheFindReplaceConverter;
 		public BackTranslationHelperModel _model;
 		public bool IsModified = false;
+		protected bool _displayExistingTargetTranslation;
 
 		/// <summary>
 		/// keep track of some recently translated portions, so we can avoid calling to Bing again for the same input data
@@ -56,6 +57,7 @@ namespace BackTranslationHelper
 
 		public void Initialize(bool displayExistingTargetTranslation)
 		{
+			_displayExistingTargetTranslation = displayExistingTargetTranslation;
 			CheckInitializeFindReplaceHelper();
 			BackTranslationHelperDataSource.SetDataUpdateProc(UpdateData);
 
@@ -76,7 +78,7 @@ namespace BackTranslationHelper
 			toolStripTextBoxStatus.Size = CalculateStatusLineSize(toolStripTextBoxStatus, settingsToolStripMenuItem);
 			var targetLanguageFont = GetTargetLanguageFontForProject(projectName);
 			var targetLanguageRightToLeft = GetTargetLanguageRightToLeftForProject(projectName);
-			if (displayExistingTargetTranslation && !hideCurrentTargetTextToolStripMenuItem.Checked)
+			if (_displayExistingTargetTranslation && !hideCurrentTargetTextToolStripMenuItem.Checked)
 			{
 				var rowStyle = tableLayoutPanel.RowStyles[nRowStyleOffset++];
 				rowStyle.SizeType = SizeType.Percent;   // gives it real estate
@@ -107,7 +109,7 @@ namespace BackTranslationHelper
 			//	existing translation, which if it's not correct, we want to be able to fill it from the converted
 			//	value (which will be in the 1st targetoption box)
 			var i = 0;
-			if ((numOfTranslators == 1) && !displayExistingTargetTranslation && !hideCurrentTargetTextToolStripMenuItem.Checked)
+			if ((numOfTranslators == 1) && !_displayExistingTargetTranslation && !hideCurrentTargetTextToolStripMenuItem.Checked)
 			{
 				// hide them all
 				for (; i < MaxPossibleTargetTranslations; i++)
@@ -125,7 +127,7 @@ namespace BackTranslationHelper
 
 				// set up mnemonics for the buttons to make it easier to trigger
 				var mnemonicChar = 1;
-				if (displayExistingTargetTranslation)
+				if (_displayExistingTargetTranslation)
 					buttonFillExistingTargetText.Text = $" &{mnemonicChar++}";  // so that Alt+1 will trigger the button (and space so the text won't show over the icon)
 
 				for (; i < numOfTranslators; i++)
@@ -551,7 +553,8 @@ namespace BackTranslationHelper
                 }
 
 				System.Diagnostics.Debug.Assert(_model != null);
-				Initialize(!String.IsNullOrEmpty(_model.TargetDataPreExisting) && !hideCurrentTargetTextToolStripMenuItem.Checked);
+
+				Initialize(_displayExistingTargetTranslation && !hideCurrentTargetTextToolStripMenuItem.Checked);
 				UpdateData(_model);
 			}
 		}
@@ -586,7 +589,7 @@ namespace BackTranslationHelper
             }
 
             System.Diagnostics.Debug.Assert(_model != null);
-            Initialize(!String.IsNullOrEmpty(_model.TargetDataPreExisting) && !hideCurrentTargetTextToolStripMenuItem.Checked);
+            Initialize(_displayExistingTargetTranslation && !hideCurrentTargetTextToolStripMenuItem.Checked);
             UpdateData(_model);
         }
 
@@ -865,11 +868,12 @@ namespace BackTranslationHelper
 
 					IsModified = false;		// so it can be changed
 
-					// I don't think I wanted to do this. This just means that if we originally processed the existing text (in Ptx), then
-					//	it would just shift to the other one, which isn't what we probably want to do.
+					// I don't think I wanted to do this. This just means that if we originally processed the existing
+					//  text (in Ptx), then it would just shift to the other one, which isn't what we probably want
+					//  to do.
 					//	_model.TargetData = null;   // so it'll be reinitialized
 					_model.TargetsPossible.Clear();
-					Initialize(!String.IsNullOrEmpty(_model.TargetDataPreExisting) && !hideCurrentTargetTextToolStripMenuItem.Checked);
+					Initialize(_displayExistingTargetTranslation && !hideCurrentTargetTextToolStripMenuItem.Checked);
 					UpdateData(_model);
 
 					return;
@@ -914,7 +918,7 @@ namespace BackTranslationHelper
 
 			TheFindReplaceProject.AssignCorrectSpelling(findWhat);
 
-			Initialize(!String.IsNullOrEmpty(_model.TargetDataPreExisting) && !hideCurrentTargetTextToolStripMenuItem.Checked);
+			Initialize(_displayExistingTargetTranslation && !hideCurrentTargetTextToolStripMenuItem.Checked);
 			UpdateData(_model);
 		}
 
@@ -966,7 +970,7 @@ namespace BackTranslationHelper
 
 			TheFindReplaceProject.FindReplacementRule(findWhat);
 
-			Initialize(!String.IsNullOrEmpty(_model.TargetDataPreExisting) && !hideCurrentTargetTextToolStripMenuItem.Checked);
+			Initialize(_displayExistingTargetTranslation && !hideCurrentTargetTextToolStripMenuItem.Checked);
 			UpdateData(_model);
 		}
 
@@ -983,7 +987,7 @@ namespace BackTranslationHelper
 
 			TheFindReplaceProject.EditSpellingFixes();
 
-			Initialize(!String.IsNullOrEmpty(_model.TargetDataPreExisting) && !hideCurrentTargetTextToolStripMenuItem.Checked);
+			Initialize(_displayExistingTargetTranslation && !hideCurrentTargetTextToolStripMenuItem.Checked);
 			UpdateData(_model);
 		}
 
@@ -1025,7 +1029,7 @@ namespace BackTranslationHelper
 
 		private void hideCurrentTargetTextToolStripMenuItem_CheckStateChanged(object sender, EventArgs e)
 		{
-			Initialize(!String.IsNullOrEmpty(_model.TargetDataPreExisting) && !hideCurrentTargetTextToolStripMenuItem.Checked);
+			Initialize(_displayExistingTargetTranslation && !hideCurrentTargetTextToolStripMenuItem.Checked);
 			UpdateData(_model);
 		}
 	}
