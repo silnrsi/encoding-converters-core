@@ -100,5 +100,17 @@ namespace BackTranslationHelper.Properties {
                 this["MapProjectNameToFindReplaceProject"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool HideCurrentTargetText {
+            get {
+                return ((bool)(this["HideCurrentTargetText"]));
+            }
+            set {
+                this["HideCurrentTargetText"] = value;
+            }
+        }
     }
 }

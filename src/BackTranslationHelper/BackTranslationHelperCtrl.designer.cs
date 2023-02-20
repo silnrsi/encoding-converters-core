@@ -198,7 +198,7 @@ namespace BackTranslationHelper
             this.hideCurrentTargetTextToolStripMenuItem.Text = "Hide &Current Target Text";
             this.hideCurrentTargetTextToolStripMenuItem.ToolTipText = "Check this menu item to hide the Current Target Text row (e.g. to get more screen" +
     " real estate)";
-            this.hideCurrentTargetTextToolStripMenuItem.CheckStateChanged += new System.EventHandler(this.hideCurrentTargetTextToolStripMenuItem_CheckStateChanged);
+            this.hideCurrentTargetTextToolStripMenuItem.CheckStateChanged += new System.EventHandler(this.HideCurrentTargetTextToolStripMenuItem_CheckStateChanged);
             // 
             // toolStripTextBoxStatus
             // 

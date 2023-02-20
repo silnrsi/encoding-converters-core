@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 namespace BackTranslationHelper
@@ -40,6 +41,7 @@ namespace BackTranslationHelper
 
 			this.MouseWheel += new MouseEventHandler(this.UserControl_MouseWheel);
 			this.textBoxTargetBackTranslation.MouseWheel += new MouseEventHandler(this.TargetBackTranslation_MouseWheel);
+			hideCurrentTargetTextToolStripMenuItem.Checked = Properties.Settings.Default.HideCurrentTargetText;
 		}
 
 		private void TargetBackTranslation_MouseWheel(object sender, MouseEventArgs e)
@@ -541,21 +543,19 @@ namespace BackTranslationHelper
             var dlg = new TranslatorListForm(TheTranslators);
             if (dlg.ShowDialog() == DialogResult.OK)
             {
-                TheTranslators.RemoveAll(t => t.Name == dlg.SelectedDisplayName);
-
-                var mapProjectNameToEcTranslators = SettingToDictionary(Properties.Settings.Default.MapProjectNameToEcTranslators);
+				var nameOfTranslatorBeingRemoved = dlg.SelectedDisplayName;
+				TheTranslators.RemoveAll(t => t.Name == nameOfTranslatorBeingRemoved);
+				_model.TargetsPossible.RemoveAll(tp => tp.TranslatorName == nameOfTranslatorBeingRemoved);
+				var mapProjectNameToEcTranslators = SettingToDictionary(Properties.Settings.Default.MapProjectNameToEcTranslators);
                 var projectName = BackTranslationHelperDataSource.ProjectName;
                 if (mapProjectNameToEcTranslators.TryGetValue(projectName, out List<string> translatorNames))
                 {
-                    translatorNames.RemoveAll(t => t == dlg.SelectedDisplayName);
+                    translatorNames.RemoveAll(t => t == nameOfTranslatorBeingRemoved);
                     Properties.Settings.Default.MapProjectNameToEcTranslators = SettingFromDictionary(mapProjectNameToEcTranslators);
                     Properties.Settings.Default.Save();
                 }
 
-				System.Diagnostics.Debug.Assert(_model != null);
-
-				Initialize(_displayExistingTargetTranslation && !hideCurrentTargetTextToolStripMenuItem.Checked);
-				UpdateData(_model);
+				Reload();
 			}
 		}
 
@@ -588,10 +588,8 @@ namespace BackTranslationHelper
                 Properties.Settings.Default.Save();
             }
 
-            System.Diagnostics.Debug.Assert(_model != null);
-            Initialize(_displayExistingTargetTranslation && !hideCurrentTargetTextToolStripMenuItem.Checked);
-            UpdateData(_model);
-        }
+			Reload();
+		}
 
 		private void UpdateEditableTextBox(TextBox textBoxFrom)
 		{
@@ -649,14 +647,34 @@ namespace BackTranslationHelper
                 Properties.Settings.Default.HideLabels = newCheckState;
                 Properties.Settings.Default.Save();
                 if (_model != null)
-                {
-                    Initialize(textBoxTargetTextExisting.Visible);
-                    UpdateData(_model);
-                }
-            }
+				{
+					Reload();
+				}
+			}
         }
 
-        protected const char chNeverUsedChar = '\u0009';  // add to words we replace, so we don't process them again
+		private void Reload()
+		{
+			System.Diagnostics.Debug.Assert(_model != null);
+			Initialize(_displayExistingTargetTranslation && !hideCurrentTargetTextToolStripMenuItem.Checked);
+			UpdateData(_model);
+		}
+
+		private void HideCurrentTargetTextToolStripMenuItem_CheckStateChanged(object sender, EventArgs e)
+		{
+			var newCheckState = hideCurrentTargetTextToolStripMenuItem.Checked;
+			if (newCheckState != Properties.Settings.Default.HideCurrentTargetText)
+			{
+				Properties.Settings.Default.HideCurrentTargetText = newCheckState;
+				Properties.Settings.Default.Save();
+				if (_model != null)
+				{
+					Reload();
+				}
+			}
+		}
+
+		protected const char chNeverUsedChar = '\u0009';  // add to words we replace, so we don't process them again
 
         public static Dictionary<string, List<string>> SettingToDictionary(StringCollection data)
         {
@@ -873,9 +891,7 @@ namespace BackTranslationHelper
 					//  to do.
 					//	_model.TargetData = null;   // so it'll be reinitialized
 					_model.TargetsPossible.Clear();
-					Initialize(_displayExistingTargetTranslation && !hideCurrentTargetTextToolStripMenuItem.Checked);
-					UpdateData(_model);
-
+					Reload();
 					return;
 			}
 
@@ -918,8 +934,7 @@ namespace BackTranslationHelper
 
 			TheFindReplaceProject.AssignCorrectSpelling(findWhat);
 
-			Initialize(_displayExistingTargetTranslation && !hideCurrentTargetTextToolStripMenuItem.Checked);
-			UpdateData(_model);
+			Reload();
 		}
 
 		private string GetRequiredSelectedText()
@@ -970,8 +985,7 @@ namespace BackTranslationHelper
 
 			TheFindReplaceProject.FindReplacementRule(findWhat);
 
-			Initialize(_displayExistingTargetTranslation && !hideCurrentTargetTextToolStripMenuItem.Checked);
-			UpdateData(_model);
+			Reload();
 		}
 
 		private void editSubtitutionsMenuItem_Click(object sender, EventArgs e)
@@ -987,8 +1001,7 @@ namespace BackTranslationHelper
 
 			TheFindReplaceProject.EditSpellingFixes();
 
-			Initialize(_displayExistingTargetTranslation && !hideCurrentTargetTextToolStripMenuItem.Checked);
-			UpdateData(_model);
+			Reload();
 		}
 
 		private void assignNewSubstitutionProjectMenuItem_Click(object sender, EventArgs e)
@@ -1025,12 +1038,6 @@ namespace BackTranslationHelper
 				// MessageBox.Show(ex.Message, EncConverters.cstrCaption);
 			}
 			return null;
-		}
-
-		private void hideCurrentTargetTextToolStripMenuItem_CheckStateChanged(object sender, EventArgs e)
-		{
-			Initialize(_displayExistingTargetTranslation && !hideCurrentTargetTextToolStripMenuItem.Checked);
-			UpdateData(_model);
 		}
 	}
 }
