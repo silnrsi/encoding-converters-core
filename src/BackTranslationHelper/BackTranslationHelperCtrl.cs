@@ -42,6 +42,13 @@ namespace BackTranslationHelper
 			this.MouseWheel += new MouseEventHandler(this.UserControl_MouseWheel);
 			this.textBoxTargetBackTranslation.MouseWheel += new MouseEventHandler(this.TargetBackTranslation_MouseWheel);
 			hideCurrentTargetTextToolStripMenuItem.Checked = Properties.Settings.Default.HideCurrentTargetText;
+
+			if (Properties.Settings.Default.PinnedToTop)
+			{
+				buttonPinToTop.Image = global::BackTranslationHelper.Properties.Resources.pindown;
+				if ((Parent != null) && (Parent is Form parentForm))
+					parentForm.TopMost = true;
+			}
 		}
 
 		private void TargetBackTranslation_MouseWheel(object sender, MouseEventArgs e)
@@ -506,36 +513,37 @@ namespace BackTranslationHelper
                 return;
             }
 
-            BackTranslationHelperDataSource.ButtonPressed(ButtonPressed.MoveToNext);
-            var existingTargetText = textBoxTargetTextExisting.Text;
-            var newTargetText = textBoxTargetBackTranslation.Text;
-            var modified = existingTargetText != newTargetText;
+			var existingTargetText = textBoxTargetTextExisting.Text;
+			var newTargetText = textBoxTargetBackTranslation.Text;
 
-            if (!autoSaveToolStripMenuItem.Checked)
+			if (!autoSaveToolStripMenuItem.Checked)
             {
-                if (modified)
+                if (IsModified)
                 {
                     var res = MessageBox.Show($"Do you want to save/write out the translated text before moving to the next portion?", BackTranslationHelperDataSource.ProjectName, MessageBoxButtons.YesNoCancel);
                     if (res == DialogResult.Cancel)
                     {
-                        BackTranslationHelperDataSource.Cancel();
                         return;
                     }
                     if (res == DialogResult.No)
                     {
-                        BackTranslationHelperDataSource.MoveToNext();
+						IsModified = false;
+						BackTranslationHelperDataSource.ButtonPressed(ButtonPressed.MoveToNext);
+						BackTranslationHelperDataSource.MoveToNext();
                         return;
                     }
                 }
             }
 
-            if (modified)
+            if (IsModified)
             {
                 BackTranslationHelperDataSource.Log($"change target text from '{existingTargetText}' to '{newTargetText}'");
                 BackTranslationHelperDataSource.WriteToTarget(newTargetText);
             }
 
-            BackTranslationHelperDataSource.MoveToNext();
+			IsModified = false;
+			BackTranslationHelperDataSource.ButtonPressed(ButtonPressed.MoveToNext);
+			BackTranslationHelperDataSource.MoveToNext();
         }
 
         private void ChangeEncConverterToolStripMenuItem_Click(object sender, EventArgs e)
@@ -716,6 +724,7 @@ namespace BackTranslationHelper
 				}
 			}
 
+			IsModified = false;	// so it will lose the changes and move on
 			BackTranslationHelperDataSource?.ButtonPressed(ButtonPressed.Skip);
 			BackTranslationHelperDataSource?.MoveToNext();
 		}
@@ -968,7 +977,7 @@ namespace BackTranslationHelper
 			return findWhat;
 		}
 
-		private void findSubstitutionRuleMenuItem_Click(object sender, EventArgs e)
+		private void FindSubstitutionRuleMenuItem_Click(object sender, EventArgs e)
 		{
 			if (TheFindReplaceProject == null)
 			{
@@ -988,7 +997,7 @@ namespace BackTranslationHelper
 			Reload();
 		}
 
-		private void editSubtitutionsMenuItem_Click(object sender, EventArgs e)
+		private void EditSubtitutionsMenuItem_Click(object sender, EventArgs e)
 		{
 			if (TheFindReplaceProject == null)
 			{
@@ -1004,7 +1013,7 @@ namespace BackTranslationHelper
 			Reload();
 		}
 
-		private void assignNewSubstitutionProjectMenuItem_Click(object sender, EventArgs e)
+		private void AssignNewSubstitutionProjectMenuItem_Click(object sender, EventArgs e)
 		{
 			// check if we're using a FindReplace helpers
 			if (Properties.Settings.Default.MapProjectNameToFindReplaceProject != null)
@@ -1038,6 +1047,20 @@ namespace BackTranslationHelper
 				// MessageBox.Show(ex.Message, EncConverters.cstrCaption);
 			}
 			return null;
+		}
+
+		private void ButtonPinToTop_Click(object sender, EventArgs e)
+		{
+			var newCheckState = !Properties.Settings.Default.PinnedToTop;
+			Properties.Settings.Default.PinnedToTop = newCheckState;
+			Properties.Settings.Default.Save();
+
+			buttonPinToTop.Image = (newCheckState)
+									? global::BackTranslationHelper.Properties.Resources.pindown
+									: global::BackTranslationHelper.Properties.Resources.pinup;
+
+			if ((Parent != null) && (Parent is Form parentForm))
+				parentForm.TopMost = newCheckState;
 		}
 	}
 }

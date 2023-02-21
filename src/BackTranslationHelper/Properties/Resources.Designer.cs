@@ -19,7 +19,7 @@ namespace BackTranslationHelper.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -70,13 +70,10 @@ namespace BackTranslationHelper.Properties {
         ///        &lt;script type=&quot;text/javascript&quot;&gt;
         ///{0}
         ///        &lt;/script&gt;
-        ///        &lt;script type=&quot;text/javascript&quot;&gt;
         ///{1}
-        ///{2}
-        ///        &lt;/script&gt;
         ///&lt;/head&gt;
         ///&lt;body&gt;
-        ///{3}
+        ///{2}
         ///&lt;/body&gt;
         ///&lt;/html&gt;
         ///.
@@ -240,11 +237,31 @@ namespace BackTranslationHelper.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to /*! jQuery v3.6.0 | (c) OpenJS Foundation and other contributors | jquery.org/license */
-        ///!function(e,t){&quot;use strict&quot;;&quot;object&quot;==typeof module&amp;&amp;&quot;object&quot;==typeof module.exports?module.exports=e.document?t(e,!0):function(e){if(!e.document)throw new Error(&quot;jQuery requires a window with a document&quot;);return t(e)}:t(e)}(&quot;undefined&quot;!=typeof window?window:this,function(C,e){&quot;use strict&quot;;var t=[],r=Object.getPrototypeOf,s=t.slice,g=t.flat?function(e){return t.flat.call(e)}:function(e){return t.concat.apply([],e)},u=t. [rest of string was truncated]&quot;;.
+        ///!function(e,t){&quot;use strict&quot;;&quot;object&quot;==typeof module&amp;&amp;&quot;object&quot;==typeof module.exports?module.exports=e.document?t(e,!0):function(e){if(!e.document)throw new Error(&quot;jQuery requires a window with a document&quot;);return t(e)}:t(e)}(&quot;undefined&quot;!=typeof window?window:this,function(C,e){&quot;use strict&quot;;var t=[],r=Object.getPrototypeOf,s=t.slice,g=t.flat?function(e){return t.flat.call(e)}:function(e){return t.concat.apply([],e)},u=t [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string jquery_3_6_0_min {
             get {
                 return ResourceManager.GetString("jquery_3_6_0_min", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap pindown {
+            get {
+                object obj = ResourceManager.GetObject("pindown", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap pinup {
+            get {
+                object obj = ResourceManager.GetObject("pinup", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
     }

@@ -71,6 +71,7 @@ namespace BackTranslationHelper
             this.buttonSkip = new System.Windows.Forms.Button();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.fontDialog = new System.Windows.Forms.FontDialog();
+            this.buttonPinToTop = new System.Windows.Forms.Button();
             this.menuStrip.SuspendLayout();
             this.tableLayoutPanel.SuspendLayout();
             this.substitutionContextMenu.SuspendLayout();
@@ -84,7 +85,7 @@ namespace BackTranslationHelper
             this.toolStripTextBoxStatus});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
-            this.menuStrip.Size = new System.Drawing.Size(691, 27);
+            this.menuStrip.Size = new System.Drawing.Size(571, 27);
             this.menuStrip.TabIndex = 0;
             this.menuStrip.Text = "menuStrip1";
             // 
@@ -245,7 +246,7 @@ namespace BackTranslationHelper
             this.tableLayoutPanel.Controls.Add(this.textBoxPossibleTargetTranslation3, 1, 4);
             this.tableLayoutPanel.Controls.Add(this.buttonNextSection, 3, 6);
             this.tableLayoutPanel.Controls.Add(this.buttonSkip, 4, 6);
-            this.tableLayoutPanel.Location = new System.Drawing.Point(3, 27);
+            this.tableLayoutPanel.Location = new System.Drawing.Point(3, 32);
             this.tableLayoutPanel.Name = "tableLayoutPanel";
             this.tableLayoutPanel.Padding = new System.Windows.Forms.Padding(10);
             this.tableLayoutPanel.RowCount = 7;
@@ -301,7 +302,7 @@ namespace BackTranslationHelper
             this.findSubstitutionRuleMenuItem.ToolTipText = "Select a word or phrase in the \'Target Translation\' box that you want to find the" +
     " substitution rule for and click this menu item (e.g. to add a boundary conditio" +
     "n if the find/replace was too \'greedy\')";
-            this.findSubstitutionRuleMenuItem.Click += new System.EventHandler(this.findSubstitutionRuleMenuItem_Click);
+            this.findSubstitutionRuleMenuItem.Click += new System.EventHandler(this.FindSubstitutionRuleMenuItem_Click);
             // 
             // editSubtitutionsMenuItem
             // 
@@ -310,14 +311,14 @@ namespace BackTranslationHelper
             this.editSubtitutionsMenuItem.Text = "&Edit Substitutions";
             this.editSubtitutionsMenuItem.ToolTipText = "Click this to see the existing substitution so you can edit one or more of them (" +
     "e.g. to add a boundary condition if the find/replace was too \'greedy\')";
-            this.editSubtitutionsMenuItem.Click += new System.EventHandler(this.editSubtitutionsMenuItem_Click);
+            this.editSubtitutionsMenuItem.Click += new System.EventHandler(this.EditSubtitutionsMenuItem_Click);
             // 
             // assignNewSubstitutionProjectMenuItem
             // 
             this.assignNewSubstitutionProjectMenuItem.Name = "assignNewSubstitutionProjectMenuItem";
             this.assignNewSubstitutionProjectMenuItem.Size = new System.Drawing.Size(284, 22);
             this.assignNewSubstitutionProjectMenuItem.Text = "&Choose/Create new substitution project";
-            this.assignNewSubstitutionProjectMenuItem.Click += new System.EventHandler(this.assignNewSubstitutionProjectMenuItem_Click);
+            this.assignNewSubstitutionProjectMenuItem.Click += new System.EventHandler(this.AssignNewSubstitutionProjectMenuItem_Click);
             // 
             // buttonFillTargetTextOption1
             // 
@@ -543,14 +544,29 @@ namespace BackTranslationHelper
             this.fontDialog.Font = new System.Drawing.Font("Arial Unicode MS", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.fontDialog.ShowColor = true;
             // 
+            // buttonPinToTop
+            // 
+            this.buttonPinToTop.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonPinToTop.Image = global::BackTranslationHelper.Properties.Resources.pinup;
+            this.buttonPinToTop.Location = new System.Drawing.Point(685, 0);
+            this.buttonPinToTop.Margin = new System.Windows.Forms.Padding(0);
+            this.buttonPinToTop.Name = "buttonPinToTop";
+            this.buttonPinToTop.Size = new System.Drawing.Size(30, 30);
+            this.buttonPinToTop.TabIndex = 3;
+            this.buttonPinToTop.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.toolTip.SetToolTip(this.buttonPinToTop, "Toggle this button to pin this dialog box so that it remains on top of other windows");
+            this.buttonPinToTop.UseVisualStyleBackColor = true;
+            this.buttonPinToTop.Click += new System.EventHandler(this.ButtonPinToTop_Click);
+            // 
             // BackTranslationHelperCtrl
             // 
             this.AutoSize = true;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.Controls.Add(this.buttonPinToTop);
             this.Controls.Add(this.tableLayoutPanel);
             this.Controls.Add(this.menuStrip);
             this.Name = "BackTranslationHelperCtrl";
-            this.Size = new System.Drawing.Size(717, 417);
+            this.Size = new System.Drawing.Size(717, 419);
             this.menuStrip.ResumeLayout(false);
             this.menuStrip.PerformLayout();
             this.tableLayoutPanel.ResumeLayout(false);
@@ -604,5 +620,6 @@ namespace BackTranslationHelper
 		private System.Windows.Forms.ToolStripMenuItem editSubtitutionsMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem assignNewSubstitutionProjectMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem hideCurrentTargetTextToolStripMenuItem;
+		private System.Windows.Forms.Button buttonPinToTop;
 	}
 }
