@@ -494,8 +494,10 @@ namespace BackTranslationHelper
 		private void ButtonWriteTextToTarget_Click(object sender, System.EventArgs e)
         {
             BackTranslationHelperDataSource.ButtonPressed(ButtonPressed.WriteToTarget);
-            BackTranslationHelperDataSource.Log($"change target text from '{textBoxTargetTextExisting.Text}' to '{textBoxTargetBackTranslation.Text}'");
-            BackTranslationHelperDataSource.WriteToTarget(textBoxTargetBackTranslation.Text);
+            BackTranslationHelperDataSource.Log($"changing target text from '{textBoxTargetTextExisting.Text}' to '{textBoxTargetBackTranslation.Text}'");
+			if (!BackTranslationHelperDataSource.WriteToTarget(textBoxTargetBackTranslation.Text))
+				return;
+
 			IsModified = false;
         }
 
@@ -538,7 +540,8 @@ namespace BackTranslationHelper
             if (IsModified)
             {
                 BackTranslationHelperDataSource.Log($"change target text from '{existingTargetText}' to '{newTargetText}'");
-                BackTranslationHelperDataSource.WriteToTarget(newTargetText);
+				if (!BackTranslationHelperDataSource.WriteToTarget(newTargetText))
+					return;
             }
 
 			IsModified = false;
@@ -610,7 +613,9 @@ namespace BackTranslationHelper
 				}
 			}
 
-			textBoxTargetBackTranslation.Text = PreprocessTargetData(textBoxFrom.Text);
+			// also put it in the model as the ‘TargetData’ (possibly overwriting the translated value) so
+			//	it’ll show up there again, rather than being overwritten by something previous
+			_model.TargetData =  textBoxTargetBackTranslation.Text = PreprocessTargetData(textBoxFrom.Text);
 			IsModified = false;	// no longer edited
 		}
 
