@@ -876,9 +876,6 @@ namespace BackTranslationHelper
 				case Keys.Down:
 					keyToSend = "{DOWN}";
 					break;
-				case Keys.Right:
-					keyToSend = "{RIGHT}";
-					break;
 				case Keys.F5:
 					if (_queryAboutF5Meaning)
 					{
