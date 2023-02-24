@@ -42,12 +42,16 @@ namespace BackTranslationHelper
 			this.MouseWheel += new MouseEventHandler(this.UserControl_MouseWheel);
 			this.textBoxTargetBackTranslation.MouseWheel += new MouseEventHandler(this.TargetBackTranslation_MouseWheel);
 			hideCurrentTargetTextToolStripMenuItem.Checked = Properties.Settings.Default.HideCurrentTargetText;
+		}
 
-			if (Properties.Settings.Default.PinnedToTop)
+		protected override void OnParentChanged(EventArgs e)
+		{
+			base.OnParentChanged(e);
+
+			if (Properties.Settings.Default.PinnedToTop && (Parent != null) && (Parent is Form parentForm))
 			{
 				buttonPinToTop.Image = global::BackTranslationHelper.Properties.Resources.pindown;
-				if ((Parent != null) && (Parent is Form parentForm))
-					parentForm.TopMost = true;
+				parentForm.TopMost = true;
 			}
 		}
 
