@@ -458,16 +458,22 @@ namespace BackTranslationHelper
 
 			if (String.IsNullOrEmpty(difference))
 			{
-				toolStripTextBoxStatus.Text = String.Empty;
-				toolStripTextBoxStatus.BackColor = System.Drawing.SystemColors.Control;
+				SetStatusBox(String.Empty);
 			}
 			else
 			{
-				toolStripTextBoxStatus.Text = $"substitutions made: {difference}";
-				toolStripTextBoxStatus.BackColor = System.Drawing.SystemColors.ButtonShadow;
+				SetStatusBox($"substitutions made: {difference}");
 			}
 
 			return targetData;
+		}
+
+		private void SetStatusBox(string value)
+		{
+			toolStripTextBoxStatus.Text = value;
+			toolStripTextBoxStatus.BackColor = String.IsNullOrEmpty(value)
+												? System.Drawing.SystemColors.Control
+												: System.Drawing.SystemColors.ButtonShadow;
 		}
 
 		public static string Difference(string str1, string str2)
@@ -500,8 +506,11 @@ namespace BackTranslationHelper
             BackTranslationHelperDataSource.ButtonPressed(ButtonPressed.WriteToTarget);
             BackTranslationHelperDataSource.Log($"changing target text from '{textBoxTargetTextExisting.Text}' to '{textBoxTargetBackTranslation.Text}'");
 			if (!BackTranslationHelperDataSource.WriteToTarget(textBoxTargetBackTranslation.Text))
-				return;
-
+			{
+				SetStatusBox($"We had to reload the text. Click the button again.");
+				if (!BackTranslationHelperDataSource.WriteToTarget(textBoxTargetBackTranslation.Text))
+					return;
+			}
 			IsModified = false;
         }
 
@@ -526,7 +535,8 @@ namespace BackTranslationHelper
             {
                 if (IsModified)
                 {
-                    var res = MessageBox.Show($"Do you want to save/write out the translated text before moving to the next portion?", BackTranslationHelperDataSource.ProjectName, MessageBoxButtons.YesNoCancel);
+                    var res = MessageBox.Show($"Do you want to save/write out the translated text before moving to the next portion?",
+											  BackTranslationHelperDataSource.ProjectName, MessageBoxButtons.YesNoCancel);
                     if (res == DialogResult.Cancel)
                     {
                         return;
@@ -545,7 +555,13 @@ namespace BackTranslationHelper
             {
                 BackTranslationHelperDataSource.Log($"change target text from '{existingTargetText}' to '{newTargetText}'");
 				if (!BackTranslationHelperDataSource.WriteToTarget(newTargetText))
-					return;
+				{
+					// assuming that before returning false, the caller updated the data,
+					//	let's try that again and see what happens
+					SetStatusBox($"We had to reload the text. Click the button again.");
+					if (!BackTranslationHelperDataSource.WriteToTarget(newTargetText))
+						return;
+				}
             }
 
 			IsModified = false;
