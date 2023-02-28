@@ -103,6 +103,7 @@
       <DependentUpon>BackTranslationHelperCtrl.cs</DependentUpon>
     </Compile>
     <Compile Include="BackTranslationHelperModel.cs" />
+    <Compile Include="FindReplaceHelper.cs" />
     <Compile Include="IBackTranslationHelperDataSource.cs" />
     <Compile Include="TranslatorListForm.cs">
       <SubType>Form</SubType>
@@ -130,6 +131,7 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
@@ -152,6 +154,8 @@
     <Content Include="html\BackTranslationHelperHtmlPage.html" />
     <Content Include="html\BackTranslationHelperJavaScriptFunctions.js" />
     <Content Include="html\jquery-3.6.0.min.js" />
+    <None Include="Resources\pinup.bmp" />
+    <None Include="Resources\pindown.bmp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ECInterfaces\ECInterfaces 2010.csproj">

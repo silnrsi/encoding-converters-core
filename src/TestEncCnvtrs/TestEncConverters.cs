@@ -14,6 +14,7 @@ using System.Reflection;
 using System.Threading;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Security.Cryptography;
 
 namespace TestEncCnvtrs
 {
@@ -704,7 +705,43 @@ namespace TestEncCnvtrs
             filename2 = tempFileName2;
         }
 
-        [Test]
+		/// <summary>
+		/// CC has a file length limit, so move this file to a temporary location and use it from there
+		/// </summary>
+		/// <param name="filename">the name of the cctable (w/ extn, e.g. Clean Spelling for Hindi to English fixes.cct)</param>
+		/// <param name="fileSpec">the full file spec to the new, temporary location (e.g. C:\Users\pete_\AppData\Local\Temp\Clean Spelling for Hindi to English fixes.cct)</param>
+		private static void MoveCcTableToTempLocation(string filename, out string fileSpec)
+		{
+			var dir = GetTestSourceFolder();
+			var origFileSpec = Path.Combine(dir, filename);
+
+			var tempPath = Path.GetTempPath();
+			fileSpec = Path.Combine(tempPath, filename);
+			File.Copy(origFileSpec, fileSpec, true);
+		}
+
+		[Test]
+		[TestCase("Because God has chosen you to be partakers in his glory\r\n2.12 \r\npartakers in his glory \r\nRomans 5:2; 8:17; Hebrews 2:9-10; 12:28 \r\n and kingdom. ", null)]
+		[TestCase("Mariam stayed there about three months, \r\n and then went back to her home. ", "Mary stayed there about three months, \r\n and then went back to her home. ")]
+		[TestCase("Mariam stayed there about three months, \n and then went back to her home. ", "Mary stayed there about three months, \n and then went back to her home. ")]
+		[TestCase("Mariam stayed there about three months, and then went back to her home. ", "Mary stayed there about three months, and then went back to her home. ")]
+		public void TestSpellFixerCC(string strInput, string strOutput)
+		{
+			// if the output is null, it means there should be no change (so just make it the same as the input)
+			strOutput ??= strInput;
+
+			var strEncConverterName = "Clean Spelling for Hindi to English fixes";
+			MoveCcTableToTempLocation($"{strEncConverterName}.cct", out string pathToCcFile);
+			m_encConverters.AddConversionMap(strEncConverterName, pathToCcFile, ConvType.Unicode_to_Unicode,
+						EncConverters.strTypeSILcc, "UNICODE", "UNICODE",
+						ProcessTypeFlags.SpellingFixerProject);
+			var theEc = m_encConverters[strEncConverterName];
+
+			var output = theEc.Convert(strInput);
+			Assert.AreEqual(strOutput, output);
+		}
+
+		[Test]
 		public void TestPerlEncConverter()
 		{
 			int countOrig = m_encConverters.Count;

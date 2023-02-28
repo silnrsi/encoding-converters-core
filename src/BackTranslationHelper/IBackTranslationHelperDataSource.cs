@@ -27,7 +27,7 @@ namespace BackTranslationHelper
 
         void ActivateKeyboard();
         void Log(string message);
-        void WriteToTarget(string text);
+        bool WriteToTarget(string text);
         void MoveToNext();
         void Cancel();
 

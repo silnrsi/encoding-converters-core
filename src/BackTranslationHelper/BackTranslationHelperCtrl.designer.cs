@@ -42,13 +42,19 @@ namespace BackTranslationHelper
             this.targetRightToLeftToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.autoSaveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.hideColumn1LabelsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.hideCurrentTargetTextToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripTextBoxStatus = new System.Windows.Forms.ToolStripTextBox();
             this.tableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
+            this.buttonSubstitute = new System.Windows.Forms.Button();
+            this.substitutionContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.addSubtitutionMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.findSubstitutionRuleMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.editSubtitutionsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.assignNewSubstitutionProjectMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.buttonFillTargetTextOption1 = new System.Windows.Forms.Button();
             this.textBoxTargetBackTranslation = new System.Windows.Forms.TextBox();
             this.buttonClose = new System.Windows.Forms.Button();
             this.buttonWriteTextToTarget = new System.Windows.Forms.Button();
-            this.buttonCopyToClipboard = new System.Windows.Forms.Button();
-            this.buttonNextSection = new System.Windows.Forms.Button();
             this.buttonFillTargetTextOption2 = new System.Windows.Forms.Button();
             this.buttonFillTargetTextOption3 = new System.Windows.Forms.Button();
             this.labelForExistingTargetData = new System.Windows.Forms.Label();
@@ -56,26 +62,30 @@ namespace BackTranslationHelper
             this.labelForTargetTranslation = new System.Windows.Forms.Label();
             this.labelForSourceData = new System.Windows.Forms.Label();
             this.buttonFillExistingTargetText = new System.Windows.Forms.Button();
-            this.buttonSkip = new System.Windows.Forms.Button();
             this.textBoxTargetTextExisting = new System.Windows.Forms.TextBox();
             this.textBoxSourceData = new System.Windows.Forms.TextBox();
             this.textBoxPossibleTargetTranslation1 = new System.Windows.Forms.TextBox();
             this.textBoxPossibleTargetTranslation2 = new System.Windows.Forms.TextBox();
             this.textBoxPossibleTargetTranslation3 = new System.Windows.Forms.TextBox();
+            this.buttonNextSection = new System.Windows.Forms.Button();
+            this.buttonSkip = new System.Windows.Forms.Button();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.fontDialog = new System.Windows.Forms.FontDialog();
+            this.buttonPinToTop = new System.Windows.Forms.Button();
             this.menuStrip.SuspendLayout();
             this.tableLayoutPanel.SuspendLayout();
+            this.substitutionContextMenu.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip
             // 
             this.menuStrip.Dock = System.Windows.Forms.DockStyle.None;
             this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.settingsToolStripMenuItem});
+            this.settingsToolStripMenuItem,
+            this.toolStripTextBoxStatus});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
-            this.menuStrip.Size = new System.Drawing.Size(189, 24);
+            this.menuStrip.Size = new System.Drawing.Size(571, 27);
             this.menuStrip.TabIndex = 0;
             this.menuStrip.Text = "menuStrip1";
             // 
@@ -87,9 +97,10 @@ namespace BackTranslationHelper
             this.fontsToolStripMenuItem,
             this.displayRighttoleftToolStripMenuItem,
             this.autoSaveToolStripMenuItem,
-            this.hideColumn1LabelsToolStripMenuItem});
+            this.hideColumn1LabelsToolStripMenuItem,
+            this.hideCurrentTargetTextToolStripMenuItem});
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(61, 23);
             this.settingsToolStripMenuItem.Text = "&Settings";
             // 
             // removeEncConverterToolStripMenuItem
@@ -180,6 +191,27 @@ namespace BackTranslationHelper
     "ated text options";
             this.hideColumn1LabelsToolStripMenuItem.CheckStateChanged += new System.EventHandler(this.HideColumn1LabelsToolStripMenuItem_CheckStateChanged);
             // 
+            // hideCurrentTargetTextToolStripMenuItem
+            // 
+            this.hideCurrentTargetTextToolStripMenuItem.CheckOnClick = true;
+            this.hideCurrentTargetTextToolStripMenuItem.Name = "hideCurrentTargetTextToolStripMenuItem";
+            this.hideCurrentTargetTextToolStripMenuItem.Size = new System.Drawing.Size(247, 22);
+            this.hideCurrentTargetTextToolStripMenuItem.Text = "Hide &Current Target Text";
+            this.hideCurrentTargetTextToolStripMenuItem.ToolTipText = "Check this menu item to hide the Current Target Text row (e.g. to get more screen" +
+    " real estate)";
+            this.hideCurrentTargetTextToolStripMenuItem.CheckStateChanged += new System.EventHandler(this.HideCurrentTargetTextToolStripMenuItem_CheckStateChanged);
+            // 
+            // toolStripTextBoxStatus
+            // 
+            this.toolStripTextBoxStatus.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.toolStripTextBoxStatus.BackColor = System.Drawing.SystemColors.ButtonShadow;
+            this.toolStripTextBoxStatus.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.toolStripTextBoxStatus.Name = "toolStripTextBoxStatus";
+            this.toolStripTextBoxStatus.ReadOnly = true;
+            this.toolStripTextBoxStatus.Size = new System.Drawing.Size(500, 23);
+            this.toolStripTextBoxStatus.ToolTipText = "This shows if any substitutions were made when processing the text in the \'Target" +
+    " Translation\' edit box";
+            // 
             // tableLayoutPanel
             // 
             this.tableLayoutPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -189,18 +221,17 @@ namespace BackTranslationHelper
             this.tableLayoutPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.tableLayoutPanel.ColumnCount = 7;
             this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel.Controls.Add(this.buttonSubstitute, 5, 6);
             this.tableLayoutPanel.Controls.Add(this.buttonFillTargetTextOption1, 6, 2);
             this.tableLayoutPanel.Controls.Add(this.textBoxTargetBackTranslation, 1, 5);
             this.tableLayoutPanel.Controls.Add(this.buttonClose, 1, 6);
             this.tableLayoutPanel.Controls.Add(this.buttonWriteTextToTarget, 2, 6);
-            this.tableLayoutPanel.Controls.Add(this.buttonCopyToClipboard, 3, 6);
-            this.tableLayoutPanel.Controls.Add(this.buttonNextSection, 4, 6);
             this.tableLayoutPanel.Controls.Add(this.buttonFillTargetTextOption2, 6, 3);
             this.tableLayoutPanel.Controls.Add(this.buttonFillTargetTextOption3, 6, 4);
             this.tableLayoutPanel.Controls.Add(this.labelForExistingTargetData, 0, 1);
@@ -208,30 +239,91 @@ namespace BackTranslationHelper
             this.tableLayoutPanel.Controls.Add(this.labelForTargetTranslation, 0, 5);
             this.tableLayoutPanel.Controls.Add(this.labelForSourceData, 0, 0);
             this.tableLayoutPanel.Controls.Add(this.buttonFillExistingTargetText, 6, 1);
-            this.tableLayoutPanel.Controls.Add(this.buttonSkip, 5, 6);
             this.tableLayoutPanel.Controls.Add(this.textBoxTargetTextExisting, 1, 1);
             this.tableLayoutPanel.Controls.Add(this.textBoxSourceData, 1, 0);
             this.tableLayoutPanel.Controls.Add(this.textBoxPossibleTargetTranslation1, 1, 2);
             this.tableLayoutPanel.Controls.Add(this.textBoxPossibleTargetTranslation2, 1, 3);
             this.tableLayoutPanel.Controls.Add(this.textBoxPossibleTargetTranslation3, 1, 4);
-            this.tableLayoutPanel.Location = new System.Drawing.Point(3, 27);
+            this.tableLayoutPanel.Controls.Add(this.buttonNextSection, 3, 6);
+            this.tableLayoutPanel.Controls.Add(this.buttonSkip, 4, 6);
+            this.tableLayoutPanel.Location = new System.Drawing.Point(3, 32);
             this.tableLayoutPanel.Name = "tableLayoutPanel";
             this.tableLayoutPanel.Padding = new System.Windows.Forms.Padding(10);
             this.tableLayoutPanel.RowCount = 7;
-            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66667F));
-            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66667F));
-            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66667F));
-            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66667F));
-            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66667F));
-            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66667F));
+            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66666F));
+            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66666F));
+            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66666F));
+            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66666F));
+            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66666F));
+            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66666F));
             this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel.Size = new System.Drawing.Size(711, 475);
+            this.tableLayoutPanel.Size = new System.Drawing.Size(711, 387);
             this.tableLayoutPanel.TabIndex = 1;
+            // 
+            // buttonSubstitute
+            // 
+            this.buttonSubstitute.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.buttonSubstitute.ContextMenuStrip = this.substitutionContextMenu;
+            this.buttonSubstitute.Location = new System.Drawing.Point(474, 349);
+            this.buttonSubstitute.Name = "buttonSubstitute";
+            this.buttonSubstitute.Size = new System.Drawing.Size(119, 25);
+            this.buttonSubstitute.TabIndex = 11;
+            this.buttonSubstitute.Text = "&Add Substitution";
+            this.toolTip.SetToolTip(this.buttonSubstitute, "Select a word or phrase in the \'Target Translation\' box that you want to configur" +
+        "e a substitute for (think: Find and Replace) and click this button");
+            this.buttonSubstitute.UseVisualStyleBackColor = true;
+            this.buttonSubstitute.Click += new System.EventHandler(this.ButtonSubstitute_Click);
+            // 
+            // substitutionContextMenu
+            // 
+            this.substitutionContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.addSubtitutionMenuItem,
+            this.findSubstitutionRuleMenuItem,
+            this.editSubtitutionsMenuItem,
+            this.assignNewSubstitutionProjectMenuItem});
+            this.substitutionContextMenu.Name = "substitutionContextMenu";
+            this.substitutionContextMenu.Size = new System.Drawing.Size(285, 92);
+            // 
+            // addSubtitutionMenuItem
+            // 
+            this.addSubtitutionMenuItem.Name = "addSubtitutionMenuItem";
+            this.addSubtitutionMenuItem.Size = new System.Drawing.Size(284, 22);
+            this.addSubtitutionMenuItem.Text = "&Add Substitution";
+            this.addSubtitutionMenuItem.ToolTipText = "Select a word or phrase in the \'Target Translation\' box that you want to configur" +
+    "e a substitute for (think: Find and Replace) and click this menu item (or just c" +
+    "lick the associated button)";
+            this.addSubtitutionMenuItem.Click += new System.EventHandler(this.ButtonSubstitute_Click);
+            // 
+            // findSubstitutionRuleMenuItem
+            // 
+            this.findSubstitutionRuleMenuItem.Name = "findSubstitutionRuleMenuItem";
+            this.findSubstitutionRuleMenuItem.Size = new System.Drawing.Size(284, 22);
+            this.findSubstitutionRuleMenuItem.Text = "&Find Substitution Rule";
+            this.findSubstitutionRuleMenuItem.ToolTipText = "Select a word or phrase in the \'Target Translation\' box that you want to find the" +
+    " substitution rule for and click this menu item (e.g. to add a boundary conditio" +
+    "n if the find/replace was too \'greedy\')";
+            this.findSubstitutionRuleMenuItem.Click += new System.EventHandler(this.FindSubstitutionRuleMenuItem_Click);
+            // 
+            // editSubtitutionsMenuItem
+            // 
+            this.editSubtitutionsMenuItem.Name = "editSubtitutionsMenuItem";
+            this.editSubtitutionsMenuItem.Size = new System.Drawing.Size(284, 22);
+            this.editSubtitutionsMenuItem.Text = "&Edit Substitutions";
+            this.editSubtitutionsMenuItem.ToolTipText = "Click this to see the existing substitution so you can edit one or more of them (" +
+    "e.g. to add a boundary condition if the find/replace was too \'greedy\')";
+            this.editSubtitutionsMenuItem.Click += new System.EventHandler(this.EditSubtitutionsMenuItem_Click);
+            // 
+            // assignNewSubstitutionProjectMenuItem
+            // 
+            this.assignNewSubstitutionProjectMenuItem.Name = "assignNewSubstitutionProjectMenuItem";
+            this.assignNewSubstitutionProjectMenuItem.Size = new System.Drawing.Size(284, 22);
+            this.assignNewSubstitutionProjectMenuItem.Text = "&Choose/Create new substitution project";
+            this.assignNewSubstitutionProjectMenuItem.Click += new System.EventHandler(this.AssignNewSubstitutionProjectMenuItem_Click);
             // 
             // buttonFillTargetTextOption1
             // 
             this.buttonFillTargetTextOption1.Image = global::BackTranslationHelper.Properties.Resources.FillDownHS;
-            this.buttonFillTargetTextOption1.Location = new System.Drawing.Point(675, 155);
+            this.buttonFillTargetTextOption1.Location = new System.Drawing.Point(675, 125);
             this.buttonFillTargetTextOption1.Name = "buttonFillTargetTextOption1";
             this.buttonFillTargetTextOption1.Size = new System.Drawing.Size(23, 23);
             this.buttonFillTargetTextOption1.TabIndex = 8;
@@ -244,11 +336,11 @@ namespace BackTranslationHelper
             // 
             this.tableLayoutPanel.SetColumnSpan(this.textBoxTargetBackTranslation, 6);
             this.textBoxTargetBackTranslation.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textBoxTargetBackTranslation.Location = new System.Drawing.Point(121, 368);
+            this.textBoxTargetBackTranslation.Location = new System.Drawing.Point(121, 293);
             this.textBoxTargetBackTranslation.Multiline = true;
             this.textBoxTargetBackTranslation.Name = "textBoxTargetBackTranslation";
             this.textBoxTargetBackTranslation.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBoxTargetBackTranslation.Size = new System.Drawing.Size(577, 65);
+            this.textBoxTargetBackTranslation.Size = new System.Drawing.Size(577, 50);
             this.textBoxTargetBackTranslation.TabIndex = 1;
             this.textBoxTargetBackTranslation.Enter += new System.EventHandler(this.TextBoxTargetBackTranslation_Enter);
             this.textBoxTargetBackTranslation.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.TextBoxTargetBackTranslation_PreviewKeyDown);
@@ -256,9 +348,9 @@ namespace BackTranslationHelper
             // buttonClose
             // 
             this.buttonClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonClose.Location = new System.Drawing.Point(181, 439);
+            this.buttonClose.Location = new System.Drawing.Point(121, 349);
             this.buttonClose.Name = "buttonClose";
-            this.buttonClose.Size = new System.Drawing.Size(75, 23);
+            this.buttonClose.Size = new System.Drawing.Size(75, 25);
             this.buttonClose.TabIndex = 6;
             this.buttonClose.Text = "Close";
             this.toolTip.SetToolTip(this.buttonClose, "Click to close this dialog");
@@ -268,9 +360,9 @@ namespace BackTranslationHelper
             // buttonWriteTextToTarget
             // 
             this.buttonWriteTextToTarget.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonWriteTextToTarget.Location = new System.Drawing.Point(262, 439);
+            this.buttonWriteTextToTarget.Location = new System.Drawing.Point(202, 349);
             this.buttonWriteTextToTarget.Name = "buttonWriteTextToTarget";
-            this.buttonWriteTextToTarget.Size = new System.Drawing.Size(104, 23);
+            this.buttonWriteTextToTarget.Size = new System.Drawing.Size(104, 25);
             this.buttonWriteTextToTarget.TabIndex = 2;
             this.buttonWriteTextToTarget.Text = "&Save Changes";
             this.toolTip.SetToolTip(this.buttonWriteTextToTarget, "Click to save/write out the translated text back to the main program (e.g. Parate" +
@@ -278,37 +370,10 @@ namespace BackTranslationHelper
             this.buttonWriteTextToTarget.UseVisualStyleBackColor = true;
             this.buttonWriteTextToTarget.Click += new System.EventHandler(this.ButtonWriteTextToTarget_Click);
             // 
-            // buttonCopyToClipboard
-            // 
-            this.buttonCopyToClipboard.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonCopyToClipboard.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonCopyToClipboard.Location = new System.Drawing.Point(372, 439);
-            this.buttonCopyToClipboard.Name = "buttonCopyToClipboard";
-            this.buttonCopyToClipboard.Size = new System.Drawing.Size(75, 23);
-            this.buttonCopyToClipboard.TabIndex = 3;
-            this.buttonCopyToClipboard.Text = "&Copy";
-            this.toolTip.SetToolTip(this.buttonCopyToClipboard, "Click to copy the translated text to the clipboard");
-            this.buttonCopyToClipboard.UseVisualStyleBackColor = true;
-            this.buttonCopyToClipboard.Click += new System.EventHandler(this.ButtonCopyToClipboard_Click);
-            // 
-            // buttonNextSection
-            // 
-            this.buttonNextSection.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonNextSection.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonNextSection.Location = new System.Drawing.Point(453, 439);
-            this.buttonNextSection.Name = "buttonNextSection";
-            this.buttonNextSection.Size = new System.Drawing.Size(75, 23);
-            this.buttonNextSection.TabIndex = 3;
-            this.buttonNextSection.Text = "&Next";
-            this.toolTip.SetToolTip(this.buttonNextSection, "Click to save/write out the translated text back to the main program and move to " +
-        "the next verse (Paratext) or paragraph (Word).");
-            this.buttonNextSection.UseVisualStyleBackColor = true;
-            this.buttonNextSection.Click += new System.EventHandler(this.ButtonNextSection_Click);
-            // 
             // buttonFillTargetTextOption2
             // 
             this.buttonFillTargetTextOption2.Image = global::BackTranslationHelper.Properties.Resources.FillDownHS;
-            this.buttonFillTargetTextOption2.Location = new System.Drawing.Point(675, 226);
+            this.buttonFillTargetTextOption2.Location = new System.Drawing.Point(675, 181);
             this.buttonFillTargetTextOption2.Name = "buttonFillTargetTextOption2";
             this.buttonFillTargetTextOption2.Size = new System.Drawing.Size(23, 23);
             this.buttonFillTargetTextOption2.TabIndex = 8;
@@ -319,7 +384,7 @@ namespace BackTranslationHelper
             // buttonFillTargetTextOption3
             // 
             this.buttonFillTargetTextOption3.Image = global::BackTranslationHelper.Properties.Resources.FillDownHS;
-            this.buttonFillTargetTextOption3.Location = new System.Drawing.Point(675, 297);
+            this.buttonFillTargetTextOption3.Location = new System.Drawing.Point(675, 237);
             this.buttonFillTargetTextOption3.Name = "buttonFillTargetTextOption3";
             this.buttonFillTargetTextOption3.Size = new System.Drawing.Size(23, 23);
             this.buttonFillTargetTextOption3.TabIndex = 8;
@@ -331,7 +396,7 @@ namespace BackTranslationHelper
             // 
             this.labelForExistingTargetData.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.labelForExistingTargetData.AutoSize = true;
-            this.labelForExistingTargetData.Location = new System.Drawing.Point(13, 110);
+            this.labelForExistingTargetData.Location = new System.Drawing.Point(13, 87);
             this.labelForExistingTargetData.Name = "labelForExistingTargetData";
             this.labelForExistingTargetData.Size = new System.Drawing.Size(102, 13);
             this.labelForExistingTargetData.TabIndex = 9;
@@ -341,7 +406,7 @@ namespace BackTranslationHelper
             // 
             this.labelForTargetDataOptions.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.labelForTargetDataOptions.AutoSize = true;
-            this.labelForTargetDataOptions.Location = new System.Drawing.Point(14, 155);
+            this.labelForTargetDataOptions.Location = new System.Drawing.Point(14, 125);
             this.labelForTargetDataOptions.Margin = new System.Windows.Forms.Padding(3);
             this.labelForTargetDataOptions.Name = "labelForTargetDataOptions";
             this.labelForTargetDataOptions.Padding = new System.Windows.Forms.Padding(0, 3, 0, 0);
@@ -353,7 +418,7 @@ namespace BackTranslationHelper
             // 
             this.labelForTargetTranslation.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.labelForTargetTranslation.AutoSize = true;
-            this.labelForTargetTranslation.Location = new System.Drawing.Point(19, 368);
+            this.labelForTargetTranslation.Location = new System.Drawing.Point(19, 293);
             this.labelForTargetTranslation.Margin = new System.Windows.Forms.Padding(3);
             this.labelForTargetTranslation.Name = "labelForTargetTranslation";
             this.labelForTargetTranslation.Padding = new System.Windows.Forms.Padding(0, 3, 0, 0);
@@ -365,7 +430,7 @@ namespace BackTranslationHelper
             // 
             this.labelForSourceData.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.labelForSourceData.AutoSize = true;
-            this.labelForSourceData.Location = new System.Drawing.Point(47, 39);
+            this.labelForSourceData.Location = new System.Drawing.Point(47, 31);
             this.labelForSourceData.Name = "labelForSourceData";
             this.labelForSourceData.Size = new System.Drawing.Size(68, 13);
             this.labelForSourceData.TabIndex = 9;
@@ -374,7 +439,7 @@ namespace BackTranslationHelper
             // buttonFillExistingTargetText
             // 
             this.buttonFillExistingTargetText.Image = global::BackTranslationHelper.Properties.Resources.FillDownHS;
-            this.buttonFillExistingTargetText.Location = new System.Drawing.Point(675, 84);
+            this.buttonFillExistingTargetText.Location = new System.Drawing.Point(675, 69);
             this.buttonFillExistingTargetText.Name = "buttonFillExistingTargetText";
             this.buttonFillExistingTargetText.Size = new System.Drawing.Size(23, 23);
             this.buttonFillExistingTargetText.TabIndex = 8;
@@ -382,30 +447,17 @@ namespace BackTranslationHelper
             this.buttonFillExistingTargetText.UseVisualStyleBackColor = true;
             this.buttonFillExistingTargetText.Click += new System.EventHandler(this.ButtonFillExistingTargetText_Click);
             // 
-            // buttonSkip
-            // 
-            this.buttonSkip.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonSkip.Location = new System.Drawing.Point(534, 439);
-            this.buttonSkip.Name = "buttonSkip";
-            this.buttonSkip.Size = new System.Drawing.Size(75, 23);
-            this.buttonSkip.TabIndex = 10;
-            this.buttonSkip.Text = "&Skip";
-            this.toolTip.SetToolTip(this.buttonSkip, "Click to move to the next verse (Paratext) or paragraph (Word) without saving/wri" +
-        "ting out the translated text.");
-            this.buttonSkip.UseVisualStyleBackColor = true;
-            this.buttonSkip.Click += new System.EventHandler(this.ButtonSkip_Click);
-            // 
             // textBoxTargetTextExisting
             // 
             this.textBoxTargetTextExisting.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.tableLayoutPanel.SetColumnSpan(this.textBoxTargetTextExisting, 5);
             this.textBoxTargetTextExisting.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textBoxTargetTextExisting.Location = new System.Drawing.Point(121, 84);
+            this.textBoxTargetTextExisting.Location = new System.Drawing.Point(121, 69);
             this.textBoxTargetTextExisting.Multiline = true;
             this.textBoxTargetTextExisting.Name = "textBoxTargetTextExisting";
             this.textBoxTargetTextExisting.ReadOnly = true;
             this.textBoxTargetTextExisting.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBoxTargetTextExisting.Size = new System.Drawing.Size(548, 65);
+            this.textBoxTargetTextExisting.Size = new System.Drawing.Size(548, 50);
             this.textBoxTargetTextExisting.TabIndex = 11;
             // 
             // textBoxSourceData
@@ -418,7 +470,7 @@ namespace BackTranslationHelper
             this.textBoxSourceData.Name = "textBoxSourceData";
             this.textBoxSourceData.ReadOnly = true;
             this.textBoxSourceData.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBoxSourceData.Size = new System.Drawing.Size(577, 65);
+            this.textBoxSourceData.Size = new System.Drawing.Size(577, 50);
             this.textBoxSourceData.TabIndex = 11;
             // 
             // textBoxPossibleTargetTranslation1
@@ -426,12 +478,12 @@ namespace BackTranslationHelper
             this.textBoxPossibleTargetTranslation1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.tableLayoutPanel.SetColumnSpan(this.textBoxPossibleTargetTranslation1, 5);
             this.textBoxPossibleTargetTranslation1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textBoxPossibleTargetTranslation1.Location = new System.Drawing.Point(121, 155);
+            this.textBoxPossibleTargetTranslation1.Location = new System.Drawing.Point(121, 125);
             this.textBoxPossibleTargetTranslation1.Multiline = true;
             this.textBoxPossibleTargetTranslation1.Name = "textBoxPossibleTargetTranslation1";
             this.textBoxPossibleTargetTranslation1.ReadOnly = true;
             this.textBoxPossibleTargetTranslation1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBoxPossibleTargetTranslation1.Size = new System.Drawing.Size(548, 65);
+            this.textBoxPossibleTargetTranslation1.Size = new System.Drawing.Size(548, 50);
             this.textBoxPossibleTargetTranslation1.TabIndex = 11;
             // 
             // textBoxPossibleTargetTranslation2
@@ -439,12 +491,12 @@ namespace BackTranslationHelper
             this.textBoxPossibleTargetTranslation2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.tableLayoutPanel.SetColumnSpan(this.textBoxPossibleTargetTranslation2, 5);
             this.textBoxPossibleTargetTranslation2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textBoxPossibleTargetTranslation2.Location = new System.Drawing.Point(121, 226);
+            this.textBoxPossibleTargetTranslation2.Location = new System.Drawing.Point(121, 181);
             this.textBoxPossibleTargetTranslation2.Multiline = true;
             this.textBoxPossibleTargetTranslation2.Name = "textBoxPossibleTargetTranslation2";
             this.textBoxPossibleTargetTranslation2.ReadOnly = true;
             this.textBoxPossibleTargetTranslation2.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBoxPossibleTargetTranslation2.Size = new System.Drawing.Size(548, 65);
+            this.textBoxPossibleTargetTranslation2.Size = new System.Drawing.Size(548, 50);
             this.textBoxPossibleTargetTranslation2.TabIndex = 11;
             // 
             // textBoxPossibleTargetTranslation3
@@ -452,33 +504,74 @@ namespace BackTranslationHelper
             this.textBoxPossibleTargetTranslation3.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.tableLayoutPanel.SetColumnSpan(this.textBoxPossibleTargetTranslation3, 5);
             this.textBoxPossibleTargetTranslation3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textBoxPossibleTargetTranslation3.Location = new System.Drawing.Point(121, 297);
+            this.textBoxPossibleTargetTranslation3.Location = new System.Drawing.Point(121, 237);
             this.textBoxPossibleTargetTranslation3.Multiline = true;
             this.textBoxPossibleTargetTranslation3.Name = "textBoxPossibleTargetTranslation3";
             this.textBoxPossibleTargetTranslation3.ReadOnly = true;
             this.textBoxPossibleTargetTranslation3.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBoxPossibleTargetTranslation3.Size = new System.Drawing.Size(548, 65);
+            this.textBoxPossibleTargetTranslation3.Size = new System.Drawing.Size(548, 50);
             this.textBoxPossibleTargetTranslation3.TabIndex = 11;
+            // 
+            // buttonNextSection
+            // 
+            this.buttonNextSection.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.buttonNextSection.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.buttonNextSection.Location = new System.Drawing.Point(312, 349);
+            this.buttonNextSection.Name = "buttonNextSection";
+            this.buttonNextSection.Size = new System.Drawing.Size(75, 25);
+            this.buttonNextSection.TabIndex = 3;
+            this.buttonNextSection.Text = "&Next";
+            this.toolTip.SetToolTip(this.buttonNextSection, "Click to save/write out the translated text back to the main program and move to " +
+        "the next verse (Paratext) or paragraph (Word).");
+            this.buttonNextSection.UseVisualStyleBackColor = true;
+            this.buttonNextSection.Click += new System.EventHandler(this.ButtonNextSection_Click);
+            // 
+            // buttonSkip
+            // 
+            this.buttonSkip.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.buttonSkip.Location = new System.Drawing.Point(393, 349);
+            this.buttonSkip.Name = "buttonSkip";
+            this.buttonSkip.Size = new System.Drawing.Size(75, 25);
+            this.buttonSkip.TabIndex = 10;
+            this.buttonSkip.Text = "&Skip";
+            this.toolTip.SetToolTip(this.buttonSkip, "Click to move to the next verse (Paratext) or paragraph (Word) without saving/wri" +
+        "ting out the translated text.");
+            this.buttonSkip.UseVisualStyleBackColor = true;
+            this.buttonSkip.Click += new System.EventHandler(this.ButtonSkip_Click);
             // 
             // fontDialog
             // 
             this.fontDialog.Font = new System.Drawing.Font("Arial Unicode MS", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.fontDialog.ShowColor = true;
             // 
+            // buttonPinToTop
+            // 
+            this.buttonPinToTop.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonPinToTop.Image = global::BackTranslationHelper.Properties.Resources.pinup;
+            this.buttonPinToTop.Location = new System.Drawing.Point(685, 0);
+            this.buttonPinToTop.Margin = new System.Windows.Forms.Padding(0);
+            this.buttonPinToTop.Name = "buttonPinToTop";
+            this.buttonPinToTop.Size = new System.Drawing.Size(30, 30);
+            this.buttonPinToTop.TabIndex = 3;
+            this.buttonPinToTop.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.toolTip.SetToolTip(this.buttonPinToTop, "Toggle this button to pin this dialog box so that it remains on top of other windows");
+            this.buttonPinToTop.UseVisualStyleBackColor = true;
+            this.buttonPinToTop.Click += new System.EventHandler(this.ButtonPinToTop_Click);
+            // 
             // BackTranslationHelperCtrl
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.Controls.Add(this.buttonPinToTop);
             this.Controls.Add(this.tableLayoutPanel);
             this.Controls.Add(this.menuStrip);
             this.Name = "BackTranslationHelperCtrl";
-            this.Size = new System.Drawing.Size(717, 505);
+            this.Size = new System.Drawing.Size(717, 419);
             this.menuStrip.ResumeLayout(false);
             this.menuStrip.PerformLayout();
             this.tableLayoutPanel.ResumeLayout(false);
             this.tableLayoutPanel.PerformLayout();
+            this.substitutionContextMenu.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -489,7 +582,6 @@ namespace BackTranslationHelper
         private System.Windows.Forms.MenuStrip menuStrip;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel;
         private System.Windows.Forms.TextBox textBoxTargetBackTranslation;
-        private System.Windows.Forms.Button buttonCopyToClipboard;
         private System.Windows.Forms.Button buttonWriteTextToTarget;
         private System.Windows.Forms.Button buttonNextSection;
         private System.Windows.Forms.ToolTip toolTip;
@@ -520,5 +612,14 @@ namespace BackTranslationHelper
         private System.Windows.Forms.TextBox textBoxPossibleTargetTranslation2;
         private System.Windows.Forms.TextBox textBoxPossibleTargetTranslation3;
 		private System.Windows.Forms.ToolStripMenuItem displayRighttoleftToolStripMenuItem;
+		private System.Windows.Forms.ToolStripTextBox toolStripTextBoxStatus;
+		private System.Windows.Forms.Button buttonSubstitute;
+		private System.Windows.Forms.ContextMenuStrip substitutionContextMenu;
+		private System.Windows.Forms.ToolStripMenuItem addSubtitutionMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem findSubstitutionRuleMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem editSubtitutionsMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem assignNewSubstitutionProjectMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem hideCurrentTargetTextToolStripMenuItem;
+		private System.Windows.Forms.Button buttonPinToTop;
 	}
 }
