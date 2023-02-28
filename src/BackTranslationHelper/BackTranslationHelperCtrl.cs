@@ -20,258 +20,258 @@ namespace BackTranslationHelper
         // the form in which this UserControl is embedded will initialize these
         public IBackTranslationHelperDataSource BackTranslationHelperDataSource;
         public List<IEncConverter> TheTranslators = new List<IEncConverter>();
-		public FindReplaceHelper TheFindReplaceProject;
-		public DirectableEncConverter TheFindReplaceConverter;
-		public BackTranslationHelperModel _model;
-		public bool IsModified = false;
-		protected bool _displayExistingTargetTranslation;
+        public FindReplaceHelper TheFindReplaceProject;
+        public DirectableEncConverter TheFindReplaceConverter;
+        public BackTranslationHelperModel _model;
+        public bool IsModified = false;
+        protected bool _displayExistingTargetTranslation;
 
-		/// <summary>
-		/// keep track of some recently translated portions, so we can avoid calling to Bing again for the same input data
-		/// (which happens if the user is switching back and forth to an existing verse editing things manually in Ptx)
-		/// key it by the converter name (bkz there may be multiple of these running each w/ the same source portion, but
-		/// different target languages)
-		/// </summary>
-		protected static Dictionary<string, Dictionary<string, string>> _mapOfRecentTranslations = new Dictionary<string, Dictionary<string, string>>();
-		#endregion
+        /// <summary>
+        /// keep track of some recently translated portions, so we can avoid calling to Bing again for the same input data
+        /// (which happens if the user is switching back and forth to an existing verse editing things manually in Ptx)
+        /// key it by the converter name (bkz there may be multiple of these running each w/ the same source portion, but
+        /// different target languages)
+        /// </summary>
+        protected static Dictionary<string, Dictionary<string, string>> _mapOfRecentTranslations = new Dictionary<string, Dictionary<string, string>>();
+        #endregion
 
-		public BackTranslationHelperCtrl()
+        public BackTranslationHelperCtrl()
         {
             InitializeComponent();
 
-			this.MouseWheel += new MouseEventHandler(this.UserControl_MouseWheel);
-			this.textBoxTargetBackTranslation.MouseWheel += new MouseEventHandler(this.TargetBackTranslation_MouseWheel);
-			hideCurrentTargetTextToolStripMenuItem.Checked = Properties.Settings.Default.HideCurrentTargetText;
-		}
+            this.MouseWheel += new MouseEventHandler(this.UserControl_MouseWheel);
+            this.textBoxTargetBackTranslation.MouseWheel += new MouseEventHandler(this.TargetBackTranslation_MouseWheel);
+            hideCurrentTargetTextToolStripMenuItem.Checked = Properties.Settings.Default.HideCurrentTargetText;
+        }
 
-		protected override void OnParentChanged(EventArgs e)
-		{
-			base.OnParentChanged(e);
+        protected override void OnParentChanged(EventArgs e)
+        {
+            base.OnParentChanged(e);
 
-			if (Properties.Settings.Default.PinnedToTop && (Parent != null) && (Parent is Form parentForm))
-			{
-				buttonPinToTop.Image = global::BackTranslationHelper.Properties.Resources.pindown;
-				parentForm.TopMost = true;
-			}
-		}
+            if (Properties.Settings.Default.PinnedToTop && (Parent != null) && (Parent is Form parentForm))
+            {
+                buttonPinToTop.Image = global::BackTranslationHelper.Properties.Resources.pindown;
+                parentForm.TopMost = true;
+            }
+        }
 
-		private void TargetBackTranslation_MouseWheel(object sender, MouseEventArgs e)
-		{
-			UserControl_MouseWheel(sender, e);
-		}
+        private void TargetBackTranslation_MouseWheel(object sender, MouseEventArgs e)
+        {
+            UserControl_MouseWheel(sender, e);
+        }
 
-		private void UserControl_MouseWheel(object sender, MouseEventArgs e)
-		{
-			var keyToSend = "{DOWN}";
-			if (e.Delta > 0)
-				keyToSend = "{UP}";
-			BroadCastKey(keyToSend);
-		}
+        private void UserControl_MouseWheel(object sender, MouseEventArgs e)
+        {
+            var keyToSend = "{DOWN}";
+            if (e.Delta > 0)
+                keyToSend = "{UP}";
+            BroadCastKey(keyToSend);
+        }
 
-		public void Initialize(bool displayExistingTargetTranslation)
-		{
-			_displayExistingTargetTranslation = displayExistingTargetTranslation;
-			CheckInitializeFindReplaceHelper();
-			BackTranslationHelperDataSource.SetDataUpdateProc(UpdateData);
+        public void Initialize(bool displayExistingTargetTranslation)
+        {
+            _displayExistingTargetTranslation = displayExistingTargetTranslation;
+            CheckInitializeFindReplaceHelper();
+            BackTranslationHelperDataSource.SetDataUpdateProc(UpdateData);
 
-			// get the last used converter names from settings 
-			InitializeTheTranslators();
+            // get the last used converter names from settings 
+            InitializeTheTranslators();
 
-			tableLayoutPanel.SuspendLayout();
-			SuspendLayout();
+            tableLayoutPanel.SuspendLayout();
+            SuspendLayout();
 
-			hideColumn1LabelsToolStripMenuItem.Checked = Properties.Settings.Default.HideLabels;
-			InitializeLabelHiding();
+            hideColumn1LabelsToolStripMenuItem.Checked = Properties.Settings.Default.HideLabels;
+            InitializeLabelHiding();
 
-			var nRowStyleOffset = 1;    // the offset to the row we're dealing w/ below
+            var nRowStyleOffset = 1;    // the offset to the row we're dealing w/ below
 
-			var projectName = BackTranslationHelperDataSource.ProjectName;
-			textBoxSourceData.Font = GetSourceLanguageFontForProject(projectName);
-			textBoxSourceData.RightToLeft = GetSourceLanguageRightToLeftForProject(projectName);
-			toolStripTextBoxStatus.Size = CalculateStatusLineSize(toolStripTextBoxStatus, settingsToolStripMenuItem);
-			var targetLanguageFont = GetTargetLanguageFontForProject(projectName);
-			var targetLanguageRightToLeft = GetTargetLanguageRightToLeftForProject(projectName);
-			if (_displayExistingTargetTranslation && !hideCurrentTargetTextToolStripMenuItem.Checked)
-			{
-				var rowStyle = tableLayoutPanel.RowStyles[nRowStyleOffset++];
-				rowStyle.SizeType = SizeType.Percent;   // gives it real estate
-				rowStyle.Height = 20F;
-				labelForExistingTargetData.Visible = !hideColumn1LabelsToolStripMenuItem.Checked;
-				textBoxTargetTextExisting.Visible = buttonFillExistingTargetText.Visible = true;
-				textBoxTargetTextExisting.Font = targetLanguageFont;
-				textBoxTargetTextExisting.RightToLeft = targetLanguageRightToLeft;
-			}
-			else
-			{
-				tableLayoutPanel.RowStyles[nRowStyleOffset++].SizeType = SizeType.AutoSize; // makes it disappear
-				textBoxTargetTextExisting.Visible = labelForExistingTargetData.Visible = buttonFillExistingTargetText.Visible = false;
-			}
+            var projectName = BackTranslationHelperDataSource.ProjectName;
+            textBoxSourceData.Font = GetSourceLanguageFontForProject(projectName);
+            textBoxSourceData.RightToLeft = GetSourceLanguageRightToLeftForProject(projectName);
+            toolStripTextBoxStatus.Size = CalculateStatusLineSize(toolStripTextBoxStatus, settingsToolStripMenuItem);
+            var targetLanguageFont = GetTargetLanguageFontForProject(projectName);
+            var targetLanguageRightToLeft = GetTargetLanguageRightToLeftForProject(projectName);
+            if (_displayExistingTargetTranslation && !hideCurrentTargetTextToolStripMenuItem.Checked)
+            {
+                var rowStyle = tableLayoutPanel.RowStyles[nRowStyleOffset++];
+                rowStyle.SizeType = SizeType.Percent;   // gives it real estate
+                rowStyle.Height = 20F;
+                labelForExistingTargetData.Visible = !hideColumn1LabelsToolStripMenuItem.Checked;
+                textBoxTargetTextExisting.Visible = buttonFillExistingTargetText.Visible = true;
+                textBoxTargetTextExisting.Font = targetLanguageFont;
+                textBoxTargetTextExisting.RightToLeft = targetLanguageRightToLeft;
+            }
+            else
+            {
+                tableLayoutPanel.RowStyles[nRowStyleOffset++].SizeType = SizeType.AutoSize; // makes it disappear
+                textBoxTargetTextExisting.Visible = labelForExistingTargetData.Visible = buttonFillExistingTargetText.Visible = false;
+            }
 
-			textBoxTargetBackTranslation.Font = targetLanguageFont;
-			textBoxTargetBackTranslation.RightToLeft = targetLanguageRightToLeft;
+            textBoxTargetBackTranslation.Font = targetLanguageFont;
+            textBoxTargetBackTranslation.RightToLeft = targetLanguageRightToLeft;
 
-			// we're either showing the target translated suggestion in a textbox (if there's only 1 converter)
-			//  or in readonly textboxes (so they can have scroll bars) above it to choose from (if there are more than one converter)
-			var textBoxesPossibleTargetTranslations = tableLayoutPanel.Controls.OfType<TextBox>().Where(l => l.Name.Contains("textBoxPossibleTargetTranslation")).ToList();
-			var buttonsFillTargetOption = tableLayoutPanel.Controls.OfType<Button>().Where(b => b.Name.Contains("buttonFillTargetTextOption")).ToList();
-			var numOfTranslators = TheTranslators.Count;
+            // we're either showing the target translated suggestion in a textbox (if there's only 1 converter)
+            //  or in readonly textboxes (so they can have scroll bars) above it to choose from (if there are more than one converter)
+            var textBoxesPossibleTargetTranslations = tableLayoutPanel.Controls.OfType<TextBox>().Where(l => l.Name.Contains("textBoxPossibleTargetTranslation")).ToList();
+            var buttonsFillTargetOption = tableLayoutPanel.Controls.OfType<Button>().Where(b => b.Name.Contains("buttonFillTargetTextOption")).ToList();
+            var numOfTranslators = TheTranslators.Count;
 
-			// if there's only one, then we don't need to display the 'possible' translations to start with.
-			// NB: but only if we're not displaying any pre-existing target translations. If we are (i.e. Paratext),
-			//	then we need to display even the one as an option, bkz the editable textbox will contain the
-			//	existing translation, which if it's not correct, we want to be able to fill it from the converted
-			//	value (which will be in the 1st targetoption box)
-			var i = 0;
-			if ((numOfTranslators == 1) && !_displayExistingTargetTranslation && !hideCurrentTargetTextToolStripMenuItem.Checked)
-			{
-				// hide them all
-				for (; i < MaxPossibleTargetTranslations; i++)
-				{
-					var textBox = textBoxesPossibleTargetTranslations[i];
-					var button = buttonsFillTargetOption[i];
-					textBox.Visible = button.Visible = false;
-					tableLayoutPanel.RowStyles[nRowStyleOffset + i].SizeType = SizeType.AutoSize;
-				}
-				labelForTargetDataOptions.Visible = false;
-			}
-			else
-			{
-				labelForTargetDataOptions.Visible = !Properties.Settings.Default.HideLabels;
+            // if there's only one, then we don't need to display the 'possible' translations to start with.
+            // NB: but only if we're not displaying any pre-existing target translations. If we are (i.e. Paratext),
+            //  then we need to display even the one as an option, bkz the editable textbox will contain the
+            //  existing translation, which if it's not correct, we want to be able to fill it from the converted
+            //  value (which will be in the 1st targetoption box)
+            var i = 0;
+            if ((numOfTranslators == 1) && !_displayExistingTargetTranslation && !hideCurrentTargetTextToolStripMenuItem.Checked)
+            {
+                // hide them all
+                for (; i < MaxPossibleTargetTranslations; i++)
+                {
+                    var textBox = textBoxesPossibleTargetTranslations[i];
+                    var button = buttonsFillTargetOption[i];
+                    textBox.Visible = button.Visible = false;
+                    tableLayoutPanel.RowStyles[nRowStyleOffset + i].SizeType = SizeType.AutoSize;
+                }
+                labelForTargetDataOptions.Visible = false;
+            }
+            else
+            {
+                labelForTargetDataOptions.Visible = !Properties.Settings.Default.HideLabels;
 
-				// set up mnemonics for the buttons to make it easier to trigger
-				var mnemonicChar = 1;
-				if (_displayExistingTargetTranslation)
-					buttonFillExistingTargetText.Text = $" &{mnemonicChar++}";  // so that Alt+1 will trigger the button (and space so the text won't show over the icon)
+                // set up mnemonics for the buttons to make it easier to trigger
+                var mnemonicChar = 1;
+                if (_displayExistingTargetTranslation)
+                    buttonFillExistingTargetText.Text = $" &{mnemonicChar++}";  // so that Alt+1 will trigger the button (and space so the text won't show over the icon)
 
-				for (; i < numOfTranslators; i++)
-				{
-					var textBox = textBoxesPossibleTargetTranslations[i];
-					var button = buttonsFillTargetOption[i];
-					button.Text = $" &{mnemonicChar++}";
-					textBox.Visible = button.Visible = true;
-					textBox.Font = textBoxTargetTextExisting.Font;
-					textBox.RightToLeft = targetLanguageRightToLeft;
-					var rowStyle = tableLayoutPanel.RowStyles[nRowStyleOffset + i];
-					rowStyle.SizeType = SizeType.Percent;   // gives it real estate
-					rowStyle.Height = 20F;
-					toolTip.SetToolTip(textBox, $"This is the translation from the {TheTranslators[i].Name} Translator");
-				}
+                for (; i < numOfTranslators; i++)
+                {
+                    var textBox = textBoxesPossibleTargetTranslations[i];
+                    var button = buttonsFillTargetOption[i];
+                    button.Text = $" &{mnemonicChar++}";
+                    textBox.Visible = button.Visible = true;
+                    textBox.Font = textBoxTargetTextExisting.Font;
+                    textBox.RightToLeft = targetLanguageRightToLeft;
+                    var rowStyle = tableLayoutPanel.RowStyles[nRowStyleOffset + i];
+                    rowStyle.SizeType = SizeType.Percent;   // gives it real estate
+                    rowStyle.Height = 20F;
+                    toolTip.SetToolTip(textBox, $"This is the translation from the {TheTranslators[i].Name} Translator");
+                }
 
-				for (; i < MaxPossibleTargetTranslations; i++)
-				{
-					var textBox = textBoxesPossibleTargetTranslations[i];
-					var button = buttonsFillTargetOption[i];
-					textBox.Visible = button.Visible = false;
-					tableLayoutPanel.RowStyles[nRowStyleOffset + i].SizeType = SizeType.AutoSize;
-				}
-			}
+                for (; i < MaxPossibleTargetTranslations; i++)
+                {
+                    var textBox = textBoxesPossibleTargetTranslations[i];
+                    var button = buttonsFillTargetOption[i];
+                    textBox.Visible = button.Visible = false;
+                    tableLayoutPanel.RowStyles[nRowStyleOffset + i].SizeType = SizeType.AutoSize;
+                }
+            }
 
-			buttonSubstitute.Visible = FindReplaceHelper.IsSpellFixerAvailable;
-			tableLayoutPanel.ResumeLayout(false);
-			tableLayoutPanel.PerformLayout();
-			ResumeLayout(false);
-			PerformLayout();
-		}
+            buttonSubstitute.Visible = FindReplaceHelper.IsSpellFixerAvailable;
+            tableLayoutPanel.ResumeLayout(false);
+            tableLayoutPanel.PerformLayout();
+            ResumeLayout(false);
+            PerformLayout();
+        }
 
-		private Size CalculateStatusLineSize(ToolStripTextBox toolStripTextBoxStatus, ToolStripMenuItem settingsToolStripMenuItem)
-		{
-			var width = this.Width - settingsToolStripMenuItem.Width - 50;  // Padding;
-			return new Size(width, toolStripTextBoxStatus.Height);
-		}
+        private Size CalculateStatusLineSize(ToolStripTextBox toolStripTextBoxStatus, ToolStripMenuItem settingsToolStripMenuItem)
+        {
+            var width = this.Width - settingsToolStripMenuItem.Width - 50;  // Padding;
+            return new Size(width, toolStripTextBoxStatus.Height);
+        }
 
-		private string CheckInitializeFindReplaceHelper(string findWhat = null)
-		{
-			if (TheFindReplaceProject != null)
-				return TheFindReplaceProject.SpellFixerEncConverterName;
+        private string CheckInitializeFindReplaceHelper(string findWhat = null)
+        {
+            if (TheFindReplaceProject != null)
+                return TheFindReplaceProject.SpellFixerEncConverterName;
 
-			// check if we're using a FindReplace helpers
-			if (Properties.Settings.Default.MapProjectNameToFindReplaceProject == null)
-				Properties.Settings.Default.MapProjectNameToFindReplaceProject = new StringCollection();
-			var mapProjectNameToFindReplaceProjects = SettingToDictionary(Properties.Settings.Default.MapProjectNameToFindReplaceProject);
-			var projectName = BackTranslationHelperDataSource.ProjectName;
+            // check if we're using a FindReplace helpers
+            if (Properties.Settings.Default.MapProjectNameToFindReplaceProject == null)
+                Properties.Settings.Default.MapProjectNameToFindReplaceProject = new StringCollection();
+            var mapProjectNameToFindReplaceProjects = SettingToDictionary(Properties.Settings.Default.MapProjectNameToFindReplaceProject);
+            var projectName = BackTranslationHelperDataSource.ProjectName;
 
-			string findReplaceConverterName = null;
-			if (!mapProjectNameToFindReplaceProjects.TryGetValue(projectName, out List<string> lstFriendlyName))
-			{
-				if (String.IsNullOrEmpty(findWhat))
-					return findReplaceConverterName;
+            string findReplaceConverterName = null;
+            if (!mapProjectNameToFindReplaceProjects.TryGetValue(projectName, out List<string> lstFriendlyName))
+            {
+                if (String.IsNullOrEmpty(findWhat))
+                    return findReplaceConverterName;
 
-				TheFindReplaceProject = TrySpellFixerProjectLogin(findWhat);
-				if (TheFindReplaceProject == null)
-					return findReplaceConverterName; // must have canceled
+                TheFindReplaceProject = TrySpellFixerProjectLogin(findWhat);
+                if (TheFindReplaceProject == null)
+                    return findReplaceConverterName; // must have canceled
 
-				findReplaceConverterName = TheFindReplaceProject.SpellFixerEncConverterName;
-				lstFriendlyName = new List<string> { findReplaceConverterName };
-				mapProjectNameToFindReplaceProjects[projectName] = lstFriendlyName;
-				Properties.Settings.Default.MapProjectNameToFindReplaceProject = SettingFromDictionary(mapProjectNameToFindReplaceProjects);
-				Properties.Settings.Default.Save();
-			}
+                findReplaceConverterName = TheFindReplaceProject.SpellFixerEncConverterName;
+                lstFriendlyName = new List<string> { findReplaceConverterName };
+                mapProjectNameToFindReplaceProjects[projectName] = lstFriendlyName;
+                Properties.Settings.Default.MapProjectNameToFindReplaceProject = SettingFromDictionary(mapProjectNameToFindReplaceProjects);
+                Properties.Settings.Default.Save();
+            }
 
-			findReplaceConverterName = lstFriendlyName.FirstOrDefault();
-			TheFindReplaceProject = new FindReplaceHelper(findReplaceConverterName);
-			TheFindReplaceConverter = (DirectableEncConverter.EncConverters.ContainsKey(findReplaceConverterName))
-										? new DirectableEncConverter(DirectableEncConverter.EncConverters[findReplaceConverterName])
-										: null;
-			return findReplaceConverterName;
-		}
+            findReplaceConverterName = lstFriendlyName.FirstOrDefault();
+            TheFindReplaceProject = new FindReplaceHelper(findReplaceConverterName);
+            TheFindReplaceConverter = (DirectableEncConverter.EncConverters.ContainsKey(findReplaceConverterName))
+                                        ? new DirectableEncConverter(DirectableEncConverter.EncConverters[findReplaceConverterName])
+                                        : null;
+            return findReplaceConverterName;
+        }
 
-		private RightToLeft GetSourceLanguageRightToLeftForProject(string projectName)
-		{
-			var languageRightToLeft = BackTranslationHelperDataSource.SourceLanguageRightToLeft;
-			if (Properties.Settings.Default.MapProjectNameToSourceRtLOverride != null)
-			{
-				var rtlOverrides = SettingToDictionary(Properties.Settings.Default.MapProjectNameToSourceRtLOverride);
-				if (rtlOverrides.TryGetValue(projectName, out List<string> rtlOverride))
-				{
-					languageRightToLeft = rtlOverride[0] == "true";
-				}
-			}
-			return languageRightToLeft ? RightToLeft.Yes : RightToLeft.No;
-		}
+        private RightToLeft GetSourceLanguageRightToLeftForProject(string projectName)
+        {
+            var languageRightToLeft = BackTranslationHelperDataSource.SourceLanguageRightToLeft;
+            if (Properties.Settings.Default.MapProjectNameToSourceRtLOverride != null)
+            {
+                var rtlOverrides = SettingToDictionary(Properties.Settings.Default.MapProjectNameToSourceRtLOverride);
+                if (rtlOverrides.TryGetValue(projectName, out List<string> rtlOverride))
+                {
+                    languageRightToLeft = rtlOverride[0] == "true";
+                }
+            }
+            return languageRightToLeft ? RightToLeft.Yes : RightToLeft.No;
+        }
 
-		private RightToLeft GetTargetLanguageRightToLeftForProject(string projectName)
-		{
-			var languageRightToLeft = BackTranslationHelperDataSource.TargetLanguageRightToLeft;
-			if (Properties.Settings.Default.MapProjectNameToTargetRtLOverride != null)
-			{
-				var rtlOverrides = SettingToDictionary(Properties.Settings.Default.MapProjectNameToTargetRtLOverride);
-				if (rtlOverrides.TryGetValue(projectName, out List<string> rtlOverride))
-				{
-					languageRightToLeft = rtlOverride[0] == "true";
-				}
-			}
-			return languageRightToLeft ? RightToLeft.Yes : RightToLeft.No;
-		}
+        private RightToLeft GetTargetLanguageRightToLeftForProject(string projectName)
+        {
+            var languageRightToLeft = BackTranslationHelperDataSource.TargetLanguageRightToLeft;
+            if (Properties.Settings.Default.MapProjectNameToTargetRtLOverride != null)
+            {
+                var rtlOverrides = SettingToDictionary(Properties.Settings.Default.MapProjectNameToTargetRtLOverride);
+                if (rtlOverrides.TryGetValue(projectName, out List<string> rtlOverride))
+                {
+                    languageRightToLeft = rtlOverride[0] == "true";
+                }
+            }
+            return languageRightToLeft ? RightToLeft.Yes : RightToLeft.No;
+        }
 
-		private Font GetSourceLanguageFontForProject(string projectName)
-		{
-			// see if there's an override
-			if (Properties.Settings.Default.MapProjectNameToSourceFontOverride != null)
-			{
-				var fontOverrides = SettingToDictionary(Properties.Settings.Default.MapProjectNameToSourceFontOverride);
-				if (fontOverrides.TryGetValue(projectName, out List<string> fontOverride))
-				{
-					return new System.Drawing.Font(fontOverride[0], float.Parse(fontOverride[1]));
-				}
-			}
-			return BackTranslationHelperDataSource.SourceLanguageFont;
-		}
+        private Font GetSourceLanguageFontForProject(string projectName)
+        {
+            // see if there's an override
+            if (Properties.Settings.Default.MapProjectNameToSourceFontOverride != null)
+            {
+                var fontOverrides = SettingToDictionary(Properties.Settings.Default.MapProjectNameToSourceFontOverride);
+                if (fontOverrides.TryGetValue(projectName, out List<string> fontOverride))
+                {
+                    return new System.Drawing.Font(fontOverride[0], float.Parse(fontOverride[1]));
+                }
+            }
+            return BackTranslationHelperDataSource.SourceLanguageFont;
+        }
 
-		private Font GetTargetLanguageFontForProject(string projectName)
-		{
-			// see if there's an override
-			if (Properties.Settings.Default.MapProjectNameToTargetFontOverride != null)
-			{
-				var fontOverrides = SettingToDictionary(Properties.Settings.Default.MapProjectNameToTargetFontOverride);
-				if (fontOverrides.TryGetValue(projectName, out List<string> fontOverride))
-				{
-					return new System.Drawing.Font(fontOverride[0], float.Parse(fontOverride[1]));
-				}
-			}
-			return BackTranslationHelperDataSource.TargetLanguageFont;
-		}
+        private Font GetTargetLanguageFontForProject(string projectName)
+        {
+            // see if there's an override
+            if (Properties.Settings.Default.MapProjectNameToTargetFontOverride != null)
+            {
+                var fontOverrides = SettingToDictionary(Properties.Settings.Default.MapProjectNameToTargetFontOverride);
+                if (fontOverrides.TryGetValue(projectName, out List<string> fontOverride))
+                {
+                    return new System.Drawing.Font(fontOverride[0], float.Parse(fontOverride[1]));
+                }
+            }
+            return BackTranslationHelperDataSource.TargetLanguageFont;
+        }
 
-		private void InitializeTheTranslators()
+        private void InitializeTheTranslators()
         {
             if (Properties.Settings.Default.MapProjectNameToEcTranslators == null)
                 Properties.Settings.Default.MapProjectNameToEcTranslators = new StringCollection();
@@ -288,16 +288,16 @@ namespace BackTranslationHelper
             if (!TheTranslators.Any())
             {
                 var aTranslator = QueryTranslator();
-				if (aTranslator == null)
-					return;
+                if (aTranslator == null)
+                    return;
 
                 var theTranslator = aTranslator.GetEncConverter;
                 TheTranslators.Add(theTranslator);
 
-				// save it in settings for this project, so we can load it automatically next time
-				if (mapProjectNameToEcTranslators.ContainsKey(projectName))
-					mapProjectNameToEcTranslators.Remove(projectName);
-				translatorNames = new List<string> { theTranslator.Name };
+                // save it in settings for this project, so we can load it automatically next time
+                if (mapProjectNameToEcTranslators.ContainsKey(projectName))
+                    mapProjectNameToEcTranslators.Remove(projectName);
+                translatorNames = new List<string> { theTranslator.Name };
                 mapProjectNameToEcTranslators.Add(projectName, translatorNames);
                 Properties.Settings.Default.MapProjectNameToEcTranslators = SettingFromDictionary(mapProjectNameToEcTranslators);
                 Properties.Settings.Default.Save();
@@ -321,109 +321,109 @@ namespace BackTranslationHelper
             return theEc;
         }
 
-		public List<TargetPossible> GetNewTargetTexts()
-		{
-			// always choose the one in the text box
-			var newTargetTexts = new List<TargetPossible>
-			{
-				new TargetPossible
-				{
-					TargetData = textBoxTargetBackTranslation.Text,
-					PossibleIndex = 0,
-					TranslatorName = TheTranslators.FirstOrDefault()?.Name
-				}
-			};
-			return newTargetTexts;
-		}
-
-		public void SetNewTargetTexts(List<TargetPossible> newTargetTexts)
+        public List<TargetPossible> GetNewTargetTexts()
         {
-			var textBoxesPossibleTargetTranslations = tableLayoutPanel.Controls.OfType<TextBox>().Where(l => l.Name.Contains("textBoxPossibleTargetTranslation")).ToList();
-			System.Diagnostics.Debug.Assert(newTargetTexts.Count == TheTranslators.Count);
-			System.Diagnostics.Debug.Assert(textBoxesPossibleTargetTranslations.Where(l => l.Visible).Take(newTargetTexts.Count).ToList().All(l => l.Visible));
+            // always choose the one in the text box
+            var newTargetTexts = new List<TargetPossible>
+            {
+                new TargetPossible
+                {
+                    TargetData = textBoxTargetBackTranslation.Text,
+                    PossibleIndex = 0,
+                    TranslatorName = TheTranslators.FirstOrDefault()?.Name
+                }
+            };
+            return newTargetTexts;
+        }
 
-			for (var i = 0; i < TheTranslators.Count; i++)
-			{
-				var textBox = textBoxesPossibleTargetTranslations[i];
-				if (textBox.Visible)
-					textBox.Text = newTargetTexts[i].TargetData;
-			}
+        public void SetNewTargetTexts(List<TargetPossible> newTargetTexts)
+        {
+            var textBoxesPossibleTargetTranslations = tableLayoutPanel.Controls.OfType<TextBox>().Where(l => l.Name.Contains("textBoxPossibleTargetTranslation")).ToList();
+            System.Diagnostics.Debug.Assert(newTargetTexts.Count == TheTranslators.Count);
+            System.Diagnostics.Debug.Assert(textBoxesPossibleTargetTranslations.Where(l => l.Visible).Take(newTargetTexts.Count).ToList().All(l => l.Visible));
 
-			// now update the actual editable box w/ the first possibility (if it isn't already filled,
-			// which would have come from the original target from the target project)
-			if (String.IsNullOrEmpty(textBoxTargetBackTranslation.Text))
-			{
-				var targetPossible = newTargetTexts.FirstOrDefault();
-				textBoxTargetBackTranslation.Text = targetPossible?.TargetData;
-			}
-		}
+            for (var i = 0; i < TheTranslators.Count; i++)
+            {
+                var textBox = textBoxesPossibleTargetTranslations[i];
+                if (textBox.Visible)
+                    textBox.Text = newTargetTexts[i].TargetData;
+            }
+
+            // now update the actual editable box w/ the first possibility (if it isn't already filled,
+            // which would have come from the original target from the target project)
+            if (String.IsNullOrEmpty(textBoxTargetBackTranslation.Text))
+            {
+                var targetPossible = newTargetTexts.FirstOrDefault();
+                textBoxTargetBackTranslation.Text = targetPossible?.TargetData;
+            }
+        }
 
         #region Event handlers
         public void GetNewData(ref BackTranslationHelperModel model)
         {
-			if (model == null)
-			{
-				_model = BackTranslationHelperDataSource.Model;
-			}
-			else if (_model?.SourceData != model.SourceData)
-			{
-				_model = model;
-				IsModified = false;	// start over assuming it isn't edited
-			}
+            if (model == null)
+            {
+                _model = BackTranslationHelperDataSource.Model;
+            }
+            else if (_model?.SourceData != model.SourceData)
+            {
+                _model = model;
+                IsModified = false; // start over assuming it isn't edited
+            }
 
             for (var i = _model.TargetsPossible.Count; i < TheTranslators.Count; i++)
             {
                 var theTranslator = TheTranslators[i];
-				var translatedText = ConvertText(theTranslator, _model.SourceData);
-				_model.TargetsPossible.Add(new TargetPossible { TargetData = translatedText, PossibleIndex = i, TranslatorName = theTranslator.Name });
+                var translatedText = ConvertText(theTranslator, _model.SourceData);
+                _model.TargetsPossible.Add(new TargetPossible { TargetData = translatedText, PossibleIndex = i, TranslatorName = theTranslator.Name });
             }
 
             model = _model;
         }
 
-		private string ConvertText(IEncConverter theTranslator, string sourceData)
-		{
-			if (!_mapOfRecentTranslations.TryGetValue(theTranslator.Name, out Dictionary<string, string> mapRecentTranslations))
-			{
-				mapRecentTranslations = new Dictionary<string, string>();
-				_mapOfRecentTranslations.Add(theTranslator.Name, mapRecentTranslations);
-			}
-
-			if (!mapRecentTranslations.TryGetValue(sourceData, out string targetData))
-			{
-				try
-				{
-					targetData = theTranslator.Convert(sourceData);
-				}
-				catch (Exception ex)
-				{
-					MessageBox.Show(ex.Message, EncConverters.cstrCaption);
-				}
-
-				mapRecentTranslations.Add(sourceData, targetData);
-			}
-
-			return targetData;
-		}
-
-		public void UpdateData(BackTranslationHelperModel model)
+        private string ConvertText(IEncConverter theTranslator, string sourceData)
         {
-			textBoxSourceData.Text = model.SourceData;
+            if (!_mapOfRecentTranslations.TryGetValue(theTranslator.Name, out Dictionary<string, string> mapRecentTranslations))
+            {
+                mapRecentTranslations = new Dictionary<string, string>();
+                _mapOfRecentTranslations.Add(theTranslator.Name, mapRecentTranslations);
+            }
 
-			// this may be a mistake, but if the verse editing has already begun and we're here (e.g. bkz a new rule was added)
-			//	then don't start over from whatever was the target data before. Reset it to what's already been edited.
-			var targetData = (IsModified)
-								? textBoxTargetBackTranslation.Text
-								: model.TargetData;
-			targetData = PreprocessTargetData(targetData);
+            if (!mapRecentTranslations.TryGetValue(sourceData, out string targetData))
+            {
+                try
+                {
+                    targetData = theTranslator.Convert(sourceData);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, EncConverters.cstrCaption);
+                }
 
-			textBoxTargetBackTranslation.Text = targetData;     // may be null, in which case, setting NewTargetTexts below will fill it with the 1st translation
-			textBoxTargetBackTranslation.DeselectAll();			// it shouldn't be pre-selected (which it seems to do)
-			
-			// if we're keeping track of what was originally in the Target Project (i.e. Paratext usage), then put the current value in the label for
-			//	the existing target field (just in case the user starts to edit or choose one of the other possibilities and then wants to revert it
-			//	(it has a fill button also).
-			textBoxTargetTextExisting.Text = model.TargetDataPreExisting;	// would be null if we're not using it
+                mapRecentTranslations.Add(sourceData, targetData);
+            }
+
+            return targetData;
+        }
+
+        public void UpdateData(BackTranslationHelperModel model)
+        {
+            textBoxSourceData.Text = model.SourceData;
+
+            // this may be a mistake, but if the verse editing has already begun and we're here (e.g. bkz a new rule was added)
+            //  then don't start over from whatever was the target data before. Reset it to what's already been edited.
+            var targetData = (IsModified)
+                                ? textBoxTargetBackTranslation.Text
+                                : model.TargetData;
+            targetData = PreprocessTargetData(targetData);
+
+            textBoxTargetBackTranslation.Text = targetData; // may be null, in which case, setting NewTargetTexts below will fill it with the 1st translation
+            textBoxTargetBackTranslation.DeselectAll();     // it shouldn't be pre-selected (which it seems to do)
+            
+            // if we're keeping track of what was originally in the Target Project (i.e. Paratext usage), then put the current value in the label for
+            //  the existing target field (just in case the user starts to edit or choose one of the other possibilities and then wants to revert it
+            //  (it has a fill button also).
+            textBoxTargetTextExisting.Text = model.TargetDataPreExisting;    // would be null if we're not using it
 
             // some clients (i.e. Word) only pass 1 translated target text (bkz it only knows about 1 EncConverter/Translator)
             //  if we have fewer than the number of possible target translations (i.e. we added 1 or more addl Translators),
@@ -432,68 +432,68 @@ namespace BackTranslationHelper
             for (var i = model.TargetsPossible.Count; i < numOfTranslators; i++)
             {
                 var theTranslator = TheTranslators[i];
-				var translatedText = ConvertText(theTranslator, model.SourceData);
-				model.TargetsPossible.Add(new TargetPossible { TargetData = translatedText, PossibleIndex = i, TranslatorName = theTranslator.Name });
+                var translatedText = ConvertText(theTranslator, model.SourceData);
+                model.TargetsPossible.Add(new TargetPossible { TargetData = translatedText, PossibleIndex = i, TranslatorName = theTranslator.Name });
             }
 
             SetNewTargetTexts(model.TargetsPossible);
         }
 
-		private string PreprocessTargetData(string targetDataOrig)
-		{
-			// if we have a FindReplaceHelper attached to this project, then use it before writing the result
-			string difference = null, targetData = targetDataOrig;
-			if (TheFindReplaceConverter != null)
-			{
-				// don't do this, bkz if the user is actively modifying search and replace rules, we don't want some previous
-				//	value to override some newer fix
-				// targetData = ConvertText(TheFindReplaceConverter.GetEncConverter, targetDataOrig);
-				targetData = TheFindReplaceConverter.SafeConvert(targetDataOrig);
+        private string PreprocessTargetData(string targetDataOrig)
+        {
+            // if we have a FindReplaceHelper attached to this project, then use it before writing the result
+            string difference = null, targetData = targetDataOrig;
+            if (TheFindReplaceConverter != null)
+            {
+                // don't do this, bkz if the user is actively modifying search and replace rules, we don't want some previous
+                //  value to override some newer fix
+                // targetData = ConvertText(TheFindReplaceConverter.GetEncConverter, targetDataOrig);
+                targetData = TheFindReplaceConverter.SafeConvert(targetDataOrig);
 
-				if (targetData != targetDataOrig)
-				{
-					difference = Difference(targetData, targetDataOrig);
-				}
-			}
+                if (targetData != targetDataOrig)
+                {
+                    difference = Difference(targetData, targetDataOrig);
+                }
+            }
 
-			if (String.IsNullOrEmpty(difference))
-			{
-				SetStatusBox(String.Empty);
-			}
-			else
-			{
-				SetStatusBox($"substitutions made: {difference}");
-			}
+            if (String.IsNullOrEmpty(difference))
+            {
+                SetStatusBox(String.Empty);
+            }
+            else
+            {
+                SetStatusBox($"substitutions made: {difference}");
+            }
 
-			return targetData;
-		}
+            return targetData;
+        }
 
-		private void SetStatusBox(string value)
-		{
-			toolStripTextBoxStatus.Text = value;
-			toolStripTextBoxStatus.BackColor = String.IsNullOrEmpty(value)
-												? System.Drawing.SystemColors.Control
-												: System.Drawing.SystemColors.ButtonShadow;
-		}
+        private void SetStatusBox(string value)
+        {
+            toolStripTextBoxStatus.Text = value;
+            toolStripTextBoxStatus.BackColor = String.IsNullOrEmpty(value)
+                                                ? System.Drawing.SystemColors.Control
+                                                : System.Drawing.SystemColors.ButtonShadow;
+        }
 
-		public static string Difference(string str1, string str2)
-		{
-			if (str1 == null)
-			{
-				return str2;
-			}
-			if (str2 == null)
-			{
-				return str1;
-			}
+        public static string Difference(string str1, string str2)
+        {
+            if (str1 == null)
+            {
+                return str2;
+            }
+            if (str2 == null)
+            {
+                return str1;
+            }
 
-			List<string> set1 = str1.Split(' ').Distinct().ToList();
-			List<string> set2 = str2.Split(' ').Distinct().ToList();
+            List<string> set1 = str1.Split(' ').Distinct().ToList();
+            List<string> set2 = str2.Split(' ').Distinct().ToList();
 
-			var diff = set2.Count() > set1.Count() ? set2.Except(set1).ToList() : set1.Except(set2).ToList();
+            var diff = set2.Count() > set1.Count() ? set2.Except(set1).ToList() : set1.Except(set2).ToList();
 
-			return $"'{string.Join("','", diff)}'";
-		}
+            return $"'{string.Join("','", diff)}'";
+        }
 
 #endregion
 
@@ -501,17 +501,17 @@ namespace BackTranslationHelper
 
 #endregion
 
-		private void ButtonWriteTextToTarget_Click(object sender, System.EventArgs e)
+        private void ButtonWriteTextToTarget_Click(object sender, System.EventArgs e)
         {
             BackTranslationHelperDataSource.ButtonPressed(ButtonPressed.WriteToTarget);
             BackTranslationHelperDataSource.Log($"changing target text from '{textBoxTargetTextExisting.Text}' to '{textBoxTargetBackTranslation.Text}'");
-			if (!BackTranslationHelperDataSource.WriteToTarget(textBoxTargetBackTranslation.Text))
-			{
-				SetStatusBox($"We had to reload the text. Click the button again.");
-				if (!BackTranslationHelperDataSource.WriteToTarget(textBoxTargetBackTranslation.Text))
-					return;
-			}
-			IsModified = false;
+            if (!BackTranslationHelperDataSource.WriteToTarget(textBoxTargetBackTranslation.Text))
+            {
+                SetStatusBox($"We had to reload the text. Click the button again.");
+                if (!BackTranslationHelperDataSource.WriteToTarget(textBoxTargetBackTranslation.Text))
+                    return;
+            }
+            IsModified = false;
         }
 
         private void ButtonCopyToClipboard_Click(object sender, System.EventArgs e)
@@ -528,24 +528,24 @@ namespace BackTranslationHelper
                 return;
             }
 
-			var existingTargetText = textBoxTargetTextExisting.Text;
-			var newTargetText = textBoxTargetBackTranslation.Text;
+            var existingTargetText = textBoxTargetTextExisting.Text;
+            var newTargetText = textBoxTargetBackTranslation.Text;
 
-			if (!autoSaveToolStripMenuItem.Checked)
+            if (!autoSaveToolStripMenuItem.Checked)
             {
                 if (IsModified)
                 {
                     var res = MessageBox.Show($"Do you want to save/write out the translated text before moving to the next portion?",
-											  BackTranslationHelperDataSource.ProjectName, MessageBoxButtons.YesNoCancel);
+                                              BackTranslationHelperDataSource.ProjectName, MessageBoxButtons.YesNoCancel);
                     if (res == DialogResult.Cancel)
                     {
                         return;
                     }
                     if (res == DialogResult.No)
                     {
-						IsModified = false;
-						BackTranslationHelperDataSource.ButtonPressed(ButtonPressed.MoveToNext);
-						BackTranslationHelperDataSource.MoveToNext();
+                        IsModified = false;
+                        BackTranslationHelperDataSource.ButtonPressed(ButtonPressed.MoveToNext);
+                        BackTranslationHelperDataSource.MoveToNext();
                         return;
                     }
                 }
@@ -554,19 +554,19 @@ namespace BackTranslationHelper
             if (IsModified)
             {
                 BackTranslationHelperDataSource.Log($"change target text from '{existingTargetText}' to '{newTargetText}'");
-				if (!BackTranslationHelperDataSource.WriteToTarget(newTargetText))
-				{
-					// assuming that before returning false, the caller updated the data,
-					//	let's try that again and see what happens
-					SetStatusBox($"We had to reload the text. Click the button again.");
-					if (!BackTranslationHelperDataSource.WriteToTarget(newTargetText))
-						return;
-				}
+                if (!BackTranslationHelperDataSource.WriteToTarget(newTargetText))
+                {
+                    // assuming that before returning false, the caller updated the data,
+                    //  let's try that again and see what happens
+                    SetStatusBox($"We had to reload the text. Click the button again.");
+                    if (!BackTranslationHelperDataSource.WriteToTarget(newTargetText))
+                        return;
+                }
             }
 
-			IsModified = false;
-			BackTranslationHelperDataSource.ButtonPressed(ButtonPressed.MoveToNext);
-			BackTranslationHelperDataSource.MoveToNext();
+            IsModified = false;
+            BackTranslationHelperDataSource.ButtonPressed(ButtonPressed.MoveToNext);
+            BackTranslationHelperDataSource.MoveToNext();
         }
 
         private void ChangeEncConverterToolStripMenuItem_Click(object sender, EventArgs e)
@@ -574,10 +574,10 @@ namespace BackTranslationHelper
             var dlg = new TranslatorListForm(TheTranslators);
             if (dlg.ShowDialog() == DialogResult.OK)
             {
-				var nameOfTranslatorBeingRemoved = dlg.SelectedDisplayName;
-				TheTranslators.RemoveAll(t => t.Name == nameOfTranslatorBeingRemoved);
-				_model.TargetsPossible.RemoveAll(tp => tp.TranslatorName == nameOfTranslatorBeingRemoved);
-				var mapProjectNameToEcTranslators = SettingToDictionary(Properties.Settings.Default.MapProjectNameToEcTranslators);
+                var nameOfTranslatorBeingRemoved = dlg.SelectedDisplayName;
+                TheTranslators.RemoveAll(t => t.Name == nameOfTranslatorBeingRemoved);
+                _model.TargetsPossible.RemoveAll(tp => tp.TranslatorName == nameOfTranslatorBeingRemoved);
+                var mapProjectNameToEcTranslators = SettingToDictionary(Properties.Settings.Default.MapProjectNameToEcTranslators);
                 var projectName = BackTranslationHelperDataSource.ProjectName;
                 if (mapProjectNameToEcTranslators.TryGetValue(projectName, out List<string> translatorNames))
                 {
@@ -586,17 +586,17 @@ namespace BackTranslationHelper
                     Properties.Settings.Default.Save();
                 }
 
-				Reload();
-			}
-		}
+                Reload();
+            }
+        }
 
         private void AddEncConverterToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var newTranslator = QueryTranslator();
-			if (newTranslator == null)
-				return;
+            if (newTranslator == null)
+                return;
 
-			var theTranslator = newTranslator.GetEncConverter;
+            var theTranslator = newTranslator.GetEncConverter;
             var projectName = BackTranslationHelperDataSource.ProjectName;
             if (TheTranslators.Any(t => t.Name == theTranslator.Name))
             {
@@ -619,47 +619,48 @@ namespace BackTranslationHelper
                 Properties.Settings.Default.Save();
             }
 
-			Reload();
-		}
+            Reload();
+        }
 
-		private void UpdateEditableTextBox(TextBox textBoxFrom)
-		{
-			if (IsModified)
-			{
-				var res = MessageBox.Show($"Do you want to overwrite the current changes in the 'Target Translation' box?", BackTranslationHelperDataSource.ProjectName, MessageBoxButtons.YesNoCancel);
-				if (res != DialogResult.Yes)
-				{
-					return;
-				}
-			}
+        private void UpdateEditableTextBox(TextBox textBoxFrom)
+        {
+            if (IsModified)
+            {
+                var res = MessageBox.Show($"Do you want to overwrite the current changes in the 'Target Translation' box?",
+                                    BackTranslationHelperDataSource.ProjectName, MessageBoxButtons.YesNo);
+                if (res != DialogResult.Yes)
+                {
+                    return;
+                }
+            }
 
-			// also put it in the model as the ‘TargetData’ (possibly overwriting the translated value) so
-			//	it’ll show up there again, rather than being overwritten by something previous
-			_model.TargetData =  textBoxTargetBackTranslation.Text = PreprocessTargetData(textBoxFrom.Text);
-			IsModified = false;	// no longer edited
-		}
+            // also put it in the model as the ‘TargetData’ (possibly overwriting the translated value) so
+            //  it’ll show up there again, rather than being overwritten by something previous
+            _model.TargetData =  textBoxTargetBackTranslation.Text = PreprocessTargetData(textBoxFrom.Text);
+            IsModified = false; // no longer edited
+        }
 
-		private void ButtonFillExistingTargetText_Click(object sender, EventArgs e)
-		{
-			UpdateEditableTextBox(textBoxTargetTextExisting);
-		}
+        private void ButtonFillExistingTargetText_Click(object sender, EventArgs e)
+        {
+            UpdateEditableTextBox(textBoxTargetTextExisting);
+        }
 
-		private void ButtonFillTargetTextOption1_Click(object sender, EventArgs e)
-		{
-			UpdateEditableTextBox(textBoxPossibleTargetTranslation1);
-		}
+        private void ButtonFillTargetTextOption1_Click(object sender, EventArgs e)
+        {
+            UpdateEditableTextBox(textBoxPossibleTargetTranslation1);
+        }
 
-		private void ButtonFillTargetTextOption2_Click(object sender, EventArgs e)
-		{
-			UpdateEditableTextBox(textBoxPossibleTargetTranslation2);
-		}
+        private void ButtonFillTargetTextOption2_Click(object sender, EventArgs e)
+        {
+            UpdateEditableTextBox(textBoxPossibleTargetTranslation2);
+        }
 
-		private void ButtonFillTargetTextOption3_Click(object sender, EventArgs e)
-		{
-			UpdateEditableTextBox(textBoxPossibleTargetTranslation3);
-		}
+        private void ButtonFillTargetTextOption3_Click(object sender, EventArgs e)
+        {
+            UpdateEditableTextBox(textBoxPossibleTargetTranslation3);
+        }
 
-		private void TextBoxTargetBackTranslation_Enter(object sender, EventArgs e)
+        private void TextBoxTargetBackTranslation_Enter(object sender, EventArgs e)
         {
             BackTranslationHelperDataSource?.ActivateKeyboard();
         }
@@ -680,34 +681,34 @@ namespace BackTranslationHelper
                 Properties.Settings.Default.HideLabels = newCheckState;
                 Properties.Settings.Default.Save();
                 if (_model != null)
-				{
-					Reload();
-				}
-			}
+                {
+                    Reload();
+                }
+            }
         }
 
-		private void Reload()
-		{
-			System.Diagnostics.Debug.Assert(_model != null);
-			Initialize(_displayExistingTargetTranslation && !hideCurrentTargetTextToolStripMenuItem.Checked);
-			UpdateData(_model);
-		}
+        private void Reload()
+        {
+            System.Diagnostics.Debug.Assert(_model != null);
+            Initialize(_displayExistingTargetTranslation && !hideCurrentTargetTextToolStripMenuItem.Checked);
+            UpdateData(_model);
+        }
 
-		private void HideCurrentTargetTextToolStripMenuItem_CheckStateChanged(object sender, EventArgs e)
-		{
-			var newCheckState = hideCurrentTargetTextToolStripMenuItem.Checked;
-			if (newCheckState != Properties.Settings.Default.HideCurrentTargetText)
-			{
-				Properties.Settings.Default.HideCurrentTargetText = newCheckState;
-				Properties.Settings.Default.Save();
-				if (_model != null)
-				{
-					Reload();
-				}
-			}
-		}
+        private void HideCurrentTargetTextToolStripMenuItem_CheckStateChanged(object sender, EventArgs e)
+        {
+            var newCheckState = hideCurrentTargetTextToolStripMenuItem.Checked;
+            if (newCheckState != Properties.Settings.Default.HideCurrentTargetText)
+            {
+                Properties.Settings.Default.HideCurrentTargetText = newCheckState;
+                Properties.Settings.Default.Save();
+                if (_model != null)
+                {
+                    Reload();
+                }
+            }
+        }
 
-		protected const char chNeverUsedChar = '\u0009';  // add to words we replace, so we don't process them again
+        protected const char chNeverUsedChar = '\u0009';  // add to words we replace, so we don't process them again
 
         public static Dictionary<string, List<string>> SettingToDictionary(StringCollection data)
         {
@@ -732,357 +733,359 @@ namespace BackTranslationHelper
             return lst;
         }
 
-		private void ButtonClose_Click(object sender, EventArgs e)
-		{
-			BackTranslationHelperDataSource?.ButtonPressed(ButtonPressed.Close);
-			BackTranslationHelperDataSource?.Cancel();
-		}
+        private void ButtonClose_Click(object sender, EventArgs e)
+        {
+            BackTranslationHelperDataSource?.ButtonPressed(ButtonPressed.Close);
+            BackTranslationHelperDataSource?.Cancel();
+        }
 
-		private void ButtonSkip_Click(object sender, EventArgs e)
-		{
-			if (IsModified)
-			{
-				var res = MessageBox.Show($"You have unsaved changes in the 'Target Translation' box. Click 'Yes' to lose them and continue (or click 'No' and then the 'Save Changes' or 'Next' buttons instead to keep them)", BackTranslationHelperDataSource.ProjectName, MessageBoxButtons.YesNoCancel);
-				if (res != DialogResult.Yes)
-				{
-					return;
-				}
-			}
+        private void ButtonSkip_Click(object sender, EventArgs e)
+        {
+            if (IsModified)
+            {
+                var res = MessageBox.Show($"You have unsaved changes in the 'Target Translation' box. Click 'Yes' to lose them and continue (or click 'No' and then the 'Save Changes' or 'Next' buttons instead to keep them)",
+                                          BackTranslationHelperDataSource.ProjectName,
+                                          MessageBoxButtons.YesNo);
+                if (res != DialogResult.Yes)
+                {
+                    return;
+                }
+            }
 
-			IsModified = false;	// so it will lose the changes and move on
-			BackTranslationHelperDataSource?.ButtonPressed(ButtonPressed.Skip);
-			BackTranslationHelperDataSource?.MoveToNext();
-		}
+            IsModified = false; // so it will lose the changes and move on
+            BackTranslationHelperDataSource?.ButtonPressed(ButtonPressed.Skip);
+            BackTranslationHelperDataSource?.MoveToNext();
+        }
 
-		private void SourceTextToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			if (Properties.Settings.Default.MapProjectNameToSourceFontOverride == null)
-				Properties.Settings.Default.MapProjectNameToSourceFontOverride = new StringCollection();
+        private void SourceTextToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (Properties.Settings.Default.MapProjectNameToSourceFontOverride == null)
+                Properties.Settings.Default.MapProjectNameToSourceFontOverride = new StringCollection();
 
-			fontDialog.Font = BackTranslationHelperDataSource.SourceLanguageFont;
-			var mapProjectNameToSourceFontOverride = SettingToDictionary(Properties.Settings.Default.MapProjectNameToSourceFontOverride);
-			var projectName = BackTranslationHelperDataSource.ProjectName;
-			if (mapProjectNameToSourceFontOverride.TryGetValue(projectName, out List<string> fontOverride))
-			{
-				fontDialog.Font = new System.Drawing.Font(fontOverride[0], float.Parse(fontOverride[1]));
-			}
+            fontDialog.Font = BackTranslationHelperDataSource.SourceLanguageFont;
+            var mapProjectNameToSourceFontOverride = SettingToDictionary(Properties.Settings.Default.MapProjectNameToSourceFontOverride);
+            var projectName = BackTranslationHelperDataSource.ProjectName;
+            if (mapProjectNameToSourceFontOverride.TryGetValue(projectName, out List<string> fontOverride))
+            {
+                fontDialog.Font = new System.Drawing.Font(fontOverride[0], float.Parse(fontOverride[1]));
+            }
 
-			if (fontDialog.ShowDialog() == DialogResult.OK)
-			{
-				fontOverride = new List<string>
-				{
-					fontDialog.Font.Name,
-					fontDialog.Font.SizeInPoints.ToString()
-				};
+            if (fontDialog.ShowDialog() == DialogResult.OK)
+            {
+                fontOverride = new List<string>
+                {
+                    fontDialog.Font.Name,
+                    fontDialog.Font.SizeInPoints.ToString()
+                };
 
-				textBoxSourceData.Font = fontDialog.Font;
-				mapProjectNameToSourceFontOverride.Add(projectName, fontOverride);
-				Properties.Settings.Default.MapProjectNameToSourceFontOverride = SettingFromDictionary(mapProjectNameToSourceFontOverride);
-				Properties.Settings.Default.Save();
-			}
-		}
+                textBoxSourceData.Font = fontDialog.Font;
+                mapProjectNameToSourceFontOverride.Add(projectName, fontOverride);
+                Properties.Settings.Default.MapProjectNameToSourceFontOverride = SettingFromDictionary(mapProjectNameToSourceFontOverride);
+                Properties.Settings.Default.Save();
+            }
+        }
 
-		private void TargetTextToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			if (Properties.Settings.Default.MapProjectNameToTargetFontOverride == null)
-				Properties.Settings.Default.MapProjectNameToTargetFontOverride = new StringCollection();
+        private void TargetTextToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (Properties.Settings.Default.MapProjectNameToTargetFontOverride == null)
+                Properties.Settings.Default.MapProjectNameToTargetFontOverride = new StringCollection();
 
-			var projectName = BackTranslationHelperDataSource.ProjectName;
-			fontDialog.Font = GetTargetLanguageFontForProject(projectName);
-			var mapProjectNameToTargetFontOverride = SettingToDictionary(Properties.Settings.Default.MapProjectNameToTargetFontOverride);
-			if (mapProjectNameToTargetFontOverride.TryGetValue(projectName, out List<string> fontOverride))
-			{
-				fontDialog.Font = new System.Drawing.Font(fontOverride[0], float.Parse(fontOverride[1]));
-			}
+            var projectName = BackTranslationHelperDataSource.ProjectName;
+            fontDialog.Font = GetTargetLanguageFontForProject(projectName);
+            var mapProjectNameToTargetFontOverride = SettingToDictionary(Properties.Settings.Default.MapProjectNameToTargetFontOverride);
+            if (mapProjectNameToTargetFontOverride.TryGetValue(projectName, out List<string> fontOverride))
+            {
+                fontDialog.Font = new System.Drawing.Font(fontOverride[0], float.Parse(fontOverride[1]));
+            }
 
-			if (fontDialog.ShowDialog() == DialogResult.OK)
-			{
-				fontOverride = new List<string>
-				{
-					fontDialog.Font.Name,
-					fontDialog.Font.SizeInPoints.ToString()
-				};
+            if (fontDialog.ShowDialog() == DialogResult.OK)
+            {
+                fontOverride = new List<string>
+                {
+                    fontDialog.Font.Name,
+                    fontDialog.Font.SizeInPoints.ToString()
+                };
 
-				textBoxTargetTextExisting.Font =
-					textBoxPossibleTargetTranslation1.Font =
-					textBoxPossibleTargetTranslation2.Font =
-					textBoxPossibleTargetTranslation3.Font =
-					textBoxTargetBackTranslation.Font = fontDialog.Font;
-				mapProjectNameToTargetFontOverride.Add(projectName, fontOverride);
-				Properties.Settings.Default.MapProjectNameToTargetFontOverride = SettingFromDictionary(mapProjectNameToTargetFontOverride);
-				Properties.Settings.Default.Save();
-			}
-		}
+                textBoxTargetTextExisting.Font =
+                    textBoxPossibleTargetTranslation1.Font =
+                    textBoxPossibleTargetTranslation2.Font =
+                    textBoxPossibleTargetTranslation3.Font =
+                    textBoxTargetBackTranslation.Font = fontDialog.Font;
+                mapProjectNameToTargetFontOverride.Add(projectName, fontOverride);
+                Properties.Settings.Default.MapProjectNameToTargetFontOverride = SettingFromDictionary(mapProjectNameToTargetFontOverride);
+                Properties.Settings.Default.Save();
+            }
+        }
 
-		private void SourceRtlOverrideToolStripMenuItem_CheckedChanged(object sender, EventArgs e)
-		{
-			if (_ignoreChange)
-				return;
+        private void SourceRtlOverrideToolStripMenuItem_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_ignoreChange)
+                return;
 
-			if (Properties.Settings.Default.MapProjectNameToSourceRtLOverride == null)
-				Properties.Settings.Default.MapProjectNameToSourceRtLOverride = new StringCollection();
+            if (Properties.Settings.Default.MapProjectNameToSourceRtLOverride == null)
+                Properties.Settings.Default.MapProjectNameToSourceRtLOverride = new StringCollection();
 
-			var projectName = BackTranslationHelperDataSource.ProjectName;
-			var rtlOverride = sourceRightToLeftToolStripMenuItem.Checked ? RightToLeft.Yes : RightToLeft.No;
+            var projectName = BackTranslationHelperDataSource.ProjectName;
+            var rtlOverride = sourceRightToLeftToolStripMenuItem.Checked ? RightToLeft.Yes : RightToLeft.No;
 
-			textBoxSourceData.RightToLeft = rtlOverride;
-			var mapProjectNameToSourceRtLOverride = SettingToDictionary(Properties.Settings.Default.MapProjectNameToSourceRtLOverride);
-			var value = new List<string> { sourceRightToLeftToolStripMenuItem.Checked ? "true" : "false" };
-			if (mapProjectNameToSourceRtLOverride.ContainsKey(projectName))
-				mapProjectNameToSourceRtLOverride[projectName] = value;
-			else
-				mapProjectNameToSourceRtLOverride.Add(projectName, value);
+            textBoxSourceData.RightToLeft = rtlOverride;
+            var mapProjectNameToSourceRtLOverride = SettingToDictionary(Properties.Settings.Default.MapProjectNameToSourceRtLOverride);
+            var value = new List<string> { sourceRightToLeftToolStripMenuItem.Checked ? "true" : "false" };
+            if (mapProjectNameToSourceRtLOverride.ContainsKey(projectName))
+                mapProjectNameToSourceRtLOverride[projectName] = value;
+            else
+                mapProjectNameToSourceRtLOverride.Add(projectName, value);
 
-			Properties.Settings.Default.MapProjectNameToSourceRtLOverride = SettingFromDictionary(mapProjectNameToSourceRtLOverride);
-			Properties.Settings.Default.Save();
-		}
+            Properties.Settings.Default.MapProjectNameToSourceRtLOverride = SettingFromDictionary(mapProjectNameToSourceRtLOverride);
+            Properties.Settings.Default.Save();
+        }
 
-		private void TargetRtlOverrideToolRightToLeftStripMenuItem_CheckedChanged(object sender, EventArgs e)
-		{
-			if (_ignoreChange)
-				return;
+        private void TargetRtlOverrideToolRightToLeftStripMenuItem_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_ignoreChange)
+                return;
 
-			if (Properties.Settings.Default.MapProjectNameToTargetRtLOverride == null)
-				Properties.Settings.Default.MapProjectNameToTargetRtLOverride = new StringCollection();
+            if (Properties.Settings.Default.MapProjectNameToTargetRtLOverride == null)
+                Properties.Settings.Default.MapProjectNameToTargetRtLOverride = new StringCollection();
 
-			var projectName = BackTranslationHelperDataSource.ProjectName;
-			var rtlOverride = targetRightToLeftToolStripMenuItem.Checked ? RightToLeft.Yes : RightToLeft.No;
+            var projectName = BackTranslationHelperDataSource.ProjectName;
+            var rtlOverride = targetRightToLeftToolStripMenuItem.Checked ? RightToLeft.Yes : RightToLeft.No;
 
-			textBoxTargetTextExisting.RightToLeft =
-				textBoxPossibleTargetTranslation1.RightToLeft =
-				textBoxPossibleTargetTranslation2.RightToLeft =
-				textBoxPossibleTargetTranslation3.RightToLeft =
-				textBoxTargetBackTranslation.RightToLeft = rtlOverride;
-			var mapProjectNameToTargetRtLOverride = SettingToDictionary(Properties.Settings.Default.MapProjectNameToTargetRtLOverride);
-			var value = new List<string> { targetRightToLeftToolStripMenuItem.Checked ? "true" : "false" };
-			if (mapProjectNameToTargetRtLOverride.ContainsKey(projectName))
-				mapProjectNameToTargetRtLOverride[projectName] = value;
-			else
-				mapProjectNameToTargetRtLOverride.Add(projectName, value);
+            textBoxTargetTextExisting.RightToLeft =
+                textBoxPossibleTargetTranslation1.RightToLeft =
+                textBoxPossibleTargetTranslation2.RightToLeft =
+                textBoxPossibleTargetTranslation3.RightToLeft =
+                textBoxTargetBackTranslation.RightToLeft = rtlOverride;
+            var mapProjectNameToTargetRtLOverride = SettingToDictionary(Properties.Settings.Default.MapProjectNameToTargetRtLOverride);
+            var value = new List<string> { targetRightToLeftToolStripMenuItem.Checked ? "true" : "false" };
+            if (mapProjectNameToTargetRtLOverride.ContainsKey(projectName))
+                mapProjectNameToTargetRtLOverride[projectName] = value;
+            else
+                mapProjectNameToTargetRtLOverride.Add(projectName, value);
 
-			Properties.Settings.Default.MapProjectNameToTargetRtLOverride = SettingFromDictionary(mapProjectNameToTargetRtLOverride);
-			Properties.Settings.Default.Save();
-		}
+            Properties.Settings.Default.MapProjectNameToTargetRtLOverride = SettingFromDictionary(mapProjectNameToTargetRtLOverride);
+            Properties.Settings.Default.Save();
+        }
 
-		private void BroadCastKey(string keyToSend)
-		{
-			SendKeyToControl(textBoxSourceData, keyToSend);
-			if (textBoxTargetTextExisting.Visible)
-				SendKeyToControl(textBoxTargetTextExisting, keyToSend);
+        private void BroadCastKey(string keyToSend)
+        {
+            SendKeyToControl(textBoxSourceData, keyToSend);
+            if (textBoxTargetTextExisting.Visible)
+                SendKeyToControl(textBoxTargetTextExisting, keyToSend);
 
-			var textBoxesPossibleTargetTranslations = tableLayoutPanel.Controls.OfType<TextBox>().Where(l => l.Name.Contains("textBoxPossibleTargetTranslation")).ToList();
-			for (var i = 0; i < TheTranslators.Count; i++)
-			{
-				var textBox = textBoxesPossibleTargetTranslations[i];
-				if (textBox.Visible)
-				{
-					SendKeyToControl(textBox, keyToSend);
-				}
-			}
-			textBoxTargetBackTranslation.Focus();	// finally, put the focus back in the editable box
-		}
+            var textBoxesPossibleTargetTranslations = tableLayoutPanel.Controls.OfType<TextBox>().Where(l => l.Name.Contains("textBoxPossibleTargetTranslation")).ToList();
+            for (var i = 0; i < TheTranslators.Count; i++)
+            {
+                var textBox = textBoxesPossibleTargetTranslations[i];
+                if (textBox.Visible)
+                {
+                    SendKeyToControl(textBox, keyToSend);
+                }
+            }
+			textBoxTargetBackTranslation.Focus();    // finally, put the focus back in the editable box
+        }
 
-		private void SendKeyToControl(Control control, string keyToSend)
-		{
-			control.Focus();
-			SendKeys.SendWait(keyToSend);
-		}
+        private void SendKeyToControl(Control control, string keyToSend)
+        {
+            control.Focus();
+            SendKeys.SendWait(keyToSend);
+        }
 
-		private bool _queryAboutF5Meaning = true;
+        private bool _queryAboutF5Meaning = true;
 
-		private void TextBoxTargetBackTranslation_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
-		{
-			string keyToSend = null;
-			switch (e.KeyData)
-			{
-				case Keys.Up:
-					keyToSend = "{UP}";
-					break;
-				case Keys.Down:
-					keyToSend = "{DOWN}";
-					break;
-				case Keys.F5:
-					if (_queryAboutF5Meaning)
-					{
-						var msg = "By pressing F5, did you mean to re-execute the translator (e.g. after making changes to it)?";
-						if (IsModified)
-							msg += " Note: existing changes will be overwritten if you click 'Yes'.";
+        private void TextBoxTargetBackTranslation_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+        {
+            string keyToSend = null;
+            switch (e.KeyData)
+            {
+                case Keys.Up:
+                    keyToSend = "{UP}";
+                    break;
+                case Keys.Down:
+                    keyToSend = "{DOWN}";
+                    break;
+                case Keys.F5:
+                    if (_queryAboutF5Meaning)
+                    {
+                        var msg = "By pressing F5, did you mean to re-execute the translator (e.g. after making changes to it)?";
+                        if (IsModified)
+                            msg += " Note: existing changes will be overwritten if you click 'Yes'.";
 
-						var res = MessageBox.Show(msg, BackTranslationHelperDataSource.ProjectName, MessageBoxButtons.YesNoCancel);
-						if ((res != DialogResult.Yes) || (_model == null))
-							return;
+                        var res = MessageBox.Show(msg, BackTranslationHelperDataSource.ProjectName, MessageBoxButtons.YesNoCancel);
+                        if ((res != DialogResult.Yes) || (_model == null))
+                            return;
 
-						_queryAboutF5Meaning = false;
-					}
+                        _queryAboutF5Meaning = false;
+                    }
 
-					IsModified = false;		// so it can be changed
+                    IsModified = false; // so it can be changed
 
-					// I don't think I wanted to do this. This just means that if we originally processed the existing
-					//  text (in Ptx), then it would just shift to the other one, which isn't what we probably want
-					//  to do.
-					//	_model.TargetData = null;   // so it'll be reinitialized
-					_model.TargetsPossible.Clear();
-					Reload();
-					return;
-			}
+                    // I don't think I wanted to do this. This just means that if we originally processed the existing
+                    //  text (in Ptx), then it would just shift to the other one, which isn't what we probably want
+                    //  to do.
+                    //  _model.TargetData = null;   // so it'll be reinitialized
+                    _model.TargetsPossible.Clear();
+                    Reload();
+                    return;
+            }
 
-			if (!String.IsNullOrEmpty(keyToSend))
-			{
-				BroadCastKey(keyToSend);
-				textBoxTargetBackTranslation.Focus();	// reset input focus back to the editable text box
-			}
-			else
-			{
-				// otherwise, if this was a bonafide edit, then we have to be careful not to clobber it if something causes us to update
-				//	the data (e.g. adding a find-replace fix)
-				IsModified = true;
-			}
-		}
+            if (!String.IsNullOrEmpty(keyToSend))
+            {
+                BroadCastKey(keyToSend);
+                textBoxTargetBackTranslation.Focus();    // reset input focus back to the editable text box
+            }
+            else
+            {
+                // otherwise, if this was a bonafide edit, then we have to be careful not to clobber it if something causes us to update
+                //  the data (e.g. adding a find-replace fix)
+                IsModified = true;
+            }
+        }
 
-		private static bool _ignoreChange;
-		private void DisplayRighttoleftToolStripMenuItem_DropDownOpening(object sender, EventArgs e)
-		{
-			_ignoreChange = true;
-			sourceRightToLeftToolStripMenuItem.Checked = textBoxSourceData.RightToLeft == RightToLeft.Yes;
-			targetRightToLeftToolStripMenuItem.Checked = textBoxTargetBackTranslation.RightToLeft == RightToLeft.Yes;
-			_ignoreChange = false;
-		}
+        private static bool _ignoreChange;
+        private void DisplayRighttoleftToolStripMenuItem_DropDownOpening(object sender, EventArgs e)
+        {
+            _ignoreChange = true;
+            sourceRightToLeftToolStripMenuItem.Checked = textBoxSourceData.RightToLeft == RightToLeft.Yes;
+            targetRightToLeftToolStripMenuItem.Checked = textBoxTargetBackTranslation.RightToLeft == RightToLeft.Yes;
+            _ignoreChange = false;
+        }
 
-		private void ButtonSubstitute_Click(object sender, EventArgs e)
-		{
-			string findWhat;
-			if ((findWhat = GetRequiredSelectedText()) == null)
-				return;
+        private void ButtonSubstitute_Click(object sender, EventArgs e)
+        {
+            string findWhat;
+            if ((findWhat = GetRequiredSelectedText()) == null)
+                return;
 
-			if (TheFindReplaceProject == null)
-			{
-				if (String.IsNullOrEmpty(CheckInitializeFindReplaceHelper(findWhat)))
-				{
-					return;
-				}
-				// TheFindReplaceProject should be initialized if we're here
-			}
+            if (TheFindReplaceProject == null)
+            {
+                if (String.IsNullOrEmpty(CheckInitializeFindReplaceHelper(findWhat)))
+                {
+                    return;
+                }
+                System.Diagnostics.Debug.Assert(TheFindReplaceProject != null);
+            }
 
-			TheFindReplaceProject.AssignCorrectSpelling(findWhat);
+            TheFindReplaceProject.AssignCorrectSpelling(findWhat);
 
-			Reload();
-		}
+            Reload();
+        }
 
-		private string GetRequiredSelectedText()
-		{
-			var findWhat = GetSelectedText();
+        private string GetRequiredSelectedText()
+        {
+            var findWhat = GetSelectedText();
 
-			if (String.IsNullOrEmpty(findWhat))
-			{
-				MessageBox.Show("Select a word or phrase in the 'Target Translation' text box before clicking this button");
-				return null;
-			}
+            if (String.IsNullOrEmpty(findWhat))
+            {
+                MessageBox.Show("Select a word or phrase in the 'Target Translation' text box before clicking this button");
+                return null;
+            }
 
-			return findWhat;
-		}
+            return findWhat;
+        }
 
-		private string GetSelectedText()
-		{
-			var findWhat = textBoxTargetBackTranslation.SelectedText;
-			if (String.IsNullOrEmpty(findWhat))
-			{
-				// if there is no selected text in the box, see if they want to use what's on the clipboard
-				IDataObject iData = Clipboard.GetDataObject();
+        private string GetSelectedText()
+        {
+            var findWhat = textBoxTargetBackTranslation.SelectedText;
+            if (String.IsNullOrEmpty(findWhat))
+            {
+                // if there is no selected text in the box, see if they want to use what's on the clipboard
+                IDataObject iData = Clipboard.GetDataObject();
 
-				// Determines whether the data is in a format you can use.
-				if (iData.GetDataPresent(DataFormats.UnicodeText))
-				{
-					findWhat = (string)iData.GetData(DataFormats.UnicodeText);
-				}
-			}
+                // Determines whether the data is in a format you can use.
+                if (iData.GetDataPresent(DataFormats.UnicodeText))
+                {
+                    findWhat = (string)iData.GetData(DataFormats.UnicodeText);
+                }
+            }
 
-			return findWhat;
-		}
+            return findWhat;
+        }
 
-		private void FindSubstitutionRuleMenuItem_Click(object sender, EventArgs e)
-		{
-			if (TheFindReplaceProject == null)
-			{
-				if (String.IsNullOrEmpty(CheckInitializeFindReplaceHelper()))
-				{
-					return;
-				}
-				// TheFindReplaceProject should be initialized if we're here
-			}
+        private void FindSubstitutionRuleMenuItem_Click(object sender, EventArgs e)
+        {
+            if (TheFindReplaceProject == null)
+            {
+                if (String.IsNullOrEmpty(CheckInitializeFindReplaceHelper()))
+                {
+                    return;
+                }
+                System.Diagnostics.Debug.Assert(TheFindReplaceProject != null);
+            }
 
-			string findWhat;
-			if ((findWhat = GetRequiredSelectedText()) == null)
-				return;
+            string findWhat;
+            if ((findWhat = GetRequiredSelectedText()) == null)
+                return;
 
-			TheFindReplaceProject.FindReplacementRule(findWhat);
+            TheFindReplaceProject.FindReplacementRule(findWhat);
 
-			Reload();
-		}
+            Reload();
+        }
 
-		private void EditSubtitutionsMenuItem_Click(object sender, EventArgs e)
-		{
-			if (TheFindReplaceProject == null)
-			{
-				if (String.IsNullOrEmpty(CheckInitializeFindReplaceHelper()))
-				{
-					return;
-				}
-				// TheFindReplaceProject should be initialized if we're here
-			}
+        private void EditSubtitutionsMenuItem_Click(object sender, EventArgs e)
+        {
+            if (TheFindReplaceProject == null)
+            {
+                if (String.IsNullOrEmpty(CheckInitializeFindReplaceHelper()))
+                {
+                    return;
+                }
+                // TheFindReplaceProject should be initialized if we're here
+            }
 
-			TheFindReplaceProject.EditSpellingFixes();
+            TheFindReplaceProject.EditSpellingFixes();
 
-			Reload();
-		}
+            Reload();
+        }
 
-		private void AssignNewSubstitutionProjectMenuItem_Click(object sender, EventArgs e)
-		{
-			// check if we're using a FindReplace helpers
-			if (Properties.Settings.Default.MapProjectNameToFindReplaceProject != null)
-			{
-				var mapProjectNameToFindReplaceProjects = SettingToDictionary(Properties.Settings.Default.MapProjectNameToFindReplaceProject);
-				var projectName = BackTranslationHelperDataSource.ProjectName;
-				if (mapProjectNameToFindReplaceProjects.ContainsKey(projectName))
-				{
-					mapProjectNameToFindReplaceProjects.Remove(projectName);
-					Properties.Settings.Default.MapProjectNameToFindReplaceProject = SettingFromDictionary(mapProjectNameToFindReplaceProjects);
-					Properties.Settings.Default.Save();
-				}
-			}
+        private void AssignNewSubstitutionProjectMenuItem_Click(object sender, EventArgs e)
+        {
+            // check if we're using a FindReplace helpers
+            if (Properties.Settings.Default.MapProjectNameToFindReplaceProject != null)
+            {
+                var mapProjectNameToFindReplaceProjects = SettingToDictionary(Properties.Settings.Default.MapProjectNameToFindReplaceProject);
+                var projectName = BackTranslationHelperDataSource.ProjectName;
+                if (mapProjectNameToFindReplaceProjects.ContainsKey(projectName))
+                {
+                    mapProjectNameToFindReplaceProjects.Remove(projectName);
+                    Properties.Settings.Default.MapProjectNameToFindReplaceProject = SettingFromDictionary(mapProjectNameToFindReplaceProjects);
+                    Properties.Settings.Default.Save();
+                }
+            }
 
-			TheFindReplaceProject = null;
-			ButtonSubstitute_Click(sender, e);
-		}
+            TheFindReplaceProject = null;
+            ButtonSubstitute_Click(sender, e);
+        }
 
-		private FindReplaceHelper TrySpellFixerProjectLogin(string findWhat)
-		{
-			try
-			{
-				var aSF = FindReplaceHelper.GetFindReplaceHelper();
-				DirectableEncConverter.EncConverters.Reinitialize();
-				aSF.QueryForSpellingCorrectionIfTableEmpty(findWhat);
-				return aSF;
-			}
-			catch (Exception)
-			{
-				// usually just a "no project selected message, so .... ignoring it
-				// MessageBox.Show(ex.Message, EncConverters.cstrCaption);
-			}
-			return null;
-		}
+        private FindReplaceHelper TrySpellFixerProjectLogin(string findWhat)
+        {
+            try
+            {
+                var aSF = FindReplaceHelper.GetFindReplaceHelper();
+                DirectableEncConverter.EncConverters.Reinitialize();
+                aSF.QueryForSpellingCorrectionIfTableEmpty(findWhat);
+                return aSF;
+            }
+            catch (Exception ex)
+            {
+				if (!ex.InnerException?.Message.Contains("No project selected") ?? true)
+					MessageBox.Show(ex.Message, EncConverters.cstrCaption);
+            }
+            return null;
+        }
 
-		private void ButtonPinToTop_Click(object sender, EventArgs e)
-		{
-			var newCheckState = !Properties.Settings.Default.PinnedToTop;
-			Properties.Settings.Default.PinnedToTop = newCheckState;
-			Properties.Settings.Default.Save();
+        private void ButtonPinToTop_Click(object sender, EventArgs e)
+        {
+            var newCheckState = !Properties.Settings.Default.PinnedToTop;
+            Properties.Settings.Default.PinnedToTop = newCheckState;
+            Properties.Settings.Default.Save();
 
-			buttonPinToTop.Image = (newCheckState)
-									? global::BackTranslationHelper.Properties.Resources.pindown
-									: global::BackTranslationHelper.Properties.Resources.pinup;
+            buttonPinToTop.Image = (newCheckState)
+                                    ? global::BackTranslationHelper.Properties.Resources.pindown
+                                    : global::BackTranslationHelper.Properties.Resources.pinup;
 
-			if ((Parent != null) && (Parent is Form parentForm))
-				parentForm.TopMost = newCheckState;
-		}
-	}
+            if ((Parent != null) && (Parent is Form parentForm))
+                parentForm.TopMost = newCheckState;
+        }
+    }
 }
