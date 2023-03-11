@@ -75,6 +75,30 @@ namespace BackTranslationHelper
             BroadCastKey(keyToSend);
         }
 
+		#region SubscribeableEvent handling
+		// If the user forms want specific text change events, they can register for them with an event handler which
+		//	we'll call if the event occurs
+		public const string SubscribeableEventKeyTargetBackTranslationTextChanged = "TargetBackTranslationTextChanged";
+		public delegate void EventHandler<EventArgs>(string value);
+		protected static Dictionary<string, EventHandler<EventArgs>> SubscribeableEvents = new Dictionary<string, EventHandler<EventArgs>>();
+
+		public void RegisterForNotification(string key, EventHandler<EventArgs> eventHandler)
+		{
+			if (!SubscribeableEvents.TryGetValue(key, out EventHandler<EventArgs> handler))
+			{
+				SubscribeableEvents.Add(key, eventHandler);
+			}
+		}
+
+		private void TextBoxTargetBackTranslation_TextChanged(object sender, System.EventArgs e)
+		{
+			if (SubscribeableEvents.TryGetValue(SubscribeableEventKeyTargetBackTranslationTextChanged, out EventHandler<EventArgs> eventHandler))
+			{
+				eventHandler(textBoxTargetBackTranslation.Text);
+			}
+		}
+		#endregion
+
         public void Initialize(bool displayExistingTargetTranslation)
         {
             _displayExistingTargetTranslation = displayExistingTargetTranslation;
