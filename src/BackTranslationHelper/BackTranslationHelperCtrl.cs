@@ -179,7 +179,7 @@ namespace BackTranslationHelper
             return new Size(width, toolStripTextBoxStatus.Height);
         }
 
-        private string CheckInitializeFindReplaceHelper(string findWhat = null)
+        private string CheckInitializeFindReplaceHelper(bool initialize = false)
         {
             if (TheFindReplaceProject != null)
                 return TheFindReplaceProject.SpellFixerEncConverterName;
@@ -193,10 +193,10 @@ namespace BackTranslationHelper
             string findReplaceConverterName = null;
             if (!mapProjectNameToFindReplaceProjects.TryGetValue(projectName, out List<string> lstFriendlyName))
             {
-                if (String.IsNullOrEmpty(findWhat))
+                if (!initialize)
                     return findReplaceConverterName;
 
-                TheFindReplaceProject = TrySpellFixerProjectLogin(findWhat);
+                TheFindReplaceProject = TrySpellFixerProjectLogin();
                 if (TheFindReplaceProject == null)
                     return findReplaceConverterName; // must have canceled
 
@@ -953,18 +953,18 @@ namespace BackTranslationHelper
 
         private void ButtonSubstitute_Click(object sender, EventArgs e)
         {
-            string findWhat;
-            if ((findWhat = GetRequiredSelectedText()) == null)
-                return;
-
             if (TheFindReplaceProject == null)
             {
-                if (String.IsNullOrEmpty(CheckInitializeFindReplaceHelper(findWhat)))
+                if (String.IsNullOrEmpty(CheckInitializeFindReplaceHelper(true)))
                 {
                     return;
                 }
                 System.Diagnostics.Debug.Assert(TheFindReplaceProject != null);
             }
+
+			string findWhat;
+			if ((findWhat = GetRequiredSelectedText()) == null)
+				return;
 
             TheFindReplaceProject.AssignCorrectSpelling(findWhat);
 
@@ -1054,16 +1054,15 @@ namespace BackTranslationHelper
             }
 
             TheFindReplaceProject = null;
-            ButtonSubstitute_Click(sender, e);
+			CheckInitializeFindReplaceHelper(true);
         }
 
-        private FindReplaceHelper TrySpellFixerProjectLogin(string findWhat)
+        private FindReplaceHelper TrySpellFixerProjectLogin()
         {
             try
             {
                 var aSF = FindReplaceHelper.GetFindReplaceHelper();
                 DirectableEncConverter.EncConverters.Reinitialize();
-                aSF.QueryForSpellingCorrectionIfTableEmpty(findWhat);
                 return aSF;
             }
             catch (Exception ex)
