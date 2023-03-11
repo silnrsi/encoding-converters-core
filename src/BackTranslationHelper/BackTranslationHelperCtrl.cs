@@ -48,11 +48,18 @@ namespace BackTranslationHelper
         {
             base.OnParentChanged(e);
 
-            if (Properties.Settings.Default.PinnedToTop && (Parent != null) && (Parent is Form parentForm))
+            if (Properties.Settings.Default.PinnedToTop)
             {
+				var parent = (Control)this;
+				while (((parent = parent.Parent) != null) && !(parent is Form))
+					;
+
+				if ((parent != null) && (parent is Form parentForm))
+				{
                 buttonPinToTop.Image = global::BackTranslationHelper.Properties.Resources.pindown;
                 parentForm.TopMost = true;
             }
+        }
         }
 
         private void TargetBackTranslation_MouseWheel(object sender, MouseEventArgs e)
@@ -1083,7 +1090,13 @@ namespace BackTranslationHelper
                                     ? global::BackTranslationHelper.Properties.Resources.pindown
                                     : global::BackTranslationHelper.Properties.Resources.pinup;
 
-            if ((Parent != null) && (Parent is Form parentForm))
+			// Now that I'm using a TableLayoutPanel in the Ptx plugin form, it may not be the parent.
+			//  So go up the parent chain until we find a Form
+			var parent = (Control)this;
+			while (((parent = parent.Parent) != null) && !(parent is Form))
+				;
+
+			if ((parent != null) && (parent is Form parentForm))
                 parentForm.TopMost = newCheckState;
         }
     }
