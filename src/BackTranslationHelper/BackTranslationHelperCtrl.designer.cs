@@ -1,4 +1,6 @@
 
+using System;
+
 namespace BackTranslationHelper
 {
     partial class BackTranslationHelperCtrl
@@ -344,6 +346,7 @@ namespace BackTranslationHelper
             this.textBoxTargetBackTranslation.TabIndex = 1;
             this.textBoxTargetBackTranslation.Enter += new System.EventHandler(this.TextBoxTargetBackTranslation_Enter);
             this.textBoxTargetBackTranslation.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.TextBoxTargetBackTranslation_PreviewKeyDown);
+			this.textBoxTargetBackTranslation.TextChanged += TextBoxTargetBackTranslation_TextChanged;
             // 
             // buttonClose
             // 
