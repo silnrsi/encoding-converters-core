@@ -668,7 +668,7 @@ namespace BackTranslationHelper
             // also put it in the model as the ‘TargetData’ (possibly overwriting the translated value) so
             //  it’ll show up there again, rather than being overwritten by something previous
             _model.TargetData =  textBoxTargetBackTranslation.Text = PreprocessTargetData(textBoxFrom.Text);
-            IsModified = false; // no longer edited
+            IsModified = true;	// mark it as modified now, since we changed from the default (which was the existing target text)
         }
 
         private void ButtonFillExistingTargetText_Click(object sender, EventArgs e)
