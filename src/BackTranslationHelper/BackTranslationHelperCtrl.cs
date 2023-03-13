@@ -379,14 +379,6 @@ namespace BackTranslationHelper
                 if (textBox.Visible)
                     textBox.Text = newTargetTexts[i].TargetData;
             }
-
-            // now update the actual editable box w/ the first possibility (if it isn't already filled,
-            // which would have come from the original target from the target project)
-            if (String.IsNullOrEmpty(textBoxTargetBackTranslation.Text))
-            {
-                var targetPossible = newTargetTexts.FirstOrDefault();
-                textBoxTargetBackTranslation.Text = targetPossible?.TargetData;
-            }
         }
 
         #region Event handlers
@@ -468,9 +460,21 @@ namespace BackTranslationHelper
             }
 
             SetNewTargetTexts(model.TargetsPossible);
-        }
 
-        private string PreprocessTargetData(string targetDataOrig)
+			// now check if the existing target was blank, then update the actual editable box w/ the first possibility
+			if (String.IsNullOrEmpty(targetData))
+			{
+				var targetPossible = model.TargetsPossible.FirstOrDefault();
+				textBoxTargetBackTranslation.Text = targetPossible?.TargetData;
+
+				// this also means its now modified (since we effectively used one of the translated versions
+				//	(if we don't do this, then the 'Save changes' and 'Next' buttons will think nothing was
+				//	changed, and will move on not having written anything)
+				IsModified = true;
+			}
+		}
+
+		private string PreprocessTargetData(string targetDataOrig)
         {
             // if we have a FindReplaceHelper attached to this project, then use it before writing the result
             string difference = null, targetData = targetDataOrig;
