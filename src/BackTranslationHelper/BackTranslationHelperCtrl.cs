@@ -50,16 +50,16 @@ namespace BackTranslationHelper
 
             if (Properties.Settings.Default.PinnedToTop)
             {
-				var parent = (Control)this;
-				while (((parent = parent.Parent) != null) && !(parent is Form))
-					;
+                var parent = (Control)this;
+                while (((parent = parent.Parent) != null) && !(parent is Form))
+                    ;
 
-				if ((parent != null) && (parent is Form parentForm))
-				{
-                buttonPinToTop.Image = global::BackTranslationHelper.Properties.Resources.pindown;
-                parentForm.TopMost = true;
-            }
-        }
+                if (parent is Form parentForm)
+                {
+					buttonPinToTop.Image = global::BackTranslationHelper.Properties.Resources.pindown;
+					parentForm.TopMost = true;
+				}
+			}
         }
 
         private void TargetBackTranslation_MouseWheel(object sender, MouseEventArgs e)
@@ -75,29 +75,29 @@ namespace BackTranslationHelper
             BroadCastKey(keyToSend);
         }
 
-		#region SubscribeableEvent handling
-		// If the user forms want specific text change events, they can register for them with an event handler which
-		//	we'll call if the event occurs
-		public const string SubscribeableEventKeyTargetBackTranslationTextChanged = "TargetBackTranslationTextChanged";
-		public delegate void EventHandler<EventArgs>(string value);
-		protected static Dictionary<string, EventHandler<EventArgs>> SubscribeableEvents = new Dictionary<string, EventHandler<EventArgs>>();
+        #region SubscribeableEvent handling
+        // If the user forms want specific text change events, they can register for them with an event handler which
+        //  we'll call if the event occurs
+        public const string SubscribeableEventKeyTargetBackTranslationTextChanged = "TargetBackTranslationTextChanged";
+        public delegate void EventHandler<EventArgs>(string value);
+        protected static Dictionary<string, EventHandler<EventArgs>> SubscribeableEvents = new Dictionary<string, EventHandler<EventArgs>>();
 
-		public void RegisterForNotification(string key, EventHandler<EventArgs> eventHandler)
-		{
-			if (!SubscribeableEvents.TryGetValue(key, out EventHandler<EventArgs> handler))
-			{
-				SubscribeableEvents.Add(key, eventHandler);
-			}
-		}
+        public void RegisterForNotification(string key, EventHandler<EventArgs> eventHandler)
+        {
+            if (!SubscribeableEvents.TryGetValue(key, out EventHandler<EventArgs> handler))
+            {
+                SubscribeableEvents.Add(key, eventHandler);
+            }
+        }
 
-		private void TextBoxTargetBackTranslation_TextChanged(object sender, System.EventArgs e)
-		{
-			if (SubscribeableEvents.TryGetValue(SubscribeableEventKeyTargetBackTranslationTextChanged, out EventHandler<EventArgs> eventHandler))
-			{
-				eventHandler(textBoxTargetBackTranslation.Text);
-			}
-		}
-		#endregion
+        private void TextBoxTargetBackTranslation_TextChanged(object sender, System.EventArgs e)
+        {
+            if (SubscribeableEvents.TryGetValue(SubscribeableEventKeyTargetBackTranslationTextChanged, out EventHandler<EventArgs> eventHandler))
+            {
+                eventHandler(textBoxTargetBackTranslation.Text);
+            }
+        }
+        #endregion
 
         public void Initialize(bool displayExistingTargetTranslation)
         {
@@ -461,20 +461,20 @@ namespace BackTranslationHelper
 
             SetNewTargetTexts(model.TargetsPossible);
 
-			// now check if the existing target was blank, then update the actual editable box w/ the first possibility
-			if (String.IsNullOrEmpty(targetData))
-			{
-				var targetPossible = model.TargetsPossible.FirstOrDefault();
-				textBoxTargetBackTranslation.Text = targetPossible?.TargetData;
+            // now check if the existing target was blank, then update the actual editable box w/ the first possibility
+            if (String.IsNullOrEmpty(targetData))
+            {
+                var targetPossible = model.TargetsPossible.FirstOrDefault();
+                textBoxTargetBackTranslation.Text = targetPossible?.TargetData;
 
-				// this also means its now modified (since we effectively used one of the translated versions
-				//	(if we don't do this, then the 'Save changes' and 'Next' buttons will think nothing was
-				//	changed, and will move on not having written anything)
-				IsModified = true;
-			}
-		}
+                // this also means its now modified (since we effectively used one of the translated versions
+                //  (if we don't do this, then the 'Save changes' and 'Next' buttons will think nothing was
+                //  changed, and will move on not having written anything)
+                IsModified = true;
+            }
+        }
 
-		private string PreprocessTargetData(string targetDataOrig)
+        private string PreprocessTargetData(string targetDataOrig)
         {
             // if we have a FindReplaceHelper attached to this project, then use it before writing the result
             string difference = null, targetData = targetDataOrig;
@@ -917,7 +917,7 @@ namespace BackTranslationHelper
                     SendKeyToControl(textBox, keyToSend);
                 }
             }
-			textBoxTargetBackTranslation.Focus();    // finally, put the focus back in the editable box
+            textBoxTargetBackTranslation.Focus();    // finally, put the focus back in the editable box
         }
 
         private void SendKeyToControl(Control control, string keyToSend)
@@ -997,9 +997,9 @@ namespace BackTranslationHelper
                 System.Diagnostics.Debug.Assert(TheFindReplaceProject != null);
             }
 
-			string findWhat;
-			if ((findWhat = GetRequiredSelectedText()) == null)
-				return;
+            string findWhat;
+            if ((findWhat = GetRequiredSelectedText()) == null)
+                return;
 
             TheFindReplaceProject.AssignCorrectSpelling(findWhat);
 
@@ -1089,7 +1089,7 @@ namespace BackTranslationHelper
             }
 
             TheFindReplaceProject = null;
-			CheckInitializeFindReplaceHelper(true);
+            CheckInitializeFindReplaceHelper(true);
         }
 
         private FindReplaceHelper TrySpellFixerProjectLogin()
@@ -1102,8 +1102,8 @@ namespace BackTranslationHelper
             }
             catch (Exception ex)
             {
-				if (!ex.InnerException?.Message.Contains("No project selected") ?? true)
-					MessageBox.Show(ex.Message, EncConverters.cstrCaption);
+                if (!ex.InnerException?.Message.Contains("No project selected") ?? true)
+                    MessageBox.Show(ex.Message, EncConverters.cstrCaption);
             }
             return null;
         }
@@ -1118,13 +1118,13 @@ namespace BackTranslationHelper
                                     ? global::BackTranslationHelper.Properties.Resources.pindown
                                     : global::BackTranslationHelper.Properties.Resources.pinup;
 
-			// Now that I'm using a TableLayoutPanel in the Ptx plugin form, it may not be the parent.
-			//  So go up the parent chain until we find a Form
-			var parent = (Control)this;
-			while (((parent = parent.Parent) != null) && !(parent is Form))
-				;
+            // Now that I'm using a TableLayoutPanel in the Ptx plugin form, it may not be the parent.
+            //  So go up the parent chain until we find a Form
+            var parent = (Control)this;
+            while (((parent = parent.Parent) != null) && !(parent is Form))
+                ;
 
-			if ((parent != null) && (parent is Form parentForm))
+			if (parent is Form parentForm)
                 parentForm.TopMost = newCheckState;
         }
     }
