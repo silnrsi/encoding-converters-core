@@ -1,4 +1,6 @@
 
+using System;
+
 namespace BackTranslationHelper
 {
     partial class BackTranslationHelperCtrl
@@ -217,9 +219,14 @@ namespace BackTranslationHelper
             this.tableLayoutPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tableLayoutPanel.AutoSize = true;
-            this.tableLayoutPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.tableLayoutPanel.ColumnCount = 7;
+			// It's possible that if this control is edited, the designer will remove these two lines.
+			//	if these two lines are re-added, then the tableLayoutPanel will lose 2 pixels of height
+			//	for every verse we process. Remove them, caused that to stop (and it still allows resizing)
+			//	if the form it's in is resized.
+			// Restore and keep this note here too if it is removed, so the next person won't spend hours trying to figure this out too :-)
+			// this.tableLayoutPanel.AutoSize = true;
+			// this.tableLayoutPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.tableLayoutPanel.ColumnCount = 7;
             this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
@@ -344,6 +351,7 @@ namespace BackTranslationHelper
             this.textBoxTargetBackTranslation.TabIndex = 1;
             this.textBoxTargetBackTranslation.Enter += new System.EventHandler(this.TextBoxTargetBackTranslation_Enter);
             this.textBoxTargetBackTranslation.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.TextBoxTargetBackTranslation_PreviewKeyDown);
+			this.textBoxTargetBackTranslation.TextChanged += TextBoxTargetBackTranslation_TextChanged;
             // 
             // buttonClose
             // 
@@ -557,12 +565,12 @@ namespace BackTranslationHelper
             this.toolTip.SetToolTip(this.buttonPinToTop, "Toggle this button to pin this dialog box so that it remains on top of other windows");
             this.buttonPinToTop.UseVisualStyleBackColor = true;
             this.buttonPinToTop.Click += new System.EventHandler(this.ButtonPinToTop_Click);
-            // 
-            // BackTranslationHelperCtrl
-            // 
-            this.AutoSize = true;
-            this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.Controls.Add(this.buttonPinToTop);
+			// 
+			// BackTranslationHelperCtrl
+			// 
+			this.AutoSize = true;
+			this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.Controls.Add(this.buttonPinToTop);
             this.Controls.Add(this.tableLayoutPanel);
             this.Controls.Add(this.menuStrip);
             this.Name = "BackTranslationHelperCtrl";
@@ -577,9 +585,9 @@ namespace BackTranslationHelper
 
         }
 
-        #endregion
+		#endregion
 
-        private System.Windows.Forms.MenuStrip menuStrip;
+		private System.Windows.Forms.MenuStrip menuStrip;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel;
         private System.Windows.Forms.TextBox textBoxTargetBackTranslation;
         private System.Windows.Forms.Button buttonWriteTextToTarget;
