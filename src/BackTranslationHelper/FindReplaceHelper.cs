@@ -107,10 +107,7 @@ namespace BackTranslationHelper
 
 		public void EditSpellingFixes()
 		{
-			if (m_fnEditSpellingFixes != null)
-			{
-				m_fnEditSpellingFixes.Invoke(m_aSpellFixer, null);
-			}
+			m_fnEditSpellingFixes?.Invoke(m_aSpellFixer, null);
 		}
 
 		public void FindReplacementRule(string strWord)
