@@ -466,11 +466,6 @@ namespace BackTranslationHelper
             {
                 var targetPossible = model.TargetsPossible.FirstOrDefault();
                 textBoxTargetBackTranslation.Text = targetPossible?.TargetData;
-
-                // this also means its now modified (since we effectively used one of the translated versions
-                //  (if we don't do this, then the 'Save changes' and 'Next' buttons will think nothing was
-                //  changed, and will move on not having written anything)
-                IsModified = true;
             }
         }
 
@@ -549,12 +544,6 @@ namespace BackTranslationHelper
             IsModified = false;
         }
 
-        private void ButtonCopyToClipboard_Click(object sender, System.EventArgs e)
-        {
-            Clipboard.SetDataObject(textBoxTargetBackTranslation.Text);
-            BackTranslationHelperDataSource.ButtonPressed(ButtonPressed.Copy);
-        }
-
         private void ButtonNextSection_Click(object sender, System.EventArgs e)
         {
             if (BackTranslationHelperDataSource == null)
@@ -586,17 +575,16 @@ namespace BackTranslationHelper
                 }
             }
 
-            if (IsModified)
+			// removed the check for IsModified, bkz if the user clicks 'Next', it means write. If they meant to
+			//	not write it, they'd click 'Skip'.
+            BackTranslationHelperDataSource.Log($"change target text from '{existingTargetText}' to '{newTargetText}'");
+            if (!BackTranslationHelperDataSource.WriteToTarget(newTargetText))
             {
-                BackTranslationHelperDataSource.Log($"change target text from '{existingTargetText}' to '{newTargetText}'");
+                // assuming that before returning false, the caller updated the data,
+                //  let's try that again and see what happens
+                SetStatusBox($"We had to reload the text. Click the button again.");
                 if (!BackTranslationHelperDataSource.WriteToTarget(newTargetText))
-                {
-                    // assuming that before returning false, the caller updated the data,
-                    //  let's try that again and see what happens
-                    SetStatusBox($"We had to reload the text. Click the button again.");
-                    if (!BackTranslationHelperDataSource.WriteToTarget(newTargetText))
-                        return;
-                }
+                    return;
             }
 
             IsModified = false;
