@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="AzureTranslatorKey" Type="System.String" Scope="User">
-      <Value Profile="(Default)">1V3jbcZwZT29xj2OKc0Win8d2+jpuRNmUGldl12p8PUsP3sh9YM+Yw==</Value>
+      <Value Profile="(Default)">QMuB0FScN6S0HBybzZkTbPjOTzxAwCwp0Lz3sKUVPDOa0nrUhgUcgQ==</Value>
     </Setting>
     <Setting Name="AzureTranslatorRegion" Type="System.String" Scope="User">
       <Value Profile="(Default)">global</Value>
