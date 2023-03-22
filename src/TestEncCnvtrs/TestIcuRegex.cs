@@ -50,6 +50,27 @@ namespace TestEncCnvtrs
 			Assert.AreEqual("पोथी रे ते मियाः  हेनाः", output,
 				"ICU regex converter should work properly for non-latin ranges of unicode also (for which UTF8String won't work on Windows)!");
 		}
+
+		[Test]
+		[TestCase("\\u0930->r", "पोथी रथ", "पोथी rथ")]
+		[TestCase("र->r", "पोथी रथ", "पोथी rथ")]
+		// these don't work bkz the C++ side of it (or maybe a bug in ICU, I can't tell)
+		//  doesn't convert, for example, \\u200d to UTF8 properly
+		// [TestCase("[\\u200c\\u200d]->", "व्‍यक्‌ति", "व्यक्ति")]
+		// [TestCase("[\\u2020\\u2021\\u200c\\u200d\\u230a\\u230b]->", "⌊व्‍यक्‌ति⌋ † ‡", "व्यक्ति  ")]
+		public void TestRegexForUnicodeEscapeCharacters(string converterSpec, string strInput, string strOutput)
+		{
+			var rec = new IcuRegexEncConverter();
+			string lhsEncoding = "UNICODE";
+			string rhsEncoding = "UNICODE";
+			ConvType convType = ConvType.Unicode_to_from_Unicode;
+			int procFlags = (int)ProcessTypeFlags.ICURegularExpression;
+			rec.Initialize("TransliterateDevanagariR", converterSpec,
+				ref lhsEncoding, ref rhsEncoding, ref convType, ref procFlags, 0, 0, false);
+			string output = rec.Convert(strInput);
+			Assert.AreEqual(strOutput, output,
+				$"ICU regex converter should work properly for Unicode Escape sequences (e.g. {converterSpec}) also!");
+		}
 	}
 }
 

@@ -3,8 +3,10 @@
 //
 using System;
 using System.Runtime.InteropServices;
-
+using System.Text;
+using System.Text.RegularExpressions;
 using ECInterfaces;                     // for IEncConverter
+using SilEncConverters40.Properties;
 
 namespace SilEncConverters40
 {
@@ -23,8 +25,8 @@ namespace SilEncConverters40
     {
         #region DLLImport Statements
 		[DllImport("IcuRegexEC.dll", EntryPoint = "IcuRegexEC_Initialize", CallingConvention = CallingConvention.Cdecl)]
-        static extern int CppInitialize (
-            [MarshalAs(UnmanagedType.LPStr)] string strConverterSpec);
+        static extern unsafe int CppInitialize (
+			byte* lpConverterSpec);
 
 		[DllImport("IcuRegexEC.dll", EntryPoint = "IcuRegexEC_DoConvert", CallingConvention = CallingConvention.Cdecl)]
         static extern unsafe int CppDoConvert(
@@ -90,36 +92,63 @@ namespace SilEncConverters40
 			return (Util.IsUnix) ? EncodingForm.UTF8String : EncodingForm.UTF16;
 		}
 
-        protected unsafe void Load(string strExpression)
-        {
-            Util.DebugWriteLine(this, "BEGIN");
-            //this.strFilepath = strExpression;
+		protected Regex _regexUnescapeUnicodeCharacterEscapeCodes = new(@"\\u[0-9a-fA-F]{4}", RegexOptions.Compiled);
 
-            if( IsFileLoaded() ) {
-                //Unload();
-                return;
-            }
+		static string UnicodeCharacterEscapeCodeFound(Match m)
+		{
+			var ret = Regex.Unescape(m.Groups[0].Value);
+			return ret;
+		}
 
-            if (!strExpression.Contains("->"))
-            {
-                throw new Exception (
-                    "The ICU regular expression:\n\n'" + strExpression +
-                    "'\n\ndoesn't contain -> ");
-            }
+		protected unsafe void Load(string strExpression)
+		{
+			Util.DebugWriteLine(this, "BEGIN");
+			//this.strFilepath = strExpression;
 
-            Util.DebugWriteLine(this, "Calling CppInitialize");
-            int status = 0;
-            status = CppInitialize(strExpression);
-            if( status != 0 )  
-            {
-                throw new Exception($"CppInitialize failed w/ error code '{status}'.");
+			if (IsFileLoaded())
+			{
+				//Unload();
+				return;
 			}
-            Util.DebugWriteLine(this, "END");
-        }
-        #endregion Misc helpers
 
-        #region Abstract Base Class Overrides
-        protected override void PreConvert
+			if (!strExpression.Contains("->"))
+			{
+				throw new Exception(
+					"The ICU regular expression:\n\n'" + strExpression +
+					"'\n\ndoesn't contain -> ");
+			}
+
+			Util.DebugWriteLine(this, "Calling CppInitialize");
+			int status = 0;
+
+			// get enough space for us to normalize the input data (6x ought to be enough)
+			strExpression = _regexUnescapeUnicodeCharacterEscapeCodes.Replace(strExpression, UnicodeCharacterEscapeCodeFound);
+			var encoding = Encoding.UTF8;
+			byte[] ba = encoding.GetBytes(strExpression);
+			var nInLen = ba.Length;
+
+			int nBufSize = ba.Length * 2;
+			byte[] abyInBuffer = new byte[nBufSize];
+			fixed (byte* lpExpression = abyInBuffer)
+			{
+				// turn that byte array into a byte array...
+				ECNormalizeData.ByteArrToByteStar(ba, lpExpression);
+				lpExpression[nInLen] = lpExpression[nInLen + 1] = lpExpression[nInLen + 2] = lpExpression[nInLen + 3] = 0;
+
+				status = CppInitialize(lpExpression);
+			}
+
+			if (status != 0)
+			{
+				throw new Exception($"CppInitialize failed w/ error code '{status}'.");
+			}
+			Util.DebugWriteLine(this, "END");
+		}
+
+		#endregion Misc helpers
+
+			#region Abstract Base Class Overrides
+		protected override void PreConvert
             (
             EncodingForm        eInEncodingForm,
             ref EncodingForm    eInFormEngine,
