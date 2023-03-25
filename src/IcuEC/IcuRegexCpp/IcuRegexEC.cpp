@@ -30,7 +30,7 @@
 // have the same name in other converters, for example Load().
 namespace IcuRegexEC
 {
-    char *          m_strConverterSpec = NULL;
+	icu::UnicodeString	 m_strConverterSpec;
 	icu::UnicodeString   m_strFind;
 	icu::UnicodeString   m_strReplace;
 	icu::RegexMatcher*   m_pMatcher;
@@ -116,11 +116,6 @@ namespace IcuRegexEC
             delete m_pMatcher;
             m_pMatcher = 0;
         }
-        if (m_strConverterSpec != 0)
-        {
-            free(m_strConverterSpec);
-            m_strConverterSpec = NULL;
-        }
     }
 
     // the format of the converter spec for ICU regular expressions is:
@@ -137,7 +132,7 @@ namespace IcuRegexEC
     //
     bool ParseConverterSpec
     (
-        char *    strConverterSpec,
+		icu::UnicodeString	strConverterSpec,
         char *    &strFind,      // string passed by reference
         char *    &strReplace,   // string passed by reference
         bool      &bIgnoreCase
@@ -148,17 +143,18 @@ namespace IcuRegexEC
         // BUT BEWARE, is there any reason that they couldn't have spaces
         // in there? So instead of using 
         // RegexMatcher::split, do it more carefully
-        char * found = strstr(strConverterSpec, clpszFindReplaceDelimiter);
+		char* lpConverterSpec = UniStr_to_CharStar(strConverterSpec);
+        char * found = strstr(lpConverterSpec, clpszFindReplaceDelimiter);
         if (found == NULL)
             return false;
 
         // set strFind to everything up to but not including the delimiter,
         // and strReplace to everything after the delimiter.
-        strFind = strndup(strConverterSpec,
-                     strlen(strConverterSpec) - strlen(found));
+        strFind = strndup(lpConverterSpec,
+                     strlen(lpConverterSpec) - strlen(found));
         strReplace = _strdup(found + strlen(clpszFindReplaceDelimiter));
 
-        found = strstr(strConverterSpec, clpszCaseInsensitiveFlag);
+        found = strstr(lpConverterSpec, clpszCaseInsensitiveFlag);
         if (found != NULL)
         {
             bIgnoreCase = true;
@@ -251,7 +247,7 @@ namespace IcuRegexEC
         if( IsMatcherLoaded() )
             FinalRelease();
 
-        m_strConverterSpec = _strdup(strConverterSpec);
+		m_strConverterSpec.setTo(strConverterSpec);
 
         // do the load at this point; not that we need it, but for checking that everything's okay.
         return Load();
@@ -355,9 +351,9 @@ namespace IcuRegexEC
 // Global wrappers to call the functions inside the namespace.
 //******************************************************************************
 
-int IcuRegexEC_Initialize(char * strConverterID)
+int IcuRegexEC_Initialize(char * lpConverterID)
 {
-    return IcuRegexEC::Initialize(strConverterID);
+    return IcuRegexEC::Initialize(lpConverterID);
 }
 int IcuRegexEC_PreConvert (int eInEncodingForm, int& eInFormEngine,
     int eOutEncodingForm, int& eOutFormEngine,
