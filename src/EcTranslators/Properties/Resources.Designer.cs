@@ -19,7 +19,7 @@ namespace SilEncConverters40.EcTranslators.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -178,6 +178,33 @@ namespace SilEncConverters40.EcTranslators.Properties {
         internal static string HelpForDeepLTranslatorTargetLanguagesComboBox {
             get {
                 return ResourceManager.GetString("HelpForDeepLTranslatorTargetLanguagesComboBox", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Click this button to enter your own Google Cloud credential key. Follow the instructions on the page, https://cloud.google.com/translation-hub/docs/admin-setup, to get create your own Google Cloud Translate service and get your own credentials (e.g. if the default credentials have run out of translation support -- note: the default credentials are using the free pricing tier and is limited to 500K characters/month for all users).
+        /// </summary>
+        internal static string HelpForGoogleTranslatorAddYourOwnApiKey {
+            get {
+                return ResourceManager.GetString("HelpForGoogleTranslatorAddYourOwnApiKey", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Choose the language you want to translate or transliterate from. Choose &apos;Auto-Detect&apos; if you want Google Translate to attempt to determine the input language..
+        /// </summary>
+        internal static string HelpForGoogleTranslatorSourceLanguagesComboBox {
+            get {
+                return ResourceManager.GetString("HelpForGoogleTranslatorSourceLanguagesComboBox", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Choose the language you want the input text to be translated into..
+        /// </summary>
+        internal static string HelpForGoogleTranslatorTargetLanguagesComboBox {
+            get {
+                return ResourceManager.GetString("HelpForGoogleTranslatorTargetLanguagesComboBox", resourceCulture);
             }
         }
     }

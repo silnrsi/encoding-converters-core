@@ -11,6 +11,7 @@ using System.Threading;
 using System.Linq;
 using SilEncConverters40.EcTranslators.BingTranslator;
 using SilEncConverters40.EcTranslators.DeepLTranslator;
+using SilEncConverters40.EcTranslators.GoogleTranslator;
 using System.Threading.Tasks;
 
 namespace TestEncCnvtrs
@@ -196,37 +197,10 @@ namespace TestEncCnvtrs
 			m_repoFile = null;
 		}
 
-		/*
-		[Apartment(ApartmentState.STA)]
-		[Test]
-		[TestCase("tta_input_ta;tta_output_ta;Delay;;GeckoFx")]
-		public void TestBingTranslatorAsHtmlSite(string converterSpecSuffix)
-		{
-			BingTranslatorAsHtmlSite(converterSpecSuffix);
-		}
-
-		private const string BingTranslatorSiteConverterFriendlyName = "BingHindi>English";
-
-		public void BingTranslatorAsHtmlSite(string converterSpecSuffix)
-        {
-			var dir = @"C:\btmp\SILConverter test files";	// GetTestSourceFolder();
-            var pathToTechHindiSiteFile = Path.Combine(dir, "BingTranslatorHindiToEnglish.html");
-            var converterSpec = $"{pathToTechHindiSiteFile};{converterSpecSuffix}";
-			m_encConverters.AddConversionMap(BingTranslatorSiteConverterFriendlyName, converterSpec, ConvType.Unicode_to_Unicode,
-											 EncConverters.strTypeSILtechHindiSite, "UNICODE", "UNICODE",
-											 ProcessTypeFlags.Translation);
-
-            var theEc = m_encConverters[BingTranslatorSiteConverterFriendlyName];
-
-			// do a forward conversion
-            var strOutput = theEc.Convert("पुराने युग के संत-महात्‍माओं का जैसा पहनावा होता था, वैसे युहन्‍ना के कपड़े भी ऊँटों के बालों के बने हुए होते थे।");
-            Assert.AreEqual("Just like the saint-mahatmas of the ancient era used to dress, yuhanna's clothes were also made of camel hair.", strOutput);
-        }
-		*/
-
 		private const string BingTranslatorConverterFriendlyName = "BingTranslator";
 
-		// these tests may fail if the Bing Translator resource no longer has any remaining juice...
+		// these tests may fail if the Bing Translator resource no longer has any remaining juice... OR (more likely)
+		//	if they change the translation
 		[Test]
 		[TestCase(ProcessTypeFlags.Translation, "Translate;hi;en", "", "")]
 		[TestCase(ProcessTypeFlags.Translation, "Translate;hi;en", "यीशु ने यह भी कहा,", "Jesus also said,")]
@@ -286,7 +260,8 @@ namespace TestEncCnvtrs
 
 		private const string DeepLTranslatorConverterFriendlyName = "DeepLTranslator";
 
-		// these tests may fail if the DeepL Translator resource no longer has any remaining juice...
+		// these tests may fail if the DeepL Translator resource no longer has any remaining juice... OR (more likely)
+		//	if they change the translation
 		[Test]
 		[TestCase(ProcessTypeFlags.Translation, "Translate;en;fr", "Hello, world!", "Bonjour à tous !")]
 		[TestCase(ProcessTypeFlags.Translation, "Translate;en;zh", "This Israel Field Guide has been developed to help you get to know the beautiful country of Israel.", "这本《以色列实地指南》是为了帮助你了解以色列这个美丽的国家而编写的。")]
@@ -316,5 +291,47 @@ namespace TestEncCnvtrs
 			Assert.Contains("de", res.glossaryLanguagePairs.Select(l => l.TargetLanguageCode).ToList());
 			Assert.NotNull(res.usageLeft);
 		}
+
+		private const string GoogleTranslatorConverterFriendlyName = "GoogleTranslator";
+
+		// these tests may fail if Google Translate resource no longer has any remaining juice... OR (more likely)
+		//	if they change the translation
+		[Test]
+		[TestCase("en;fr", "Hello, world!", "Bonjour le monde!")]
+		[TestCase("en;zh", "This Israel Field Guide has been developed to help you get to know the beautiful country of Israel.", "这本以色列实地指南旨在帮助您了解以色列这个美丽的国家。")]
+		[TestCase("en;de", "How are you?", "Wie geht es dir?")]
+		public void TestGoogleConverter(string converterSpec, string testInput, string testOutput)
+		{
+			m_encConverters.AddConversionMap(GoogleTranslatorConverterFriendlyName, converterSpec, ConvType.Unicode_to_Unicode,
+											 EncConverters.strTypeSILGoogleTranslator, "UNICODE", "UNICODE",
+											 ProcessTypeFlags.Translation);
+
+			var theEc = m_encConverters[GoogleTranslatorConverterFriendlyName];
+
+			// do a forward conversion
+			var strOutput = theEc.Convert(testInput);
+			Assert.AreEqual(testOutput, strOutput);
+		}
+
+		[Test]
+		public async Task TestGoogleTranslateGetCapabilities()
+		{
+			var res = await GoogleTranslatorEncConverter.GetCapabilities();
+			Assert.IsNotNull(res);
+            var languagesSupported = res.Select(l => l.Code).ToList();
+            Assert.Contains("en", languagesSupported);
+			Assert.Contains("fr", languagesSupported);
+			Assert.Contains("de", languagesSupported);
+			Assert.Contains("doi", languagesSupported);
+		}
+
+#if Disable
+		[Test]
+		public async Task TestGoogleCloudBillingAccountQuery()
+		{
+			var res = await GoogleTranslatorAutoConfigDialog.GetUsage();
+			Assert.IsNotNull(res);
+		}
+#endif
 	}
 }

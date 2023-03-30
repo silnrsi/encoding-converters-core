@@ -74,18 +74,6 @@ namespace SilEncConverters40.EcTranslators.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string AzureTranslatorKeyOverride {
-            get {
-                return ((string)(this["AzureTranslatorKeyOverride"]));
-            }
-            set {
-                this["AzureTranslatorKeyOverride"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("X1jOy3rXKfQl20lvyoj7LYlLtEuaRITqjY+oGo4BYCpE6/4MQ9kQFA==")]
         public string DeepLTranslatorKey {
             get {
@@ -93,6 +81,18 @@ namespace SilEncConverters40.EcTranslators.Properties {
             }
             set {
                 this["DeepLTranslatorKey"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string AzureTranslatorKeyOverride {
+            get {
+                return ((string)(this["AzureTranslatorKeyOverride"]));
+            }
+            set {
+                this["AzureTranslatorKeyOverride"] = value;
             }
         }
         
@@ -117,6 +117,92 @@ namespace SilEncConverters40.EcTranslators.Properties {
             }
             set {
                 this["DeepLTranslatorKeyDialogInstructionUrl"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("ga2IjIXDPBcfeNWHbsrMyv2IYXHklD7fPFredwAbuGHx/qTOpfVDrHQ0Fd+u1ewDQE0n0X20/mT0uewko" +
+            "TX32AC3HoT62QxOp3BGU7PNffnJJfoNvDQhpANF3zlFC5UV2aINNXX2BDulLtb0Ji7EVzx9j1S1zbmzr" +
+            "FmoSIxc9QkVv57z932s4LowX9qxEoQ1UO4mmmeYThUg4L8nFtfRPzXRkXT2yDH/FIev4FicOUc5FG7oK" +
+            "Zwg5NjaopHZLeklZLPugPwGFZc6h3rjazScluDIBihsxmEmqqrf2BaNadf3/uIs3DCtMt9nOLLDarPHF" +
+            "td1l7Ozon1tRaKZics+NODEFRUSlosMaEOmNRxXAn0wMpSPksFfQYr6VYFZtwGDZEnwOzp252e41uxki" +
+            "vy7u3VDQvFoQscYWknwn5Hp4OWuYOKj6ZfIyQ5Fj9PG3PdX2m87Fp6LGySiVftGmfbFQKpeOXMeqMjGd" +
+            "g1ZTr5dk/uPK3Ub2mNysLQCzzyPj42j74BZihFWrw0NBPXT8jX4ZSqWHIUuKIgyNplDDy/uXOQfu85XR" +
+            "WgEfih8uRU0eD405r4woYRkb/zzHN4IqHfofldZQkUe+cql9SZbQpL6I3EEgbBk/HzRz+tWsX6n59y83" +
+            "Zecxx9gu7zJNZBY277RMWfulka+m6qdwEet6kPquHO+95RdEAxO8ZTf+agwnnXRwh46ICneWLr3LBEnx" +
+            "LOTCLZPrcjtfSAS52uTKw32KP2PwZhFyTjJ3X6H6MU3d35rfAmTNCEzSFBQd/RXpfB7ALLVW/YPS0D+O" +
+            "/UsQHKpaL3jTjcsivgIntEze4bnBzY6uSSamSQjBMX6DAuMbUDe49sqO3veJSmvxNDiVXDSAePiV8pvR" +
+            "5arUdhulBeWpH7u3kOb3jXeZUpoVqgT5YOSe/CE2HkS8fL5F7fhx/wbq4JFEZgzEFxQCynd3VRd1qu9C" +
+            "8Q0FeSeqCBU8NNs6A3V9VxPeYwsRy1YicmSdj30SXNyjApFsxb1aX+FIUvSdMGb2uHzvXcE/oEMmkhB+" +
+            "hgxawd38aIj/lB6lG8DK49ERpj18Ldn6GvkJ0MpZsB7X/P4usqLu15JE1u/9KA18rQD304iIFSo8xm0E" +
+            "iwl0SNIqU7rlTLCZR4aoKebGxJXLTEXUMMLTxp6+HsGTjOOfkJyCrkMPDJQ62J/8H4GKjfP0oQ/m7HLo" +
+            "lmthcoUx65xFmVR4RFzdspHb+y4sbssA/BDMneZEa+rNrrgoXm8nFv4ufWY3RlxhbHNpOuCm+Bn91bhE" +
+            "3+538P+G67d+AvvFxtK9OXo4e94RVDRyYBrQr4vdi5T/LhQXAFI+aHdlibUB2+KukGZcKqR9u8Z4fm+E" +
+            "54wip5mNFG87vjQ606lqou9jgZ7+OnI3gGTSyIVSH+IsRS8Y4ZiO9SA7fYdRGA7RFM+LKsAt72A8ypJN" +
+            "IeumWg84USFsMxFBitB3ixkofe8Ol1sgo7AXg+7Nlvo2doMs0xZN+3UNHOW4UKAVYP8djqWdOomXskFd" +
+            "hedIk4o30fTrhNyjMja/kLv0dYAfbhLa6s+ezfo/dDU86x9CXm1XMga/kifhi2hVCwTSlc1hgWuLoS1x" +
+            "6/n4iUZjnU7OuUTlKPQy+PRBl7I2nES8TQtrWjltDH3x2EtAgd4mdydb6f69kTbgtKluTCUtvH2pxlcN" +
+            "FxS6kjpalzsutWbZXqgEb7gedSz47YSYtO3oIgmV7Z19d6+/rg5bcOUCx2x1fMM8aAcChhuvL75ht5qn" +
+            "YX6Ge+Im4oZKwwS1pSCwJwTnDKdD0WIjtiJks9NoXQhGd7lwAQ2R79fwEItPt0XHO2NqDLFPEbL8ANit" +
+            "qUtQ8UPyNut/QSQRzJ5/XmW4JUudy3+UwdZ/YY31bbHdm5dcnydMH2JoOcSUtK99S/ilE9TpKgjiBK4B" +
+            "zXIkXY+BkSyIRAdJc0lnyL/O8uwnc9u+4orUm0e+7oZdHpMa6OovpC/md6r0nOhMgsN04VYEynpimqir" +
+            "Aai2yZliAlnl/+AXIshwqrJdDxekARvCkHYb2WRR0PDpSSpdVEHug/uC6xhEM7XBTrymz14fUS22y7T+" +
+            "XMue0PCzrBpdySw/EbjEWvgBR21XrDT03Gt7ZLiiFW4tWq4foAgeJAkPEGb+qKucblC+xydpONoCvzY0" +
+            "GiyzTdhPK110vSt0zT+cCYEy1L21gnRXiABuftJNi/+P9OqrmgvK9xIvOS/katiDGviXpD9jvVpyhIjO" +
+            "ZLxOQtslzEAps5JpyRARISO0pttcY0hWT9znSTL2Oi/7GxRulx0OJnUjC1qg21HKxVVmXd4IObRbH6bS" +
+            "LDDObkmnyeyM5ZUUnQMgA7LnaZYJqxGI415hTjqmpX0vMn7wwo7R3+NkfccpVVmofGCRHjgumw3xriAL" +
+            "sztBFNJf3DjFlvxMPTgxabjvj1Xy/HipTz+vEcAEr48Bfg7t+JTJEa2LGy/G3wAMDMbEyU7zFJL3vfC2" +
+            "mJUlgj7qdq/1quIpwkjnyIq6UVaEfPs/dSHzKYodrMoxFdTLBrbl86FhlXHyjlHcHImOddRALgBgjtRF" +
+            "zlfjG5B0DvmwJ7D8f0wanP8l/g0xzLf9RgKdU2evUBIlu0y1hYfT5wD0YLP2rqsMs/TcS4YLAvEwoP0Z" +
+            "mo4LBnCWajSyJmm0jxvkeulEnJ0hsyslqEY6XBfWgzS61mJKZNZes0JbjIptjiUXBW4RzAfYe+o91fpn" +
+            "jOqp+Nfv8cDno1vpWHkkEHT+HX/IVTBDqsMqmEsl2kFNgSIVwZpBT4E+wrFGciFjiiCU10A6On6kbfvn" +
+            "6FKbCK1CKvWIcuuufQXq6xyF67OVtvciTl22EslIHiDLjTMTYL4rg3Pk4fsovYBanwhf6dlhUxcZ+W6R" +
+            "kurPz/lEJ4ucPR2ifaLnVIubj9jGk6o63TuHrGThpXKomxBLgVcWBxhkY8XHF6+Z/qhYbYAuGW8OgblO" +
+            "T/8Pk/Y0NFCcv5Rmj52NzWHjFGxj0Znsg4OnaurMKfeNnU5PbwyCn2z1GFII0SnMbXAo3gWVxHxJzvq7" +
+            "UjlVfMFVC8yz+ZzoReS5HDZJxwSzmDQ")]
+        public string GoogleTranslatorCredentials {
+            get {
+                return ((string)(this["GoogleTranslatorCredentials"]));
+            }
+            set {
+                this["GoogleTranslatorCredentials"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://cloud.google.com/translate/docs/setup#creating_service_accounts_and_keys")]
+        public string GoogleTranslatorKeyDialogInstructionUrl {
+            get {
+                return ((string)(this["GoogleTranslatorKeyDialogInstructionUrl"]));
+            }
+            set {
+                this["GoogleTranslatorKeyDialogInstructionUrl"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string GoogleTranslatorCredentialsOverride {
+            get {
+                return ((string)(this["GoogleTranslatorCredentialsOverride"]));
+            }
+            set {
+                this["GoogleTranslatorCredentialsOverride"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("projects/bright-coyote-381812")]
+        public string GoogleCloudBillingProjectName {
+            get {
+                return ((string)(this["GoogleCloudBillingProjectName"]));
+            }
+            set {
+                this["GoogleCloudBillingProjectName"] = value;
             }
         }
     }

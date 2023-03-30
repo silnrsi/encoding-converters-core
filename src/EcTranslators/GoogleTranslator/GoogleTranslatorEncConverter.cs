@@ -9,11 +9,15 @@ using System.Threading.Tasks;
 using ECInterfaces;                     // for ConvType
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Google.Apis.Auth.OAuth2;
+using Google.Cloud.Translation.V2;
+using DeepL.Model;
+using Microsoft.Extensions.Options;
 
 namespace SilEncConverters40.EcTranslators.GoogleTranslator
 {
 	/// <summary>
-	/// Managed Google Translator EncConverter.
+	/// Managed Google Translate EncConverter.
 	/// </summary>
 	[GuidAttribute("A2C80989-EBBD-4257-9006-31FADC88646F")]
 	// normally these subclasses are treated as the base class (i.e. the 
@@ -24,61 +28,59 @@ namespace SilEncConverters40.EcTranslators.GoogleTranslator
 	//  how it is started (see EncConverters.AddEx).
 	// [ComVisible(false)] 
 	public class GoogleTranslatorEncConverter : EncConverter
-    {
+	{
 		#region Const Definitions
-		// by putting the azure key in a settings file, users can get their own free azure account, create their own 'Translator'
-		//  resource, and enter their own key in the file (or the UI to have us set it in the file) and get their own 2E6 chars free
-		//	(or pay for as much as they want)
-		// see https://docs.microsoft.com/en-us/azure/cognitive-services/translator/quickstart-translator
-		public static string AzureTranslatorSubscriptionKey
+		// by putting the google translate credentials in a settings file, users can get their own credentials to use, 
+		//  and enter it thru the UI if our key runs out of free stuff
+		// see https://console.cloud.google.com/apis/credentials
+
+
+		private static TranslationClient _translationClient;
+		public static TranslationClient TranslateClient
 		{
 			get
 			{
-				var overrideKey = Properties.Settings.Default.AzureTranslatorKeyOverride;
-				return (!String.IsNullOrEmpty(overrideKey))
-							? overrideKey
-							: Properties.Settings.Default.AzureTranslatorKey;
-			}
-			set
-			{
-				Properties.Settings.Default.AzureTranslatorKeyOverride = value;
+				if (_translationClient == null)
+				{
+					var googleCreds = GoogleCredential.FromJson(GoogleTranslatorSubscriptionKey);
+					_translationClient = TranslationClient.Create(googleCreds);
+				}
+				return _translationClient;
 			}
 		}
 
-		private static readonly string endpointTranslator = Properties.Settings.Default.AzureTranslatorTextTranslationEndpoint;
-		private static readonly string endpointCapabilities = $"{endpointTranslator}languages?api-version=3.0";
-
-		// Add your location, also known as region. The default is global.
-		// This is required if using a Cognitive Services resource.
-		public static string AzureTranslatorLocation = Properties.Settings.Default.AzureTranslatorRegion;
-
-		public enum TransductionType
+		public static string GoogleTranslatorSubscriptionKey
 		{
-			Unknown,
-			Translate,
-			Transliterate,
-			TranslateWithTransliterate,
-			DictionaryLookup
-		};
+			get
+			{
+				var overrideKey = Properties.Settings.Default.GoogleTranslatorCredentialsOverride;
+				var key = (!String.IsNullOrEmpty(overrideKey))
+							? overrideKey
+							: Properties.Settings.Default.GoogleTranslatorCredentials;
+				return EncryptionClass.Decrypt(key);
+			}
+			set
+			{
+				// the value is already encrypted by the time it gets here
+				Properties.Settings.Default.GoogleTranslatorCredentialsOverride = value;
+			}
+		}
 
-        public const string CstrDisplayName = "Google Translator";
-        internal const string strHtmlFilename  = "Google_Translator_Plug-in_About_box.htm";
+		public const string CstrDisplayName = "Google Translate";
+        internal const string strHtmlFilename  = "Google_Translate_Plug-in_About_box.htm";
 		#endregion Const Definitions
 
 		#region Member Variable Definitions
 
-		protected TransductionType transductionRequested;
 		protected string fromLanguage;
 		protected string toLanguage;
-		protected string toScript;
-		protected string fromScript;
 
 		#endregion Member Variable Definitions
 
 		#region Initialization
 		public GoogleTranslatorEncConverter() : base(typeof(GoogleTranslatorEncConverter).FullName,EncConverters.strTypeSILGoogleTranslator)
         {
-			// this is needed to be able to use the Azure Translator (https call) from Word. If you don't have it, you just get this error:
+			// this is needed to be able to use the Google Translator (https call) from Word. If you don't have it, you just get this error:
 			//	Unable to read data from the transport connection: An existing connection was forcibly closed by the remote host
 			ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 		}
@@ -87,15 +89,13 @@ namespace SilEncConverters40.EcTranslators.GoogleTranslator
 			ref string lhsEncodingID, ref string rhsEncodingID, ref ConvType conversionType,
 			ref Int32 processTypeFlags, Int32 codePageInput, Int32 codePageOutput, bool bAdding)
 		{
-			Util.DebugWriteLine(this, "BEGIN");
-            Util.DebugWriteLine(this, converterName + ", " + converterSpec);
+			Util.DebugWriteLine(this, $"BEGIN: {converterName}, {converterSpec}");
 
             // let the base class have first stab at it
             base.Initialize(converterName, converterSpec, ref lhsEncodingID, ref rhsEncodingID, 
                 ref conversionType, ref processTypeFlags, codePageInput, codePageOutput, bAdding );
 
-			if (!ParseConverterIdentifier(converterSpec, out transductionRequested,
-										  ref fromLanguage, out toLanguage, out fromScript, out toScript))
+			if (!ParseConverterIdentifier(converterSpec, ref fromLanguage, out toLanguage))
 			{
 				throw new ApplicationException($"{CstrDisplayName} not properly configured! converterName: {converterName}");
 			}
@@ -111,92 +111,49 @@ namespace SilEncConverters40.EcTranslators.GoogleTranslator
 			if (String.IsNullOrEmpty(rhsEncodingID))
 				rhsEncodingID = m_strRhsEncodingID = EncConverters.strDefUnicodeEncoding;
 
+			// this is a Translation process type by definition. This is used by various programs to prevent
+			//	over usage -- e.g. Paratext should be blocking these EncConverter types as the 'Transliteration'
+			//	type project EncConverter (bkz it'll try to "transliterate" the entire corpus -- probably not
+			//	what's wanted). Also ClipboardEncConverter also doesn't process these for a preview (so the
+			//	system tray popup doesn't take forever to display.
+			processTypeFlags |= (int)ProcessTypeFlags.Translation;
+
 			Util.DebugWriteLine(this, "END");
 		}
 
 		internal static bool ParseConverterIdentifier(string converterSpec,
-			out TransductionType transductionRequested,
-			ref string fromLanguage, out string toLanguage,
-			out string fromScript, out string toScript)
+			ref string fromLanguage, out string toLanguage)
 		{
-			transductionRequested = TransductionType.Unknown;
-			toLanguage = fromScript = toScript = null;
+			toLanguage = null;
 
 			string[] astrs = converterSpec.Split(new[] { ';' });
 
-			// gotta at least have the transduction type requested and the toLanguage
-			if (astrs.Length < 3)
+			// gotta at least have the toLanguage
+			if (astrs.Length < 1)
 				return false;
 
-			if (!Enum.TryParse(astrs[0], out transductionRequested))
-				return false;
+			if (!String.IsNullOrEmpty(astrs[0]))
+				fromLanguage = astrs[0];	// don't change it (from Auto-Detect) if it was saved as empty space
 
-			if (!String.IsNullOrEmpty(astrs[1]))
-				fromLanguage = astrs[1];	// don't change it (from Auto-Detect) if it was saved as empty space
-
-			toLanguage = astrs[2];
-			fromScript = (astrs.Length >= 4) ? astrs[3] : null;
-			toScript = (astrs.Length >= 5) ? astrs[4] : null;
+			toLanguage = astrs[1];
 			return true;
 		}
 
-		public static async Task<string> GetTranslationCapabilities()
+#pragma warning disable CS3002 // Return type is not CLS-compliant
+		public async static Task<List<Google.Cloud.Translation.V2.Language>> GetCapabilities()
+#pragma warning restore CS3002 // Return type is not CLS-compliant
 		{
-			try
+			var resultLanguagesSupported = await Task.Run(async delegate
 			{
-				string jsonResponse = null;
-				using (HttpClient client = new HttpClient())
-				{
-					var response = await client.GetAsync(endpointCapabilities).ConfigureAwait(false);
-					jsonResponse = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-					if (!response.IsSuccessStatusCode)
-					{
-						throw new ApplicationException($"You must have internet in order to use the {CstrDisplayName}. Are you online? (response: {jsonResponse})");
-					}
-				}
-				return jsonResponse;
-			}
-			catch (Exception ex)
-			{
-				return LogExceptionMessage("GetTranslationCapabilities", ex);
-			}
+				return (await TranslateClient.ListLanguagesAsync(LanguageCodes.English)).ToList();
+			}).ConfigureAwait(false);
+
+			return resultLanguagesSupported;
 		}
 
-		/*
-		public static (List<TranslationLanguage> translations, List<TransliterationLanguage> transliterations, List<DictionaryLanguage> dictionaryOptions) GetCapabilities()
-		{
-			var jsonCapabilities = GetTranslationCapabilities().Result;
-			JObject capabilities = JObject.Parse(jsonCapabilities);
-			var translationTokens = capabilities["translation"].Children();
-			var translations = TranslationLanguage.LoadFromJTokens(translationTokens);
-
-			var transliterationsTokens = capabilities["transliteration"].Children();
-			var transliterations = TransliterationLanguage.LoadFromJTokens(transliterationsTokens);
-
-			var dictionaryTokens = capabilities["dictionary"].Children();
-			var dictionaryOptions = DictionaryLanguage.LoadFromJTokens(dictionaryTokens);
-
-			return (translations, transliterations, dictionaryOptions);
-		}
-		*/
 		#endregion Initialization
 
 		#region Abstract Base Class Overrides
-		protected unsafe override void PreConvert
-            (
-			EncodingForm        eInEncodingForm,
-            ref EncodingForm    eInFormEngine,
-            EncodingForm        eOutEncodingForm,
-            ref EncodingForm    eOutFormEngine,
-            ref NormalizeFlags  eNormalizeOutput,
-            bool                bForward
-            ) 
-        {
-            // let the base class do it's thing first
-            base.PreConvert( eInEncodingForm, ref eInFormEngine,
-                            eOutEncodingForm, ref eOutFormEngine,
-                            ref eNormalizeOutput, bForward);
-        }
 
         [CLSCompliant(false)]
         protected override unsafe void DoConvert
@@ -214,171 +171,41 @@ namespace SilEncConverters40.EcTranslators.GoogleTranslator
 			//  quantity and no other EncConverter does it that way. Besides, I'm afraid I'll break smtg ;-]
 			byte[] baIn = new byte[nInLen];
 			ECNormalizeData.ByteStarToByteArr(lpInBuffer, nInLen, baIn);
-			string strOutput = null;
-			Encoding enc = Encoding.Unicode;
 
-			char[] caIn = enc.GetChars(baIn);
+			char[] caIn = Encoding.Unicode.GetChars(baIn);
 
 			// here's our input string
 			var strInput = new string(caIn);
 
-			strOutput = CallGoogleTranslator(strInput).Result;
+			var strOutput = CallGoogleTranslator(strInput).Result;
 
-			StringToProperByteStar(strOutput, lpOutBuffer, ref rnOutLen);
+			Common.StringToProperByteStar(strOutput, lpOutBuffer, ref rnOutLen);
 		}
 
 		private async Task<string> CallGoogleTranslator(string strInput)
 		{
 			try
 			{
-				// Input and output languages are defined as parameters.
-				var routeSuffix = route;
-				var body = new object[] { new { Text = CleanDictionaryLookupInputString(strInput) } };
-				var requestBody = JsonConvert.SerializeObject(body);
-
-				using (var client = new HttpClient())
-				using (var request = new HttpRequestMessage())
+				var result = await Task.Run(async delegate
 				{
-					// Build the request.
-					request.Method = HttpMethod.Post;
-					request.RequestUri = new Uri(endpointTranslator + routeSuffix);
-					request.Content = new StringContent(requestBody, Encoding.UTF8, "application/json");
-					request.Headers.Add("Ocp-Apim-Subscription-Key", AzureTranslatorSubscriptionKey);
-					request.Headers.Add("Ocp-Apim-Subscription-Region", AzureTranslatorLocation);
+					return await TranslateClient.TranslateTextAsync(strInput, toLanguage, fromLanguage);
+				}).ConfigureAwait(false);
 
-					// Send the request and get response.
-					var response = await client.SendAsync(request).ConfigureAwait(false);
-
-					// Read response as a string.
-					var result = await response.Content.ReadAsStringAsync();
-					if (!response.IsSuccessStatusCode)
-						throw new ApplicationException(result);
-
-					result = HarvestResult(result);
-					return result;
-				}
+				return result.TranslatedText;
 			}
 			catch (Exception ex)
 			{
-				return LogExceptionMessage(GetType().Name, ex);
+				return Common.LogExceptionMessage(GetType().Name, ex);
 			}
-		}
-
-		private string CleanDictionaryLookupInputString(string strInput)
-		{
-			// for dictionary lookup, make sure there's only a single word (or the lookup will return no translations)
-			if (transductionRequested == TransductionType.DictionaryLookup)
-			{
-				strInput = strInput?.Trim();
-				var nIndex = strInput?.IndexOf(' ');
-				if (nIndex > 0)
-					strInput = strInput.Substring(0, (int)nIndex);
-			}
-
-			return strInput;
-		}
-
-		private string HarvestResult(string jsonResult)
-		{
-			JArray json = JArray.Parse(jsonResult);
-			string path = null, output = null;
-			switch (transductionRequested)
-			{
-				case TransductionType.Translate:
-					output = ExtractTranslation(json);
-					break;
-				case TransductionType.TranslateWithTransliterate:
-					path = $"$..translations[?(@.to == '{toLanguage}')].transliteration.text";
-					output = json.SelectToken(path)?.ToString();
-
-					// not all languages support Transliteration. If this one doesn't, then see if simple 'Translation' works
-					if (String.IsNullOrEmpty(output))
-						output = ExtractTranslation(json);
-					break;
-				case TransductionType.Transliterate:
-					path = $"[?(@.script == '{toScript}')].text";
-					output = json.SelectToken(path)?.ToString();
-					break;
-				case TransductionType.DictionaryLookup:
-					path = "$..translations[?(@displayTarget != null)].displayTarget";
-					var translations = json.SelectTokens(path)?.ToList();
-					output = (translations.Count == 0)
-								? String.Empty
-								: (translations.Count == 1)
-									? translations.First().ToString()
-									: translations.Aggregate($"%{translations.Count}%", (c, n) => { return c + $"{n}%"; });
-					break;
-			};
-			return output ?? String.Empty;
-		}
-
-		private string ExtractTranslation(JArray json)
-		{
-			var path = $"$..translations[?(@.to == '{toLanguage}')].text";
-			var output = json.SelectToken(path)?.ToString();
-			return output;
 		}
 
 		#endregion Abstract Base Class Overrides
 
 		#region Misc helpers
 
-		protected string route
-		{
-			get
-			{
-				var fromIndicated = (!String.IsNullOrEmpty(fromLanguage)) ? $"&from={fromLanguage}" : String.Empty;
-				var toIndicated = (!String.IsNullOrEmpty(toLanguage)) ? $"&to={toLanguage}" : String.Empty;
-				switch (transductionRequested)
-				{
-					case TransductionType.Translate:
-						return $"translate?api-version=3.0{fromIndicated}{toIndicated}";
-					case TransductionType.Transliterate:
-						// transliterate has a special form for the from language
-						fromIndicated = (!String.IsNullOrEmpty(fromLanguage)) ? $"&language={fromLanguage}" : String.Empty;
-						return $"transliterate?api-version=3.0{fromIndicated}&fromScript={fromScript}&toScript={toScript}";
-					case TransductionType.TranslateWithTransliterate:
-						return $"translate?api-version=3.0{fromIndicated}{toIndicated}&toScript={toScript}";
-					case TransductionType.DictionaryLookup:
-						return $"dictionary/lookup?api-version=3.0{fromIndicated}{toIndicated}";
-					default:
-						throw new ApplicationException($"Unknown TransductionRequested for GoogleTranslatorEncConverter: '{transductionRequested}'");
-				};
-			}
-		}
-
-		[CLSCompliant(false)]
-		protected unsafe void StringToProperByteStar(string strOutput, byte* lpOutBuffer, ref int rnOutLen)
-		{
-			int nLen = strOutput.Length * 2;
-			if (nLen > (int)rnOutLen)
-				EncConverters.ThrowError(ErrStatus.OutputBufferFull);
-			rnOutLen = nLen;
-			ECNormalizeData.StringToByteStar(strOutput, lpOutBuffer, rnOutLen, false);
-		}
-
 		protected override string GetConfigTypeName
 		{
 			get { return typeof(GoogleTranslatorEncConverterConfig).AssemblyQualifiedName; }
-		}
-
-		protected unsafe void Load(bool bReload)
-        {
-            Util.DebugWriteLine(this, "BEGIN");
-            Util.DebugWriteLine(this, "END");
-        }
-
-		public static string LogExceptionMessage(string className, Exception ex)
-		{
-			string msg = "Error occurred: " + ex.Message;
-			while (ex.InnerException != null)
-			{
-				ex = ex.InnerException;
-				msg += $"{Environment.NewLine}because: (InnerException): {ex.Message}";
-			}
-
-			Util.DebugWriteLine(className, msg);
-			return msg;
 		}
 
 		#endregion Misc helpers
