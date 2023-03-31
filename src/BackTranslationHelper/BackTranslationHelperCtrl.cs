@@ -128,7 +128,7 @@ namespace BackTranslationHelper
                 rowStyle.SizeType = SizeType.Percent;   // gives it real estate
                 rowStyle.Height = 20F;
 				textBoxTargetTextExisting.Font = targetLanguageFont;
-                textBoxTargetTextExisting.RightToLeft = targetLanguageRightToLeft;
+				textBoxTargetTextExisting.RightToLeft = targetLanguageRightToLeft;
             }
             else
             {
@@ -176,7 +176,7 @@ namespace BackTranslationHelper
                     var textBox = textBoxesPossibleTargetTranslations[i];
                     var button = buttonsFillTargetOption[i];
                     button.Text = $" &{mnemonicChar++}";
-					textBox.Font = textBoxTargetTextExisting.Font;
+					textBox.Font = targetLanguageFont;
                     textBox.RightToLeft = targetLanguageRightToLeft;
                     var rowStyle = tableLayoutPanel.RowStyles[nRowStyleOffset + i];
                     rowStyle.SizeType = SizeType.Percent;   // gives it real estate
@@ -829,8 +829,16 @@ namespace BackTranslationHelper
                     textBoxPossibleTargetTranslation2.Font =
                     textBoxPossibleTargetTranslation3.Font =
                     textBoxTargetBackTranslation.Font = fontDialog.Font;
-                mapProjectNameToTargetFontOverride.Add(projectName, fontOverride);
-                Properties.Settings.Default.MapProjectNameToTargetFontOverride = SettingFromDictionary(mapProjectNameToTargetFontOverride);
+
+				if (mapProjectNameToTargetFontOverride.ContainsKey(projectName))
+				{
+					mapProjectNameToTargetFontOverride[projectName] = fontOverride;
+				}
+				else
+				{
+					mapProjectNameToTargetFontOverride.Add(projectName, fontOverride);
+				}
+				Properties.Settings.Default.MapProjectNameToTargetFontOverride = SettingFromDictionary(mapProjectNameToTargetFontOverride);
                 Properties.Settings.Default.Save();
             }
         }
