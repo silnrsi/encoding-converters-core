@@ -61,13 +61,13 @@ namespace SilEncConverters40.EcTranslators.GoogleTranslator
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 50F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(660, 368);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(659, 368);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
             // buttonOK
             // 
             this.buttonOK.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.buttonOK.Location = new System.Drawing.Point(288, 342);
+            this.buttonOK.Location = new System.Drawing.Point(287, 342);
             this.buttonOK.Name = "buttonOK";
             this.buttonOK.Size = new System.Drawing.Size(75, 23);
             this.buttonOK.TabIndex = 6;
@@ -79,7 +79,7 @@ namespace SilEncConverters40.EcTranslators.GoogleTranslator
             // 
             this.buttonCancel.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonCancel.Location = new System.Drawing.Point(369, 342);
+            this.buttonCancel.Location = new System.Drawing.Point(368, 342);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(75, 23);
             this.buttonCancel.TabIndex = 7;
@@ -103,7 +103,7 @@ namespace SilEncConverters40.EcTranslators.GoogleTranslator
             this.textBoxTranslatorKey.Location = new System.Drawing.Point(211, 3);
             this.textBoxTranslatorKey.Multiline = true;
             this.textBoxTranslatorKey.Name = "textBoxTranslatorKey";
-            this.textBoxTranslatorKey.Size = new System.Drawing.Size(446, 283);
+            this.textBoxTranslatorKey.Size = new System.Drawing.Size(445, 283);
             this.textBoxTranslatorKey.TabIndex = 2;
             // 
             // linkLabelInstructions
@@ -128,7 +128,7 @@ namespace SilEncConverters40.EcTranslators.GoogleTranslator
             this.ClientSize = new System.Drawing.Size(686, 392);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Name = "QueryForGoogleCredentials";
-            this.Text = "Enter DeepL Translator Resource Key";
+            this.Text = "Enter Google Translate API Credentials";
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             this.ResumeLayout(false);

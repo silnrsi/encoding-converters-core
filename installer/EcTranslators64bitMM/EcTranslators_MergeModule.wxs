@@ -328,19 +328,14 @@
 									<File Id="bt_colorschememapping.xml" Name="colorschememapping.xml" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\colorschememapping.xml"/>
 									<File Id="bt_themedata.thmx" Name="themedata.thmx" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\themedata.thmx"/>
 									<File Id="bt_header.htm" Name="header.htm" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\header.htm"/>
-									<File Id="bt_image001.png" Name="image001.png" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\image001.png"/>
-									<File Id="bt_image002.jpg" Name="image002.jpg" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\image002.jpg"/>
+									<File Id="bt_image002.png" Name="image002.png" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\image002.png"/>
 									<File Id="bt_image003.jpg" Name="image003.jpg" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\image003.jpg"/>
-									<File Id="bt_image004.png" Name="image004.png" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\image004.png"/>
+									<File Id="bt_image004.jpg" Name="image004.jpg" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\image004.jpg"/>
 									<File Id="bt_image006.jpg" Name="image006.jpg" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\image006.jpg"/>
 									<File Id="bt_image007.png" Name="image007.png" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\image007.png"/>
-									<File Id="bt_image008.png" Name="image008.png" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\image008.png"/>
-									<File Id="bt_image010.png" Name="image010.png" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\image010.png"/>
-									<File Id="bt_image014.jpg" Name="image014.jpg" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\image014.jpg"/>
-									<File Id="bt_image015.jpg" Name="image015.jpg" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\image015.jpg"/>
-									<File Id="bt_item0018.xml" Name="item0018.xml" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\item0018.xml"/>
-									<File Id="bt_oledata.mso" Name="oledata.mso" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\oledata.mso"/>
-									<File Id="bt_props019.xml" Name="props019.xml" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\props019.xml"/>
+									<File Id="bt_image010.jpg" Name="image010.jpg" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\image010.jpg"/>
+									<File Id="bt_item0015.xml" Name="item0015.xml" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\item0015.xml"/>
+									<File Id="bt_props016.xml" Name="props016.xml" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\props016.xml"/>
 								</Component>
 							</Directory>
 
@@ -355,14 +350,10 @@
 									<File Id="dt_colorschememapping.xml" Name="colorschememapping.xml" Source="..\..\redist\Help\Deepl_Translator_Plug-in_About_box_files\colorschememapping.xml"/>
 									<File Id="dt_themedata.thmx" Name="themedata.thmx" Source="..\..\redist\Help\Deepl_Translator_Plug-in_About_box_files\themedata.thmx"/>
 									<File Id="dt_header.htm" Name="header.htm" Source="..\..\redist\Help\Deepl_Translator_Plug-in_About_box_files\header.htm"/>
-									<File Id="dt_image001.emz" Name="image001.emz" Source="..\..\redist\Help\Deepl_Translator_Plug-in_About_box_files\image001.emz"/>
-									<File Id="dt_image002.gif" Name="image002.gif" Source="..\..\redist\Help\Deepl_Translator_Plug-in_About_box_files\image002.gif"/>
 									<File Id="dt_image003.jpg" Name="image003.jpg" Source="..\..\redist\Help\Deepl_Translator_Plug-in_About_box_files\image003.jpg"/>
-									<File Id="dt_image004.png" Name="image004.png" Source="..\..\redist\Help\Deepl_Translator_Plug-in_About_box_files\image004.png"/>
+									<File Id="dt_image004.jpg" Name="image004.jpg" Source="..\..\redist\Help\Deepl_Translator_Plug-in_About_box_files\image004.jpg"/>
 									<File Id="dt_image005.jpg" Name="image005.jpg" Source="..\..\redist\Help\Deepl_Translator_Plug-in_About_box_files\image005.jpg"/>
-									<File Id="dt_image006.png" Name="image006.png" Source="..\..\redist\Help\Deepl_Translator_Plug-in_About_box_files\image006.png"/>
-									<File Id="dt_image008.jpg" Name="image008.jpg" Source="..\..\redist\Help\Deepl_Translator_Plug-in_About_box_files\image008.jpg"/>
-									<File Id="dt_image012.png" Name="image012.png" Source="..\..\redist\Help\Deepl_Translator_Plug-in_About_box_files\image012.png"/>
+									<File Id="dt_image006.jpg" Name="image006.jpg" Source="..\..\redist\Help\Deepl_Translator_Plug-in_About_box_files\image006.jpg"/>
 									<File Id="dt_item0015.xml" Name="item0015.xml" Source="..\..\redist\Help\Deepl_Translator_Plug-in_About_box_files\item0015.xml"/>
 									<File Id="dt_props016.xml" Name="props016.xml" Source="..\..\redist\Help\Deepl_Translator_Plug-in_About_box_files\props016.xml"/>
 								</Component>
@@ -379,22 +370,12 @@
 									<File Id="gt_colorschememapping.xml" Name="colorschememapping.xml" Source="..\..\redist\Help\Google_Translate_Plug-in_About_box_files\colorschememapping.xml"/>
 									<File Id="gt_themedata.thmx" Name="themedata.thmx" Source="..\..\redist\Help\Google_Translate_Plug-in_About_box_files\themedata.thmx"/>
 									<File Id="gt_header.htm" Name="header.htm" Source="..\..\redist\Help\Google_Translate_Plug-in_About_box_files\header.htm"/>
-									<File Id="gt_image001.emz" Name="image001.emz" Source="..\..\redist\Help\Google_Translate_Plug-in_About_box_files\image001.emz"/>
-									<File Id="gt_image001.jpg" Name="image001.jpg" Source="..\..\redist\Help\Google_Translate_Plug-in_About_box_files\image001.jpg"/>
-									<File Id="gt_image002.gif" Name="image002.gif" Source="..\..\redist\Help\Google_Translate_Plug-in_About_box_files\image002.gif"/>
-									<File Id="gt_image002.jpg" Name="image002.jpg" Source="..\..\redist\Help\Google_Translate_Plug-in_About_box_files\image002.jpg"/>
-									<File Id="gt_image004.jpg" Name="image004.jpg" Source="..\..\redist\Help\Google_Translate_Plug-in_About_box_files\image004.jpg"/>
-									<File Id="gt_image004.png" Name="image004.png" Source="..\..\redist\Help\Google_Translate_Plug-in_About_box_files\image004.png"/>
-									<File Id="gt_image005.jpg" Name="image005.jpg" Source="..\..\redist\Help\Google_Translate_Plug-in_About_box_files\image005.jpg"/>
-									<File Id="gt_image005.png" Name="image005.png" Source="..\..\redist\Help\Google_Translate_Plug-in_About_box_files\image005.png"/>
-									<File Id="gt_image006.jpg" Name="image006.jpg" Source="..\..\redist\Help\Google_Translate_Plug-in_About_box_files\image006.jpg"/>
-									<File Id="gt_image006.png" Name="image006.png" Source="..\..\redist\Help\Google_Translate_Plug-in_About_box_files\image006.png"/>
-									<File Id="gt_image008.png" Name="image008.png" Source="..\..\redist\Help\Google_Translate_Plug-in_About_box_files\image008.png"/>
-									<File Id="gt_image009.png" Name="image009.png" Source="..\..\redist\Help\Google_Translate_Plug-in_About_box_files\image009.png"/>
+									<File Id="gt_image003.jpg" Name="image003.jpg" Source="..\..\redist\Help\Google_Translate_Plug-in_About_box_files\image003.jpg"/>
+									<File Id="gt_image008.jpg" Name="image008.jpg" Source="..\..\redist\Help\Google_Translate_Plug-in_About_box_files\image008.jpg"/>
 									<File Id="gt_image011.png" Name="image011.png" Source="..\..\redist\Help\Google_Translate_Plug-in_About_box_files\image011.png"/>
-									<File Id="gt_image012.png" Name="image012.png" Source="..\..\redist\Help\Google_Translate_Plug-in_About_box_files\image012.png"/>
-									<File Id="gt_item0015.xml" Name="item0015.xml" Source="..\..\redist\Help\Google_Translate_Plug-in_About_box_files\item0015.xml"/>
-									<File Id="gt_props016.xml" Name="props016.xml" Source="..\..\redist\Help\Google_Translate_Plug-in_About_box_files\props016.xml"/>
+									<File Id="gt_image012.jpg" Name="image012.jpg" Source="..\..\redist\Help\Google_Translate_Plug-in_About_box_files\image012.jpg"/>
+									<File Id="gt_item0011.xml" Name="item0011.xml" Source="..\..\redist\Help\Google_Translate_Plug-in_About_box_files\item0011.xml"/>
+									<File Id="gt_props012.xml" Name="props012.xml" Source="..\..\redist\Help\Google_Translate_Plug-in_About_box_files\props012.xml"/>
 								</Component>
 							</Directory>
 
