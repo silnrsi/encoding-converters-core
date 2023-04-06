@@ -542,7 +542,8 @@ namespace SilEncConverters40.EcTranslators.BingTranslator
 			var azureTranslatorKeyOverride = Properties.Settings.Default.AzureTranslatorKeyOverride;
 			if (!String.IsNullOrEmpty(azureTranslatorKeyOverride))
 				azureTranslatorKeyOverride = EncryptionClass.Decrypt(azureTranslatorKeyOverride);
-			var dlg = new QueryForAzureKeyAndLocation(azureTranslatorKeyOverride, Properties.Settings.Default.AzureTranslatorRegion);
+
+			using var dlg = new QueryForAzureKeyAndLocation(azureTranslatorKeyOverride, Properties.Settings.Default.AzureTranslatorRegion);
 			if (dlg.ShowDialog() == DialogResult.OK)
 			{
 				azureTranslatorKeyOverride = EncryptionClass.Encrypt(dlg.AzureTranslatorKey);

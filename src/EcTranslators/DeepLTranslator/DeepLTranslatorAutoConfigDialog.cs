@@ -328,7 +328,7 @@ namespace SilEncConverters40.EcTranslators.DeepLTranslator
 			var deepLTranslatorKeyOverride = Properties.Settings.Default.DeepLTranslatorKeyOverride;
 			if (!String.IsNullOrEmpty(deepLTranslatorKeyOverride))
 				deepLTranslatorKeyOverride = EncryptionClass.Decrypt(deepLTranslatorKeyOverride);
-			var dlg = new QueryForDeepLKey(deepLTranslatorKeyOverride);
+			using var dlg = new QueryForDeepLKey(deepLTranslatorKeyOverride);
 			if (dlg.ShowDialog() == DialogResult.OK)
 			{
 				var translatorKey = EncryptionClass.Encrypt(dlg.TranslatorKey);

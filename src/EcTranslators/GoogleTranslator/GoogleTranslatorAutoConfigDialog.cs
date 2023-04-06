@@ -305,7 +305,7 @@ namespace SilEncConverters40.EcTranslators.GoogleTranslator
 			if (!String.IsNullOrEmpty(translatorCredentialsOverride))
 				translatorCredentialsOverride = EncryptionClass.Decrypt(translatorCredentialsOverride);
 
-			var dlg = new QueryForGoogleCredentials(translatorCredentialsOverride);
+			using var dlg = new QueryForGoogleCredentials(translatorCredentialsOverride);
 			if (dlg.ShowDialog() == DialogResult.Yes)
 			{
 				var translatorKey = EncryptionClass.Encrypt(dlg.TranslatorKey);
