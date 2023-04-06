@@ -12,4 +12,10 @@
                    DisplayName="DeepL Translator"
                    ConfiguratorProgId="SilEncConverters40.EcTranslators.DeepLTranslator.DeepLTranslatorEncConverterConfig"
                    AssemblyReference="EcTranslators, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" />
+  <ECPluginDetails ImplementationName="SIL.GoogleTranslator"
+                   ImplementationProgId="SilEncConverters40.EcTranslators.GoogleTranslator.GoogleTranslatorEncConverter"
+                   Priority="0"
+                   DisplayName="Google Translate"
+                   ConfiguratorProgId="SilEncConverters40.EcTranslators.GoogleTranslator.GoogleTranslatorEncConverterConfig"
+                   AssemblyReference="EcTranslators, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" />
 </EncConverterPlugins>

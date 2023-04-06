@@ -127,18 +127,17 @@ namespace BackTranslationHelper
                 var rowStyle = tableLayoutPanel.RowStyles[nRowStyleOffset++];
                 rowStyle.SizeType = SizeType.Percent;   // gives it real estate
                 rowStyle.Height = 20F;
-                labelForExistingTargetData.Visible = !hideColumn1LabelsToolStripMenuItem.Checked;
-                textBoxTargetTextExisting.Visible = buttonFillExistingTargetText.Visible = true;
-                textBoxTargetTextExisting.Font = targetLanguageFont;
-                textBoxTargetTextExisting.RightToLeft = targetLanguageRightToLeft;
+				textBoxTargetTextExisting.Font = targetLanguageFont;
+				textBoxTargetTextExisting.RightToLeft = targetLanguageRightToLeft;
             }
             else
             {
-                tableLayoutPanel.RowStyles[nRowStyleOffset++].SizeType = SizeType.AutoSize; // makes it disappear
-                textBoxTargetTextExisting.Visible = labelForExistingTargetData.Visible = buttonFillExistingTargetText.Visible = false;
-            }
+				var rowStyle = tableLayoutPanel.RowStyles[nRowStyleOffset++];
+				rowStyle.SizeType = SizeType.Absolute; // makes it disappear
+				rowStyle.Height = 0;
+			}
 
-            textBoxTargetBackTranslation.Font = targetLanguageFont;
+			textBoxTargetBackTranslation.Font = targetLanguageFont;
             textBoxTargetBackTranslation.RightToLeft = targetLanguageRightToLeft;
 
             // we're either showing the target translated suggestion in a textbox (if there's only 1 converter)
@@ -160,15 +159,13 @@ namespace BackTranslationHelper
                 {
                     var textBox = textBoxesPossibleTargetTranslations[i];
                     var button = buttonsFillTargetOption[i];
-                    textBox.Visible = button.Visible = false;
-                    tableLayoutPanel.RowStyles[nRowStyleOffset + i].SizeType = SizeType.AutoSize;
-                }
-                labelForTargetDataOptions.Visible = false;
+					var rowStyle = tableLayoutPanel.RowStyles[nRowStyleOffset + i];
+					rowStyle.SizeType = SizeType.Absolute;
+					rowStyle.Height = 0;
+				}
             }
             else
             {
-                labelForTargetDataOptions.Visible = !Properties.Settings.Default.HideLabels;
-
                 // set up mnemonics for the buttons to make it easier to trigger
                 var mnemonicChar = 1;
                 if (_displayExistingTargetTranslation)
@@ -179,8 +176,7 @@ namespace BackTranslationHelper
                     var textBox = textBoxesPossibleTargetTranslations[i];
                     var button = buttonsFillTargetOption[i];
                     button.Text = $" &{mnemonicChar++}";
-                    textBox.Visible = button.Visible = true;
-                    textBox.Font = textBoxTargetTextExisting.Font;
+					textBox.Font = targetLanguageFont;
                     textBox.RightToLeft = targetLanguageRightToLeft;
                     var rowStyle = tableLayoutPanel.RowStyles[nRowStyleOffset + i];
                     rowStyle.SizeType = SizeType.Percent;   // gives it real estate
@@ -192,9 +188,10 @@ namespace BackTranslationHelper
                 {
                     var textBox = textBoxesPossibleTargetTranslations[i];
                     var button = buttonsFillTargetOption[i];
-                    textBox.Visible = button.Visible = false;
-                    tableLayoutPanel.RowStyles[nRowStyleOffset + i].SizeType = SizeType.AutoSize;
-                }
+					var rowStyle = tableLayoutPanel.RowStyles[nRowStyleOffset + i];
+					rowStyle.SizeType = SizeType.Absolute;
+					rowStyle.Height = 0;
+				}
             }
 
             buttonSubstitute.Visible = FindReplaceHelper.IsSpellFixerAvailable;
@@ -329,7 +326,7 @@ namespace BackTranslationHelper
                 if (mapProjectNameToEcTranslators.ContainsKey(projectName))
                     mapProjectNameToEcTranslators.Remove(projectName);
                 translatorNames = new List<string> { theTranslator.Name };
-                mapProjectNameToEcTranslators.Add(projectName, translatorNames);
+                mapProjectNameToEcTranslators[projectName] = translatorNames;
                 Properties.Settings.Default.MapProjectNameToEcTranslators = SettingFromDictionary(mapProjectNameToEcTranslators);
                 Properties.Settings.Default.Save();
             }
@@ -371,17 +368,15 @@ namespace BackTranslationHelper
         {
             var textBoxesPossibleTargetTranslations = tableLayoutPanel.Controls.OfType<TextBox>().Where(l => l.Name.Contains("textBoxPossibleTargetTranslation")).ToList();
             System.Diagnostics.Debug.Assert(newTargetTexts.Count == TheTranslators.Count);
-            System.Diagnostics.Debug.Assert(textBoxesPossibleTargetTranslations.Where(l => l.Visible).Take(newTargetTexts.Count).ToList().All(l => l.Visible));
 
             for (var i = 0; i < TheTranslators.Count; i++)
             {
                 var textBox = textBoxesPossibleTargetTranslations[i];
-                if (textBox.Visible)
-                    textBox.Text = newTargetTexts[i].TargetData;
+				textBox.Text = newTargetTexts[i].TargetData;
             }
         }
 
-        #region Event handlers
+		#region Event handlers
         public void GetNewData(ref BackTranslationHelperModel model)
         {
             if (model == null)
@@ -694,9 +689,9 @@ namespace BackTranslationHelper
                 labelForExistingTargetData.Visible =
                 labelForTargetDataOptions.Visible =
                 labelForTargetTranslation.Visible = !Properties.Settings.Default.HideLabels;
-        }
+		}
 
-        private void HideColumn1LabelsToolStripMenuItem_CheckStateChanged(object sender, EventArgs e)
+		private void HideColumn1LabelsToolStripMenuItem_CheckStateChanged(object sender, EventArgs e)
         {
             var newCheckState = hideColumn1LabelsToolStripMenuItem.Checked;
             if (newCheckState != Properties.Settings.Default.HideLabels)
@@ -802,7 +797,7 @@ namespace BackTranslationHelper
                 };
 
                 textBoxSourceData.Font = fontDialog.Font;
-                mapProjectNameToSourceFontOverride.Add(projectName, fontOverride);
+                mapProjectNameToSourceFontOverride[projectName] = fontOverride;
                 Properties.Settings.Default.MapProjectNameToSourceFontOverride = SettingFromDictionary(mapProjectNameToSourceFontOverride);
                 Properties.Settings.Default.Save();
             }
@@ -834,8 +829,9 @@ namespace BackTranslationHelper
                     textBoxPossibleTargetTranslation2.Font =
                     textBoxPossibleTargetTranslation3.Font =
                     textBoxTargetBackTranslation.Font = fontDialog.Font;
-                mapProjectNameToTargetFontOverride.Add(projectName, fontOverride);
-                Properties.Settings.Default.MapProjectNameToTargetFontOverride = SettingFromDictionary(mapProjectNameToTargetFontOverride);
+
+				mapProjectNameToTargetFontOverride[projectName] = fontOverride;
+				Properties.Settings.Default.MapProjectNameToTargetFontOverride = SettingFromDictionary(mapProjectNameToTargetFontOverride);
                 Properties.Settings.Default.Save();
             }
         }
@@ -854,11 +850,7 @@ namespace BackTranslationHelper
             textBoxSourceData.RightToLeft = rtlOverride;
             var mapProjectNameToSourceRtLOverride = SettingToDictionary(Properties.Settings.Default.MapProjectNameToSourceRtLOverride);
             var value = new List<string> { sourceRightToLeftToolStripMenuItem.Checked ? "true" : "false" };
-            if (mapProjectNameToSourceRtLOverride.ContainsKey(projectName))
-                mapProjectNameToSourceRtLOverride[projectName] = value;
-            else
-                mapProjectNameToSourceRtLOverride.Add(projectName, value);
-
+            mapProjectNameToSourceRtLOverride[projectName] = value;
             Properties.Settings.Default.MapProjectNameToSourceRtLOverride = SettingFromDictionary(mapProjectNameToSourceRtLOverride);
             Properties.Settings.Default.Save();
         }
@@ -881,11 +873,7 @@ namespace BackTranslationHelper
                 textBoxTargetBackTranslation.RightToLeft = rtlOverride;
             var mapProjectNameToTargetRtLOverride = SettingToDictionary(Properties.Settings.Default.MapProjectNameToTargetRtLOverride);
             var value = new List<string> { targetRightToLeftToolStripMenuItem.Checked ? "true" : "false" };
-            if (mapProjectNameToTargetRtLOverride.ContainsKey(projectName))
-                mapProjectNameToTargetRtLOverride[projectName] = value;
-            else
-                mapProjectNameToTargetRtLOverride.Add(projectName, value);
-
+            mapProjectNameToTargetRtLOverride[projectName] = value;
             Properties.Settings.Default.MapProjectNameToTargetRtLOverride = SettingFromDictionary(mapProjectNameToTargetRtLOverride);
             Properties.Settings.Default.Save();
         }
@@ -893,17 +881,13 @@ namespace BackTranslationHelper
         private void BroadCastKey(string keyToSend)
         {
             SendKeyToControl(textBoxSourceData, keyToSend);
-            if (textBoxTargetTextExisting.Visible)
-                SendKeyToControl(textBoxTargetTextExisting, keyToSend);
+            SendKeyToControl(textBoxTargetTextExisting, keyToSend);
 
             var textBoxesPossibleTargetTranslations = tableLayoutPanel.Controls.OfType<TextBox>().Where(l => l.Name.Contains("textBoxPossibleTargetTranslation")).ToList();
             for (var i = 0; i < TheTranslators.Count; i++)
             {
                 var textBox = textBoxesPossibleTargetTranslations[i];
-                if (textBox.Visible)
-                {
-                    SendKeyToControl(textBox, keyToSend);
-                }
+                SendKeyToControl(textBox, keyToSend);
             }
             textBoxTargetBackTranslation.Focus();    // finally, put the focus back in the editable box
         }
@@ -1115,5 +1099,5 @@ namespace BackTranslationHelper
 			if (parent is Form parentForm)
                 parentForm.TopMost = newCheckState;
         }
-    }
+	}
 }

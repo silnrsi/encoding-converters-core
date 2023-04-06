@@ -89,11 +89,10 @@ namespace SilEncConverters40.EcTranslators.BingTranslator
 			ref string lhsEncodingID, ref string rhsEncodingID, ref ConvType conversionType,
 			ref Int32 processTypeFlags, Int32 codePageInput, Int32 codePageOutput, bool bAdding)
 		{
-			Util.DebugWriteLine(this, "BEGIN");
-            Util.DebugWriteLine(this, converterName + ", " + converterSpec);
+			Util.DebugWriteLine(this, $"BEGIN: {converterName}, {converterSpec}");
 
-            // let the base class have first stab at it
-            base.Initialize(converterName, converterSpec, ref lhsEncodingID, ref rhsEncodingID, 
+			// let the base class have first stab at it
+			base.Initialize(converterName, converterSpec, ref lhsEncodingID, ref rhsEncodingID, 
                 ref conversionType, ref processTypeFlags, codePageInput, codePageOutput, bAdding );
 
 			if (!ParseConverterIdentifier(converterSpec, out transductionRequested,
@@ -113,6 +112,11 @@ namespace SilEncConverters40.EcTranslators.BingTranslator
 			if (String.IsNullOrEmpty(rhsEncodingID))
 				rhsEncodingID = m_strRhsEncodingID = EncConverters.strDefUnicodeEncoding;
 
+			// this is a Translation process type by definition. This is used by various programs to prevent
+			//	over usage -- e.g. Paratext should be blocking these EncConverter types as the 'Transliteration'
+			//	type project EncConverter (bkz it'll try to "transliterate" the entire corpus -- probably not
+			//	what's wanted). Also ClipboardEncConverter also doesn't process these for a preview (so the
+			//	system tray popup doesn't take forever to display.
 			processTypeFlags |= (int)ProcessTypeFlags.Translation;	// this is a Translation process type by definition
 
 			Util.DebugWriteLine(this, "END");
@@ -162,7 +166,7 @@ namespace SilEncConverters40.EcTranslators.BingTranslator
 			}
 			catch (Exception ex)
 			{
-				return LogExceptionMessage("GetTranslationCapabilities", ex);
+				return EcTranslatorUtils.LogExceptionMessage("GetTranslationCapabilities", ex);
 			}
 		}
 
@@ -185,21 +189,6 @@ namespace SilEncConverters40.EcTranslators.BingTranslator
 		#endregion Initialization
 
 		#region Abstract Base Class Overrides
-		protected unsafe override void PreConvert
-            (
-			EncodingForm        eInEncodingForm,
-            ref EncodingForm    eInFormEngine,
-            EncodingForm        eOutEncodingForm,
-            ref EncodingForm    eOutFormEngine,
-            ref NormalizeFlags  eNormalizeOutput,
-            bool                bForward
-            ) 
-        {
-            // let the base class do it's thing first
-            base.PreConvert( eInEncodingForm, ref eInFormEngine,
-                            eOutEncodingForm, ref eOutFormEngine,
-                            ref eNormalizeOutput, bForward);
-        }
 
         [CLSCompliant(false)]
         protected override unsafe void DoConvert
@@ -217,17 +206,15 @@ namespace SilEncConverters40.EcTranslators.BingTranslator
 			//  quantity and no other EncConverter does it that way. Besides, I'm afraid I'll break smtg ;-]
 			byte[] baIn = new byte[nInLen];
 			ECNormalizeData.ByteStarToByteArr(lpInBuffer, nInLen, baIn);
-			string strOutput = null;
-			Encoding enc = Encoding.Unicode;
 
-			char[] caIn = enc.GetChars(baIn);
+			char[] caIn = Encoding.Unicode.GetChars(baIn);
 
 			// here's our input string
 			var strInput = new string(caIn);
 
-			strOutput = CallBingTranslator(strInput).Result;
+			var strOutput = CallBingTranslator(strInput).Result;
 
-			StringToProperByteStar(strOutput, lpOutBuffer, ref rnOutLen);
+			EcTranslatorUtils.StringToProperByteStar(strOutput, lpOutBuffer, ref rnOutLen);
 		}
 
 		private async Task<string> CallBingTranslator(string strInput)
@@ -263,7 +250,7 @@ namespace SilEncConverters40.EcTranslators.BingTranslator
 			}
 			catch (Exception ex)
 			{
-				return LogExceptionMessage(GetType().Name, ex);
+				return EcTranslatorUtils.LogExceptionMessage(GetType().Name, ex);
 			}
 		}
 
@@ -350,38 +337,9 @@ namespace SilEncConverters40.EcTranslators.BingTranslator
 			}
 		}
 
-		[CLSCompliant(false)]
-		protected unsafe void StringToProperByteStar(string strOutput, byte* lpOutBuffer, ref int rnOutLen)
-		{
-			int nLen = strOutput.Length * 2;
-			if (nLen > (int)rnOutLen)
-				EncConverters.ThrowError(ErrStatus.OutputBufferFull);
-			rnOutLen = nLen;
-			ECNormalizeData.StringToByteStar(strOutput, lpOutBuffer, rnOutLen, false);
-		}
-
 		protected override string GetConfigTypeName
 		{
 			get { return typeof(BingTranslatorEncConverterConfig).AssemblyQualifiedName; }
-		}
-
-		protected unsafe void Load(bool bReload)
-        {
-            Util.DebugWriteLine(this, "BEGIN");
-            Util.DebugWriteLine(this, "END");
-        }
-
-		public static string LogExceptionMessage(string className, Exception ex)
-		{
-			string msg = "Error occurred: " + ex.Message;
-			while (ex.InnerException != null)
-			{
-				ex = ex.InnerException;
-				msg += $"{Environment.NewLine}because: (InnerException): {ex.Message}";
-			}
-
-			Util.DebugWriteLine(className, msg);
-			return msg;
 		}
 
 		#endregion Misc helpers

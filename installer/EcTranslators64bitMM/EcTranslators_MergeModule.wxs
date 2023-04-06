@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
     <Module Id="EcTranslatorsMM" Language="1033" Version="5.0.0.0">
-        <Package Id="{9B0F9F79-B67B-4028-ADB8-F0F1D579FDF4}" Comments="Merge module for the Translator EncConverters (e.g. Bing, etc)"
+        <Package Id="{9B0F9F79-B67B-4028-ADB8-F0F1D579FDF4}" Comments="Merge module for the Translator EncConverters (e.g. Bing, DeepL, and Google Translate)"
 				 Description="Include in any client application deployment project which uses the EncConverters interface" Manufacturer="SIL International"
-				 InstallerVersion="200" Keywords="SIL; Bing Translator; EncConverters"
+				 InstallerVersion="200" Keywords="SIL; Bing Translator; DeepL Translator; Google Translate; EncConverters"
                  Platform="x64" />
 
         <Directory Id="TARGETDIR" Name="SourceDir">
@@ -16,12 +16,18 @@
 					<Class Id="{4EA28F93-EDAD-49A4-8FB7-3E22C5EAD07B}" Context="InprocServer32" Description="SilEncConverters40.EcTranslators.DeepLTranslator.DeepLTranslatorEncConverter" ThreadingModel="both" ForeignServer="mscoree.dll">
 						<ProgId Id="SilEncConverters40.EcTranslators.DeepLTranslator.DeepLTranslatorEncConverter" Description="SilEncConverters40.EcTranslators.DeepLTranslator.DeepLTranslatorEncConverter" />
 					</Class>
+					<Class Id="{A2C80989-EBBD-4257-9006-31FADC88646F}" Context="InprocServer32" Description="SilEncConverters40.EcTranslators.GoogleTranslator.GoogleTranslatorEncConverter" ThreadingModel="both" ForeignServer="mscoree.dll">
+						<ProgId Id="SilEncConverters40.EcTranslators.GoogleTranslator.GoogleTranslatorEncConverter" Description="SilEncConverters40.EcTranslators.GoogleTranslator.GoogleTranslatorEncConverter" />
+					</Class>
 
 					<Class Id="{EF5B7141-72EE-30C0-B86E-A738A1E962B1}" Context="InprocServer32" Description="SilEncConverters40.EcTranslators.BingTranslator.BingTranslatorEncConverterConfig" ThreadingModel="both" ForeignServer="mscoree.dll">
 						<ProgId Id="SilEncConverters40.EcTranslators.BingTranslator.BingTranslatorEncConverterConfig" Description="SilEncConverters40.EcTranslators.BingTranslator.BingTranslatorEncConverterConfig" />
 					</Class>
 					<Class Id="{2F9C4B82-3BE1-32C7-A749-EB93CF454B70}" Context="InprocServer32" Description="SilEncConverters40.EcTranslators.DeepLTranslator.DeepLTranslatorEncConverterConfig" ThreadingModel="both" ForeignServer="mscoree.dll">
 						<ProgId Id="SilEncConverters40.EcTranslators.DeepLTranslator.DeepLTranslatorEncConverterConfig" Description="SilEncConverters40.EcTranslators.DeepLTranslator.DeepLTranslatorEncConverterConfig" />
+					</Class>
+					<Class Id="{6D1DE91D-8803-4F78-A77C-B6C4F182D40E}" Context="InprocServer32" Description="SilEncConverters40.EcTranslators.GoogleTranslator.GoogleTranslatorEncConverterConfig" ThreadingModel="both" ForeignServer="mscoree.dll">
+						<ProgId Id="SilEncConverters40.EcTranslators.GoogleTranslator.GoogleTranslatorEncConverterConfig" Description="SilEncConverters40.EcTranslators.GoogleTranslator.GoogleTranslatorEncConverterConfig" />
 					</Class>
 
 					<File Id="EcTranslators.dll" Name="EcTranslators.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="EcTranslators.dll" AssemblyApplication="EcTranslators.dll"
@@ -67,6 +73,26 @@
 					<RegistryValue Root="HKCR" Key="CLSID\{2F9C4B82-3BE1-32C7-A749-EB93CF454B70}\InprocServer32" Name="RuntimeVersion" Value="v4.0.30319" Type="string" Action="write" />
 					<RegistryValue Root="HKCR" Key="CLSID\{2F9C4B82-3BE1-32C7-A749-EB93CF454B70}\InprocServer32" Name="CodeBase" Value="file:///[#EcTranslators.dll]" Type="string" Action="write" />
 
+					<RegistryValue Root="HKCR" Key="CLSID\{A2C80989-EBBD-4257-9006-31FADC88646F}\Implemented Categories\{62C8FE65-4EBB-45e7-B440-6E39B2CDBF29}" Value="" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{A2C80989-EBBD-4257-9006-31FADC88646F}\InprocServer32\4.0.0.0" Name="Class" Value="SilEncConverters40.EcTranslators.GoogleTranslator.GoogleTranslatorEncConverter" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{A2C80989-EBBD-4257-9006-31FADC88646F}\InprocServer32\4.0.0.0" Name="Assembly" Value="EcTranslators, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{A2C80989-EBBD-4257-9006-31FADC88646F}\InprocServer32\4.0.0.0" Name="RuntimeVersion" Value="v4.0.30319" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{A2C80989-EBBD-4257-9006-31FADC88646F}\InprocServer32\4.0.0.0" Name="CodeBase" Value="file:///[#EcTranslators.dll]" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{A2C80989-EBBD-4257-9006-31FADC88646F}\InprocServer32" Name="Class" Value="SilEncConverters40.EcTranslators.GoogleTranslator.GoogleTranslatorEncConverter" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{A2C80989-EBBD-4257-9006-31FADC88646F}\InprocServer32" Name="Assembly" Value="EcTranslators, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{A2C80989-EBBD-4257-9006-31FADC88646F}\InprocServer32" Name="RuntimeVersion" Value="v4.0.30319" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{A2C80989-EBBD-4257-9006-31FADC88646F}\InprocServer32" Name="CodeBase" Value="file:///[#EcTranslators.dll]" Type="string" Action="write" />
+
+					<RegistryValue Root="HKCR" Key="CLSID\{6D1DE91D-8803-4F78-A77C-B6C4F182D40E}\Implemented Categories\{62C8FE65-4EBB-45e7-B440-6E39B2CDBF29}" Value="" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{6D1DE91D-8803-4F78-A77C-B6C4F182D40E}\InprocServer32\4.0.0.0" Name="Class" Value="SilEncConverters40.EcTranslators.GoogleTranslator.GoogleTranslatorEncConverterConfig" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{6D1DE91D-8803-4F78-A77C-B6C4F182D40E}\InprocServer32\4.0.0.0" Name="Assembly" Value="EcTranslators, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{6D1DE91D-8803-4F78-A77C-B6C4F182D40E}\InprocServer32\4.0.0.0" Name="RuntimeVersion" Value="v4.0.30319" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{6D1DE91D-8803-4F78-A77C-B6C4F182D40E}\InprocServer32\4.0.0.0" Name="CodeBase" Value="file:///[#EcTranslators.dll]" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{6D1DE91D-8803-4F78-A77C-B6C4F182D40E}\InprocServer32" Name="Class" Value="SilEncConverters40.EcTranslators.GoogleTranslator.GoogleTranslatorEncConverterConfig" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{6D1DE91D-8803-4F78-A77C-B6C4F182D40E}\InprocServer32" Name="Assembly" Value="EcTranslators, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{6D1DE91D-8803-4F78-A77C-B6C4F182D40E}\InprocServer32" Name="RuntimeVersion" Value="v4.0.30319" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{6D1DE91D-8803-4F78-A77C-B6C4F182D40E}\InprocServer32" Name="CodeBase" Value="file:///[#EcTranslators.dll]" Type="string" Action="write" />
+
 				</Component>
 
 				<Component Id="EcTranslators.dll.config" Guid="{1A4FE83D-7EDB-41BC-93E5-18485A3147F1}">
@@ -79,9 +105,12 @@
 							<Interface Id="{3C93B5AB-3090-425E-8905-149196742749}" Name="_BingTranslatorEncConverter" ProxyStubClassId32="{00020424-0000-0000-C000-000000000046}" />
 							<Interface Id="{F7084FE2-D092-47EB-AE14-DA18CE55D188}" Name="_BingTranslatorEncConverterConfig" ProxyStubClassId32="{00020424-0000-0000-C000-000000000046}" />
 							<Interface Id="{C823E675-9558-49F8-81E2-055F00781D35}" Name="_BingTranslatorAutoConfigDialog" ProxyStubClassId32="{00020424-0000-0000-C000-000000000046}" />
-							<Interface Id="{B835705F-B405-3D21-96B2-8EE0866A9CA8}" Name="_DeepLTranslatorEncConverterConfig" ProxyStubClassId32="{00020424-0000-0000-C000-000000000046}" />
-							<Interface Id="{D68A1476-B72C-34A6-843D-33DBFC5BEB1C}" Name="_DeepLTranslatorAutoConfigDialog" ProxyStubClassId32="{00020424-0000-0000-C000-000000000046}" />
-							<Interface Id="{DB5EC15A-B6B0-341A-B26A-3244D9AC5657}" Name="_DeepLTranslatorEncConverter" ProxyStubClassId32="{00020424-0000-0000-C000-000000000046}" />
+							<Interface Id="{4156515D-5738-4AFE-AF2C-F8584C56C794}" Name="_DeepLTranslatorEncConverterConfig" ProxyStubClassId32="{00020424-0000-0000-C000-000000000046}" />
+							<Interface Id="{A77247C1-B55A-49CE-9CE0-AC7AEC42FCC7}" Name="_DeepLTranslatorAutoConfigDialog" ProxyStubClassId32="{00020424-0000-0000-C000-000000000046}" />
+							<Interface Id="{87952809-3B59-40E2-A4D1-47BA20EF4997}" Name="_DeepLTranslatorEncConverter" ProxyStubClassId32="{00020424-0000-0000-C000-000000000046}" />
+							<Interface Id="{838D53E0-92D5-4100-B33F-571A5E694125}" Name="_GoogleTranslatorEncConverterConfig" ProxyStubClassId32="{00020424-0000-0000-C000-000000000046}" />
+							<Interface Id="{6F6F5D9E-A40A-4846-8BA0-6576447989E8}" Name="_GoogleTranslatorAutoConfigDialog" ProxyStubClassId32="{00020424-0000-0000-C000-000000000046}" />
+							<Interface Id="{1DCCF64C-F082-45E7-AE8B-E66D68E5171F}" Name="_GoogleTranslatorEncConverter" ProxyStubClassId32="{00020424-0000-0000-C000-000000000046}" />
 						</TypeLib>
 					</File>
 				</Component>
@@ -228,6 +257,51 @@
 						  Source="..\..\output\x64\release\System.ValueTuple.dll"/>
 				</Component>
 
+				<Component Id="Google.Cloud.Translation.V2.dll" Guid="{88C99B41-3F83-418F-A312-EE106B07A383}">
+					<File Id="Google.Cloud.Translation.V2.dll" Name="Google.Cloud.Translation.V2.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="Google.Cloud.Translation.V2.dll" AssemblyApplication="Google.Cloud.Translation.V2.dll"
+						  Source="..\..\output\x64\release\Google.Cloud.Translation.V2.dll"/>
+				</Component>
+
+				<Component Id="Google.Apis.Translate.v2.dll" Guid="{F14F1743-D102-4EBD-9541-076F27A24273}">
+					<File Id="Google.Apis.Translate.v2.dll" Name="Google.Apis.Translate.v2.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="Google.Apis.Translate.v2.dll" AssemblyApplication="Google.Apis.Translate.v2.dll"
+						  Source="..\..\output\x64\release\Google.Apis.Translate.v2.dll"/>
+				</Component>
+
+				<Component Id="Google.Apis.Auth.PlatformServices.dll" Guid="{0794425D-F123-49CA-A844-B3A86A793B0C}">
+					<File Id="Google.Apis.Auth.PlatformServices.dll" Name="Google.Apis.Auth.PlatformServices.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="Google.Apis.Auth.PlatformServices.dll" AssemblyApplication="Google.Apis.Auth.PlatformServices.dll"
+						  Source="..\..\output\x64\release\Google.Apis.Auth.PlatformServices.dll"/>
+				</Component>
+
+				<Component Id="Google.Apis.PlatformServices.dll" Guid="{D9BB433F-6324-4169-B5BE-B778861C2F71}">
+					<File Id="Google.Apis.PlatformServices.dll" Name="Google.Apis.PlatformServices.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="Google.Apis.PlatformServices.dll" AssemblyApplication="Google.Apis.PlatformServices.dll"
+						  Source="..\..\output\x64\release\Google.Apis.PlatformServices.dll"/>
+				</Component>
+
+				<Component Id="Google.Apis.Auth.dll" Guid="{BDBCAE05-1B69-44AE-827B-16F6BF91ABB4}">
+					<File Id="Google.Apis.Auth.dll" Name="Google.Apis.Auth.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="Google.Apis.Auth.dll" AssemblyApplication="Google.Apis.Auth.dll"
+						  Source="..\..\output\x64\release\Google.Apis.Auth.dll"/>
+				</Component>
+
+				<Component Id="Google.Apis.dll" Guid="{F70841B8-D3A2-430C-9B38-89ACB291D0A6}">
+					<File Id="Google.Apis.dll" Name="Google.Apis.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="Google.Apis.dll" AssemblyApplication="Google.Apis.dll"
+						  Source="..\..\output\x64\release\Google.Apis.dll"/>
+				</Component>
+
+				<Component Id="Google.Apis.Core.dll" Guid="{EDEB27F9-0C9D-49B4-BD5A-4AA74E9000D2}">
+					<File Id="Google.Apis.Core.dll" Name="Google.Apis.Core.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="Google.Apis.Core.dll" AssemblyApplication="Google.Apis.Core.dll"
+						  Source="..\..\output\x64\release\Google.Apis.Core.dll"/>
+				</Component>
+
+				<Component Id="Google.Api.Gax.Rest.dll" Guid="{AB6E0CFC-5588-49A1-A528-02933CBDDE51}">
+					<File Id="Google.Api.Gax.Rest.dll" Name="Google.Api.Gax.Rest.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="Google.Api.Gax.Rest.dll" AssemblyApplication="Google.Api.Gax.Rest.dll"
+						  Source="..\..\output\x64\release\Google.Api.Gax.Rest.dll"/>
+				</Component>
+
+				<Component Id="Google.Api.Gax.dll" Guid="{44485EB8-579D-4711-BC35-AD4E1475533F}">
+					<File Id="Google.Api.Gax.dll" Name="Google.Api.Gax.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="Google.Api.Gax.dll" AssemblyApplication="Google.Api.Gax.dll"
+						  Source="..\..\output\x64\release\Google.Api.Gax.dll"/>
+				</Component>
+
 				<Directory Id="EcTranslatorsECFolder" Name="EC">
                     <Directory Id="EcTranslatorsPluginsFolder" Name="Plugins">
                         <Component Id="Translators4.0.0.0PluginDetails.xml" Guid="{F71D8AD5-F9C8-4619-8507-E19A0A5B7A70}">
@@ -254,19 +328,13 @@
 									<File Id="bt_colorschememapping.xml" Name="colorschememapping.xml" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\colorschememapping.xml"/>
 									<File Id="bt_themedata.thmx" Name="themedata.thmx" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\themedata.thmx"/>
 									<File Id="bt_header.htm" Name="header.htm" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\header.htm"/>
-									<File Id="bt_image001.png" Name="image001.png" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\image001.png"/>
-									<File Id="bt_image002.jpg" Name="image002.jpg" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\image002.jpg"/>
 									<File Id="bt_image003.jpg" Name="image003.jpg" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\image003.jpg"/>
-									<File Id="bt_image004.png" Name="image004.png" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\image004.png"/>
+									<File Id="bt_image004.jpg" Name="image004.jpg" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\image004.jpg"/>
 									<File Id="bt_image006.jpg" Name="image006.jpg" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\image006.jpg"/>
 									<File Id="bt_image007.png" Name="image007.png" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\image007.png"/>
-									<File Id="bt_image008.png" Name="image008.png" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\image008.png"/>
-									<File Id="bt_image010.png" Name="image010.png" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\image010.png"/>
-									<File Id="bt_image014.jpg" Name="image014.jpg" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\image014.jpg"/>
-									<File Id="bt_image015.jpg" Name="image015.jpg" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\image015.jpg"/>
-									<File Id="bt_item0018.xml" Name="item0018.xml" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\item0018.xml"/>
-									<File Id="bt_oledata.mso" Name="oledata.mso" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\oledata.mso"/>
-									<File Id="bt_props019.xml" Name="props019.xml" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\props019.xml"/>
+									<File Id="bt_image010.jpg" Name="image010.jpg" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\image010.jpg"/>
+									<File Id="bt_item0015.xml" Name="item0015.xml" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\item0015.xml"/>
+									<File Id="bt_props016.xml" Name="props016.xml" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\props016.xml"/>
 								</Component>
 							</Directory>
 
@@ -281,16 +349,32 @@
 									<File Id="dt_colorschememapping.xml" Name="colorschememapping.xml" Source="..\..\redist\Help\Deepl_Translator_Plug-in_About_box_files\colorschememapping.xml"/>
 									<File Id="dt_themedata.thmx" Name="themedata.thmx" Source="..\..\redist\Help\Deepl_Translator_Plug-in_About_box_files\themedata.thmx"/>
 									<File Id="dt_header.htm" Name="header.htm" Source="..\..\redist\Help\Deepl_Translator_Plug-in_About_box_files\header.htm"/>
-									<File Id="dt_image001.emz" Name="image001.emz" Source="..\..\redist\Help\Deepl_Translator_Plug-in_About_box_files\image001.emz"/>
-									<File Id="dt_image002.gif" Name="image002.gif" Source="..\..\redist\Help\Deepl_Translator_Plug-in_About_box_files\image002.gif"/>
 									<File Id="dt_image003.jpg" Name="image003.jpg" Source="..\..\redist\Help\Deepl_Translator_Plug-in_About_box_files\image003.jpg"/>
-									<File Id="dt_image004.png" Name="image004.png" Source="..\..\redist\Help\Deepl_Translator_Plug-in_About_box_files\image004.png"/>
+									<File Id="dt_image004.jpg" Name="image004.jpg" Source="..\..\redist\Help\Deepl_Translator_Plug-in_About_box_files\image004.jpg"/>
 									<File Id="dt_image005.jpg" Name="image005.jpg" Source="..\..\redist\Help\Deepl_Translator_Plug-in_About_box_files\image005.jpg"/>
-									<File Id="dt_image006.png" Name="image006.png" Source="..\..\redist\Help\Deepl_Translator_Plug-in_About_box_files\image006.png"/>
-									<File Id="dt_image008.jpg" Name="image008.jpg" Source="..\..\redist\Help\Deepl_Translator_Plug-in_About_box_files\image008.jpg"/>
-									<File Id="dt_image012.png" Name="image012.png" Source="..\..\redist\Help\Deepl_Translator_Plug-in_About_box_files\image012.png"/>
+									<File Id="dt_image006.jpg" Name="image006.jpg" Source="..\..\redist\Help\Deepl_Translator_Plug-in_About_box_files\image006.jpg"/>
 									<File Id="dt_item0015.xml" Name="item0015.xml" Source="..\..\redist\Help\Deepl_Translator_Plug-in_About_box_files\item0015.xml"/>
 									<File Id="dt_props016.xml" Name="props016.xml" Source="..\..\redist\Help\Deepl_Translator_Plug-in_About_box_files\props016.xml"/>
+								</Component>
+							</Directory>
+
+							<!--Google Translate Help-->
+							<Component Id="GoogleTranslateHelp.htm" Guid="{9AE55C92-8BA7-4138-8C84-730AD3E84BA2}">
+								<File Id="GoogleTranslateHelp.htm" Name="Google_Translate_Plug-in_About_box.htm" KeyPath="yes" Source="..\..\redist\Help\Google_Translate_Plug-in_About_box.htm"/>
+								<Shortcut Id="GoogleTranslateHelpHtm" Directory="EcTranslatorsHelp" Name="Google Translate Plug-in Help" Description="View help document for the Google Translate Plug-in" IconIndex="0" Show="normal" Target="[#GoogleTranslateHelp.htm]" WorkingDirectory="Help" Advertise="no" />
+							</Component>
+							<Directory Id="Google_Translate_Plugin_About_box" Name="Google_Translate_Plug-in_About_box_files">
+								<Component Id="Google_Translate_Plugin_About_boxComp" Guid="{A2054C7D-794F-4C75-B9BD-5E0AC32EC6B0}">
+									<File Id="gt_filelist.xml" Name="filelist.xml" KeyPath="yes" Source="..\..\redist\Help\Google_Translate_Plug-in_About_box_files\filelist.xml"/>
+									<File Id="gt_colorschememapping.xml" Name="colorschememapping.xml" Source="..\..\redist\Help\Google_Translate_Plug-in_About_box_files\colorschememapping.xml"/>
+									<File Id="gt_themedata.thmx" Name="themedata.thmx" Source="..\..\redist\Help\Google_Translate_Plug-in_About_box_files\themedata.thmx"/>
+									<File Id="gt_header.htm" Name="header.htm" Source="..\..\redist\Help\Google_Translate_Plug-in_About_box_files\header.htm"/>
+									<File Id="gt_image003.jpg" Name="image003.jpg" Source="..\..\redist\Help\Google_Translate_Plug-in_About_box_files\image003.jpg"/>
+									<File Id="gt_image008.jpg" Name="image008.jpg" Source="..\..\redist\Help\Google_Translate_Plug-in_About_box_files\image008.jpg"/>
+									<File Id="gt_image011.png" Name="image011.png" Source="..\..\redist\Help\Google_Translate_Plug-in_About_box_files\image011.png"/>
+									<File Id="gt_image012.jpg" Name="image012.jpg" Source="..\..\redist\Help\Google_Translate_Plug-in_About_box_files\image012.jpg"/>
+									<File Id="gt_item0011.xml" Name="item0011.xml" Source="..\..\redist\Help\Google_Translate_Plug-in_About_box_files\item0011.xml"/>
+									<File Id="gt_props012.xml" Name="props012.xml" Source="..\..\redist\Help\Google_Translate_Plug-in_About_box_files\props012.xml"/>
 								</Component>
 							</Directory>
 

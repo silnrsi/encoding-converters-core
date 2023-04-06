@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -117,6 +117,12 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="DeepLTranslatorKeyDialogInstructionUrl" xml:space="preserve">
+    <value>https://www.deepl.com/pro?cta=header-pro/</value>
+  </data>
+  <data name="GoogleTranslatorKeyDialogInstructionUrl" xml:space="preserve">
+    <value>https://cloud.google.com/translate/docs/setup#creating_service_accounts_and_keys</value>
+  </data>
   <data name="HelpForBingTranslatorAddYourOwnApiKey" xml:space="preserve">
     <value>Click this button to enter your own API key from Microsoft Azure. See the "Prerequisites" section on the page, https://docs.microsoft.com/en-us/azure/cognitive-services/translator/quickstart-translator, for how to get your own key (e.g. if the default API key has run out of translation support -- note: the default API key is using the free pricing tier and is limited to 2 million characters/month)</value>
   </data>
@@ -158,6 +164,15 @@ See https://docs.microsoft.com/en-us/azure/cognitive-services/translator/languag
     <value>Choose the language you want to translate or transliterate from. Choose 'Auto-Detect' if you want the underlying DeepL Translator to attempt to determine the input language.</value>
   </data>
   <data name="HelpForDeepLTranslatorTargetLanguagesComboBox" xml:space="preserve">
+    <value>Choose the language you want the input text to be translated into.</value>
+  </data>
+  <data name="HelpForGoogleTranslatorAddYourOwnApiKey" xml:space="preserve">
+    <value>Click this button to enter your own Google Cloud credential key. Follow the instructions on the page, https://cloud.google.com/translation-hub/docs/admin-setup, to get create your own Google Cloud Translate service and get your own credentials (e.g. if the default credentials have run out of translation support -- note: the default credentials are using the free pricing tier and is limited to 500K characters/month for all users)</value>
+  </data>
+  <data name="HelpForGoogleTranslatorSourceLanguagesComboBox" xml:space="preserve">
+    <value>Choose the language you want to translate or transliterate from. Choose 'Auto-Detect' if you want Google Translate to attempt to determine the input language.</value>
+  </data>
+  <data name="HelpForGoogleTranslatorTargetLanguagesComboBox" xml:space="preserve">
     <value>Choose the language you want the input text to be translated into.</value>
   </data>
 </root>

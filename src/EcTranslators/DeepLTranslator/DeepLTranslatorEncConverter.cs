@@ -27,10 +27,10 @@ namespace SilEncConverters40.EcTranslators.DeepLTranslator
 	public class DeepLTranslatorEncConverter : EncConverter
     {
 		#region Const Definitions
-		// by putting the azure key in a settings file, users can get their own free azure account, create their own 'Translator'
-		//  resource, and enter their own key in the file (or the UI to have us set it in the file) and get their own 2E6 chars free
+		// by putting the DeepL key in a settings file, users can get their own free DeepL account, create their own 'Translator'
+		//  resource, and enter their own key in the file (or the UI to have us set it in the file) and get their own 500K chars free
 		//	(or pay for as much as they want)
-		// see https://docs.microsoft.com/en-us/azure/cognitive-services/translator/quickstart-translator
+		// see https://www.deepl.com/pro?cta=header-pro/
 
 		private static Translator _deepLTranslator;
 		public static Translator DeepLTranslator
@@ -129,6 +129,11 @@ namespace SilEncConverters40.EcTranslators.DeepLTranslator
 			if (String.IsNullOrEmpty(rhsEncodingID))
 				rhsEncodingID = m_strRhsEncodingID = EncConverters.strDefUnicodeEncoding;
 
+			// this is a Translation process type by definition. This is used by various programs to prevent
+			//	over usage -- e.g. Paratext should be blocking these EncConverter types as the 'Transliteration'
+			//	type project EncConverter (bkz it'll try to "transliterate" the entire corpus -- probably not
+			//	what's wanted). Also ClipboardEncConverter also doesn't process these for a preview (so the
+			//	system tray popup doesn't take forever to display.
 			processTypeFlags |= (int)ProcessTypeFlags.Translation;  // this is a Translation process type by definition
 
 			Util.DebugWriteLine(this, $"END: {converterName}, {converterSpec}");
@@ -222,7 +227,7 @@ namespace SilEncConverters40.EcTranslators.DeepLTranslator
 			}
 			catch (Exception ex)
 			{
-				LogExceptionMessage("DeepLEncConverter.GetCapabilities", ex);
+				EcTranslatorUtils.LogExceptionMessage("DeepLEncConverter.GetCapabilities", ex);
 				throw;
 			}
 		}
@@ -255,7 +260,7 @@ namespace SilEncConverters40.EcTranslators.DeepLTranslator
 
 			var strOutput = CallDeepLTranslator(strInput).Result;
 
-			StringToProperByteStar(strOutput, lpOutBuffer, ref rnOutLen);
+			EcTranslatorUtils.StringToProperByteStar(strOutput, lpOutBuffer, ref rnOutLen);
 		}
 
 		private async Task<string> CallDeepLTranslator(string strInput)
@@ -272,7 +277,7 @@ namespace SilEncConverters40.EcTranslators.DeepLTranslator
 			}
 			catch (Exception ex)
 			{
-				return LogExceptionMessage(GetType().Name, ex);
+				return EcTranslatorUtils.LogExceptionMessage(GetType().Name, ex);
 			}
 		}
 
@@ -280,32 +285,9 @@ namespace SilEncConverters40.EcTranslators.DeepLTranslator
 
 #region Misc helpers
 
-		[CLSCompliant(false)]
-		protected unsafe void StringToProperByteStar(string strOutput, byte* lpOutBuffer, ref int rnOutLen)
-		{
-			int nLen = strOutput.Length * 2;
-			if (nLen > (int)rnOutLen)
-				EncConverters.ThrowError(ErrStatus.OutputBufferFull);
-			rnOutLen = nLen;
-			ECNormalizeData.StringToByteStar(strOutput, lpOutBuffer, rnOutLen, false);
-		}
-
 		protected override string GetConfigTypeName
 		{
 			get { return typeof(DeepLTranslatorEncConverterConfig).AssemblyQualifiedName; }
-		}
-
-		public static string LogExceptionMessage(string className, Exception ex)
-		{
-			string msg = "Error occurred: " + ex.Message;
-			while (ex.InnerException != null)
-			{
-				ex = ex.InnerException;
-				msg += $"{Environment.NewLine}because: (InnerException): {ex.Message}";
-			}
-
-			Util.DebugWriteLine(className, msg);
-			return msg;
 		}
 
 #endregion Misc helpers
