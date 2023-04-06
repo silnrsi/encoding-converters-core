@@ -328,7 +328,6 @@
 									<File Id="bt_colorschememapping.xml" Name="colorschememapping.xml" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\colorschememapping.xml"/>
 									<File Id="bt_themedata.thmx" Name="themedata.thmx" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\themedata.thmx"/>
 									<File Id="bt_header.htm" Name="header.htm" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\header.htm"/>
-									<File Id="bt_image002.png" Name="image002.png" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\image002.png"/>
 									<File Id="bt_image003.jpg" Name="image003.jpg" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\image003.jpg"/>
 									<File Id="bt_image004.jpg" Name="image004.jpg" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\image004.jpg"/>
 									<File Id="bt_image006.jpg" Name="image006.jpg" Source="..\..\redist\Help\Bing_Translator_Plug-in_About_box_files\image006.jpg"/>
