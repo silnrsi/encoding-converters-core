@@ -326,7 +326,7 @@ namespace BackTranslationHelper
                 if (mapProjectNameToEcTranslators.ContainsKey(projectName))
                     mapProjectNameToEcTranslators.Remove(projectName);
                 translatorNames = new List<string> { theTranslator.Name };
-                mapProjectNameToEcTranslators.Add(projectName, translatorNames);
+                mapProjectNameToEcTranslators[projectName] = translatorNames;
                 Properties.Settings.Default.MapProjectNameToEcTranslators = SettingFromDictionary(mapProjectNameToEcTranslators);
                 Properties.Settings.Default.Save();
             }
@@ -797,7 +797,7 @@ namespace BackTranslationHelper
                 };
 
                 textBoxSourceData.Font = fontDialog.Font;
-                mapProjectNameToSourceFontOverride.Add(projectName, fontOverride);
+                mapProjectNameToSourceFontOverride[projectName] = fontOverride;
                 Properties.Settings.Default.MapProjectNameToSourceFontOverride = SettingFromDictionary(mapProjectNameToSourceFontOverride);
                 Properties.Settings.Default.Save();
             }
@@ -830,14 +830,7 @@ namespace BackTranslationHelper
                     textBoxPossibleTargetTranslation3.Font =
                     textBoxTargetBackTranslation.Font = fontDialog.Font;
 
-				if (mapProjectNameToTargetFontOverride.ContainsKey(projectName))
-				{
-					mapProjectNameToTargetFontOverride[projectName] = fontOverride;
-				}
-				else
-				{
-					mapProjectNameToTargetFontOverride.Add(projectName, fontOverride);
-				}
+				mapProjectNameToTargetFontOverride[projectName] = fontOverride;
 				Properties.Settings.Default.MapProjectNameToTargetFontOverride = SettingFromDictionary(mapProjectNameToTargetFontOverride);
                 Properties.Settings.Default.Save();
             }
@@ -857,11 +850,7 @@ namespace BackTranslationHelper
             textBoxSourceData.RightToLeft = rtlOverride;
             var mapProjectNameToSourceRtLOverride = SettingToDictionary(Properties.Settings.Default.MapProjectNameToSourceRtLOverride);
             var value = new List<string> { sourceRightToLeftToolStripMenuItem.Checked ? "true" : "false" };
-            if (mapProjectNameToSourceRtLOverride.ContainsKey(projectName))
-                mapProjectNameToSourceRtLOverride[projectName] = value;
-            else
-                mapProjectNameToSourceRtLOverride.Add(projectName, value);
-
+            mapProjectNameToSourceRtLOverride[projectName] = value;
             Properties.Settings.Default.MapProjectNameToSourceRtLOverride = SettingFromDictionary(mapProjectNameToSourceRtLOverride);
             Properties.Settings.Default.Save();
         }
@@ -884,11 +873,7 @@ namespace BackTranslationHelper
                 textBoxTargetBackTranslation.RightToLeft = rtlOverride;
             var mapProjectNameToTargetRtLOverride = SettingToDictionary(Properties.Settings.Default.MapProjectNameToTargetRtLOverride);
             var value = new List<string> { targetRightToLeftToolStripMenuItem.Checked ? "true" : "false" };
-            if (mapProjectNameToTargetRtLOverride.ContainsKey(projectName))
-                mapProjectNameToTargetRtLOverride[projectName] = value;
-            else
-                mapProjectNameToTargetRtLOverride.Add(projectName, value);
-
+            mapProjectNameToTargetRtLOverride[projectName] = value;
             Properties.Settings.Default.MapProjectNameToTargetRtLOverride = SettingFromDictionary(mapProjectNameToTargetRtLOverride);
             Properties.Settings.Default.Save();
         }
