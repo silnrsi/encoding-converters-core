@@ -61,6 +61,24 @@ namespace SilEncConverters40.EcTranslators.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to https://www.deepl.com/pro?cta=header-pro/.
+        /// </summary>
+        internal static string DeepLTranslatorKeyDialogInstructionUrl {
+            get {
+                return ResourceManager.GetString("DeepLTranslatorKeyDialogInstructionUrl", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to https://cloud.google.com/translate/docs/setup#creating_service_accounts_and_keys.
+        /// </summary>
+        internal static string GoogleTranslatorKeyDialogInstructionUrl {
+            get {
+                return ResourceManager.GetString("GoogleTranslatorKeyDialogInstructionUrl", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Click this button to enter your own API key from Microsoft Azure. See the &quot;Prerequisites&quot; section on the page, https://docs.microsoft.com/en-us/azure/cognitive-services/translator/quickstart-translator, for how to get your own key (e.g. if the default API key has run out of translation support -- note: the default API key is using the free pricing tier and is limited to 2 million characters/month).
         /// </summary>
         internal static string HelpForBingTranslatorAddYourOwnApiKey {

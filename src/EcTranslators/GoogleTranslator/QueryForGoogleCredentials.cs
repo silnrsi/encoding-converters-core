@@ -12,7 +12,7 @@ namespace SilEncConverters40.EcTranslators.GoogleTranslator
 			InitializeComponent();
 
 			textBoxTranslatorKey.Text = googleTranslatorCredentials;
-			var translatorKeyLocationDialogInstructionUrl = Properties.Settings.Default.GoogleTranslatorKeyDialogInstructionUrl;
+			var translatorKeyLocationDialogInstructionUrl = Properties.Resources.GoogleTranslatorKeyDialogInstructionUrl;
 			var translatorKeyLocationDialogInstruction = string.Format(InstructionsFormat, translatorKeyLocationDialogInstructionUrl);
 			linkLabelInstructions.Text = translatorKeyLocationDialogInstruction;
 			linkLabelInstructions.Links.Add(4, translatorKeyLocationDialogInstructionUrl.Length,
@@ -29,7 +29,7 @@ namespace SilEncConverters40.EcTranslators.GoogleTranslator
 
 		private void linkLabelInstructions_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
-			Process.Start(Properties.Settings.Default.GoogleTranslatorKeyDialogInstructionUrl);
+			Process.Start(Properties.Resources.GoogleTranslatorKeyDialogInstructionUrl);
 		}
 
 		private void buttonOK_Click(object sender, System.EventArgs e)

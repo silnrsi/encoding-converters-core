@@ -110,18 +110,6 @@ namespace SilEncConverters40.EcTranslators.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://www.deepl.com/pro?cta=header-pro/")]
-        public string DeepLTranslatorKeyDialogInstructionUrl {
-            get {
-                return ((string)(this["DeepLTranslatorKeyDialogInstructionUrl"]));
-            }
-            set {
-                this["DeepLTranslatorKeyDialogInstructionUrl"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("ga2IjIXDPBcfeNWHbsrMyv2IYXHklD7fPFredwAbuGHx/qTOpfVDrHQ0Fd+u1ewDQE0n0X20/mT0uewko" +
             "TX32AC3HoT62QxOp3BGU7PNffnJJfoNvDQhpANF3zlFC5UV2aINNXX2BDulLtb0Ji7EVzx9j1S1zbmzr" +
             "FmoSIxc9QkVv57z932s4LowX9qxEoQ1UO4mmmeYThUg4L8nFtfRPzXRkXT2yDH/FIev4FicOUc5FG7oK" +
@@ -167,18 +155,6 @@ namespace SilEncConverters40.EcTranslators.Properties {
             }
             set {
                 this["GoogleTranslatorCredentials"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://cloud.google.com/translate/docs/setup#creating_service_accounts_and_keys")]
-        public string GoogleTranslatorKeyDialogInstructionUrl {
-            get {
-                return ((string)(this["GoogleTranslatorKeyDialogInstructionUrl"]));
-            }
-            set {
-                this["GoogleTranslatorKeyDialogInstructionUrl"] = value;
             }
         }
         
