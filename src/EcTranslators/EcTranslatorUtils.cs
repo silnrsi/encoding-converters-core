@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace SilEncConverters40.EcTranslators
 {
-	public class Common
+	internal class EcTranslatorUtils
 	{
 		[CLSCompliant(false)]
-		public static unsafe void StringToProperByteStar(string strOutput, byte* lpOutBuffer, ref int rnOutLen)
+		internal static unsafe void StringToProperByteStar(string strOutput, byte* lpOutBuffer, ref int rnOutLen)
 		{
 			int nLen = strOutput.Length * 2;
 			if (nLen > (int)rnOutLen)
@@ -19,7 +19,7 @@ namespace SilEncConverters40.EcTranslators
 			ECNormalizeData.StringToByteStar(strOutput, lpOutBuffer, rnOutLen, false);
 		}
 
-		public static string LogExceptionMessage(string className, Exception ex)
+		internal static string LogExceptionMessage(string className, Exception ex)
 		{
 			string msg = "Error occurred: " + ex.Message;
 			while (ex.InnerException != null)

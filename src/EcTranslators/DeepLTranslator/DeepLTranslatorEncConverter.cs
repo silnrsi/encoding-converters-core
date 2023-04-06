@@ -227,7 +227,7 @@ namespace SilEncConverters40.EcTranslators.DeepLTranslator
 			}
 			catch (Exception ex)
 			{
-				Common.LogExceptionMessage("DeepLEncConverter.GetCapabilities", ex);
+				EcTranslatorUtils.LogExceptionMessage("DeepLEncConverter.GetCapabilities", ex);
 				throw;
 			}
 		}
@@ -260,7 +260,7 @@ namespace SilEncConverters40.EcTranslators.DeepLTranslator
 
 			var strOutput = CallDeepLTranslator(strInput).Result;
 
-			Common.StringToProperByteStar(strOutput, lpOutBuffer, ref rnOutLen);
+			EcTranslatorUtils.StringToProperByteStar(strOutput, lpOutBuffer, ref rnOutLen);
 		}
 
 		private async Task<string> CallDeepLTranslator(string strInput)
@@ -277,7 +277,7 @@ namespace SilEncConverters40.EcTranslators.DeepLTranslator
 			}
 			catch (Exception ex)
 			{
-				return Common.LogExceptionMessage(GetType().Name, ex);
+				return EcTranslatorUtils.LogExceptionMessage(GetType().Name, ex);
 			}
 		}
 

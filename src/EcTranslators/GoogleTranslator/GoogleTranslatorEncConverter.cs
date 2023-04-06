@@ -179,7 +179,7 @@ namespace SilEncConverters40.EcTranslators.GoogleTranslator
 
 			var strOutput = CallGoogleTranslator(strInput).Result;
 
-			Common.StringToProperByteStar(strOutput, lpOutBuffer, ref rnOutLen);
+			EcTranslatorUtils.StringToProperByteStar(strOutput, lpOutBuffer, ref rnOutLen);
 		}
 
 		private async Task<string> CallGoogleTranslator(string strInput)
@@ -195,7 +195,7 @@ namespace SilEncConverters40.EcTranslators.GoogleTranslator
 			}
 			catch (Exception ex)
 			{
-				return Common.LogExceptionMessage(GetType().Name, ex);
+				return EcTranslatorUtils.LogExceptionMessage(GetType().Name, ex);
 			}
 		}
 

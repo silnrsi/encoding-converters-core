@@ -166,7 +166,7 @@ namespace SilEncConverters40.EcTranslators.BingTranslator
 			}
 			catch (Exception ex)
 			{
-				return Common.LogExceptionMessage("GetTranslationCapabilities", ex);
+				return EcTranslatorUtils.LogExceptionMessage("GetTranslationCapabilities", ex);
 			}
 		}
 
@@ -214,7 +214,7 @@ namespace SilEncConverters40.EcTranslators.BingTranslator
 
 			var strOutput = CallBingTranslator(strInput).Result;
 
-			Common.StringToProperByteStar(strOutput, lpOutBuffer, ref rnOutLen);
+			EcTranslatorUtils.StringToProperByteStar(strOutput, lpOutBuffer, ref rnOutLen);
 		}
 
 		private async Task<string> CallBingTranslator(string strInput)
@@ -250,7 +250,7 @@ namespace SilEncConverters40.EcTranslators.BingTranslator
 			}
 			catch (Exception ex)
 			{
-				return Common.LogExceptionMessage(GetType().Name, ex);
+				return EcTranslatorUtils.LogExceptionMessage(GetType().Name, ex);
 			}
 		}
 

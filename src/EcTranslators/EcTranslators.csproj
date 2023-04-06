@@ -91,7 +91,7 @@
     <Compile Include="BingTranslator\QueryForAzureKeyAndLocation.Designer.cs">
       <DependentUpon>QueryForAzureKeyAndLocation.cs</DependentUpon>
     </Compile>
-    <Compile Include="Common.cs" />
+    <Compile Include="EcTranslatorUtils.cs" />
     <Compile Include="DeepLTranslator\DeepLTranslatorEncConverterConfig.cs" Condition="('$(OS)'=='Windows_NT')" />
     <Compile Include="DeepLTranslator\DeepLTranslatorAutoConfigDialog.cs" Condition="('$(OS)'=='Windows_NT')">
       <SubType>Form</SubType>
