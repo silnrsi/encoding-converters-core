@@ -97,6 +97,11 @@ namespace BackTranslationHelper
                 eventHandler(textBoxTargetBackTranslation.Text);
             }
         }
+
+		public void AddToSettingsMenu(System.Windows.Forms.ToolStripMenuItem menuItem)
+		{
+			settingsToolStripMenuItem.DropDownItems.Add(menuItem);
+		}
         #endregion
 
         public void Initialize(bool displayExistingTargetTranslation)
