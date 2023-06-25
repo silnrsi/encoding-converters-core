@@ -7,9 +7,28 @@ namespace BackTranslationHelper
 	public class BackTranslationHelperModel
     {
 		/// <summary>
-		/// The data from the original source that is to be translated from
+		/// The data from the original source that goes into the Source Data (readonly) text box.
+		/// This version may be partial snippets of text (e.g. iso-formatted runs of text in Word
+		/// or scripture text from Paratext that may be broken up by footnotes or other meta data)
+		/// that doesn't necessarily make the best for translation. This string will be used for the
+		/// Translator's Convert method only if SourceDataAlternate is null.
 		/// </summary>
-        public string SourceData { get; set; }
+		public string SourceData { get; set; }
+
+		/// <summary>
+		/// The data from the original source that is to be translated from (unless it is null,
+		/// in which case, the SourceData member will be translated). This generally represents
+		/// complete sentences that are best for translation.
+		/// </summary>
+		public string SourceDataAlternate { get; set; }
+
+		/// <summary>
+		/// Call this to get the source text to translate using the Translator EncConverters
+		/// </summary>
+		public string SourceToTranslate
+		{
+			get { return SourceDataAlternate ?? SourceData; }
+		}
 
 		/// <summary>
 		/// The one or more translations/conversions from the SourceData field value via the one or more EncConverter Translators

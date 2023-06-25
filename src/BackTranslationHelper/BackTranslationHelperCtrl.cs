@@ -388,7 +388,7 @@ namespace BackTranslationHelper
             {
                 _model = BackTranslationHelperDataSource.Model;
             }
-            else if (_model?.SourceData != model.SourceData)
+            else if (_model?.SourceToTranslate != model.SourceToTranslate)
             {
                 _model = model;
                 IsModified = false; // start over assuming it isn't edited
@@ -397,7 +397,7 @@ namespace BackTranslationHelper
             for (var i = _model.TargetsPossible.Count; i < TheTranslators.Count; i++)
             {
                 var theTranslator = TheTranslators[i];
-                var translatedText = ConvertText(theTranslator, _model.SourceData);
+                var translatedText = ConvertText(theTranslator, _model.SourceToTranslate);
                 _model.TargetsPossible.Add(new TargetPossible { TargetData = translatedText, PossibleIndex = i, TranslatorName = theTranslator.Name });
             }
 
@@ -455,7 +455,7 @@ namespace BackTranslationHelper
             for (var i = model.TargetsPossible.Count; i < numOfTranslators; i++)
             {
                 var theTranslator = TheTranslators[i];
-                var translatedText = ConvertText(theTranslator, model.SourceData);
+                var translatedText = ConvertText(theTranslator, model.SourceToTranslate);
                 model.TargetsPossible.Add(new TargetPossible { TargetData = translatedText, PossibleIndex = i, TranslatorName = theTranslator.Name });
             }
 
