@@ -84,10 +84,7 @@ namespace BackTranslationHelper
 
         public void RegisterForNotification(string key, EventHandler<EventArgs> eventHandler)
         {
-            if (!SubscribeableEvents.TryGetValue(key, out EventHandler<EventArgs> handler))
-            {
-                SubscribeableEvents.Add(key, eventHandler);
-            }
+            SubscribeableEvents[key] = eventHandler;
         }
 
         private void TextBoxTargetBackTranslation_TextChanged(object sender, System.EventArgs e)
@@ -409,7 +406,7 @@ namespace BackTranslationHelper
             if (!_mapOfRecentTranslations.TryGetValue(theTranslator.Name, out Dictionary<string, string> mapRecentTranslations))
             {
                 mapRecentTranslations = new Dictionary<string, string>();
-                _mapOfRecentTranslations.Add(theTranslator.Name, mapRecentTranslations);
+                _mapOfRecentTranslations[theTranslator.Name] = mapRecentTranslations;
             }
 
             if (!mapRecentTranslations.TryGetValue(sourceData, out string targetData))
@@ -423,7 +420,7 @@ namespace BackTranslationHelper
                     MessageBox.Show(ex.Message, EncConverters.cstrCaption);
                 }
 
-                mapRecentTranslations.Add(sourceData, targetData);
+				mapRecentTranslations[sourceData] = targetData;
             }
 
             return targetData;
@@ -632,7 +629,7 @@ namespace BackTranslationHelper
             if (!mapProjectNameToEcTranslators.TryGetValue(projectName, out List<string> translatorNames))
             {
                 translatorNames = new List<string>();
-                mapProjectNameToEcTranslators.Add(projectName, translatorNames);
+				mapProjectNameToEcTranslators[projectName] = translatorNames;
             }
 
             if (!translatorNames.Any(n => n == theTranslator.Name))
