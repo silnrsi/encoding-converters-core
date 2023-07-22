@@ -27,7 +27,7 @@ namespace SilEncConverters40.EcTranslators.GoogleTranslator
 	//  'HKEY_CLASSES_ROOT\SilEncConverters40.EcTranslators.GoogleTranslatorEncConverter' which is the basis of 
 	//  how it is started (see EncConverters.AddEx).
 	// [ComVisible(false)] 
-	public class GoogleTranslatorEncConverter : EncConverter
+	public class GoogleTranslatorEncConverter : TranslatorConverter
 	{
 		#region Const Definitions
 		// by putting the google translate credentials in a settings file, users can get their own credentials to use, 
@@ -164,6 +164,8 @@ namespace SilEncConverters40.EcTranslators.GoogleTranslator
             ref int     rnOutLen
             )
         {
+			CheckOverusage();
+
 			// we need to put it *back* into a string for the lookup
 			// [aside: I should probably override base.InternalConvertEx so I can avoid having the base 
 			//  class version turn the input string into a byte* for this call just so we can turn around 
@@ -179,7 +181,7 @@ namespace SilEncConverters40.EcTranslators.GoogleTranslator
 
 			var strOutput = CallGoogleTranslator(strInput).Result;
 
-			EcTranslatorUtils.StringToProperByteStar(strOutput, lpOutBuffer, ref rnOutLen);
+			StringToProperByteStar(strOutput, lpOutBuffer, ref rnOutLen);
 		}
 
 		private async Task<string> CallGoogleTranslator(string strInput)
@@ -195,7 +197,7 @@ namespace SilEncConverters40.EcTranslators.GoogleTranslator
 			}
 			catch (Exception ex)
 			{
-				return EcTranslatorUtils.LogExceptionMessage(GetType().Name, ex);
+				return LogExceptionMessage(GetType().Name, ex);
 			}
 		}
 

@@ -414,13 +414,16 @@ namespace BackTranslationHelper
                 try
                 {
                     targetData = theTranslator.Convert(sourceData);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message, EncConverters.cstrCaption);
-                }
 
-				mapRecentTranslations[sourceData] = targetData;
+					// only save it if we get it back successfully
+					mapRecentTranslations[sourceData] = targetData;
+				}
+				catch (Exception ex)
+                {
+					var msg = ex.Message;
+                    MessageBox.Show($"{msg}. Press F5 in the 'Target Translation' text box to try the conversion again.", EncConverters.cstrCaption);
+					targetData = msg;	// but display this so the user sees it
+				}
             }
 
             return targetData;

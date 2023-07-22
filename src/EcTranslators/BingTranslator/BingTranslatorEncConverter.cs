@@ -23,8 +23,8 @@ namespace SilEncConverters40.EcTranslators.BingTranslator
 	//  'HKEY_CLASSES_ROOT\SilEncConverters40.EcTranslators.BingTranslatorEncConverter' which is the basis of 
 	//  how it is started (see EncConverters.AddEx).
 	// [ComVisible(false)] 
-	public class BingTranslatorEncConverter : EncConverter
-    {
+	public class BingTranslatorEncConverter : TranslatorConverter
+	{
 		#region Const Definitions
 		// by putting the azure key in a settings file, users can get their own free azure account, create their own 'Translator'
 		//  resource, and enter their own key in the file (or the UI to have us set it in the file) and get their own 2E6 chars free
@@ -166,7 +166,7 @@ namespace SilEncConverters40.EcTranslators.BingTranslator
 			}
 			catch (Exception ex)
 			{
-				return EcTranslatorUtils.LogExceptionMessage("GetTranslationCapabilities", ex);
+				return LogExceptionMessage("GetTranslationCapabilities", ex);
 			}
 		}
 
@@ -199,6 +199,8 @@ namespace SilEncConverters40.EcTranslators.BingTranslator
             ref int     rnOutLen
             )
         {
+			CheckOverusage();
+
 			// we need to put it *back* into a string for the lookup
 			// [aside: I should probably override base.InternalConvertEx so I can avoid having the base 
 			//  class version turn the input string into a byte* for this call just so we can turn around 
@@ -214,7 +216,7 @@ namespace SilEncConverters40.EcTranslators.BingTranslator
 
 			var strOutput = CallBingTranslator(strInput).Result;
 
-			EcTranslatorUtils.StringToProperByteStar(strOutput, lpOutBuffer, ref rnOutLen);
+			StringToProperByteStar(strOutput, lpOutBuffer, ref rnOutLen);
 		}
 
 		private async Task<string> CallBingTranslator(string strInput)
@@ -250,7 +252,7 @@ namespace SilEncConverters40.EcTranslators.BingTranslator
 			}
 			catch (Exception ex)
 			{
-				return EcTranslatorUtils.LogExceptionMessage(GetType().Name, ex);
+				return LogExceptionMessage(GetType().Name, ex);
 			}
 		}
 

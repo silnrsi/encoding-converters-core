@@ -24,8 +24,8 @@ namespace SilEncConverters40.EcTranslators.DeepLTranslator
 	//  'HKEY_CLASSES_ROOT\SilEncConverters40.EcTranslators.DeepLTranslatorEncConverter' which is the basis of 
 	//  how it is started (see EncConverters.AddEx).
 	// [ComVisible(false)] 
-	public class DeepLTranslatorEncConverter : EncConverter
-    {
+	public class DeepLTranslatorEncConverter : TranslatorConverter
+	{
 		#region Const Definitions
 		// by putting the DeepL key in a settings file, users can get their own free DeepL account, create their own 'Translator'
 		//  resource, and enter their own key in the file (or the UI to have us set it in the file) and get their own 500K chars free
@@ -227,7 +227,7 @@ namespace SilEncConverters40.EcTranslators.DeepLTranslator
 			}
 			catch (Exception ex)
 			{
-				EcTranslatorUtils.LogExceptionMessage("DeepLEncConverter.GetCapabilities", ex);
+				LogExceptionMessage("DeepLEncConverter.GetCapabilities", ex);
 				throw;
 			}
 		}
@@ -245,6 +245,8 @@ namespace SilEncConverters40.EcTranslators.DeepLTranslator
             ref int     rnOutLen
             )
         {
+			CheckOverusage();
+
 			// we need to put it *back* into a string for the lookup
 			// [aside: I should probably override base.InternalConvertEx so I can avoid having the base 
 			//  class version turn the input string into a byte* for this call just so we can turn around 
@@ -260,7 +262,7 @@ namespace SilEncConverters40.EcTranslators.DeepLTranslator
 
 			var strOutput = CallDeepLTranslator(strInput).Result;
 
-			EcTranslatorUtils.StringToProperByteStar(strOutput, lpOutBuffer, ref rnOutLen);
+			StringToProperByteStar(strOutput, lpOutBuffer, ref rnOutLen);
 		}
 
 		private async Task<string> CallDeepLTranslator(string strInput)
@@ -277,7 +279,7 @@ namespace SilEncConverters40.EcTranslators.DeepLTranslator
 			}
 			catch (Exception ex)
 			{
-				return EcTranslatorUtils.LogExceptionMessage(GetType().Name, ex);
+				return LogExceptionMessage(GetType().Name, ex);
 			}
 		}
 
