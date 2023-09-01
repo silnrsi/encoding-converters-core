@@ -62,7 +62,12 @@ namespace BackTranslationHelper
 			}
         }
 
-        private void TargetBackTranslation_MouseWheel(object sender, MouseEventArgs e)
+		private void SettingsToolStripMenuItem_DropDownOpening(object sender, EventArgs e)
+		{
+			this.hideCurrentTargetTextToolStripMenuItem.Visible = (_model == null) || (_model.DisplayExistingTargetTranslation);
+		}
+
+		private void TargetBackTranslation_MouseWheel(object sender, MouseEventArgs e)
         {
             UserControl_MouseWheel(sender, e);
         }
