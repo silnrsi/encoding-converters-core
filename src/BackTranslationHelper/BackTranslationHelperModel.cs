@@ -43,12 +43,25 @@ namespace BackTranslationHelper
 		public string TargetData { get; set; }
 
 		/// <summary>
+		/// This is used by the different clients to indicate whether the target translation box is editable or not
+		/// (e.g. it won't be in Paratext if the user doesn't have edit privilege -- e.g. if it's just a consultant wanting to see
+		/// Google or Bing's stab at the BT for comparison purposes)
+		/// </summary>
+		public bool IsTargetTranslationEditable { get; set; }
+
+		/// <summary>
 		/// This is set to true if there was originally some data already existing in the target project, which causes us
 		/// to keep it in another field (as well as the editable field associated w/ the TargetData property) in case the
 		/// user wants to revert to it.
 		/// </summary>
-        public string TargetDataPreExisting { get; set; }
-    }
+		public string TargetDataPreExisting { get; set; }
+
+		/// <summary>
+		/// This is used by the different clients to indicate whether the existing target translation box should be shown or not
+		/// (e.g. Word doesn't, bkz that's just the source data and Paratext might if not hidden)
+		/// </summary>
+		public bool DisplayExistingTargetTranslation { get; set; }
+	}
 
 	[Serializable]
 	public class TargetPossible
