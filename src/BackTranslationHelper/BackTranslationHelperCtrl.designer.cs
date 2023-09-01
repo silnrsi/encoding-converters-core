@@ -45,6 +45,7 @@ namespace BackTranslationHelper
             this.autoSaveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.hideColumn1LabelsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.hideCurrentTargetTextToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.hideSourceTextToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripTextBoxStatus = new System.Windows.Forms.ToolStripTextBox();
             this.tableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
             this.buttonSubstitute = new System.Windows.Forms.Button();
@@ -72,8 +73,8 @@ namespace BackTranslationHelper
             this.buttonNextSection = new System.Windows.Forms.Button();
             this.buttonSkip = new System.Windows.Forms.Button();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
-            this.fontDialog = new System.Windows.Forms.FontDialog();
             this.buttonPinToTop = new System.Windows.Forms.Button();
+            this.fontDialog = new System.Windows.Forms.FontDialog();
             this.menuStrip.SuspendLayout();
             this.tableLayoutPanel.SuspendLayout();
             this.substitutionContextMenu.SuspendLayout();
@@ -100,10 +101,12 @@ namespace BackTranslationHelper
             this.displayRighttoleftToolStripMenuItem,
             this.autoSaveToolStripMenuItem,
             this.hideColumn1LabelsToolStripMenuItem,
-            this.hideCurrentTargetTextToolStripMenuItem});
+            this.hideCurrentTargetTextToolStripMenuItem,
+            this.hideSourceTextToolStripMenuItem});
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
             this.settingsToolStripMenuItem.Size = new System.Drawing.Size(61, 23);
             this.settingsToolStripMenuItem.Text = "&Settings";
+			this.settingsToolStripMenuItem.DropDownOpening += SettingsToolStripMenuItem_DropDownOpening;
             // 
             // removeEncConverterToolStripMenuItem
             // 
@@ -203,6 +206,15 @@ namespace BackTranslationHelper
     " real estate)";
             this.hideCurrentTargetTextToolStripMenuItem.CheckStateChanged += new System.EventHandler(this.HideCurrentTargetTextToolStripMenuItem_CheckStateChanged);
             // 
+            // hideSourceTextToolStripMenuItem
+            // 
+            this.hideSourceTextToolStripMenuItem.CheckOnClick = true;
+            this.hideSourceTextToolStripMenuItem.Name = "hideSourceTextToolStripMenuItem";
+            this.hideSourceTextToolStripMenuItem.Size = new System.Drawing.Size(247, 22);
+            this.hideSourceTextToolStripMenuItem.Text = "Hide &Source Text";
+            this.hideSourceTextToolStripMenuItem.ToolTipText = "Check this menu item to hide the Source Text row (e.g. to get more screen real estate)";
+            this.hideSourceTextToolStripMenuItem.CheckStateChanged += new System.EventHandler(this.HideSourceTextToolStripMenuItem_CheckStateChanged);
+            // 
             // toolStripTextBoxStatus
             // 
             this.toolStripTextBoxStatus.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
@@ -221,7 +233,7 @@ namespace BackTranslationHelper
             | System.Windows.Forms.AnchorStyles.Right)));
 			// It's possible that if this control is edited, the designer will remove these two lines.
 			//	if these two lines are re-added, then the tableLayoutPanel will lose 2 pixels of height
-			//	for every verse we process. Remove them, caused that to stop (and it still allows resizing)
+			//	for every verse we process. Removing them caused that to stop (and it still allows resizing)
 			//	if the form it's in is resized.
 			// Restore and keep this note here too if it is removed, so the next person won't spend hours trying to figure this out too :-)
 			// this.tableLayoutPanel.AutoSize = true;
@@ -547,11 +559,6 @@ namespace BackTranslationHelper
             this.buttonSkip.UseVisualStyleBackColor = true;
             this.buttonSkip.Click += new System.EventHandler(this.ButtonSkip_Click);
             // 
-            // fontDialog
-            // 
-            this.fontDialog.Font = new System.Drawing.Font("Arial Unicode MS", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.fontDialog.ShowColor = true;
-            // 
             // buttonPinToTop
             // 
             this.buttonPinToTop.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -565,12 +572,17 @@ namespace BackTranslationHelper
             this.toolTip.SetToolTip(this.buttonPinToTop, "Toggle this button to pin this dialog box so that it remains on top of other windows");
             this.buttonPinToTop.UseVisualStyleBackColor = true;
             this.buttonPinToTop.Click += new System.EventHandler(this.ButtonPinToTop_Click);
-			// 
-			// BackTranslationHelperCtrl
-			// 
-			this.AutoSize = true;
-			this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.Controls.Add(this.buttonPinToTop);
+            // 
+            // fontDialog
+            // 
+            this.fontDialog.Font = new System.Drawing.Font("Arial Unicode MS", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.fontDialog.ShowColor = true;
+            // 
+            // BackTranslationHelperCtrl
+            // 
+            this.AutoSize = true;
+            this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.Controls.Add(this.buttonPinToTop);
             this.Controls.Add(this.tableLayoutPanel);
             this.Controls.Add(this.menuStrip);
             this.Name = "BackTranslationHelperCtrl";
@@ -629,5 +641,6 @@ namespace BackTranslationHelper
 		private System.Windows.Forms.ToolStripMenuItem assignNewSubstitutionProjectMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem hideCurrentTargetTextToolStripMenuItem;
 		private System.Windows.Forms.Button buttonPinToTop;
+		private System.Windows.Forms.ToolStripMenuItem hideSourceTextToolStripMenuItem;
 	}
 }

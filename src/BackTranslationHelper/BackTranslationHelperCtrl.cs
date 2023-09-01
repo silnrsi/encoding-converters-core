@@ -24,7 +24,6 @@ namespace BackTranslationHelper
         public DirectableEncConverter TheFindReplaceConverter;
         public BackTranslationHelperModel _model;
         public bool IsModified = false;
-        protected bool _displayExistingTargetTranslation;
 
         /// <summary>
         /// keep track of some recently translated portions, so we can avoid calling to Bing again for the same input data
@@ -42,7 +41,8 @@ namespace BackTranslationHelper
             this.MouseWheel += new MouseEventHandler(this.UserControl_MouseWheel);
             this.textBoxTargetBackTranslation.MouseWheel += new MouseEventHandler(this.TargetBackTranslation_MouseWheel);
             hideCurrentTargetTextToolStripMenuItem.Checked = Properties.Settings.Default.HideCurrentTargetText;
-        }
+			hideSourceTextToolStripMenuItem.Checked = Properties.Settings.Default.HideSourceText;
+		}
 
         protected override void OnParentChanged(EventArgs e)
         {
@@ -62,7 +62,12 @@ namespace BackTranslationHelper
 			}
         }
 
-        private void TargetBackTranslation_MouseWheel(object sender, MouseEventArgs e)
+		private void SettingsToolStripMenuItem_DropDownOpening(object sender, EventArgs e)
+		{
+			this.hideCurrentTargetTextToolStripMenuItem.Visible = (_model == null) || (_model.DisplayExistingTargetTranslation);
+		}
+
+		private void TargetBackTranslation_MouseWheel(object sender, MouseEventArgs e)
         {
             UserControl_MouseWheel(sender, e);
         }
@@ -99,111 +104,125 @@ namespace BackTranslationHelper
 		{
 			settingsToolStripMenuItem.DropDownItems.Add(menuItem);
 		}
-        #endregion
+		#endregion
 
-        public void Initialize(bool displayExistingTargetTranslation)
-        {
-            _displayExistingTargetTranslation = displayExistingTargetTranslation;
-            CheckInitializeFindReplaceHelper();
-            BackTranslationHelperDataSource.SetDataUpdateProc(UpdateData);
+		public void Initialize(BackTranslationHelperModel model)
+		{
+			var displayExistingTargetTranslation = model.DisplayExistingTargetTranslation;
+			var targetIsEditable = model.IsTargetTranslationEditable;
 
-            // get the last used converter names from settings 
-            InitializeTheTranslators();
+			CheckInitializeFindReplaceHelper();
+			BackTranslationHelperDataSource.SetDataUpdateProc(UpdateData);
 
-            tableLayoutPanel.SuspendLayout();
-            SuspendLayout();
+			// get the last used converter names from settings 
+			InitializeTheTranslators();
 
-            hideColumn1LabelsToolStripMenuItem.Checked = Properties.Settings.Default.HideLabels;
-            InitializeLabelHiding();
+			tableLayoutPanel.SuspendLayout();
+			SuspendLayout();
 
-            var nRowStyleOffset = 1;    // the offset to the row we're dealing w/ below
+			hideColumn1LabelsToolStripMenuItem.Checked = Properties.Settings.Default.HideLabels;
+			InitializeLabelHiding();
 
-            var projectName = BackTranslationHelperDataSource.ProjectName;
-            textBoxSourceData.Font = GetSourceLanguageFontForProject(projectName);
-            textBoxSourceData.RightToLeft = GetSourceLanguageRightToLeftForProject(projectName);
-            toolStripTextBoxStatus.Size = CalculateStatusLineSize(toolStripTextBoxStatus, settingsToolStripMenuItem);
-            var targetLanguageFont = GetTargetLanguageFontForProject(projectName);
-            var targetLanguageRightToLeft = GetTargetLanguageRightToLeftForProject(projectName);
-            if (_displayExistingTargetTranslation && !hideCurrentTargetTextToolStripMenuItem.Checked)
-            {
-                var rowStyle = tableLayoutPanel.RowStyles[nRowStyleOffset++];
-                rowStyle.SizeType = SizeType.Percent;   // gives it real estate
-                rowStyle.Height = 20F;
-				textBoxTargetTextExisting.Font = targetLanguageFont;
-				textBoxTargetTextExisting.RightToLeft = targetLanguageRightToLeft;
-            }
-            else
-            {
-				var rowStyle = tableLayoutPanel.RowStyles[nRowStyleOffset++];
-				rowStyle.SizeType = SizeType.Absolute; // makes it disappear
-				rowStyle.Height = 0;
-			}
+			var projectName = BackTranslationHelperDataSource.ProjectName;
+			toolStripTextBoxStatus.Size = CalculateStatusLineSize(toolStripTextBoxStatus, settingsToolStripMenuItem);
+
+			var nRowStyleOffset = 0;    // start w/ the Source Language text box
+
+			ExpandOrCollapse(!Properties.Settings.Default.HideSourceText, nRowStyleOffset++,
+							 textBoxSourceData, GetSourceLanguageFontForProject(projectName), GetSourceLanguageRightToLeftForProject(projectName));
+
+			var targetLanguageFont = GetTargetLanguageFontForProject(projectName);
+			var targetLanguageRightToLeft = GetTargetLanguageRightToLeftForProject(projectName);
+
+			var hideCurrentTargetText = Properties.Settings.Default.HideCurrentTargetText;
+			ExpandOrCollapse(displayExistingTargetTranslation && !hideCurrentTargetText, nRowStyleOffset++,
+							 textBoxTargetTextExisting, targetLanguageFont, targetLanguageRightToLeft);
 
 			textBoxTargetBackTranslation.Font = targetLanguageFont;
-            textBoxTargetBackTranslation.RightToLeft = targetLanguageRightToLeft;
+			textBoxTargetBackTranslation.RightToLeft = targetLanguageRightToLeft;
+			textBoxTargetBackTranslation.ReadOnly = !targetIsEditable;
 
-            // we're either showing the target translated suggestion in a textbox (if there's only 1 converter)
-            //  or in readonly textboxes (so they can have scroll bars) above it to choose from (if there are more than one converter)
-            var textBoxesPossibleTargetTranslations = tableLayoutPanel.Controls.OfType<TextBox>().Where(l => l.Name.Contains("textBoxPossibleTargetTranslation")).ToList();
-            var buttonsFillTargetOption = tableLayoutPanel.Controls.OfType<Button>().Where(b => b.Name.Contains("buttonFillTargetTextOption")).ToList();
-            var numOfTranslators = TheTranslators.Count;
+			// we're either showing the target translated suggestion in a textbox (if there's only 1 converter)
+			//  or in readonly textboxes (so they can have scroll bars) above it to choose from (if there are more than one converter)
+			var textBoxesPossibleTargetTranslations = tableLayoutPanel.Controls.OfType<TextBox>().Where(l => l.Name.Contains("textBoxPossibleTargetTranslation")).ToList();
+			var buttonsFillTargetOption = tableLayoutPanel.Controls.OfType<Button>().Where(b => b.Name.Contains("buttonFillTargetTextOption")).ToList();
+			var numOfTranslators = TheTranslators.Count;
 
-            // if there's only one, then we don't need to display the 'possible' translations to start with.
-            // NB: but only if we're not displaying any pre-existing target translations. If we are (i.e. Paratext),
-            //  then we need to display even the one as an option, bkz the editable textbox will contain the
-            //  existing translation, which if it's not correct, we want to be able to fill it from the converted
-            //  value (which will be in the 1st targetoption box)
-            var i = 0;
-            if ((numOfTranslators == 1) && !_displayExistingTargetTranslation && !hideCurrentTargetTextToolStripMenuItem.Checked)
-            {
-                // hide them all
-                for (; i < MaxPossibleTargetTranslations; i++)
-                {
-                    var textBox = textBoxesPossibleTargetTranslations[i];
-                    var button = buttonsFillTargetOption[i];
+			// if there's only one, then we don't need to display the 'possible' translations to start with.
+			// NB: but only if we're not displaying any pre-existing target translations. If we are (i.e. Paratext),
+			//  then we need to display even the one as an option, bkz the editable textbox will contain the
+			//  existing translation, which if it's not correct, we want to be able to fill it from the converted
+			//  value (which will be in the 1st targetoption box)
+			var i = 0;
+			if ((numOfTranslators == 1) && !displayExistingTargetTranslation && !hideCurrentTargetText)
+			{
+				// hide them all
+				for (; i < MaxPossibleTargetTranslations; i++)
+				{
+					var textBox = textBoxesPossibleTargetTranslations[i];
+					var button = buttonsFillTargetOption[i];
 					var rowStyle = tableLayoutPanel.RowStyles[nRowStyleOffset + i];
 					rowStyle.SizeType = SizeType.Absolute;
 					rowStyle.Height = 0;
 				}
-            }
-            else
-            {
-                // set up mnemonics for the buttons to make it easier to trigger
-                var mnemonicChar = 1;
-                if (_displayExistingTargetTranslation)
-                    buttonFillExistingTargetText.Text = $" &{mnemonicChar++}";  // so that Alt+1 will trigger the button (and space so the text won't show over the icon)
+			}
+			else
+			{
+				// set up mnemonics for the buttons to make it easier to trigger
+				var mnemonicChar = 1;
+				if (displayExistingTargetTranslation)
+					buttonFillExistingTargetText.Text = $" &{mnemonicChar++}";  // so that Alt+1 will trigger the button (and space so the text won't show over the icon)
 
-                for (; i < numOfTranslators; i++)
-                {
-                    var textBox = textBoxesPossibleTargetTranslations[i];
-                    var button = buttonsFillTargetOption[i];
-                    button.Text = $" &{mnemonicChar++}";
+				for (; i < numOfTranslators; i++)
+				{
+					var textBox = textBoxesPossibleTargetTranslations[i];
+					var button = buttonsFillTargetOption[i];
+					button.Text = $" &{mnemonicChar++}";
 					textBox.Font = targetLanguageFont;
-                    textBox.RightToLeft = targetLanguageRightToLeft;
-                    var rowStyle = tableLayoutPanel.RowStyles[nRowStyleOffset + i];
-                    rowStyle.SizeType = SizeType.Percent;   // gives it real estate
-                    rowStyle.Height = 20F;
-                    toolTip.SetToolTip(textBox, $"This is the translation from the {TheTranslators[i].Name} Translator");
-                }
+					textBox.RightToLeft = targetLanguageRightToLeft;
+					var rowStyle = tableLayoutPanel.RowStyles[nRowStyleOffset + i];
+					rowStyle.SizeType = SizeType.Percent;   // gives it real estate
+					rowStyle.Height = 20F;
+					toolTip.SetToolTip(textBox, $"This is the translation from the {TheTranslators[i].Name} Translator");
+				}
 
-                for (; i < MaxPossibleTargetTranslations; i++)
-                {
-                    var textBox = textBoxesPossibleTargetTranslations[i];
-                    var button = buttonsFillTargetOption[i];
+				for (; i < MaxPossibleTargetTranslations; i++)
+				{
+					var textBox = textBoxesPossibleTargetTranslations[i];
+					var button = buttonsFillTargetOption[i];
 					var rowStyle = tableLayoutPanel.RowStyles[nRowStyleOffset + i];
 					rowStyle.SizeType = SizeType.Absolute;
 					rowStyle.Height = 0;
 				}
-            }
+			}
 
-            buttonSubstitute.Visible = FindReplaceHelper.IsSpellFixerAvailable;
-            tableLayoutPanel.ResumeLayout(false);
-            tableLayoutPanel.PerformLayout();
-            ResumeLayout(false);
-            PerformLayout();
-        }
+			buttonSubstitute.Visible = FindReplaceHelper.IsSpellFixerAvailable;
+			tableLayoutPanel.ResumeLayout(false);
+			tableLayoutPanel.PerformLayout();
+			ResumeLayout(false);
+			PerformLayout();
 
-        private Size CalculateStatusLineSize(ToolStripTextBox toolStripTextBoxStatus, ToolStripMenuItem settingsToolStripMenuItem)
+			void ExpandOrCollapse(bool hasRealEstate, int rowOffset, TextBox textBox, Font font, RightToLeft isRightToLeft)
+			{
+				System.Diagnostics.Debug.WriteLine($"textBox: {textBox.Name}, hasRealEstate: {hasRealEstate}, font: {font.Name}, isRtL: {isRightToLeft}");
+				if (hasRealEstate)
+				{
+					var rowStyle = tableLayoutPanel.RowStyles[rowOffset];
+					rowStyle.SizeType = SizeType.Percent;   // gives it real estate
+					rowStyle.Height = 20F;
+					textBox.Font = font;
+					textBox.RightToLeft = isRightToLeft;
+				}
+				else
+				{
+					var rowStyle = tableLayoutPanel.RowStyles[rowOffset];
+					rowStyle.SizeType = SizeType.Absolute; // makes it disappear
+					rowStyle.Height = 0;
+				}
+			}
+		}
+
+		private Size CalculateStatusLineSize(ToolStripTextBox toolStripTextBoxStatus, ToolStripMenuItem settingsToolStripMenuItem)
         {
             var width = this.Width - settingsToolStripMenuItem.Width - 50;  // Padding;
             return new Size(width, toolStripTextBoxStatus.Height);
@@ -713,7 +732,7 @@ namespace BackTranslationHelper
         private void Reload()
         {
             System.Diagnostics.Debug.Assert(_model != null);
-            Initialize(_displayExistingTargetTranslation && !hideCurrentTargetTextToolStripMenuItem.Checked);
+            Initialize(_model);
             UpdateData(_model);
         }
 
@@ -723,6 +742,20 @@ namespace BackTranslationHelper
             if (newCheckState != Properties.Settings.Default.HideCurrentTargetText)
             {
                 Properties.Settings.Default.HideCurrentTargetText = newCheckState;
+                Properties.Settings.Default.Save();
+                if (_model != null)
+                {
+                    Reload();
+                }
+            }
+        }
+
+        private void HideSourceTextToolStripMenuItem_CheckStateChanged(object sender, EventArgs e)
+        {
+            var newCheckState = hideSourceTextToolStripMenuItem.Checked;
+            if (newCheckState != Properties.Settings.Default.HideSourceText)
+            {
+                Properties.Settings.Default.HideSourceText = newCheckState;
                 Properties.Settings.Default.Save();
                 if (_model != null)
                 {

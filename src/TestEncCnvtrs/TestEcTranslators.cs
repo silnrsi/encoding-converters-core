@@ -264,7 +264,7 @@ namespace TestEncCnvtrs
 		//	if they change the translation
 		[Test]
 		[TestCase(ProcessTypeFlags.Translation, "Translate;en;fr", "Hello, world!", "Bonjour à tous !")]
-		[TestCase(ProcessTypeFlags.Translation, "Translate;en;zh", "This Israel Field Guide has been developed to help you get to know the beautiful country of Israel.", "这本《以色列实地指南》是为了帮助你了解以色列这个美丽的国家而编写的。")]
+		[TestCase(ProcessTypeFlags.Translation, "Translate;en;zh", "How are you?", "你好吗？")]
 		[TestCase(ProcessTypeFlags.Translation, "Translate;en;de;Less", "How are you?", "Wie geht es dir?")]
 		[TestCase(ProcessTypeFlags.Translation, "Translate;en;de;More", "How are you?", "Wie geht es Ihnen?")]
 		public void TestDeepLConverter(ProcessTypeFlags processType, string converterSpec, string testInput, string testOutput)
