@@ -161,10 +161,10 @@ namespace SilEncConverters40
         protected unsafe void Load()
         {
             Util.DebugWriteLine(this, "BEGIN");
-            string strScriptPath = ConverterIdentifier;
+			string strScriptPath = ConverterIdentifier;
 
-            // first make sure it's there and get the last time it was modified
-            DateTime timeModified = DateTime.Now; // don't care really, but have to initialize it.
+			// first make sure it's there and get the last time it was modified
+			DateTime timeModified = DateTime.Now; // don't care really, but have to initialize it.
             if (!DoesFileExist(strScriptPath, ref timeModified))
                 EncConverters.ThrowError(ErrStatus.CantOpenReadMap, strScriptPath);
 

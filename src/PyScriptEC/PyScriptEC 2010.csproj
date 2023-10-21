@@ -103,8 +103,14 @@
     <Compile Include="PyScriptAutoConfigDialog.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="PyScriptAutoConfigDialog.Designer.cs">
+      <DependentUpon>PyScriptAutoConfigDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="PyScriptEncConverter.cs" />
     <Compile Include="PyScriptEncConverterConfig.cs" />
+    <Compile Include="PythonAutoConfigDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ECInterfaces\ECInterfaces 2010.csproj">
