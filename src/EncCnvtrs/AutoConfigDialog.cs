@@ -131,9 +131,11 @@ namespace SilEncConverters40
                 var strXmlFilePath = (string)keyRoot.GetValue("RootDir");
                 if (String.IsNullOrEmpty(strXmlFilePath))
                     throw new ApplicationException("The 'RootDir' registry key is not defined!? Perhaps the application needs to be re-installed. Ask the developer.");
-                strXmlFilePath = Path.Combine(strXmlFilePath, Path.Combine(@"Help", strHtmlFileName));
+				if (strHtmlFileName.StartsWith("http"))
+					strXmlFilePath = strHtmlFileName;
+				else
+					strXmlFilePath = Path.Combine(strXmlFilePath, Path.Combine(@"Help", strHtmlFileName));
                 System.Diagnostics.Debug.WriteLine(strXmlFilePath);
-                System.Diagnostics.Debug.Assert(System.IO.File.Exists(strXmlFilePath), String.Format("Cannot find '{0}'. If this is a development machine, you need to add the following reg key to see the About help files: HLKM\\SOFTWARE\\SIL\\SilEncConverters40\\[RootDir] = '<parent folder where the 'help' sub-folder exists>' along with a trailing slash (e.g. \"C:\\fw\\lib\\release\\\")", strHtmlFileName));
                 this.webBrowser.Navigate(strXmlFilePath);
             }
 #if DEBUG
