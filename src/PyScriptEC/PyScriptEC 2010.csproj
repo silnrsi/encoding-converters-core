@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -83,6 +83,10 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Python.Runtime, Version=3.0.3.0, Culture=neutral, PublicKeyToken=5000fea6cba702dd, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\pythonnet.3.0.3\lib\netstandard2.0\Python.Runtime.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -100,13 +104,21 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Py3ScriptAutoConfigDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Py3ScriptAutoConfigDialog.Designer.cs">
+      <DependentUpon>Py3ScriptAutoConfigDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="PyScriptAutoConfigDialog.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Py3ScriptEncConverter.cs" />
     <Compile Include="PyScriptAutoConfigDialog.Designer.cs">
       <DependentUpon>PyScriptAutoConfigDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="PyScriptEncConverter.cs" />
+    <Compile Include="Py3ScriptEncConverterConfig.cs" />
     <Compile Include="PyScriptEncConverterConfig.cs" />
     <Compile Include="PythonAutoConfigDialog.cs">
       <SubType>Form</SubType>
@@ -140,12 +152,17 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Py3ScriptAutoConfigDialog.resx">
+      <DependentUpon>Py3ScriptAutoConfigDialog.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="PyScriptAutoConfigDialog.resx">
       <DependentUpon>PyScriptAutoConfigDialog.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

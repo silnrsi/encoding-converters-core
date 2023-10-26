@@ -37,10 +37,10 @@ namespace SilEncConverters40
         #region Const Definitions
         // private registry access key string constants
         public const string BY_PROCESS_TYPE = "ByProcessType";
-		public const string strInstallerLocationRegKey = @"SOFTWARE\SIL\SilEncConverters40\Installer";
-		public const string strInstallerPathKey = "InstallerPath";
+        public const string strInstallerLocationRegKey = @"SOFTWARE\SIL\SilEncConverters40\Installer";
+        public const string strInstallerPathKey = "InstallerPath";
 #if UseXmlFilesForPlugins
-		public const string SEC_ROOT_KEY = @"SOFTWARE\SIL\SilEncConverters40";
+        public const string SEC_ROOT_KEY = @"SOFTWARE\SIL\SilEncConverters40";
 #if !PluginsInEachFolder
         public const string CstrDefPluginFolderEc = "EC";
         public const string CstrDefPluginFolderPlugins = "Plugins";
@@ -62,11 +62,11 @@ namespace SilEncConverters40
         public const string strRegKeyForSelfRegistering = "RegisterSelf";
         internal const string strShowToolTipsStateKey   = "ShowToolTips";
         internal const string CstrUseGeckoRegKey = "UseMozilla";
-		internal const string CstrUseEdgeRegKey = "UseEdge";
+        internal const string CstrUseEdgeRegKey = "UseEdge";
 
-		// implement types define in EncCnvtrs.dll (public so users can use them in .Net
-		//  code rather than hard-coding the strings)
-		public const string strTypeImplCOM              = "COM";
+        // implement types define in EncCnvtrs.dll (public so users can use them in .Net
+        //  code rather than hard-coding the strings)
+        public const string strTypeImplCOM              = "COM";
         public const string strTypeSILcc                = "SIL.cc";
         public const string strTypeSILtec               = "SIL.tec";
         public const string strTypeSILtecForm           = "SIL.tecForm";
@@ -77,17 +77,18 @@ namespace SilEncConverters40
         public const string strTypeSILicuConv           = "ICU.conv";
         public const string strTypeSILicuRegex          = "ICU.regex";
         public const string strTypeSILPyScript          = "SIL.PyScript";
+        public const string strTypeSILPy3Script            = "SIL.Py3Script";
         public const string strTypeSILPerlExpression    = "SIL.PerlExpression";
         public const string strTypeSILfallback          = "SIL.fallback";
         public const string strTypeSILadaptit           = "SIL.AdaptItKB";
         public const string strTypeSILadaptitGuesser    = "SIL.AdaptItKBGuesser";
         public const string strTypeSILtechHindiSite        = "SIL.TechHindiWebPage";
         public const string strTypeSILBingTranslator    = "SIL.BingTranslator";
-		public const string strTypeSILGoogleTranslator  = "SIL.GoogleTranslator";
+        public const string strTypeSILGoogleTranslator  = "SIL.GoogleTranslator";
         public const string strTypeSILDeepLTranslator    = "SIL.DeepLTranslator";
         public const string strTypeSILAzureOpenAiTranslator = "SIL.AzureOpenAI";
 
-		public const string cstrTempConverterPrefix     = "Temporary Converter";
+        public const string cstrTempConverterPrefix     = "Temporary Converter";
 
         // default values for XML file attributes
         public const string HKLM_PATH_TO_XML_FILE       = @"SOFTWARE\SIL\EncodingConverterRepository";
@@ -433,17 +434,17 @@ namespace SilEncConverters40
 
             // read the XML details
             mappingRegistry.platformRow aPlatformRow = file.platform.FindByname(strTypeImplCOM);
-			if (aPlatformRow != null)
-			{
-				foreach (mappingRegistry.implementRow aImplRow in aPlatformRow.GetimplementRows())
-				{
-					mapImplementTypesUse[aImplRow.type] = aImplRow.use;
-					int priority = ((aImplRow.IspriorityNull()) ? cnDefImplPriority : aImplRow.priority);
-					m_mapImplementTypesPriority[aImplRow.type] = priority;
-				}
-			}
+            if (aPlatformRow != null)
+            {
+                foreach (mappingRegistry.implementRow aImplRow in aPlatformRow.GetimplementRows())
+                {
+                    mapImplementTypesUse[aImplRow.type] = aImplRow.use;
+                    int priority = ((aImplRow.IspriorityNull()) ? cnDefImplPriority : aImplRow.priority);
+                    m_mapImplementTypesPriority[aImplRow.type] = priority;
+                }
+            }
 
-			InsureImplementationsRow(file);
+            InsureImplementationsRow(file);
             mappingRegistry.implementationsRow aImplsRow = file.implementations[0];
 
             // now open and read the information about which plug-ins are installed (based on the
@@ -468,17 +469,17 @@ namespace SilEncConverters40
 
             if (String.IsNullOrEmpty(strPluginXmlFilesFolder))
 #if !PluginsInEachFolder
-			{
-				// Argh...
-				//  in v4.0, we have the assemblies in each our own install folders. But the
-				//  Fieldworks instance can't use the instance of this assembly installed as
-				//  part of SEC, for example. So the whole, "Let's try to use the newer version
-				//  of the assembly installed by the other guy" doesn't work. Therefore, we
-				//  also no longer want to. Each client will put the plugins in a
-				//  <running folder>\EC\Plugins folder
-				Debug.WriteLine("EncConverters: Falling back to assembly folder");
-				strPluginXmlFilesFolder = PlugInFolder;
-			}
+            {
+                // Argh...
+                //  in v4.0, we have the assemblies in each our own install folders. But the
+                //  Fieldworks instance can't use the instance of this assembly installed as
+                //  part of SEC, for example. So the whole, "Let's try to use the newer version
+                //  of the assembly installed by the other guy" doesn't work. Therefore, we
+                //  also no longer want to. Each client will put the plugins in a
+                //  <running folder>\EC\Plugins folder
+                Debug.WriteLine("EncConverters: Falling back to assembly folder");
+                strPluginXmlFilesFolder = PlugInFolder;
+            }
 #else
             {
                 strPluginXmlFilesFolder = Util.CommonAppDataPath() + strDefPluginFolder;
@@ -486,7 +487,7 @@ namespace SilEncConverters40
 
             strPluginXmlFilesFolder += strDefPluginFolderVersionPrefix + typeof(IEncConverter).Assembly.GetName().Version.ToString();
 #endif
-			Debug.Assert(Directory.Exists(strPluginXmlFilesFolder), String.Format("Can't find the plug-in folder, '{0}'", strPluginXmlFilesFolder));
+            Debug.Assert(Directory.Exists(strPluginXmlFilesFolder), String.Format("Can't find the plug-in folder, '{0}'", strPluginXmlFilesFolder));
             string[] astrPluginXmlFiles = Directory.GetFiles(strPluginXmlFilesFolder, "*.xml");
             Debug.Assert(astrPluginXmlFiles.Length > 0, String.Format(@"You don't have any plug-ins installed (e.g. {0}\SilEncConverters40 Plugin Details.xml)", strPluginXmlFilesFolder));
 
@@ -582,9 +583,9 @@ namespace SilEncConverters40
                         {
                             strProgId = (string)m_mapImplTypeToProgId[strImplementationType];
 
-							// see if one or the other has a higher priority. (it might not be in there yet, if we're just building an initial repo)
-							if (!m_mapImplementTypesPriority.ContainsKey(strImplementationType))
-								continue;
+                            // see if one or the other has a higher priority. (it might not be in there yet, if we're just building an initial repo)
+                            if (!m_mapImplementTypesPriority.ContainsKey(strImplementationType))
+                                continue;
 
                             int nNewPriority = aDetailsRow.Priority;
                             int nExistingPriority = (int)m_mapImplementTypesPriority[strImplementationType];
@@ -715,25 +716,25 @@ namespace SilEncConverters40
                 WriteRepositoryFile(file);
         }
 
-		/// <summary>
-		/// Returns the folder we expect to find the plug-ins describing which assemblies the various implementations are in
-		/// </summary>
-		private string PlugInFolder
-		{
-			get
-			{
-				return Path.Combine(Path.Combine(GetRunningFolder,
-												 CstrDefPluginFolderEc),
-									CstrDefPluginFolderPlugins);
-			}
-		}
+        /// <summary>
+        /// Returns the folder we expect to find the plug-ins describing which assemblies the various implementations are in
+        /// </summary>
+        private string PlugInFolder
+        {
+            get
+            {
+                return Path.Combine(Path.Combine(GetRunningFolder,
+                                                 CstrDefPluginFolderEc),
+                                    CstrDefPluginFolderPlugins);
+            }
+        }
 
-		/// <summary>
-		/// Get the folder the executing assembly comes from.  On Windows .Net, Location
-		/// will likely point to a "shadow copy".  We want the original location, so we use
-		/// CodeBase instead (even though the URI must be dealt with).
-		/// </summary>
-		protected static string GetRunningFolder
+        /// <summary>
+        /// Get the folder the executing assembly comes from.  On Windows .Net, Location
+        /// will likely point to a "shadow copy".  We want the original location, so we use
+        /// CodeBase instead (even though the URI must be dealt with).
+        /// </summary>
+        protected static string GetRunningFolder
         {
             get
             {
@@ -1996,7 +1997,7 @@ namespace SilEncConverters40
         public void RemoveNonPersist(object mapName)
         {
             Util.DebugWriteLine(this, "BEGIN");
-			// first see if this name is a concatenation of mappingName+implementation
+            // first see if this name is a concatenation of mappingName+implementation
             string sImplementType;
             string strMapName = StringMapNameFromObject(mapName);
             string strConverterName = GetMappingName(strMapName, out sImplementType);
@@ -2420,32 +2421,32 @@ namespace SilEncConverters40
             {
                 Util.DebugWriteLine(this, "Getting from assembly.");
 
-				ObjectHandle ohndl;
-				try
-				{
-					ohndl = Activator.CreateInstance(strAssemblySpec, strProgID);
-					rConverter = (IEncConverter)ohndl.Unwrap();
-				}
-				catch (Exception ex)
-				{
-					// see if we can load the assembly from an installation of SILConverters
+                ObjectHandle ohndl;
+                try
+                {
+                    ohndl = Activator.CreateInstance(strAssemblySpec, strProgID);
+                    rConverter = (IEncConverter)ohndl.Unwrap();
+                }
+                catch (Exception ex)
+                {
+                    // see if we can load the assembly from an installation of SILConverters
                     //    strAssemblySpec = e.g. "SilEncConverters40, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485"
-					var index = strAssemblySpec.IndexOf(',');
-					if (index > 0)
-					{
-						var assemblyName = strAssemblySpec.Substring(0, index);
-						var keyInstallLocation = Registry.LocalMachine.OpenSubKey(strInstallerLocationRegKey);
-						if (keyInstallLocation != null)
-						{
-							var installPath = (string)keyInstallLocation.GetValue(strInstallerPathKey);
-							var assemblyFileSpec = Path.Combine(Path.GetDirectoryName(installPath), $"{assemblyName}.dll");
-							var assembly = Assembly.LoadFrom(assemblyFileSpec);
-							var type = assembly.GetType(strProgID);
-							Util.DebugWriteLine(this, ex.Message + $" So trying to get {strProgID} from {assemblyFileSpec} instead");
-							rConverter = (IEncConverter) Activator.CreateInstance(type);
-						}
-					}
-				}
+                    var index = strAssemblySpec.IndexOf(',');
+                    if (index > 0)
+                    {
+                        var assemblyName = strAssemblySpec.Substring(0, index);
+                        var keyInstallLocation = Registry.LocalMachine.OpenSubKey(strInstallerLocationRegKey);
+                        if (keyInstallLocation != null)
+                        {
+                            var installPath = (string)keyInstallLocation.GetValue(strInstallerPathKey);
+                            var assemblyFileSpec = Path.Combine(Path.GetDirectoryName(installPath), $"{assemblyName}.dll");
+                            var assembly = Assembly.LoadFrom(assemblyFileSpec);
+                            var type = assembly.GetType(strProgID);
+                            Util.DebugWriteLine(this, ex.Message + $" So trying to get {strProgID} from {assemblyFileSpec} instead");
+                            rConverter = (IEncConverter) Activator.CreateInstance(type);
+                        }
+                    }
+                }
                 if (rConverter == null)
                 {
                     Util.DebugWriteLine(this, "Returning null.");
@@ -3157,11 +3158,11 @@ namespace SilEncConverters40
                 }
                 catch (Exception e)
                 {
-					var error = LogExceptionMessage("AutoConfigure", e);
+                    var error = LogExceptionMessage("AutoConfigure", e);
 
-					MessageBox.Show($"AutoConfigure failed: {error}", traceSwitch.DisplayName);
+                    MessageBox.Show($"AutoConfigure failed: {error}", traceSwitch.DisplayName);
 #if DEBUG
-					if (Util.IsUnix)
+                    if (Util.IsUnix)
                     {
                         throw;
                     }
@@ -3171,20 +3172,20 @@ namespace SilEncConverters40
             return false;
         }
 
-		public static string LogExceptionMessage(string className, Exception ex)
-		{
-			string msg = "Error occurred: " + ex.Message;
-			while (ex.InnerException != null)
-			{
-				ex = ex.InnerException;
-				msg += $"{Environment.NewLine}because: (InnerException): {ex.Message}";
-			}
+        public static string LogExceptionMessage(string className, Exception ex)
+        {
+            string msg = "Error occurred: " + ex.Message;
+            while (ex.InnerException != null)
+            {
+                ex = ex.InnerException;
+                msg += $"{Environment.NewLine}because: (InnerException): {ex.Message}";
+            }
 
-			Util.DebugWriteLine(className, msg);
-			return msg;
-		}
+            Util.DebugWriteLine(className, msg);
+            return msg;
+        }
 
-		public bool AutoConfigureEx
+        public bool AutoConfigureEx
             (
             IEncConverter rIEncConverter,
             ConvType eConversionTypeFilter,
@@ -4895,6 +4896,7 @@ namespace SilEncConverters40
                     break;
                 case ErrStatus.CompilationFailed:
                     strRes = "IDS_kStatus_CompilationFailed";
+                    bFormatExtra = true;
                     break;
                 case ErrStatus.NameNotFound:
                     strRes = "IDS_kStatus_NameNotFound";
@@ -5001,7 +5003,12 @@ namespace SilEncConverters40
                 string strMsg = LocRM.GetString(strRes);
 
                 if (bFormatExtra)
-                    strMsg = String.Format(strMsg, strExtra);
+                {
+                    if (strMsg.Contains("{0}"))
+                        strMsg = String.Format(strMsg, strExtra);
+                    else
+                        strMsg = $"{strMsg}:{Environment.NewLine}{Environment.NewLine}{strExtra}";
+                }
 
                 ECException x = new ECException(strMsg, status);
                 throw x;
