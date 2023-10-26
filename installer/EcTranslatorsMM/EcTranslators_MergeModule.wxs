@@ -318,11 +318,11 @@
 
                 <Component Id="AzureOpenAiExe.exe" Guid="{53510C8B-7FA8-4D55-8959-94CC72A44121}">
                     <File Id="AzureOpenAiExe.exe" Name="AzureOpenAiExe.exe" KeyPath="yes" Assembly=".net" AssemblyManifest="AzureOpenAiExe.exe" AssemblyApplication="AzureOpenAiExe.exe"
-                          Source="..\..\output\x64\release\AzureOpenAiExe.exe"/>
+                          Source="..\..\output\Win32\release\AzureOpenAiExe.exe"/>
                 </Component>
 
                 <Component Id="AzureOpenAiExe.exe.config" Guid="{9605F08D-AC5B-4193-B3CA-27203214A402}">
-                    <File Id="AzureOpenAiExe.exe.config" Name="AzureOpenAiExe.exe.config" Vital="yes" KeyPath="yes" Source="..\..\output\x64\release\AzureOpenAiExe.exe.config" />
+                    <File Id="AzureOpenAiExe.exe.config" Name="AzureOpenAiExe.exe.config" Vital="yes" KeyPath="yes" Source="..\..\output\Win32\release\AzureOpenAiExe.exe.config" />
                 </Component>
 
                 <Directory Id="EcTranslatorsECFolder" Name="EC">
