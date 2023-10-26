@@ -32,5 +32,28 @@
     <Setting Name="GoogleCloudBillingProjectName" Type="System.String" Scope="User">
       <Value Profile="(Default)">projects/bright-coyote-381812</Value>
     </Setting>
+    <Setting Name="AzureOpenAiEndpoint" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="AzureOpenAiDeploymentName" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="AzureOpenAiKeyOverride" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="AzureOpenAiKeyLocationDialogInstructionUrl" Type="System.String" Scope="User">
+      <Value Profile="(Default)">https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/create-resource</Value>
+    </Setting>
+    <Setting Name="AzureOpenAiSystemPromptAdditions" Type="System.Collections.Specialized.StringCollection" Scope="User">
+      <Value Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
+&lt;ArrayOfString xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"&gt;
+  &lt;string&gt;with a 'free translation' style&lt;/string&gt;
+  &lt;string&gt;with a 'literal translation' style&lt;/string&gt;
+  &lt;string&gt;with a 'free translation' style aimed at high school students&lt;/string&gt;
+  &lt;string&gt;in the Devanagari script&lt;/string&gt;
+  &lt;string&gt;using 'Yoda speak'&lt;/string&gt;
+  &lt;string&gt;UseSystemPrompt: Translate from Hindi into English.&lt;/string&gt;
+&lt;/ArrayOfString&gt;</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

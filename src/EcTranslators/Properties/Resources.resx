@@ -123,6 +123,21 @@
   <data name="GoogleTranslatorKeyDialogInstructionUrl" xml:space="preserve">
     <value>https://cloud.google.com/translate/docs/setup#creating_service_accounts_and_keys</value>
   </data>
+  <data name="HelpForAzureOpenAiAddYourOwnApiKey" xml:space="preserve">
+    <value>Click this button to enter your own Resource key and other information needed to use the Microsoft Azure Open AI Service. See https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/create-resource, for more information on how to get your own Azure Open AI Resource. Note: there is no default Resource for this converter; you must get your own to use it.</value>
+  </data>
+  <data name="HelpForAzureOpenAiSourceLanguageTextBox" xml:space="preserve">
+    <value>Enter the name of the language you want the Azure Open AI Resource to tranlate from (e.g. Hindi)</value>
+  </data>
+  <data name="HelpForAzureOpenAiSystemPromptAdditionsComboBox" xml:space="preserve">
+    <value>You can add one of the existing additions to the base system prompt using the values in this drop down box (or type in your own)</value>
+  </data>
+  <data name="HelpForAzureOpenAiSystemPromptTextBox" xml:space="preserve">
+    <value>This box shows the System Prompt that will be sent to the Azure Open AI Resource</value>
+  </data>
+  <data name="HelpForAzureOpenAiTargetLanguageTextBox" xml:space="preserve">
+    <value>Enter the name of the language you want the Azure Open AI Resource to tranlate into (e.g. English)</value>
+  </data>
   <data name="HelpForBingTranslatorAddYourOwnApiKey" xml:space="preserve">
     <value>Click this button to enter your own API key from Microsoft Azure. See the "Prerequisites" section on the page, https://docs.microsoft.com/en-us/azure/cognitive-services/translator/quickstart-translator, for how to get your own key (e.g. if the default API key has run out of translation support -- note: the default API key is using the free pricing tier and is limited to 2 million characters/month)</value>
   </data>

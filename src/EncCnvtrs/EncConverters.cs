@@ -81,10 +81,11 @@ namespace SilEncConverters40
         public const string strTypeSILfallback          = "SIL.fallback";
         public const string strTypeSILadaptit           = "SIL.AdaptItKB";
         public const string strTypeSILadaptitGuesser    = "SIL.AdaptItKBGuesser";
-		public const string strTypeSILtechHindiSite		= "SIL.TechHindiWebPage";
-        public const string strTypeSILBingTranslator	= "SIL.BingTranslator";
+        public const string strTypeSILtechHindiSite        = "SIL.TechHindiWebPage";
+        public const string strTypeSILBingTranslator    = "SIL.BingTranslator";
 		public const string strTypeSILGoogleTranslator  = "SIL.GoogleTranslator";
-		public const string strTypeSILDeepLTranslator	= "SIL.DeepLTranslator";
+        public const string strTypeSILDeepLTranslator    = "SIL.DeepLTranslator";
+        public const string strTypeSILAzureOpenAiTranslator = "SIL.AzureOpenAI";
 
 		public const string cstrTempConverterPrefix     = "Temporary Converter";
 
@@ -626,7 +627,7 @@ namespace SilEncConverters40
                         // then the converters are keyed either based on the process type or the
                         //  extension (these are used by the "Add" method where the user doesn't
                         //  have to specify the implementation type)
-                        if (!aDetailsRow.IsDefiningProcessTypeNull() && (aDetailsRow.DefiningProcessType != 0))	// but not for "Don't know"
+                        if (!aDetailsRow.IsDefiningProcessTypeNull() && (aDetailsRow.DefiningProcessType != 0))    // but not for "Don't know"
                         {
                             int nProcessType = aDetailsRow.DefiningProcessType;
 
@@ -2428,7 +2429,7 @@ namespace SilEncConverters40
 				catch (Exception ex)
 				{
 					// see if we can load the assembly from an installation of SILConverters
-					//	strAssemblySpec = e.g. "SilEncConverters40, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485"
+                    //    strAssemblySpec = e.g. "SilEncConverters40, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485"
 					var index = strAssemblySpec.IndexOf(',');
 					if (index > 0)
 					{

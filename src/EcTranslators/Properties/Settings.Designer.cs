@@ -181,5 +181,74 @@ namespace SilEncConverters40.EcTranslators.Properties {
                 this["GoogleCloudBillingProjectName"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string AzureOpenAiEndpoint {
+            get {
+                return ((string)(this["AzureOpenAiEndpoint"]));
+            }
+            set {
+                this["AzureOpenAiEndpoint"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string AzureOpenAiDeploymentName {
+            get {
+                return ((string)(this["AzureOpenAiDeploymentName"]));
+            }
+            set {
+                this["AzureOpenAiDeploymentName"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string AzureOpenAiKeyOverride {
+            get {
+                return ((string)(this["AzureOpenAiKeyOverride"]));
+            }
+            set {
+                this["AzureOpenAiKeyOverride"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/create-resource" +
+            "")]
+        public string AzureOpenAiKeyLocationDialogInstructionUrl {
+            get {
+                return ((string)(this["AzureOpenAiKeyLocationDialogInstructionUrl"]));
+            }
+            set {
+                this["AzureOpenAiKeyLocationDialogInstructionUrl"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute(@"<?xml version=""1.0"" encoding=""utf-16""?>
+<ArrayOfString xmlns:xsd=""http://www.w3.org/2001/XMLSchema"" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"">
+  <string>with a 'free translation' style</string>
+  <string>with a 'literal translation' style</string>
+  <string>with a 'free translation' style aimed at high school students</string>
+  <string>in the Devanagari script</string>
+  <string>using 'Yoda speak'</string>
+  <string>UseSystemPrompt: Translate from Hindi into English.</string>
+</ArrayOfString>")]
+        public global::System.Collections.Specialized.StringCollection AzureOpenAiSystemPromptAdditions {
+            get {
+                return ((global::System.Collections.Specialized.StringCollection)(this["AzureOpenAiSystemPromptAdditions"]));
+            }
+            set {
+                this["AzureOpenAiSystemPromptAdditions"] = value;
+            }
+        }
     }
 }

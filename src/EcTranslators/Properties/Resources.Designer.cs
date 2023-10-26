@@ -79,6 +79,51 @@ namespace SilEncConverters40.EcTranslators.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Click this button to enter your own Resource key and other information needed to use the Microsoft Azure Open AI Service. See https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/create-resource, for more information on how to get your own Azure Open AI Resource. Note: there is no default Resource for this converter; you must get your own to use it..
+        /// </summary>
+        internal static string HelpForAzureOpenAiAddYourOwnApiKey {
+            get {
+                return ResourceManager.GetString("HelpForAzureOpenAiAddYourOwnApiKey", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enter the name of the language you want the Azure Open AI Resource to tranlate from (e.g. Hindi).
+        /// </summary>
+        internal static string HelpForAzureOpenAiSourceLanguageTextBox {
+            get {
+                return ResourceManager.GetString("HelpForAzureOpenAiSourceLanguageTextBox", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You can add one of the existing additions to the base system prompt using the values in this drop down box (or type in your own).
+        /// </summary>
+        internal static string HelpForAzureOpenAiSystemPromptAdditionsComboBox {
+            get {
+                return ResourceManager.GetString("HelpForAzureOpenAiSystemPromptAdditionsComboBox", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This box shows the System Prompt that will be sent to the Azure Open AI Resource.
+        /// </summary>
+        internal static string HelpForAzureOpenAiSystemPromptTextBox {
+            get {
+                return ResourceManager.GetString("HelpForAzureOpenAiSystemPromptTextBox", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enter the name of the language you want the Azure Open AI Resource to tranlate into (e.g. English).
+        /// </summary>
+        internal static string HelpForAzureOpenAiTargetLanguageTextBox {
+            get {
+                return ResourceManager.GetString("HelpForAzureOpenAiTargetLanguageTextBox", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Click this button to enter your own API key from Microsoft Azure. See the &quot;Prerequisites&quot; section on the page, https://docs.microsoft.com/en-us/azure/cognitive-services/translator/quickstart-translator, for how to get your own key (e.g. if the default API key has run out of translation support -- note: the default API key is using the free pricing tier and is limited to 2 million characters/month).
         /// </summary>
         internal static string HelpForBingTranslatorAddYourOwnApiKey {
