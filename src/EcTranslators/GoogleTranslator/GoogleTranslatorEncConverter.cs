@@ -179,7 +179,9 @@ namespace SilEncConverters40.EcTranslators.GoogleTranslator
 			// here's our input string
 			var strInput = new string(caIn);
 
-			var strOutput = CallGoogleTranslator(strInput).Result;
+			var strOutput = String.IsNullOrEmpty(strInput)
+								? strInput
+								: CallGoogleTranslator(strInput).Result;
 
 			StringToProperByteStar(strOutput, lpOutBuffer, ref rnOutLen);
 		}

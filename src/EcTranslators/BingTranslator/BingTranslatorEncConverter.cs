@@ -214,7 +214,9 @@ namespace SilEncConverters40.EcTranslators.BingTranslator
 			// here's our input string
 			var strInput = new string(caIn);
 
-			var strOutput = CallBingTranslator(strInput).Result;
+			var strOutput = String.IsNullOrEmpty(strInput)
+								? strInput
+								: CallBingTranslator(strInput).Result;
 
 			StringToProperByteStar(strOutput, lpOutBuffer, ref rnOutLen);
 		}

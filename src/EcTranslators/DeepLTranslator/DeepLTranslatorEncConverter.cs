@@ -260,7 +260,9 @@ namespace SilEncConverters40.EcTranslators.DeepLTranslator
 			// here's our input string
 			var strInput = new string(caIn);
 
-			var strOutput = CallDeepLTranslator(strInput).Result;
+			var strOutput = String.IsNullOrEmpty(strInput)
+								? strInput
+								: CallDeepLTranslator(strInput).Result;
 
 			StringToProperByteStar(strOutput, lpOutBuffer, ref rnOutLen);
 		}
