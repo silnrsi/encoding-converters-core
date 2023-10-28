@@ -104,6 +104,16 @@ namespace BackTranslationHelper.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap FillUpHS {
+            get {
+                object obj = ResourceManager.GetObject("FillUpHS", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;button id=&quot;{0}&quot; name=&quot;{1}&quot; onMouseUp=&quot;{2}&quot; title=&quot;{3}&quot;&gt;&lt;img src=&quot;{4}&quot;&gt;&lt;/button&gt;.
         /// </summary>
         internal static string HTML_ButtonImageToolTip {
