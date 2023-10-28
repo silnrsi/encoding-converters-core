@@ -123,9 +123,24 @@ namespace SilEncConverters40.EcTranslators.AzureOpenAI
 
             // this is the only one we support from now on (if the user really wants to do legacy to unicode, they have to deal with the legacy as coming in utf-8 format
             conversionType = ConvType.Unicode_to_Unicode;
-        }
 
-        internal static bool ParseConverterIdentifier(string converterSpec,
+			// I'm assuming that we'd have to/want to set up a different one to go the other direction
+			m_eConversionType = conversionType = MakeUniDirectional(conversionType);
+
+			if (String.IsNullOrEmpty(lhsEncodingID))
+				lhsEncodingID = m_strLhsEncodingID = EncConverters.strDefUnicodeEncoding;
+			if (String.IsNullOrEmpty(rhsEncodingID))
+				rhsEncodingID = m_strRhsEncodingID = EncConverters.strDefUnicodeEncoding;
+
+			// this is a Translation process type by definition. This is used by various programs to prevent
+			//	over usage -- e.g. Paratext should be blocking these EncConverter types as the 'Transliteration'
+			//	type project EncConverter (bkz it'll try to "transliterate" the entire corpus -- probably not
+			//	what's wanted). Also ClipboardEncConverter also doesn't process these for a preview (so the
+			//	system tray popup doesn't take forever to display.
+			processTypeFlags |= (int)ProcessTypeFlags.Translation;
+		}
+
+		internal static bool ParseConverterIdentifier(string converterSpec,
             out string fromLanguage, out string toLanguage,
             out string addlInstructions, out string systemPrompt)
         {
