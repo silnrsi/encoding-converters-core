@@ -13,6 +13,7 @@ using Google.Apis.Auth.OAuth2;
 using Google.Cloud.Translation.V2;
 using DeepL.Model;
 using Microsoft.Extensions.Options;
+using System.Windows.Forms;
 
 namespace SilEncConverters40.EcTranslators.GoogleTranslator
 {
@@ -143,19 +144,30 @@ namespace SilEncConverters40.EcTranslators.GoogleTranslator
 		public async static Task<List<Google.Cloud.Translation.V2.Language>> GetCapabilities()
 #pragma warning restore CS3002 // Return type is not CLS-compliant
 		{
-			var resultLanguagesSupported = await Task.Run(async delegate
+			try
 			{
-				return (await TranslateClient.ListLanguagesAsync(LanguageCodes.English)).ToList();
-			}).ConfigureAwait(false);
+				var resultLanguagesSupported = await Task.Run(async delegate
+				{
+					return (await TranslateClient.ListLanguagesAsync(LanguageCodes.English)).ToList();
+				}).ConfigureAwait(false);
 
-			return resultLanguagesSupported;
+				return resultLanguagesSupported;
+			}
+			catch (Exception ex)
+			{
+				var error = LogExceptionMessage($"{typeof(GoogleTranslatorEncConverter).Name}.GetCapabilities", ex);
+				if (error.Contains("The remote name could not be resolved"))
+					error += String.Format("{0}{0}Unable to reach the {1} service. Are you connected to the internet?", Environment.NewLine, CstrDisplayName);
+				MessageBox.Show(error, EncConverters.cstrCaption);
+			}
+			return null;
 		}
 
 		#endregion Initialization
 
 		#region Abstract Base Class Overrides
 
-        [CLSCompliant(false)]
+		[CLSCompliant(false)]
         protected override unsafe void DoConvert
             (
             byte*       lpInBuffer,

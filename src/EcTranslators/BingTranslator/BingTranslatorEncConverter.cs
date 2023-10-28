@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Runtime.InteropServices;   // for the class attributes
 using System.Text;                      // for ASCIIEncoding
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using ECInterfaces;                     // for ConvType
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -166,13 +167,20 @@ namespace SilEncConverters40.EcTranslators.BingTranslator
 			}
 			catch (Exception ex)
 			{
-				return LogExceptionMessage("GetTranslationCapabilities", ex);
+				var error = LogExceptionMessage($"{typeof(BingTranslatorEncConverter).Name}.GetCapabilities", ex);
+				if (error.Contains("The remote name could not be resolved"))
+					error += String.Format("{0}{0}Unable to reach the {1} service. Are you connected to the internet?", Environment.NewLine, CstrDisplayName);
+				MessageBox.Show(error, EncConverters.cstrCaption);
 			}
+			return null;
 		}
 
 		public static (List<TranslationLanguage> translations, List<TransliterationLanguage> transliterations, List<DictionaryLanguage> dictionaryOptions) GetCapabilities()
 		{
 			var jsonCapabilities = GetTranslationCapabilities().Result;
+			if (jsonCapabilities == null)
+				return (null, null, null);
+
 			JObject capabilities = JObject.Parse(jsonCapabilities);
 			var translationTokens = capabilities["translation"].Children();
 			var translations = TranslationLanguage.LoadFromJTokens(translationTokens);

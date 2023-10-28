@@ -62,6 +62,8 @@ namespace SilEncConverters40.EcTranslators.GoogleTranslator
             Util.DebugWriteLine(this, "called base.Initalize");
 
 			LanguagesSupported = GetCapabilities().GetAwaiter().GetResult();
+			if (LanguagesSupported == null)
+				return;
 
 			string fromLanguage = SourceLanguageNameAutoDetect, toLanguage = TargetLanguageNameMustBeConfigure;
 			InitializeSourceAndTargetLanguages(initializeTargetLanguageAlso: true);

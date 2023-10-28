@@ -6,10 +6,9 @@ using System.Net.Http;
 using System.Runtime.InteropServices;   // for the class attributes
 using System.Text;                      // for ASCIIEncoding
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using DeepL;
 using ECInterfaces;                     // for ConvType
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace SilEncConverters40.EcTranslators.DeepLTranslator
 {
@@ -227,13 +226,15 @@ namespace SilEncConverters40.EcTranslators.DeepLTranslator
 			}
 			catch (Exception ex)
 			{
-				LogExceptionMessage("DeepLEncConverter.GetCapabilities", ex);
-				throw;
+				var error = LogExceptionMessage($"{typeof(DeepLTranslatorEncConverter).Name}.GetCapabilities", ex);
+				if (error.Contains("The server name or address could not be resolved"))
+					error += String.Format("{0}{0}Unable to reach the {1} service. Are you connected to the internet?", Environment.NewLine, CstrDisplayName);
+				MessageBox.Show(error, EncConverters.cstrCaption);
 			}
+			return (null, null, null, null);
 		}
 
 		#endregion Initialization
-
 		#region Abstract Base Class Overrides
 
         [CLSCompliant(false)]
