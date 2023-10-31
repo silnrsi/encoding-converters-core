@@ -38,6 +38,15 @@ jobs:
       # See https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference
       run: msbuild /m /p:Configuration=${{matrix.build_configuration}} "${{env.SOLUTION_FILE_PATH}}"
 
+    - name: Create NuGet Package
+      run: dotnet pack -c ${{ matrix.build_configuration }} -o ./output
+
+    - name: Upload NuGet Package as Artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: nuget-package
+        path: ./output/*.nupkg
+
     # TODO Run tests
     #- name: Test
     #  run: output/Win32/${{matrix.build_configuration}}/RunTests.exe
@@ -57,6 +66,9 @@ jobs:
 
     - name: Install dependencies
       run: sudo apt-get install --assume-yes automake g++ python2-dev python2 libicu-dev mono5-sil icu-dev-fw libteckit-dev
+
+    - name: Restore NuGet Packages
+      run: nuget restore "${{env.SOLUTION_FILE_PATH}}"
 
     - name: Checkout
       uses: actions/checkout@v2
