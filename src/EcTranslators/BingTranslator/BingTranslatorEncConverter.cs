@@ -16,7 +16,11 @@ namespace SilEncConverters40.EcTranslators.BingTranslator
 	/// <summary>
 	/// Managed Bing Translator EncConverter.
 	/// </summary>
+#if X64
 	[GuidAttribute("73742D80-5508-4500-9FAA-AF82E4756C35")]
+#else
+	[GuidAttribute("4F7DE175-EC0C-463A-8027-6FFB8799C050")]
+#endif
 	// normally these subclasses are treated as the base class (i.e. the 
 	//  client can use them orthogonally as IEncConverter interface pointers
 	//  so normally these individual subclasses would be invisible), but if 

@@ -21,12 +21,17 @@ using Google.Apis.Discovery;
 
 namespace SilEncConverters40.EcTranslators.AzureOpenAI
 {
-    /// <summary>
-    /// Access to ChatGPT 3.5 via Azure's OpenAI
-    /// </summary>
-    public class AzureOpenAiEncConverter : ExeEncConverter
+	/// <summary>
+	/// Access to ChatGPT 3.5 via Azure's OpenAI
+	/// </summary>
+#if X64
+	[GuidAttribute("194C96AC-60D9-4456-8B57-A522B5CB1ED2")]
+#else
+	[GuidAttribute("74EC9437-A9F1-44B3-BA70-5A8055E210D9")]
+#endif
+	public class AzureOpenAiEncConverter : ExeEncConverter
     {
-        #region Member Variable Definitions
+		#region Member Variable Definitions
         protected string AiSystemInstructions;
 
         public const string strDisplayName = "Azure OpenAI Translator";
@@ -40,9 +45,9 @@ namespace SilEncConverters40.EcTranslators.AzureOpenAI
         public const string EnvVarNameEndPoint = "EncConverters_AzureOpenAiEndpoint";
         public const string EnvVarNameKey = "EncConverters_AzureOpenAiKey";
 
-        #endregion Member Variable Definitions
+		#endregion Member Variable Definitions
 
-        #region Initialization
+		#region Initialization
         // by putting the azure key in a settings file, users can (someday) get their own azure OpenAI resource 
         //  and enter their own key in the settings file(s) (or the UI to have us set it in the file) to have
         //    access to it
@@ -177,7 +182,7 @@ namespace SilEncConverters40.EcTranslators.AzureOpenAI
             return String.Format(SystemPromptFormat, fromLanguage, toLanguage, $" {addlInstructions.Replace(";", null)}");
         }
 
-        #endregion Initialization
+		#endregion Initialization
 
         public override string ExeName
         {
@@ -222,7 +227,7 @@ namespace SilEncConverters40.EcTranslators.AzureOpenAI
                     !string.IsNullOrEmpty((parameter = Environment.GetEnvironmentVariable(envVarName)));
         }
 
-        #region Misc helpers
+		#region Misc helpers
 
         protected override EncodingForm  DefaultUnicodeEncForm(bool bForward, bool bLHS)
         {
@@ -230,9 +235,9 @@ namespace SilEncConverters40.EcTranslators.AzureOpenAI
             return EncodingForm.UTF16;
         }
 
-        #endregion Misc helpers
+		#endregion Misc helpers
 
-        #region Abstract Base Class Overrides
+		#region Abstract Base Class Overrides
         protected override string   GetConfigTypeName
         {
             get { return typeof(AzureOpenAiEncConverterConfig).AssemblyQualifiedName; }
@@ -254,6 +259,6 @@ namespace SilEncConverters40.EcTranslators.AzureOpenAI
             }
         }
 
-        #endregion Abstract Base Class Overrides
+		#endregion Abstract Base Class Overrides
     }
 }

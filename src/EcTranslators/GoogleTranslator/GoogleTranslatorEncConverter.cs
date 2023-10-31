@@ -20,7 +20,11 @@ namespace SilEncConverters40.EcTranslators.GoogleTranslator
 	/// <summary>
 	/// Managed Google Translate EncConverter.
 	/// </summary>
+#if X64
 	[GuidAttribute("A2C80989-EBBD-4257-9006-31FADC88646F")]
+#else
+	[GuidAttribute("A8C89778-D507-4DF5-8AB5-220D40177636")]
+#endif
 	// normally these subclasses are treated as the base class (i.e. the 
 	//  client can use them orthogonally as IEncConverter interface pointers
 	//  so normally these individual subclasses would be invisible), but if 

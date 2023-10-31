@@ -15,7 +15,11 @@ namespace SilEncConverters40.EcTranslators.DeepLTranslator
 	/// <summary>
 	/// Managed DeepL Translator EncConverter.
 	/// </summary>
+#if X64
 	[GuidAttribute("4EA28F93-EDAD-49A4-8FB7-3E22C5EAD07B")]
+#else
+	[GuidAttribute("3345D59E-753F-4E0D-9877-7AC393C45C6A")]
+#endif
 	// normally these subclasses are treated as the base class (i.e. the 
 	//  client can use them orthogonally as IEncConverter interface pointers
 	//  so normally these individual subclasses would be invisible), but if 
