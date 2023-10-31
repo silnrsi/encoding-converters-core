@@ -13,6 +13,7 @@ using SilEncConverters40.EcTranslators.BingTranslator;
 using SilEncConverters40.EcTranslators.DeepLTranslator;
 using SilEncConverters40.EcTranslators.GoogleTranslator;
 using SilEncConverters40.EcTranslators.AzureOpenAI;
+using SilEncConverters40.EcTranslators.NllbTranslator;
 using System.Threading.Tasks;
 
 namespace TestEncCnvtrs
@@ -198,7 +199,32 @@ namespace TestEncCnvtrs
             m_repoFile = null;
         }
 
-        private const string AzureOpenAIConverterFriendlyName = "ChatGptTranslator";
+		private const string NllbConverterFriendlyName = "NllbTranslator";
+
+		/// <summary>
+		/// To run this test, you need to have the https://github.com/Nateowami/NLLB-demo repo clones,
+		/// and built into a docker container and running on your local machine
+		/// </summary>
+		/// <param name="converterSpec"></param>
+		/// <param name="testInput"></param>
+		/// <param name="testOutput"></param>
+		[Test]
+		[TestCase("hin_Deva;eng_Latn",
+			"वे जानते हैं कि परमेश्वर का अस्तित्व है और यह सब कुछ उनके लिए ही बनाया है। परंतु फिर भी न तो वे परमेश्वर का कोई सम्‍मान, और न ही तो उसका धन्यवाद करते हैं। इसलिए उनकी आँखें में पर्दा पड़ गया है, और परमेश्वर के विषय में उनका जो विचार है, वह गलत हो चुका है।",
+			"They know that God exists and that everything was made for them. Yet they do not give glory to God or give him thanks. Their minds are blinded and their thoughts are in error.")]
+		public void TestNllbConverter(string converterSpec, string testInput, string testOutput)
+		{
+			m_encConverters.AddConversionMap(NllbConverterFriendlyName, converterSpec, ConvType.Unicode_to_Unicode,
+											 EncConverters.strTypeSILNllbTranslator, "UNICODE", "UNICODE", ProcessTypeFlags.Translation);
+
+			var theEc = m_encConverters[NllbConverterFriendlyName];
+
+			// do a forward conversion
+			var strOutput = theEc.Convert(testInput);
+			Assert.AreEqual(testOutput, strOutput);
+		}
+
+		private const string AzureOpenAIConverterFriendlyName = "ChatGptTranslator";
 
         [Test]
         [TestCase("Hindi;English;Translate from Hindi into English.", "यीशु ने यह भी कहा,", "Jesus also said this,")]

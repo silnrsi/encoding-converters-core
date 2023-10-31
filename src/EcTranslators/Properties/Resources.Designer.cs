@@ -254,7 +254,7 @@ namespace SilEncConverters40.EcTranslators.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Choose the language you want to translate or transliterate from. Choose &apos;Auto-Detect&apos; if you want Google Translate to attempt to determine the input language..
+        ///   Looks up a localized string similar to Choose the language you want to translate from. Choose &apos;Auto-Detect&apos; if you want Google Translate to attempt to determine the input language..
         /// </summary>
         internal static string HelpForGoogleTranslatorSourceLanguagesComboBox {
             get {
@@ -268,6 +268,33 @@ namespace SilEncConverters40.EcTranslators.Properties {
         internal static string HelpForGoogleTranslatorTargetLanguagesComboBox {
             get {
                 return ResourceManager.GetString("HelpForGoogleTranslatorTargetLanguagesComboBox", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Click this button to enter your own API key..
+        /// </summary>
+        internal static string HelpForNllbTranslatorAddYourOwnApiKey {
+            get {
+                return ResourceManager.GetString("HelpForNllbTranslatorAddYourOwnApiKey", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Choose the language you want to translate from..
+        /// </summary>
+        internal static string HelpForNllbTranslatorSourceLanguagesComboBox {
+            get {
+                return ResourceManager.GetString("HelpForNllbTranslatorSourceLanguagesComboBox", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Choose the language you want the input text to be translated into..
+        /// </summary>
+        internal static string HelpForNllbTranslatorTargetLanguagesComboBox {
+            get {
+                return ResourceManager.GetString("HelpForNllbTranslatorTargetLanguagesComboBox", resourceCulture);
             }
         }
     }

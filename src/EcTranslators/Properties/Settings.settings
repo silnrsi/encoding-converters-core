@@ -55,5 +55,11 @@
   &lt;string&gt;UseSystemPrompt: Translate from Hindi into English.&lt;/string&gt;
 &lt;/ArrayOfString&gt;</Value>
     </Setting>
+    <Setting Name="NllbTranslatorKey" Type="System.String" Scope="User">
+      <Value Profile="(Default)">R2HnnkY7wjy5XeaTWPpfig==</Value>
+    </Setting>
+    <Setting Name="NllbTranslatorKeyOverride" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
   </Settings>
 </SettingsFile>

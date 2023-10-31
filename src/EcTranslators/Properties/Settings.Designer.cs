@@ -250,5 +250,29 @@ namespace SilEncConverters40.EcTranslators.Properties {
                 this["AzureOpenAiSystemPromptAdditions"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("R2HnnkY7wjy5XeaTWPpfig==")]
+        public string NllbTranslatorKey {
+            get {
+                return ((string)(this["NllbTranslatorKey"]));
+            }
+            set {
+                this["NllbTranslatorKey"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string NllbTranslatorKeyOverride {
+            get {
+                return ((string)(this["NllbTranslatorKeyOverride"]));
+            }
+            set {
+                this["NllbTranslatorKeyOverride"] = value;
+            }
+        }
     }
 }

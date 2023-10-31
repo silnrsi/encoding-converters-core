@@ -3,7 +3,7 @@
     <Module Id="EcTranslatorsMM" Language="1033" Version="5.0.0.0">
         <Package Id="{9B0F9F79-B67B-4028-ADB8-F0F1D579FDF4}" Comments="Merge module for the Translator EncConverters (e.g. Bing, DeepL, and Google Translate)"
                  Description="Include in any client application deployment project which uses the EncConverters interface" Manufacturer="SIL International"
-                 InstallerVersion="200" Keywords="SIL; Bing Translator; DeepL Translator; Google Translate; EncConverters"
+                 InstallerVersion="200" Keywords="SIL; Bing Translator; DeepL Translator; Google Translate; NLLB Translator; Azure OpenAI; EncConverters"
                  Platform="x64" />
 
         <Directory Id="TARGETDIR" Name="SourceDir">
@@ -19,8 +19,14 @@
                     <Class Id="{A2C80989-EBBD-4257-9006-31FADC88646F}" Context="InprocServer32" Description="SilEncConverters40.EcTranslators.GoogleTranslator.GoogleTranslatorEncConverter" ThreadingModel="both" ForeignServer="mscoree.dll">
                         <ProgId Id="SilEncConverters40.EcTranslators.GoogleTranslator.GoogleTranslatorEncConverter" Description="SilEncConverters40.EcTranslators.GoogleTranslator.GoogleTranslatorEncConverter" />
                     </Class>
+					<Class Id="{194C96AC-60D9-4456-8B57-A522B5CB1ED2}" Context="InprocServer32" Description="SilEncConverters40.EcTranslators.AzureOpenAI.AzureOpenAiEncConverter" ThreadingModel="both" ForeignServer="mscoree.dll">
+						<ProgId Id="SilEncConverters40.EcTranslators.AzureOpenAI.AzureOpenAiEncConverter" Description="SilEncConverters40.EcTranslators.AzureOpenAI.AzureOpenAiEncConverter" />
+					</Class>
+					<Class Id="{DAFFF949-BA9C-4A28-B7A3-13D205D0B838}" Context="InprocServer32" Description="SilEncConverters40.EcTranslators.NllbTranslator.NllbTranslatorEncConverter" ThreadingModel="both" ForeignServer="mscoree.dll">
+						<ProgId Id="SilEncConverters40.EcTranslators.NllbTranslator.NllbTranslatorEncConverter" Description="SilEncConverters40.EcTranslators.NllbTranslator.NllbTranslatorEncConverter" />
+					</Class>
 
-                    <Class Id="{EF5B7141-72EE-30C0-B86E-A738A1E962B1}" Context="InprocServer32" Description="SilEncConverters40.EcTranslators.BingTranslator.BingTranslatorEncConverterConfig" ThreadingModel="both" ForeignServer="mscoree.dll">
+					<Class Id="{EF5B7141-72EE-30C0-B86E-A738A1E962B1}" Context="InprocServer32" Description="SilEncConverters40.EcTranslators.BingTranslator.BingTranslatorEncConverterConfig" ThreadingModel="both" ForeignServer="mscoree.dll">
                         <ProgId Id="SilEncConverters40.EcTranslators.BingTranslator.BingTranslatorEncConverterConfig" Description="SilEncConverters40.EcTranslators.BingTranslator.BingTranslatorEncConverterConfig" />
                     </Class>
                     <Class Id="{2F9C4B82-3BE1-32C7-A749-EB93CF454B70}" Context="InprocServer32" Description="SilEncConverters40.EcTranslators.DeepLTranslator.DeepLTranslatorEncConverterConfig" ThreadingModel="both" ForeignServer="mscoree.dll">
@@ -29,8 +35,14 @@
                     <Class Id="{6D1DE91D-8803-4F78-A77C-B6C4F182D40E}" Context="InprocServer32" Description="SilEncConverters40.EcTranslators.GoogleTranslator.GoogleTranslatorEncConverterConfig" ThreadingModel="both" ForeignServer="mscoree.dll">
                         <ProgId Id="SilEncConverters40.EcTranslators.GoogleTranslator.GoogleTranslatorEncConverterConfig" Description="SilEncConverters40.EcTranslators.GoogleTranslator.GoogleTranslatorEncConverterConfig" />
                     </Class>
+					<Class Id="{1966EB9F-66C6-4AE2-A30E-3F51EFB19C1F}" Context="InprocServer32" Description="SilEncConverters40.EcTranslators.AzureOpenAI.AzureOpenAiEncConverterConfig" ThreadingModel="both" ForeignServer="mscoree.dll">
+						<ProgId Id="SilEncConverters40.EcTranslators.AzureOpenAI.AzureOpenAiEncConverterConfig" Description="SilEncConverters40.EcTranslators.AzureOpenAI.AzureOpenAiEncConverterConfig" />
+					</Class>
+					<Class Id="{298B5F03-ACD9-4EE1-BD96-2D6FFD3F846D}" Context="InprocServer32" Description="SilEncConverters40.EcTranslators.NllbTranslator.NllbTranslatorEncConverterConfig" ThreadingModel="both" ForeignServer="mscoree.dll">
+						<ProgId Id="SilEncConverters40.EcTranslators.NllbTranslator.NllbTranslatorEncConverterConfig" Description="SilEncConverters40.EcTranslators.NllbTranslator.NllbTranslatorEncConverterConfig" />
+					</Class>
 
-                    <File Id="EcTranslators.dll" Name="EcTranslators.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="EcTranslators.dll" AssemblyApplication="EcTranslators.dll"
+					<File Id="EcTranslators.dll" Name="EcTranslators.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="EcTranslators.dll" AssemblyApplication="EcTranslators.dll"
                           Source="..\..\output\x64\release\EcTranslators.dll" />
                     
                     <RegistryValue Root="HKCR" Key="CLSID\{73742D80-5508-4500-9FAA-AF82E4756C35}\Implemented Categories\{62C8FE65-4EBB-45e7-B440-6E39B2CDBF29}" Value="" Type="string" Action="write" />
@@ -93,7 +105,47 @@
                     <RegistryValue Root="HKCR" Key="CLSID\{6D1DE91D-8803-4F78-A77C-B6C4F182D40E}\InprocServer32" Name="RuntimeVersion" Value="v4.0.30319" Type="string" Action="write" />
                     <RegistryValue Root="HKCR" Key="CLSID\{6D1DE91D-8803-4F78-A77C-B6C4F182D40E}\InprocServer32" Name="CodeBase" Value="file:///[#EcTranslators.dll]" Type="string" Action="write" />
 
-                </Component>
+					<RegistryValue Root="HKCR" Key="CLSID\{194C96AC-60D9-4456-8B57-A522B5CB1ED2}\Implemented Categories\{62C8FE65-4EBB-45e7-B440-6E39B2CDBF29}" Value="" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{194C96AC-60D9-4456-8B57-A522B5CB1ED2}\InprocServer32\4.0.0.0" Name="Class" Value="SilEncConverters40.EcTranslators.AzureOpenAI.AzureOpenAiEncConverter" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{194C96AC-60D9-4456-8B57-A522B5CB1ED2}\InprocServer32\4.0.0.0" Name="Assembly" Value="EcTranslators, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{194C96AC-60D9-4456-8B57-A522B5CB1ED2}\InprocServer32\4.0.0.0" Name="RuntimeVersion" Value="v4.0.30319" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{194C96AC-60D9-4456-8B57-A522B5CB1ED2}\InprocServer32\4.0.0.0" Name="CodeBase" Value="file:///[#EcTranslators.dll]" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{194C96AC-60D9-4456-8B57-A522B5CB1ED2}\InprocServer32" Name="Class" Value="SilEncConverters40.EcTranslators.AzureOpenAI.AzureOpenAiEncConverter" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{194C96AC-60D9-4456-8B57-A522B5CB1ED2}\InprocServer32" Name="Assembly" Value="EcTranslators, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{194C96AC-60D9-4456-8B57-A522B5CB1ED2}\InprocServer32" Name="RuntimeVersion" Value="v4.0.30319" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{194C96AC-60D9-4456-8B57-A522B5CB1ED2}\InprocServer32" Name="CodeBase" Value="file:///[#EcTranslators.dll]" Type="string" Action="write" />
+
+					<RegistryValue Root="HKCR" Key="CLSID\{1966EB9F-66C6-4AE2-A30E-3F51EFB19C1F}\Implemented Categories\{62C8FE65-4EBB-45e7-B440-6E39B2CDBF29}" Value="" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{1966EB9F-66C6-4AE2-A30E-3F51EFB19C1F}\InprocServer32\4.0.0.0" Name="Class" Value="SilEncConverters40.EcTranslators.AzureOpenAI.AzureOpenAiEncConverterConfig" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{1966EB9F-66C6-4AE2-A30E-3F51EFB19C1F}\InprocServer32\4.0.0.0" Name="Assembly" Value="EcTranslators, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{1966EB9F-66C6-4AE2-A30E-3F51EFB19C1F}\InprocServer32\4.0.0.0" Name="RuntimeVersion" Value="v4.0.30319" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{1966EB9F-66C6-4AE2-A30E-3F51EFB19C1F}\InprocServer32\4.0.0.0" Name="CodeBase" Value="file:///[#EcTranslators.dll]" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{1966EB9F-66C6-4AE2-A30E-3F51EFB19C1F}\InprocServer32" Name="Class" Value="SilEncConverters40.EcTranslators.AzureOpenAI.AzureOpenAiEncConverterConfig" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{1966EB9F-66C6-4AE2-A30E-3F51EFB19C1F}\InprocServer32" Name="Assembly" Value="EcTranslators, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{1966EB9F-66C6-4AE2-A30E-3F51EFB19C1F}\InprocServer32" Name="RuntimeVersion" Value="v4.0.30319" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{1966EB9F-66C6-4AE2-A30E-3F51EFB19C1F}\InprocServer32" Name="CodeBase" Value="file:///[#EcTranslators.dll]" Type="string" Action="write" />
+
+					<RegistryValue Root="HKCR" Key="CLSID\{DAFFF949-BA9C-4A28-B7A3-13D205D0B838}\Implemented Categories\{62C8FE65-4EBB-45e7-B440-6E39B2CDBF29}" Value="" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{DAFFF949-BA9C-4A28-B7A3-13D205D0B838}\InprocServer32\4.0.0.0" Name="Class" Value="SilEncConverters40.EcTranslators.NllbTranslator.NllbTranslatorEncConverter" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{DAFFF949-BA9C-4A28-B7A3-13D205D0B838}\InprocServer32\4.0.0.0" Name="Assembly" Value="EcTranslators, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{DAFFF949-BA9C-4A28-B7A3-13D205D0B838}\InprocServer32\4.0.0.0" Name="RuntimeVersion" Value="v4.0.30319" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{DAFFF949-BA9C-4A28-B7A3-13D205D0B838}\InprocServer32\4.0.0.0" Name="CodeBase" Value="file:///[#EcTranslators.dll]" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{DAFFF949-BA9C-4A28-B7A3-13D205D0B838}\InprocServer32" Name="Class" Value="SilEncConverters40.EcTranslators.NllbTranslator.NllbTranslatorEncConverter" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{DAFFF949-BA9C-4A28-B7A3-13D205D0B838}\InprocServer32" Name="Assembly" Value="EcTranslators, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{DAFFF949-BA9C-4A28-B7A3-13D205D0B838}\InprocServer32" Name="RuntimeVersion" Value="v4.0.30319" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{DAFFF949-BA9C-4A28-B7A3-13D205D0B838}\InprocServer32" Name="CodeBase" Value="file:///[#EcTranslators.dll]" Type="string" Action="write" />
+
+					<RegistryValue Root="HKCR" Key="CLSID\{298B5F03-ACD9-4EE1-BD96-2D6FFD3F846D}\Implemented Categories\{62C8FE65-4EBB-45e7-B440-6E39B2CDBF29}" Value="" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{298B5F03-ACD9-4EE1-BD96-2D6FFD3F846D}\InprocServer32\4.0.0.0" Name="Class" Value="SilEncConverters40.EcTranslators.NllbTranslator.NllbTranslatorEncConverterConfig" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{298B5F03-ACD9-4EE1-BD96-2D6FFD3F846D}\InprocServer32\4.0.0.0" Name="Assembly" Value="EcTranslators, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{298B5F03-ACD9-4EE1-BD96-2D6FFD3F846D}\InprocServer32\4.0.0.0" Name="RuntimeVersion" Value="v4.0.30319" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{298B5F03-ACD9-4EE1-BD96-2D6FFD3F846D}\InprocServer32\4.0.0.0" Name="CodeBase" Value="file:///[#EcTranslators.dll]" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{298B5F03-ACD9-4EE1-BD96-2D6FFD3F846D}\InprocServer32" Name="Class" Value="SilEncConverters40.EcTranslators.NllbTranslator.NllbTranslatorEncConverterConfig" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{298B5F03-ACD9-4EE1-BD96-2D6FFD3F846D}\InprocServer32" Name="Assembly" Value="EcTranslators, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{298B5F03-ACD9-4EE1-BD96-2D6FFD3F846D}\InprocServer32" Name="RuntimeVersion" Value="v4.0.30319" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{298B5F03-ACD9-4EE1-BD96-2D6FFD3F846D}\InprocServer32" Name="CodeBase" Value="file:///[#EcTranslators.dll]" Type="string" Action="write" />
+
+				</Component>
 
                 <Component Id="EcTranslators.dll.config" Guid="{1A4FE83D-7EDB-41BC-93E5-18485A3147F1}">
                     <File Id="EcTranslators.dll.config" Name="EcTranslators.dll.config" Vital="yes" KeyPath="yes" Source="..\..\output\x64\release\EcTranslators.dll.config" />
@@ -111,7 +163,13 @@
                             <Interface Id="{838D53E0-92D5-4100-B33F-571A5E694125}" Name="_GoogleTranslatorEncConverterConfig" ProxyStubClassId32="{00020424-0000-0000-C000-000000000046}" />
                             <Interface Id="{6F6F5D9E-A40A-4846-8BA0-6576447989E8}" Name="_GoogleTranslatorAutoConfigDialog" ProxyStubClassId32="{00020424-0000-0000-C000-000000000046}" />
                             <Interface Id="{1DCCF64C-F082-45E7-AE8B-E66D68E5171F}" Name="_GoogleTranslatorEncConverter" ProxyStubClassId32="{00020424-0000-0000-C000-000000000046}" />
-                        </TypeLib>
+							<Interface Id="{E6AD70C0-B33E-4DA0-B8FF-27FDB58E8ADA}" Name="_AzureOpenAiEncConverterConfig" ProxyStubClassId32="{00020424-0000-0000-C000-000000000046}" />
+							<Interface Id="{3A7924F0-56EC-4C55-9893-44A16E2D89AA}" Name="_AzureOpenAiAutoConfigDialog" ProxyStubClassId32="{00020424-0000-0000-C000-000000000046}" />
+							<Interface Id="{35A0B71A-9E22-4C60-BEB8-508E404C160F}" Name="_AzureOpenAiEncConverter" ProxyStubClassId32="{00020424-0000-0000-C000-000000000046}" />
+							<Interface Id="{CAF7E4C7-3726-44D8-B898-6237DA057D78}" Name="_NllbTranslatorEncConverterConfig" ProxyStubClassId32="{00020424-0000-0000-C000-000000000046}" />
+							<Interface Id="{DC9FB355-9340-489F-B83E-E9B6655D5387}" Name="_NllbTranslatorAutoConfigDialog" ProxyStubClassId32="{00020424-0000-0000-C000-000000000046}" />
+							<Interface Id="{01E12ED0-3E48-4686-AA6C-AFBDE667ABA8}" Name="_NllbTranslatorEncConverter" ProxyStubClassId32="{00020424-0000-0000-C000-000000000046}" />
+						</TypeLib>
                     </File>
                 </Component>
 
@@ -127,7 +185,7 @@
                                     Source="..\..\output\x64\release\BackTranslationHelper.dll"/>
                 </Component>
 
-                <Component Id="Microsoft.Bcl.AsyncInterfaces.dll" Guid="{0DA1D8ED-D450-4338-BFF4-513AB038CD93}">
+				<Component Id="Microsoft.Bcl.AsyncInterfaces.dll" Guid="{0DA1D8ED-D450-4338-BFF4-513AB038CD93}">
                     <File Id="Microsoft.Bcl.AsyncInterfaces.dll" Name="Microsoft.Bcl.AsyncInterfaces.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="Microsoft.Bcl.AsyncInterfaces.dll" AssemblyApplication="Microsoft.Bcl.AsyncInterfaces.dll"
                           Source="..\..\output\x64\release\Microsoft.Bcl.AsyncInterfaces.dll"/>
                 </Component>
@@ -424,7 +482,31 @@
                                 </Component>
                             </Directory>
 
-                        </Directory>
+							<!--NLLB Translator Help-->
+							<Component Id="NnlbTranslatorHelp.htm" Guid="{869002A8-178C-4F3E-AADB-509AEA33CAD3}">
+								<File Id="NnlbTranslatorHelp.htm" Name="NLLB_Translate_Plug-in_About_box.htm" KeyPath="yes" Source="..\..\redist\Help\NLLB_Translate_Plug-in_About_box.htm"/>
+								<Shortcut Id="NnlbTranslatorHelpHtm" Directory="EcTranslatorsHelp" Name="NNLB Plug-in Help" Description="View help document for the No Language Left Behind (NLLB) EncConverter/Translator Plug-in" IconIndex="0" Show="normal" Target="[#NnlbTranslatorHelp.htm]" WorkingDirectory="Help" Advertise="no" />
+							</Component>
+							<Directory Id="NLLB_Translate_Plugin_About_box" Name="NLLB_Translate_Plug-in_About_box_files">
+								<Component Id="NLLB_Translate_Plugin_About_boxComp" Guid="{5163B2FC-660E-4648-B81F-A87A6DA109B6}">
+									<File Id="nt_filelist.xml" Name="filelist.xml" KeyPath="yes" Source="..\..\redist\Help\NLLB_Translate_Plug-in_About_box_files\filelist.xml"/>
+									<File Id="nt_colorschememapping.xml" Name="colorschememapping.xml" Source="..\..\redist\Help\NLLB_Translate_Plug-in_About_box_files\colorschememapping.xml"/>
+									<File Id="nt_themedata.thmx" Name="themedata.thmx" Source="..\..\redist\Help\NLLB_Translate_Plug-in_About_box_files\themedata.thmx"/>
+									<File Id="nt_header.htm" Name="header.htm" Source="..\..\redist\Help\NLLB_Translate_Plug-in_About_box_files\header.htm"/>
+									<File Id="nt_image003.jpg" Name="image003.jpg" Source="..\..\redist\Help\NLLB_Translate_Plug-in_About_box_files\image003.jpg"/>
+									<File Id="nt_image004.jpg" Name="image004.jpg" Source="..\..\redist\Help\NLLB_Translate_Plug-in_About_box_files\image004.jpg"/>
+									<File Id="nt_image007.jpg" Name="image007.jpg" Source="..\..\redist\Help\NLLB_Translate_Plug-in_About_box_files\image007.jpg"/>
+									<File Id="nt_image008.jpg" Name="image008.jpg" Source="..\..\redist\Help\NLLB_Translate_Plug-in_About_box_files\image008.jpg"/>
+									<File Id="nt_image012.jpg" Name="image012.jpg" Source="..\..\redist\Help\NLLB_Translate_Plug-in_About_box_files\image012.jpg"/>
+									<File Id="nt_image013.jpg" Name="image013.jpg" Source="..\..\redist\Help\NLLB_Translate_Plug-in_About_box_files\image013.jpg"/>
+									<File Id="nt_image016.jpg" Name="image016.jpg" Source="..\..\redist\Help\NLLB_Translate_Plug-in_About_box_files\image016.jpg"/>
+									<File Id="nt_image021.jpg" Name="image021.jpg" Source="..\..\redist\Help\NLLB_Translate_Plug-in_About_box_files\image021.jpg"/>
+									<File Id="nt_item0023.xml" Name="item0023.xml" Source="..\..\redist\Help\NLLB_Translate_Plug-in_About_box_files\item0023.xml"/>
+									<File Id="nt_props024.xml" Name="props024.xml" Source="..\..\redist\Help\NLLB_Translate_Plug-in_About_box_files\props024.xml"/>
+								</Component>
+							</Directory>
+
+						</Directory>
                     </Directory>
                 </Directory>
             </Directory>

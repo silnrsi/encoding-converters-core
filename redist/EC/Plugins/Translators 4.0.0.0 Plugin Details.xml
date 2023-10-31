@@ -18,6 +18,12 @@
                    DisplayName="Google Translate"
                    ConfiguratorProgId="SilEncConverters40.EcTranslators.GoogleTranslator.GoogleTranslatorEncConverterConfig"
                    AssemblyReference="EcTranslators, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" />
+  <ECPluginDetails ImplementationName="SIL.NllbTranslator"
+                   ImplementationProgId="SilEncConverters40.EcTranslators.NllbTranslator.NllbTranslatorEncConverter"
+                   Priority="0"
+                   DisplayName="NLLB Translator"
+                   ConfiguratorProgId="SilEncConverters40.EcTranslators.NllbTranslator.NllbTranslatorEncConverterConfig"
+                   AssemblyReference="EcTranslators, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" />
   <ECPluginDetails ImplementationName="SIL.AzureOpenAI"
                    ImplementationProgId="SilEncConverters40.EcTranslators.AzureOpenAI.AzureOpenAiEncConverter"
                    Priority="0"

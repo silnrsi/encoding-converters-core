@@ -87,8 +87,9 @@ namespace SilEncConverters40
         public const string strTypeSILGoogleTranslator  = "SIL.GoogleTranslator";
         public const string strTypeSILDeepLTranslator    = "SIL.DeepLTranslator";
         public const string strTypeSILAzureOpenAiTranslator = "SIL.AzureOpenAI";
+		public const string strTypeSILNllbTranslator	= "SIL.NllbTranslator";
 
-        public const string cstrTempConverterPrefix     = "Temporary Converter";
+		public const string cstrTempConverterPrefix     = "Temporary Converter";
 
         // default values for XML file attributes
         public const string HKLM_PATH_TO_XML_FILE       = @"SOFTWARE\SIL\EncodingConverterRepository";

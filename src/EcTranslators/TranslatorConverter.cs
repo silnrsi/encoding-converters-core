@@ -1,10 +1,8 @@
 using ECInterfaces;
 using System;
-using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+using System.Reflection;
 
 namespace SilEncConverters40.EcTranslators
 {
@@ -39,15 +37,32 @@ namespace SilEncConverters40.EcTranslators
 
 		internal static string LogExceptionMessage(string className, Exception ex)
 		{
-			string msg = "Error occurred: " + ex.Message;
+			var message = ex.Message;
+			var msg = "Error occurred: " + message;
 			while (ex.InnerException != null)
 			{
 				ex = ex.InnerException;
-				msg += $"{Environment.NewLine}because: (InnerException): {ex.Message}";
+				if (message.Contains(ex.Message))
+					continue;   // skip identical msgs
+				message = ex.Message;
+				msg += $"{Environment.NewLine}because: (InnerException): {message}";
 			}
 
 			Util.DebugWriteLine(className, msg);
 			return msg;
+		}
+
+		public static string LoadEmbeddedResourceFileAsStringExecutingAssembly(string strResourceName)
+		{
+			var assembly = Assembly.GetExecutingAssembly();
+			strResourceName = assembly.GetManifestResourceNames().FirstOrDefault(n => n.Contains(strResourceName));
+			if (string.IsNullOrEmpty(strResourceName))
+				return null;
+
+			var resourceAsStream = assembly.GetManifestResourceStream(strResourceName);
+			StreamReader reader = new StreamReader(resourceAsStream);
+			string text = reader.ReadToEnd();
+			return text;
 		}
 	}
 }
