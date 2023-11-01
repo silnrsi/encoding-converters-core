@@ -48,7 +48,7 @@ jobs:
       run: |
         $timeout = 0
         while ($timeout -lt 5*60) {
-          if (Test-Path -Path '.\Common\Win32\Debug\TestEncCnvtrs.dll' -And Test-Path -Path '.\Common\Win32\Release\TestEncCnvtrs.dll' -And Test-Path -Path '.\Common\x64\Debug\TestEncCnvtrs.dll') {
+          if ((Test-Path -Path '.\Common\Win32\Debug\TestEncCnvtrs.dll') -And (Test-Path -Path '.\Common\Win32\Release\TestEncCnvtrs.dll') -And (Test-Path -Path '.\Common\x64\Debug\TestEncCnvtrs.dll')) {
               Write-Host "All required files exist, continuing..."
               exit 0
           } else {
