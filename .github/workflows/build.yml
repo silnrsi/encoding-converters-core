@@ -39,14 +39,18 @@ jobs:
       # See https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference
       run: msbuild /m /p:Configuration=${{matrix.build_configuration}} /p:Platform=${{ matrix.build_platform }} "${{env.SOLUTION_FILE_PATH}}"
 
+    - name: List Files in Repository
+      run: dir /s
+      shell: cmd
+
     - uses: actions/upload-artifact@v3
       with:
         name: build-artifacts-${{ matrix.build_platform }}-${{ matrix.build_configuration }}
         path: |
-          '.\output\*\${{ matrix.build_configuration }}\*.exe'
-          '.\output\*\${{ matrix.build_configuration }}\*.dll'
-          '.\output\*\${{ matrix.build_configuration }}\*.tlb'
-          '.\output\*\${{ matrix.build_configuration }}\*.config'
+          '.\output\**\${{ matrix.build_configuration }}\*.exe'
+          '.\output\**\${{ matrix.build_configuration }}\*.dll'
+          '.\output\**\${{ matrix.build_configuration }}\*.tlb'
+          '.\output\**\${{ matrix.build_configuration }}\*.config'
           retention-days: 1
 
   publish_nuget:
