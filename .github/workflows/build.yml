@@ -44,6 +44,7 @@ jobs:
         xcopy /s /y .\output\${{ matrix.build_platform }}\${{ matrix.build_configuration }}\* .\Common\${{ matrix.build_platform }}\${{ matrix.build_configuration }}\
 
   publish_nuget:
+    needs: build-windows
     runs-on: windows-2019
     strategy:
        # Keep building other jobs even if another fails, to show what _is_ still working.
