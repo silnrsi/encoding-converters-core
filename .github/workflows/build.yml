@@ -72,14 +72,14 @@ jobs:
     - name: Install dependencies
       run: sudo apt-get install --assume-yes automake g++ python2-dev python2 libicu-dev mono5-sil icu-dev-fw libteckit-dev
 
+    - name: Checkout
+      uses: actions/checkout@v2
+
     - name: List Files in Repository
       run: ls -R
 
     - name: Restore NuGet Packages
       run: nuget restore "${{env.SOLUTION_FILE_PATH}}"
-
-    - name: Checkout
-      uses: actions/checkout@v2
 
     - name: Autogen
       run: . environ && ./autogen.sh
