@@ -84,11 +84,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Python.Runtime, Version=3.0.3.0, Culture=neutral, PublicKeyToken=5000fea6cba702dd, processorArchitecture=MSIL" Condition="('$(OS)'=='Windows_NT')">
+    <Reference Include="Python.Runtime, Version=3.0.3.0, Culture=neutral, PublicKeyToken=5000fea6cba702dd, processorArchitecture=MSIL">
       <HintPath>..\..\packages\pythonnet.3.0.3\lib\netstandard2.0\Python.Runtime.dll</HintPath>
-    </Reference>
-    <Reference Include="Python.Runtime, Version=3.7.2.4, Culture=neutral, PublicKeyToken=5000fea6cba702dd, processorArchitecture=MSIL" Condition="('$(OS)'!='Windows_NT')">
-      <HintPath>..\..\packages\Python.Runtime.AllPlatforms.3.7.2.4\runtimes\linux-x64\lib\netstandard2.0\Python.Runtime.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
