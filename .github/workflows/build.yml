@@ -42,8 +42,6 @@ jobs:
     - name: Copy files to common location
       run: |
         xcopy /s /y .\output\${{ matrix.build_platform }}\${{ matrix.build_configuration }}\* .\Common\${{ matrix.build_platform }}\${{ matrix.build_configuration }}\
-        shell: cmd
-        # cp -r ./output/${{ matrix.build_platform }}/${{ matrix.build_configuration }}/* ./Common/${{ matrix.build_platform }}/${{ matrix.build_configuration }}
       
     - name: Copy files back for nuget packaging
       run: |
