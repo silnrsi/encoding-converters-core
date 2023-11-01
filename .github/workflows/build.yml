@@ -39,7 +39,7 @@ jobs:
       run: msbuild /m /p:Configuration=${{matrix.build_configuration}} "${{env.SOLUTION_FILE_PATH}}"
 
     - name: List Files in Repository
-      run: dir /s
+      run: dir ./ /s
 
     - name: Create NuGet Package
       run: nuget pack ./Package.nuspec -OutputDirectory ./output/${{matrix.build_configuration}}
