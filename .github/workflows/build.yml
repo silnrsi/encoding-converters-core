@@ -39,13 +39,18 @@ jobs:
       run: msbuild /m /p:Configuration=${{matrix.build_configuration}} "${{env.SOLUTION_FILE_PATH}}"
 
     - name: Create NuGet Package
-      run: dotnet pack -c ${{ matrix.build_configuration }} -o ./output
+      run: nuget pack Package.nuspec -OutputDirectory ./output/${{matrix.build_configuration}}
+      if: matrix.build_configuration == 'Debug'
+
+    - name: Create NuGet Package
+      run: nuget pack Package.nuspec -OutputDirectory ./output/${{matrix.build_configuration}}
+      if: matrix.build_configuration == 'Release'
 
     - name: Upload NuGet Package as Artifact
       uses: actions/upload-artifact@v2
       with:
-        name: nuget-package
-        path: ./output/*.nupkg
+        name: ${{matrix.build_configuration}}-nuget-package
+        path: ./output/${{matrix.build_configuration}}/*.nupkg
 
     # TODO Run tests
     #- name: Test
@@ -68,7 +73,7 @@ jobs:
       run: sudo apt-get install --assume-yes automake g++ python2-dev python2 libicu-dev mono5-sil icu-dev-fw libteckit-dev
 
     - name: Restore NuGet Packages
-      run: nuget restore "${{env.SOLUTION_FILE_PATH}}"
+      run: nuget restore "'${{env.SOLUTION_FILE_PATH}}'"
 
     - name: Checkout
       uses: actions/checkout@v2
