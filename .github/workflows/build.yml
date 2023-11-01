@@ -38,6 +38,9 @@ jobs:
       # See https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference
       run: msbuild /m /p:Configuration=${{matrix.build_configuration}} "${{env.SOLUTION_FILE_PATH}}"
 
+    - name: List Files in Repository
+      run: dir /s
+
     - name: Create NuGet Package
       run: nuget pack ./Package.nuspec -OutputDirectory ./output/${{matrix.build_configuration}}
       if: matrix.build_configuration == 'Debug'
