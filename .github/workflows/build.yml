@@ -78,17 +78,18 @@ jobs:
     - name: Process Folders
       run: |
           $folderNames = ${{ steps.get-folders.outputs.folder-names }}
+          $folderNames
+          $platform = ''
+          $configuration = ''
+          $pattern = '^build-artifacts-(\w+)-(\w+)$'
           foreach ($folderName in $folderNames) {
-            $platform = ''
-            $configuration = ''
-            $pattern = '^build-artifacts-(\w+)-(\w+)$'
             if ($folderName -match $pattern) {
               $platform = $matches[1]
               $configuration = $matches[2]
             }
 
-            $destination = ".\output\$platform\$configuration\"
-            xcopy ".\$folderName\*" $destination /Y /E
+            $destination = "output\$platform\$configuration\"
+            xcopy $folderName\* $destination /Y /E
           }
 
     - name: List Files in Repository
