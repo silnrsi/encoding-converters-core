@@ -59,9 +59,7 @@ jobs:
               exit 0
           } else {
               Write-Host "Waiting for files to exist..."
-              Get-ChildItem -Path .\Common\Win32\Debug
-              Get-ChildItem -Path .\Common\Win32\Release
-              Get-ChildItem -Path .\Common\x64\Debug
+              Get-ChildItem -Path .\Common
               Start-Sleep -Seconds 5
               $timeout += 5
           }
