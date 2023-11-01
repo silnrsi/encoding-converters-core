@@ -39,6 +39,14 @@ jobs:
       # See https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference
       run: msbuild /m /p:Configuration=${{matrix.build_configuration}} /p:Platform=${{ matrix.build_platform }} "${{env.SOLUTION_FILE_PATH}}"
 
+    - name: Copy files to common location
+      run: |
+        cp -r ./output/${{ matrix.build_platform }}/${{ matrix.build_configuration }}/* ./output/Common/${{ matrix.build_platform }}/${{ matrix.build_configuration }}
+      
+    - name: Copy files back for nuget packaging
+      run: |
+        cp -r ./output/Common/* ./output
+      
     - name: List Files in Repository
       run: dir /s
       shell: cmd
