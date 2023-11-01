@@ -11,12 +11,12 @@
 	</PropertyGroup>
 	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
 		<DefineConstants>Debug</DefineConstants>
-		<OutputPath>bin\$(Configuration)\</OutputPath>
-		<IntermediateOutputPath>obj\$(Platform)\$(Configuration)\</IntermediateOutputPath>
+		<OutputPath>..\..\output\MergeModules\$(Platform)\$(Configuration)\</OutputPath>
+		<IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
 	</PropertyGroup>
 	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
-		<OutputPath>..\MergeModules\$(Platform)\</OutputPath>
-		<IntermediateOutputPath>obj\$(Platform)\$(Configuration)\</IntermediateOutputPath>
+		<OutputPath>..\..\output\MergeModules\$(Platform)\$(Configuration)\</OutputPath>
+		<IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
 	</PropertyGroup>
 	<ItemGroup>
 		<Compile Include="PythonEc_MergeModule.wxs" />

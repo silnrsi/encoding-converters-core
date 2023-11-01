@@ -58,7 +58,7 @@
 
 		<!--these are bits for including in an installer (merge modules, plug-ins, and help files. But these don't need
 			to be in each project and make it take forever. Just put them in runtimes so they don't get copied-->
-		<file src=".\installer\MergeModules\**\*.*" target="runtimes\EcDistFiles\MergeModules" exclude="**\*.wixpdb"/>
+		<file src=".\output\MergeModules\**\*.*" target="runtimes\EcDistFiles\MergeModules" exclude="**\*.wixpdb"/>
 		<file src=".\redist\EC\Plugins\*.xml" target="runtimes\EcDistFiles\redist\EC\Plugins" />
 		<file src=".\redist\Help\**\*.*" target="runtimes\EcDistFiles\redist\Help" />
 	</files>
