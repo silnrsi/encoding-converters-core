@@ -45,9 +45,14 @@ jobs:
 
   publish_nuget:
     runs-on: windows-2019
+    strategy:
+       # Keep building other jobs even if another fails, to show what _is_ still working.
+       fail-fast: false
+       matrix:
+         build_configuration: ["Release"]
+
     steps:
     - name: Copy files back for nuget packaging (bkz nuspec is looking for them in the output folder) during the 'Release' build (bkz both platforms will have been finished by then)
-      if: matrix.build_configuration == 'Release' && matrix.build_platform == 'Win32'
       run: |
         xcopy /s /y .\Common\* .\output
 
@@ -56,11 +61,9 @@ jobs:
       shell: cmd
 
     - name: Create NuGet Package
-      if: matrix.build_configuration == 'Release' && matrix.build_platform == 'Win32'
       run: nuget pack ./Package.${{matrix.build_configuration}}.nuspec -OutputDirectory ./output/${{matrix.build_configuration}}
 
     - name: Upload NuGet Package as Artifact
-      if: matrix.build_configuration == 'Release' && matrix.build_platform == 'Win32'
       uses: actions/upload-artifact@v2
       with:
         name: ${{matrix.build_configuration}}-nuget-package
