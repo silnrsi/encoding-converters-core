@@ -45,7 +45,7 @@ jobs:
 
     - name: Copy files back for nuget packaging (bkz nuspec is looking for them in the output folder) during the 'Release' build (bkz both platforms will have been finished by then)
       run: xcopy /s /y .\Common\* .\output
-      if: matrix.build_configuration == "Release" && matrix.build_platform == "Win32"  
+      if: matrix.build_configuration == 'Release' && matrix.build_platform == 'Win32'
 
     - name: List Files in Repository
       run: dir /s
@@ -53,11 +53,11 @@ jobs:
 
     - name: Create NuGet Package
       run: nuget pack ./Package.${{matrix.build_configuration}}.nuspec -OutputDirectory ./output/${{matrix.build_configuration}}
-      if: matrix.build_configuration == "Release" && matrix.build_platform == "Win32"
+      if: matrix.build_configuration == 'Release' && matrix.build_platform == 'Win32'
 
     - name: Upload NuGet Package as Artifact
       uses: actions/upload-artifact@v2
-      if: matrix.build_configuration == "Release" && matrix.build_platform == "Win32"
+      if: matrix.build_configuration == 'Release' && matrix.build_platform == 'Win32'
       with:
         name: ${{matrix.build_configuration}}-nuget-package
         path: ./output/${{matrix.build_configuration}}/*.nupkg
