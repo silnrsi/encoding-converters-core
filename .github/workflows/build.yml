@@ -73,11 +73,6 @@ jobs:
       id: get-folders
       run: |
           $folderNames = Get-ChildItem -Directory -Path . | Where-Object { $_.Name -like 'build-artifacts-*' } | Select-Object -ExpandProperty Name
-          Write-Output "::set-output name=folder-names::$folderNames"
-
-    - name: Process Folders
-      run: |
-          $folderNames = ${{ steps.get-folders.outputs.folder-names }}
           $folderNames
           $platform = ''
           $configuration = ''
@@ -89,7 +84,7 @@ jobs:
             }
 
             $destination = "output\$platform\$configuration\"
-            xcopy $folderName\* $destination /Y /E
+            xcopy /y "$folderName\*.*" $destination
           }
 
     - name: List Files in Repository
