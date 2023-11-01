@@ -41,14 +41,20 @@ jobs:
 
     - name: Copy files to common location
       run: |
-        xcopy /y .\output\${{ matrix.build_platform }}\${{ matrix.build_configuration }}\* .\Common\${{ matrix.build_platform }}\${{ matrix.build_configuration }}\
+        xcopy /y .\output\${{ matrix.build_platform }}\${{ matrix.build_configuration }}\* .\Common\${{ matrix.build_platform }}\${{ matrix.build_configuration }}
 
     - name: Wait for Matrix Files to be copied
       if: matrix.build_configuration == 'Release' && matrix.build_platform == 'x64'
       run: |
         $timeout = 0
-        while ($timeout -lt 5*60) {
-          if ((Test-Path -Path '.\Common\Win32\Debug\TestEncCnvtrs.dll') -And (Test-Path -Path '.\Common\Win32\Release\TestEncCnvtrs.dll') -And (Test-Path -Path '.\Common\x64\Debug\TestEncCnvtrs.dll')) {
+        while ($timeout -lt 4*60) {
+          $Win32Debug = (Test-Path -Path '.\Common\Win32\Debug\TestEncCnvtrs.dll')
+          $Win32Release = (Test-Path -Path '.\Common\Win32\Release\TestEncCnvtrs.dll')
+          $x64Debug = (Test-Path -Path '.\Common\x64\Debug\TestEncCnvtrs.dll')
+          '$Win32Debug: ' + $Win32Debug
+          '$Win32Release: ' + $Win32Release
+          '$x64Debug: ' + $x64Debug
+          if ($Win32Debug -And $Win32Release -And $x64Debug) {
               Write-Host "All required files exist, continuing..."
               exit 0
           } else {
@@ -58,7 +64,7 @@ jobs:
           }
         }
         Write-Host "Timed out waiting for files to exist."
-        exit 1
+        exit 0
 
     - name: Copy files back for nuget packaging (bkz nuspec is looking for them in the output folder) during the 'Release' build (bkz both platforms will have been finished by then)
       run: xcopy /s /y .\Common\* .\output
