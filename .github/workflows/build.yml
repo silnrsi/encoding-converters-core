@@ -69,6 +69,28 @@ jobs:
     - name: Download all workflow run artifacts
       uses: actions/download-artifact@v3
 
+    - name: Get Folder Names
+      id: get-folders
+      run: |
+          $folderNames = Get-ChildItem -Directory -Path . | Where-Object { $_.Name -like 'build-artifacts-*' } | Select-Object -ExpandProperty Name
+          Write-Output "::set-output name=folder-names::$folderNames"
+
+    - name: Process Folders
+      run: |
+          $folderNames = ${{ steps.get-folders.outputs.folder-names }}
+          foreach ($folderName in $folderNames) {
+            $platform = ''
+            $configuration = ''
+            $pattern = '^build-artifacts-(\w+)-(\w+)$'
+            if ($folderName -match $pattern) {
+              $platform = $matches[1]
+              $configuration = $matches[2]
+            }
+
+            $destination = ".\output\$platform\$configuration\"
+            xcopy ".\$folderName\*" $destination /Y /E
+          }
+
     - name: List Files in Repository
       run: dir /s
       shell: cmd
