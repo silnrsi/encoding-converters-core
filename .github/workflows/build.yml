@@ -43,12 +43,7 @@ jobs:
       shell: cmd
 
     - name: Create NuGet Package
-      run: nuget pack ./Package.nuspec -OutputDirectory ./output/${{matrix.build_configuration}}
-      if: matrix.build_configuration == 'Debug'
-
-    - name: Create NuGet Package
-      run: nuget pack ./Package.nuspec -OutputDirectory ./output/${{matrix.build_configuration}}
-      if: matrix.build_configuration == 'Release'
+      run: nuget pack ./Package.${{matrix.build_configuration}}.nuspec -OutputDirectory ./output/${{matrix.build_configuration}}
 
     - name: Upload NuGet Package as Artifact
       uses: actions/upload-artifact@v2
