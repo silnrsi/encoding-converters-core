@@ -74,19 +74,10 @@ jobs:
       run: |
           $folderNames = Get-ChildItem -Directory -Path . | Where-Object { $_.Name -like 'build-artifacts-*' } | Select-Object -ExpandProperty Name
           $folderNames
-          $platform = ''
-          $configuration = ''
-          $pattern = '^build-artifacts-(\w+)-(\w+)$'
           foreach ($folderName in $folderNames) {
-            if ($folderName -match $pattern) {
-              $platform = $matches[1]
-              $configuration = $matches[2]
-            }
-
-            $destination = "output\$platform\$configuration\"
             $source = "$folderName\*.*"
-            "xcopy /y $source $destination"
-            xcopy /y $source $destination
+            "xcopy /s /y $source .\"
+            xcopy /s /y $source .\
           }
 
     - name: List Files in Repository
