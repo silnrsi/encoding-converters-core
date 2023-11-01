@@ -41,7 +41,8 @@ jobs:
 
     - name: Copy files to common location
       run: |
-        cp -r ./output/${{ matrix.build_platform }}/${{ matrix.build_configuration }}/* ./Common/${{ matrix.build_platform }}/${{ matrix.build_configuration }}
+        xcopy /s /i .\output\${{ matrix.build_platform }}/${{ matrix.build_configuration }}\* .\Common\${{ matrix.build_platform }}/${{ matrix.build_configuration }}\
+        # cp -r ./output/${{ matrix.build_platform }}/${{ matrix.build_configuration }}/* ./Common/${{ matrix.build_platform }}/${{ matrix.build_configuration }}
       
     - name: Copy files back for nuget packaging
       run: |
