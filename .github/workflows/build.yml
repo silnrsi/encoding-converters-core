@@ -39,11 +39,11 @@ jobs:
       run: msbuild /m /p:Configuration=${{matrix.build_configuration}} "${{env.SOLUTION_FILE_PATH}}"
 
     - name: Create NuGet Package
-      run: nuget pack Package.nuspec -OutputDirectory ./output/${{matrix.build_configuration}}
+      run: nuget pack ./Package.nuspec -OutputDirectory ./output/${{matrix.build_configuration}}
       if: matrix.build_configuration == 'Debug'
 
     - name: Create NuGet Package
-      run: nuget pack Package.nuspec -OutputDirectory ./output/${{matrix.build_configuration}}
+      run: nuget pack ./Package.nuspec -OutputDirectory ./output/${{matrix.build_configuration}}
       if: matrix.build_configuration == 'Release'
 
     - name: Upload NuGet Package as Artifact
@@ -72,8 +72,11 @@ jobs:
     - name: Install dependencies
       run: sudo apt-get install --assume-yes automake g++ python2-dev python2 libicu-dev mono5-sil icu-dev-fw libteckit-dev
 
+    - name: List Files in Repository
+      run: ls -R
+
     - name: Restore NuGet Packages
-      run: nuget restore "'${{env.SOLUTION_FILE_PATH}}'"
+      run: nuget restore "${{env.SOLUTION_FILE_PATH}}"
 
     - name: Checkout
       uses: actions/checkout@v2
