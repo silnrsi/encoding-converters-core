@@ -44,8 +44,9 @@ jobs:
         xcopy /s /y .\output\${{ matrix.build_platform }}\${{ matrix.build_configuration }}\* .\Common\${{ matrix.build_platform }}\${{ matrix.build_configuration }}\
       
     - name: Copy files back for nuget packaging (bkz nuspec is looking for them in the output folder)
+      if: matrix.build_configuration == 'Release' && matrix.build_platform == 'x64'
       run: |
-        xcopy /y .\Common]* .\output
+        xcopy /s /y .\Common\* .\output
 
     - name: List Files in Repository
       run: dir /s
