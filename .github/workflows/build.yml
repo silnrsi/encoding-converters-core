@@ -42,7 +42,12 @@ jobs:
     - uses: actions/upload-artifact@v3
       with:
         name: build-artifacts-${{ matrix.build_platform }}-${{ matrix.build_configuration }}
-        path: .\output\${{ matrix.build_platform }}\${{ matrix.build_configuration }}\
+        path: |
+          .\*\output\${{ matrix.build_platform }}\${{ matrix.build_configuration }}\*.exe
+          .\*\output\${{ matrix.build_platform }}\${{ matrix.build_configuration }}\*.dll
+          .\*\output\${{ matrix.build_platform }}\${{ matrix.build_configuration }}\*.tlb
+          .\*\output\${{ matrix.build_platform }}\${{ matrix.build_configuration }}\*.config
+          retention-days: 1
 
   publish_nuget:
     needs: build-windows
