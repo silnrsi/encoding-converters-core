@@ -25,7 +25,7 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v1.0.2
@@ -39,37 +39,26 @@ jobs:
       # See https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference
       run: msbuild /m /p:Configuration=${{matrix.build_configuration}} /p:Platform=${{ matrix.build_platform }} "${{env.SOLUTION_FILE_PATH}}"
 
-    - name: Copy files to common location
-      run: |
-        xcopy /y .\output\${{ matrix.build_platform }}\${{ matrix.build_configuration }}\* .\Common\${{ matrix.build_platform }}\${{ matrix.build_configuration }}\
+    - uses: actions/upload-artifact@v3
+      with:
+        name: build-artifacts-${{ matrix.build_platform }}-${{ matrix.build_configuration }}
+        path: .\output\${{ matrix.build_platform }}\${{ matrix.build_configuration }}\
 
-    - name: Wait for Matrix Files to be copied
-      if: matrix.build_configuration == 'Release' && matrix.build_platform == 'x64'
-      run: |
-        $timeout = 0
-        while ($timeout -lt 4*60) {
-          $Win32Debug = (Test-Path -Path '.\Common\Win32\Debug\TestEncCnvtrs.dll')
-          $Win32Release = (Test-Path -Path '.\Common\Win32\Release\TestEncCnvtrs.dll')
-          $x64Debug = (Test-Path -Path '.\Common\x64\Debug\TestEncCnvtrs.dll')
-          '$Win32Debug: ' + $Win32Debug
-          '$Win32Release: ' + $Win32Release
-          '$x64Debug: ' + $x64Debug
-          if ($Win32Debug -And $Win32Release -And $x64Debug) {
-              Write-Host "All required files exist, continuing..."
-              exit 0
-          } else {
-              Write-Host "Waiting for files to exist..."
-              Get-ChildItem -Path .\Common
-              Start-Sleep -Seconds 5
-              $timeout += 5
-          }
-        }
-        Write-Host "Timed out waiting for files to exist."
-        exit 0
+  publish_nuget:
+    needs: build-windows
+    runs-on: windows-2019
+    strategy:
+       # Keep building other jobs even if another fails, to show what _is_ still working.
+       fail-fast: false
+       matrix:
+         build_configuration: ["Release"]
 
-    - name: Copy files back for nuget packaging (bkz nuspec is looking for them in the output folder) during the 'Release' build (bkz both platforms will have been finished by then)
-      run: xcopy /s /y .\Common\* .\output
-      if: matrix.build_configuration == 'Release' && matrix.build_platform == 'x64'
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Download all workflow run artifacts
+      uses: actions/download-artifact@v3
 
     - name: List Files in Repository
       run: dir /s
@@ -77,11 +66,9 @@ jobs:
 
     - name: Create NuGet Package
       run: nuget pack ./Package.${{matrix.build_configuration}}.nuspec -OutputDirectory ./output/${{matrix.build_configuration}}
-      if: matrix.build_configuration == 'Release' && matrix.build_platform == 'x64'
 
     - name: Upload NuGet Package as Artifact
-      uses: actions/upload-artifact@v2
-      if: matrix.build_configuration == 'Release' && matrix.build_platform == 'x64'
+      uses: actions/upload-artifact@v3
       with:
         name: ${{matrix.build_configuration}}-nuget-package
         path: ./output/${{matrix.build_configuration}}/*.nupkg
@@ -107,7 +94,7 @@ jobs:
       run: sudo apt-get install --assume-yes automake g++ python2-dev python2 libicu-dev mono5-sil icu-dev-fw libteckit-dev
 
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: List Files in Repository
       run: ls -R
