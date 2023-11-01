@@ -41,7 +41,24 @@ jobs:
 
     - name: Copy files to common location
       run: |
-        xcopy /s /y .\output\${{ matrix.build_platform }}\${{ matrix.build_configuration }}\* .\Common\${{ matrix.build_platform }}\${{ matrix.build_configuration }}\
+        xcopy /y .\output\${{ matrix.build_platform }}\${{ matrix.build_configuration }}\* .\Common\${{ matrix.build_platform }}\${{ matrix.build_configuration }}\
+
+    - name: Wait for Matrix Files to be copied
+      if: matrix.build_configuration == 'Release' && matrix.build_platform == 'x64'
+      run: |
+        $timeout = 0
+        while ($timeout -lt 5*60) {
+          if (Test-Path -Path '.\Common\Win32\Debug\TestEncCnvtrs.dll' -And Test-Path -Path '.\Common\Win32\Release\TestEncCnvtrs.dll' -And Test-Path -Path '.\Common\x64\Debug\TestEncCnvtrs.dll') {
+              Write-Host "All required files exist, continuing..."
+              exit 0
+          } else {
+              Write-Host "Waiting for files to exist..."
+              Start-Sleep -Seconds 5
+              $timeout += 5
+          }
+        }
+        Write-Host "Timed out waiting for files to exist."
+        exit 1
 
     - name: Copy files back for nuget packaging (bkz nuspec is looking for them in the output folder) during the 'Release' build (bkz both platforms will have been finished by then)
       run: xcopy /s /y .\Common\* .\output
