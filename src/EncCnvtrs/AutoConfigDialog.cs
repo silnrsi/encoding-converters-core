@@ -7,6 +7,7 @@ using System.Drawing;                   // for Font
 using System.IO;                        // for Path.DirectorySeparatorChar
 using Microsoft.Win32;                  // for RegistryKey
 using ECInterfaces;                     // for IEncConverter
+using System.Diagnostics;
 
 namespace SilEncConverters40
 {
@@ -355,8 +356,17 @@ namespace SilEncConverters40
             }
             else
             {
-                m_aEC = InitializeEncConverter;
-                IsModified = false;
+				try
+				{
+					m_aEC = InitializeEncConverter;
+				}
+				catch (Exception ex)
+				{
+					var error = EncConverters.LogExceptionMessage("AutoConfigure", ex);
+					MessageBox.Show($"OnApply failed: {error}", EncConverters.cstrCaption);
+				}
+
+				IsModified = false;
 
                 // finally, if we're in 'edit mode' and the converter is already in the repository
                 //  then re-add it to save changes to the repository (i.e. make the default behavior 

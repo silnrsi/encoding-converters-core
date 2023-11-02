@@ -605,7 +605,7 @@ namespace ECInterfaces
         Exception = -6,					// an internal error has occurred
         NameNotFound = -7,				// couldn't find the requested name: '{0}'
         IncompleteChar = -8,			// bad input data (lone surrogate, incomplete UTF8 sequence)
-        CompilationFailed = -9,			// mapping compilation failed (syntax errors, etc)
+        CompilationFailed = -9,			// mapping compilation failed (syntax errors, etc): '{0}'
         OutOfMemory = -10,				// unable to allocate required memory
         CantOpenReadMap = -11,			// unable to open or read the map file '{0}'
         InEncFormNotSupported = -12,	// the input encoding format is not supported

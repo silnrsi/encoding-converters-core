@@ -179,20 +179,34 @@ namespace SilEncConverters40
                 var strErrorExtraValue = strScriptPath;
                 try
                 {
-                    var distroPath = DistroPath(ConverterIdentifier);
-                    if (Runtime.PythonDLL != distroPath)
-                        Runtime.PythonDLL = distroPath;
+					var distroPath = DistroPath(ConverterIdentifier);
+					try
+					{
+						if (Runtime.PythonDLL != distroPath)
+							Runtime.PythonDLL = distroPath;
 
-                    if (!PythonEngine.IsInitialized)
-                    {
-                        PythonEngine.Initialize();
-                    }
+						if (!PythonEngine.IsInitialized)
+						{
+							PythonEngine.Initialize();
+						}
+					}
+					catch (Exception e)
+					{
+						if (e.Message.Contains("This property must be set before runtime is initialized") && (Runtime.PythonDLL != distroPath))
+						{
+							EncConverters.ThrowError(ErrStatus.CantOpenReadMap, $"You have to restart the {strDisplayName} Setup dialog to reset the Python interface");
+						}
 
-                    // causes access violation and may not be needed (since this isn't async):
-                    //  PythonEngine.BeginAllowThreads();
-                    dynamic sysModule = Py.Import("sys");
+						// see if this helps (it doesn't seem to, but it also doesn't die...
+						PythonEngine.Shutdown();
+						throw;
+					}
+
+					// causes access violation and may not be needed (since this isn't async):
+					//  PythonEngine.BeginAllowThreads();
+					dynamic sysModule = Py.Import("sys");
                     strScriptDir = strScriptDir.Replace(@"\", "/");
-                    sysModule.path.append(strScriptDir);
+                    sysModule.path.insert(0, strScriptDir);
 
                     using (Py.GIL())
                     {

@@ -92,7 +92,7 @@ namespace SilEncConverters40
             this.textBoxFileSpec.Name = "textBoxFileSpec";
             this.textBoxFileSpec.Size = new System.Drawing.Size(390, 20);
             this.textBoxFileSpec.TabIndex = 1;
-            this.textBoxFileSpec.TextChanged += new System.EventHandler(this.textBoxFileSpec_TextChanged);
+            this.textBoxFileSpec.TextChanged += new System.EventHandler(this.textBox_TextChanged);
             // 
             // buttonBrowse
             // 
@@ -124,6 +124,7 @@ namespace SilEncConverters40
             this.textBoxPython3Path.Name = "textBoxPython3Path";
             this.textBoxPython3Path.Size = new System.Drawing.Size(384, 20);
             this.textBoxPython3Path.TabIndex = 6;
+			this.textBoxPython3Path.TextChanged += new System.EventHandler(this.textBox_TextChanged);
             // 
             // buttonPython3Browse
             // 

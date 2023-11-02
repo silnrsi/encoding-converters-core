@@ -9,12 +9,22 @@ using System.Text;
 using System.Windows.Forms;
 using System.IO;
 using ECInterfaces;                     // for IEncConverter
+using System.Linq;
 
 namespace SilEncConverters40
 {
     public partial class Py3ScriptAutoConfigDialog : PythonAutoConfigDialog
     {
-        public Py3ScriptAutoConfigDialog(
+		private const string OpenFileDialogTitleBrowseForDll = "Browse for Python 3 DLL";
+		private const string OpenFileDialogTitleBrowseForScript = "Browse for Python Script";
+
+		private const string OpenFileDialogDefaultExtBrowseForDll = "dll";
+		private const string OpenFileDialogDefaultExtBrowseForScript = "py";
+
+		private const string OpenFileDialogFilterBrowseForDll = "Python 3 DLL (Python3 DLL)|Python3??.dll";
+		private const string OpenFileDialogFilterBrowseForScript = "Python scripts (*.py)|*.py";
+
+		public Py3ScriptAutoConfigDialog(
             IEncConverters aECs,
             string strDisplayName,
             string strFriendlyName,
@@ -132,8 +142,9 @@ namespace SilEncConverters40
 
         private void buttonBrowse_Click(object sender, EventArgs e)
         {
-            openFileDialogBrowse.DefaultExt = "py";
-            openFileDialogBrowse.Filter = "Python scripts (*.py)|*.py";
+			// since we use the same dialog for the python script and the python dll, don't keep the 'FileName' around,
+			//	when searching for the latter
+			InitializeOpenFileDialog(openFileDialogBrowse.FileName, OpenFileDialogDefaultExtBrowseForScript, OpenFileDialogFilterBrowseForScript, OpenFileDialogTitleBrowseForScript);
             var scriptPath = Py3ScriptEncConverter.ScriptPath(ConverterIdentifier);
             if (!String.IsNullOrEmpty(scriptPath))
                 openFileDialogBrowse.InitialDirectory = Path.GetDirectoryName(scriptPath);
@@ -148,23 +159,34 @@ namespace SilEncConverters40
         }
 
         private void buttonBrowseForPythonDll_Click(object sender, EventArgs e)
-        {
-            openFileDialogBrowse.DefaultExt = "dll";
-            openFileDialogBrowse.Filter = "Python 3 DLL (Python3 DLL)|Python3??.dll";
-            var distroPath = Py3ScriptEncConverter.DistroPath(ConverterIdentifier);
-            if (!String.IsNullOrEmpty(distroPath))
-                openFileDialogBrowse.InitialDirectory = Path.GetDirectoryName(distroPath);
-            else
-                openFileDialogBrowse.InitialDirectory = @"C:\";
+		{
+			// since we use the same dialog for the python script and the python dll, don't keep the 'FileName' around,
+			//	when searching for the latter
+			InitializeOpenFileDialog(openFileDialogBrowse.FileName, OpenFileDialogDefaultExtBrowseForDll, OpenFileDialogFilterBrowseForDll, OpenFileDialogTitleBrowseForDll);
 
-            if (openFileDialogBrowse.ShowDialog() == DialogResult.OK)
-            {
-                ResetFields();
-                textBoxPython3Path.Text = openFileDialogBrowse.FileName;
-            }
-        }
+			var distroPath = Py3ScriptEncConverter.DistroPath(ConverterIdentifier);
+			if (!String.IsNullOrEmpty(distroPath))
+				openFileDialogBrowse.InitialDirectory = Path.GetDirectoryName(distroPath);
+			else
+				openFileDialogBrowse.InitialDirectory = @"C:\";
 
-        private void textBoxFileSpec_TextChanged(object sender, EventArgs e)
+			if (openFileDialogBrowse.ShowDialog() == DialogResult.OK)
+			{
+				ResetFields();
+				textBoxPython3Path.Text = openFileDialogBrowse.FileName;
+			}
+		}
+
+		private void InitializeOpenFileDialog(string fileName, string defaultExt, string filter, string title)
+		{
+			if (!string.IsNullOrEmpty(fileName) && fileName.Substring(fileName.Length - defaultExt.Length + 1).ToLower() != $".{defaultExt}")
+				fileName = "";
+			openFileDialogBrowse.Title = title;
+			openFileDialogBrowse.DefaultExt = defaultExt;
+			openFileDialogBrowse.Filter = filter;
+		}
+
+		private void textBox_TextChanged(object sender, EventArgs e)
         {
             if (m_bInitialized) // but only do this after we're already initialized
             {
