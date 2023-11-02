@@ -51,6 +51,7 @@ jobs:
           output\${{ matrix.build_platform }}\${{ matrix.build_configuration }}\*.dll
           output\${{ matrix.build_platform }}\${{ matrix.build_configuration }}\*.tlb
           output\${{ matrix.build_platform }}\${{ matrix.build_configuration }}\*.config
+          output\MergeModules\**\*.*
           retention-days: 1
 
   publish_nuget:
