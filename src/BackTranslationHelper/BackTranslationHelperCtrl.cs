@@ -523,9 +523,9 @@ namespace BackTranslationHelper
                 var thread = new Thread(() =>
                 {
                     IEnumerable<(string TranslatedText, int Index)> results = Partitioner
-                        .Create(translators, EnumerablePartitionerOptions.NoBuffering)
+                        .Create(translators, EnumerablePartitionerOptions.None)
                         .AsParallel()
-                        .WithMergeOptions(ParallelMergeOptions.NotBuffered)
+                        .WithMergeOptions(ParallelMergeOptions.FullyBuffered)
                         .Select((theTranslatorPlusIndex) =>
                         {
                             var theTranslator = theTranslatorPlusIndex.TheTranslator;
@@ -539,14 +539,6 @@ namespace BackTranslationHelper
                             return (translatedText, index);
                         })
                         .ToList();
-
-                    // This isn't really necessary, but for some reason, if we don't do it, then the thread returns immediately
-                    //  So if we get here, just reset the values we already set...
-                    foreach (var result in results)
-                    {
-                        var index = result.Index;
-                        model.TargetsPossible[index] = new TargetPossible { TargetData = result.TranslatedText, PossibleIndex = index, TranslatorName = TheTranslators[index].Name };
-                    }
 
                     waitForAllTranslatorsToFinish.Set();
                 });
@@ -1080,6 +1072,13 @@ namespace BackTranslationHelper
                     //  to do.
                     //  _model.TargetData = null;   // so it'll be reinitialized
                     _model.TargetsPossible.Clear();
+
+                    // also remove any existing translations for the current sourceData
+                    var sourceToTranslate = _model.SourceToTranslate;
+                    if (!string.IsNullOrEmpty(sourceToTranslate))
+                    {
+                        _mapOfRecentTranslations.Values.ToList().ForEach(m => m.Remove(sourceToTranslate));
+                    }
                     Reload();
                     return;
             }
