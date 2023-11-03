@@ -135,16 +135,16 @@ namespace BackTranslationHelper
 						numOfTranslators + 1;
 			float percentageHeight = 100 / totalTextBoxes;
 
-            var nRowStyleOffset = 0;    // start w/ the Source Language text box
+			var nRowStyleOffset = 0;    // start w/ the Source Language text box
 
 			ExpandOrCollapse(showSourceText, nRowStyleOffset++, percentageHeight, 
-                             textBoxSourceData, GetSourceLanguageFontForProject(projectName), GetSourceLanguageRightToLeftForProject(projectName));
+							 textBoxSourceData, GetSourceLanguageFontForProject(projectName), GetSourceLanguageRightToLeftForProject(projectName));
 
             var targetLanguageFont = GetTargetLanguageFontForProject(projectName);
             var targetLanguageRightToLeft = GetTargetLanguageRightToLeftForProject(projectName);
 
             ExpandOrCollapse(displayExistingTargetTranslation && showCurrentTargetText, nRowStyleOffset++, percentageHeight, 
-                             textBoxTargetTextExisting, targetLanguageFont, targetLanguageRightToLeft);
+							 textBoxTargetTextExisting, targetLanguageFont, targetLanguageRightToLeft);
 
             textBoxTargetBackTranslation.Font = targetLanguageFont;
             textBoxTargetBackTranslation.RightToLeft = targetLanguageRightToLeft;
@@ -495,7 +495,7 @@ namespace BackTranslationHelper
         public ManualResetEvent waitForAllTranslatorsToFinish;
 		private SemaphoreSlim semaphore = new SemaphoreSlim(1);
 
-        private async Task CallTranslators(BackTranslationHelperModel model)
+		private async Task CallTranslators(BackTranslationHelperModel model)
         {
             try
             {
@@ -542,7 +542,7 @@ namespace BackTranslationHelper
 							semaphore.Wait();
 							try
 							{
-                            model.TargetsPossible.Add(new TargetPossible { TargetData = translatedText, PossibleIndex = index, TranslatorName = theTranslator.Name });
+								model.TargetsPossible.Add(new TargetPossible { TargetData = translatedText, PossibleIndex = index, TranslatorName = theTranslator.Name });
 							}
 							catch { }
 							finally
@@ -550,7 +550,7 @@ namespace BackTranslationHelper
 								semaphore.Release();
 							}
 
-                            System.Diagnostics.Debug.WriteLine($"BTH: progressBar: bumped Value from {theTranslator.Name}");
+							System.Diagnostics.Debug.WriteLine($"BTH: progressBar: bumped Value from {theTranslator.Name}");
                             InvokeIfRequired(progressBar, () => progressBar.Value = Math.Min(progressBar.Value + 1, progressBar.Maximum));
                             return (translatedText, index);
                         })
@@ -1071,8 +1071,6 @@ namespace BackTranslationHelper
                     if (_queryAboutF5Meaning)
                     {
                         var msg = "By pressing F5, did you mean to re-execute the translator (e.g. after making changes to it)?";
-                        if (IsModified)
-                            msg += " Note: existing changes will be overwritten if you click 'Yes'.";
 
                         var res = MessageBox.Show(msg, BackTranslationHelperDataSource.ProjectName, MessageBoxButtons.YesNoCancel);
                         if ((res != DialogResult.Yes) || (_model == null))
@@ -1080,8 +1078,6 @@ namespace BackTranslationHelper
 
                         _queryAboutF5Meaning = false;
                     }
-
-                    IsModified = false; // so it can be changed
 
                     // I don't think I wanted to do this. This just means that if we originally processed the existing
                     //  text (in Ptx), then it would just shift to the other one, which isn't what we probably want
