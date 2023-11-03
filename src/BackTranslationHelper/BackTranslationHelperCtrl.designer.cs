@@ -118,10 +118,8 @@ namespace BackTranslationHelper
             // 
             this.removeEncConverterToolStripMenuItem.Name = "removeEncConverterToolStripMenuItem";
             this.removeEncConverterToolStripMenuItem.Size = new System.Drawing.Size(315, 22);
-            this.removeEncConverterToolStripMenuItem.Text = "Remove or Reorder &Translators/EncConverters";
-            this.removeEncConverterToolStripMenuItem.ToolTipText = "Click to bring up a dialog to remove or reorder the Translators/EncConverters use" +
-    "d to generate one of the translated draft of the source text (e.g. Bing Translat" +
-    "or)";
+            this.removeEncConverterToolStripMenuItem.Text = "Edit, Remove or Reorder &Translators/EncConverters";
+            this.removeEncConverterToolStripMenuItem.ToolTipText = "Click to bring up a dialog to edit, remove or reorder the Translators/EncConverters.";
             this.removeEncConverterToolStripMenuItem.Click += new System.EventHandler(this.ChangeEncConverterToolStripMenuItem_Click);
             // 
             // addEncConverterToolStripMenuItem

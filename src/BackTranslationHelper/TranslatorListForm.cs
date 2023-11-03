@@ -6,6 +6,8 @@ using System.Diagnostics;               // for Debug.Assert
 using System.Collections.Generic;
 using ECInterfaces;
 using System.Linq;
+using SilEncConverters40;
+using System.Reflection;
 
 namespace BackTranslationHelper
 {
@@ -29,8 +31,9 @@ namespace BackTranslationHelper
                 m_mapLbItems2Tooltips[translator.Name] = translator.ToString();
             }
 
-            // disable the add button (until an implementation type is selected)
-            buttonRemove.Enabled = false;
+            // disable the buttons (until an implementation type is selected)
+            buttonRemove.Enabled = buttonEditSelected.Enabled =
+				buttonMoveTranslatorDown.Enabled = buttonMoveTranslatorUp.Enabled = false;
 
             labelStatic.Text = $"Choose the Translator/EncConverter to remove";
         }
@@ -55,7 +58,7 @@ namespace BackTranslationHelper
 
 		private void listBoxTranslatorNames_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			this.buttonRemove.Enabled = buttonMoveTranslatorDown.Enabled = buttonMoveTranslatorUp.Enabled = (this.listBoxTranslatorNames.SelectedItem != null);
+			this.buttonRemove.Enabled = buttonEditSelected.Enabled = buttonMoveTranslatorDown.Enabled = buttonMoveTranslatorUp.Enabled = (this.listBoxTranslatorNames.SelectedItem != null);
 		}
 
 		private void buttonCancel_Click(object sender, System.EventArgs e)
@@ -126,6 +129,60 @@ namespace BackTranslationHelper
 			this.listBoxTranslatorNames.SelectedIndex = currentIndex + 1;
 
 			buttonRemove.Text = OkButtonTextSave;
+		}
+
+		private void buttonEditSelected_Click(object sender, EventArgs e)
+		{
+			if (listBoxTranslatorNames.SelectedIndex == -1)
+				return;
+
+			// check for this item in the repository collection (should exist, but sometimes, doesn't!)
+			var index = listBoxTranslatorNames.SelectedIndex;
+			var converterName = listBoxTranslatorNames.SelectedItem as String;
+			if (!DirectableEncConverter.EncConverters.ContainsKey(converterName))
+				return;
+
+			var theEC = DirectableEncConverter.EncConverters[converterName];
+			Debug.Assert(theEC != null);
+
+			// get the name (but if it's a temporary name, then just start from scratch (with no name)
+			string strFriendlyName = theEC.Name;
+			if (strFriendlyName.IndexOf(EncConverters.cstrTempConverterPrefix) == 0)
+				strFriendlyName = null;
+
+			bool bTooltipActive = toolTip.Active;
+			toolTip.Active = false;
+			if (DirectableEncConverter.EncConverters.AutoConfigureEx(theEC, theEC.ConversionType, ref strFriendlyName, theEC.LeftEncodingID, theEC.RightEncodingID))
+			{
+				// since even the name could theoretically change, remove the existing one and ...
+				if (m_mapLbItems2Tooltips.ContainsKey(converterName))
+					m_mapLbItems2Tooltips.Remove(converterName);
+
+				// remove the old one from the listbox also
+				if (this.listBoxTranslatorNames.Items.Contains(converterName))
+					this.listBoxTranslatorNames.Items.Remove(converterName);
+
+				// get a possible new name
+				Debug.Assert(!String.IsNullOrEmpty(strFriendlyName));
+				converterName = strFriendlyName;
+
+				this.listBoxTranslatorNames.Items.Insert(index, converterName);
+				this.listBoxTranslatorNames.SelectedIndex = index;
+
+				// make it visible
+				this.listBoxTranslatorNames.TopIndex = index;
+
+				// also update the tooltip and fixup the button state
+				// (but first re-get the converter since (for some types, e.g. CmpdEncConverter)
+				//  it might be totally different.
+				theEC = DirectableEncConverter.EncConverters[converterName];
+				if (theEC != null)
+					m_mapLbItems2Tooltips[converterName] = theEC.ToString();
+
+				// finally, make this a Save situation:
+				buttonRemove.Text = OkButtonTextSave;
+			}
+			toolTip.Active = bTooltipActive;
 		}
 	}
 }

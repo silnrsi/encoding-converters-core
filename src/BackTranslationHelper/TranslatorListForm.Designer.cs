@@ -45,6 +45,7 @@ namespace BackTranslationHelper
             this.buttonMoveTranslatorDown = new System.Windows.Forms.Button();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.timerTooltip = new System.Windows.Forms.Timer(this.components);
+            this.buttonEditSelected = new System.Windows.Forms.Button();
             this.tableLayoutPanel.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -53,13 +54,13 @@ namespace BackTranslationHelper
             this.listBoxTranslatorNames.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tableLayoutPanel.SetColumnSpan(this.listBoxTranslatorNames, 2);
+            this.tableLayoutPanel.SetColumnSpan(this.listBoxTranslatorNames, 3);
             this.helpProvider.SetHelpString(this.listBoxTranslatorNames, "This list displays all of the currently added Translator/EncConverters");
             this.listBoxTranslatorNames.Location = new System.Drawing.Point(3, 26);
             this.listBoxTranslatorNames.Name = "listBoxTranslatorNames";
             this.tableLayoutPanel.SetRowSpan(this.listBoxTranslatorNames, 2);
             this.helpProvider.SetShowHelp(this.listBoxTranslatorNames, true);
-            this.listBoxTranslatorNames.Size = new System.Drawing.Size(316, 212);
+            this.listBoxTranslatorNames.Size = new System.Drawing.Size(372, 303);
             this.listBoxTranslatorNames.TabIndex = 0;
             this.listBoxTranslatorNames.SelectedIndexChanged += new System.EventHandler(this.listBoxTranslatorNames_SelectedIndexChanged);
             this.listBoxTranslatorNames.MouseMove += new System.Windows.Forms.MouseEventHandler(this.listBoxTranslatorNames_MouseMove);
@@ -68,10 +69,10 @@ namespace BackTranslationHelper
             // 
             this.labelStatic.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tableLayoutPanel.SetColumnSpan(this.labelStatic, 2);
+            this.tableLayoutPanel.SetColumnSpan(this.labelStatic, 3);
             this.labelStatic.Location = new System.Drawing.Point(3, 0);
             this.labelStatic.Name = "labelStatic";
-            this.labelStatic.Size = new System.Drawing.Size(316, 23);
+            this.labelStatic.Size = new System.Drawing.Size(372, 23);
             this.labelStatic.TabIndex = 1;
             this.labelStatic.Text = "Choose the Translator/EncConverter to remove or reorder";
             // 
@@ -80,7 +81,7 @@ namespace BackTranslationHelper
             this.buttonRemove.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.helpProvider.SetHelpString(this.buttonRemove, "Click this button to remove the selected translator/EncConverter from this projec" +
         "t");
-            this.buttonRemove.Location = new System.Drawing.Point(83, 256);
+            this.buttonRemove.Location = new System.Drawing.Point(151, 346);
             this.buttonRemove.Name = "buttonRemove";
             this.helpProvider.SetShowHelp(this.buttonRemove, true);
             this.buttonRemove.Size = new System.Drawing.Size(75, 23);
@@ -93,7 +94,7 @@ namespace BackTranslationHelper
             this.buttonCancel.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.helpProvider.SetHelpString(this.buttonCancel, "Click this button to cancel this dialog");
-            this.buttonCancel.Location = new System.Drawing.Point(164, 256);
+            this.buttonCancel.Location = new System.Drawing.Point(232, 346);
             this.buttonCancel.Name = "buttonCancel";
             this.helpProvider.SetShowHelp(this.buttonCancel, true);
             this.buttonCancel.Size = new System.Drawing.Size(75, 23);
@@ -106,16 +107,18 @@ namespace BackTranslationHelper
             this.tableLayoutPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tableLayoutPanel.ColumnCount = 3;
-            this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel.ColumnCount = 4;
             this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50.00001F));
+            this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel.Controls.Add(this.labelStatic, 0, 0);
-            this.tableLayoutPanel.Controls.Add(this.buttonCancel, 1, 3);
+            this.tableLayoutPanel.Controls.Add(this.buttonCancel, 2, 3);
             this.tableLayoutPanel.Controls.Add(this.listBoxTranslatorNames, 0, 1);
-            this.tableLayoutPanel.Controls.Add(this.buttonRemove, 0, 3);
-            this.tableLayoutPanel.Controls.Add(this.buttonMoveTranslatorUp, 2, 1);
-            this.tableLayoutPanel.Controls.Add(this.buttonMoveTranslatorDown, 2, 2);
+            this.tableLayoutPanel.Controls.Add(this.buttonMoveTranslatorUp, 3, 1);
+            this.tableLayoutPanel.Controls.Add(this.buttonMoveTranslatorDown, 3, 2);
+            this.tableLayoutPanel.Controls.Add(this.buttonRemove, 1, 3);
+            this.tableLayoutPanel.Controls.Add(this.buttonEditSelected, 0, 3);
             this.tableLayoutPanel.Location = new System.Drawing.Point(12, 12);
             this.tableLayoutPanel.Name = "tableLayoutPanel";
             this.tableLayoutPanel.RowCount = 4;
@@ -123,14 +126,14 @@ namespace BackTranslationHelper
             this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel.Size = new System.Drawing.Size(351, 283);
+            this.tableLayoutPanel.Size = new System.Drawing.Size(408, 372);
             this.tableLayoutPanel.TabIndex = 4;
             // 
             // buttonMoveTranslatorUp
             // 
             this.buttonMoveTranslatorUp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.buttonMoveTranslatorUp.Image = global::BackTranslationHelper.Properties.Resources.FillUpHS;
-            this.buttonMoveTranslatorUp.Location = new System.Drawing.Point(325, 112);
+            this.buttonMoveTranslatorUp.Location = new System.Drawing.Point(381, 157);
             this.buttonMoveTranslatorUp.Name = "buttonMoveTranslatorUp";
             this.buttonMoveTranslatorUp.Size = new System.Drawing.Size(23, 23);
             this.buttonMoveTranslatorUp.TabIndex = 9;
@@ -141,7 +144,7 @@ namespace BackTranslationHelper
             // buttonMoveTranslatorDown
             // 
             this.buttonMoveTranslatorDown.Image = global::BackTranslationHelper.Properties.Resources.FillDownHS;
-            this.buttonMoveTranslatorDown.Location = new System.Drawing.Point(325, 141);
+            this.buttonMoveTranslatorDown.Location = new System.Drawing.Point(381, 186);
             this.buttonMoveTranslatorDown.Name = "buttonMoveTranslatorDown";
             this.buttonMoveTranslatorDown.Size = new System.Drawing.Size(23, 23);
             this.buttonMoveTranslatorDown.TabIndex = 9;
@@ -154,12 +157,23 @@ namespace BackTranslationHelper
             this.timerTooltip.Interval = 500;
             this.timerTooltip.Tick += new System.EventHandler(this.timerTooltip_Tick);
             // 
+            // buttonEditSelected
+            // 
+            this.buttonEditSelected.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.buttonEditSelected.Location = new System.Drawing.Point(70, 346);
+            this.buttonEditSelected.Name = "buttonEditSelected";
+            this.buttonEditSelected.Size = new System.Drawing.Size(75, 23);
+            this.buttonEditSelected.TabIndex = 2;
+            this.buttonEditSelected.Text = "&Edit";
+            this.toolTip.SetToolTip(this.buttonEditSelected, "Click to edit the selected Translator/EncConverter");
+            this.buttonEditSelected.Click += new System.EventHandler(this.buttonEditSelected_Click);
+            // 
             // TranslatorListForm
             // 
             this.AcceptButton = this.buttonRemove;
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
             this.CancelButton = this.buttonCancel;
-            this.ClientSize = new System.Drawing.Size(375, 307);
+            this.ClientSize = new System.Drawing.Size(432, 396);
             this.Controls.Add(this.tableLayoutPanel);
             this.HelpButton = true;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -170,6 +184,7 @@ namespace BackTranslationHelper
             this.Text = "Reorder/Remove Translator";
             this.tableLayoutPanel.ResumeLayout(false);
             this.ResumeLayout(false);
+
         }
 
 		private ListBox listBoxTranslatorNames;
@@ -184,5 +199,6 @@ namespace BackTranslationHelper
 		private Button buttonMoveTranslatorDown;
 		#endregion
 
+		private Button buttonEditSelected;
 	}
 }
