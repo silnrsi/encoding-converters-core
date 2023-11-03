@@ -493,7 +493,7 @@ namespace BackTranslationHelper
         }
 
         public ManualResetEvent waitForAllTranslatorsToFinish;
-
+		private SemaphoreSlim semaphore = new SemaphoreSlim(1);
 
         private async Task CallTranslators(BackTranslationHelperModel model)
         {
@@ -538,7 +538,17 @@ namespace BackTranslationHelper
                             var index = theTranslatorPlusIndex.Index;
                             var translatedText = ConvertText(theTranslatorPlusIndex.TheTranslator, model.SourceToTranslate);
 
+							// list doesn't seem threadsafe...
+							semaphore.Wait();
+							try
+							{
                             model.TargetsPossible.Add(new TargetPossible { TargetData = translatedText, PossibleIndex = index, TranslatorName = theTranslator.Name });
+							}
+							catch { }
+							finally
+							{
+								semaphore.Release();
+							}
 
                             System.Diagnostics.Debug.WriteLine($"BTH: progressBar: bumped Value from {theTranslator.Name}");
                             InvokeIfRequired(progressBar, () => progressBar.Value = Math.Min(progressBar.Value + 1, progressBar.Maximum));
