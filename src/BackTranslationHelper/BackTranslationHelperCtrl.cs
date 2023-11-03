@@ -127,16 +127,23 @@ namespace BackTranslationHelper
             var projectName = BackTranslationHelperDataSource.ProjectName;
             toolStripTextBoxStatus.Size = CalculateStatusLineSize(toolStripTextBoxStatus, settingsToolStripMenuItem);
 
+			var showSourceText = !Properties.Settings.Default.HideSourceText;
+			var showCurrentTargetText = !Properties.Settings.Default.HideCurrentTargetText;
+			var numOfTranslators = TheTranslators.Count;
+			var totalTextBoxes = (showSourceText ? 1 : 0) +	// the total number of visible text boxes
+						(showCurrentTargetText ? 1 : 0) +
+						numOfTranslators + 1;
+			float percentageHeight = 100 / totalTextBoxes;
+
             var nRowStyleOffset = 0;    // start w/ the Source Language text box
 
-            ExpandOrCollapse(!Properties.Settings.Default.HideSourceText, nRowStyleOffset++,
+			ExpandOrCollapse(showSourceText, nRowStyleOffset++, percentageHeight, 
                              textBoxSourceData, GetSourceLanguageFontForProject(projectName), GetSourceLanguageRightToLeftForProject(projectName));
 
             var targetLanguageFont = GetTargetLanguageFontForProject(projectName);
             var targetLanguageRightToLeft = GetTargetLanguageRightToLeftForProject(projectName);
 
-            var hideCurrentTargetText = Properties.Settings.Default.HideCurrentTargetText;
-            ExpandOrCollapse(displayExistingTargetTranslation && !hideCurrentTargetText, nRowStyleOffset++,
+            ExpandOrCollapse(displayExistingTargetTranslation && showCurrentTargetText, nRowStyleOffset++, percentageHeight, 
                              textBoxTargetTextExisting, targetLanguageFont, targetLanguageRightToLeft);
 
             textBoxTargetBackTranslation.Font = targetLanguageFont;
@@ -148,7 +155,6 @@ namespace BackTranslationHelper
             var labelsPossibleTargetTranslations = tableLayoutPanel.Controls.OfType<Label>().Where(l => l.Name.Contains("labelForPossibleTargetTranslation")).ToList();
             var textBoxesPossibleTargetTranslations = tableLayoutPanel.Controls.OfType<TextBox>().Where(l => l.Name.Contains("textBoxPossibleTargetTranslation")).ToList();
             var buttonsFillTargetOption = tableLayoutPanel.Controls.OfType<Button>().Where(b => b.Name.Contains("buttonFillTargetTextOption")).ToList();
-            var numOfTranslators = TheTranslators.Count;
 
             // if there's only one, then we don't need to display the 'possible' translations to start with.
             // NB: but only if we're not displaying any pre-existing target translations. If we are (i.e. Paratext),
@@ -156,7 +162,7 @@ namespace BackTranslationHelper
             //  existing translation, which if it's not correct, we want to be able to fill it from the converted
             //  value (which will be in the 1st targetoption box)
             var i = 0;
-            if ((numOfTranslators == 1) && !displayExistingTargetTranslation && !hideCurrentTargetText)
+            if ((numOfTranslators == 1) && !displayExistingTargetTranslation && showCurrentTargetText)
             {
                 // hide them all
                 for (; i < MaxPossibleTargetTranslations; i++)
@@ -186,7 +192,7 @@ namespace BackTranslationHelper
                     textBox.RightToLeft = targetLanguageRightToLeft;
                     var rowStyle = tableLayoutPanel.RowStyles[nRowStyleOffset + i];
                     rowStyle.SizeType = SizeType.Percent;   // gives it real estate
-                    rowStyle.Height = 20F;
+                    rowStyle.Height = percentageHeight;
                     toolTip.SetToolTip(textBox, $"This is the translation from the {TheTranslators[i].Name} Translator");
                 }
 
@@ -204,14 +210,14 @@ namespace BackTranslationHelper
             ResumeLayout(false);
             PerformLayout();
 
-            void ExpandOrCollapse(bool hasRealEstate, int rowOffset, TextBox textBox, Font font, RightToLeft isRightToLeft)
+            void ExpandOrCollapse(bool hasRealEstate, int rowOffset, float percentageHeight, TextBox textBox, Font font, RightToLeft isRightToLeft)
             {
                 System.Diagnostics.Debug.WriteLine($"BTH: textBox: {textBox.Name}, hasRealEstate: {hasRealEstate}, font: {font.Name}, isRtL: {isRightToLeft}");
                 if (hasRealEstate)
                 {
                     var rowStyle = tableLayoutPanel.RowStyles[rowOffset];
                     rowStyle.SizeType = SizeType.Percent;   // gives it real estate
-                    rowStyle.Height = 20F;
+                    rowStyle.Height = percentageHeight;
                     textBox.Font = font;
                     textBox.RightToLeft = isRightToLeft;
                 }
