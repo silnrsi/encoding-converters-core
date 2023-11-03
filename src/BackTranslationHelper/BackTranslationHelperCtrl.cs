@@ -391,10 +391,10 @@ namespace BackTranslationHelper
         {
             var textBoxesPossibleTargetTranslations = tableLayoutPanel.Controls.OfType<TextBox>().Where(l => l.Name.Contains("textBoxPossibleTargetTranslation")).ToList();
 
-            // if the user clicks the progress bar to stop the translations, the number in newTargetTexts could be less
-            //  than textBoxesPossibleTargetTranslations.Count
-            System.Diagnostics.Debug.Assert(newTargetTexts.Count <= textBoxesPossibleTargetTranslations.Count);
-            foreach (var targetText in newTargetTexts.Where(tt => tt != null))
+			// The parallel processing seems to return before all of it is finished, resulting in the newTargetTexts having nulls in it.
+			var targetTexts = newTargetTexts.Where(tt => tt != null).ToList();
+			System.Diagnostics.Debug.Assert(targetTexts.Count <= textBoxesPossibleTargetTranslations.Count);
+			foreach (var targetText in targetTexts)
             {
                 if (targetText.PossibleIndex >= textBoxesPossibleTargetTranslations.Count)
                     continue;
@@ -505,7 +505,7 @@ namespace BackTranslationHelper
                 // some of the possible target translators may have already been run by the client (e.g. Word always
                 //  does the 1st one). OR we may already have one or more and we're adding more...
                 //  So this is for any that haven't been done yet
-                var alreadyTranslatedTargetNames = model.TargetsPossible.Select(tp => tp.TranslatorName).ToList();
+                var alreadyTranslatedTargetNames = model.TargetsPossible.Where(tt => tt != null).Select(tp => tp.TranslatorName).ToList();
                 var translators = TheTranslators.Where(t => !alreadyTranslatedTargetNames.Contains(t.Name))
                                                 .Select(t => new { TheTranslator = t, Index = TheTranslators.IndexOf(t) })
                                                 .ToList();
