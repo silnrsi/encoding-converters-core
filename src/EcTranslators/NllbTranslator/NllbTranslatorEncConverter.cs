@@ -239,9 +239,9 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
 
 		private string HarvestResult(string jsonResult)
 		{
-			var json = JValue.Parse(jsonResult);
-			var output = json.SelectToken("translatedText")?.ToString();
-			return output;
+			var jsonArray = JArray.Parse(jsonResult);
+			var output = jsonArray.Select(obj => (string)obj["translatedText"])?.ToList();
+			return String.Join(Environment.NewLine, output);
 		}
 
 		#endregion Abstract Base Class Overrides

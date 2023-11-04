@@ -157,16 +157,24 @@ namespace Nllb
 				  DeepL.TextTranslateOptions? options = null,
 				  CancellationToken cancellationToken = default)
 			{
-				var bodyParams = new TranslateMsg { SourceLanguage = sourceLanguageCode, TargetLanguage = targetLanguageCode, Text = text };
+				// call it once for each paragraph of text
+				var strings = text.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+				var result = String.Empty;
+				foreach (var str in strings)
+				{
+					var bodyParams = new TranslateMsg { SourceLanguage = sourceLanguageCode, TargetLanguage = targetLanguageCode, Text = str };
 
-				using var responseMessage = await _client
-					  .ApiPostJsonAsync("/api/v1/translate", cancellationToken, bodyParams).ConfigureAwait(false);
+					using var responseMessage = await _client
+						  .ApiPostJsonAsync("/api/v1/translate", cancellationToken, bodyParams).ConfigureAwait(false);
 
-				// Read response as a string.
-				var result = await responseMessage.Content.ReadAsStringAsync();
-				if (!responseMessage.IsSuccessStatusCode)
-					throw new ApplicationException(result);
-				return result;
+					// Read response as a string.
+					if (!String.IsNullOrEmpty(result))
+						result += ",";
+					result += await responseMessage.Content.ReadAsStringAsync();
+					if (!responseMessage.IsSuccessStatusCode)
+						throw new ApplicationException(result);
+				}
+				return $"[{result}]";
 			}
 
 			/// <summary>Internal function to retrieve available languages.</summary>

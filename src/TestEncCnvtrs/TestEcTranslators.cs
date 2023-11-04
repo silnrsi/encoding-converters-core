@@ -210,6 +210,11 @@ namespace TestEncCnvtrs
 		/// <param name="testOutput"></param>
 		[Test]
 		[TestCase("hin_Deva;eng_Latn",
+			@"फिर एक स्‍वर्गदूत ने मुझसे कहा, ""इस बात को लिख ले: वे धन्य हैं, जिनको मेमने के विवाह के भोज का निमन्‍त्रण है।
+यह परमेश्वर के सच्‍चे बोल हैं।",
+			@"Then an angel said to me, ""Write: Blessed are those who are invited to the wedding banquet of the Lamb"".
+These are the true words of God.")]
+		[TestCase("hin_Deva;eng_Latn",
 			"वे जानते हैं कि परमेश्वर का अस्तित्व है और यह सब कुछ उनके लिए ही बनाया है। परंतु फिर भी न तो वे परमेश्वर का कोई सम्‍मान, और न ही तो उसका धन्यवाद करते हैं। इसलिए उनकी आँखें में पर्दा पड़ गया है, और परमेश्वर के विषय में उनका जो विचार है, वह गलत हो चुका है।",
 			"They know that God exists and that everything was made for them. Yet they do not give glory to God or give him thanks. Their minds are blinded and their thoughts are in error.")]
 		public void TestNllbConverter(string converterSpec, string testInput, string testOutput)
