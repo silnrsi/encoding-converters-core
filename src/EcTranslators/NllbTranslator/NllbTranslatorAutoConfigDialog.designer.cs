@@ -3,34 +3,34 @@ using ECInterfaces;     // for Util
 
 namespace SilEncConverters40.EcTranslators.NllbTranslator
 {
-	partial class NllbTranslatorAutoConfigDialog
-	{
-		/// <summary>
-		/// Required designer variable.
-		/// </summary>
-		private System.ComponentModel.IContainer components = null;
+    partial class NllbTranslatorAutoConfigDialog
+    {
+        /// <summary>
+        /// Required designer variable.
+        /// </summary>
+        private System.ComponentModel.IContainer components = null;
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-		protected override void Dispose(bool disposing)
-		{
-			if (disposing && (components != null))
-			{
-				components.Dispose();
-			}
-			base.Dispose(disposing);
-		}
+        /// <summary>
+        /// Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
 
-		#region Windows Form Designer generated code
+        #region Windows Form Designer generated code
 
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
+        /// <summary>
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
             this.openFileDialogBrowse = new System.Windows.Forms.OpenFileDialog();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.labelSourceLanguage = new System.Windows.Forms.Label();
@@ -145,9 +145,8 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
             this.buttonSetNllbTranslateApiKey.Name = "buttonSetNllbTranslateApiKey";
             this.buttonSetNllbTranslateApiKey.Size = new System.Drawing.Size(294, 23);
             this.buttonSetNllbTranslateApiKey.TabIndex = 14;
-            this.buttonSetNllbTranslateApiKey.Text = "Enter the Nllb Translator Key";
+            this.buttonSetNllbTranslateApiKey.Text = "Enter the Api Key and Endpoint";
             this.buttonSetNllbTranslateApiKey.UseVisualStyleBackColor = true;
-            this.buttonSetNllbTranslateApiKey.Visible = false;
             this.buttonSetNllbTranslateApiKey.Click += new System.EventHandler(this.ButtonSetNllbTranslateApiKey_Click);
             // 
             // NllbTranslatorAutoConfigDialog
@@ -165,15 +164,15 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
             this.tableLayoutPanel1.PerformLayout();
             this.ResumeLayout(false);
 
-		}
+        }
 
-		#endregion
-		private System.Windows.Forms.OpenFileDialog openFileDialogBrowse;
-		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
-		private System.Windows.Forms.Label labelSourceLanguage;
-		private System.Windows.Forms.Label labelTargetLanguage;
-		private System.Windows.Forms.ComboBox comboBoxSourceLanguages;
-		private System.Windows.Forms.ComboBox comboBoxTargetLanguages;
-		private System.Windows.Forms.Button buttonSetNllbTranslateApiKey;
-	}
+        #endregion
+        private System.Windows.Forms.OpenFileDialog openFileDialogBrowse;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+        private System.Windows.Forms.Label labelSourceLanguage;
+        private System.Windows.Forms.Label labelTargetLanguage;
+        private System.Windows.Forms.ComboBox comboBoxSourceLanguages;
+        private System.Windows.Forms.ComboBox comboBoxTargetLanguages;
+        private System.Windows.Forms.Button buttonSetNllbTranslateApiKey;
+    }
 }

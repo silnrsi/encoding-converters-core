@@ -211,6 +211,7 @@ namespace DeepL.Internal {
 
       switch (statusCode) {
         case HttpStatusCode.Forbidden:
+        case HttpStatusCode.Unauthorized:
           throw new AuthorizationException("Authorization failure, check AuthKey" + message);
         case HttpStatusCodeQuotaExceeded:
           throw new QuotaExceededException("Quota for this billing period has been exceeded" + message);
@@ -295,39 +296,39 @@ namespace DeepL.Internal {
       return await ApiCallAsync(requestMessage, cancellationToken);
     }
 
-		/// <summary>Function to perform HTTP POST requests using a simple json contents (used by NllbTranslator; not DeepL).</summary>
-		/// <param name="relativeUri">Endpoint URL relative to server base URL.</param>
-		/// <param name="cancellationToken">The cancellation token to cancel operation.</param>
-		/// <param name="bodyParams">Parameters to embed in the HTTP request body.</param>
-		/// <returns><see cref="HttpResponseMessage" /> received from DeepL API.</returns>
-		/// <exception cref="ConnectionException">If any failure occurs while sending the request.</exception>
-		public async Task<HttpResponseMessage> ApiPostJsonAsync(
-			  string relativeUri,
-			  CancellationToken cancellationToken,
-			  object? bodyObject = null)
-		{
-			var requestBody = bodyObject != null
-								? Newtonsoft.Json.JsonConvert.SerializeObject(bodyObject)
-								: null;
+        /// <summary>Function to perform HTTP POST requests using a simple json contents (used by NllbTranslator; not DeepL).</summary>
+        /// <param name="relativeUri">Endpoint URL relative to server base URL.</param>
+        /// <param name="cancellationToken">The cancellation token to cancel operation.</param>
+        /// <param name="bodyParams">Parameters to embed in the HTTP request body.</param>
+        /// <returns><see cref="HttpResponseMessage" /> received from DeepL API.</returns>
+        /// <exception cref="ConnectionException">If any failure occurs while sending the request.</exception>
+        public async Task<HttpResponseMessage> ApiPostJsonAsync(
+              string relativeUri,
+              CancellationToken cancellationToken,
+              object? bodyObject = null)
+        {
+            var requestBody = bodyObject != null
+                                ? Newtonsoft.Json.JsonConvert.SerializeObject(bodyObject)
+                                : null;
 
-			using var requestMessage = new HttpRequestMessage
-			{
-				RequestUri = new Uri(_serverUrl, relativeUri),
-				Method = HttpMethod.Post,
-				Content = new StringContent(requestBody, Encoding.UTF8, "application/json")
-			};
-			return await ApiCallAsync(requestMessage, cancellationToken);
-		}
+            using var requestMessage = new HttpRequestMessage
+            {
+                RequestUri = new Uri(_serverUrl, relativeUri),
+                Method = HttpMethod.Post,
+                Content = new StringContent(requestBody, Encoding.UTF8, "application/json")
+            };
+            return await ApiCallAsync(requestMessage, cancellationToken);
+        }
 
-		/// <summary>Internal function to upload files using an HTTP POST request.</summary>
-		/// <param name="relativeUri">Endpoint URL relative to server base URL.</param>
-		/// <param name="cancellationToken">The cancellation token to cancel operation.</param>
-		/// <param name="bodyParams">Parameters to embed in the HTTP request body.</param>
-		/// <param name="file">Optional file content to upload in request.</param>
-		/// <param name="fileName">If <see cref="file" /> is used, the name of file.</param>
-		/// <returns><see cref="HttpResponseMessage" /> received from DeepL API.</returns>
-		/// <exception cref="ConnectionException">If any failure occurs while sending the request.</exception>
-		public async Task<HttpResponseMessage> ApiUploadAsync(
+        /// <summary>Internal function to upload files using an HTTP POST request.</summary>
+        /// <param name="relativeUri">Endpoint URL relative to server base URL.</param>
+        /// <param name="cancellationToken">The cancellation token to cancel operation.</param>
+        /// <param name="bodyParams">Parameters to embed in the HTTP request body.</param>
+        /// <param name="file">Optional file content to upload in request.</param>
+        /// <param name="fileName">If <see cref="file" /> is used, the name of file.</param>
+        /// <returns><see cref="HttpResponseMessage" /> received from DeepL API.</returns>
+        /// <exception cref="ConnectionException">If any failure occurs while sending the request.</exception>
+        public async Task<HttpResponseMessage> ApiUploadAsync(
           string relativeUri,
           CancellationToken cancellationToken,
           IEnumerable<(string Key, string Value)> bodyParams,

@@ -56,9 +56,15 @@
 &lt;/ArrayOfString&gt;</Value>
     </Setting>
     <Setting Name="NllbTranslatorKey" Type="System.String" Scope="User">
-      <Value Profile="(Default)">R2HnnkY7wjy5XeaTWPpfig==</Value>
+      <Value Profile="(Default)">N3RK/o+wYtvEFMVGtYsmROIyLr/+RWh1</Value>
     </Setting>
     <Setting Name="NllbTranslatorKeyOverride" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="NllbTranslatorEndpoint" Type="System.String" Scope="User">
+      <Value Profile="(Default)">http://localhost:8000</Value>
+    </Setting>
+    <Setting Name="NllbTranslatorEndpointOverride" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
   </Settings>

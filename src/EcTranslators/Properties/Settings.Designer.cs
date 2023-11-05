@@ -253,7 +253,7 @@ namespace SilEncConverters40.EcTranslators.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("R2HnnkY7wjy5XeaTWPpfig==")]
+        [global::System.Configuration.DefaultSettingValueAttribute("N3RK/o+wYtvEFMVGtYsmROIyLr/+RWh1")]
         public string NllbTranslatorKey {
             get {
                 return ((string)(this["NllbTranslatorKey"]));
@@ -272,6 +272,30 @@ namespace SilEncConverters40.EcTranslators.Properties {
             }
             set {
                 this["NllbTranslatorKeyOverride"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://localhost:8000")]
+        public string NllbTranslatorEndpoint {
+            get {
+                return ((string)(this["NllbTranslatorEndpoint"]));
+            }
+            set {
+                this["NllbTranslatorEndpoint"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string NllbTranslatorEndpointOverride {
+            get {
+                return ((string)(this["NllbTranslatorEndpointOverride"]));
+            }
+            set {
+                this["NllbTranslatorEndpointOverride"] = value;
             }
         }
     }
