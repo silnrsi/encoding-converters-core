@@ -334,20 +334,26 @@ namespace BackTranslationHelper
                 Properties.Settings.Default.MapProjectNameToEcTranslators = new StringCollection();
             var mapProjectNameToEcTranslators = SettingToDictionary(Properties.Settings.Default.MapProjectNameToEcTranslators);
             var projectName = BackTranslationHelperDataSource.ProjectName;
+
+            var somethingChanged = false;
             if (mapProjectNameToEcTranslators.TryGetValue(projectName, out List<string> translatorNames))
             {
                 foreach (var translatorName in translatorNames)
+                {
                     if (!TheTranslators.Any(t => t.Name == translatorName) && DirectableEncConverter.EncConverters.ContainsKey(translatorName))
+                    {
+                        somethingChanged = true;
                         TheTranslators.Add(DirectableEncConverter.EncConverters[translatorName]);
+            }
+                }
             }
 
             // see how many converters are configured (if none, then query for one)
             if (!TheTranslators.Any())
             {
                 var aTranslator = QueryTranslator();
-                if (aTranslator == null)
-                    return;
-
+                if (aTranslator != null)
+                {
                 var theTranslator = aTranslator.GetEncConverter;
                 TheTranslators.Add(theTranslator);
 
@@ -358,6 +364,14 @@ namespace BackTranslationHelper
                 mapProjectNameToEcTranslators[projectName] = translatorNames;
                 Properties.Settings.Default.MapProjectNameToEcTranslators = SettingFromDictionary(mapProjectNameToEcTranslators);
                 Properties.Settings.Default.Save();
+            }
+
+                somethingChanged = true;
+            }
+
+            if (somethingChanged)
+            {
+                BackTranslationHelperDataSource.TranslatorSetChanged(TheTranslators);
             }
         }
 
