@@ -103,6 +103,14 @@ namespace BackTranslationHelper
 
         public void AddToSettingsMenu(System.Windows.Forms.ToolStripMenuItem menuItem)
         {
+            // sometimes the matrix form doesn't know if it's already been added or not. So if it has, let's remove the old one
+            var previousMenuItem = settingsToolStripMenuItem.DropDownItems.Cast<ToolStripMenuItem>().FirstOrDefault(i => i.Name == menuItem.Name);
+            if (previousMenuItem != null)
+            {
+                // let's remove the existing one
+                settingsToolStripMenuItem.DropDownItems.Remove(previousMenuItem);
+            }
+
             settingsToolStripMenuItem.DropDownItems.Add(menuItem);
         }
         #endregion
@@ -127,24 +135,24 @@ namespace BackTranslationHelper
             var projectName = BackTranslationHelperDataSource.ProjectName;
             toolStripTextBoxStatus.Size = CalculateStatusLineSize(toolStripTextBoxStatus, settingsToolStripMenuItem);
 
-			var showSourceText = !Properties.Settings.Default.HideSourceText;
-			var showCurrentTargetText = !Properties.Settings.Default.HideCurrentTargetText;
-			var numOfTranslators = TheTranslators.Count;
+            var showSourceText = !Properties.Settings.Default.HideSourceText;
+            var showCurrentTargetText = !Properties.Settings.Default.HideCurrentTargetText;
+            var numOfTranslators = TheTranslators.Count;
 			var totalTextBoxes = (showSourceText ? 1 : 0) +	// the total number of visible text boxes
-						(showCurrentTargetText ? 1 : 0) +
-						numOfTranslators + 1;
-			float percentageHeight = 100 / totalTextBoxes;
+                        (showCurrentTargetText ? 1 : 0) +
+                        numOfTranslators + 1;
+            float percentageHeight = 100 / totalTextBoxes;
 
-			var nRowStyleOffset = 0;    // start w/ the Source Language text box
+            var nRowStyleOffset = 0;    // start w/ the Source Language text box
 
-			ExpandOrCollapse(showSourceText, nRowStyleOffset++, percentageHeight, 
-							 textBoxSourceData, GetSourceLanguageFontForProject(projectName), GetSourceLanguageRightToLeftForProject(projectName));
+            ExpandOrCollapse(showSourceText, nRowStyleOffset++, percentageHeight, 
+                             textBoxSourceData, GetSourceLanguageFontForProject(projectName), GetSourceLanguageRightToLeftForProject(projectName));
 
             var targetLanguageFont = GetTargetLanguageFontForProject(projectName);
             var targetLanguageRightToLeft = GetTargetLanguageRightToLeftForProject(projectName);
 
             ExpandOrCollapse(displayExistingTargetTranslation && showCurrentTargetText, nRowStyleOffset++, percentageHeight, 
-							 textBoxTargetTextExisting, targetLanguageFont, targetLanguageRightToLeft);
+                             textBoxTargetTextExisting, targetLanguageFont, targetLanguageRightToLeft);
 
             textBoxTargetBackTranslation.Font = targetLanguageFont;
             textBoxTargetBackTranslation.RightToLeft = targetLanguageRightToLeft;
@@ -344,7 +352,7 @@ namespace BackTranslationHelper
                     {
                         somethingChanged = true;
                         TheTranslators.Add(DirectableEncConverter.EncConverters[translatorName]);
-            }
+                    }
                 }
             }
 
@@ -354,17 +362,17 @@ namespace BackTranslationHelper
                 var aTranslator = QueryTranslator();
                 if (aTranslator != null)
                 {
-                var theTranslator = aTranslator.GetEncConverter;
-                TheTranslators.Add(theTranslator);
+                    var theTranslator = aTranslator.GetEncConverter;
+                    TheTranslators.Add(theTranslator);
 
-                // save it in settings for this project, so we can load it automatically next time
-                if (mapProjectNameToEcTranslators.ContainsKey(projectName))
-                    mapProjectNameToEcTranslators.Remove(projectName);
-                translatorNames = new List<string> { theTranslator.Name };
-                mapProjectNameToEcTranslators[projectName] = translatorNames;
-                Properties.Settings.Default.MapProjectNameToEcTranslators = SettingFromDictionary(mapProjectNameToEcTranslators);
-                Properties.Settings.Default.Save();
-            }
+                    // save it in settings for this project, so we can load it automatically next time
+                    if (mapProjectNameToEcTranslators.ContainsKey(projectName))
+                        mapProjectNameToEcTranslators.Remove(projectName);
+                    translatorNames = new List<string> { theTranslator.Name };
+                    mapProjectNameToEcTranslators[projectName] = translatorNames;
+                    Properties.Settings.Default.MapProjectNameToEcTranslators = SettingFromDictionary(mapProjectNameToEcTranslators);
+                    Properties.Settings.Default.Save();
+                }
 
                 somethingChanged = true;
             }
@@ -411,10 +419,10 @@ namespace BackTranslationHelper
         {
             var textBoxesPossibleTargetTranslations = tableLayoutPanel.Controls.OfType<TextBox>().Where(l => l.Name.Contains("textBoxPossibleTargetTranslation")).ToList();
 
-			// The parallel processing seems to return before all of it is finished, resulting in the newTargetTexts having nulls in it.
-			var targetTexts = newTargetTexts.Where(tt => tt != null).ToList();
-			System.Diagnostics.Debug.Assert(targetTexts.Count <= textBoxesPossibleTargetTranslations.Count);
-			foreach (var targetText in targetTexts)
+            // The parallel processing seems to return before all of it is finished, resulting in the newTargetTexts having nulls in it.
+            var targetTexts = newTargetTexts.Where(tt => tt != null).ToList();
+            System.Diagnostics.Debug.Assert(targetTexts.Count <= textBoxesPossibleTargetTranslations.Count);
+            foreach (var targetText in targetTexts)
             {
                 if (targetText.PossibleIndex >= textBoxesPossibleTargetTranslations.Count)
                     continue;
@@ -443,7 +451,7 @@ namespace BackTranslationHelper
             model = _model;
         }
 
-        private string ConvertText(IEncConverter theTranslator, string sourceData)
+        public string ConvertText(IEncConverter theTranslator, string sourceData)
         {
             if (!_mapOfRecentTranslations.TryGetValue(theTranslator.Name, out Dictionary<string, string> mapRecentTranslations))
             {
@@ -462,9 +470,9 @@ namespace BackTranslationHelper
                 }
                 catch (Exception ex)
                 {
-                    var msg = ex.Message;
-                    MessageBox.Show($"{msg}. Press F5 in the 'Target Translation' text box to try the conversion again.", EncConverters.cstrCaption);
+                    var msg = LogExceptionMessage("ConvertText", ex);
                     targetData = msg;    // but display this so the user sees it
+                    SetStatusBox($"Translation failed. Press F5 to redo the conversion.");
                 }
             }
 
@@ -507,9 +515,9 @@ namespace BackTranslationHelper
         }
 
         public ManualResetEvent waitForAllTranslatorsToFinish;
-		private SemaphoreSlim semaphore = new SemaphoreSlim(1);
+        private SemaphoreSlim semaphoreParallelProcessing = new SemaphoreSlim(1);
 
-		private async Task CallTranslators(BackTranslationHelperModel model)
+        private async Task CallTranslators(BackTranslationHelperModel model)
         {
             try
             {
@@ -552,19 +560,19 @@ namespace BackTranslationHelper
                             var index = theTranslatorPlusIndex.Index;
                             var translatedText = ConvertText(theTranslatorPlusIndex.TheTranslator, model.SourceToTranslate);
 
-							// list doesn't seem threadsafe...
-							semaphore.Wait();
-							try
-							{
-								model.TargetsPossible.Add(new TargetPossible { TargetData = translatedText, PossibleIndex = index, TranslatorName = theTranslator.Name });
-							}
-							catch { }
-							finally
-							{
-								semaphore.Release();
-							}
+                            // list doesn't seem threadsafe...
+                            semaphoreParallelProcessing.Wait();
+                            try
+                            {
+                                model.TargetsPossible.Add(new TargetPossible { TargetData = translatedText, PossibleIndex = index, TranslatorName = theTranslator.Name });
+                            }
+                            catch { }
+                            finally
+                            {
+                                semaphoreParallelProcessing.Release();
+                            }
 
-							System.Diagnostics.Debug.WriteLine($"BTH: progressBar: bumped Value from {theTranslator.Name}");
+                            System.Diagnostics.Debug.WriteLine($"BTH: progressBar: bumped Value from {theTranslator.Name}");
                             InvokeIfRequired(progressBar, () => progressBar.Value = Math.Min(progressBar.Value + 1, progressBar.Maximum));
                             return (translatedText, index);
                         })
