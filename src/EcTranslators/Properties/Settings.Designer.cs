@@ -251,15 +251,12 @@ namespace SilEncConverters40.EcTranslators.Properties {
             }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("N3RK/o+wYtvEFMVGtYsmROIyLr/+RWh1")]
         public string NllbTranslatorKey {
             get {
                 return ((string)(this["NllbTranslatorKey"]));
-            }
-            set {
-                this["NllbTranslatorKey"] = value;
             }
         }
         
@@ -275,15 +272,12 @@ namespace SilEncConverters40.EcTranslators.Properties {
             }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("http://localhost:8000")]
         public string NllbTranslatorEndpoint {
             get {
                 return ((string)(this["NllbTranslatorEndpoint"]));
-            }
-            set {
-                this["NllbTranslatorEndpoint"] = value;
             }
         }
         
@@ -296,6 +290,18 @@ namespace SilEncConverters40.EcTranslators.Properties {
             }
             set {
                 this["NllbTranslatorEndpointOverride"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string NllbTranslatorPathToDockerProject {
+            get {
+                return ((string)(this["NllbTranslatorPathToDockerProject"]));
+            }
+            set {
+                this["NllbTranslatorPathToDockerProject"] = value;
             }
         }
     }

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+  <head>
+      <title>{{ MODEL_NAME }}</title>
+    <style>
+      html {
+        box-sizing: border-box;
+      }
+      *,
+      *:before,
+      *:after {
+        box-sizing: inherit;
+      }
+      #wrapper {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-column-gap: 2em;
+      }
+      #input,
+      #output {
+        width: 100%;
+        height: 10em;
+        border: 1px solid grey;
+        font-size: 1rem;
+        padding: 0.5rem;
+      }
+      #translateButton {
+        font-size: 1rem;
+      }
+      #endpoints {
+        font-family: monospace;
+      }
+    </style>
+  </head>
+  <body>
+      <h1>{{ MODEL_NAME }}</h1>
+      <p>
+          This page will translate text using the {{ MODEL_NAME }} model. See
+          <a href="https://ai.meta.com/research/no-language-left-behind/"
+             target="_blank">https://ai.meta.com/research/no-language-left-behind/</a>
+      </p>
+    <div id="wrapper">
+      <div id="source">
+        <h2>Source</h2>
+        <label for="inputLanguage">Input language</label>
+        <select id="inputLanguage" name="inputLanguage"></select>
+        <textarea id="input"></textarea>
+        <button id="translateButton">Translate</button>
+      </div>
+      <div id="target">
+        <h2>Target</h2>
+        <label for="outputLanguage">Output language</label>
+        <select id="outputLanguage" name="outputLanguage"></select>
+        <div id="output"></div>
+      </div>
+    </div>
+    <h2>API instructions</h2>
+    <ul id="endpoints">
+      <li>GET /api/v1/translate/languages/</li>
+      <li>POST /api/v1/translate/ with sourceLanguage, targetLanguage, text</li>
+    </ul>
+    <script>
+      async function start() {
+        const URL = `${location.origin}/api/v1/translate/languages/`;
+        console.log(URL);
+        const response = await fetch(URL, {
+          headers: { "Content-Type": "application/json" },
+        });
+        const languages = await response.json();
+        for (const language of languages) {
+          for (const select of [inputLanguage, outputLanguage]) {
+            const option = document.createElement("option");
+            option.value = language;
+            option.textContent = language;
+            select.appendChild(option);
+          }
+        }
+      }
+      start();
+      translateButton.addEventListener("click", async () => {
+        const text = input.value;
+        const data = {
+          sourceLanguage: inputLanguage.value,
+          targetLanguage: outputLanguage.value,
+          text,
+        };
+        try {
+          const response = await fetch(`${location.origin}/api/v1/translate/`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+          });
+          const responseBody = await response.json();
+          if (!response.ok) {
+            console.error(response);
+            alert("Error: " + response.statusText);
+          }
+          output.textContent = responseBody.translatedText;
+        } catch (e) {
+          console.error(e);
+          alert("Error: " + e);
+        }
+      });
+    </script>
+  </body>
+</html>

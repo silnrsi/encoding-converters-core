@@ -215,9 +215,11 @@
     </EmbeddedResource>
     <EmbeddedResource Include="NllbTranslator\NllbTranslatorAutoConfigDialog.resx">
       <DependentUpon>NllbTranslatorAutoConfigDialog.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="NllbTranslator\QueryForEndpointAndApiKey.resx">
       <DependentUpon>QueryForEndpointAndApiKey.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -229,6 +231,10 @@
     <None Include="..\..\redist\EC\Plugins\Translators 4.0.0.0 Plugin Details.xml">
       <Link>PlugIn\Translators 4.0.0.0 Plugin Details.xml</Link>
     </None>
+    <Content Include="NllbTranslator\Docker\import_model.py" />
+    <Content Include="NllbTranslator\Docker\server.py" />
+    <Content Include="NllbTranslator\Docker\settings.py" />
+    <Content Include="NllbTranslator\Docker\templates\index.html" />
     <Content Include="TRFFC17.ICO" />
   </ItemGroup>
   <ItemGroup>
@@ -238,6 +244,9 @@
     <None Include="app.config" />
     <None Include="DeepLTranslator\DeepL\LICENSE" />
     <EmbeddedResource Include="NllbTranslator\NllbHumanReadableLgNames.json" />
+    <None Include="NllbTranslator\Docker\Dockerfile" />
+    <None Include="NllbTranslator\Docker\buildDocker.ps1" />
+    <None Include="NllbTranslator\Docker\README.md" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

@@ -61,11 +61,41 @@ namespace SilEncConverters40.EcTranslators.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to docker build -t nllb{0} .
+        ///docker run -p {1}:{1} nllb{0}
+        ///Start-Process http://localhost:{1}/
+        ///
+        ///Write-output &quot;Make sure there are no errors and that the page at &apos;http://localhost:{1}&apos; is able to translate before using in SILConverters&quot;
+        ///pause .
+        /// </summary>
+        internal static string buildDocker {
+            get {
+                return ResourceManager.GetString("buildDocker", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to https://www.deepl.com/pro?cta=header-pro/.
         /// </summary>
         internal static string DeepLTranslatorKeyDialogInstructionUrl {
             get {
                 return ResourceManager.GetString("DeepLTranslatorKeyDialogInstructionUrl", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to FROM python:3.9
+        ///
+        ///# Install steps mostly taken from https://medium.com/mlearning-ai/text-translation-using-nllb-and-huggingface-tutorial-7e789e0f7816
+        ///
+        ///# Install main dependencies
+        ///RUN pip install transformers sentencepiece fasttext
+        ///# Install PyTorch. This command varies depending on your OS and other factors; see https://pytorch.org/get-started/locally/ for instructions for your system
+        ///RUN pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu   # if you have a gpu: r [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string Dockerfile {
+            get {
+                return ResourceManager.GetString("Dockerfile", resourceCulture);
             }
         }
         
@@ -272,7 +302,7 @@ namespace SilEncConverters40.EcTranslators.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Click this button to enter your own API key..
+        ///   Looks up a localized string similar to Click this button to configure the NLLB Parameters (e.g. which model to use, an API key, and the endpoint)..
         /// </summary>
         internal static string HelpForNllbTranslatorAddYourOwnApiKey {
             get {
@@ -295,6 +325,114 @@ namespace SilEncConverters40.EcTranslators.Properties {
         internal static string HelpForNllbTranslatorTargetLanguagesComboBox {
             get {
                 return ResourceManager.GetString("HelpForNllbTranslatorTargetLanguagesComboBox", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to # This file exists because:
+        ///# 1. Documentation for using transformers often shows how to download them in Python
+        ///# 2. We want the download of the model to happen as part of the building of the image, not when it runs
+        ///
+        ///from settings import MODEL_NAME
+        ///
+        ///checkpoint = MODEL_NAME
+        ///from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, pipeline
+        ///model = AutoModelForSeq2SeqLM.from_pretrained(checkpoint)
+        ///tokenizer = AutoTokenizer.from_pretrained(checkpoint)
+        ///.
+        /// </summary>
+        internal static string import_model {
+            get {
+                return ResourceManager.GetString("import_model", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;!DOCTYPE html&gt;
+        ///&lt;html&gt;
+        ///  &lt;head&gt;
+        ///      &lt;title&gt;{{ MODEL_NAME }}&lt;/title&gt;
+        ///    &lt;style&gt;
+        ///      html {
+        ///        box-sizing: border-box;
+        ///      }
+        ///      *,
+        ///      *:before,
+        ///      *:after {
+        ///        box-sizing: inherit;
+        ///      }
+        ///      #wrapper {
+        ///        display: grid;
+        ///        grid-template-columns: 1fr 1fr;
+        ///        grid-column-gap: 2em;
+        ///      }
+        ///      #input,
+        ///      #output {
+        ///        width: 100%;
+        ///        height: 10em;
+        ///        border: 1px solid grey;
+        ///        font-size: 1rem;
+        ///        padding: 0.5rem;
+        ///  [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string index {
+            get {
+                return ResourceManager.GetString("index", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to # Usage: execute these commands in Powershell
+        ///
+        ///PS&gt; docker build -t nllb{0} .            # note: include the space and &apos;.&apos; at the end when copying to Powershell
+        ///PS&gt; docker run -p {1}:{1} nllb{0}
+        ///
+        ///Then in a web browser, navigate to http://localhost:{1}/
+        ///.
+        /// </summary>
+        internal static string README {
+            get {
+                return ResourceManager.GetString("README", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to from flask import Flask, render_template, request, jsonify
+        ///from settings import MODEL_NAME, PORT, API_KEY
+        ///
+        ///app = Flask(__name__)
+        ///
+        ///checkpoint = MODEL_NAME
+        ///from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, pipeline
+        ///model = AutoModelForSeq2SeqLM.from_pretrained(checkpoint)
+        ///tokenizer = AutoTokenizer.from_pretrained(checkpoint)
+        ///
+        ///def IsNullOrEmpty(s):
+        ///    return s is None or s == &apos;&apos;
+        ///
+        ///@app.route(&apos;/&apos;)
+        ///def send_report():
+        ///    # Check if the API key is present in the request headers
+        ///    if [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string server {
+            get {
+                return ResourceManager.GetString("server", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to # Define your API key: it can only be alphanumeric characters + &apos;-&apos;; nothing else (i.e. [a-zA-Z-])
+        ///# the prefix, &apos;SIL-NLLB-Auth-Key &apos; will be added, so if you&apos;re using this in the &apos;Nllb Translator&apos; 
+        ///# Setup tab of SILConverters, just enter the part after that (i.e. your-api-key-here)
+        ///API_KEY = {0}    # e.g. &apos;SIL-NLLB-Auth-Key your-api-key-here&apos;
+        ///
+        ///# You can either access the model locally via http://localhost:8000/ or from another machine on the network by using 
+        ///#  the IP address of the machine hosting [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string settings {
+            get {
+                return ResourceManager.GetString("settings", resourceCulture);
             }
         }
     }

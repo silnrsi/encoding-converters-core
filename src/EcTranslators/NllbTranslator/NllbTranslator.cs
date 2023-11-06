@@ -14,7 +14,7 @@ using DeepL.Model;
 namespace Nllb
 {
 
-	public interface ITranslator : IDisposable
+    public interface ITranslator : IDisposable
     {
         /// <summary>Translate specified text from source language into target language.</summary>
         /// <param name="text">Text to translate; must not be empty.</param>
@@ -81,7 +81,7 @@ namespace Nllb
 
                 if (!headers.ContainsKey("Authorization"))
                 {
-                    headers.Add("Authorization", $"SIL-NLLB-Auth-Key {authKey}");
+                    headers.Add("Authorization", authKey);
                 }
 
                 var clientFactory = options.ClientFactory ?? (() =>

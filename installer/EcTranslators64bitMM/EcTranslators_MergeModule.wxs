@@ -493,16 +493,21 @@
 									<File Id="nt_colorschememapping.xml" Name="colorschememapping.xml" Source="..\..\redist\Help\NLLB_Translate_Plug-in_About_box_files\colorschememapping.xml"/>
 									<File Id="nt_themedata.thmx" Name="themedata.thmx" Source="..\..\redist\Help\NLLB_Translate_Plug-in_About_box_files\themedata.thmx"/>
 									<File Id="nt_header.htm" Name="header.htm" Source="..\..\redist\Help\NLLB_Translate_Plug-in_About_box_files\header.htm"/>
+									<File Id="nt_image001.jpg" Name="image001.jpg" Source="..\..\redist\Help\NLLB_Translate_Plug-in_About_box_files\image001.jpg"/>
 									<File Id="nt_image003.jpg" Name="image003.jpg" Source="..\..\redist\Help\NLLB_Translate_Plug-in_About_box_files\image003.jpg"/>
 									<File Id="nt_image004.jpg" Name="image004.jpg" Source="..\..\redist\Help\NLLB_Translate_Plug-in_About_box_files\image004.jpg"/>
+									<File Id="nt_image005.jpg" Name="image005.jpg" Source="..\..\redist\Help\NLLB_Translate_Plug-in_About_box_files\image005.jpg"/>
+									<File Id="nt_image006.jpg" Name="image006.jpg" Source="..\..\redist\Help\NLLB_Translate_Plug-in_About_box_files\image006.jpg"/>
 									<File Id="nt_image007.jpg" Name="image007.jpg" Source="..\..\redist\Help\NLLB_Translate_Plug-in_About_box_files\image007.jpg"/>
 									<File Id="nt_image008.jpg" Name="image008.jpg" Source="..\..\redist\Help\NLLB_Translate_Plug-in_About_box_files\image008.jpg"/>
+									<File Id="nt_image009.jpg" Name="image009.jpg" Source="..\..\redist\Help\NLLB_Translate_Plug-in_About_box_files\image009.jpg"/>
 									<File Id="nt_image012.jpg" Name="image012.jpg" Source="..\..\redist\Help\NLLB_Translate_Plug-in_About_box_files\image012.jpg"/>
-									<File Id="nt_image013.jpg" Name="image013.jpg" Source="..\..\redist\Help\NLLB_Translate_Plug-in_About_box_files\image013.jpg"/>
 									<File Id="nt_image016.jpg" Name="image016.jpg" Source="..\..\redist\Help\NLLB_Translate_Plug-in_About_box_files\image016.jpg"/>
 									<File Id="nt_image021.jpg" Name="image021.jpg" Source="..\..\redist\Help\NLLB_Translate_Plug-in_About_box_files\image021.jpg"/>
-									<File Id="nt_item0023.xml" Name="item0023.xml" Source="..\..\redist\Help\NLLB_Translate_Plug-in_About_box_files\item0023.xml"/>
-									<File Id="nt_props024.xml" Name="props024.xml" Source="..\..\redist\Help\NLLB_Translate_Plug-in_About_box_files\props024.xml"/>
+									<File Id="nt_image023.jpg" Name="image023.jpg" Source="..\..\redist\Help\NLLB_Translate_Plug-in_About_box_files\image023.jpg"/>
+									<File Id="nt_image027.jpg" Name="image027.jpg" Source="..\..\redist\Help\NLLB_Translate_Plug-in_About_box_files\image027.jpg"/>
+									<File Id="nt_item0027.xml" Name="item0027.xml" Source="..\..\redist\Help\NLLB_Translate_Plug-in_About_box_files\item0027.xml"/>
+									<File Id="nt_props028.xml" Name="props028.xml" Source="..\..\redist\Help\NLLB_Translate_Plug-in_About_box_files\props028.xml"/>
 								</Component>
 							</Directory>
 

@@ -13,6 +13,8 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using static Nllb.ITranslator;
 using System.Windows.Forms;
+using SilEncConverters40.EcTranslators.Properties;
+using System.Collections;
 
 namespace SilEncConverters40.EcTranslators.NllbTranslator
 {
@@ -38,6 +40,8 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
         public const string CstrDisplayName = "NLLB Translator";
         internal const string strHtmlFilename = "NLLB_Translate_Plug-in_About_box.htm";
 
+        public const string NllbAuthenticationPrefix = "SIL-NLLB-Auth-Key ";
+
         public const string EnvVarNameEndPoint = "EncConverters_NllbEndpoint";
         public const string EnvVarNameKey = "EncConverters_NllbApiKey";
 
@@ -45,23 +49,31 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
 
         #region Member Variable Definitions
 
+        public string FromLanguage;
+        public string ToLanguage;
+        public string PathToDockerProject;
+        public string ApiKey;        // always clear text
+        public string Endpoint;
+
         private static bool HasValidEnvironmentVariable(string envVarName, out string parameter)
         {
             return !string.IsNullOrEmpty((parameter = Environment.GetEnvironmentVariable(envVarName)));
         }
 
         // borrowing from deepL's approach
-        internal static Translator _nllbTranslator;
-        public static Translator NllbTranslator
+        internal Translator _nllbTranslator;
+        public Translator NllbTranslator
         {
             get
             {
                 if (_nllbTranslator == null)
                 {
                     var handler = new DeepLTranslator.Http2CustomHandler();
+                    var serverUrl = Endpoint ?? NllbTranslatorEndpoint;
+
                     var options = new DeepL.TranslatorOptions
                     {
-                        ServerUrl = NllbTranslatorEndpoint,
+                        ServerUrl = serverUrl,
                         MaximumNetworkRetries = 2,
                         PerRetryConnectionTimeout = TimeSpan.FromSeconds(5),
                         OverallConnectionTimeout = TimeSpan.FromSeconds(10),
@@ -71,7 +83,8 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
                             DisposeClient = true,
                         },
                     };
-                    _nllbTranslator = new Translator(NllbTranslatorApiKey, options);
+                    var apiKey = ApiKey ?? NllbTranslatorApiKey;
+                    _nllbTranslator = new Translator(NllbAuthenticationPrefix + apiKey, options);
                 }
                 return _nllbTranslator;
             }
@@ -120,9 +133,6 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
             }
         }
 
-        protected string fromLanguage;
-        protected string toLanguage;
-
 #endregion Member Variable Definitions
 
         #region Initialization
@@ -143,7 +153,8 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
             base.Initialize(converterName, converterSpec, ref lhsEncodingID, ref rhsEncodingID, 
                 ref conversionType, ref processTypeFlags, codePageInput, codePageOutput, bAdding );
 
-            if (!ParseConverterIdentifier(converterSpec, out fromLanguage, out toLanguage))
+            if (!ParseConverterIdentifier(converterSpec, out string pathToDockerProject, out FromLanguage, out ToLanguage,
+                                         out ApiKey, out Endpoint))
             {
                 throw new ApplicationException($"{CstrDisplayName} not properly configured! converterName: {converterName}");
             }
@@ -169,23 +180,28 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
             Util.DebugWriteLine(this, "END");
         }
 
-        internal static bool ParseConverterIdentifier(string converterSpec,
-            out string fromLanguage, out string toLanguage)
+        internal static bool ParseConverterIdentifier(string converterSpec, out string pathToDockerProject,
+            out string fromLanguage, out string toLanguage, out string apiKey, out string endpoint)
         {
             toLanguage = null;
 
             string[] astrs = converterSpec.Split(new[] { ';' });
 
-            if (astrs.Length < 2)
-                throw new ApplicationException($"{CstrDisplayName} not properly configured! converterSpec: {converterSpec} must have at least a source and target language (eg. hin_Deva;eng_Latn)");
+            if (astrs.Length < 3)
+                throw new ApplicationException($"{CstrDisplayName} not properly configured! converterSpec: {converterSpec} must have the path to the Docker project and the source and target languages (eg. D:\\Docker\\NLLB;hin_Deva;eng_Latn)");
 
-            fromLanguage = astrs[0];
-            toLanguage = astrs[1];
+            pathToDockerProject = astrs[0];
+            fromLanguage = astrs[1];
+            toLanguage = astrs[2];
+
+            endpoint = (astrs.Length >= 4) ? astrs[3] : NllbTranslatorEndpoint;
+            apiKey = (astrs.Length >= 5) ? EncryptionClass.Decrypt(astrs[4]) : NllbTranslatorApiKey;
+
             return true;
         }
 
 #pragma warning disable CS3002 // Return type is not CLS-compliant
-        public async static Task<Dictionary<string, string>> GetCapabilities()
+        public async Task<Dictionary<string, string>> GetCapabilities(bool showError)
 #pragma warning restore CS3002 // Return type is not CLS-compliant
         {
             try
@@ -206,7 +222,10 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
             catch (Exception ex)
             {
                 var error = GetErrorMsg(ex);
-                MessageBox.Show(error, EncConverters.cstrCaption);
+                if (showError)
+                    MessageBox.Show(error, EncConverters.cstrCaption);
+                else
+                    System.Diagnostics.Debug.WriteLine(error);
             }
             return null;
         }
@@ -258,7 +277,7 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
             {
                 var translatedText = await Task.Run(async delegate
                 {
-                    return await NllbTranslator.TranslateTextAsync(strInput, fromLanguage, toLanguage);
+                    return await NllbTranslator.TranslateTextAsync(strInput, FromLanguage, ToLanguage);
                 }).ConfigureAwait(false);
 
                 var result = HarvestResult(translatedText);
@@ -275,10 +294,10 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
         {
             var error = LogExceptionMessage(CstrDisplayName, ex);
             if (error.Contains("Unauthorized"))
-                error += String.Format("{0}{0}You need to edit this converter instance and in the Setup tab, enter the api key you set up in your NLLB Docker instance. {0}(if you didn't change the default key, then just delete the current key to revert back to the default key).{0}You may need to do this for each client app, since they store their Settings separately.{0}You can also use environment variables to set these values:{0}{1}{0}{2}",
-                                       Environment.NewLine, EnvVarNameKey, EnvVarNameEndPoint);
-            if (error.Contains("Unable to connect to the remote server"))
-                error += String.Format("{0}{0}Unable to reach the {1} service. Have you turned on the NLLB Docker container?", Environment.NewLine, CstrDisplayName);
+                error = String.Format("You need to edit this converter instance and in the Setup tab, enter the api key you set up in your NLLB Docker instance. {0}(if you didn't change the default key, then just delete the current key to revert back to the default key).{0}You may need to do this for each client app, since they store their Settings separately.{0}You can also use environment variables to set these values:{0}{1}{0}{2}{0}{0}{3}",
+                                      Environment.NewLine, EnvVarNameKey, EnvVarNameEndPoint, error);
+            if (error.Contains("Unable to connect to the remote server") || error.Contains("A connection with the server could not be established"))
+                error = String.Format("Unable to reach the {1} service. Have you turned on the NLLB Docker container?{0}{0}{2}", Environment.NewLine, CstrDisplayName, error);
             return error;
         }
 
