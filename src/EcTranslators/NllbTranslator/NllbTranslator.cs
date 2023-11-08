@@ -63,23 +63,13 @@ namespace Nllb
             {
                 options ??= new DeepL.TranslatorOptions();
 
-                if (authKey == null)
-                {
-                    throw new ArgumentNullException(nameof(authKey));
-                }
-
-                authKey = authKey.Trim();
-
-                if (authKey.Length == 0)
-                {
-                    throw new ArgumentException($"{nameof(authKey)} is empty");
-                }
+                authKey = authKey?.Trim();
 
                 var serverUrl = new Uri(options.ServerUrl ?? NllbLServerUrl);
 
                 var headers = new Dictionary<string, string?>(options.Headers, StringComparer.OrdinalIgnoreCase);
 
-                if (!headers.ContainsKey("Authorization"))
+                if (!String.IsNullOrEmpty(authKey) && !headers.ContainsKey("Authorization"))
                 {
                     headers.Add("Authorization", authKey);
                 }

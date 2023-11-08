@@ -251,18 +251,9 @@ namespace SilEncConverters40.EcTranslators.Properties {
             }
         }
         
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("N3RK/o+wYtvEFMVGtYsmROIyLr/+RWh1")]
-        public string NllbTranslatorKey {
-            get {
-                return ((string)(this["NllbTranslatorKey"]));
-            }
-        }
-        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        [global::System.Configuration.DefaultSettingValueAttribute("N3RK/o+wYtvEFMVGtYsmROIyLr/+RWh1")]
         public string NllbTranslatorKeyOverride {
             get {
                 return ((string)(this["NllbTranslatorKeyOverride"]));

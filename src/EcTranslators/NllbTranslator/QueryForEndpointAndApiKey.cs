@@ -192,9 +192,13 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
             // the server.py file
             File.WriteAllText(Path.Combine(_pathToDockerProjectFolder, FileNamePyServer), Properties.Resources.server);
 
-            // the settings.py file
-            var settingsFileContents = String.Format(Properties.Resources.settings,
-                                                     $"'{NllbTranslatorEncConverter.NllbAuthenticationPrefix + TranslatorApiKey}'", Port, $"'{ModelName}'");
+			// the settings.py file
+			var translatorApiKey = TranslatorApiKey?.Trim();
+			if (!String.IsNullOrEmpty(translatorApiKey))
+				translatorApiKey = NllbTranslatorEncConverter.NllbAuthenticationPrefix + translatorApiKey;
+
+			var settingsFileContents = string.Format(Properties.Resources.settings,
+                                                     $"'{translatorApiKey}'", Port, $"'{ModelName}'");
             File.WriteAllText(Path.Combine(_pathToDockerProjectFolder, FileNamePySettings), settingsFileContents);
 
             MessageBox.Show($"If you have Docker installed and a recent version of Powershell (see instructions on the About tab), open a Powershell Window and run the two 'docker' commands listed in the '{pathToReadme}' file to build the NLLB Docker project (or run them in the '{pathToPsScript}' script if you know how to enable running scripts from the internet). When finished, return to this message and click 'OK' to connect to the launched endpoint and continue.",

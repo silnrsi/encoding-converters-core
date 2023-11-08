@@ -20,6 +20,7 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
     {
         private readonly ComboBoxItem SourceLanguageNameMustBeConfigured = new ComboBoxItem { Display = "Select Source Language" };
         private readonly ComboBoxItem TargetLanguageNameMustBeConfigured = new ComboBoxItem { Display = "Select Target Language" };
+		private string ModelNameSuffix = String.Empty;	// so we can add it to the friendly name -- but only works if the user edits (which they should do, but...)
 
         public NllbTranslatorAutoConfigDialog
             (
@@ -82,7 +83,7 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
                 if (!String.IsNullOrEmpty(apiKey) && !String.IsNullOrEmpty(endpoint))
                     GetLanguagesSupportedAndInitializeComboBoxes(false, apiKey, endpoint);
                 else
-                    buttonConfigureNllbModel.Enabled = false;    // until the path is chosen
+                    buttonConfigureNllbModel.Enabled = !String.IsNullOrEmpty(DockerProjectFolderPath);    // until the path is chosen
 
                 comboBoxSourceLanguages.SelectedItem = SourceLanguageNameMustBeConfigured;
                 comboBoxTargetLanguages.SelectedItem = TargetLanguageNameMustBeConfigured;
@@ -205,9 +206,10 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
             {
                 var selectedSourceLanguage = (ComboBoxItem)comboBoxSourceLanguages.SelectedItem;
                 var selectedTargetLanguage = (ComboBoxItem)comboBoxTargetLanguages.SelectedItem;
-                return $"Nllb Translate {selectedSourceLanguage} to {selectedTargetLanguage}";
+                return $"NLLB{ModelNameSuffix} Translate {selectedSourceLanguage} to {selectedTargetLanguage}";
             }
-        }
+
+		}
 
         /// <summary>
         /// Initialize the source and possibly target language combo boxes with the translation languages possible.
@@ -274,9 +276,10 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
                 Properties.Settings.Default.Save();
 
                 m_aEC = null;    // reset the associated EncConverter instance so it'll get rebuilt w/ the new parameters
+				ModelNameSuffix = dlg.ModelNameSuffix;	// so we can add it to the DefaultFriendlyName
 
-                // in case something changed, reinitialize the combo boxes
-                GetLanguagesSupportedAndInitializeComboBoxes(m_bInitialized, dlg.TranslatorApiKey, dlg.Endpoint);
+				// in case something changed, reinitialize the combo boxes
+				GetLanguagesSupportedAndInitializeComboBoxes(m_bInitialized, dlg.TranslatorApiKey, dlg.Endpoint);
             }
         }
 

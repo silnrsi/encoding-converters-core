@@ -84,7 +84,9 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
                         },
                     };
                     var apiKey = ApiKey ?? NllbTranslatorApiKey;
-                    _nllbTranslator = new Translator(NllbAuthenticationPrefix + apiKey, options);
+					if (!String.IsNullOrEmpty(apiKey))
+						apiKey = NllbAuthenticationPrefix + apiKey;
+					_nllbTranslator = new Translator(apiKey, options);
                 }
                 return _nllbTranslator;
             }
@@ -98,19 +100,18 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
                 if (HasValidEnvironmentVariable(EnvVarNameKey, out string overrideKey))
                     return overrideKey;
 
-                var key = !String.IsNullOrEmpty((overrideKey = Properties.Settings.Default.NllbTranslatorKeyOverride))
-                                ? overrideKey
-                                : Properties.Settings.Default.NllbTranslatorKey;
+                var key = Properties.Settings.Default.NllbTranslatorKeyOverride;
 
 #if encryptingNewCredentials
                 var translatorKey = EncryptionClass.Encrypt(key);
 #endif
-                return EncryptionClass.Decrypt(key);
+                return String.IsNullOrEmpty(key) ? String.Empty : EncryptionClass.Decrypt(key);
             }
             set
             {
-                var translatorKey = !String.IsNullOrEmpty(value)
-                                        ? EncryptionClass.Encrypt(value)
+				var trimmedValue = value?.Trim();
+                var translatorKey = !String.IsNullOrEmpty(trimmedValue)
+                                        ? EncryptionClass.Encrypt(trimmedValue)
                                         : null;
                 Properties.Settings.Default.NllbTranslatorKeyOverride = translatorKey;
             }

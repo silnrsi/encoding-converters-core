@@ -55,11 +55,8 @@
   &lt;string&gt;UseSystemPrompt: Translate from Hindi into English.&lt;/string&gt;
 &lt;/ArrayOfString&gt;</Value>
     </Setting>
-    <Setting Name="NllbTranslatorKey" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">N3RK/o+wYtvEFMVGtYsmROIyLr/+RWh1</Value>
-    </Setting>
     <Setting Name="NllbTranslatorKeyOverride" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
+      <Value Profile="(Default)">N3RK/o+wYtvEFMVGtYsmROIyLr/+RWh1</Value>
     </Setting>
     <Setting Name="NllbTranslatorEndpoint" Type="System.String" Scope="Application">
       <Value Profile="(Default)">http://localhost:8000</Value>
