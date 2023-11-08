@@ -138,7 +138,7 @@ namespace BackTranslationHelper
             var showSourceText = !Properties.Settings.Default.HideSourceText;
             var showCurrentTargetText = !Properties.Settings.Default.HideCurrentTargetText;
             var numOfTranslators = TheTranslators.Count;
-			var totalTextBoxes = (showSourceText ? 1 : 0) +	// the total number of visible text boxes
+            var totalTextBoxes = (showSourceText ? 1 : 0) +	// the total number of visible text boxes
                         (showCurrentTargetText ? 1 : 0) +
                         numOfTranslators + 1;
             float percentageHeight = 100 / totalTextBoxes;
@@ -600,13 +600,23 @@ namespace BackTranslationHelper
 
         public static void InvokeIfRequired(Control control, Action action)
         {
-            if (control.InvokeRequired)
+            try
             {
-                control.Invoke(action);
+                // this can happen if the user is closing the form while we're still processing the translation calls.
+                if (control.IsDisposed)
+                    return;
+
+                if (control.InvokeRequired)
+                {
+                    control.Invoke(action);
+                }
+                else
+                {
+                    action();
+                }
             }
-            else
+            catch
             {
-                action();
             }
         }
 
