@@ -263,7 +263,17 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
                 return;
             }
 
-            using var dlg = new QueryForEndpointAndApiKey(dockerProjectFolderPath, NllbTranslatorApiKey, NllbTranslatorEndpoint);
+			var apiKey = NllbTranslatorApiKey;
+			var endpoint = NllbTranslatorEndpoint;
+			if (m_aEC != null)
+			{
+				var theTranslator = (NllbTranslatorEncConverter)m_aEC;
+				apiKey = theTranslator.ApiKey;
+				endpoint = theTranslator.Endpoint;
+			}
+
+
+			using var dlg = new QueryForEndpointAndApiKey(dockerProjectFolderPath, apiKey, endpoint);
             if (dlg.ShowDialog() == DialogResult.OK)
             {
                 // if the user configures a model, then save the API Key and Endpoint for any new converters they create
@@ -271,7 +281,7 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
                 // whether they build the model (successfully) or not)
                 Properties.Settings.Default.NllbTranslatorPathToDockerProject = dockerProjectFolderPath;
                 NllbTranslatorApiKey = dlg.TranslatorApiKey;
-                var endpoint = dlg.Endpoint;
+                endpoint = dlg.Endpoint;
                 NllbTranslatorEndpoint = (endpoint == Properties.Settings.Default.NllbTranslatorEndpoint) ? null : endpoint;
                 Properties.Settings.Default.Save();
 

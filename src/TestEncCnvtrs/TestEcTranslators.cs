@@ -202,19 +202,22 @@ namespace TestEncCnvtrs
 		private const string NllbConverterFriendlyName = "NllbTranslator";
 
 		/// <summary>
-		/// To run this test, you need to have the https://github.com/Nateowami/NLLB-demo repo clones,
-		/// and built into a docker container and running on your local machine
+		/// To run this test, you need to go thru the instructions in have the $(SolutionDir)redist\Help\NLLB_Translate_Plug-in_About_box.htm
+		/// file to create a docker container for the NLLB 600m model and run it on your local machine.
+		/// Two additional notes:
+		/// 1) have no api key in the NLLB Model Config dialog (or set up an env var with it--see TestAzureOpenAiConverter for an eg)
+		/// 2) Change the @"D:\NLLB\test" path to wherever you chose as the Docker Project folder.
 		/// </summary>
-		/// <param name="converterSpec"></param>
-		/// <param name="testInput"></param>
-		/// <param name="testOutput"></param>
+		/// <param name="converterSpec">ConverterIdentifier of the NLLB converter to be used to convert the text</param>
+		/// <param name="testInput">The text to be translated</param>
+		/// <param name="testOutput">The expected translation</param>
 		[Test]
-		[TestCase("hin_Deva;eng_Latn",
+		[TestCase(@"D:\NLLB\test;hin_Deva;eng_Latn",
 			@"फिर एक स्‍वर्गदूत ने मुझसे कहा, ""इस बात को लिख ले: वे धन्य हैं, जिनको मेमने के विवाह के भोज का निमन्‍त्रण है।
 यह परमेश्वर के सच्‍चे बोल हैं।",
 			@"Then an angel said to me, ""Write: Blessed are those who are invited to the wedding banquet of the Lamb"".
 These are the true words of God.")]
-		[TestCase("hin_Deva;eng_Latn",
+		[TestCase(@"D:\NLLB\test;hin_Deva;eng_Latn",
 			"वे जानते हैं कि परमेश्वर का अस्तित्व है और यह सब कुछ उनके लिए ही बनाया है। परंतु फिर भी न तो वे परमेश्वर का कोई सम्‍मान, और न ही तो उसका धन्यवाद करते हैं। इसलिए उनकी आँखें में पर्दा पड़ गया है, और परमेश्वर के विषय में उनका जो विचार है, वह गलत हो चुका है।",
 			"They know that God exists and that everything was made for them. Yet they do not give glory to God or give him thanks. Their minds are blinded and their thoughts are in error.")]
 		public void TestNllbConverter(string converterSpec, string testInput, string testOutput)
