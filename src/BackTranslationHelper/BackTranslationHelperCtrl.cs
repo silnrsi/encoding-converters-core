@@ -649,7 +649,7 @@ namespace BackTranslationHelper
             return targetData;
         }
 
-        private void SetStatusBox(string value)
+		private void SetStatusBox(string value)
         {
             toolStripTextBoxStatus.Text = value;
             toolStripTextBoxStatus.BackColor = String.IsNullOrEmpty(value)
@@ -1140,7 +1140,40 @@ namespace BackTranslationHelper
             }
         }
 
-        private static bool _ignoreChange;
+		private void TextBoxPossibleTargetTranslation_PreviewKeyDown(object sender, System.Windows.Forms.PreviewKeyDownEventArgs e)
+		{
+			if (e.KeyData == (Keys.Control | Keys.Down))
+				CopySelectedTextToTargetTranslationTextBox(sender);
+		}
+
+		private void TextBoxPossibleTargetTranslation_MouseUp(object sender, System.Windows.Forms.MouseEventArgs e)
+		{
+			if (e.Button == MouseButtons.Right)
+				CopySelectedTextToTargetTranslationTextBox(sender);
+		}
+
+		private void CopySelectedTextToTargetTranslationTextBox(object sender)
+		{
+			// if the user has text selected in one of the possible translation text boxes and an insertion point in the target Translation text box
+			//	AND if they press Ctrl+Down arrow, then copy that text down to the insertion point
+			var textBox = sender as TextBox;
+			var cursorPosition = textBoxTargetBackTranslation.SelectionStart;
+			var textToInsert = textBox.SelectedText;
+			var textToReplace = textBoxTargetBackTranslation.SelectedText;
+			if (!string.IsNullOrEmpty(textToInsert) && (cursorPosition >= 0))
+			{
+				if (!String.IsNullOrEmpty(textToReplace))
+					textBoxTargetBackTranslation.SelectedText = String.Empty;
+
+				cursorPosition = textBoxTargetBackTranslation.SelectionStart;
+				textToReplace = textBoxTargetBackTranslation.Text;
+				textBoxTargetBackTranslation.Text = textBoxTargetBackTranslation.Text.Insert(cursorPosition, textToInsert);
+				textBoxTargetBackTranslation.SelectionStart = cursorPosition + textToInsert.Length;
+				textBoxTargetBackTranslation.Focus();
+			}
+		}
+
+		private static bool _ignoreChange;
         private void DisplayRighttoleftToolStripMenuItem_DropDownOpening(object sender, EventArgs e)
         {
             _ignoreChange = true;

@@ -81,7 +81,8 @@ namespace BackTranslationHelper
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.buttonPinToTop = new System.Windows.Forms.Button();
             this.fontDialog = new System.Windows.Forms.FontDialog();
-            this.menuStrip.SuspendLayout();
+			this.contextMenuHideDefault = new System.Windows.Forms.ContextMenu();
+			this.menuStrip.SuspendLayout();
             this.tableLayoutPanel.SuspendLayout();
             this.substitutionContextMenu.SuspendLayout();
             this.SuspendLayout();
@@ -372,6 +373,9 @@ namespace BackTranslationHelper
             this.textBoxPossibleTargetTranslation1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.textBoxPossibleTargetTranslation1.Size = new System.Drawing.Size(548, 42);
             this.textBoxPossibleTargetTranslation1.TabIndex = 11;
+			this.textBoxPossibleTargetTranslation1.ContextMenu = contextMenuHideDefault;
+			this.textBoxPossibleTargetTranslation1.PreviewKeyDown += TextBoxPossibleTargetTranslation_PreviewKeyDown;
+			this.textBoxPossibleTargetTranslation1.MouseUp += TextBoxPossibleTargetTranslation_MouseUp;
             // 
             // buttonFillTargetTextOption1
             // 
@@ -408,11 +412,14 @@ namespace BackTranslationHelper
             this.textBoxPossibleTargetTranslation2.ReadOnly = true;
             this.textBoxPossibleTargetTranslation2.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.textBoxPossibleTargetTranslation2.Size = new System.Drawing.Size(548, 42);
-            this.textBoxPossibleTargetTranslation2.TabIndex = 11;
-            // 
-            // buttonFillTargetTextOption2
-            // 
-            this.buttonFillTargetTextOption2.Image = global::BackTranslationHelper.Properties.Resources.FillDownHS;
+            this.textBoxPossibleTargetTranslation2.TabIndex = 12;
+			this.textBoxPossibleTargetTranslation2.ContextMenu = contextMenuHideDefault;
+			this.textBoxPossibleTargetTranslation2.PreviewKeyDown += TextBoxPossibleTargetTranslation_PreviewKeyDown;
+			this.textBoxPossibleTargetTranslation2.MouseUp += TextBoxPossibleTargetTranslation_MouseUp;
+			// 
+			// buttonFillTargetTextOption2
+			// 
+			this.buttonFillTargetTextOption2.Image = global::BackTranslationHelper.Properties.Resources.FillDownHS;
             this.buttonFillTargetTextOption2.Location = new System.Drawing.Point(675, 157);
             this.buttonFillTargetTextOption2.Name = "buttonFillTargetTextOption2";
             this.buttonFillTargetTextOption2.Size = new System.Drawing.Size(23, 23);
@@ -444,11 +451,14 @@ namespace BackTranslationHelper
             this.textBoxPossibleTargetTranslation3.ReadOnly = true;
             this.textBoxPossibleTargetTranslation3.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.textBoxPossibleTargetTranslation3.Size = new System.Drawing.Size(548, 42);
-            this.textBoxPossibleTargetTranslation3.TabIndex = 11;
-            // 
-            // buttonFillTargetTextOption3
-            // 
-            this.buttonFillTargetTextOption3.Image = global::BackTranslationHelper.Properties.Resources.FillDownHS;
+            this.textBoxPossibleTargetTranslation3.TabIndex = 13;
+			this.textBoxPossibleTargetTranslation3.ContextMenu = contextMenuHideDefault;
+			this.textBoxPossibleTargetTranslation3.PreviewKeyDown += TextBoxPossibleTargetTranslation_PreviewKeyDown;
+			this.textBoxPossibleTargetTranslation3.MouseUp += TextBoxPossibleTargetTranslation_MouseUp;
+			// 
+			// buttonFillTargetTextOption3
+			// 
+			this.buttonFillTargetTextOption3.Image = global::BackTranslationHelper.Properties.Resources.FillDownHS;
             this.buttonFillTargetTextOption3.Location = new System.Drawing.Point(675, 205);
             this.buttonFillTargetTextOption3.Name = "buttonFillTargetTextOption3";
             this.buttonFillTargetTextOption3.Size = new System.Drawing.Size(23, 23);
@@ -480,11 +490,14 @@ namespace BackTranslationHelper
             this.textBoxPossibleTargetTranslation4.ReadOnly = true;
             this.textBoxPossibleTargetTranslation4.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.textBoxPossibleTargetTranslation4.Size = new System.Drawing.Size(548, 42);
-            this.textBoxPossibleTargetTranslation4.TabIndex = 12;
-            // 
-            // buttonFillTargetTextOption4
-            // 
-            this.buttonFillTargetTextOption4.Image = global::BackTranslationHelper.Properties.Resources.FillDownHS;
+            this.textBoxPossibleTargetTranslation4.TabIndex = 14;
+			this.textBoxPossibleTargetTranslation4.ContextMenu = contextMenuHideDefault;
+			this.textBoxPossibleTargetTranslation4.PreviewKeyDown += TextBoxPossibleTargetTranslation_PreviewKeyDown;
+			this.textBoxPossibleTargetTranslation4.MouseUp += TextBoxPossibleTargetTranslation_MouseUp;
+			// 
+			// buttonFillTargetTextOption4
+			// 
+			this.buttonFillTargetTextOption4.Image = global::BackTranslationHelper.Properties.Resources.FillDownHS;
             this.buttonFillTargetTextOption4.Location = new System.Drawing.Point(675, 253);
             this.buttonFillTargetTextOption4.Name = "buttonFillTargetTextOption4";
             this.buttonFillTargetTextOption4.Size = new System.Drawing.Size(23, 23);
@@ -661,10 +674,14 @@ namespace BackTranslationHelper
             // 
             this.fontDialog.Font = new System.Drawing.Font("Arial Unicode MS", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.fontDialog.ShowColor = true;
-            // 
-            // BackTranslationHelperCtrl
-            // 
-            this.AutoSize = true;
+			// 
+			// contextMenuHideDefault
+			// 
+			this.contextMenuHideDefault.Name = "contextMenuHideDefault";
+			// 
+			// BackTranslationHelperCtrl
+			// 
+			this.AutoSize = true;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.Controls.Add(this.buttonPinToTop);
             this.Controls.Add(this.tableLayoutPanel);
@@ -681,9 +698,9 @@ namespace BackTranslationHelper
 
         }
 
-        #endregion
+		#endregion
 
-        private System.Windows.Forms.MenuStrip menuStrip;
+		private System.Windows.Forms.MenuStrip menuStrip;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel;
         private System.Windows.Forms.TextBox textBoxTargetBackTranslation;
         private System.Windows.Forms.Button buttonWriteTextToTarget;
@@ -732,5 +749,6 @@ namespace BackTranslationHelper
         private System.Windows.Forms.Label labelForPossibleTargetTranslation2;
         private System.Windows.Forms.Label labelForPossibleTargetTranslation3;
         private System.Windows.Forms.Label labelForPossibleTargetTranslation4;
-    }
+		private System.Windows.Forms.ContextMenu contextMenuHideDefault;
+	}
 }
