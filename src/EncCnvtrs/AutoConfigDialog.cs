@@ -783,7 +783,8 @@ namespace SilEncConverters40
         private void buttonTest_Click(object sender, EventArgs e)
         {
             Util.DebugWriteLine(this, "BEGIN");
-            IEncConverter aEC = InitializeEncConverter;
+			ecTextBoxOutput.Text = String.Empty;			// clear out any previous contents
+			IEncConverter aEC = InitializeEncConverter;
             if (aEC != null)
             {
                 try
