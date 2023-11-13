@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Drawing;
 using System.Linq;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -16,6 +15,11 @@ namespace BackTranslationHelper
     public partial class BackTranslationHelperCtrl : UserControl
     {
         public const int MaxPossibleTargetTranslations = 4;  // to add more, you have to add new lines like the one starting at row 2
+
+        // I could make the EcTranslator project a dependency to this project and use NllbEncConverter.CstrDisplayName instead, but...
+        private const string NllbEncConverterDisplayName = "NLLB Translator";
+        private const string NllbEncConverterSplitSentencesPrefix = @"\SplitSentences ";
+
 
         #region Member variables
         // the form in which this UserControl is embedded will initialize these
@@ -66,6 +70,7 @@ namespace BackTranslationHelper
         private void SettingsToolStripMenuItem_DropDownOpening(object sender, EventArgs e)
         {
             this.hideCurrentTargetTextToolStripMenuItem.Visible = (_model == null) || (_model.DisplayExistingTargetTranslation);
+            this.SentenceSplittingMenuItem.Enabled = TheTranslators.Any(t => t.Configurator?.ConfiguratorDisplayName == NllbEncConverterDisplayName);
         }
 
         private void TargetBackTranslation_MouseWheel(object sender, MouseEventArgs e)
@@ -649,7 +654,7 @@ namespace BackTranslationHelper
             return targetData;
         }
 
-		private void SetStatusBox(string value)
+        private void SetStatusBox(string value)
         {
             toolStripTextBoxStatus.Text = value;
             toolStripTextBoxStatus.BackColor = String.IsNullOrEmpty(value)
@@ -877,6 +882,17 @@ namespace BackTranslationHelper
                     Reload();
                 }
             }
+        }
+
+        private void SplitSentencesMenuItem_CheckStateChanged(object sender, EventArgs e)
+        {
+            var theNllbEncConverter = TheTranslators.FirstOrDefault(t => t.Configurator?.ConfiguratorDisplayName == NllbEncConverterDisplayName);
+            if (theNllbEncConverter == null)
+                return;    // shouldn't be possible, but...
+
+            var polarity = (SentenceSplittingMenuItem.Checked) ? "ON" : "OFF";
+            theNllbEncConverter.Convert(NllbEncConverterSplitSentencesPrefix + polarity);
+            ProcessRetranslate(nllbOnly: true);
         }
 
         private void Reload()
@@ -1111,19 +1127,7 @@ namespace BackTranslationHelper
                         _queryAboutF5Meaning = false;
                     }
 
-                    // I don't think I wanted to do this. This just means that if we originally processed the existing
-                    //  text (in Ptx), then it would just shift to the other one, which isn't what we probably want
-                    //  to do.
-                    //  _model.TargetData = null;   // so it'll be reinitialized
-                    _model.TargetsPossible.Clear();
-
-                    // also remove any existing translations for the current sourceData
-                    var sourceToTranslate = _model.SourceToTranslate;
-                    if (!string.IsNullOrEmpty(sourceToTranslate))
-                    {
-                        _mapOfRecentTranslations.Values.ToList().ForEach(m => m.Remove(sourceToTranslate));
-                    }
-                    Reload();
+                    ProcessRetranslate(nllbOnly: false);
                     return;
             }
 
@@ -1140,40 +1144,70 @@ namespace BackTranslationHelper
             }
         }
 
-		private void TextBoxPossibleTargetTranslation_PreviewKeyDown(object sender, System.Windows.Forms.PreviewKeyDownEventArgs e)
-		{
-			if (e.KeyData == (Keys.Control | Keys.Down))
-				CopySelectedTextToTargetTranslationTextBox(sender);
-		}
+        private void ProcessRetranslate(bool nllbOnly)
+        {
+            // I don't think I wanted to do this. This just means that if we originally processed the existing
+            //  text (in Ptx), then it would just shift to the other one, which isn't what we probably want
+            //  to do.
+            //  _model.TargetData = null;   // so it'll be reinitialized
+            // UPDATE: this is what we want to do in Word. Otherwise, if there's only one translator, we'll never
+            //  see the update.
+            if (!_model.DisplayExistingTargetTranslation && (TheTranslators.Count == 1))
+                _model.TargetData = String.Empty;
 
-		private void TextBoxPossibleTargetTranslation_MouseUp(object sender, System.Windows.Forms.MouseEventArgs e)
-		{
-			if (e.Button == MouseButtons.Right)
-				CopySelectedTextToTargetTranslationTextBox(sender);
-		}
+            var targetsToClear = _model.TargetsPossible;
+            if (nllbOnly)
+            {
+                var nllbTranslatorNames = TheTranslators.Where(t => t.Configurator?.ConfiguratorDisplayName == NllbEncConverterDisplayName).Select(t => t.Name).ToHashSet();
+                targetsToClear = targetsToClear.Where(tp => nllbTranslatorNames.Contains(tp.TranslatorName))
+                                               .ToList();
+            }
 
-		private void CopySelectedTextToTargetTranslationTextBox(object sender)
-		{
-			// if the user has text selected in one of the possible translation text boxes and an insertion point in the target Translation text box
-			//	AND if they press Ctrl+Down arrow, then copy that text down to the insertion point
-			var textBox = sender as TextBox;
-			var cursorPosition = textBoxTargetBackTranslation.SelectionStart;
-			var textToInsert = textBox.SelectedText;
-			var textToReplace = textBoxTargetBackTranslation.SelectedText;
-			if (!string.IsNullOrEmpty(textToInsert) && (cursorPosition >= 0))
-			{
-				if (!String.IsNullOrEmpty(textToReplace))
-					textBoxTargetBackTranslation.SelectedText = String.Empty;
+            targetsToClear.Clear();
 
-				cursorPosition = textBoxTargetBackTranslation.SelectionStart;
-				textToReplace = textBoxTargetBackTranslation.Text;
-				textBoxTargetBackTranslation.Text = textBoxTargetBackTranslation.Text.Insert(cursorPosition, textToInsert);
-				textBoxTargetBackTranslation.SelectionStart = cursorPosition + textToInsert.Length;
-				textBoxTargetBackTranslation.Focus();
-			}
-		}
+            // also remove any existing translations for the current sourceData, so it knows it needs to retranslate
+            var sourceToTranslate = _model.SourceToTranslate;
+            if (!string.IsNullOrEmpty(sourceToTranslate))
+            {
+                _mapOfRecentTranslations.Values.ToList().ForEach(m => m.Remove(sourceToTranslate));
+            }
+            Reload();
+        }
 
-		private static bool _ignoreChange;
+        private void TextBoxPossibleTargetTranslation_PreviewKeyDown(object sender, System.Windows.Forms.PreviewKeyDownEventArgs e)
+        {
+            if (e.KeyData == (Keys.Control | Keys.Down))
+                CopySelectedTextToTargetTranslationTextBox(sender);
+        }
+
+        private void TextBoxPossibleTargetTranslation_MouseUp(object sender, System.Windows.Forms.MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+                CopySelectedTextToTargetTranslationTextBox(sender);
+        }
+
+        private void CopySelectedTextToTargetTranslationTextBox(object sender)
+        {
+            // if the user has text selected in one of the possible translation text boxes and an insertion point in the target Translation text box
+            //	AND if they press Ctrl+Down arrow, then copy that text down to the insertion point
+            var textBox = sender as TextBox;
+            var cursorPosition = textBoxTargetBackTranslation.SelectionStart;
+            var textToInsert = textBox.SelectedText;
+            var textToReplace = textBoxTargetBackTranslation.SelectedText;
+            if (!string.IsNullOrEmpty(textToInsert) && (cursorPosition >= 0))
+            {
+                if (!String.IsNullOrEmpty(textToReplace))
+                    textBoxTargetBackTranslation.SelectedText = String.Empty;
+
+                cursorPosition = textBoxTargetBackTranslation.SelectionStart;
+                textToReplace = textBoxTargetBackTranslation.Text;
+                textBoxTargetBackTranslation.Text = textBoxTargetBackTranslation.Text.Insert(cursorPosition, textToInsert);
+                textBoxTargetBackTranslation.SelectionStart = cursorPosition + textToInsert.Length;
+                textBoxTargetBackTranslation.Focus();
+            }
+        }
+
+        private static bool _ignoreChange;
         private void DisplayRighttoleftToolStripMenuItem_DropDownOpening(object sender, EventArgs e)
         {
             _ignoreChange = true;
