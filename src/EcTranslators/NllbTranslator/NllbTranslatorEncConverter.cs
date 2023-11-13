@@ -15,6 +15,7 @@ using static Nllb.ITranslator;
 using System.Windows.Forms;
 using SilEncConverters40.EcTranslators.Properties;
 using System.Collections;
+using System.Text.RegularExpressions;
 
 namespace SilEncConverters40.EcTranslators.NllbTranslator
 {
@@ -45,6 +46,8 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
         public const string EnvVarNameEndPoint = "EncConverters_NllbEndpoint";
         public const string EnvVarNameKey = "EncConverters_NllbApiKey";
 
+        public const string SplitSentencesPrefix = @"\SplitSentences ";   // send for conversion: \SplitSentences ON and \SplitSentences OFF
+
         #endregion Const Definitions
 
         #region Member Variable Definitions
@@ -54,6 +57,13 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
         public string PathToDockerProject;
         public string ApiKey;        // always clear text
         public string Endpoint;
+
+        public Regex SentenceSplitter = new Regex(Properties.Settings.Default.NllbSentenceFinalPunctuationRegex);
+        public bool IsSplitSentences = Properties.Settings.Default.NllbProcessSentenceBySentence;
+
+        public int RepeatsOfLastInputString { get; set; } = 0;
+        public string LastInputString { get; set; }
+        public int MaxTokensPerSentence { get; set; }
 
         private static bool HasValidEnvironmentVariable(string envVarName, out string parameter)
         {
@@ -84,9 +94,9 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
                         },
                     };
                     var apiKey = ApiKey ?? NllbTranslatorApiKey;
-					if (!String.IsNullOrEmpty(apiKey))
-						apiKey = NllbAuthenticationPrefix + apiKey;
-					_nllbTranslator = new Translator(apiKey, options);
+                    if (!String.IsNullOrEmpty(apiKey))
+                        apiKey = NllbAuthenticationPrefix + apiKey;
+                    _nllbTranslator = new Translator(apiKey, options);
                 }
                 return _nllbTranslator;
             }
@@ -109,7 +119,7 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
             }
             set
             {
-				var trimmedValue = value?.Trim();
+                var trimmedValue = value?.Trim();
                 var translatorKey = !String.IsNullOrEmpty(trimmedValue)
                                         ? EncryptionClass.Encrypt(trimmedValue)
                                         : null;
@@ -265,11 +275,121 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
             // here's our input string
             var strInput = new string(caIn);
 
-            var strOutput = String.IsNullOrEmpty(strInput)
-                                ? strInput
-                                : CallNllbTranslator(strInput).Result;
+            var strOutput = DoConvert(strInput);
 
             StringToProperByteStar(strOutput, lpOutBuffer, ref rnOutLen);
+            return;
+        }
+
+        protected string DoConvert(string strInput)
+        {
+            // if we're not already splitting sentences, see if we're getting the same string over and over again
+            if ((LastInputString == strInput) && (RepeatsOfLastInputString++ > 0))
+            {
+                // ... on the 3rd time of getting the same string, start the splitting of sentences and processing them separately
+                //    to see if that helps. Here's an example of one that the facebook-1.3G model seems to lose its way with:
+                //    (केवल ये शहीद और न्याय करने वाले लोग हजार वर्षों वाले उस युग के आरंभ में पुनर्जीवित हो जाएँगे। इस बार जीवित होने को “पहला जीवित होना” कहते हैं। बाकि जो मरे हुए हैं, परमेश्वर उन सबको तब तक पुनर्जीवित नहीं करेगा, जब तक उस हजार वर्षों वाले युग का अंत नहीं होगा।)
+                //  litBt: (Only these martyrs and judge-doing ones will become alive again in the beginning of that thousand year era. This time of becoming alive is called the “first resurrection.” The remaining (ones) who have died, God will not make them alive again until the end of that thousand years era happens.)
+                // 1.3G model (before splitting sentences):
+                //  (The first resurrection is the first.) The rest of the dead will not be raised until the thousand years are ended.
+                // 1.3G model (after splitting sentences):
+                //  (Only these martyrs and judges will be resurrected at the beginning of the millennial age. This resurrection is called the first resurrection.) (The rest of the dead will not be raised until the thousand years are over.)
+                IsSplitSentences = true;
+
+                // start w/ 1 less than the current, so we'll likely do a split right away
+                MaxTokensPerSentence = WordCount(strInput) - RepeatsOfLastInputString;
+
+                // if the user keeps doing this until it goes negative, then just start over
+                if (MaxTokensPerSentence < 0)
+                {
+                    SetSplitSentences(false);   // start over
+                }
+                System.Diagnostics.Debug.WriteLine($"NllbEncConverter: RepeatsOfLastInputString: {RepeatsOfLastInputString}, convert the string, \"{SplitSentencesPrefix} ON\" (or OFF), to turn on (or off) splitting sentences");
+            }
+            else
+            {
+                LastInputString = strInput;
+                if (strInput.StartsWith(SplitSentencesPrefix))
+                {
+                    SetSplitSentences(strInput.Substring(Math.Min(strInput.Length, SplitSentencesPrefix.Length))?.StartsWith("ON") ?? false);
+                }
+            }
+
+            var toAdd = default((int, string));
+            var sentences = new List<(int WordCount, string Sentence)>();
+            if (IsSplitSentences)
+            {
+                SentenceSplitter.Replace(strInput, LimitSentenceLength);
+                if (sentences.Sum(s => s.Sentence.Length) < strInput.Length)
+                {
+                    var accumulatedSentences = String.Join(String.Empty, sentences.Select(s => s.Sentence));
+                    System.Diagnostics.Debug.Assert(strInput.Contains(accumulatedSentences));
+                    var addlInput = strInput.Substring(accumulatedSentences.Length); // add the remaining bit that didn't end in a sentence final puntuation
+                    var lastSentence = sentences.LastOrDefault();
+                    if (lastSentence != default)
+                    {
+                        sentences.Remove(lastSentence);                 // remove it here, so it can be added back combined later
+                        addlInput = lastSentence.Sentence + addlInput;
+                    }
+                    toAdd = (WordCount(addlInput), addlInput);
+                }
+            }
+            else
+                toAdd = (WordCount(strInput), strInput);
+
+            if (toAdd != default)
+                sentences.Add(toAdd);
+
+            var strOutput = String.Empty;
+            foreach (var sentence in sentences.Select(s => s.Sentence))
+            {
+                var output = String.IsNullOrEmpty(sentence.Trim())
+                                    ? sentence
+                                    : CallNllbTranslator(sentence).Result;
+
+                // make sure the space isn't lost between the sentences
+                if ((strOutput.LastOrDefault() != default) && (output?.First() != ' '))
+                    strOutput += ' ';
+
+                strOutput += output;
+            }
+
+            return strOutput;
+
+
+            string LimitSentenceLength(Match match)
+            {
+                var sentence = match.ToString();
+                var wordCount = WordCount(sentence);
+                var lastSentence = sentences.LastOrDefault();
+
+                // if there is no last sentence or if it would go beyond the limit to add this one to its Sentence...
+                int combinedWordCount = wordCount;
+                if ((lastSentence == default((int, string))) || ((combinedWordCount = (wordCount + lastSentence.WordCount)) > MaxTokensPerSentence))
+                {
+                    sentences.Add((wordCount, sentence));   // ... make this new one the new last sentence
+                }
+                else
+                {
+                    // otherwise, remove the current last sentence, and add this combined one back in
+                    sentences.Remove(lastSentence);
+                    var combinedSentence = lastSentence.Sentence + sentence;
+                    sentences.Add((combinedWordCount, combinedSentence));
+                }
+                return sentence;    // always return the matched item, so we can see if we got the whole thing
+            }
+
+            void SetSplitSentences(bool isSplitSentences)    // expecting this to be either 'ON' or 'OFF'
+            {
+                IsSplitSentences = isSplitSentences;
+                RepeatsOfLastInputString = isSplitSentences ? 1 : 0;
+                System.Diagnostics.Debug.WriteLine($"NllbEncConverter: Sentence Splitting is {isSplitSentences}. Convert the same string again and it'll start up again w/ 1 less than the number of tokens in the next string sent for conversion.");
+            }
+        }
+
+        private static int WordCount(string sentence)
+        {
+            return sentence.Split(new[] { ' ' }).Length;
         }
 
         private async Task<string> CallNllbTranslator(string strInput)

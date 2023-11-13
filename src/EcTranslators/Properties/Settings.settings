@@ -67,5 +67,11 @@
     <Setting Name="NllbTranslatorPathToDockerProject" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
+    <Setting Name="NllbSentenceFinalPunctuationRegex" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">(.*?)([\p{Po}-[,]])</Value>
+    </Setting>
+    <Setting Name="NllbProcessSentenceBySentence" Type="System.Boolean" Scope="Application">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

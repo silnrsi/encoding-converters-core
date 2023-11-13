@@ -295,5 +295,23 @@ namespace SilEncConverters40.EcTranslators.Properties {
                 this["NllbTranslatorPathToDockerProject"] = value;
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("(.*?)([\\p{Po}-[,]])")]
+        public string NllbSentenceFinalPunctuationRegex {
+            get {
+                return ((string)(this["NllbSentenceFinalPunctuationRegex"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool NllbProcessSentenceBySentence {
+            get {
+                return ((bool)(this["NllbProcessSentenceBySentence"]));
+            }
+        }
     }
 }
