@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, jsonify
 from settings import MODEL_NAME, PORT, API_KEY
+from gevent.pywsgi import WSGIServer
 
 app = Flask(__name__)
 
@@ -54,4 +55,8 @@ def translate_text():
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=PORT, debug=True)
+    # Debug/Development:
+	# app.run(host="0.0.0.0", port=PORT, debug=True)
+	# Production:
+	http_server = WSGIServer(('', PORT), app)
+	http_server.serve_forever()

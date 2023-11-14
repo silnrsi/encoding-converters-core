@@ -13,6 +13,7 @@ COPY import_model.py .
 RUN python import_model.py
 
 RUN pip install flask
+RUN pip install gevent
 
 COPY . .
 
