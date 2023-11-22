@@ -312,6 +312,7 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
                 if (strInput.StartsWith(SplitSentencesPrefix))
                 {
                     SetSplitSentences(strInput.Substring(Math.Min(strInput.Length, SplitSentencesPrefix.Length))?.StartsWith("ON") ?? false);
+                    return strInput;
                 }
             }
 
@@ -324,14 +325,18 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
                 {
                     var accumulatedSentences = String.Join(String.Empty, sentences.Select(s => s.Sentence));
                     System.Diagnostics.Debug.Assert(strInput.Contains(accumulatedSentences));
-                    var addlInput = strInput.Substring(accumulatedSentences.Length); // add the remaining bit that didn't end in a sentence final puntuation
+                    var leftOver = strInput.Substring(accumulatedSentences.Length); // add the remaining bit that didn't end in a sentence final puntuation
                     var lastSentence = sentences.LastOrDefault();
                     if (lastSentence != default)
                     {
-                        sentences.Remove(lastSentence);                 // remove it here, so it can be added back combined later
-                        addlInput = lastSentence.Sentence + addlInput;
+                        var addlInput = lastSentence.Sentence + leftOver;
+                        if (WordCount(addlInput) <= MaxTokensPerSentence)
+                        {
+                            sentences.Remove(lastSentence);      // remove it here, so it can be added back combined later
+                            leftOver = addlInput;
+                        }
                     }
-                    toAdd = (WordCount(addlInput), addlInput);
+                    toAdd = (WordCount(leftOver), leftOver);
                 }
             }
             else

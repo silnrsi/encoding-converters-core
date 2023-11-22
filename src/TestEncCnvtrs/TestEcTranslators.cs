@@ -199,40 +199,61 @@ namespace TestEncCnvtrs
             m_repoFile = null;
         }
 
-		private const string NllbConverterFriendlyName = "NllbTranslator";
+        private const string NllbConverterFriendlyName = "NllbTranslator";
 
-		/// <summary>
-		/// To run this test, you need to go thru the instructions in have the $(SolutionDir)redist\Help\NLLB_Translate_Plug-in_About_box.htm
-		/// file to create a docker container for the NLLB 600m model and run it on your local machine.
-		/// Two additional notes:
-		/// 1) have no api key in the NLLB Model Config dialog (or set up an env var with it--see TestAzureOpenAiConverter for an eg)
-		/// 2) Change the @"D:\NLLB\test" path to wherever you chose as the Docker Project folder.
-		/// </summary>
-		/// <param name="converterSpec">ConverterIdentifier of the NLLB converter to be used to convert the text</param>
-		/// <param name="testInput">The text to be translated</param>
-		/// <param name="testOutput">The expected translation</param>
-		[Test]
+        /// <summary>
+        /// To run this test, you need to go thru the instructions in have the $(SolutionDir)redist\Help\NLLB_Translate_Plug-in_About_box.htm
+        /// file to create a docker container for the NLLB 600m model and run it on your local machine.
+        /// Two additional notes:
+        /// 1) have no api key in the NLLB Model Config dialog (or set up an env var with it--see TestAzureOpenAiConverter for an eg)
+        /// 2) Change the @"D:\NLLB\test" path to wherever you chose as the Docker Project folder.
+        /// </summary>
+        /// <param name="converterSpec">ConverterIdentifier of the NLLB converter to be used to convert the text</param>
+        /// <param name="testInput">The text to be translated</param>
+        /// <param name="testOutput">The expected translation</param>
+        [Test]
 		[TestCase(@"D:\NLLB\test;hin_Deva;eng_Latn",
 			@"फिर एक स्‍वर्गदूत ने मुझसे कहा, ""इस बात को लिख ले: वे धन्य हैं, जिनको मेमने के विवाह के भोज का निमन्‍त्रण है।
 यह परमेश्वर के सच्‍चे बोल हैं।",
 			@"Then an angel said to me, ""Write: Blessed are those who are invited to the wedding banquet of the Lamb"".
 These are the true words of God.")]
-		[TestCase(@"D:\NLLB\test;hin_Deva;eng_Latn",
-			"वे जानते हैं कि परमेश्वर का अस्तित्व है और यह सब कुछ उनके लिए ही बनाया है। परंतु फिर भी न तो वे परमेश्वर का कोई सम्‍मान, और न ही तो उसका धन्यवाद करते हैं। इसलिए उनकी आँखें में पर्दा पड़ गया है, और परमेश्वर के विषय में उनका जो विचार है, वह गलत हो चुका है।",
-			"They know that God exists and that everything was made for them. Yet they do not give glory to God or give him thanks. Their minds are blinded and their thoughts are in error.")]
-		public void TestNllbConverter(string converterSpec, string testInput, string testOutput)
-		{
-			m_encConverters.AddConversionMap(NllbConverterFriendlyName, converterSpec, ConvType.Unicode_to_Unicode,
-											 EncConverters.strTypeSILNllbTranslator, "UNICODE", "UNICODE", ProcessTypeFlags.Translation);
+		[TestCase(@"D:\NLLB\nllb-600m;hin_Deva;eng_Latn;http://localhost:8000;N3RK/o+wYtvEFMVGtYsmROIyLr/+RWh1",
+            "वे जानते हैं कि परमेश्वर का अस्तित्व है और यह सब कुछ उनके लिए ही बनाया है। परंतु फिर भी न तो वे परमेश्वर का कोई सम्‍मान, और न ही तो उसका धन्यवाद करते हैं। इसलिए उनकी आँखें में पर्दा पड़ गया है, और परमेश्वर के विषय में उनका जो विचार है, वह गलत हो चुका है।",
+            "They know that God exists and that everything was made for them. Yet they do not give glory to God or give him thanks. Their minds are blinded and their thoughts are in error.")]
+        [TestCase(@"D:\NLLB\nllb-600m;hin_Deva;eng_Latn;http://localhost:8000;N3RK/o+wYtvEFMVGtYsmROIyLr/+RWh1",
+            "(केवल ये शहीद और न्याय करने वाले लोग हजार वर्षों वाले उस युग के आरंभ में पुनर्जीवित हो जाएँगे। इस बार जीवित होने को “पहला जीवित होना” कहते हैं। बाकि जो मरे हुए हैं, परमेश्वर उन सबको तब तक पुनर्जीवित नहीं करेगा, जब तक उस हजार वर्षों वाले युग का अंत नहीं होगा।)",
+            "(The only resurrection will be the ones who died and judged at the beginning of the thousand years. This resurrection is called the First Resurrection. The rest of the dead God did not raise until the thousand years were over.)")]
+        [TestCase(@"D:\NLLB\nllb-600m;hin_Deva;eng_Latn;http://localhost:8000;N3RK/o+wYtvEFMVGtYsmROIyLr/+RWh1",
+            "केवल ये शहीद और न्याय करने वाले लोग हजार वर्षों वाले उस युग के आरंभ में पुनर्जीवित हो जाएँगे। इस बार जीवित होने को “पहला जीवित होना” कहते हैं। बाकि जो मरे हुए हैं, परमेश्वर उन सबको तब तक पुनर्जीवित नहीं करेगा, जब तक उस हजार वर्षों वाले युग का अंत नहीं होगा,",
+			"Only these martyrs and judges will be resurrected at the beginning of that millennial age. This time the resurrection is called the First Resurrection. The rest of the dead God did not raise until the thousand years were over.")]
+        [TestCase(@"D:\NLLB\nllb-600m;hin_Deva;eng_Latn;http://localhost:8000;N3RK/o+wYtvEFMVGtYsmROIyLr/+RWh1",
+            "बाकि जो मरे हुए हैं, परमेश्वर उन सबको तब तक पुनर्जीवित नहीं करेगा, जब तक उस हजार वर्षों वाले युग का अंत नहीं होगा,",
+            "The rest of the dead God did not raise until the thousand years were over.")]	// yes, NLLB changes the final ',' to a '.'
+        public void TestNllbConverter(string converterSpec, string testInput, string testOutput)
+        {
+            m_encConverters.AddConversionMap(NllbConverterFriendlyName, converterSpec, ConvType.Unicode_to_Unicode,
+                                             EncConverters.strTypeSILNllbTranslator, "UNICODE", "UNICODE", ProcessTypeFlags.Translation);
 
-			var theEc = m_encConverters[NllbConverterFriendlyName];
+            var theEc = m_encConverters[NllbConverterFriendlyName];
 
-			// do a forward conversion
-			var strOutput = theEc.Convert(testInput);
-			Assert.AreEqual(testOutput, strOutput);
-		}
+            // do a forward conversion
+            var strOutput = theEc.Convert(testInput);
+            if (testOutput != strOutput)
+            {
+                // if you do the same conversion a 3rd time, then it will limit the token count and process the text is sentence chunks
+                strOutput = theEc.Convert(testInput);
+                strOutput = theEc.Convert(testInput);
 
-		private const string AzureOpenAIConverterFriendlyName = "ChatGptTranslator";
+                // OR you can do this:
+                theEc.Convert(NllbTranslatorEncConverter.SplitSentencesPrefix + "ON");
+                strOutput = theEc.Convert(testInput);
+            }
+
+            Assert.AreEqual(testOutput, strOutput);
+            theEc.Convert(NllbTranslatorEncConverter.SplitSentencesPrefix + "OFF");    // to turn it off for the next run
+        }
+
+        private const string AzureOpenAIConverterFriendlyName = "ChatGptTranslator";
 
         [Test]
         [TestCase("Hindi;English;Translate from Hindi into English.", "यीशु ने यह भी कहा,", "Jesus also said this,")]
