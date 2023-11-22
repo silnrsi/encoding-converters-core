@@ -99,7 +99,8 @@ namespace SilEncConverters40
                 }
 
                 IsModified = false;
-                m_bAllStepsAreBidirectional = !EncConverters.IsUnidirectional(m_aEC.ConversionType);
+				if (m_aEC != null)
+					m_bAllStepsAreBidirectional = !EncConverters.IsUnidirectional(m_aEC.ConversionType);
             }
         }
 

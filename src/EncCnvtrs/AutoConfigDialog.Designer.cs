@@ -550,7 +550,7 @@ namespace SilEncConverters40
             this.checkBoxICURegularExpression.Name = "checkBoxICURegularExpression";
             this.checkBoxICURegularExpression.Size = new System.Drawing.Size(138, 17);
             this.checkBoxICURegularExpression.TabIndex = 3;
-            this.checkBoxICURegularExpression.Text = "ICU Regular &Expression";
+            this.checkBoxICURegularExpression.Text = "Regular &Expression";
             this.checkBoxICURegularExpression.UseVisualStyleBackColor = true;
             this.checkBoxICURegularExpression.CheckedChanged += new System.EventHandler(this.SomethingChanged);
             // 

@@ -454,26 +454,46 @@ namespace SilEncConverters40
         {
             // remove any existing converter by the name we're about to give it (probably not necessary).
             System.Diagnostics.Debug.Assert(!String.IsNullOrEmpty(FriendlyName));
-            if (ShouldRemoveBeforeAdd)
-                m_aECs.Remove(FriendlyName);
 
-            // if it was originally under a different name...
-            if (!String.IsNullOrEmpty(m_strOriginalFriendlyName) && (m_strOriginalFriendlyName != FriendlyName))
-            {
-                // ... remove that too (this one probably *is* necessary to remove old stuff)
-                m_aECs.Remove(m_strOriginalFriendlyName);
-            }
+			try
+			{
+				// TODO: this is causing problems, bkz any converter can be a step in a compound converter,
+				//	and if you call Remove here, it removes it from any compound converter that references it.
+				//	But is it really necessary to remove it if only the data changes and not the name...
+				// UPDATE: It appears that if we do AddConverterMappingSub and it already exists with a given name
+				//	the entry will be updated, so we don't need this anyway
+				// UPDATE2: but if this is a compound converter, then it will append the steps to those already existing
+				//	rather than replacing them, so we do need to remove the existing steps. But we can't do that
+				//	without calling m_aECs.Remove, and we can't change the behavior of Remove or add a new way to do that,
+				//	bkz when this is running in, for example, Paratext, it's using a version of the EncConverters core that
+				//	it loaded and can't use a possible newer one that has this change (this causes 'method doesn't exist'
+				//	kind of errors).
+				if (ShouldRemoveBeforeAdd)
+					m_aECs.Remove(FriendlyName);
 
-            // have the sub-classes do their thing to add it
-            AddConverterMappingSub();
+				// if it was originally under a different name... (YES, in this case, we have to remove it)
+				if (!String.IsNullOrEmpty(m_strOriginalFriendlyName) && (m_strOriginalFriendlyName != FriendlyName))
+				{
+					// ... remove that too (this one probably *is* necessary to remove old stuff)
+					m_aECs.Remove(m_strOriginalFriendlyName);
+				}
 
-            // if it worked, then ...
-            // ... indicate that now this converter is in the repository
-            IsInRepository = true;
+				// have the sub-classes do their thing to add it
+				AddConverterMappingSub();
 
-            // and save the name so we can clear it out if need be later
-            m_strOriginalFriendlyName = FriendlyName;
-        }
+				// if it worked, then ...
+				// ... indicate that now this converter is in the repository
+				IsInRepository = true;
+
+				// and save the name so we can clear it out if need be later
+				m_strOriginalFriendlyName = FriendlyName;
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show(String.Format("Couldn't add converter to repository! Reason: {0}", ex.Message),
+					EncConverters.cstrCaption);
+			}
+		}
 
         // allow subclasses to define whether we should remove records before adding them 
         //  (e.g. SpellFixer is already added, so we don't want to remove it or we'll clobber the

@@ -84,6 +84,7 @@
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
+    <Compile Include="TestNetRegex.cs" />
     <Compile Include="TestPy3ScriptEncConverters.cs" />
     <Compile Include="TestUtil.cs" />
     <Compile Include="TestIcuConvEncConverter.cs" />

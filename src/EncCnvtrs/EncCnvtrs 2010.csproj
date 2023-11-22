@@ -222,6 +222,14 @@
     </Compile>
     <Compile Include="FallbackEncConverter.cs" />
     <Compile Include="FallbackEncConverterConfig.cs" />
+    <Compile Include="NetRegexAutoConfigDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="NetRegexEncConverterConfig.cs" />
+    <Compile Include="NetRegexEncConverter.cs" />
+    <Compile Include="NetRegexAutoConfigDialog.Designer.cs">
+      <DependentUpon>NetRegexAutoConfigDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="IEncConverterConfig.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -298,6 +306,9 @@
     <EmbeddedResource Include="FallbackAutoConfigDialog.resx">
       <SubType>Designer</SubType>
       <DependentUpon>FallbackAutoConfigDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="NetRegexAutoConfigDialog.resx">
+      <DependentUpon>NetRegexAutoConfigDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ImplTypeList.resx">
       <DependentUpon>ImplTypeList.cs</DependentUpon>

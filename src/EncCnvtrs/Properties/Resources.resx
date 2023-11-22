@@ -164,6 +164,9 @@ Choose the encoding type for the output of the table/map: either Unicode or Lega
 For example, if this is an Unicode encoding converter, then the output will be Unicode encoding.
     </value>
   </data>
+  <data name="NetRegexQuickReferenceLink" xml:space="preserve">
+    <value>https://learn.microsoft.com/en-us/dotnet/standard/base-types/regular-expression-language-quick-reference</value>
+  </data>
   <data name="PreviewBoxHelpString" xml:space="preserve">
     <value>
 This box displays the result of the conversion using the selected converter given some data

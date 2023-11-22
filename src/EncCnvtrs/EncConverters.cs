@@ -73,7 +73,8 @@ namespace SilEncConverters40
         public const string strTypeSILmap               = "SIL.map";
         public const string strTypeSILcp                = "cp";
         public const string strTypeSILcomp              = "SIL.comp";
-        public const string strTypeSILicuTrans          = "ICU.trans";
+		public const string strTypeSILNetRegex			= "SIL.netRegex";
+		public const string strTypeSILicuTrans          = "ICU.trans";
         public const string strTypeSILicuConv           = "ICU.conv";
         public const string strTypeSILicuRegex          = "ICU.regex";
         public const string strTypeSILPyScript          = "SIL.PyScript";

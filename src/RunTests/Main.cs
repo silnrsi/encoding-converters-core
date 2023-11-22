@@ -15,6 +15,7 @@ namespace RunTests
 			RunTestIcuConvEncConverter();
 			RunTestIcuTranslit();
 			RunTestIcuRegex();
+			RunTestNetRegex();
 			Console.WriteLine("{0} Tests Run; {1} Tests Failed", m_crun, m_cfail);
 		}
 
@@ -172,6 +173,23 @@ namespace RunTests
 			}
 			catch (Exception e) { Console.WriteLine("Exception caught during TestIcuRegex setup or teardown: {0}", e.Message); }
 			Console.WriteLine("Done Testing IcuRegex");
+		}
+
+		public static void RunTestNetRegex()
+		{
+			Console.WriteLine("Begin Testing NetRegex");
+			var test = new TestNetRegex();
+			try
+			{
+				try { test.TestRegexToVandC(); Console.WriteLine("TestRegexToVandC succeeded!"); }
+				catch (Exception e) { Console.WriteLine("TestRegexToVandC failed: {0}", e.Message); ++m_cfail; }
+				++m_crun;
+				try { test.TestRegexForNonAnsiRange(); Console.WriteLine("TestRegexForNonAnsiRange succeeded!"); }
+				catch (Exception e) { Console.WriteLine("TestRegexForNonAnsiRange failed: {0}", e.Message); ++m_cfail; }
+				++m_crun;
+			}
+			catch (Exception e) { Console.WriteLine("Exception caught during TestNetRegex setup or teardown: {0}", e.Message); }
+			Console.WriteLine("Done Testing NetRegex");
 		}
 	}
 }
