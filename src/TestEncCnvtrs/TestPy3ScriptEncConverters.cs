@@ -28,9 +28,9 @@ namespace TestEncCnvtrs
         bool m_fSetRegistryValue;
         string m_repoFile;
 
-        // best if you use these as the install path for the two flavors of 3.12 Python for these tests
-        private const string PathPython64 = @"D:\Python\Python312";
-        private const string PathPython86 = @"D:\Python\Python312-32";
+        // best if you use these as the install path for the two flavors of 3.9 Python for these tests
+        private const string PathPython64 = @"D:\Python\Python39";
+        private const string PathPython86 = @"D:\Python\Python39-32";
 
         private const string EnvironmentVariableNamePythonHome = "PYTHONHOME";
 
@@ -224,8 +224,8 @@ namespace TestEncCnvtrs
         }
 
         /// <summary>
-        /// This is a test for Python 3 via the Py3ScriptEncConverter and requires a Python 3.12 to be installed in the D:\Python\Python312 folder
-        /// So that the file, D:\Python\Python312\python312.dll will exist
+        /// This is a test for Python 3 via the Py3ScriptEncConverter and requires a Python 3.9 to be installed in the D:\Python\Python39 folder
+        /// So that the file, D:\Python\Python39\python39.dll will exist
         /// Note that unless someone complains, this transducer will only support Unicode encoding
         /// </summary>
         [Test]
@@ -233,7 +233,7 @@ namespace TestEncCnvtrs
         {
             var converterName = "UnitTesting-Python3-ReverseString-Unicode";
             var dir = Path.Combine(TestEncConverters.GetMapsTablesFolder(), "PythonExamples");
-            var converterIdentifierForPython3 = @$"{Path.Combine(dir, "ReverseString.py")};{m_testPythonHome}\python312.dll";
+            var converterIdentifierForPython3 = @$"{Path.Combine(dir, "ReverseString.py")};{m_testPythonHome}\python39.dll";
             m_encConverters.AddConversionMap(converterName, converterIdentifierForPython3,
                                              ConvType.Unicode_to_from_Unicode, EncConverters.strTypeSILPy3Script,
                                              "UNICODE", "UNICODE", ProcessTypeFlags.PythonScript);
