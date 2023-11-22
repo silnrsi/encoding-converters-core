@@ -80,6 +80,9 @@ namespace SilEncConverters40
         #region Member Variable Definitions
         public const string strDisplayName = "ICU Transliterator";
         public const string strHtmlFilename = "ICU_Transliterators_Plug-in_About_box.htm";
+
+		public bool TransliteratorInitialized { get; set; }
+
         #endregion Member Variable Definitions
 
         #region Initialization
@@ -88,14 +91,6 @@ namespace SilEncConverters40
         public IcuTranslitEncConverter() : base(
             typeof(IcuTranslitEncConverter).FullName, EncConverters.strTypeSILicuTrans)
         {
-        }
-
-        /// <summary>
-        /// The class destructor. </summary>
-        ~IcuTranslitEncConverter()
-        {
-            //if( IsFileLoaded() )
-            //    CCUnloadTable(m_hTable);
         }
 
         public override void Initialize(
@@ -120,7 +115,9 @@ namespace SilEncConverters40
 			if (converterSpec.Contains("Any"))
 				m_eConversionType = conversionType = MakeUniDirectional(conversionType);
 
-            Util.DebugWriteLine(this, "END");
+			TransliteratorInitialized = false;	// so it has to be reinitialized in the C++ side
+
+			Util.DebugWriteLine(this, "END");
         }
 
         #endregion Initialization
@@ -128,18 +125,7 @@ namespace SilEncConverters40
         #region Misc helpers
         protected bool IsFileLoaded()
         {
-            //return (m_hTable != 0);
-            return false;
-        }
-
-        protected void Unload()
-        {
-            //Util.DebugWriteLine(this, "BEGIN");
-            //if( IsFileLoaded() )
-            //{
-            //    CCUnloadTable(m_hTable);
-            //    m_hTable = 0;
-            //}
+            return TransliteratorInitialized;
         }
 
         protected override EncodingForm DefaultUnicodeEncForm(bool bForward, bool bLHS)
@@ -154,18 +140,23 @@ namespace SilEncConverters40
         {
             Util.DebugWriteLine(this, "BEGIN");
 
-            if (IsFileLoaded())
-                Unload();
+			if (IsFileLoaded())
+				return;
 
             Util.DebugWriteLine(this, "Calling CppInitialize");
             int status = 0;
 
             status = CppInitialize(strTranslitID);
-            if (status != 0)
-            {
-                throw new Exception("CppInitialize failed.");
-            }
-            Util.DebugWriteLine(this, "END");
+			if (status != 0)
+			{
+				throw new Exception("CppInitialize failed.");
+			}
+			else
+			{
+				TransliteratorInitialized = true;
+			}
+
+			Util.DebugWriteLine(this, "END");
         }
         #endregion Misc helpers
 
