@@ -26,64 +26,76 @@ namespace SilEncConverters40.EcTranslators.AzureOpenAI.AzureOpenAiExe
         private static readonly char[] TrimmableChars = new char[] { '\r', '\n', ' ' };
 
         static async Task Main(string[] args)
-        {
-            // set the stdin/out to Unicode
-            Console.InputEncoding = Encoding.Unicode;
-            Console.OutputEncoding = Encoding.Unicode;
+		{
+			// set the stdin/out to Unicode
+			Console.InputEncoding = Encoding.Unicode;
+			Console.OutputEncoding = Encoding.Unicode;
 
-            if (!IsValidParameters(args, out string deploymentName, out string endpoint, out string key, out string systemPrompt))
-                return;
+			if (!IsValidParameters(args, out string deploymentName, out string endpoint, out string key, out string systemPrompt))
+				return;
 
-            // Pass the deployment name you chose when you created/deployed the model in Azure OpenAI Studio.
-            var client = new OpenAIClient(new Uri(endpoint), new AzureKeyCredential(key));
+			try
+			{
+				await ProcessRequest(deploymentName, endpoint, key, systemPrompt);
+			}
+			catch (Exception ex)
+			{
+				System.Diagnostics.Debug.Fail(ex.Message);
+			}
+		}
 
-            // create the ChatMessages w/ the given systemPrompt
-            var chatMessages = new List<ChatMessage>
-            {
-                new ChatMessage(ChatRole.System, systemPrompt)
-            };
-            var chatCompletionOptions = new ChatCompletionsOptions(chatMessages);
+		private static async Task ProcessRequest(string deploymentName, string endpoint, string key, string systemPrompt)
+		{
+			// Pass the deployment name you chose when you created/deployed the model in Azure OpenAI Studio.
+			var client = new OpenAIClient(new Uri(endpoint), new AzureKeyCredential(key));
 
-            // in case there are multiple lines (e.g. what Paratext will do if the verse has multiple paragraphs),
-            //  process in a while loop
-            var index = 0;
-            List<string> input = null; // new List<string> { "वहाँ वह विश्राम के दिन प्रार्थना घर में जाकर लोगों को परमेश्वर का वचन सुनाने लगा। सब लोग सुनकर चकित हो गये।", "", "परंतु कई तो यह भी कहने लगे, “यह ज्ञान इसको कहाँ से आया!? और ऐसे सामर्थ्‍य के काम यह कैसे करता है, जिसकी चर्चा सब लोग कर रहे हैं!?" };
-            while ((input != null && input.Count > index) || (input == null && Console.In.Peek() != -1))
-            {
-                var strInput = (input != null)
-                                ? input[index++]
-                                : Console.ReadLine();
-                if (String.IsNullOrEmpty(strInput?.Trim(TrimmableChars)))   // don't actually trim them, but just for the sake of finding nothing to translate...
-                    continue;
+			// create the ChatMessages w/ the given systemPrompt
+			var chatMessages = new List<ChatMessage>
+			{
+				new ChatMessage(ChatRole.System, systemPrompt)
+			};
+			var chatCompletionOptions = new ChatCompletionsOptions(chatMessages);
 
-                // add the string to be translated to as the 'user' message
-                chatCompletionOptions.Messages.Add(new ChatMessage(ChatRole.User, strInput));
+			// in case there are multiple lines (e.g. what Paratext will do if the verse has multiple paragraphs),
+			//  process in a while loop
+			var index = 0;
+			List<string> input = null; // new List<string> { "वहाँ वह विश्राम के दिन प्रार्थना घर में जाकर लोगों को परमेश्वर का वचन सुनाने लगा। सब लोग सुनकर चकित हो गये।", "", "परंतु कई तो यह भी कहने लगे, “यह ज्ञान इसको कहाँ से आया!? और ऐसे सामर्थ्‍य के काम यह कैसे करता है, जिसकी चर्चा सब लोग कर रहे हैं!?" };
+			while ((input != null && input.Count > index) || (input == null && Console.In.Peek() != -1))
+			{
+				var strInput = (input != null)
+								? input[index++]
+								: Console.ReadLine();
+				if (String.IsNullOrEmpty(strInput?.Trim(TrimmableChars)))   // don't actually trim them, but just for the sake of finding nothing to translate...
+					continue;
 
-                // call the service to process the user msg based on the given system prompt
-                var chatCompletions = await client.GetChatCompletionsAsync(deploymentName, chatCompletionOptions);
+				// add the string to be translated to as the 'user' message
+				chatCompletionOptions.Messages.Add(new ChatMessage(ChatRole.User, strInput));
 
-                // clean up and return the "assistent's response"
-                var strOutput = HarvestResult(strInput, chatCompletions.Value.Choices[0]);
+				// call the service to process the user msg based on the given system prompt
+				var chatCompletions = await client.GetChatCompletionsAsync(deploymentName, chatCompletionOptions);
 
-                // put that back in the chat, in case we are processing multiple lines
-                //    (this'll make them 'related' for better translation)
-                chatCompletionOptions.Messages.Add(new ChatMessage(ChatRole.Assistant, strOutput));
-            }
+				// clean up and return the "assistent's response"
+				var strOutput = HarvestResult(strInput, chatCompletions.Value.Choices[0]);
 
-            for (var i = 1; i < chatCompletionOptions.Messages.Count;)
-            {
-                var strInput = chatCompletionOptions.Messages[i++].Content;
-                var strOutput = chatCompletionOptions.Messages[i++].Content;
+				// put that back in the chat, in case we are processing multiple lines
+				//    (this'll make them 'related' for better translation)
+				chatCompletionOptions.Messages.Add(new ChatMessage(ChatRole.Assistant, strOutput));
+			}
+
+			for (var i = 1; i < chatCompletionOptions.Messages.Count;)
+			{
+				var strInput = chatCompletionOptions.Messages[i++].Content;
+				var strOutput = chatCompletionOptions.Messages[i++].Content;
 
 #if LogResults
-                File.AppendAllText(LogFilePath, string.Format("{1}=>{2}:{3}=>{4}{0}", Environment.NewLine, systemPrompt, i / 2, strInput, strOutput));
+				File.AppendAllText(LogFilePath, string.Format("{1}=>{2}:{3}=>{4}{0}", Environment.NewLine, systemPrompt, i / 2, strInput, strOutput));
 #endif
-                // write the responses to the standard out to return it
-                Console.WriteLine(strOutput);
-            }
-        }
+				// write the responses to the standard out to return it
+				Console.WriteLine(strOutput);
+			}
+		}
 
-        private static bool IsValidParameters(string[] args, out string deploymentName, out string endpoint, out string key, out string systemPrompt)
+		private static bool IsValidParameters(string[] args, out string deploymentName, out string endpoint, out string key, out string systemPrompt)
         {
             if (args.Length != 4)
             {
