@@ -63,10 +63,7 @@ namespace SilEncConverters40.EcTranslators.Properties {
         /// <summary>
         ///   Looks up a localized string similar to docker build -t nllb{0} .
         ///docker run -p {1}:{1} nllb{0}
-        ///Start-Process http://localhost:{1}/
-        ///
-        ///Write-output &quot;Make sure there are no errors and that the page at &apos;http://localhost:{1}&apos; is able to translate before using in SILConverters&quot;
-        ///pause .
+        ///# Start-Process http://localhost:{1}/.
         /// </summary>
         internal static string buildDocker {
             get {
@@ -96,6 +93,15 @@ namespace SilEncConverters40.EcTranslators.Properties {
         internal static string Dockerfile {
             get {
                 return ResourceManager.GetString("Dockerfile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to https://cloud.google.com/vertex-ai/docs/start/cloud-environment.
+        /// </summary>
+        internal static string GoogleCloudVertexCredentialsDialogInstructionUrl {
+            get {
+                return ResourceManager.GetString("GoogleCloudVertexCredentialsDialogInstructionUrl", resourceCulture);
             }
         }
         
@@ -329,6 +335,87 @@ namespace SilEncConverters40.EcTranslators.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Click this button to enter your own Google Cloud credential key. Follow the instructions on the page, https://cloud.google.com/vertex-ai/docs/start/cloud-environment, to get create your own Google Cloud Translate service and get your own credentials (e.g. if the default credentials have run out of translation support.
+        /// </summary>
+        internal static string HelpForVertexAiAddYourOwnApiKey {
+            get {
+                return ResourceManager.GetString("HelpForVertexAiAddYourOwnApiKey", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enter the location id of the Google Cloud Vertex AI resource (e.g. us-central1).
+        /// </summary>
+        internal static string HelpForVertexAiLocationIdTextBox {
+            get {
+                return ResourceManager.GetString("HelpForVertexAiLocationIdTextBox", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enter the model id of the Google Cloud Vertex AI resource (e.g. chat-bison, chat-bison-32k, or gemini-pro).
+        /// </summary>
+        internal static string HelpForVertexAiModelIdTextBox {
+            get {
+                return ResourceManager.GetString("HelpForVertexAiModelIdTextBox", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enter the id of the Google Cloud Project that contains the Vertex AI resource.
+        /// </summary>
+        internal static string HelpForVertexAiProjectIdTextBox {
+            get {
+                return ResourceManager.GetString("HelpForVertexAiProjectIdTextBox", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enter the publisher of the Google Cloud Vertex AI resource (e.g. google).
+        /// </summary>
+        internal static string HelpForVertexAiPublisherTextBox {
+            get {
+                return ResourceManager.GetString("HelpForVertexAiPublisherTextBox", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enter the name of the language you want the Vertex AI Model to tranlate from (e.g. Hindi).
+        /// </summary>
+        internal static string HelpForVertexAiSourceLanguageTextBox {
+            get {
+                return ResourceManager.GetString("HelpForVertexAiSourceLanguageTextBox", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You can add one of the existing additions to the base system prompt using the values in this drop down box (or type in your own).
+        /// </summary>
+        internal static string HelpForVertexAiSystemPromptAdditionsComboBox {
+            get {
+                return ResourceManager.GetString("HelpForVertexAiSystemPromptAdditionsComboBox", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This box shows the System Prompt that will be sent to the Vertext AI Model.
+        /// </summary>
+        internal static string HelpForVertexAiSystemPromptTextBox {
+            get {
+                return ResourceManager.GetString("HelpForVertexAiSystemPromptTextBox", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enter the name of the language you want the Vertex AI Model to tranlate into (e.g. English).
+        /// </summary>
+        internal static string HelpForVertexAiTargetLanguageTextBox {
+            get {
+                return ResourceManager.GetString("HelpForVertexAiTargetLanguageTextBox", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to # This file exists because:
         ///# 1. Documentation for using transformers often shows how to download them in Python
         ///# 2. We want the download of the model to happen as part of the building of the image, not when it runs
@@ -399,6 +486,7 @@ namespace SilEncConverters40.EcTranslators.Properties {
         /// <summary>
         ///   Looks up a localized string similar to from flask import Flask, render_template, request, jsonify
         ///from settings import MODEL_NAME, PORT, API_KEY
+        ///from gevent.pywsgi import WSGIServer
         ///
         ///app = Flask(__name__)
         ///
@@ -412,8 +500,7 @@ namespace SilEncConverters40.EcTranslators.Properties {
         ///
         ///@app.route(&apos;/&apos;)
         ///def send_report():
-        ///    # Check if the API key is present in the request headers
-        ///    if [rest of string was truncated]&quot;;.
+        ///    # Check if the API key is  [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string server {
             get {

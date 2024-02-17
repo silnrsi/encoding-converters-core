@@ -10,10 +10,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using Newtonsoft.Json;
+using SilEncConverters40.EcTranslators.VertexAi;
+using System.Security.Policy;
 
 namespace SilEncConverters40.EcTranslators.AzureOpenAI.AzureOpenAiExe
 {
-    internal class Program
+	// for debugging: command line parameters are:
+	// gpt-translator-encconverter https://azure-openai-encconverter.openai.azure.com/ 5bc... "Translate from Hindi into English."
+	internal class Program
     {
 #if LogResults
         private const string LogFilePath = @"C:\btmp\AzureOpenAiLog.txt";
@@ -31,12 +36,23 @@ namespace SilEncConverters40.EcTranslators.AzureOpenAI.AzureOpenAiExe
 			Console.InputEncoding = Encoding.Unicode;
 			Console.OutputEncoding = Encoding.Unicode;
 
-			if (!IsValidParameters(args, out string deploymentName, out string endpoint, out string key, out string systemPrompt))
+			string pathToEncryptedCommandLineParameterFile = null;
+			if ((args.Length == 0) || !File.Exists((pathToEncryptedCommandLineParameterFile = args[0])))
+			{
+				Console.WriteLine(String.Format("Usage:{0}{0}{1} \"<PathToEncryptedCommandLineParameterFile>\"", Environment.NewLine, typeof(Program).Namespace));
+				return;
+			}
+
+			var contents = File.ReadAllText(pathToEncryptedCommandLineParameterFile);
+			var json = EncryptionClass.Decrypt(contents);
+			var arguments = JsonConvert.DeserializeObject<AzureOpenAiPromptExeTranslatorCommandLineArgs>(json);
+
+			if (!IsValidParameters(arguments, out string deploymentName, out string endpoint, out string key, out string systemPrompt))
 				return;
 
 			try
 			{
-				await ProcessRequest(deploymentName, endpoint, key, systemPrompt);
+				await ProcessRequest(arguments, deploymentName, endpoint, key, systemPrompt);
 			}
 			catch (Exception ex)
 			{
@@ -44,17 +60,28 @@ namespace SilEncConverters40.EcTranslators.AzureOpenAI.AzureOpenAiExe
 			}
 		}
 
-		private static async Task ProcessRequest(string deploymentName, string endpoint, string key, string systemPrompt)
+		private static async Task ProcessRequest(AzureOpenAiPromptExeTranslatorCommandLineArgs arguments, string deploymentName, string endpoint,
+												 string key, string systemPrompt)
 		{
 			// Pass the deployment name you chose when you created/deployed the model in Azure OpenAI Studio.
 			var client = new OpenAIClient(new Uri(endpoint), new AzureKeyCredential(key));
 
 			// create the ChatMessages w/ the given systemPrompt
-			var chatMessages = new List<ChatMessage>
+			var chatMessages = new List<Azure.AI.OpenAI.ChatRequestMessage>
 			{
-				new ChatMessage(ChatRole.System, systemPrompt)
+				new ChatRequestSystemMessage(systemPrompt)
 			};
-			var chatCompletionOptions = new ChatCompletionsOptions(chatMessages);
+
+			// microsoft just does examples like they are previous communication w/ the model
+			var numberOfExamples = arguments.ExamplesInputString.Count;
+			for (int i = 0; i < numberOfExamples; i++)
+			{
+				chatMessages.Add(new ChatRequestUserMessage(arguments.ExamplesInputString[i]));
+				chatMessages.Add(new ChatRequestAssistantMessage(arguments.ExamplesOutputString[i]));
+			}
+
+			var prefixMessages = chatMessages.Count;
+			var chatCompletionOptions = new ChatCompletionsOptions(deploymentName, chatMessages);
 
 			// in case there are multiple lines (e.g. what Paratext will do if the verse has multiple paragraphs),
 			//  process in a while loop
@@ -69,23 +96,29 @@ namespace SilEncConverters40.EcTranslators.AzureOpenAI.AzureOpenAiExe
 					continue;
 
 				// add the string to be translated to as the 'user' message
-				chatCompletionOptions.Messages.Add(new ChatMessage(ChatRole.User, strInput));
+
+				chatCompletionOptions.Messages.Add(new ChatRequestUserMessage(strInput));
+
+#if LogResults
+				var json = JsonConvert.SerializeObject(chatCompletionOptions, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling = DefaultValueHandling.Ignore });
+				File.AppendAllText(LogFilePath, json + Environment.NewLine);
+#endif
 
 				// call the service to process the user msg based on the given system prompt
-				var chatCompletions = await client.GetChatCompletionsAsync(deploymentName, chatCompletionOptions);
+				var chatCompletions = await client.GetChatCompletionsAsync(chatCompletionOptions);
 
 				// clean up and return the "assistent's response"
 				var strOutput = HarvestResult(strInput, chatCompletions.Value.Choices[0]);
 
 				// put that back in the chat, in case we are processing multiple lines
 				//    (this'll make them 'related' for better translation)
-				chatCompletionOptions.Messages.Add(new ChatMessage(ChatRole.Assistant, strOutput));
+				chatCompletionOptions.Messages.Add(new ChatRequestAssistantMessage(strOutput));
 			}
 
-			for (var i = 1; i < chatCompletionOptions.Messages.Count;)
+			for (var i = prefixMessages; i < chatCompletionOptions.Messages.Count;)
 			{
-				var strInput = chatCompletionOptions.Messages[i++].Content;
-				var strOutput = chatCompletionOptions.Messages[i++].Content;
+				var strInput = ((ChatRequestUserMessage)chatCompletionOptions.Messages[i++]).Content;
+				var strOutput = ((ChatRequestAssistantMessage)chatCompletionOptions.Messages[i++]).Content;
 
 #if LogResults
 				File.AppendAllText(LogFilePath, string.Format("{1}=>{2}:{3}=>{4}{0}", Environment.NewLine, systemPrompt, i / 2, strInput, strOutput));
@@ -95,19 +128,19 @@ namespace SilEncConverters40.EcTranslators.AzureOpenAI.AzureOpenAiExe
 			}
 		}
 
-		private static bool IsValidParameters(string[] args, out string deploymentName, out string endpoint, out string key, out string systemPrompt)
+		private static bool IsValidParameters(AzureOpenAiPromptExeTranslatorCommandLineArgs arguments, out string deploymentName, out string endpoint, out string key, out string systemPrompt)
         {
-            if (args.Length != 4)
-            {
-                Console.WriteLine(String.Format("Usage:{0}{0}{1} \"<AzureOpenAiDeploymentName>\" \"<AzureOpenAiEndpoint>\" \"<AzureOpenAiKey>\" \"<system prompt>\"", Environment.NewLine, typeof(Program).Namespace));
-                deploymentName = endpoint = key = systemPrompt = null;
-                return false;
-            }
+			if (arguments == null)
+			{
+				Console.WriteLine(String.Format("Usage:{0}{0}{1} \"<PathToEncryptedCommandLineParameterFile>", Environment.NewLine, typeof(Program).Namespace));
+				deploymentName = endpoint = systemPrompt = key = null;
+				return false;
+			}
 
-            deploymentName = args[0];
-            endpoint = args[1];
-            key = args[2];
-            systemPrompt = args[3];
+			deploymentName = arguments.DeploymentId;
+			endpoint = arguments.EndpointId;
+			key = arguments.Credentials;
+			systemPrompt = arguments.SystemPrompt;
 
             if (!IsValidParameter(EnvVarNameDeploymentName, ref deploymentName))
             {
@@ -133,7 +166,7 @@ namespace SilEncConverters40.EcTranslators.AzureOpenAI.AzureOpenAiExe
                 return false;
             }
 
-            return true;
+			return true;
         }
 
         private static bool IsValidParameter(string envVarName, ref string parameter)

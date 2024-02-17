@@ -12,7 +12,7 @@ namespace SilEncConverters40.EcTranslators.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.5.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.8.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -311,6 +311,78 @@ namespace SilEncConverters40.EcTranslators.Properties {
         public bool NllbProcessSentenceBySentence {
             get {
                 return ((bool)(this["NllbProcessSentenceBySentence"]));
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string GoogleCloudVertexAiCredentials {
+            get {
+                return ((string)(this["GoogleCloudVertexAiCredentials"]));
+            }
+            set {
+                this["GoogleCloudVertexAiCredentials"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string GoogleCloudVertexAiCredentialsOverride {
+            get {
+                return ((string)(this["GoogleCloudVertexAiCredentialsOverride"]));
+            }
+            set {
+                this["GoogleCloudVertexAiCredentialsOverride"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string GoogleCloudVertexAiProjectId {
+            get {
+                return ((string)(this["GoogleCloudVertexAiProjectId"]));
+            }
+            set {
+                this["GoogleCloudVertexAiProjectId"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("us-central1")]
+        public string GoogleCloudVertexAiLocationId {
+            get {
+                return ((string)(this["GoogleCloudVertexAiLocationId"]));
+            }
+            set {
+                this["GoogleCloudVertexAiLocationId"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("google")]
+        public string GoogleCloudVertexAiPublisher {
+            get {
+                return ((string)(this["GoogleCloudVertexAiPublisher"]));
+            }
+            set {
+                this["GoogleCloudVertexAiPublisher"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("chat-bison")]
+        public string GoogleCloudVertexAiModelId {
+            get {
+                return ((string)(this["GoogleCloudVertexAiModelId"]));
+            }
+            set {
+                this["GoogleCloudVertexAiModelId"] = value;
             }
         }
     }

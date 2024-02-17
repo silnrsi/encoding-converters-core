@@ -127,6 +127,9 @@
   <data name="Dockerfile" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\nllbtranslator\docker\dockerfile;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
+  <data name="GoogleCloudVertexCredentialsDialogInstructionUrl" xml:space="preserve">
+    <value>https://cloud.google.com/vertex-ai/docs/start/cloud-environment</value>
+  </data>
   <data name="GoogleTranslatorKeyDialogInstructionUrl" xml:space="preserve">
     <value>https://cloud.google.com/translate/docs/setup#creating_service_accounts_and_keys</value>
   </data>
@@ -205,6 +208,33 @@ See https://docs.microsoft.com/en-us/azure/cognitive-services/translator/languag
   </data>
   <data name="HelpForNllbTranslatorTargetLanguagesComboBox" xml:space="preserve">
     <value>Choose the language you want the input text to be translated into.</value>
+  </data>
+  <data name="HelpForVertexAiAddYourOwnApiKey" xml:space="preserve">
+    <value>Click this button to enter your own Google Cloud credential key. Follow the instructions on the page, https://cloud.google.com/vertex-ai/docs/start/cloud-environment, to get create your own Google Cloud Translate service and get your own credentials (e.g. if the default credentials have run out of translation support</value>
+  </data>
+  <data name="HelpForVertexAiLocationIdTextBox" xml:space="preserve">
+    <value>Enter the location id of the Google Cloud Vertex AI resource (e.g. us-central1)</value>
+  </data>
+  <data name="HelpForVertexAiModelIdTextBox" xml:space="preserve">
+    <value>Enter the model id of the Google Cloud Vertex AI resource (e.g. chat-bison, chat-bison-32k, or gemini-pro)</value>
+  </data>
+  <data name="HelpForVertexAiProjectIdTextBox" xml:space="preserve">
+    <value>Enter the id of the Google Cloud Project that contains the Vertex AI resource</value>
+  </data>
+  <data name="HelpForVertexAiPublisherTextBox" xml:space="preserve">
+    <value>Enter the publisher of the Google Cloud Vertex AI resource (e.g. google)</value>
+  </data>
+  <data name="HelpForVertexAiSourceLanguageTextBox" xml:space="preserve">
+    <value>Enter the name of the language you want the Vertex AI Model to tranlate from (e.g. Hindi)</value>
+  </data>
+  <data name="HelpForVertexAiSystemPromptAdditionsComboBox" xml:space="preserve">
+    <value>You can add one of the existing additions to the base system prompt using the values in this drop down box (or type in your own)</value>
+  </data>
+  <data name="HelpForVertexAiSystemPromptTextBox" xml:space="preserve">
+    <value>This box shows the System Prompt that will be sent to the Vertext AI Model</value>
+  </data>
+  <data name="HelpForVertexAiTargetLanguageTextBox" xml:space="preserve">
+    <value>Enter the name of the language you want the Vertex AI Model to tranlate into (e.g. English)</value>
   </data>
   <data name="import_model" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\nllbtranslator\docker\import_model.py;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>

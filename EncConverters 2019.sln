@@ -43,6 +43,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SilIndicEncConverters 2010"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ECDriver", "src\ECDriver\windows\ECDriver 2010.vcxproj", "{1AE110F1-E97B-4D14-9F3A-8AF01344E3B9}"
 	ProjectSection(ProjectDependencies) = postProject
+		{1E45DBF2-3629-4413-AC1F-61E6AA33B9B6} = {1E45DBF2-3629-4413-AC1F-61E6AA33B9B6}
 		{2935E02F-43ED-4670-9A00-A91B0AD3D66C} = {2935E02F-43ED-4670-9A00-A91B0AD3D66C}
 		{3E4B908A-4F96-43C5-981B-1AA4B73CCC26} = {3E4B908A-4F96-43C5-981B-1AA4B73CCC26}
 	EndProjectSection
@@ -205,6 +206,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BackTranslationHelper", "src\BackTranslationHelper\BackTranslationHelper.csproj", "{3E74CE98-6558-4AF0-BB0C-C7E436208B1B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureOpenAiExe", "src\EcTranslators\AzureOpenAi\AzureOpenAiExe\AzureOpenAiExe.csproj", "{4F6FF8AD-6BEB-4104-B123-7FA9C2DC0BBE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VertexAiExe", "src\EcTranslators\VertexAi\VertexAiExe\VertexAiExe.csproj", "{5E1021B4-61AE-4E96-8D5A-7CDF6D5F7982}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -636,6 +639,18 @@ Global
 		{4F6FF8AD-6BEB-4104-B123-7FA9C2DC0BBE}.Template|Win32.Build.0 = Debug|x86
 		{4F6FF8AD-6BEB-4104-B123-7FA9C2DC0BBE}.Template|x64.ActiveCfg = Debug|x64
 		{4F6FF8AD-6BEB-4104-B123-7FA9C2DC0BBE}.Template|x64.Build.0 = Debug|x64
+		{5E1021B4-61AE-4E96-8D5A-7CDF6D5F7982}.Debug|Win32.ActiveCfg = Debug|x86
+		{5E1021B4-61AE-4E96-8D5A-7CDF6D5F7982}.Debug|Win32.Build.0 = Debug|x86
+		{5E1021B4-61AE-4E96-8D5A-7CDF6D5F7982}.Debug|x64.ActiveCfg = Debug|x64
+		{5E1021B4-61AE-4E96-8D5A-7CDF6D5F7982}.Debug|x64.Build.0 = Debug|x64
+		{5E1021B4-61AE-4E96-8D5A-7CDF6D5F7982}.Release|Win32.ActiveCfg = Release|x86
+		{5E1021B4-61AE-4E96-8D5A-7CDF6D5F7982}.Release|Win32.Build.0 = Release|x86
+		{5E1021B4-61AE-4E96-8D5A-7CDF6D5F7982}.Release|x64.ActiveCfg = Release|x64
+		{5E1021B4-61AE-4E96-8D5A-7CDF6D5F7982}.Release|x64.Build.0 = Release|x64
+		{5E1021B4-61AE-4E96-8D5A-7CDF6D5F7982}.Template|Win32.ActiveCfg = Debug|Any CPU
+		{5E1021B4-61AE-4E96-8D5A-7CDF6D5F7982}.Template|Win32.Build.0 = Debug|Any CPU
+		{5E1021B4-61AE-4E96-8D5A-7CDF6D5F7982}.Template|x64.ActiveCfg = Debug|Any CPU
+		{5E1021B4-61AE-4E96-8D5A-7CDF6D5F7982}.Template|x64.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

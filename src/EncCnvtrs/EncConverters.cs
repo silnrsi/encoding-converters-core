@@ -89,7 +89,7 @@ namespace SilEncConverters40
         public const string strTypeSILDeepLTranslator    = "SIL.DeepLTranslator";
         public const string strTypeSILAzureOpenAiTranslator = "SIL.AzureOpenAI";
 		public const string strTypeSILNllbTranslator	= "SIL.NllbTranslator";
-
+		public const string strTypeSILVertexAiTranslator = "SIL.VertexAi";
 		public const string cstrTempConverterPrefix     = "Temporary Converter";
 
         // default values for XML file attributes

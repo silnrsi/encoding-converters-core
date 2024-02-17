@@ -29,8 +29,8 @@ namespace SilEncConverters40.EcTranslators.AzureOpenAI
 #else
 	[GuidAttribute("74EC9437-A9F1-44B3-BA70-5A8055E210D9")]
 #endif
-	public class AzureOpenAiEncConverter : ExeEncConverter
-    {
+	public class AzureOpenAiEncConverter : PromptExeTranslator
+	{
 		#region Member Variable Definitions
         protected string AiSystemInstructions;
 
@@ -95,14 +95,11 @@ namespace SilEncConverters40.EcTranslators.AzureOpenAI
         /// <summary>
         /// The class constructor. </summary>
         public AzureOpenAiEncConverter()
-            : base(
-            typeof(AzureOpenAiEncConverter).FullName,
-            ImplTypeSilAzureOpenAi,
-            ConvType.Unicode_to_Unicode,             // conversionType
-            EncConverters.strDefUnicodeEncoding,     // lhsEncodingID
-            EncConverters.strDefUnicodeEncoding,     // rhsEncodingID
-            (Int32)ProcessTypeFlags.Translation,     // lProcessType
-            "")
+            : base
+			(
+				typeof(AzureOpenAiEncConverter).FullName,
+				ImplTypeSilAzureOpenAi
+			)
         {
         }
 
@@ -215,9 +212,22 @@ namespace SilEncConverters40.EcTranslators.AzureOpenAI
                                     EncConverters.cstrCaption);
                 }
 
-                // The system prompt can't have double quotes in it, bkz those are used for separating the 4 command line parameters,
-                //    So convert them to single quotes, which should also work
-                return $"\"{azureOpenAiDeploymentName}\" \"{azureOpenAiEndpoint}\" \"{azureOpenAiKey}\" \"{AiSystemInstructions.Replace("\"", "'")}\"";
+				var args = new AzureOpenAiPromptExeTranslatorCommandLineArgs
+				{
+					DeploymentId = azureOpenAiDeploymentName,
+					EndpointId = azureOpenAiEndpoint,
+					SystemPrompt = AiSystemInstructions,
+					Credentials = azureOpenAiKey,
+					ExamplesInputString = ExamplesInputString,
+					ExamplesOutputString = ExamplesOutputString,
+				};
+
+				// The system prompt can't have double quotes in it, bkz those are used for separating the 4 command line parameters,
+				//    So convert them to single quotes, which should also work
+				// return $"\"{projectId}\" \"{locationId}\" \"{publisher}\" \"{modelId}\" \"{VertexAiSystemPrompt.Replace("\"", "'")}\" \"{GoogleCloudVertexAiSubscriptionKey}\"";
+				var tempFilespec = args.SaveToTempFile();
+				var arguments = $"\"{tempFilespec}\"";
+				return arguments;
             }
         }
 
@@ -238,7 +248,7 @@ namespace SilEncConverters40.EcTranslators.AzureOpenAI
 		#endregion Misc helpers
 
 		#region Abstract Base Class Overrides
-        protected override string   GetConfigTypeName
+		protected override string   GetConfigTypeName
         {
             get { return typeof(AzureOpenAiEncConverterConfig).AssemblyQualifiedName; }
         }

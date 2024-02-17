@@ -73,5 +73,23 @@
     <Setting Name="NllbProcessSentenceBySentence" Type="System.Boolean" Scope="Application">
       <Value Profile="(Default)">False</Value>
     </Setting>
+    <Setting Name="GoogleCloudVertexAiCredentials" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="GoogleCloudVertexAiCredentialsOverride" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="GoogleCloudVertexAiProjectId" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="GoogleCloudVertexAiLocationId" Type="System.String" Scope="User">
+      <Value Profile="(Default)">us-central1</Value>
+    </Setting>
+    <Setting Name="GoogleCloudVertexAiPublisher" Type="System.String" Scope="User">
+      <Value Profile="(Default)">google</Value>
+    </Setting>
+    <Setting Name="GoogleCloudVertexAiModelId" Type="System.String" Scope="User">
+      <Value Profile="(Default)">chat-bison</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

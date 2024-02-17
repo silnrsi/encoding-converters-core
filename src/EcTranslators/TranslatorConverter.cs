@@ -35,7 +35,7 @@ namespace SilEncConverters40.EcTranslators
 			ECNormalizeData.StringToByteStar(strOutput, lpOutBuffer, rnOutLen, false);
 		}
 
-		internal static string LogExceptionMessage(string className, Exception ex)
+		public static string LogExceptionMessage(string className, Exception ex)
 		{
 			var message = ex.Message;
 			var msg = "Error occurred: " + message;
