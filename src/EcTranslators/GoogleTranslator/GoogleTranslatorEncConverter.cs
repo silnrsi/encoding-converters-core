@@ -38,8 +38,6 @@ namespace SilEncConverters40.EcTranslators.GoogleTranslator
 		// by putting the google translate credentials in a settings file, users can get their own credentials to use, 
 		//  and enter it thru the UI if our key runs out of free stuff
 		// see https://console.cloud.google.com/apis/credentials
-
-
 		private static TranslationClient _translationClient;
 		public static TranslationClient TranslateClient
 		{
@@ -67,7 +65,8 @@ namespace SilEncConverters40.EcTranslators.GoogleTranslator
 			set
 			{
 				// the value is already encrypted by the time it gets here
-				Properties.Settings.Default.GoogleTranslatorCredentialsOverride = value;
+				var credentials = String.IsNullOrEmpty(value) ? value : EncryptionClass.Encrypt(value);
+				Properties.Settings.Default.GoogleTranslatorCredentialsOverride = credentials;
 			}
 		}
 
