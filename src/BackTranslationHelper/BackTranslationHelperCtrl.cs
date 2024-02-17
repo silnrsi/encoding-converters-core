@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Drawing;
 using System.Linq;
+using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -18,7 +20,13 @@ namespace BackTranslationHelper
 
         // I could make the EcTranslator project a dependency to this project and use NllbEncConverter.CstrDisplayName instead, but...
         private const string NllbEncConverterDisplayName = "NLLB Translator";
-        private const string NllbEncConverterSplitSentencesPrefix = @"\SplitSentences ";
+
+		private readonly List<string> PromptTranslatorConfiguratorDisplayNames = new List<string>
+		{
+			"Azure OpenAI Translator", "Vertex AI Translator"
+		};
+
+		private const string NllbEncConverterSplitSentencesPrefix = @"\SplitSentences ";
 
 
         #region Member variables
@@ -71,6 +79,7 @@ namespace BackTranslationHelper
         {
             this.hideCurrentTargetTextToolStripMenuItem.Visible = (_model == null) || (_model.DisplayExistingTargetTranslation);
             this.SentenceSplittingMenuItem.Enabled = TheTranslators.Any(t => t.Configurator?.ConfiguratorDisplayName == NllbEncConverterDisplayName);
+			this.AddExampleMenuItem.Enabled = this.PurgeExamplesMenuItem.Enabled = PromptTranslators.Any();
         }
 
         private void TargetBackTranslation_MouseWheel(object sender, MouseEventArgs e)
@@ -168,13 +177,15 @@ namespace BackTranslationHelper
             var labelsPossibleTargetTranslations = tableLayoutPanel.Controls.OfType<Label>().Where(l => l.Name.Contains("labelForPossibleTargetTranslation")).ToList();
             var textBoxesPossibleTargetTranslations = tableLayoutPanel.Controls.OfType<TextBox>().Where(l => l.Name.Contains("textBoxPossibleTargetTranslation")).ToList();
             var buttonsFillTargetOption = tableLayoutPanel.Controls.OfType<Button>().Where(b => b.Name.Contains("buttonFillTargetTextOption")).ToList();
+			if (!labelsPossibleTargetTranslations.Any() || !textBoxesPossibleTargetTranslations.Any() || !buttonsFillTargetOption.Any())
+				return; // if we're closing, there might be any and it would be bad to continue
 
-            // if there's only one, then we don't need to display the 'possible' translations to start with.
-            // NB: but only if we're not displaying any pre-existing target translations. If we are (i.e. Paratext),
-            //  then we need to display even the one as an option, bkz the editable textbox will contain the
-            //  existing translation, which if it's not correct, we want to be able to fill it from the converted
-            //  value (which will be in the 1st targetoption box)
-            var i = 0;
+			// if there's only one, then we don't need to display the 'possible' translations to start with.
+			// NB: but only if we're not displaying any pre-existing target translations. If we are (i.e. Paratext),
+			//  then we need to display even the one as an option, bkz the editable textbox will contain the
+			//  existing translation, which if it's not correct, we want to be able to fill it from the converted
+			//  value (which will be in the 1st targetoption box)
+			var i = 0;
             if ((numOfTranslators == 1) && !displayExistingTargetTranslation && showCurrentTargetText)
             {
                 // hide them all
@@ -688,19 +699,21 @@ namespace BackTranslationHelper
 #endregion
 
         private void ButtonWriteTextToTarget_Click(object sender, System.EventArgs e)
-        {
-            BackTranslationHelperDataSource.ButtonPressed(ButtonPressed.WriteToTarget);
-            BackTranslationHelperDataSource.Log($"changing target text from '{textBoxTargetTextExisting.Text}' to '{textBoxTargetBackTranslation.Text}'");
-            if (!BackTranslationHelperDataSource.WriteToTarget(textBoxTargetBackTranslation.Text))
-            {
-                SetStatusBox($"We had to reload the text. Click the button again.");
-                if (!BackTranslationHelperDataSource.WriteToTarget(textBoxTargetBackTranslation.Text))
-                    return;
-            }
-            IsModified = false;
-        }
+		{
+			BackTranslationHelperDataSource.ButtonPressed(ButtonPressed.WriteToTarget);
+			BackTranslationHelperDataSource.Log($"changing target text from '{textBoxTargetTextExisting.Text}' to '{textBoxTargetBackTranslation.Text}'");
+			if (!BackTranslationHelperDataSource.WriteToTarget(textBoxTargetBackTranslation.Text))
+			{
+				SetStatusBox($"We had to reload the text. Click the button again.");
+				if (!BackTranslationHelperDataSource.WriteToTarget(textBoxTargetBackTranslation.Text))
+					return;
+			}
+			IsModified = false;
 
-        private void ButtonNextSection_Click(object sender, System.EventArgs e)
+			CheckCapturePropmptTranslatorExamples();
+		}
+
+		private void ButtonNextSection_Click(object sender, System.EventArgs e)
         {
             if (BackTranslationHelperDataSource == null)
             {
@@ -744,7 +757,9 @@ namespace BackTranslationHelper
             }
 
             IsModified = false;
-            BackTranslationHelperDataSource.ButtonPressed(ButtonPressed.MoveToNext);
+			CheckCapturePropmptTranslatorExamples();
+
+			BackTranslationHelperDataSource.ButtonPressed(ButtonPressed.MoveToNext);
             BackTranslationHelperDataSource.MoveToNext();
         }
 
@@ -1160,10 +1175,10 @@ namespace BackTranslationHelper
             {
                 var nllbTranslatorNames = TheTranslators.Where(t => t.Configurator?.ConfiguratorDisplayName == NllbEncConverterDisplayName).Select(t => t.Name).ToHashSet();
                 targetsToClear = targetsToClear.Where(tp => nllbTranslatorNames.Contains(tp.TranslatorName))
-                                               .ToList();
+				.ToList();
             }
 
-            targetsToClear.Clear();
+			_model.TargetsPossible.RemoveAll(tp => targetsToClear.Contains(tp));
 
             // also remove any existing translations for the current sourceData, so it knows it needs to retranslate
             var sourceToTranslate = _model.SourceToTranslate;
@@ -1374,5 +1389,82 @@ namespace BackTranslationHelper
             Util.DebugWriteLine(className, msg);
             return msg;
         }
-    }
+
+		private void CheckCapturePropmptTranslatorExamples()
+		{
+			// if the user had the ctrl button pressed, then write the source and target to as examples to any EncConverters that derive
+			//	from PromptExeTranslator
+			if ((ModifierKeys & Keys.Control) != Keys.Control)
+				return;
+
+			AddExampleMenuItem_Click(null, null);
+		}
+
+		private void AddExampleMenuItem_Click(object sender, EventArgs e)
+		{
+			var inputText = textBoxSourceData.Text;
+			var outputText = textBoxTargetBackTranslation.Text;
+			var chatPromptTranslatorNames = PromptTranslators.Select(t => t.Configurator?.ConfiguratorDisplayName).ToList();
+			var dlg = new ExampleEditorDialog(inputText, textBoxSourceData.Font, outputText, textBoxTargetBackTranslation.Font, chatPromptTranslatorNames);
+			if (DialogResult.OK == dlg.ShowDialog())
+			{
+				SendExampleToPromptTranslators(dlg.ExampleInput, dlg.ExampleOutput, dlg.TranslatorNames);
+			}
+		}
+
+		private List<IEncConverter> PromptTranslators
+		{
+			get
+			{
+				return TheTranslators.Where(t => PromptTranslatorConfiguratorDisplayNames.Contains(t.Configurator?.ConfiguratorDisplayName)).ToList();
+			}
+		}
+
+		private void SendExampleToPromptTranslators(string inputText, string outputText, List<string> translatorNamesToSendTo)
+		{
+			try
+			{
+				var translatorsToSendTo = PromptTranslators.Where(t =>
+				{
+					// no translatorNamesToSendTo means send to all (1) of them
+					return !translatorNamesToSendTo.Any() || translatorNamesToSendTo.Contains(t.Configurator?.ConfiguratorDisplayName);
+				});
+
+				foreach (var translator in translatorsToSendTo)
+				{
+					var type = translator.GetType();
+					var methodInfo = type.GetMethod("AddExample");
+					if (methodInfo == null)
+						continue;
+
+					var parameters = new object[] { inputText, outputText };
+					methodInfo.Invoke(translator, parameters);
+				}
+			}
+			catch (Exception ex)
+			{
+				LogExceptionMessage("SendExampleToPromptTranslators", ex);
+			}
+		}
+
+		private void PurgeExamplesMenuItem_Click(object sender, EventArgs e)
+		{
+			try
+			{
+				foreach (var translator in PromptTranslators)
+				{
+					var type = translator.GetType();
+					var methodInfo = type.GetMethod("PurgeExamples");
+					if (methodInfo == null)
+						continue;
+
+					methodInfo.Invoke(translator, null);
+				}
+			}
+			catch (Exception ex)
+			{
+				LogExceptionMessage("PurgeExamplesMenuItem_Click", ex);
+			}
+		}
+	}
 }

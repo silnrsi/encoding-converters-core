@@ -32,6 +32,7 @@ namespace BackTranslationHelper
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(BackTranslationHelperCtrl));
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.removeEncConverterToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -46,6 +47,9 @@ namespace BackTranslationHelper
             this.hideColumn1LabelsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.hideCurrentTargetTextToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.hideSourceTextToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.SentenceSplittingMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.AddExampleMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.PurgeExamplesMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripTextBoxStatus = new System.Windows.Forms.ToolStripTextBox();
             this.tableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
             this.labelForSourceData = new System.Windows.Forms.Label();
@@ -82,7 +86,6 @@ namespace BackTranslationHelper
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.buttonPinToTop = new System.Windows.Forms.Button();
             this.fontDialog = new System.Windows.Forms.FontDialog();
-            this.SentenceSplittingMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip.SuspendLayout();
             this.tableLayoutPanel.SuspendLayout();
             this.substitutionContextMenu.SuspendLayout();
@@ -111,7 +114,9 @@ namespace BackTranslationHelper
             this.hideColumn1LabelsToolStripMenuItem,
             this.hideCurrentTargetTextToolStripMenuItem,
             this.hideSourceTextToolStripMenuItem,
-            this.SentenceSplittingMenuItem});
+            this.SentenceSplittingMenuItem,
+            this.AddExampleMenuItem,
+            this.PurgeExamplesMenuItem});
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
             this.settingsToolStripMenuItem.Size = new System.Drawing.Size(61, 23);
             this.settingsToolStripMenuItem.Text = "&Settings";
@@ -224,6 +229,32 @@ namespace BackTranslationHelper
             this.hideSourceTextToolStripMenuItem.ToolTipText = "Check this menu item to hide the Source Text row (e.g. to get more screen real es" +
     "tate)";
             this.hideSourceTextToolStripMenuItem.CheckStateChanged += new System.EventHandler(this.HideSourceTextToolStripMenuItem_CheckStateChanged);
+            // 
+            // SentenceSplittingMenuItem
+            // 
+            this.SentenceSplittingMenuItem.CheckOnClick = true;
+            this.SentenceSplittingMenuItem.Name = "SentenceSplittingMenuItem";
+            this.SentenceSplittingMenuItem.Size = new System.Drawing.Size(341, 22);
+            this.SentenceSplittingMenuItem.Text = "Sentence S&plitting";
+            this.SentenceSplittingMenuItem.ToolTipText = resources.GetString("SentenceSplittingMenuItem.ToolTipText");
+            this.SentenceSplittingMenuItem.CheckStateChanged += new System.EventHandler(this.SplitSentencesMenuItem_CheckStateChanged);
+            // 
+            // AddExampleMenuItem
+            // 
+            this.AddExampleMenuItem.Name = "AddExampleMenuItem";
+            this.AddExampleMenuItem.Size = new System.Drawing.Size(341, 22);
+            this.AddExampleMenuItem.Text = "Add &Example";
+            this.AddExampleMenuItem.ToolTipText = resources.GetString("AddExampleMenuItem.ToolTipText");
+            this.AddExampleMenuItem.Click += new System.EventHandler(this.AddExampleMenuItem_Click);
+            // 
+            // PurgeExamplesMenuItem
+            // 
+            this.PurgeExamplesMenuItem.Name = "PurgeExamplesMenuItem";
+            this.PurgeExamplesMenuItem.Size = new System.Drawing.Size(341, 22);
+            this.PurgeExamplesMenuItem.Text = "&Purge Examples/Reset Prompt Based Translators";
+            this.PurgeExamplesMenuItem.ToolTipText = "For Chat Prompt-based Translators (e.g. Vertex AI or Azure Open AI) click here to" +
+    " purge any collected examples or to reset the converter";
+            this.PurgeExamplesMenuItem.Click += new System.EventHandler(this.PurgeExamplesMenuItem_Click);
             // 
             // toolStripTextBoxStatus
             // 
@@ -683,17 +714,6 @@ namespace BackTranslationHelper
             this.fontDialog.Font = new System.Drawing.Font("Arial Unicode MS", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.fontDialog.ShowColor = true;
             // 
-            // sentenceSplittingToolStripMenuItem
-            // 
-            this.SentenceSplittingMenuItem.CheckOnClick = true;
-            this.SentenceSplittingMenuItem.Name = "sentenceSplittingToolStripMenuItem";
-            this.SentenceSplittingMenuItem.Size = new System.Drawing.Size(341, 22);
-            this.SentenceSplittingMenuItem.Text = "Sentence S&plitting";
-            this.SentenceSplittingMenuItem.ToolTipText = "Check this menu to enable sentence splitting for the NLLB Translator (Check to tu" +
-    "rn on processing the text in smaller sentence chunks. Use if the NLLB Translator " +
-    "leaves parts of the translation out because the text to translate is too long)";
-            this.SentenceSplittingMenuItem.CheckStateChanged += new System.EventHandler(this.SplitSentencesMenuItem_CheckStateChanged);
-            // 
             // BackTranslationHelperCtrl
             // 
             this.AutoSize = true;
@@ -766,5 +786,7 @@ namespace BackTranslationHelper
         private System.Windows.Forms.Label labelForPossibleTargetTranslation4;
         private System.Windows.Forms.ContextMenu contextMenuHideDefault;
         public System.Windows.Forms.ToolStripMenuItem SentenceSplittingMenuItem;
-    }
+		private System.Windows.Forms.ToolStripMenuItem AddExampleMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem PurgeExamplesMenuItem;
+	}
 }

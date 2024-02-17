@@ -103,6 +103,12 @@
       <DependentUpon>BackTranslationHelperCtrl.cs</DependentUpon>
     </Compile>
     <Compile Include="BackTranslationHelperModel.cs" />
+    <Compile Include="ExampleEditorDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ExampleEditorDialog.Designer.cs">
+      <DependentUpon>ExampleEditorDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="FindReplaceHelper.cs" />
     <Compile Include="IBackTranslationHelperDataSource.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -116,6 +122,9 @@
     <Compile Include="TranslatorListForm.Designer.cs">
       <DependentUpon>TranslatorListForm.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="ExampleEditorDialog.resx">
+      <DependentUpon>ExampleEditorDialog.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="TranslatorListForm.resx">
       <DependentUpon>TranslatorListForm.cs</DependentUpon>
     </EmbeddedResource>

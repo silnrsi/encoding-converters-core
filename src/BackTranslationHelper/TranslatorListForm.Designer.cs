@@ -43,9 +43,9 @@ namespace BackTranslationHelper
             this.tableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
             this.buttonMoveTranslatorUp = new System.Windows.Forms.Button();
             this.buttonMoveTranslatorDown = new System.Windows.Forms.Button();
+            this.buttonEditSelected = new System.Windows.Forms.Button();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.timerTooltip = new System.Windows.Forms.Timer(this.components);
-            this.buttonEditSelected = new System.Windows.Forms.Button();
             this.tableLayoutPanel.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -152,11 +152,6 @@ namespace BackTranslationHelper
             this.buttonMoveTranslatorDown.UseVisualStyleBackColor = true;
             this.buttonMoveTranslatorDown.Click += new System.EventHandler(this.buttonMoveTranslatorDown_Click);
             // 
-            // timerTooltip
-            // 
-            this.timerTooltip.Interval = 500;
-            this.timerTooltip.Tick += new System.EventHandler(this.timerTooltip_Tick);
-            // 
             // buttonEditSelected
             // 
             this.buttonEditSelected.Anchor = System.Windows.Forms.AnchorStyles.Right;
@@ -167,6 +162,11 @@ namespace BackTranslationHelper
             this.buttonEditSelected.Text = "&Edit";
             this.toolTip.SetToolTip(this.buttonEditSelected, "Click to edit the selected Translator/EncConverter");
             this.buttonEditSelected.Click += new System.EventHandler(this.buttonEditSelected_Click);
+            // 
+            // timerTooltip
+            // 
+            this.timerTooltip.Interval = 500;
+            this.timerTooltip.Tick += new System.EventHandler(this.timerTooltip_Tick);
             // 
             // TranslatorListForm
             // 
