@@ -166,6 +166,8 @@
     <Content Include="html\BackTranslationHelperHtmlPage.html" />
     <Content Include="html\BackTranslationHelperJavaScriptFunctions.js" />
     <Content Include="html\jquery-3.6.0.min.js" />
+    <None Include="Resources\Play.bmp" />
+    <None Include="Resources\Pause.bmp" />
     <None Include="Resources\FillUpHS.png" />
     <None Include="Resources\pinup.bmp" />
     <None Include="Resources\pindown.bmp" />

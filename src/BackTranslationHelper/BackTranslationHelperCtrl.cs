@@ -4,6 +4,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Reflection;
@@ -37,6 +38,7 @@ namespace BackTranslationHelper
         public DirectableEncConverter TheFindReplaceConverter;
         public BackTranslationHelperModel _model;
         public bool IsModified = false;
+		public bool IsPaused = false;	// if the client form wants to stop the translations (e.g. Paratext when checking in different verses and the user doesn't want each one translated)
 
         /// <summary>
         /// keep track of some recently translated portions, so we can avoid calling to Bing again for the same input data
@@ -744,9 +746,13 @@ namespace BackTranslationHelper
                 }
             }
 
-            // removed the check for IsModified, bkz if the user clicks 'Next', it means write. If they meant to
-            //    not write it, they'd click 'Skip'.
-            BackTranslationHelperDataSource.Log($"change target text from '{existingTargetText}' to '{newTargetText}'");
+			// if the user clicks next, then they probably mean to not have it be 'Paused'
+			if (IsPaused)
+				SetPausedAndImage(false);
+
+			// removed the check for IsModified, bkz if the user clicks 'Next', it means write. If they meant to
+			//    not write it, they'd click 'Skip'.
+			BackTranslationHelperDataSource.Log($"change target text from '{existingTargetText}' to '{newTargetText}'");
             if (!BackTranslationHelperDataSource.WriteToTarget(newTargetText))
             {
                 // assuming that before returning false, the caller updated the data,
@@ -756,7 +762,7 @@ namespace BackTranslationHelper
                     return;
             }
 
-            IsModified = false;
+			IsModified = false;
 			CheckCapturePropmptTranslatorExamples();
 
 			BackTranslationHelperDataSource.ButtonPressed(ButtonPressed.MoveToNext);
@@ -1465,6 +1471,31 @@ namespace BackTranslationHelper
 			{
 				LogExceptionMessage("PurgeExamplesMenuItem_Click", ex);
 			}
+		}
+
+		private void ButtonPauseUpdating_Click(object sender, EventArgs e)
+		{
+			SetPausedAndImage(!IsPaused);
+
+			// if the user takes off the pause, then reload the data (which might retranslate if we don't already have it)
+			if (!IsPaused)
+				Reload();
+		}
+
+		private void SetPausedAndImage(bool value)
+		{
+			Debug.WriteLine($"SetPausedAndImage: curr value: {IsPaused}, new value: {value}");
+			IsPaused = value;
+			InvokeIfRequired(buttonPauseUpdating, () =>
+			{
+				Debug.WriteLine($"SetPausedAndImage: before buttonPauseUpdating.Image: {buttonPauseUpdating.Image}");
+
+				buttonPauseUpdating.Image = IsPaused
+											? global::BackTranslationHelper.Properties.Resources.Play
+											: global::BackTranslationHelper.Properties.Resources.Pause;
+
+				Debug.WriteLine($"SetPausedAndImage: after buttonPauseUpdating.Image: {buttonPauseUpdating.Image}");
+			});
 		}
 	}
 }
