@@ -358,11 +358,12 @@
                           Source="..\..\output\Win32\release\Google.Apis.Translate.v2.dll"/>
                 </Component>
 
+				<!-- These might be obsolete after the latest upgrade
                 <Component Id="Google.Apis.Auth.PlatformServices.dll" Guid="{0794425D-F123-49CA-A844-B3A86A793B0C}">
                     <File Id="Google.Apis.Auth.PlatformServices.dll" Name="Google.Apis.Auth.PlatformServices.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="Google.Apis.Auth.PlatformServices.dll" AssemblyApplication="Google.Apis.Auth.PlatformServices.dll"
                           Source="..\..\output\Win32\release\Google.Apis.Auth.PlatformServices.dll"/>
                 </Component>
-
+-->
                 <Component Id="Google.Apis.PlatformServices.dll" Guid="{D9BB433F-6324-4169-B5BE-B778861C2F71}">
                     <File Id="Google.Apis.PlatformServices.dll" Name="Google.Apis.PlatformServices.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="Google.Apis.PlatformServices.dll" AssemblyApplication="Google.Apis.PlatformServices.dll"
                           Source="..\..\output\Win32\release\Google.Apis.PlatformServices.dll"/>
@@ -373,7 +374,7 @@
                           Source="..\..\output\Win32\release\Google.Apis.Auth.dll"/>
                 </Component>
 
-                <Component Id="Google.Apis.dll" Guid="{F70841B8-D3A2-430C-9B38-89ACB291D0A6}">
+				<Component Id="Google.Apis.dll" Guid="{F70841B8-D3A2-430C-9B38-89ACB291D0A6}">
                     <File Id="Google.Apis.dll" Name="Google.Apis.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="Google.Apis.dll" AssemblyApplication="Google.Apis.dll"
                           Source="..\..\output\Win32\release\Google.Apis.dll"/>
                 </Component>
@@ -490,7 +491,7 @@
 					<File Id="VertexAiExe.exe.config" Name="VertexAiExe.exe.config" Vital="yes" KeyPath="yes" Source="..\..\output\Win32\release\VertexAiExe.exe.config" />
 				</Component>
 
-                <Directory Id="EcTranslatorsECFolder" Name="EC">
+				<Directory Id="EcTranslatorsECFolder" Name="EC">
                     <Directory Id="EcTranslatorsPluginsFolder" Name="Plugins">
                         <Component Id="Translators4.0.0.0PluginDetails.xml" Guid="{0EA6F96A-F273-4254-8367-20C87BA6663B}">
                             <File Id="Translators4.0.0.0PluginDetails.xml" Name="Translators 4.0.0.0 Plugin Details.xml" KeyPath="yes" Source="..\..\redist\EC\Plugins\Translators 4.0.0.0 Plugin Details.xml"/>

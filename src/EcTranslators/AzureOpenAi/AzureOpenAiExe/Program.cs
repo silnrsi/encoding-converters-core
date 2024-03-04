@@ -11,7 +11,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using Newtonsoft.Json;
-using SilEncConverters40.EcTranslators.VertexAi;
 using System.Security.Policy;
 
 namespace SilEncConverters40.EcTranslators.AzureOpenAI.AzureOpenAiExe

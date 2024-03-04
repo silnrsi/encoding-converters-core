@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -110,9 +110,7 @@
     <Compile Include="Py3ScriptAutoConfigDialog.Designer.cs">
       <DependentUpon>Py3ScriptAutoConfigDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="PyScriptAutoConfigDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="PyScriptAutoConfigDialog.cs" />
     <Compile Include="Py3ScriptEncConverter.cs" />
     <Compile Include="PyScriptAutoConfigDialog.Designer.cs">
       <DependentUpon>PyScriptAutoConfigDialog.cs</DependentUpon>
