@@ -358,6 +358,7 @@
                     <File Id="Google.Apis.Translate.v2.dll" Name="Google.Apis.Translate.v2.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="Google.Apis.Translate.v2.dll" AssemblyApplication="Google.Apis.Translate.v2.dll"
                           Source="..\..\output\x64\release\Google.Apis.Translate.v2.dll"/>
                 </Component>
+				
 <!-- These might be obsolete after the latest upgrade
                 <Component Id="Google.Apis.Auth.PlatformServices.dll" Guid="{0794425D-F123-49CA-A844-B3A86A793B0C}">
                     <File Id="Google.Apis.Auth.PlatformServices.dll" Name="Google.Apis.Auth.PlatformServices.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="Google.Apis.Auth.PlatformServices.dll" AssemblyApplication="Google.Apis.Auth.PlatformServices.dll"

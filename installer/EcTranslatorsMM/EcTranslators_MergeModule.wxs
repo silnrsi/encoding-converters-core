@@ -363,12 +363,13 @@
                     <File Id="Google.Apis.Auth.PlatformServices.dll" Name="Google.Apis.Auth.PlatformServices.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="Google.Apis.Auth.PlatformServices.dll" AssemblyApplication="Google.Apis.Auth.PlatformServices.dll"
                           Source="..\..\output\Win32\release\Google.Apis.Auth.PlatformServices.dll"/>
                 </Component>
--->
+
                 <Component Id="Google.Apis.PlatformServices.dll" Guid="{D9BB433F-6324-4169-B5BE-B778861C2F71}">
                     <File Id="Google.Apis.PlatformServices.dll" Name="Google.Apis.PlatformServices.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="Google.Apis.PlatformServices.dll" AssemblyApplication="Google.Apis.PlatformServices.dll"
                           Source="..\..\output\Win32\release\Google.Apis.PlatformServices.dll"/>
                 </Component>
-
+				-->
+				
                 <Component Id="Google.Apis.Auth.dll" Guid="{BDBCAE05-1B69-44AE-827B-16F6BF91ABB4}">
                     <File Id="Google.Apis.Auth.dll" Name="Google.Apis.Auth.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="Google.Apis.Auth.dll" AssemblyApplication="Google.Apis.Auth.dll"
                           Source="..\..\output\Win32\release\Google.Apis.Auth.dll"/>
