@@ -416,80 +416,80 @@
 
 				<Component Id="Google.Protobuf.dll" Guid="{CFC69E99-71C7-4D6F-B522-98E41314558D}">
 					<File Id="Google.Protobuf.dll" Name="Google.Protobuf.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="Google.Protobuf.dll" AssemblyApplication="Google.Protobuf.dll"
-                          Source="..\..\output\Win32\release\Google.Protobuf.dll"/>
+                          Source="..\..\output\x64\release\Google.Protobuf.dll"/>
 				</Component>
 
 				<Component Id="Google.Api.Gax.Grpc.dll" Guid="{51A2A1F3-D183-474B-9DB0-6A6DA916F07C}">
 					<File Id="Google.Api.Gax.Grpc.dll" Name="Google.Api.Gax.Grpc.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="Google.Api.Gax.Grpc.dll" AssemblyApplication="Google.Api.Gax.Grpc.dll"
-                          Source="..\..\output\Win32\release\Google.Api.Gax.Grpc.dll"/>
+                          Source="..\..\output\x64\release\Google.Api.Gax.Grpc.dll"/>
 				</Component>
 
 				<Component Id="Google.Api.CommonProtos.dll" Guid="{6F6A6D33-3828-4958-B821-EBD97F23BEA9}">
 					<File Id="Google.Api.CommonProtos.dll" Name="Google.Api.CommonProtos.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="Google.Api.CommonProtos.dll" AssemblyApplication="Google.Api.CommonProtos.dll"
-                          Source="..\..\output\Win32\release\Google.Api.CommonProtos.dll"/>
+                          Source="..\..\output\x64\release\Google.Api.CommonProtos.dll"/>
 				</Component>
 
 				<Component Id="Google.Cloud.AIPlatform.V1.dll" Guid="{6DA5E602-8001-4056-A4C1-F4FFB16A4F86}">
 					<File Id="Google.Cloud.AIPlatform.V1.dll" Name="Google.Cloud.AIPlatform.V1.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="Google.Cloud.AIPlatform.V1.dll" AssemblyApplication="Google.Cloud.AIPlatform.V1.dll"
-                          Source="..\..\output\Win32\release\Google.Cloud.AIPlatform.V1.dll"/>
+                          Source="..\..\output\x64\release\Google.Cloud.AIPlatform.V1.dll"/>
 				</Component>
 
 				<Component Id="Google.Cloud.Iam.V1.dll" Guid="{22B0E41D-BF86-4CB8-A67B-74A903D75B9D}">
 					<File Id="Google.Cloud.Iam.V1.dll" Name="Google.Cloud.Iam.V1.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="Google.Cloud.Iam.V1.dll" AssemblyApplication="Google.Cloud.Iam.V1.dll"
-                          Source="..\..\output\Win32\release\Google.Cloud.Iam.V1.dll"/>
+                          Source="..\..\output\x64\release\Google.Cloud.Iam.V1.dll"/>
 				</Component>
 
 				<Component Id="Google.Cloud.Location.dll" Guid="{43057128-1334-44D7-BE6B-DE6608D72DFD}">
 					<File Id="Google.Cloud.Location.dll" Name="Google.Cloud.Location.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="Google.Cloud.Location.dll" AssemblyApplication="Google.Cloud.Location.dll"
-                          Source="..\..\output\Win32\release\Google.Cloud.Location.dll"/>
+                          Source="..\..\output\x64\release\Google.Cloud.Location.dll"/>
 				</Component>
 
 				<Component Id="Google.LongRunning.dll" Guid="{49279B06-D591-4739-95BE-51298E3AD05F}">
 					<File Id="Google.LongRunning.dll" Name="Google.LongRunning.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="Google.LongRunning.dll" AssemblyApplication="Google.LongRunning.dll"
-                          Source="..\..\output\Win32\release\Google.LongRunning.dll"/>
+                          Source="..\..\output\x64\release\Google.LongRunning.dll"/>
 				</Component>
 
 				<Component Id="Grpc.Auth.dll" Guid="{F642E512-EB63-4378-BF02-805D516BCC62}">
 					<File Id="Grpc.Auth.dll" Name="Grpc.Auth.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="Grpc.Auth.dll" AssemblyApplication="Grpc.Auth.dll"
-                          Source="..\..\output\Win32\release\Grpc.Auth.dll"/>
+                          Source="..\..\output\x64\release\Grpc.Auth.dll"/>
 				</Component>
 
 				<Component Id="Grpc.Core.Api.dll" Guid="{0B635548-EBA4-4243-AD25-9033046242B3}">
 					<File Id="Grpc.Core.Api.dll" Name="Grpc.Core.Api.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="Grpc.Core.Api.dll" AssemblyApplication="Grpc.Core.Api.dll"
-                          Source="..\..\output\Win32\release\Grpc.Core.Api.dll"/>
+                          Source="..\..\output\x64\release\Grpc.Core.Api.dll"/>
 				</Component>
 
 				<Component Id="Grpc.Core.dll" Guid="{401C37E4-9D14-4160-9172-F8B0FB69CAB8}">
 					<File Id="Grpc.Core.dll" Name="Grpc.Core.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="Grpc.Core.dll" AssemblyApplication="Grpc.Core.dll"
-                          Source="..\..\output\Win32\release\Grpc.Core.dll"/>
+                          Source="..\..\output\x64\release\Grpc.Core.dll"/>
 				</Component>
 
 				<Component Id="Grpc.Net.Client.dll" Guid="{33F20C3A-5C97-4919-B5C8-B5F8A7634316}">
 					<File Id="Grpc.Net.Client.dll" Name="Grpc.Net.Client.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="Grpc.Net.Client.dll" AssemblyApplication="Grpc.Net.Client.dll"
-                          Source="..\..\output\Win32\release\Grpc.Net.Client.dll"/>
+                          Source="..\..\output\x64\release\Grpc.Net.Client.dll"/>
 				</Component>
 
 				<Component Id="Grpc.Net.Common.dll" Guid="{63CF2FAE-0789-46A6-9051-240379993094}">
 					<File Id="Grpc.Net.Common.dll" Name="Grpc.Net.Common.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="Grpc.Net.Common.dll" AssemblyApplication="Grpc.Net.Common.dll"
-                          Source="..\..\output\Win32\release\Grpc.Net.Common.dll"/>
+                          Source="..\..\output\x64\release\Grpc.Net.Common.dll"/>
 				</Component>
 
 				<Component Id="grpc_csharp_ext.x64.dll" Guid="{70CC0116-FCF2-4CBC-8A27-ED34773E87CA}">
-					<File Id="grpc_csharp_ext.x64.dll" Name="grpc_csharp_ext.x64.dll" KeyPath="yes" Source="..\..\output\Win32\release\grpc_csharp_ext.x64.dll" />
+					<File Id="grpc_csharp_ext.x64.dll" Name="grpc_csharp_ext.x64.dll" KeyPath="yes" Source="..\..\output\x64\release\grpc_csharp_ext.x64.dll" />
 				</Component>
 
 				<!--don't ask... somehow they build Grpc.Core to require both of these (or maybe only this one) even in x64 apps-->
 				<Component Id="grpc_csharp_ext.x86.dll" Guid="{5BEF8809-6349-47FB-A31B-E2504D72EEC5}">
-					<File Id="grpc_csharp_ext.x86.dll" Name="grpc_csharp_ext.x86.dll" KeyPath="yes" Source="..\..\output\Win32\release\grpc_csharp_ext.x86.dll" />
+					<File Id="grpc_csharp_ext.x86.dll" Name="grpc_csharp_ext.x86.dll" KeyPath="yes" Source="..\..\output\x64\release\grpc_csharp_ext.x86.dll" />
 				</Component>
 
 				<Component Id="VertexAiExe.exe" Guid="{F33FF5C4-34ED-4B30-B932-FBED7136FD09}">
 					<File Id="VertexAiExe.exe" Name="VertexAiExe.exe" KeyPath="yes" Assembly=".net" AssemblyManifest="VertexAiExe.exe" AssemblyApplication="VertexAiExe.exe"
-                          Source="..\..\output\Win32\release\VertexAiExe.exe"/>
+                          Source="..\..\output\x64\release\VertexAiExe.exe"/>
 				</Component>
 
 				<Component Id="VertexAiExe.exe.config" Guid="{959E27FF-C4AD-48A8-A1D0-12699EABECC2}">
-					<File Id="VertexAiExe.exe.config" Name="VertexAiExe.exe.config" Vital="yes" KeyPath="yes" Source="..\..\output\Win32\release\VertexAiExe.exe.config" />
+					<File Id="VertexAiExe.exe.config" Name="VertexAiExe.exe.config" Vital="yes" KeyPath="yes" Source="..\..\output\x64\release\VertexAiExe.exe.config" />
 				</Component>
 
 				<Directory Id="EcTranslatorsECFolder" Name="EC">
