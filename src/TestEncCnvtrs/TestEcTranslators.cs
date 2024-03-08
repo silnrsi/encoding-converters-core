@@ -22,6 +22,12 @@ namespace TestEncCnvtrs
     [TestFixture]
     public class TestEcTranslators
     {
+        private const string AzureOpenAiKey = "f65d3...";
+        private const string AzureOpenAiDeploymentName = "gpt-4-translator-encconverter";
+        private const string AzureOpenAiEndpoint = "https://ai-silconvertersai857014728513.openai.azure.com/";
+
+        private const string VertexAiCredentials = @"H:\bright-coyote-381812-bc584cec007f.json";
+
         EncConverters m_encConverters;
         bool m_fWroteRepoFile;
         bool m_fSetRegistryValue;
@@ -200,78 +206,83 @@ namespace TestEncCnvtrs
             m_repoFile = null;
         }
 
-		private const string VertexAiConverterFriendlyName = "VertexAiTranslator";
+        private const string VertexAiConverterFriendlyName = "VertexAiTranslator";
 
-		[Test]
-//		[TestCase("Hindi;English;bright-coyote-381812;us-central1;google;chat-bison-32k;Translate from Hindi into English.", "यीशु ने यह भी कहा,", "Jesus also said,")]
-//		[TestCase(";;bright-coyote-381812;us-central1;google;chat-bison-32k;UseSystemPrompt: Translate from Hindi into English.", "परमेश्वर भेदभाव नहीं करता।", "God is impartial.")]
-//		[TestCase("Hindi;English;bright-coyote-381812;us-central1;google;chat-bison-32k;with a \"free translation\" style aimed at high school students", @"यीशु ने यह भी कहा,
+        [Test]
+//      [TestCase("Hindi;English;bright-coyote-381812;us-central1;google;chat-bison-32k;Translate from Hindi into English.", "यीशु ने यह भी कहा,", "Jesus also said,")]
+//      [TestCase(";;bright-coyote-381812;us-central1;google;chat-bison-32k;UseSystemPrompt: Translate from Hindi into English.", "परमेश्वर भेदभाव नहीं करता।", "God is impartial.")]
+//      [TestCase("Hindi;English;bright-coyote-381812;us-central1;google;chat-bison-32k;with a \"free translation\" style aimed at high school students", @"यीशु ने यह भी कहा,
 //परमे‍‍श्वर मेरा पिता है।", @"Jesus also said,
 //God is my Father.")]
-//		// For the NMT model, the model ID is general/nmt
-//		[TestCase("Hindi;English;bright-coyote-381812;us-central1;google;chat-bison;Translate from Hindi into English.", "यीशु ने यह भी कहा,", "Jesus also said,")]
-		// try gemini pro
-		[TestCase("Hindi;English;bright-coyote-381812;us-central1;google;chat-bison;Translate from Hindi into English.", "यीशु ने यह भी कहा,", "Jesus also said,")]
-		[TestCase("Hindi;English;bright-coyote-381812;us-central1;google;chat-bison;Translate from Hindi into English.", "परंतु वह चोगे को छोड़कर नंगा ही वहाँ से भाग गया। ", "However, leaving behind his clothes, he ran away naked from there.")]
-		public void TestVertexAiConverter(string converterSpec, string testInput, string testOutput)
-		{
-			m_encConverters.AddConversionMap(VertexAiConverterFriendlyName, converterSpec, ConvType.Unicode_to_Unicode,
-											 VertexAiEncConverter.ImplTypeSilVertexAi, "UNICODE", "UNICODE", ProcessTypeFlags.Translation);
+//      // For the NMT model, the model ID is general/nmt
+//      [TestCase("Hindi;English;bright-coyote-381812;us-central1;google;chat-bison;Translate from Hindi into English.", "यीशु ने यह भी कहा,", "Jesus also said,")]
+        // try gemini pro
+        [TestCase("Hindi;English;bright-coyote-381812;us-central1;google;chat-bison;Translate from Hindi into English.", "यीशु ने यह भी कहा,", "Jesus also said,")]
+        [TestCase("Hindi;English;bright-coyote-381812;us-central1;google;chat-bison;Translate from Hindi into English.", "परंतु वह चोगे को छोड़कर वहाँ से भाग गया। ", "But he fled from there, leaving behind his cloak.")]
+        public void TestVertexAiConverter(string converterSpec, string testInput, string testOutput)
+        {
+            Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", VertexAiCredentials);    // see C:\Users\pete_\source\repos\encoding-converters-core\src\EcTranslators\VertexAi\VertexAiExe\Program.cs
 
-			var theEc = m_encConverters[VertexAiConverterFriendlyName];
+            m_encConverters.AddConversionMap(VertexAiConverterFriendlyName, converterSpec, ConvType.Unicode_to_Unicode,
+                                             VertexAiEncConverter.ImplTypeSilVertexAi, "UNICODE", "UNICODE", ProcessTypeFlags.Translation);
 
-			// do a forward conversion
-			var strOutput = theEc.Convert(testInput);
-			Assert.AreEqual(testOutput, strOutput);
-		}
+            var theEc = m_encConverters[VertexAiConverterFriendlyName];
 
-		private const string PromptAiConverterFriendlyName = "PromptAiTranslator";	// either vertex or azure open ai, but system prompt-based transducer
+            // do a forward conversion
+            var strOutput = theEc.Convert(testInput);
+            Assert.AreEqual(testOutput, strOutput);
+        }
 
-		[Test]
-		[TestCase("Hindi;English;bright-coyote-381812;us-central1;google;chat-bison-32k;with a \"free translation\" style aimed at high school students",
-			VertexAiEncConverter.ImplTypeSilVertexAi,
-			@"सामर्थ अनुसार दान",
-			@"ability",
-			@"Donate according to your capability",
-			@"परंतु अपनी सामर्थ अनुसार ही दो",
-			@"capability")]
-		[TestCase("Hindi;English;with a \"free translation\" style aimed at high school students",
-			AzureOpenAiEncConverter.ImplTypeSilAzureOpenAi,
-			@"सामर्थ अनुसार दान",
-			@"capability",
-			@"Donate according to your ability",
-			@"परंतु अपनी सामर्थ अनुसार ही दो",
-			@"ability")]
-		public void TestPromptAiConverter_With_Examples(string converterSpec, string implName, string testInput1, string testOutput1Contains,
-														string updatedOutput1, string testInput2, string testOutput2Contains)
-		{
-			// normally, these values get to the program that calls the AzureOpenAI endpoint via command line parameters that
-			//    come from the exe's settings *.config file... but for tests, there isn't one, so, we can also send as env vars:
-			// BUT if you don't have a resource (and they're not easily available yet or free), then this test will fail anyway...
-			Environment.SetEnvironmentVariable(AzureOpenAiEncConverter.EnvVarNameEndPoint, "https://azure-openai-encconverter.openai.azure.com/");
-			Environment.SetEnvironmentVariable(AzureOpenAiEncConverter.EnvVarNameDeploymentName, "gpt-translator-encconverter");
-			Environment.SetEnvironmentVariable(AzureOpenAiEncConverter.EnvVarNameKey, "5bc68...");    // change the key to the real value or this test will fail
+        private const string PromptAiConverterFriendlyName = "PromptAiTranslator";  // either vertex or azure open ai, but system prompt-based transducer
 
-			m_encConverters.AddConversionMap(VertexAiConverterFriendlyName, converterSpec, ConvType.Unicode_to_Unicode,
-											 implName, "UNICODE", "UNICODE", ProcessTypeFlags.Translation);
+        // this test is likely to fail, bkz we're at the mercy of the translation resource, which is constantly evolving
+        //    So don't worry too much if it does... these are here bkz at one point they did work as expected.
+        [Test]
+        [TestCase("Hindi;English;bright-coyote-381812;us-central1;google;chat-bison-32k;with a \"free translation\" style aimed at high school students",
+            VertexAiEncConverter.ImplTypeSilVertexAi,
+            @"सामर्थ अनुसार दान",                                  // phrase to translate
+            @"ability",                                        // should contain... (at the mercy of the resource, though, so it might fail)
+            @"Donate according to your capability",            // give this as an example input
+            @"परंतु अपनी सामर्थ अनुसार ही दो",                        // ... and output (recommending 'capability' instead
+            @"capability")]                                    // now see if it has learned from our example
+        [TestCase("Hindi;English;with a \"free translation\" style aimed at high school students",
+            AzureOpenAiEncConverter.ImplTypeSilAzureOpenAi,
+            @"सामर्थ अनुसार दान",                                 // phrase to translate
+            @"ability",                                       // should contain... (at the mercy of the resource, though, so it might fail)
+            @"Donate according to your capability",           // give this as an example input
+            @"परंतु अपनी सामर्थ अनुसार ही दो",                       // ... and output (recommending 'capability' instead
+            @"capability")]                                   // now see if it has learned from our example
+        public void TestPromptAiConverter_With_Examples(string converterSpec, string implName, string testInput1, string testOutput1Contains,
+                                                        string updatedOutput1, string testInput2, string testOutput2Contains)
+        {
+            // normally, these values get to the program that calls the AzureOpenAI endpoint via command line parameters that
+            //    come from the exe's settings *.config file... but for tests, there isn't one, so, we can also send as env vars:
+            // BUT if you don't have a resource (and they're not easily available yet or free), then this test will fail anyway...
+            Environment.SetEnvironmentVariable(AzureOpenAiEncConverter.EnvVarNameEndPoint, AzureOpenAiEndpoint);
+            Environment.SetEnvironmentVariable(AzureOpenAiEncConverter.EnvVarNameDeploymentName, AzureOpenAiDeploymentName);
+            Environment.SetEnvironmentVariable(AzureOpenAiEncConverter.EnvVarNameKey, AzureOpenAiKey);    // change the key to the real value or this test will fail
+            Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", VertexAiCredentials);    // see C:\Users\pete_\source\repos\encoding-converters-core\src\EcTranslators\VertexAi\VertexAiExe\Program.cs
 
-			var theEc = m_encConverters[VertexAiConverterFriendlyName];
+            m_encConverters.AddConversionMap(VertexAiConverterFriendlyName, converterSpec, ConvType.Unicode_to_Unicode,
+                                             implName, "UNICODE", "UNICODE", ProcessTypeFlags.Translation);
 
-			// do a forward conversion
-			var strOutput = theEc.Convert(testInput1);
-			Assert.IsTrue(strOutput.Contains(testOutput1Contains));     // e.g. सामर्थ normally gets translated as 'ability' 
+            var theEc = m_encConverters[VertexAiConverterFriendlyName];
 
-			// to train it with examples, we have to call the AddExample method (but since we only have the interface pointer, use reflection)
-			var type = theEc.GetType();
-			var methodInfo = type.GetMethod("AddExample");              // train it on translating it as 'capability' (though, that's not more natural)
-			var parameters = new object[] { testInput1, updatedOutput1 };
-			methodInfo.Invoke(theEc, parameters);						// this will release the VertexAiExe, since that's the only way the args (including the example sentences) are sent
+            // do a forward conversion
+            var strOutput = theEc.Convert(testInput1);
+            Assert.IsTrue(strOutput.Contains(testOutput1Contains));     // e.g. सामर्थ normally gets translated as 'ability' 
 
-			strOutput = theEc.Convert(testInput2);
-			Assert.IsTrue(strOutput.Contains(testOutput2Contains));     // see if it learned to use 'capability' rather than 'ability'
-		}
+            // to train it with examples, we have to call the AddExample method (but since we only have the interface pointer, use reflection)
+            var type = theEc.GetType();
+            var methodInfo = type.GetMethod("AddExample");              // train it on translating it as 'capability' (though, that's not more natural)
+            var parameters = new object[] { testInput1, updatedOutput1 };
+            methodInfo.Invoke(theEc, parameters);                        // this will release the VertexAiExe, since that's the only way the args (including the example sentences) are sent
 
-		private const string NllbConverterFriendlyName = "NllbTranslator";
+            strOutput = theEc.Convert(testInput2);
+            Assert.IsTrue(strOutput.Contains(testOutput2Contains));     // see if it learned to use 'capability' rather than 'ability'
+        }
+
+        private const string NllbConverterFriendlyName = "NllbTranslator";
 
         /// <summary>
         /// To run this test, you need to go thru the instructions in have the $(SolutionDir)redist\Help\NLLB_Translate_Plug-in_About_box.htm
@@ -284,12 +295,12 @@ namespace TestEncCnvtrs
         /// <param name="testInput">The text to be translated</param>
         /// <param name="testOutput">The expected translation</param>
         [Test]
-		[TestCase(@"D:\NLLB\test;hin_Deva;eng_Latn",
-			@"फिर एक स्‍वर्गदूत ने मुझसे कहा, ""इस बात को लिख ले: वे धन्य हैं, जिनको मेमने के विवाह के भोज का निमन्‍त्रण है।
+        [TestCase(@"D:\NLLB\test;hin_Deva;eng_Latn",
+            @"फिर एक स्‍वर्गदूत ने मुझसे कहा, ""इस बात को लिख ले: वे धन्य हैं, जिनको मेमने के विवाह के भोज का निमन्‍त्रण है।
 यह परमेश्वर के सच्‍चे बोल हैं।",
-			@"Then an angel said to me, ""Write: Blessed are those who are invited to the wedding banquet of the Lamb"".
+            @"Then an angel said to me, ""Write: Blessed are those who are invited to the wedding banquet of the Lamb"".
 These are the true words of God.")]
-		[TestCase(@"D:\NLLB\nllb-600m;hin_Deva;eng_Latn;http://localhost:8000;N3RK/o+wYtvEFMVGtYsmROIyLr/+RWh1",
+        [TestCase(@"D:\NLLB\nllb-600m;hin_Deva;eng_Latn;http://localhost:8000;N3RK/o+wYtvEFMVGtYsmROIyLr/+RWh1",
             "वे जानते हैं कि परमेश्वर का अस्तित्व है और यह सब कुछ उनके लिए ही बनाया है। परंतु फिर भी न तो वे परमेश्वर का कोई सम्‍मान, और न ही तो उसका धन्यवाद करते हैं। इसलिए उनकी आँखें में पर्दा पड़ गया है, और परमेश्वर के विषय में उनका जो विचार है, वह गलत हो चुका है।",
             "They know that God exists and that everything was made for them. Yet they do not give glory to God or give him thanks. Their minds are blinded and their thoughts are in error.")]
         [TestCase(@"D:\NLLB\nllb-600m;hin_Deva;eng_Latn;http://localhost:8000;N3RK/o+wYtvEFMVGtYsmROIyLr/+RWh1",
@@ -297,10 +308,10 @@ These are the true words of God.")]
             "(The only resurrection will be the ones who died and judged at the beginning of the thousand years. This resurrection is called the First Resurrection. The rest of the dead God did not raise until the thousand years were over.)")]
         [TestCase(@"D:\NLLB\nllb-600m;hin_Deva;eng_Latn;http://localhost:8000;N3RK/o+wYtvEFMVGtYsmROIyLr/+RWh1",
             "केवल ये शहीद और न्याय करने वाले लोग हजार वर्षों वाले उस युग के आरंभ में पुनर्जीवित हो जाएँगे। इस बार जीवित होने को “पहला जीवित होना” कहते हैं। बाकि जो मरे हुए हैं, परमेश्वर उन सबको तब तक पुनर्जीवित नहीं करेगा, जब तक उस हजार वर्षों वाले युग का अंत नहीं होगा,",
-			"Only these martyrs and judges will be resurrected at the beginning of that millennial age. This time the resurrection is called the First Resurrection. The rest of the dead God did not raise until the thousand years were over.")]
+            "Only these martyrs and judges will be resurrected at the beginning of that millennial age. This time the resurrection is called the First Resurrection. The rest of the dead God did not raise until the thousand years were over.")]
         [TestCase(@"D:\NLLB\nllb-600m;hin_Deva;eng_Latn;http://localhost:8000;N3RK/o+wYtvEFMVGtYsmROIyLr/+RWh1",
             "बाकि जो मरे हुए हैं, परमेश्वर उन सबको तब तक पुनर्जीवित नहीं करेगा, जब तक उस हजार वर्षों वाले युग का अंत नहीं होगा,",
-            "The rest of the dead God did not raise until the thousand years were over.")]	// yes, NLLB changes the final ',' to a '.'
+            "The rest of the dead God did not raise until the thousand years were over.")]    // yes, NLLB changes the final ',' to a '.'
         public void TestNllbConverter(string converterSpec, string testInput, string testOutput)
         {
             m_encConverters.AddConversionMap(NllbConverterFriendlyName, converterSpec, ConvType.Unicode_to_Unicode,
@@ -331,16 +342,16 @@ These are the true words of God.")]
         [TestCase("Hindi;English;Translate from Hindi into English.", "यीशु ने यह भी कहा,", "Jesus also said this,")]
         [TestCase(";;UseSystemPrompt: Translate from Hindi into English.", "परमेश्वर भेदभाव नहीं करता।", "God does not discriminate.")]
         [TestCase("Hindi;English;with a \"free translation\" style aimed at high school students", @"यीशु ने यह भी कहा,
-परमे‍‍श्वर मेरा पिता है।", @"Jesus also said this,
+परमे‍‍श्वर मेरा पिता है।", @"Jesus also said,
 God is my father.")]
         public void TestAzureOpenAiConverter(string converterSpec, string testInput, string testOutput)
         {
             // normally, these values get to the program that calls the AzureOpenAI endpoint via command line parameters that
             //    come from the exe's settings *.config file... but for tests, there isn't one, so, we can also send as env vars:
             // BUT if you don't have a resource (and they're not easily available yet or free), then this test will fail anyway...
-            Environment.SetEnvironmentVariable(AzureOpenAiEncConverter.EnvVarNameEndPoint, "https://azure-openai-encconverter.openai.azure.com/");
-            Environment.SetEnvironmentVariable(AzureOpenAiEncConverter.EnvVarNameDeploymentName, "gpt-translator-encconverter");
-            Environment.SetEnvironmentVariable(AzureOpenAiEncConverter.EnvVarNameKey, "5bc68...");    // change the key to the real value or this test will fail
+            Environment.SetEnvironmentVariable(AzureOpenAiEncConverter.EnvVarNameEndPoint, AzureOpenAiEndpoint);
+            Environment.SetEnvironmentVariable(AzureOpenAiEncConverter.EnvVarNameDeploymentName, AzureOpenAiDeploymentName);
+            Environment.SetEnvironmentVariable(AzureOpenAiEncConverter.EnvVarNameKey, AzureOpenAiKey);    // change the key to the real value or this test will fail
 
             m_encConverters.AddConversionMap(AzureOpenAIConverterFriendlyName, converterSpec, ConvType.Unicode_to_Unicode,
                                              AzureOpenAiEncConverter.ImplTypeSilAzureOpenAi, "UNICODE", "UNICODE", ProcessTypeFlags.Translation);
@@ -366,8 +377,8 @@ God is my father.")]
         // [TestCase("TranslateWithTransliterate;;en;;Deva", "नहीं", "not")]    // can't transliterate from an language=en result
         // [TestCase("TranslateWithTransliterate;en;ar;;Arab", "God", "الله")] // you *can* do this, but there is no transliteration part of it (since the result is already in Arab script)
         [TestCase(ProcessTypeFlags.Transliteration, "Transliterate;hi;;Deva;Latn", "संसार", "sansar")]
-		// doesn't like short runs of text [TestCase(ProcessTypeFlags.Transliteration, "Transliterate;hi;;Latn;Deva", "sansar", "संसार")]
-		[TestCase(ProcessTypeFlags.Transliteration, "Transliterate;ar;;Arab;Latn", "الله", "alleh")]
+        // doesn't like short runs of text [TestCase(ProcessTypeFlags.Transliteration, "Transliterate;hi;;Latn;Deva", "sansar", "संसार")]
+        [TestCase(ProcessTypeFlags.Transliteration, "Transliterate;ar;;Arab;Latn", "الله", "alleh")]
         // doesn't like short runs of text [TestCase(ProcessTypeFlags.Transliteration, "Transliterate;ar;;Latn;Arab", "alleh", "الله")]
         // [TestCase("Transliterate;ar;;;Latn", "الله", "alleh")]        // this doesn't work, because with Transliterate, you must specify the fromScript
         [TestCase(ProcessTypeFlags.Translation, "DictionaryLookup;en;hi", "with", "साथ")]

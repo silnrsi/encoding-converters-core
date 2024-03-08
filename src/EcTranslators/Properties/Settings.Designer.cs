@@ -12,7 +12,7 @@ namespace SilEncConverters40.EcTranslators.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.8.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.5.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -241,6 +241,8 @@ namespace SilEncConverters40.EcTranslators.Properties {
   <string>in the Devanagari script</string>
   <string>using 'Yoda speak'</string>
   <string>UseSystemPrompt: Translate from Hindi into English.</string>
+  <string>UseSystemPrompt: You will be given one or more sentences in Khmer script. Your job is to transliterate them into the Latin script and return only the transliterated Latin result.</string>
+  <string>UseSystemPrompt: You will be given one or more sentences in Tibetan script. Your job is to transliterate them into the International Phonetic Alphabet (IPA) and return only the transliterated IPA result.</string>
 </ArrayOfString>")]
         public global::System.Collections.Specialized.StringCollection AzureOpenAiSystemPromptAdditions {
             get {
@@ -311,18 +313,6 @@ namespace SilEncConverters40.EcTranslators.Properties {
         public bool NllbProcessSentenceBySentence {
             get {
                 return ((bool)(this["NllbProcessSentenceBySentence"]));
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string GoogleCloudVertexAiCredentials {
-            get {
-                return ((string)(this["GoogleCloudVertexAiCredentials"]));
-            }
-            set {
-                this["GoogleCloudVertexAiCredentials"] = value;
             }
         }
         

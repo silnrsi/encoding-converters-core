@@ -53,6 +53,8 @@
   &lt;string&gt;in the Devanagari script&lt;/string&gt;
   &lt;string&gt;using 'Yoda speak'&lt;/string&gt;
   &lt;string&gt;UseSystemPrompt: Translate from Hindi into English.&lt;/string&gt;
+  &lt;string&gt;UseSystemPrompt: You will be given one or more sentences in Khmer script. Your job is to transliterate them into the Latin script and return only the transliterated Latin result.&lt;/string&gt;
+  &lt;string&gt;UseSystemPrompt: You will be given one or more sentences in Tibetan script. Your job is to transliterate them into the International Phonetic Alphabet (IPA) and return only the transliterated IPA result.&lt;/string&gt;
 &lt;/ArrayOfString&gt;</Value>
     </Setting>
     <Setting Name="NllbTranslatorKeyOverride" Type="System.String" Scope="User">
@@ -72,9 +74,6 @@
     </Setting>
     <Setting Name="NllbProcessSentenceBySentence" Type="System.Boolean" Scope="Application">
       <Value Profile="(Default)">False</Value>
-    </Setting>
-    <Setting Name="GoogleCloudVertexAiCredentials" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
     </Setting>
     <Setting Name="GoogleCloudVertexAiCredentialsOverride" Type="System.String" Scope="User">
       <Value Profile="(Default)" />

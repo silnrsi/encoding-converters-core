@@ -137,6 +137,7 @@ namespace SilEncConverters40.EcTranslators.AzureOpenAI
             var azureOpenAiResourceKey = AzureOpenAiKeyOverride;
             var azureOpenAiEndpoint = AzureOpenAiEndpoint;
             var azureOpenAiDeploymentName = AzureOpenAiDeploymentName;
+
             if (String.IsNullOrEmpty(azureOpenAiResourceKey) || String.IsNullOrEmpty(azureOpenAiEndpoint) || String.IsNullOrEmpty(azureOpenAiDeploymentName))
             {
                 MessageBox.Show(this, $"Click the '{buttonSetAzureOpenAiApiKey.Text}' button to enter your Azure Open AI Resource information", EncConverters.cstrCaption);
@@ -148,6 +149,7 @@ namespace SilEncConverters40.EcTranslators.AzureOpenAI
             {
                 Settings.Default.AzureOpenAiSystemPromptAdditions.Insert(0, additionToSystemPrompt);
                 Settings.Default.Save();
+                LoadComboBoxFromSettings(comboBoxSystemPromptAdditions, Settings.Default.AzureOpenAiSystemPromptAdditions);
             }
 
             var selectedFromLanguage = textBoxSourceLanguage.Text;

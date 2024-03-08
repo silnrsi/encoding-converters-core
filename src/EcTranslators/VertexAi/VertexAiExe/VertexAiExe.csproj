@@ -53,53 +53,53 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Google.Api.CommonProtos, Version=2.13.0.0, Culture=neutral, PublicKeyToken=3ec5ea7f18953e47, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\packages\Google.Api.CommonProtos.2.13.0\lib\net461\Google.Api.CommonProtos.dll</HintPath>
+    <Reference Include="Google.Api.CommonProtos, Version=2.14.0.0, Culture=neutral, PublicKeyToken=3ec5ea7f18953e47, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\Google.Api.CommonProtos.2.14.0\lib\net461\Google.Api.CommonProtos.dll</HintPath>
     </Reference>
-    <Reference Include="Google.Api.Gax, Version=4.4.0.0, Culture=neutral, PublicKeyToken=3ec5ea7f18953e47, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\packages\Google.Api.Gax.4.4.0\lib\net462\Google.Api.Gax.dll</HintPath>
+    <Reference Include="Google.Api.Gax, Version=4.6.0.0, Culture=neutral, PublicKeyToken=3ec5ea7f18953e47, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\Google.Api.Gax.4.6.0\lib\net462\Google.Api.Gax.dll</HintPath>
     </Reference>
-    <Reference Include="Google.Api.Gax.Grpc, Version=4.4.0.0, Culture=neutral, PublicKeyToken=3ec5ea7f18953e47, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\packages\Google.Api.Gax.Grpc.4.4.0\lib\net462\Google.Api.Gax.Grpc.dll</HintPath>
+    <Reference Include="Google.Api.Gax.Grpc, Version=4.6.0.0, Culture=neutral, PublicKeyToken=3ec5ea7f18953e47, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\Google.Api.Gax.Grpc.4.6.0\lib\net462\Google.Api.Gax.Grpc.dll</HintPath>
     </Reference>
-    <Reference Include="Google.Apis, Version=1.66.0.0, Culture=neutral, PublicKeyToken=4b01fa6e34db77ab, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\packages\Google.Apis.1.66.0\lib\net462\Google.Apis.dll</HintPath>
+    <Reference Include="Google.Apis, Version=1.67.0.0, Culture=neutral, PublicKeyToken=4b01fa6e34db77ab, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\Google.Apis.1.67.0\lib\net462\Google.Apis.dll</HintPath>
     </Reference>
-    <Reference Include="Google.Apis.Auth, Version=1.66.0.0, Culture=neutral, PublicKeyToken=4b01fa6e34db77ab, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\packages\Google.Apis.Auth.1.66.0\lib\net462\Google.Apis.Auth.dll</HintPath>
+    <Reference Include="Google.Apis.Auth, Version=1.67.0.0, Culture=neutral, PublicKeyToken=4b01fa6e34db77ab, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\Google.Apis.Auth.1.67.0\lib\net462\Google.Apis.Auth.dll</HintPath>
     </Reference>
-    <Reference Include="Google.Apis.Core, Version=1.66.0.0, Culture=neutral, PublicKeyToken=4b01fa6e34db77ab, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\packages\Google.Apis.Core.1.66.0\lib\net462\Google.Apis.Core.dll</HintPath>
+    <Reference Include="Google.Apis.Core, Version=1.67.0.0, Culture=neutral, PublicKeyToken=4b01fa6e34db77ab, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\Google.Apis.Core.1.67.0\lib\net462\Google.Apis.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Google.Cloud.AIPlatform.V1, Version=2.20.0.0, Culture=neutral, PublicKeyToken=185c282632e132a0, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\packages\Google.Cloud.AIPlatform.V1.2.20.0\lib\net462\Google.Cloud.AIPlatform.V1.dll</HintPath>
+    <Reference Include="Google.Cloud.AIPlatform.V1, Version=2.24.0.0, Culture=neutral, PublicKeyToken=185c282632e132a0, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\Google.Cloud.AIPlatform.V1.2.24.0\lib\net462\Google.Cloud.AIPlatform.V1.dll</HintPath>
     </Reference>
-    <Reference Include="Google.Cloud.Iam.V1, Version=3.0.0.0, Culture=neutral, PublicKeyToken=185c282632e132a0, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\packages\Google.Cloud.Iam.V1.3.0.0\lib\net462\Google.Cloud.Iam.V1.dll</HintPath>
+    <Reference Include="Google.Cloud.Iam.V1, Version=3.1.0.0, Culture=neutral, PublicKeyToken=185c282632e132a0, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\Google.Cloud.Iam.V1.3.1.0\lib\net462\Google.Cloud.Iam.V1.dll</HintPath>
     </Reference>
-    <Reference Include="Google.Cloud.Location, Version=2.0.0.0, Culture=neutral, PublicKeyToken=185c282632e132a0, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\packages\Google.Cloud.Location.2.0.0\lib\net462\Google.Cloud.Location.dll</HintPath>
+    <Reference Include="Google.Cloud.Location, Version=2.1.0.0, Culture=neutral, PublicKeyToken=185c282632e132a0, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\Google.Cloud.Location.2.1.0\lib\net462\Google.Cloud.Location.dll</HintPath>
     </Reference>
-    <Reference Include="Google.LongRunning, Version=3.0.0.0, Culture=neutral, PublicKeyToken=185c282632e132a0, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\packages\Google.LongRunning.3.0.0\lib\net462\Google.LongRunning.dll</HintPath>
+    <Reference Include="Google.LongRunning, Version=3.1.0.0, Culture=neutral, PublicKeyToken=185c282632e132a0, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\Google.LongRunning.3.1.0\lib\net462\Google.LongRunning.dll</HintPath>
     </Reference>
-    <Reference Include="Google.Protobuf, Version=3.25.2.0, Culture=neutral, PublicKeyToken=a7d26565bac4d604, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\packages\Google.Protobuf.3.25.2\lib\net45\Google.Protobuf.dll</HintPath>
+    <Reference Include="Google.Protobuf, Version=3.25.3.0, Culture=neutral, PublicKeyToken=a7d26565bac4d604, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\Google.Protobuf.3.25.3\lib\net45\Google.Protobuf.dll</HintPath>
     </Reference>
     <Reference Include="Grpc.Auth, Version=2.0.0.0, Culture=neutral, PublicKeyToken=d754f35622e28bad, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\packages\Grpc.Auth.2.60.0\lib\net462\Grpc.Auth.dll</HintPath>
+      <HintPath>..\..\..\..\packages\Grpc.Auth.2.61.0\lib\net462\Grpc.Auth.dll</HintPath>
     </Reference>
     <Reference Include="Grpc.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=d754f35622e28bad, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\packages\Grpc.Core.2.46.6\lib\net45\Grpc.Core.dll</HintPath>
     </Reference>
     <Reference Include="Grpc.Core.Api, Version=2.0.0.0, Culture=neutral, PublicKeyToken=d754f35622e28bad, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\packages\Grpc.Core.Api.2.60.0\lib\net462\Grpc.Core.Api.dll</HintPath>
+      <HintPath>..\..\..\..\packages\Grpc.Core.Api.2.61.0\lib\net462\Grpc.Core.Api.dll</HintPath>
     </Reference>
     <Reference Include="Grpc.Net.Client, Version=2.0.0.0, Culture=neutral, PublicKeyToken=d754f35622e28bad, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\packages\Grpc.Net.Client.2.60.0\lib\net462\Grpc.Net.Client.dll</HintPath>
+      <HintPath>..\..\..\..\packages\Grpc.Net.Client.2.61.0\lib\net462\Grpc.Net.Client.dll</HintPath>
     </Reference>
     <Reference Include="Grpc.Net.Common, Version=2.0.0.0, Culture=neutral, PublicKeyToken=d754f35622e28bad, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\packages\Grpc.Net.Common.2.60.0\lib\netstandard2.0\Grpc.Net.Common.dll</HintPath>
+      <HintPath>..\..\..\..\packages\Grpc.Net.Common.2.61.0\lib\netstandard2.0\Grpc.Net.Common.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=8.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\packages\Microsoft.Bcl.AsyncInterfaces.8.0.0\lib\net462\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
@@ -135,8 +135,8 @@
     <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
     </Reference>
-    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=7.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\packages\System.Runtime.CompilerServices.Unsafe.7.0.0-preview.2.22152.2\lib\net462\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\System.Runtime.CompilerServices.Unsafe.6.0.0\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
     </Reference>
     <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\packages\System.Threading.Tasks.Extensions.4.5.4\lib\net461\System.Threading.Tasks.Extensions.dll</HintPath>
@@ -232,7 +232,7 @@
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('..\..\..\..\packages\Grpc.Core.2.46.6\build\net45\Grpc.Core.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\..\packages\Grpc.Core.2.46.6\build\net45\Grpc.Core.targets'))" />
-    <Error Condition="!Exists('..\..\..\..\packages\Google.Api.CommonProtos.2.13.0\build\Google.Api.CommonProtos.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\..\packages\Google.Api.CommonProtos.2.13.0\build\Google.Api.CommonProtos.targets'))" />
+    <Error Condition="!Exists('..\..\..\..\packages\Google.Api.CommonProtos.2.14.0\build\Google.Api.CommonProtos.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\..\packages\Google.Api.CommonProtos.2.14.0\build\Google.Api.CommonProtos.targets'))" />
   </Target>
-  <Import Project="..\..\..\..\packages\Google.Api.CommonProtos.2.13.0\build\Google.Api.CommonProtos.targets" Condition="Exists('..\..\..\..\packages\Google.Api.CommonProtos.2.13.0\build\Google.Api.CommonProtos.targets')" />
+  <Import Project="..\..\..\..\packages\Google.Api.CommonProtos.2.14.0\build\Google.Api.CommonProtos.targets" Condition="Exists('..\..\..\..\packages\Google.Api.CommonProtos.2.14.0\build\Google.Api.CommonProtos.targets')" />
 </Project>

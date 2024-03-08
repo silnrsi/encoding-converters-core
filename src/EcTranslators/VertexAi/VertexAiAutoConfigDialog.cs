@@ -60,13 +60,13 @@ namespace SilEncConverters40.EcTranslators.VertexAi
                 System.Diagnostics.Debug.Assert(!String.IsNullOrEmpty(ConverterIdentifier));
 
                 ParseConverterIdentifier(ConverterIdentifier, out fromLanguage, out toLanguage,
-										 out string projectId, out string locationId, out string publisher, out string modelId,
-										 out string addlInstructions, out string systemPrompt);
+                                         out string projectId, out string locationId, out string publisher, out string modelId,
+                                         out string addlInstructions, out string systemPrompt);
 
-				textBoxProjectId.Text = projectId;
-				textBoxLocationId.Text = locationId;
-				textBoxPublisher.Text = publisher;
-				textBoxModelId.Text = modelId;
+                textBoxProjectId.Text = projectId;
+                textBoxLocationId.Text = locationId;
+                textBoxPublisher.Text = publisher;
+                textBoxModelId.Text = modelId;
                 textBoxCompleteSystemPrompt.Text = systemPrompt;
                 if (!String.IsNullOrEmpty(addlInstructions))
                     comboBoxSystemPromptAdditions.Text = addlInstructions;
@@ -75,10 +75,10 @@ namespace SilEncConverters40.EcTranslators.VertexAi
             else
             {
                 textBoxCompleteSystemPrompt.Text = ResourceNeededWarning;
-				textBoxProjectId.Text = Settings.Default.GoogleCloudVertexAiProjectId;
-				textBoxLocationId.Text = Settings.Default.GoogleCloudVertexAiLocationId;
-				textBoxPublisher.Text = Settings.Default.GoogleCloudVertexAiPublisher;
-				textBoxModelId.Text = Settings.Default.GoogleCloudVertexAiModelId;
+                textBoxProjectId.Text = Settings.Default.GoogleCloudVertexAiProjectId;
+                textBoxLocationId.Text = Settings.Default.GoogleCloudVertexAiLocationId;
+                textBoxPublisher.Text = Settings.Default.GoogleCloudVertexAiPublisher;
+                textBoxModelId.Text = Settings.Default.GoogleCloudVertexAiModelId;
             }
 
             textBoxSourceLanguage.Text = fromLanguage;
@@ -87,10 +87,10 @@ namespace SilEncConverters40.EcTranslators.VertexAi
 
             m_bInitialized = true;
 
-			helpProvider.SetHelpString(textBoxProjectId, Resources.HelpForVertexAiProjectIdTextBox);
-			helpProvider.SetHelpString(textBoxLocationId, Resources.HelpForVertexAiLocationIdTextBox);
-			helpProvider.SetHelpString(textBoxPublisher, Resources.HelpForVertexAiPublisherTextBox);
-			helpProvider.SetHelpString(textBoxModelId, Resources.HelpForVertexAiModelIdTextBox);
+            helpProvider.SetHelpString(textBoxProjectId, Resources.HelpForVertexAiProjectIdTextBox);
+            helpProvider.SetHelpString(textBoxLocationId, Resources.HelpForVertexAiLocationIdTextBox);
+            helpProvider.SetHelpString(textBoxPublisher, Resources.HelpForVertexAiPublisherTextBox);
+            helpProvider.SetHelpString(textBoxModelId, Resources.HelpForVertexAiModelIdTextBox);
             helpProvider.SetHelpString(textBoxSourceLanguage, Properties.Resources.HelpForVertexAiSourceLanguageTextBox);
             helpProvider.SetHelpString(textBoxTargetLanguage, Properties.Resources.HelpForVertexAiTargetLanguageTextBox);
             helpProvider.SetHelpString(textBoxCompleteSystemPrompt, Properties.Resources.HelpForVertexAiSystemPromptTextBox);
@@ -153,47 +153,48 @@ namespace SilEncConverters40.EcTranslators.VertexAi
             {
                 Settings.Default.AzureOpenAiSystemPromptAdditions.Insert(0, additionToSystemPrompt);
                 Settings.Default.Save();
+                LoadComboBoxFromSettings(comboBoxSystemPromptAdditions, Settings.Default.AzureOpenAiSystemPromptAdditions);
             }
 
-			var projectId = textBoxProjectId.Text;
-			var locationId = textBoxLocationId.Text;
-			var publisher = textBoxPublisher.Text;
-			var modelId = textBoxModelId.Text;
+            var projectId = textBoxProjectId.Text;
+            var locationId = textBoxLocationId.Text;
+            var publisher = textBoxPublisher.Text;
+            var modelId = textBoxModelId.Text;
 
-			if (!IsValidUserInput(null, ref projectId))
-			{
-				MessageBox.Show(this, $"The Vertex AI resource Project Id must be entered and cannot contain a ';' character! See {Resources.GoogleCloudVertexCredentialsDialogInstructionUrl} for help on creating one.", EncConverters.cstrCaption);
-				return false;
-			}
-			Settings.Default.GoogleCloudVertexAiProjectId = projectId;
+            if (!IsValidUserInput(null, ref projectId))
+            {
+                MessageBox.Show(this, $"The Vertex AI resource Project Id must be entered and cannot contain a ';' character! See {Resources.GoogleCloudVertexCredentialsDialogInstructionUrl} for help on creating one.", EncConverters.cstrCaption);
+                return false;
+            }
+            Settings.Default.GoogleCloudVertexAiProjectId = projectId;
 
-			if (!IsValidUserInput(null, ref locationId))
-			{
-				MessageBox.Show(this, $"The Vertex AI resource Location Id (e.g. us-central1) must be entered and cannot contain a ';' character! See {Resources.GoogleCloudVertexCredentialsDialogInstructionUrl} for help on creating one.", EncConverters.cstrCaption);
-				return false;
-			}
-			Settings.Default.GoogleCloudVertexAiLocationId = locationId;
+            if (!IsValidUserInput(null, ref locationId))
+            {
+                MessageBox.Show(this, $"The Vertex AI resource Location Id (e.g. us-central1) must be entered and cannot contain a ';' character! See {Resources.GoogleCloudVertexCredentialsDialogInstructionUrl} for help on creating one.", EncConverters.cstrCaption);
+                return false;
+            }
+            Settings.Default.GoogleCloudVertexAiLocationId = locationId;
 
-			if (!IsValidUserInput(null, ref publisher))
-			{
-				MessageBox.Show(this, $"The Vertex AI resource Publisher (e.g. google) must be entered and cannot contain a ';' character! See {Resources.GoogleCloudVertexCredentialsDialogInstructionUrl} for help on creating one.", EncConverters.cstrCaption);
-				return false;
-			}
-			Settings.Default.GoogleCloudVertexAiPublisher = publisher;
+            if (!IsValidUserInput(null, ref publisher))
+            {
+                MessageBox.Show(this, $"The Vertex AI resource Publisher (e.g. google) must be entered and cannot contain a ';' character! See {Resources.GoogleCloudVertexCredentialsDialogInstructionUrl} for help on creating one.", EncConverters.cstrCaption);
+                return false;
+            }
+            Settings.Default.GoogleCloudVertexAiPublisher = publisher;
 
-			if (!IsValidUserInput(null, ref modelId))
-			{
-				MessageBox.Show(this, $"The Vertex AI resource Model Id (e.g. chat-bison, chat-bison-32k, or gemini-pro) must be entered and cannot contain a ';' character! See {Resources.GoogleCloudVertexCredentialsDialogInstructionUrl} for help on creating one.", EncConverters.cstrCaption);
-				return false;
-			}
-			Settings.Default.GoogleCloudVertexAiModelId = modelId;
-			Settings.Default.Save();
+            if (!IsValidUserInput(null, ref modelId))
+            {
+                MessageBox.Show(this, $"The Vertex AI resource Model Id (e.g. chat-bison, chat-bison-32k, or gemini-pro) must be entered and cannot contain a ';' character! See {Resources.GoogleCloudVertexCredentialsDialogInstructionUrl} for help on creating one.", EncConverters.cstrCaption);
+                return false;
+            }
+            Settings.Default.GoogleCloudVertexAiModelId = modelId;
+            Settings.Default.Save();
 
-			var selectedFromLanguage = textBoxSourceLanguage.Text;
+            var selectedFromLanguage = textBoxSourceLanguage.Text;
             var selectedToLanguage = textBoxTargetLanguage.Text;
             if (!additionToSystemPrompt.StartsWith(ReplacementSystemPrompt))
             {
-				if (!IsValidUserInput(SourceLanguageNameMustBeConfigured, ref selectedFromLanguage))
+                if (!IsValidUserInput(SourceLanguageNameMustBeConfigured, ref selectedFromLanguage))
                 {
                     MessageBox.Show(this, "A Source language name (e.g. Hindi) must be entered and cannot contain a ';' character!", EncConverters.cstrCaption);
                     return false;
@@ -216,11 +217,11 @@ namespace SilEncConverters40.EcTranslators.VertexAi
             ConverterIdentifier = String.Format("{0};{1};{2};{3};{4};{5};{6}",
                 selectedFromLanguage,
                 selectedToLanguage,
-				projectId,
-				locationId,
-				publisher,
-				modelId,
-				additionToSystemPrompt);
+                projectId,
+                locationId,
+                publisher,
+                modelId,
+                additionToSystemPrompt);
 
             return base.OnApply();
 
@@ -290,26 +291,26 @@ namespace SilEncConverters40.EcTranslators.VertexAi
         private void ButtonSetVertexAiKey_Click(object sender, EventArgs e)
         {
 #if encryptingNewCredentials
-			var googleTranslatorKeyHide = Properties.Settings.Default.GoogleTranslatorCredentials;
-			var credentials = EncryptionClass.Encrypt(googleTranslatorKeyHide);
+            var googleTranslatorKeyHide = Properties.Settings.Default.GoogleTranslatorCredentials;
+            var credentials = EncryptionClass.Encrypt(googleTranslatorKeyHide);
 #endif
-			// only send the key if it's already the override key (so we don't expose ours)
-			var vertexAiCredentialsOverride = Properties.Settings.Default.GoogleCloudVertexAiCredentialsOverride;
-			if (!String.IsNullOrEmpty(vertexAiCredentialsOverride))
-				vertexAiCredentialsOverride = EncryptionClass.Decrypt(vertexAiCredentialsOverride);
+            // only send the key if it's already the override key (so we don't expose ours)
+            var vertexAiCredentialsOverride = Properties.Settings.Default.GoogleCloudVertexAiCredentialsOverride;
+            if (!String.IsNullOrEmpty(vertexAiCredentialsOverride))
+                vertexAiCredentialsOverride = EncryptionClass.Decrypt(vertexAiCredentialsOverride);
 
-			using var dlg = new QueryForGoogleCredentials(vertexAiCredentialsOverride);
-			if (dlg.ShowDialog() == DialogResult.OK)
-			{
-				GoogleCloudVertexAiSubscriptionKey = dlg.TranslatorKey;
-				Properties.Settings.Default.Save();
-			}
-		}
+            using var dlg = new QueryForGoogleCredentials(vertexAiCredentialsOverride);
+            if (dlg.ShowDialog() == DialogResult.OK)
+            {
+                GoogleCloudVertexAiSubscriptionKey = dlg.TranslatorKey;
+                Properties.Settings.Default.Save();
+            }
+        }
 
-		private void TextBoxVertexResourceParameters_TextChanged(object sender, EventArgs e)
-		{
-			IsModified = true;
-		}
-	}
+        private void TextBoxVertexResourceParameters_TextChanged(object sender, EventArgs e)
+        {
+            IsModified = true;
+        }
+    }
 }
 

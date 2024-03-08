@@ -135,14 +135,14 @@
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.VisualBasic" />
-    <Reference Include="Microsoft.Web.WebView2.Core, Version=1.0.2210.55, Culture=neutral, PublicKeyToken=2a8ab48044d2601e, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.Web.WebView2.1.0.2210.55\lib\net45\Microsoft.Web.WebView2.Core.dll</HintPath>
+    <Reference Include="Microsoft.Web.WebView2.Core, Version=1.0.2365.46, Culture=neutral, PublicKeyToken=2a8ab48044d2601e, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Web.WebView2.1.0.2365.46\lib\net45\Microsoft.Web.WebView2.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Web.WebView2.WinForms, Version=1.0.2210.55, Culture=neutral, PublicKeyToken=2a8ab48044d2601e, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.Web.WebView2.1.0.2210.55\lib\net45\Microsoft.Web.WebView2.WinForms.dll</HintPath>
+    <Reference Include="Microsoft.Web.WebView2.WinForms, Version=1.0.2365.46, Culture=neutral, PublicKeyToken=2a8ab48044d2601e, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Web.WebView2.1.0.2365.46\lib\net45\Microsoft.Web.WebView2.WinForms.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Web.WebView2.Wpf, Version=1.0.2210.55, Culture=neutral, PublicKeyToken=2a8ab48044d2601e, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.Web.WebView2.1.0.2210.55\lib\net45\Microsoft.Web.WebView2.Wpf.dll</HintPath>
+    <Reference Include="Microsoft.Web.WebView2.Wpf, Version=1.0.2365.46, Culture=neutral, PublicKeyToken=2a8ab48044d2601e, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Web.WebView2.1.0.2365.46\lib\net45\Microsoft.Web.WebView2.Wpf.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -523,12 +523,12 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\..\packages\Geckofx60.32.60.0.55\build\Geckofx60.32.targets') and ('$(Platform)' == 'x86') and ('$(OS)'=='Windows_NT')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Geckofx60.32.60.0.55\build\Geckofx60.32.targets'))" />
     <Error Condition="!Exists('..\..\packages\Geckofx60.64.60.0.55\build\Geckofx60.64.targets') and ('$(Platform)' == 'x64') and ('$(OS)'=='Windows_NT')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Geckofx60.64.60.0.55\build\Geckofx60.64.targets'))" />
-    <Error Condition="!Exists('..\..\packages\Microsoft.Web.WebView2.1.0.2210.55\build\Microsoft.Web.WebView2.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.Web.WebView2.1.0.2210.55\build\Microsoft.Web.WebView2.targets'))" />
+    <Error Condition="!Exists('..\..\packages\Microsoft.Web.WebView2.1.0.2365.46\build\Microsoft.Web.WebView2.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.Web.WebView2.1.0.2365.46\build\Microsoft.Web.WebView2.targets'))" />
   </Target>
   <!--BE: I had to manually add the extra conditions on these, so it will do the target (which copies files) from the correct package based on the platform.
       Also, I had to manually edit the 64 bit target so that it would now get the files from Firefox64, rather than Firefox it was looking at (which are the 86 binaries)
       This will all get undone if you update the gecko nuget packages -->
   <Import Project="..\..\packages\Geckofx60.32.60.0.55\build\Geckofx60.32.targets" Condition="Exists('..\..\packages\Geckofx60.32.60.0.55\build\Geckofx60.32.targets') and ('$(Platform)' == 'x86') and ('$(OS)'!='Windows_NT')" />
   <Import Project="..\..\packages\Geckofx60.64.60.0.55\build\Geckofx60.64.targets" Condition="Exists('..\..\packages\Geckofx60.64.60.0.55\build\Geckofx60.64.targets') and ('$(Platform)' == 'x64') and ('$(OS)'!='Windows_NT')" />
-  <Import Project="..\..\packages\Microsoft.Web.WebView2.1.0.2210.55\build\Microsoft.Web.WebView2.targets" Condition="Exists('..\..\packages\Microsoft.Web.WebView2.1.0.2210.55\build\Microsoft.Web.WebView2.targets')" />
+  <Import Project="..\..\packages\Microsoft.Web.WebView2.1.0.2365.46\build\Microsoft.Web.WebView2.targets" Condition="Exists('..\..\packages\Microsoft.Web.WebView2.1.0.2365.46\build\Microsoft.Web.WebView2.targets')" />
 </Project>
