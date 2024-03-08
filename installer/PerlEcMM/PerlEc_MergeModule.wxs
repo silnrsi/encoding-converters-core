@@ -1,57 +1,61 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-	<Module Id="PerlEcMM" Language="1033" Version="5.0.0.0">
-		<Package Id="9e8a69ef-1379-4fdf-8199-4e53539bb181" Keywords="Perl, Encoding Conversion, SILConverters" Description="Perl EncConverter merge module" Comments="Merge module containing the Perl EncConverter DLLs"
-						 Manufacturer="SIL International" InstallerVersion="200" />
+    <Module Id="PerlEcMM" Language="1033" Version="5.0.0.0">
+        <Package Id="9e8a69ef-1379-4fdf-8199-4e53539bb181" Keywords="Perl, Encoding Conversion, SILConverters" Description="Perl EncConverter merge module" Comments="Merge module containing the Perl EncConverter DLLs"
+                         Manufacturer="SIL International" InstallerVersion="200" />
 
-		<Directory Id="TARGETDIR" Name="SourceDir">
-			<Directory Id="MergeRedirectFolder">
-				<Component Id="PerlExpressionEC.dll" Guid="{7702FA46-2EF5-4D08-8344-AD4E91493558}">
-					<File Id="PerlExpressionEC.dll" KeyPath="yes" Source="..\..\output\Win32\release\PerlExpressionEC.dll" />
-				</Component>
-				<Directory Id="PerlECFolder" Name="EC">
-					<Directory Id="PerlPluginsFolder" Name="Plugins">
-						<Component Id="PerlEC4.0.0.0PluginDetails.xml" Guid="ED5D4121-0744-4694-A077-355A29EF0C61">
-							<File Id="PerlEC4.0.0.0PluginDetails.xml" Name="PerlEC512 4.0.0.0 Plugin Details.xml" Vital="yes" KeyPath="yes" Source="..\..\redist\EC\Plugins\PerlEC 4.0.0.0 Plugin Details.xml"/>
-						</Component>
-					</Directory>
-				</Directory>
-			</Directory>
+        <Directory Id="TARGETDIR" Name="SourceDir">
+            <Directory Id="MergeRedirectFolder">
+                <Component Id="PerlExpressionEC.dll" Guid="{7702FA46-2EF5-4D08-8344-AD4E91493558}">
+                    <File Id="PerlExpressionEC.dll" KeyPath="yes" Source="..\..\output\Win32\release\PerlExpressionEC.dll" />
+                </Component>
+                <Directory Id="PerlECFolder" Name="EC">
+                    <Directory Id="PerlPluginsFolder" Name="Plugins">
+                        <Component Id="PerlEC4.0.0.0PluginDetails.xml" Guid="ED5D4121-0744-4694-A077-355A29EF0C61">
+                            <File Id="PerlEC4.0.0.0PluginDetails.xml" Name="PerlEC512 4.0.0.0 Plugin Details.xml" Vital="yes" KeyPath="yes" Source="..\..\redist\EC\Plugins\PerlEC 4.0.0.0 Plugin Details.xml"/>
+                        </Component>
+                    </Directory>
+                </Directory>
+            </Directory>
 
-			<Directory Id="CommonAppDataFolder" SourceName="AppData">
-				<Directory Id="AppDataSIL" Name="SIL">
-					<Directory Id="AppDataSILConverters40" Name="SILConverters40">
-						<Directory Id="Help" Name="Help">
+            <Directory Id="CommonAppDataFolder" SourceName="AppData">
+                <Directory Id="AppDataSIL" Name="SIL">
+                    <Directory Id="AppDataSILConverters40" Name="SILConverters40">
+                        <Directory Id="Help" Name="Help">
 
-							<!--Perl Expression Plug-in Help-->
-							<Component Id="PerlHelp.htm" Guid="{2785223F-BD09-4B83-A53A-10E03425A1BA}">
-								<File Id="PerlHelp.htm" Name="Perl_Expression_Plug-in_About_box.htm" KeyPath="yes" Source="..\..\redist\Help\Perl_Expression_Plug-in_About_box.htm"/>
-								<Shortcut Id="PerlHelpHtm" Directory="PerlHelp" Name="Perl Expression Plug-in Help" Description="View help document for the Perl Expression Plug-in" IconIndex="0" Show="normal" Target="[#PerlHelp.htm]" WorkingDirectory="Help" Advertise="no" />
-							</Component>
-							<Directory Id="Perl_Expression_Plugin_About_box" Name="Perl_Expression_Plug-in_About_box_files">
-								<Component Id="Perl_Expression_Plugin_About_boxComp" Guid="{99EC5C24-C410-4CA6-873E-B11E5B10BE53}">
-									<File Id="ai_filelist.xml" Name="filelist.xml" KeyPath="yes" Source="..\..\redist\Help\Perl_Expression_Plug-in_About_box_files\filelist.xml"/>
-									<File Id="ai_header.htm" Name="header.htm" Source="..\..\redist\Help\Perl_Expression_Plug-in_About_box_files\header.htm"/>
-									<File Id="ai_image001.png" Name="image001.png" Source="..\..\redist\Help\Perl_Expression_Plug-in_About_box_files\image001.png"/>
-									<File Id="ai_image003.png" Name="image003.png" Source="..\..\redist\Help\Perl_Expression_Plug-in_About_box_files\image003.png"/>
-									<File Id="ai_image004.jpg" Name="image004.jpg" Source="..\..\redist\Help\Perl_Expression_Plug-in_About_box_files\image004.jpg"/>
-									<File Id="ai_image005.png" Name="image005.png" Source="..\..\redist\Help\Perl_Expression_Plug-in_About_box_files\image005.png"/>
-									<File Id="ai_image006.jpg" Name="image006.jpg" Source="..\..\redist\Help\Perl_Expression_Plug-in_About_box_files\image006.jpg"/>
-									<File Id="ai_image007.jpg" Name="image007.jpg" Source="..\..\redist\Help\Perl_Expression_Plug-in_About_box_files\image007.jpg"/>
-								</Component>
-							</Directory>
+                            <!--Perl Expression Plug-in Help-->
+                            <Component Id="PerlHelp.htm" Guid="{2785223F-BD09-4B83-A53A-10E03425A1BA}">
+                                <File Id="PerlHelp.htm" Name="Perl_Expression_Plug-in_About_box.htm" KeyPath="yes" Source="..\..\redist\Help\Perl_Expression_Plug-in_About_box.htm"/>
+                                <Shortcut Id="PerlHelpHtm" Directory="PerlHelp" Name="Perl Expression Plug-in Help" Description="View help document for the Perl Expression Plug-in" IconIndex="0" Show="normal" Target="[#PerlHelp.htm]" WorkingDirectory="Help" Advertise="no" />
+                            </Component>
+                            <Directory Id="Perl_Expression_Plugin_About_box" Name="Perl_Expression_Plug-in_About_box_files">
+                                <Component Id="Perl_Expression_Plugin_About_boxComp" Guid="{99EC5C24-C410-4CA6-873E-B11E5B10BE53}">
+                                    <File Id="ai_filelist.xml" Name="filelist.xml" KeyPath="yes" Source="..\..\redist\Help\Perl_Expression_Plug-in_About_box_files\filelist.xml"/>
+                                    <File Id="ai_header.htm" Name="header.htm" Source="..\..\redist\Help\Perl_Expression_Plug-in_About_box_files\header.htm"/>
+                                    <File Id="ai_image001.png" Name="image001.png" Source="..\..\redist\Help\Perl_Expression_Plug-in_About_box_files\image001.png"/>
+                                    <File Id="ai_image003.png" Name="image003.png" Source="..\..\redist\Help\Perl_Expression_Plug-in_About_box_files\image003.png"/>
+                                    <File Id="ai_image004.jpg" Name="image004.jpg" Source="..\..\redist\Help\Perl_Expression_Plug-in_About_box_files\image004.jpg"/>
+                                    <File Id="ai_image005.png" Name="image005.png" Source="..\..\redist\Help\Perl_Expression_Plug-in_About_box_files\image005.png"/>
+                                    <File Id="ai_image006.jpg" Name="image006.jpg" Source="..\..\redist\Help\Perl_Expression_Plug-in_About_box_files\image006.jpg"/>
+                                    <File Id="ai_image007.jpg" Name="image007.jpg" Source="..\..\redist\Help\Perl_Expression_Plug-in_About_box_files\image007.jpg"/>
+                                </Component>
+                            </Directory>
 
-						</Directory>
-					</Directory>
-				</Directory>
-			</Directory>
+                        </Directory>
+                    </Directory>
+                </Directory>
+            </Directory>
 
-			<Directory Id="ProgramMenuFolder" Name="Program">
-				<Directory Id="SIL_Converters" Name="SIL Converters">
-					<Directory Id="PerlHelp" Name="Help" />
-				</Directory>
-			</Directory>
+            <Directory Id="ProgramMenuFolder" Name="Program">
+                <Directory Id="SIL_Converters" Name="SIL Converters">
+                    <Directory Id="PerlHelp" Name="Help" />
+                </Directory>
+            </Directory>
 
-		</Directory>
-	</Module>
+        </Directory>
+
+        <InstallExecuteSequence>
+            <RemoveShortcuts>Installed AND NOT UPGRADINGPRODUCTCODE AND REMOVE="ALL"</RemoveShortcuts>
+        </InstallExecuteSequence>
+    </Module>
 </Wix>

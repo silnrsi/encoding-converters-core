@@ -1,66 +1,70 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-	<Module Id="CcDLLs64bitMM" Language="1033" Version="5.0.0.0">
-		<Package Id="{2498A3D7-0058-41C4-B937-F4B1B91D362C}" Comments="Merge module containing the 64bit CC run-time engine DLL" Description="CC DLL" Keywords="Consistent Changes, CC, Encoding Conversion, SILConverters"
-						 Manufacturer="SIL International" InstallerVersion="200" Platform="x64"/>
+    <Module Id="CcDLLs64bitMM" Language="1033" Version="5.0.0.0">
+        <Package Id="{2498A3D7-0058-41C4-B937-F4B1B91D362C}" Comments="Merge module containing the 64bit CC run-time engine DLL" Description="CC DLL" Keywords="Consistent Changes, CC, Encoding Conversion, SILConverters"
+                         Manufacturer="SIL International" InstallerVersion="200" Platform="x64"/>
 
-		<Directory Id="TARGETDIR" Name="SourceDir">
-			<Directory Id="MergeRedirectFolder">
-				<Component Id="CcEC.dll" Guid="{AF58D393-8511-4E81-9634-3080A1F3C737}">
-					<File Id="CcEC.dll" Name="CcEC.dll" KeyPath="yes" Source="..\..\output\x64\Release\CcEC.dll"/>
-				</Component>
-				<Directory Id="ECFolder" Name="EC">
-					<Directory Id="PluginsFolder" Name="Plugins">
-						<Component Id="CC_4.0.0.0_Plugin_Details.xml" Guid="{FB34953E-9013-40F8-BAA5-5ADFFDD8B765}">
-							<File Id="CC_4.0.0.0_Plugin_Details.xml" Name="CC 4.0.0.0 Plugin Details.xml" KeyPath="yes" Source="..\..\redist\EC\Plugins\CC 4.0.0.0 Plugin Details.xml"/>
-						</Component>
-					</Directory>
-				</Directory>
-			</Directory>
+        <Directory Id="TARGETDIR" Name="SourceDir">
+            <Directory Id="MergeRedirectFolder">
+                <Component Id="CcEC.dll" Guid="{AF58D393-8511-4E81-9634-3080A1F3C737}">
+                    <File Id="CcEC.dll" Name="CcEC.dll" KeyPath="yes" Source="..\..\output\x64\Release\CcEC.dll"/>
+                </Component>
+                <Directory Id="ECFolder" Name="EC">
+                    <Directory Id="PluginsFolder" Name="Plugins">
+                        <Component Id="CC_4.0.0.0_Plugin_Details.xml" Guid="{FB34953E-9013-40F8-BAA5-5ADFFDD8B765}">
+                            <File Id="CC_4.0.0.0_Plugin_Details.xml" Name="CC 4.0.0.0 Plugin Details.xml" KeyPath="yes" Source="..\..\redist\EC\Plugins\CC 4.0.0.0 Plugin Details.xml"/>
+                        </Component>
+                    </Directory>
+                </Directory>
+            </Directory>
 
-			<Directory Id="CommonFiles64Folder" SourceName="Common Files Folder">
-				<Directory Id="CcSIL" Name="SIL">
-					<Component Id="CC64.dll" Guid="{9335AE04-02AA-47BB-85A7-1C41BE71BC1D}">
-						<File Id="CC64.dll" Name="CC64.dll" KeyPath="yes" Source="..\..\redist\64bit\Cc64.dll" />
-					</Component>
-				</Directory>
-			</Directory>
+            <Directory Id="CommonFiles64Folder" SourceName="Common Files Folder">
+                <Directory Id="CcSIL" Name="SIL">
+                    <Component Id="CC64.dll" Guid="{9335AE04-02AA-47BB-85A7-1C41BE71BC1D}">
+                        <File Id="CC64.dll" Name="CC64.dll" KeyPath="yes" Source="..\..\redist\64bit\Cc64.dll" />
+                    </Component>
+                </Directory>
+            </Directory>
 
-			<Directory Id="CommonAppDataFolder" SourceName="AppData">
-				<Directory Id="AppDataSIL" Name="SIL">
-					<Directory Id="AppDataSILConverters40" Name="SILConverters40">
-						<Directory Id="Help" Name="Help">
+            <Directory Id="CommonAppDataFolder" SourceName="AppData">
+                <Directory Id="AppDataSIL" Name="SIL">
+                    <Directory Id="AppDataSILConverters40" Name="SILConverters40">
+                        <Directory Id="Help" Name="Help">
 
-							<!--CC table Converter Help-->
-							<Component Id="CcTableHelp.htm" Guid="{AB8B9FD4-2152-4F89-A43B-4D985922768B}">
-								<File Id="CcTableHelp.htm" Name="CC_Table_Plug-in_About_box.htm" KeyPath="yes" Source="..\..\redist\Help\CC_Table_Plug-in_About_box.htm"/>
-								<Shortcut Id="CcTableHelpHtm" Directory="CcHelp" Name="CC Table Plug-in Help" Description="View help document for the CC Table Plug-in" IconIndex="0" Show="normal" Target="[#CcTableHelp.htm]" WorkingDirectory="Help" Advertise="no" />
-							</Component>
-							<Directory Id="CC_Table_Plugin_About_box" Name="CC_Table_Plug-in_About_box_files">
-								<Component Id="CC_Table_Plugin_About_boxComp" Guid="{3526F625-39D3-4114-8AC9-88C3D9CB68C4}">
-									<File Id="cc_filelist.xml" Name="filelist.xml" KeyPath="yes" Source="..\..\redist\Help\CC_Table_Plug-in_About_box_files\filelist.xml"/>
-									<File Id="cc_colorschememapping.xml" Name="colorschememapping.xml" Source="..\..\redist\Help\CC_Table_Plug-in_About_box_files\colorschememapping.xml"/>
-									<File Id="cc_themedata.thmx" Name="themedata.thmx" Source="..\..\redist\Help\CC_Table_Plug-in_About_box_files\themedata.thmx"/>
-									<File Id="cc_image001.png" Name="image001.png" Source="..\..\redist\Help\CC_Table_Plug-in_About_box_files\image001.png"/>
-									<File Id="cc_image002.jpg" Name="image002.jpg" Source="..\..\redist\Help\CC_Table_Plug-in_About_box_files\image002.jpg"/>
-									<File Id="cc_image003.png" Name="image003.png" Source="..\..\redist\Help\CC_Table_Plug-in_About_box_files\image003.png"/>
-									<File Id="cc_image004.jpg" Name="image004.jpg" Source="..\..\redist\Help\CC_Table_Plug-in_About_box_files\image004.jpg"/>
-									<File Id="cc_image005.png" Name="image005.png" Source="..\..\redist\Help\CC_Table_Plug-in_About_box_files\image005.png"/>
-									<File Id="cc_image006.jpg" Name="image006.jpg" Source="..\..\redist\Help\CC_Table_Plug-in_About_box_files\image006.jpg"/>
-								</Component>
-							</Directory>
+                            <!--CC table Converter Help-->
+                            <Component Id="CcTableHelp.htm" Guid="{AB8B9FD4-2152-4F89-A43B-4D985922768B}">
+                                <File Id="CcTableHelp.htm" Name="CC_Table_Plug-in_About_box.htm" KeyPath="yes" Source="..\..\redist\Help\CC_Table_Plug-in_About_box.htm"/>
+                                <Shortcut Id="CcTableHelpHtm" Directory="CcHelp" Name="CC Table Plug-in Help" Description="View help document for the CC Table Plug-in" IconIndex="0" Show="normal" Target="[#CcTableHelp.htm]" WorkingDirectory="Help" Advertise="no" />
+                            </Component>
+                            <Directory Id="CC_Table_Plugin_About_box" Name="CC_Table_Plug-in_About_box_files">
+                                <Component Id="CC_Table_Plugin_About_boxComp" Guid="{3526F625-39D3-4114-8AC9-88C3D9CB68C4}">
+                                    <File Id="cc_filelist.xml" Name="filelist.xml" KeyPath="yes" Source="..\..\redist\Help\CC_Table_Plug-in_About_box_files\filelist.xml"/>
+                                    <File Id="cc_colorschememapping.xml" Name="colorschememapping.xml" Source="..\..\redist\Help\CC_Table_Plug-in_About_box_files\colorschememapping.xml"/>
+                                    <File Id="cc_themedata.thmx" Name="themedata.thmx" Source="..\..\redist\Help\CC_Table_Plug-in_About_box_files\themedata.thmx"/>
+                                    <File Id="cc_image001.png" Name="image001.png" Source="..\..\redist\Help\CC_Table_Plug-in_About_box_files\image001.png"/>
+                                    <File Id="cc_image002.jpg" Name="image002.jpg" Source="..\..\redist\Help\CC_Table_Plug-in_About_box_files\image002.jpg"/>
+                                    <File Id="cc_image003.png" Name="image003.png" Source="..\..\redist\Help\CC_Table_Plug-in_About_box_files\image003.png"/>
+                                    <File Id="cc_image004.jpg" Name="image004.jpg" Source="..\..\redist\Help\CC_Table_Plug-in_About_box_files\image004.jpg"/>
+                                    <File Id="cc_image005.png" Name="image005.png" Source="..\..\redist\Help\CC_Table_Plug-in_About_box_files\image005.png"/>
+                                    <File Id="cc_image006.jpg" Name="image006.jpg" Source="..\..\redist\Help\CC_Table_Plug-in_About_box_files\image006.jpg"/>
+                                </Component>
+                            </Directory>
 
-						</Directory>
-					</Directory>
-				</Directory>
-			</Directory>
+                        </Directory>
+                    </Directory>
+                </Directory>
+            </Directory>
 
-			<Directory Id="ProgramMenuFolder" Name="Program">
-				<Directory Id="SIL_Converters" Name="SIL Converters">
-					<Directory Id="CcHelp" Name="Help" />
-				</Directory>
-			</Directory>
+            <Directory Id="ProgramMenuFolder" Name="Program">
+                <Directory Id="SIL_Converters" Name="SIL Converters">
+                    <Directory Id="CcHelp" Name="Help" />
+                </Directory>
+            </Directory>
 
-		</Directory>
-	</Module>
+        </Directory>
+
+        <InstallExecuteSequence>
+            <RemoveShortcuts>Installed AND NOT UPGRADINGPRODUCTCODE AND REMOVE="ALL"</RemoveShortcuts>
+        </InstallExecuteSequence>
+    </Module>
 </Wix>
