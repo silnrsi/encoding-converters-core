@@ -2,8 +2,10 @@
 
 #if DEBUG
 #define LogResults
+// #define DEBUG_LIVE
 #endif
 
+using Google.Apis.Auth.OAuth2;
 using Google.Cloud.AIPlatform.V1;
 using Google.Protobuf.Collections;
 using Google.Protobuf.Reflection;
@@ -14,6 +16,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using static Google.Rpc.Context.AttributeContext.Types;
@@ -41,60 +44,51 @@ namespace SilEncConverters40.EcTranslators.VertexAi.VertexAiExe
             Console.InputEncoding = Encoding.Unicode;
             Console.OutputEncoding = Encoding.Unicode;
 
-			string pathToEncryptedCommandLineParameterFile = null;
-			if ((args.Length == 0) || !File.Exists((pathToEncryptedCommandLineParameterFile = args[0])))
-			{
-				Console.WriteLine(String.Format("Usage:{0}{0}{1} \"<PathToEncryptedCommandLineParameterFile>\"", Environment.NewLine, typeof(Program).Namespace));
-				return;
-			}
+            string pathToEncryptedCommandLineParameterFile = null;
+            if ((args.Length == 0) || !File.Exists((pathToEncryptedCommandLineParameterFile = args[0])))
+            {
+                Console.WriteLine(String.Format("Usage:{0}{0}{1} \"<PathToEncryptedCommandLineParameterFile>\"", Environment.NewLine, typeof(Program).Namespace));
+                return;
+            }
 
-			var credentialFile = String.Empty;
-			var originalCredentialFileSpec = Environment.GetEnvironmentVariable(EnvVarNameGoogleApplicationCredentials);
-			var credentialsEnvironmentVariableAlreadySet = !String.IsNullOrEmpty(originalCredentialFileSpec);
+#if DEBUG_LIVE
+            System.Diagnostics.Debug.Fail("Click Retry to debug AzureOpenAiExe");
+#endif
+
 			try
 			{
-				var contents = File.ReadAllText(pathToEncryptedCommandLineParameterFile);
-				var json = EncryptionClass.Decrypt(contents);
-				var arguments = JsonConvert.DeserializeObject<VertexAiPromptExeTranslatorCommandLineArgs>(json);
+                var contents = File.ReadAllText(pathToEncryptedCommandLineParameterFile);
+                var json = EncryptionClass.Decrypt(contents);
+                var arguments = JsonConvert.DeserializeObject<VertexAiPromptExeTranslatorCommandLineArgs>(json);
 
-				credentialFile = credentialsEnvironmentVariableAlreadySet ? originalCredentialFileSpec : null; 
-                if (!IsValidParameters(arguments, out PredictionServiceClient client, out EndpointName endpointName, ref credentialFile, out string systemPrompt))
+                if (!IsValidParameters(arguments, out PredictionServiceClient client, out EndpointName endpointName,
+									   out string systemPrompt))
                     return;
 
                 await ProcessRequest(arguments, client, endpointName, systemPrompt);
             }
             catch (Exception ex)
             {
-				Console.WriteLine(GetExceptionMessage(ex));
+                Console.WriteLine(GetExceptionMessage(ex));
             }
-            finally
+
+            static string GetExceptionMessage(Exception ex)
             {
-                if (!credentialsEnvironmentVariableAlreadySet)
-				{
-					if (File.Exists(credentialFile))
-						File.Delete(credentialFile);
+                var message = ex.Message;
+                var msg = "Error occurred: " + message;
+                while (ex.InnerException != null)
+                {
+                    ex = ex.InnerException;
+                    if (message.Contains(ex.Message))
+                        continue;   // skip identical msgs
+                    message = ex.Message;
+                    msg += $"{Environment.NewLine}because: (InnerException): {message}";
+                }
+                return msg;
+            }
+        }
 
-					Environment.SetEnvironmentVariable(EnvVarNameGoogleApplicationCredentials, String.Empty);
-				}
-			}
-
-			static string GetExceptionMessage(Exception ex)
-			{
-				var message = ex.Message;
-				var msg = "Error occurred: " + message;
-				while (ex.InnerException != null)
-				{
-					ex = ex.InnerException;
-					if (message.Contains(ex.Message))
-						continue;   // skip identical msgs
-					message = ex.Message;
-					msg += $"{Environment.NewLine}because: (InnerException): {message}";
-				}
-				return msg;
-			}
-		}
-
-		private static async Task<bool> ProcessRequest(VertexAiPromptExeTranslatorCommandLineArgs arguments, PredictionServiceClient client,
+        private static async Task<bool> ProcessRequest(VertexAiPromptExeTranslatorCommandLineArgs arguments, PredictionServiceClient client,
                                                        EndpointName endpointName, string systemPrompt)
         {
             var chatConversation = new ChatConversation
@@ -104,15 +98,15 @@ namespace SilEncConverters40.EcTranslators.VertexAi.VertexAiExe
                 messages = new List<ChatMessage>()
             };
 
-			var numberOfExamples = arguments.ExamplesInputString.Count;
-			for (int i = 0; i < numberOfExamples; i++)
-			{
-				chatConversation.examples.Add(new Example
-				{
-					input = new Input { content = arguments.ExamplesInputString[i] },
-					output = new Output { content = arguments.ExamplesOutputString[i] }
-				});
-			}
+            var numberOfExamples = arguments.ExamplesInputString.Count;
+            for (int i = 0; i < numberOfExamples; i++)
+            {
+                chatConversation.examples.Add(new Example
+                {
+                    input = new Input { content = arguments.ExamplesInputString[i] },
+                    output = new Output { content = arguments.ExamplesOutputString[i] }
+                });
+            }
 
             // You can construct Protobuf from JSON.
             var parametersJson = JsonConvert.SerializeObject(new
@@ -120,8 +114,8 @@ namespace SilEncConverters40.EcTranslators.VertexAi.VertexAiExe
                 temperature = (arguments.Temperature == null) ? 0.3 : (double)arguments.Temperature,
                 maxDecodeSteps = (arguments.MaxDecodeSteps == null) ? 200 : (int)arguments.MaxDecodeSteps,
                 topP = (arguments.TopP == null) ? 0.8 : arguments.TopP,
-				topK = (arguments.TopK == null) ? 40 : arguments.TopK,
-			});
+                topK = (arguments.TopK == null) ? 40 : arguments.TopK,
+            });
             var parameters = Value.Parser.ParseJson(parametersJson);
 
             // in case there are multiple lines (e.g. what Paratext will do if the verse has multiple paragraphs),
@@ -147,13 +141,13 @@ namespace SilEncConverters40.EcTranslators.VertexAi.VertexAiExe
                 // Make the request.
                 var json = chatConversation.ToString();
 #if LogResults
-				File.AppendAllText(LogFilePath, json + Environment.NewLine);
+                File.AppendAllText(LogFilePath, json + Environment.NewLine);
 #endif
-				var response = client.Predict(endpointName, new List<Value> { Value.Parser.ParseJson(json) }, parameters);
+                var response = client.Predict(endpointName, new List<Value> { Value.Parser.ParseJson(json) }, parameters);
 
-				var fields = response.Predictions.First().StructValue.Fields;
-				// clean up and return the "assistent's response"
-				var strOutput = HarvestResult(strInput, fields);
+                var fields = response.Predictions.First().StructValue.Fields;
+                // clean up and return the "assistent's response"
+                var strOutput = HarvestResult(strInput, fields);
 
                 // put that back in the chat, in case we are processing multiple lines
                 //    (this'll make them 'related' for better translation)
@@ -175,71 +169,71 @@ namespace SilEncConverters40.EcTranslators.VertexAi.VertexAiExe
             return true;
         }
 
-		private static string HarvestResult(string strInput, MapField<string, Value> fields)
-		{
-			var responseContent = fields["candidates"].ListValue.Values[0].StructValue.Fields["content"].StringValue;
+        private static string HarvestResult(string strInput, MapField<string, Value> fields)
+        {
+            var responseContent = fields["candidates"].ListValue.Values[0].StructValue.Fields["content"].StringValue;
 
-			if (strInput?[0] != ' ' && responseContent?[0] == ' ')
+            if (strInput?[0] != ' ' && responseContent?[0] == ' ')
                 responseContent = responseContent.Substring(1);
 
-			// these come from: https://cloud.google.com/vertex-ai/docs/generative-ai/configure-safety-attributes-palm
-			if (responseContent.Contains("I'm not able to help with that, as I'm only a language model. If you believe this is an error, please send us your feedback."))
-			{
-				var blocked = fields["safetyAttributes"].ListValue.Values[0].StructValue.Fields["blocked"].BoolValue;
-				if (blocked)
-				{
-					var errors = fields["safetyAttributes"].ListValue.Values[0].StructValue.Fields["errors"].ListValue.Values[0].NumberValue.ToString();
-					if ((errors.Length == 3) && (errors[0] == '2'))
-					{
-						string contentFilteringReason = "violence, sexual content, etc.";
-						switch (errors.Substring(1))
-						{
-							case "20":
-								contentFilteringReason = "The supplied or returned language is unsupported.For a list of supported languages, see Language support.";
-								break;
+            // these come from: https://cloud.google.com/vertex-ai/docs/generative-ai/configure-safety-attributes-palm
+            if (responseContent.Contains("I'm not able to help with that, as I'm only a language model. If you believe this is an error, please send us your feedback."))
+            {
+                var blocked = fields["safetyAttributes"].ListValue.Values[0].StructValue.Fields["blocked"].BoolValue;
+                if (blocked)
+                {
+                    var errors = fields["safetyAttributes"].ListValue.Values[0].StructValue.Fields["errors"].ListValue.Values[0].NumberValue.ToString();
+                    if ((errors.Length == 3) && (errors[0] == '2'))
+                    {
+                        string contentFilteringReason = "violence, sexual content, etc.";
+                        switch (errors.Substring(1))
+                        {
+                            case "20":
+                                contentFilteringReason = "The supplied or returned language is unsupported.For a list of supported languages, see Language support.";
+                                break;
 
-							case "30":
-								contentFilteringReason = "The prompt or response was blocked because it was found to be potentially harmful. A term is included from the terminology blocklist. Rephrase your prompt.";
-								break;
+                            case "30":
+                                contentFilteringReason = "The prompt or response was blocked because it was found to be potentially harmful. A term is included from the terminology blocklist. Rephrase your prompt.";
+                                break;
 
-							case "31":
-								contentFilteringReason = "The content might include Sensitive Personally Identifiable Information(SPII). Rephrase your prompt.";
-								break;
+                            case "31":
+                                contentFilteringReason = "The content might include Sensitive Personally Identifiable Information(SPII). Rephrase your prompt.";
+                                break;
 
-							case "40":
-								contentFilteringReason = "The prompt or response was blocked because it was found to be potentially harmful. The content violates SafeSearch settings.Rephrase your prompt.";
-								break;
+                            case "40":
+                                contentFilteringReason = "The prompt or response was blocked because it was found to be potentially harmful. The content violates SafeSearch settings.Rephrase your prompt.";
+                                break;
 
-							case "50":
-								contentFilteringReason = "The prompt or response was blocked because it might contain sexually explicit content.Rephrase your prompt.";
-								break;
+                            case "50":
+                                contentFilteringReason = "The prompt or response was blocked because it might contain sexually explicit content.Rephrase your prompt.";
+                                break;
 
-							case "51":
-								contentFilteringReason = "The prompt or response was blocked because it might contain hate speech content.Rephrase your prompt.";
-								break;
+                            case "51":
+                                contentFilteringReason = "The prompt or response was blocked because it might contain hate speech content.Rephrase your prompt.";
+                                break;
 
-							case "52":
-								contentFilteringReason = "The prompt or response was blocked because it might contain harassment content. Rephrase your prompt.";
-								break;
+                            case "52":
+                                contentFilteringReason = "The prompt or response was blocked because it might contain harassment content. Rephrase your prompt.";
+                                break;
 
-							case "53":
-								contentFilteringReason = "The prompt or response was blocked because it might contain dangerous content. Rephrase your prompt.";
-								break;
+                            case "53":
+                                contentFilteringReason = "The prompt or response was blocked because it might contain dangerous content. Rephrase your prompt.";
+                                break;
 
-							case "54":
-								contentFilteringReason = "The prompt or response was blocked because it might contain toxic content. Rephrase your prompt.";
-								break;
+                            case "54":
+                                contentFilteringReason = "The prompt or response was blocked because it might contain toxic content. Rephrase your prompt.";
+                                break;
 
-							default:
-							case "00":
-								contentFilteringReason = "Reason unknown. Rephrase your prompt.";
-								break;
-						}
+                            default:
+                            case "00":
+                                contentFilteringReason = "Reason unknown. Rephrase your prompt.";
+                                break;
+                        }
 
-						responseContent = $"<VertexAI didn't translate the sentence due to Content Filtering: {contentFilteringReason}>";
-					}
-				}
-			}
+                        responseContent = $"<VertexAI didn't translate the sentence due to Content Filtering: {contentFilteringReason}>";
+                    }
+                }
+            }
 
             return CleanString(strInput, responseContent);
         }
@@ -258,7 +252,7 @@ namespace SilEncConverters40.EcTranslators.VertexAi.VertexAiExe
         }
 
         private static bool IsValidParameters(VertexAiPromptExeTranslatorCommandLineArgs arguments, out PredictionServiceClient client,
-											  out EndpointName endpoint, ref string credentialFile, out string systemPrompt)
+                                              out EndpointName endpoint, out string systemPrompt)
         {
             client = null;
             endpoint = null;
@@ -274,16 +268,6 @@ namespace SilEncConverters40.EcTranslators.VertexAi.VertexAiExe
             {
                 Console.WriteLine(String.Format("Usage:{0}{0}{1} \"<PathToEncryptedCommandLineParameterFile>\"", Environment.NewLine, typeof(Program).Namespace));
                 return false;
-            }
-
-			// only put the credentials in a temp file, if it wasn't already set as an environment variable
-            string credentials = null;
-            if (String.IsNullOrEmpty(credentialFile) && !String.IsNullOrEmpty((credentials = arguments.Credentials)))
-            {
-                credentialFile = Path.GetTempFileName();
-                File.WriteAllText(credentialFile, credentials.Replace("'", "\""));
-
-                Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", credentialFile);
             }
 
             if (!IsValidParameter(EnvVarNameProjectId, ref projectId))
@@ -316,9 +300,15 @@ namespace SilEncConverters40.EcTranslators.VertexAi.VertexAiExe
                 return false;
             }
 
+            var credentialsAsJson = arguments.Credentials;
+            var credentials = !String.IsNullOrEmpty(credentialsAsJson) && !File.Exists(credentialsAsJson)
+                                ? GoogleCredential.FromJson(credentialsAsJson)
+                                : GoogleCredential.GetApplicationDefault();
+
             client = new PredictionServiceClientBuilder
             {
-                Endpoint = $"{locationId}-aiplatform.googleapis.com"
+                Endpoint = $"{locationId}-aiplatform.googleapis.com",
+                GoogleCredential = credentials,
             }.Build();
 
             // Configure the parent resource.

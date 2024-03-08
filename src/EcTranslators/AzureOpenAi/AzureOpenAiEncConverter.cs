@@ -21,17 +21,17 @@ using Google.Apis.Discovery;
 
 namespace SilEncConverters40.EcTranslators.AzureOpenAI
 {
-	/// <summary>
-	/// Access to ChatGPT 3.5 via Azure's OpenAI
-	/// </summary>
+    /// <summary>
+    /// Access to ChatGPT 3.5 via Azure's OpenAI
+    /// </summary>
 #if X64
-	[GuidAttribute("194C96AC-60D9-4456-8B57-A522B5CB1ED2")]
+    [GuidAttribute("194C96AC-60D9-4456-8B57-A522B5CB1ED2")]
 #else
-	[GuidAttribute("74EC9437-A9F1-44B3-BA70-5A8055E210D9")]
+    [GuidAttribute("74EC9437-A9F1-44B3-BA70-5A8055E210D9")]
 #endif
-	public class AzureOpenAiEncConverter : PromptExeTranslator
-	{
-		#region Member Variable Definitions
+    public class AzureOpenAiEncConverter : PromptExeTranslator
+    {
+        #region Member Variable Definitions
         protected string AiSystemInstructions;
 
         public const string strDisplayName = "Azure OpenAI Translator";
@@ -45,9 +45,9 @@ namespace SilEncConverters40.EcTranslators.AzureOpenAI
         public const string EnvVarNameEndPoint = "EncConverters_AzureOpenAiEndpoint";
         public const string EnvVarNameKey = "EncConverters_AzureOpenAiKey";
 
-		#endregion Member Variable Definitions
+        #endregion Member Variable Definitions
 
-		#region Initialization
+        #region Initialization
         // by putting the azure key in a settings file, users can (someday) get their own azure OpenAI resource 
         //  and enter their own key in the settings file(s) (or the UI to have us set it in the file) to have
         //    access to it
@@ -55,7 +55,10 @@ namespace SilEncConverters40.EcTranslators.AzureOpenAI
         {
             get
             {
-                return Properties.Settings.Default.AzureOpenAiEndpoint;
+                var endpoint = Properties.Settings.Default.AzureOpenAiEndpoint;
+                return !String.IsNullOrEmpty(endpoint)
+                        ? endpoint
+                        : Environment.GetEnvironmentVariable(AzureOpenAiEncConverter.EnvVarNameEndPoint);
             }
             set
             {
@@ -68,7 +71,9 @@ namespace SilEncConverters40.EcTranslators.AzureOpenAI
             get
             {
                 var deploymentName = Properties.Settings.Default.AzureOpenAiDeploymentName;
-                return deploymentName;
+                return !String.IsNullOrEmpty(deploymentName)
+                        ? deploymentName
+                        : Environment.GetEnvironmentVariable(AzureOpenAiEncConverter.EnvVarNameDeploymentName);
             }
             set
             {
@@ -82,7 +87,17 @@ namespace SilEncConverters40.EcTranslators.AzureOpenAI
             get
             {
                 var overrideKey = Properties.Settings.Default.AzureOpenAiKeyOverride;
-                return String.IsNullOrEmpty(overrideKey) ? overrideKey : EncryptionClass.Decrypt(overrideKey);
+
+#if encryptingNewCredentials
+                var translatorKey = EncryptionClass.Encrypt(overrideKey);
+#endif
+
+                // decrypt it if we're storing it
+                overrideKey = String.IsNullOrEmpty(overrideKey) ? overrideKey : EncryptionClass.Decrypt(overrideKey);
+
+                return !String.IsNullOrEmpty(overrideKey)
+                        ? overrideKey
+                        : Environment.GetEnvironmentVariable(EnvVarNameKey);
             }
             set
             {
@@ -96,10 +111,10 @@ namespace SilEncConverters40.EcTranslators.AzureOpenAI
         /// The class constructor. </summary>
         public AzureOpenAiEncConverter()
             : base
-			(
-				typeof(AzureOpenAiEncConverter).FullName,
-				ImplTypeSilAzureOpenAi
-			)
+            (
+                typeof(AzureOpenAiEncConverter).FullName,
+                ImplTypeSilAzureOpenAi
+            )
         {
         }
 
@@ -126,23 +141,23 @@ namespace SilEncConverters40.EcTranslators.AzureOpenAI
             // this is the only one we support from now on (if the user really wants to do legacy to unicode, they have to deal with the legacy as coming in utf-8 format
             conversionType = ConvType.Unicode_to_Unicode;
 
-			// I'm assuming that we'd have to/want to set up a different one to go the other direction
-			m_eConversionType = conversionType = MakeUniDirectional(conversionType);
+            // I'm assuming that we'd have to/want to set up a different one to go the other direction
+            m_eConversionType = conversionType = MakeUniDirectional(conversionType);
 
-			if (String.IsNullOrEmpty(lhsEncodingID))
-				lhsEncodingID = m_strLhsEncodingID = EncConverters.strDefUnicodeEncoding;
-			if (String.IsNullOrEmpty(rhsEncodingID))
-				rhsEncodingID = m_strRhsEncodingID = EncConverters.strDefUnicodeEncoding;
+            if (String.IsNullOrEmpty(lhsEncodingID))
+                lhsEncodingID = m_strLhsEncodingID = EncConverters.strDefUnicodeEncoding;
+            if (String.IsNullOrEmpty(rhsEncodingID))
+                rhsEncodingID = m_strRhsEncodingID = EncConverters.strDefUnicodeEncoding;
 
-			// this is a Translation process type by definition. This is used by various programs to prevent
+            // this is a Translation process type by definition. This is used by various programs to prevent
 			//	over usage -- e.g. Paratext should be blocking these EncConverter types as the 'Transliteration'
 			//	type project EncConverter (bkz it'll try to "transliterate" the entire corpus -- probably not
 			//	what's wanted). Also ClipboardEncConverter also doesn't process these for a preview (so the
 			//	system tray popup doesn't take forever to display.
-			processTypeFlags |= (int)ProcessTypeFlags.Translation;
-		}
+            processTypeFlags |= (int)ProcessTypeFlags.Translation;
+        }
 
-		internal static bool ParseConverterIdentifier(string converterSpec,
+        internal static bool ParseConverterIdentifier(string converterSpec,
             out string fromLanguage, out string toLanguage,
             out string addlInstructions, out string systemPrompt)
         {
@@ -179,7 +194,7 @@ namespace SilEncConverters40.EcTranslators.AzureOpenAI
             return String.Format(SystemPromptFormat, fromLanguage, toLanguage, $" {addlInstructions.Replace(";", null)}");
         }
 
-		#endregion Initialization
+        #endregion Initialization
 
         public override string ExeName
         {
@@ -212,22 +227,22 @@ namespace SilEncConverters40.EcTranslators.AzureOpenAI
                                     EncConverters.cstrCaption);
                 }
 
-				var args = new AzureOpenAiPromptExeTranslatorCommandLineArgs
-				{
-					DeploymentId = azureOpenAiDeploymentName,
-					EndpointId = azureOpenAiEndpoint,
-					SystemPrompt = AiSystemInstructions,
-					Credentials = azureOpenAiKey,
-					ExamplesInputString = ExamplesInputString,
-					ExamplesOutputString = ExamplesOutputString,
-				};
+                var args = new AzureOpenAiPromptExeTranslatorCommandLineArgs
+                {
+                    DeploymentId = azureOpenAiDeploymentName,
+                    EndpointId = azureOpenAiEndpoint,
+                    SystemPrompt = AiSystemInstructions,
+                    Credentials = azureOpenAiKey,
+                    ExamplesInputString = ExamplesInputString,
+                    ExamplesOutputString = ExamplesOutputString,
+                };
 
-				// The system prompt can't have double quotes in it, bkz those are used for separating the 4 command line parameters,
-				//    So convert them to single quotes, which should also work
-				// return $"\"{projectId}\" \"{locationId}\" \"{publisher}\" \"{modelId}\" \"{VertexAiSystemPrompt.Replace("\"", "'")}\" \"{GoogleCloudVertexAiSubscriptionKey}\"";
-				var tempFilespec = args.SaveToTempFile();
-				var arguments = $"\"{tempFilespec}\"";
-				return arguments;
+                // The system prompt can't have double quotes in it, bkz those are used for separating the 4 command line parameters,
+                //    So convert them to single quotes, which should also work
+                // return $"\"{projectId}\" \"{locationId}\" \"{publisher}\" \"{modelId}\" \"{VertexAiSystemPrompt.Replace("\"", "'")}\" \"{GoogleCloudVertexAiSubscriptionKey}\"";
+                var tempFilespec = args.SaveToTempFile();
+                var arguments = $"\"{tempFilespec}\"";
+                return arguments;
             }
         }
 
@@ -237,7 +252,7 @@ namespace SilEncConverters40.EcTranslators.AzureOpenAI
                     !string.IsNullOrEmpty((parameter = Environment.GetEnvironmentVariable(envVarName)));
         }
 
-		#region Misc helpers
+        #region Misc helpers
 
         protected override EncodingForm  DefaultUnicodeEncForm(bool bForward, bool bLHS)
         {
@@ -245,10 +260,10 @@ namespace SilEncConverters40.EcTranslators.AzureOpenAI
             return EncodingForm.UTF16;
         }
 
-		#endregion Misc helpers
+        #endregion Misc helpers
 
-		#region Abstract Base Class Overrides
-		protected override string   GetConfigTypeName
+        #region Abstract Base Class Overrides
+        protected override string   GetConfigTypeName
         {
             get { return typeof(AzureOpenAiEncConverterConfig).AssemblyQualifiedName; }
         }
@@ -269,6 +284,6 @@ namespace SilEncConverters40.EcTranslators.AzureOpenAI
             }
         }
 
-		#endregion Abstract Base Class Overrides
+        #endregion Abstract Base Class Overrides
     }
 }

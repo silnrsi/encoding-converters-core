@@ -18,17 +18,17 @@
                     <Class Id="{A8C89778-D507-4DF5-8AB5-220D40177636}" Context="InprocServer32" Description="SilEncConverters40.EcTranslators.GoogleTranslator.GoogleTranslatorEncConverter" ThreadingModel="both" ForeignServer="mscoree.dll">
                         <ProgId Id="SilEncConverters40.EcTranslators.GoogleTranslator.GoogleTranslatorEncConverter" Description="SilEncConverters40.EcTranslators.GoogleTranslator.GoogleTranslatorEncConverter" />
                     </Class>
-					<Class Id="{74EC9437-A9F1-44B3-BA70-5A8055E210D9}" Context="InprocServer32" Description="SilEncConverters40.EcTranslators.AzureOpenAI.AzureOpenAiEncConverter" ThreadingModel="both" ForeignServer="mscoree.dll">
-						<ProgId Id="SilEncConverters40.EcTranslators.AzureOpenAI.AzureOpenAiEncConverter" Description="SilEncConverters40.EcTranslators.AzureOpenAI.AzureOpenAiEncConverter" />
-					</Class>
-					<Class Id="{0CE67479-9D4D-4DC5-B89F-A5384B72DFBD}" Context="InprocServer32" Description="SilEncConverters40.EcTranslators.NllbTranslator.NllbTranslatorEncConverter" ThreadingModel="both" ForeignServer="mscoree.dll">
-						<ProgId Id="SilEncConverters40.EcTranslators.NllbTranslator.NllbTranslatorEncConverter" Description="SilEncConverters40.EcTranslators.NllbTranslator.NllbTranslatorEncConverter" />
-					</Class>
-					<Class Id="{8B8FC565-9E65-44F7-B2C4-A2C11E54AD86}" Context="InprocServer32" Description="SilEncConverters40.EcTranslators.VertexAi.VertexAiEncConverter" ThreadingModel="both" ForeignServer="mscoree.dll">
-						<ProgId Id="SilEncConverters40.EcTranslators.VertexAi.VertexAiEncConverter" Description="SilEncConverters40.EcTranslators.VertexAi.VertexAiEncConverter" />
-					</Class>
+                    <Class Id="{74EC9437-A9F1-44B3-BA70-5A8055E210D9}" Context="InprocServer32" Description="SilEncConverters40.EcTranslators.AzureOpenAI.AzureOpenAiEncConverter" ThreadingModel="both" ForeignServer="mscoree.dll">
+                        <ProgId Id="SilEncConverters40.EcTranslators.AzureOpenAI.AzureOpenAiEncConverter" Description="SilEncConverters40.EcTranslators.AzureOpenAI.AzureOpenAiEncConverter" />
+                    </Class>
+                    <Class Id="{0CE67479-9D4D-4DC5-B89F-A5384B72DFBD}" Context="InprocServer32" Description="SilEncConverters40.EcTranslators.NllbTranslator.NllbTranslatorEncConverter" ThreadingModel="both" ForeignServer="mscoree.dll">
+                        <ProgId Id="SilEncConverters40.EcTranslators.NllbTranslator.NllbTranslatorEncConverter" Description="SilEncConverters40.EcTranslators.NllbTranslator.NllbTranslatorEncConverter" />
+                    </Class>
+                    <Class Id="{8B8FC565-9E65-44F7-B2C4-A2C11E54AD86}" Context="InprocServer32" Description="SilEncConverters40.EcTranslators.VertexAi.VertexAiEncConverter" ThreadingModel="both" ForeignServer="mscoree.dll">
+                        <ProgId Id="SilEncConverters40.EcTranslators.VertexAi.VertexAiEncConverter" Description="SilEncConverters40.EcTranslators.VertexAi.VertexAiEncConverter" />
+                    </Class>
 
-					<Class Id="{D08F1FE5-1B3A-48F6-B767-9A0F3A82C46E}" Context="InprocServer32" Description="SilEncConverters40.EcTranslators.BingTranslator.BingTranslatorEncConverterConfig" ThreadingModel="both" ForeignServer="mscoree.dll">
+                    <Class Id="{D08F1FE5-1B3A-48F6-B767-9A0F3A82C46E}" Context="InprocServer32" Description="SilEncConverters40.EcTranslators.BingTranslator.BingTranslatorEncConverterConfig" ThreadingModel="both" ForeignServer="mscoree.dll">
                         <ProgId Id="SilEncConverters40.EcTranslators.BingTranslator.BingTranslatorEncConverterConfig" Description="SilEncConverters40.EcTranslators.BingTranslator.BingTranslatorEncConverterConfig" />
                     </Class>
                     <Class Id="{36543EBB-826F-4884-9015-A75921C67F5C}" Context="InprocServer32" Description="SilEncConverters40.EcTranslators.DeepLTranslator.DeepLTranslatorEncConverterConfig" ThreadingModel="both" ForeignServer="mscoree.dll">
@@ -37,17 +37,17 @@
                     <Class Id="{D77B73FB-12BA-4B70-B75B-921CB84BFB1F}" Context="InprocServer32" Description="SilEncConverters40.EcTranslators.GoogleTranslator.GoogleTranslatorEncConverterConfig" ThreadingModel="both" ForeignServer="mscoree.dll">
                         <ProgId Id="SilEncConverters40.EcTranslators.GoogleTranslator.GoogleTranslatorEncConverterConfig" Description="SilEncConverters40.EcTranslators.GoogleTranslator.GoogleTranslatorEncConverterConfig" />
                     </Class>
-					<Class Id="{6AABD4CF-FC65-4CC3-A762-193400E79281}" Context="InprocServer32" Description="SilEncConverters40.EcTranslators.AzureOpenAI.AzureOpenAiEncConverterConfig" ThreadingModel="both" ForeignServer="mscoree.dll">
-						<ProgId Id="SilEncConverters40.EcTranslators.AzureOpenAI.AzureOpenAiEncConverterConfig" Description="SilEncConverters40.EcTranslators.AzureOpenAI.AzureOpenAiEncConverterConfig" />
-					</Class>
-					<Class Id="{6A29A528-AA9E-4654-8466-2C9A27D85759}" Context="InprocServer32" Description="SilEncConverters40.EcTranslators.NllbTranslator.NllbTranslatorEncConverterConfig" ThreadingModel="both" ForeignServer="mscoree.dll">
-						<ProgId Id="SilEncConverters40.EcTranslators.NllbTranslator.NllbTranslatorEncConverterConfig" Description="SilEncConverters40.EcTranslators.NllbTranslator.NllbTranslatorEncConverterConfig" />
-					</Class>
-					<Class Id="{8CCB0373-82B6-4273-8870-A24F8142D85F}" Context="InprocServer32" Description="SilEncConverters40.EcTranslators.VertexAi.VertexAiEncConverterConfig" ThreadingModel="both" ForeignServer="mscoree.dll">
-						<ProgId Id="SilEncConverters40.EcTranslators.VertexAi.VertexAiEncConverterConfig" Description="SilEncConverters40.EcTranslators.VertexAi.VertexAiEncConverterConfig" />
-					</Class>
+                    <Class Id="{6AABD4CF-FC65-4CC3-A762-193400E79281}" Context="InprocServer32" Description="SilEncConverters40.EcTranslators.AzureOpenAI.AzureOpenAiEncConverterConfig" ThreadingModel="both" ForeignServer="mscoree.dll">
+                        <ProgId Id="SilEncConverters40.EcTranslators.AzureOpenAI.AzureOpenAiEncConverterConfig" Description="SilEncConverters40.EcTranslators.AzureOpenAI.AzureOpenAiEncConverterConfig" />
+                    </Class>
+                    <Class Id="{6A29A528-AA9E-4654-8466-2C9A27D85759}" Context="InprocServer32" Description="SilEncConverters40.EcTranslators.NllbTranslator.NllbTranslatorEncConverterConfig" ThreadingModel="both" ForeignServer="mscoree.dll">
+                        <ProgId Id="SilEncConverters40.EcTranslators.NllbTranslator.NllbTranslatorEncConverterConfig" Description="SilEncConverters40.EcTranslators.NllbTranslator.NllbTranslatorEncConverterConfig" />
+                    </Class>
+                    <Class Id="{8CCB0373-82B6-4273-8870-A24F8142D85F}" Context="InprocServer32" Description="SilEncConverters40.EcTranslators.VertexAi.VertexAiEncConverterConfig" ThreadingModel="both" ForeignServer="mscoree.dll">
+                        <ProgId Id="SilEncConverters40.EcTranslators.VertexAi.VertexAiEncConverterConfig" Description="SilEncConverters40.EcTranslators.VertexAi.VertexAiEncConverterConfig" />
+                    </Class>
 
-					<File Id="EcTranslators.dll" Name="EcTranslators.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="EcTranslators.dll" AssemblyApplication="EcTranslators.dll"
+                    <File Id="EcTranslators.dll" Name="EcTranslators.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="EcTranslators.dll" AssemblyApplication="EcTranslators.dll"
                           Source="..\..\output\Win32\release\EcTranslators.dll" />
                     
                     <RegistryValue Root="HKCR" Key="CLSID\{4F7DE175-EC0C-463A-8027-6FFB8799C050}\Implemented Categories\{62C8FE65-4EBB-45e7-B440-6E39B2CDBF29}" Value="" Type="string" Action="write" />
@@ -110,67 +110,67 @@
                     <RegistryValue Root="HKCR" Key="CLSID\{D77B73FB-12BA-4B70-B75B-921CB84BFB1F}\InprocServer32" Name="RuntimeVersion" Value="v4.0.30319" Type="string" Action="write" />
                     <RegistryValue Root="HKCR" Key="CLSID\{D77B73FB-12BA-4B70-B75B-921CB84BFB1F}\InprocServer32" Name="CodeBase" Value="file:///[#EcTranslators.dll]" Type="string" Action="write" />
 
-					<RegistryValue Root="HKCR" Key="CLSID\{74EC9437-A9F1-44B3-BA70-5A8055E210D9}\Implemented Categories\{62C8FE65-4EBB-45e7-B440-6E39B2CDBF29}" Value="" Type="string" Action="write" />
-					<RegistryValue Root="HKCR" Key="CLSID\{74EC9437-A9F1-44B3-BA70-5A8055E210D9}\InprocServer32\4.0.0.0" Name="Class" Value="SilEncConverters40.EcTranslators.AzureOpenAI.AzureOpenAiEncConverter" Type="string" Action="write" />
-					<RegistryValue Root="HKCR" Key="CLSID\{74EC9437-A9F1-44B3-BA70-5A8055E210D9}\InprocServer32\4.0.0.0" Name="Assembly" Value="EcTranslators, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" Type="string" Action="write" />
-					<RegistryValue Root="HKCR" Key="CLSID\{74EC9437-A9F1-44B3-BA70-5A8055E210D9}\InprocServer32\4.0.0.0" Name="RuntimeVersion" Value="v4.0.30319" Type="string" Action="write" />
-					<RegistryValue Root="HKCR" Key="CLSID\{74EC9437-A9F1-44B3-BA70-5A8055E210D9}\InprocServer32\4.0.0.0" Name="CodeBase" Value="file:///[#EcTranslators.dll]" Type="string" Action="write" />
-					<RegistryValue Root="HKCR" Key="CLSID\{74EC9437-A9F1-44B3-BA70-5A8055E210D9}\InprocServer32" Name="Class" Value="SilEncConverters40.EcTranslators.AzureOpenAI.AzureOpenAiEncConverter" Type="string" Action="write" />
-					<RegistryValue Root="HKCR" Key="CLSID\{74EC9437-A9F1-44B3-BA70-5A8055E210D9}\InprocServer32" Name="Assembly" Value="EcTranslators, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" Type="string" Action="write" />
-					<RegistryValue Root="HKCR" Key="CLSID\{74EC9437-A9F1-44B3-BA70-5A8055E210D9}\InprocServer32" Name="RuntimeVersion" Value="v4.0.30319" Type="string" Action="write" />
-					<RegistryValue Root="HKCR" Key="CLSID\{74EC9437-A9F1-44B3-BA70-5A8055E210D9}\InprocServer32" Name="CodeBase" Value="file:///[#EcTranslators.dll]" Type="string" Action="write" />
+                    <RegistryValue Root="HKCR" Key="CLSID\{74EC9437-A9F1-44B3-BA70-5A8055E210D9}\Implemented Categories\{62C8FE65-4EBB-45e7-B440-6E39B2CDBF29}" Value="" Type="string" Action="write" />
+                    <RegistryValue Root="HKCR" Key="CLSID\{74EC9437-A9F1-44B3-BA70-5A8055E210D9}\InprocServer32\4.0.0.0" Name="Class" Value="SilEncConverters40.EcTranslators.AzureOpenAI.AzureOpenAiEncConverter" Type="string" Action="write" />
+                    <RegistryValue Root="HKCR" Key="CLSID\{74EC9437-A9F1-44B3-BA70-5A8055E210D9}\InprocServer32\4.0.0.0" Name="Assembly" Value="EcTranslators, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" Type="string" Action="write" />
+                    <RegistryValue Root="HKCR" Key="CLSID\{74EC9437-A9F1-44B3-BA70-5A8055E210D9}\InprocServer32\4.0.0.0" Name="RuntimeVersion" Value="v4.0.30319" Type="string" Action="write" />
+                    <RegistryValue Root="HKCR" Key="CLSID\{74EC9437-A9F1-44B3-BA70-5A8055E210D9}\InprocServer32\4.0.0.0" Name="CodeBase" Value="file:///[#EcTranslators.dll]" Type="string" Action="write" />
+                    <RegistryValue Root="HKCR" Key="CLSID\{74EC9437-A9F1-44B3-BA70-5A8055E210D9}\InprocServer32" Name="Class" Value="SilEncConverters40.EcTranslators.AzureOpenAI.AzureOpenAiEncConverter" Type="string" Action="write" />
+                    <RegistryValue Root="HKCR" Key="CLSID\{74EC9437-A9F1-44B3-BA70-5A8055E210D9}\InprocServer32" Name="Assembly" Value="EcTranslators, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" Type="string" Action="write" />
+                    <RegistryValue Root="HKCR" Key="CLSID\{74EC9437-A9F1-44B3-BA70-5A8055E210D9}\InprocServer32" Name="RuntimeVersion" Value="v4.0.30319" Type="string" Action="write" />
+                    <RegistryValue Root="HKCR" Key="CLSID\{74EC9437-A9F1-44B3-BA70-5A8055E210D9}\InprocServer32" Name="CodeBase" Value="file:///[#EcTranslators.dll]" Type="string" Action="write" />
 
-					<RegistryValue Root="HKCR" Key="CLSID\{6AABD4CF-FC65-4CC3-A762-193400E79281}\Implemented Categories\{62C8FE65-4EBB-45e7-B440-6E39B2CDBF29}" Value="" Type="string" Action="write" />
-					<RegistryValue Root="HKCR" Key="CLSID\{6AABD4CF-FC65-4CC3-A762-193400E79281}\InprocServer32\4.0.0.0" Name="Class" Value="SilEncConverters40.EcTranslators.AzureOpenAI.AzureOpenAiEncConverterConfig" Type="string" Action="write" />
-					<RegistryValue Root="HKCR" Key="CLSID\{6AABD4CF-FC65-4CC3-A762-193400E79281}\InprocServer32\4.0.0.0" Name="Assembly" Value="EcTranslators, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" Type="string" Action="write" />
-					<RegistryValue Root="HKCR" Key="CLSID\{6AABD4CF-FC65-4CC3-A762-193400E79281}\InprocServer32\4.0.0.0" Name="RuntimeVersion" Value="v4.0.30319" Type="string" Action="write" />
-					<RegistryValue Root="HKCR" Key="CLSID\{6AABD4CF-FC65-4CC3-A762-193400E79281}\InprocServer32\4.0.0.0" Name="CodeBase" Value="file:///[#EcTranslators.dll]" Type="string" Action="write" />
-					<RegistryValue Root="HKCR" Key="CLSID\{6AABD4CF-FC65-4CC3-A762-193400E79281}\InprocServer32" Name="Class" Value="SilEncConverters40.EcTranslators.AzureOpenAI.AzureOpenAiEncConverterConfig" Type="string" Action="write" />
-					<RegistryValue Root="HKCR" Key="CLSID\{6AABD4CF-FC65-4CC3-A762-193400E79281}\InprocServer32" Name="Assembly" Value="EcTranslators, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" Type="string" Action="write" />
-					<RegistryValue Root="HKCR" Key="CLSID\{6AABD4CF-FC65-4CC3-A762-193400E79281}\InprocServer32" Name="RuntimeVersion" Value="v4.0.30319" Type="string" Action="write" />
-					<RegistryValue Root="HKCR" Key="CLSID\{6AABD4CF-FC65-4CC3-A762-193400E79281}\InprocServer32" Name="CodeBase" Value="file:///[#EcTranslators.dll]" Type="string" Action="write" />
+                    <RegistryValue Root="HKCR" Key="CLSID\{6AABD4CF-FC65-4CC3-A762-193400E79281}\Implemented Categories\{62C8FE65-4EBB-45e7-B440-6E39B2CDBF29}" Value="" Type="string" Action="write" />
+                    <RegistryValue Root="HKCR" Key="CLSID\{6AABD4CF-FC65-4CC3-A762-193400E79281}\InprocServer32\4.0.0.0" Name="Class" Value="SilEncConverters40.EcTranslators.AzureOpenAI.AzureOpenAiEncConverterConfig" Type="string" Action="write" />
+                    <RegistryValue Root="HKCR" Key="CLSID\{6AABD4CF-FC65-4CC3-A762-193400E79281}\InprocServer32\4.0.0.0" Name="Assembly" Value="EcTranslators, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" Type="string" Action="write" />
+                    <RegistryValue Root="HKCR" Key="CLSID\{6AABD4CF-FC65-4CC3-A762-193400E79281}\InprocServer32\4.0.0.0" Name="RuntimeVersion" Value="v4.0.30319" Type="string" Action="write" />
+                    <RegistryValue Root="HKCR" Key="CLSID\{6AABD4CF-FC65-4CC3-A762-193400E79281}\InprocServer32\4.0.0.0" Name="CodeBase" Value="file:///[#EcTranslators.dll]" Type="string" Action="write" />
+                    <RegistryValue Root="HKCR" Key="CLSID\{6AABD4CF-FC65-4CC3-A762-193400E79281}\InprocServer32" Name="Class" Value="SilEncConverters40.EcTranslators.AzureOpenAI.AzureOpenAiEncConverterConfig" Type="string" Action="write" />
+                    <RegistryValue Root="HKCR" Key="CLSID\{6AABD4CF-FC65-4CC3-A762-193400E79281}\InprocServer32" Name="Assembly" Value="EcTranslators, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" Type="string" Action="write" />
+                    <RegistryValue Root="HKCR" Key="CLSID\{6AABD4CF-FC65-4CC3-A762-193400E79281}\InprocServer32" Name="RuntimeVersion" Value="v4.0.30319" Type="string" Action="write" />
+                    <RegistryValue Root="HKCR" Key="CLSID\{6AABD4CF-FC65-4CC3-A762-193400E79281}\InprocServer32" Name="CodeBase" Value="file:///[#EcTranslators.dll]" Type="string" Action="write" />
 
-					<RegistryValue Root="HKCR" Key="CLSID\{0CE67479-9D4D-4DC5-B89F-A5384B72DFBD}\Implemented Categories\{62C8FE65-4EBB-45e7-B440-6E39B2CDBF29}" Value="" Type="string" Action="write" />
-					<RegistryValue Root="HKCR" Key="CLSID\{0CE67479-9D4D-4DC5-B89F-A5384B72DFBD}\InprocServer32\4.0.0.0" Name="Class" Value="SilEncConverters40.EcTranslators.NllbTranslator.NllbTranslatorEncConverter" Type="string" Action="write" />
-					<RegistryValue Root="HKCR" Key="CLSID\{0CE67479-9D4D-4DC5-B89F-A5384B72DFBD}\InprocServer32\4.0.0.0" Name="Assembly" Value="EcTranslators, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" Type="string" Action="write" />
-					<RegistryValue Root="HKCR" Key="CLSID\{0CE67479-9D4D-4DC5-B89F-A5384B72DFBD}\InprocServer32\4.0.0.0" Name="RuntimeVersion" Value="v4.0.30319" Type="string" Action="write" />
-					<RegistryValue Root="HKCR" Key="CLSID\{0CE67479-9D4D-4DC5-B89F-A5384B72DFBD}\InprocServer32\4.0.0.0" Name="CodeBase" Value="file:///[#EcTranslators.dll]" Type="string" Action="write" />
-					<RegistryValue Root="HKCR" Key="CLSID\{0CE67479-9D4D-4DC5-B89F-A5384B72DFBD}\InprocServer32" Name="Class" Value="SilEncConverters40.EcTranslators.NllbTranslator.NllbTranslatorEncConverter" Type="string" Action="write" />
-					<RegistryValue Root="HKCR" Key="CLSID\{0CE67479-9D4D-4DC5-B89F-A5384B72DFBD}\InprocServer32" Name="Assembly" Value="EcTranslators, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" Type="string" Action="write" />
-					<RegistryValue Root="HKCR" Key="CLSID\{0CE67479-9D4D-4DC5-B89F-A5384B72DFBD}\InprocServer32" Name="RuntimeVersion" Value="v4.0.30319" Type="string" Action="write" />
-					<RegistryValue Root="HKCR" Key="CLSID\{0CE67479-9D4D-4DC5-B89F-A5384B72DFBD}\InprocServer32" Name="CodeBase" Value="file:///[#EcTranslators.dll]" Type="string" Action="write" />
+                    <RegistryValue Root="HKCR" Key="CLSID\{0CE67479-9D4D-4DC5-B89F-A5384B72DFBD}\Implemented Categories\{62C8FE65-4EBB-45e7-B440-6E39B2CDBF29}" Value="" Type="string" Action="write" />
+                    <RegistryValue Root="HKCR" Key="CLSID\{0CE67479-9D4D-4DC5-B89F-A5384B72DFBD}\InprocServer32\4.0.0.0" Name="Class" Value="SilEncConverters40.EcTranslators.NllbTranslator.NllbTranslatorEncConverter" Type="string" Action="write" />
+                    <RegistryValue Root="HKCR" Key="CLSID\{0CE67479-9D4D-4DC5-B89F-A5384B72DFBD}\InprocServer32\4.0.0.0" Name="Assembly" Value="EcTranslators, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" Type="string" Action="write" />
+                    <RegistryValue Root="HKCR" Key="CLSID\{0CE67479-9D4D-4DC5-B89F-A5384B72DFBD}\InprocServer32\4.0.0.0" Name="RuntimeVersion" Value="v4.0.30319" Type="string" Action="write" />
+                    <RegistryValue Root="HKCR" Key="CLSID\{0CE67479-9D4D-4DC5-B89F-A5384B72DFBD}\InprocServer32\4.0.0.0" Name="CodeBase" Value="file:///[#EcTranslators.dll]" Type="string" Action="write" />
+                    <RegistryValue Root="HKCR" Key="CLSID\{0CE67479-9D4D-4DC5-B89F-A5384B72DFBD}\InprocServer32" Name="Class" Value="SilEncConverters40.EcTranslators.NllbTranslator.NllbTranslatorEncConverter" Type="string" Action="write" />
+                    <RegistryValue Root="HKCR" Key="CLSID\{0CE67479-9D4D-4DC5-B89F-A5384B72DFBD}\InprocServer32" Name="Assembly" Value="EcTranslators, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" Type="string" Action="write" />
+                    <RegistryValue Root="HKCR" Key="CLSID\{0CE67479-9D4D-4DC5-B89F-A5384B72DFBD}\InprocServer32" Name="RuntimeVersion" Value="v4.0.30319" Type="string" Action="write" />
+                    <RegistryValue Root="HKCR" Key="CLSID\{0CE67479-9D4D-4DC5-B89F-A5384B72DFBD}\InprocServer32" Name="CodeBase" Value="file:///[#EcTranslators.dll]" Type="string" Action="write" />
 
-					<RegistryValue Root="HKCR" Key="CLSID\{6A29A528-AA9E-4654-8466-2C9A27D85759}\Implemented Categories\{62C8FE65-4EBB-45e7-B440-6E39B2CDBF29}" Value="" Type="string" Action="write" />
-					<RegistryValue Root="HKCR" Key="CLSID\{6A29A528-AA9E-4654-8466-2C9A27D85759}\InprocServer32\4.0.0.0" Name="Class" Value="SilEncConverters40.EcTranslators.NllbTranslator.NllbTranslatorEncConverterConfig" Type="string" Action="write" />
-					<RegistryValue Root="HKCR" Key="CLSID\{6A29A528-AA9E-4654-8466-2C9A27D85759}\InprocServer32\4.0.0.0" Name="Assembly" Value="EcTranslators, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" Type="string" Action="write" />
-					<RegistryValue Root="HKCR" Key="CLSID\{6A29A528-AA9E-4654-8466-2C9A27D85759}\InprocServer32\4.0.0.0" Name="RuntimeVersion" Value="v4.0.30319" Type="string" Action="write" />
-					<RegistryValue Root="HKCR" Key="CLSID\{6A29A528-AA9E-4654-8466-2C9A27D85759}\InprocServer32\4.0.0.0" Name="CodeBase" Value="file:///[#EcTranslators.dll]" Type="string" Action="write" />
-					<RegistryValue Root="HKCR" Key="CLSID\{6A29A528-AA9E-4654-8466-2C9A27D85759}\InprocServer32" Name="Class" Value="SilEncConverters40.EcTranslators.NllbTranslator.NllbTranslatorEncConverterConfig" Type="string" Action="write" />
-					<RegistryValue Root="HKCR" Key="CLSID\{6A29A528-AA9E-4654-8466-2C9A27D85759}\InprocServer32" Name="Assembly" Value="EcTranslators, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" Type="string" Action="write" />
-					<RegistryValue Root="HKCR" Key="CLSID\{6A29A528-AA9E-4654-8466-2C9A27D85759}\InprocServer32" Name="RuntimeVersion" Value="v4.0.30319" Type="string" Action="write" />
-					<RegistryValue Root="HKCR" Key="CLSID\{6A29A528-AA9E-4654-8466-2C9A27D85759}\InprocServer32" Name="CodeBase" Value="file:///[#EcTranslators.dll]" Type="string" Action="write" />
+                    <RegistryValue Root="HKCR" Key="CLSID\{6A29A528-AA9E-4654-8466-2C9A27D85759}\Implemented Categories\{62C8FE65-4EBB-45e7-B440-6E39B2CDBF29}" Value="" Type="string" Action="write" />
+                    <RegistryValue Root="HKCR" Key="CLSID\{6A29A528-AA9E-4654-8466-2C9A27D85759}\InprocServer32\4.0.0.0" Name="Class" Value="SilEncConverters40.EcTranslators.NllbTranslator.NllbTranslatorEncConverterConfig" Type="string" Action="write" />
+                    <RegistryValue Root="HKCR" Key="CLSID\{6A29A528-AA9E-4654-8466-2C9A27D85759}\InprocServer32\4.0.0.0" Name="Assembly" Value="EcTranslators, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" Type="string" Action="write" />
+                    <RegistryValue Root="HKCR" Key="CLSID\{6A29A528-AA9E-4654-8466-2C9A27D85759}\InprocServer32\4.0.0.0" Name="RuntimeVersion" Value="v4.0.30319" Type="string" Action="write" />
+                    <RegistryValue Root="HKCR" Key="CLSID\{6A29A528-AA9E-4654-8466-2C9A27D85759}\InprocServer32\4.0.0.0" Name="CodeBase" Value="file:///[#EcTranslators.dll]" Type="string" Action="write" />
+                    <RegistryValue Root="HKCR" Key="CLSID\{6A29A528-AA9E-4654-8466-2C9A27D85759}\InprocServer32" Name="Class" Value="SilEncConverters40.EcTranslators.NllbTranslator.NllbTranslatorEncConverterConfig" Type="string" Action="write" />
+                    <RegistryValue Root="HKCR" Key="CLSID\{6A29A528-AA9E-4654-8466-2C9A27D85759}\InprocServer32" Name="Assembly" Value="EcTranslators, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" Type="string" Action="write" />
+                    <RegistryValue Root="HKCR" Key="CLSID\{6A29A528-AA9E-4654-8466-2C9A27D85759}\InprocServer32" Name="RuntimeVersion" Value="v4.0.30319" Type="string" Action="write" />
+                    <RegistryValue Root="HKCR" Key="CLSID\{6A29A528-AA9E-4654-8466-2C9A27D85759}\InprocServer32" Name="CodeBase" Value="file:///[#EcTranslators.dll]" Type="string" Action="write" />
 
-					<RegistryValue Root="HKCR" Key="CLSID\{8B8FC565-9E65-44F7-B2C4-A2C11E54AD86}\Implemented Categories\{62C8FE65-4EBB-45e7-B440-6E39B2CDBF29}" Value="" Type="string" Action="write" />
-					<RegistryValue Root="HKCR" Key="CLSID\{8B8FC565-9E65-44F7-B2C4-A2C11E54AD86}\InprocServer32\4.0.0.0" Name="Class" Value="SilEncConverters40.EcTranslators.VertexAi.VertexAiEncConverter" Type="string" Action="write" />
-					<RegistryValue Root="HKCR" Key="CLSID\{8B8FC565-9E65-44F7-B2C4-A2C11E54AD86}\InprocServer32\4.0.0.0" Name="Assembly" Value="EcTranslators, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" Type="string" Action="write" />
-					<RegistryValue Root="HKCR" Key="CLSID\{8B8FC565-9E65-44F7-B2C4-A2C11E54AD86}\InprocServer32\4.0.0.0" Name="RuntimeVersion" Value="v4.0.30319" Type="string" Action="write" />
-					<RegistryValue Root="HKCR" Key="CLSID\{8B8FC565-9E65-44F7-B2C4-A2C11E54AD86}\InprocServer32\4.0.0.0" Name="CodeBase" Value="file:///[#EcTranslators.dll]" Type="string" Action="write" />
-					<RegistryValue Root="HKCR" Key="CLSID\{8B8FC565-9E65-44F7-B2C4-A2C11E54AD86}\InprocServer32" Name="Class" Value="SilEncConverters40.EcTranslators.VertexAi.VertexAiEncConverter" Type="string" Action="write" />
-					<RegistryValue Root="HKCR" Key="CLSID\{8B8FC565-9E65-44F7-B2C4-A2C11E54AD86}\InprocServer32" Name="Assembly" Value="EcTranslators, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" Type="string" Action="write" />
-					<RegistryValue Root="HKCR" Key="CLSID\{8B8FC565-9E65-44F7-B2C4-A2C11E54AD86}\InprocServer32" Name="RuntimeVersion" Value="v4.0.30319" Type="string" Action="write" />
-					<RegistryValue Root="HKCR" Key="CLSID\{8B8FC565-9E65-44F7-B2C4-A2C11E54AD86}\InprocServer32" Name="CodeBase" Value="file:///[#EcTranslators.dll]" Type="string" Action="write" />
+                    <RegistryValue Root="HKCR" Key="CLSID\{8B8FC565-9E65-44F7-B2C4-A2C11E54AD86}\Implemented Categories\{62C8FE65-4EBB-45e7-B440-6E39B2CDBF29}" Value="" Type="string" Action="write" />
+                    <RegistryValue Root="HKCR" Key="CLSID\{8B8FC565-9E65-44F7-B2C4-A2C11E54AD86}\InprocServer32\4.0.0.0" Name="Class" Value="SilEncConverters40.EcTranslators.VertexAi.VertexAiEncConverter" Type="string" Action="write" />
+                    <RegistryValue Root="HKCR" Key="CLSID\{8B8FC565-9E65-44F7-B2C4-A2C11E54AD86}\InprocServer32\4.0.0.0" Name="Assembly" Value="EcTranslators, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" Type="string" Action="write" />
+                    <RegistryValue Root="HKCR" Key="CLSID\{8B8FC565-9E65-44F7-B2C4-A2C11E54AD86}\InprocServer32\4.0.0.0" Name="RuntimeVersion" Value="v4.0.30319" Type="string" Action="write" />
+                    <RegistryValue Root="HKCR" Key="CLSID\{8B8FC565-9E65-44F7-B2C4-A2C11E54AD86}\InprocServer32\4.0.0.0" Name="CodeBase" Value="file:///[#EcTranslators.dll]" Type="string" Action="write" />
+                    <RegistryValue Root="HKCR" Key="CLSID\{8B8FC565-9E65-44F7-B2C4-A2C11E54AD86}\InprocServer32" Name="Class" Value="SilEncConverters40.EcTranslators.VertexAi.VertexAiEncConverter" Type="string" Action="write" />
+                    <RegistryValue Root="HKCR" Key="CLSID\{8B8FC565-9E65-44F7-B2C4-A2C11E54AD86}\InprocServer32" Name="Assembly" Value="EcTranslators, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" Type="string" Action="write" />
+                    <RegistryValue Root="HKCR" Key="CLSID\{8B8FC565-9E65-44F7-B2C4-A2C11E54AD86}\InprocServer32" Name="RuntimeVersion" Value="v4.0.30319" Type="string" Action="write" />
+                    <RegistryValue Root="HKCR" Key="CLSID\{8B8FC565-9E65-44F7-B2C4-A2C11E54AD86}\InprocServer32" Name="CodeBase" Value="file:///[#EcTranslators.dll]" Type="string" Action="write" />
 
-					<RegistryValue Root="HKCR" Key="CLSID\{8CCB0373-82B6-4273-8870-A24F8142D85F}\Implemented Categories\{62C8FE65-4EBB-45e7-B440-6E39B2CDBF29}" Value="" Type="string" Action="write" />
-					<RegistryValue Root="HKCR" Key="CLSID\{8CCB0373-82B6-4273-8870-A24F8142D85F}\InprocServer32\4.0.0.0" Name="Class" Value="SilEncConverters40.EcTranslators.VertexAi.VertexAiEncConverterConfig" Type="string" Action="write" />
-					<RegistryValue Root="HKCR" Key="CLSID\{8CCB0373-82B6-4273-8870-A24F8142D85F}\InprocServer32\4.0.0.0" Name="Assembly" Value="EcTranslators, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" Type="string" Action="write" />
-					<RegistryValue Root="HKCR" Key="CLSID\{8CCB0373-82B6-4273-8870-A24F8142D85F}\InprocServer32\4.0.0.0" Name="RuntimeVersion" Value="v4.0.30319" Type="string" Action="write" />
-					<RegistryValue Root="HKCR" Key="CLSID\{8CCB0373-82B6-4273-8870-A24F8142D85F}\InprocServer32\4.0.0.0" Name="CodeBase" Value="file:///[#EcTranslators.dll]" Type="string" Action="write" />
-					<RegistryValue Root="HKCR" Key="CLSID\{8CCB0373-82B6-4273-8870-A24F8142D85F}\InprocServer32" Name="Class" Value="SilEncConverters40.EcTranslators.VertexAi.VertexAiEncConverterConfig" Type="string" Action="write" />
-					<RegistryValue Root="HKCR" Key="CLSID\{8CCB0373-82B6-4273-8870-A24F8142D85F}\InprocServer32" Name="Assembly" Value="EcTranslators, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" Type="string" Action="write" />
-					<RegistryValue Root="HKCR" Key="CLSID\{8CCB0373-82B6-4273-8870-A24F8142D85F}\InprocServer32" Name="RuntimeVersion" Value="v4.0.30319" Type="string" Action="write" />
-					<RegistryValue Root="HKCR" Key="CLSID\{8CCB0373-82B6-4273-8870-A24F8142D85F}\InprocServer32" Name="CodeBase" Value="file:///[#EcTranslators.dll]" Type="string" Action="write" />
+                    <RegistryValue Root="HKCR" Key="CLSID\{8CCB0373-82B6-4273-8870-A24F8142D85F}\Implemented Categories\{62C8FE65-4EBB-45e7-B440-6E39B2CDBF29}" Value="" Type="string" Action="write" />
+                    <RegistryValue Root="HKCR" Key="CLSID\{8CCB0373-82B6-4273-8870-A24F8142D85F}\InprocServer32\4.0.0.0" Name="Class" Value="SilEncConverters40.EcTranslators.VertexAi.VertexAiEncConverterConfig" Type="string" Action="write" />
+                    <RegistryValue Root="HKCR" Key="CLSID\{8CCB0373-82B6-4273-8870-A24F8142D85F}\InprocServer32\4.0.0.0" Name="Assembly" Value="EcTranslators, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" Type="string" Action="write" />
+                    <RegistryValue Root="HKCR" Key="CLSID\{8CCB0373-82B6-4273-8870-A24F8142D85F}\InprocServer32\4.0.0.0" Name="RuntimeVersion" Value="v4.0.30319" Type="string" Action="write" />
+                    <RegistryValue Root="HKCR" Key="CLSID\{8CCB0373-82B6-4273-8870-A24F8142D85F}\InprocServer32\4.0.0.0" Name="CodeBase" Value="file:///[#EcTranslators.dll]" Type="string" Action="write" />
+                    <RegistryValue Root="HKCR" Key="CLSID\{8CCB0373-82B6-4273-8870-A24F8142D85F}\InprocServer32" Name="Class" Value="SilEncConverters40.EcTranslators.VertexAi.VertexAiEncConverterConfig" Type="string" Action="write" />
+                    <RegistryValue Root="HKCR" Key="CLSID\{8CCB0373-82B6-4273-8870-A24F8142D85F}\InprocServer32" Name="Assembly" Value="EcTranslators, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" Type="string" Action="write" />
+                    <RegistryValue Root="HKCR" Key="CLSID\{8CCB0373-82B6-4273-8870-A24F8142D85F}\InprocServer32" Name="RuntimeVersion" Value="v4.0.30319" Type="string" Action="write" />
+                    <RegistryValue Root="HKCR" Key="CLSID\{8CCB0373-82B6-4273-8870-A24F8142D85F}\InprocServer32" Name="CodeBase" Value="file:///[#EcTranslators.dll]" Type="string" Action="write" />
 
-				</Component>
+                </Component>
 
                 <Component Id="EcTranslators.dll.config" Guid="{74D8E8A8-4AFB-44A3-8771-C21FC7B4DA6E}">
                     <File Id="EcTranslators.dll.config" Name="EcTranslators.dll.config" Vital="yes" KeyPath="yes" Source="..\..\output\Win32\release\EcTranslators.dll.config" />
@@ -188,16 +188,16 @@
                             <Interface Id="{DF0E021A-15D2-4400-8909-C1894A4948CC}" Name="_GoogleTranslatorEncConverterConfig" ProxyStubClassId32="{00020424-0000-0000-C000-000000000046}" />
                             <Interface Id="{8941F9CB-6453-48A7-8C2B-5A83D6F61001}" Name="_GoogleTranslatorAutoConfigDialog" ProxyStubClassId32="{00020424-0000-0000-C000-000000000046}" />
                             <Interface Id="{BF7E6F63-D91C-40F0-A993-C6F50838794A}" Name="_GoogleTranslatorEncConverter" ProxyStubClassId32="{00020424-0000-0000-C000-000000000046}" />
-							<Interface Id="{80230643-E8EE-4475-BCC4-6803CEE666F8}" Name="_AzureOpenAiEncConverterConfig" ProxyStubClassId32="{00020424-0000-0000-C000-000000000046}" />
-							<Interface Id="{B1A80B0E-49DA-42EE-9E62-9F63E991C7BF}" Name="_AzureOpenAiAutoConfigDialog" ProxyStubClassId32="{00020424-0000-0000-C000-000000000046}" />
-							<Interface Id="{EA786415-D15B-4753-8EBC-93530ACE4F43}" Name="_AzureOpenAiEncConverter" ProxyStubClassId32="{00020424-0000-0000-C000-000000000046}" />
-							<Interface Id="{4B3911AD-A886-47CC-8D20-0ABA34E6CF11}" Name="_NllbTranslatorEncConverterConfig" ProxyStubClassId32="{00020424-0000-0000-C000-000000000046}" />
-							<Interface Id="{6ABAC063-035A-4339-A5FF-67256DC56EE0}" Name="_NllbTranslatorAutoConfigDialog" ProxyStubClassId32="{00020424-0000-0000-C000-000000000046}" />
-							<Interface Id="{90116AE6-3A0E-4659-A1E7-A14CE34CF216}" Name="_NllbTranslatorEncConverter" ProxyStubClassId32="{00020424-0000-0000-C000-000000000046}" />
-							<Interface Id="{AAA36A67-DA25-4C63-A4B8-8C1F0AAFB20A}" Name="_VertexAiEncConverterConfig" ProxyStubClassId32="{00020424-0000-0000-C000-000000000046}" />
-							<Interface Id="{FD292C7C-DC49-43E0-AB23-E6F94AA56B56}" Name="_VertexAiAutoConfigDialog" ProxyStubClassId32="{00020424-0000-0000-C000-000000000046}" />
-							<Interface Id="{FBD3B40A-6026-4E22-AE59-2A528DA552E1}" Name="_VertexAiEncConverter" ProxyStubClassId32="{00020424-0000-0000-C000-000000000046}" />
-						</TypeLib>
+                            <Interface Id="{80230643-E8EE-4475-BCC4-6803CEE666F8}" Name="_AzureOpenAiEncConverterConfig" ProxyStubClassId32="{00020424-0000-0000-C000-000000000046}" />
+                            <Interface Id="{B1A80B0E-49DA-42EE-9E62-9F63E991C7BF}" Name="_AzureOpenAiAutoConfigDialog" ProxyStubClassId32="{00020424-0000-0000-C000-000000000046}" />
+                            <Interface Id="{EA786415-D15B-4753-8EBC-93530ACE4F43}" Name="_AzureOpenAiEncConverter" ProxyStubClassId32="{00020424-0000-0000-C000-000000000046}" />
+                            <Interface Id="{4B3911AD-A886-47CC-8D20-0ABA34E6CF11}" Name="_NllbTranslatorEncConverterConfig" ProxyStubClassId32="{00020424-0000-0000-C000-000000000046}" />
+                            <Interface Id="{6ABAC063-035A-4339-A5FF-67256DC56EE0}" Name="_NllbTranslatorAutoConfigDialog" ProxyStubClassId32="{00020424-0000-0000-C000-000000000046}" />
+                            <Interface Id="{90116AE6-3A0E-4659-A1E7-A14CE34CF216}" Name="_NllbTranslatorEncConverter" ProxyStubClassId32="{00020424-0000-0000-C000-000000000046}" />
+                            <Interface Id="{AAA36A67-DA25-4C63-A4B8-8C1F0AAFB20A}" Name="_VertexAiEncConverterConfig" ProxyStubClassId32="{00020424-0000-0000-C000-000000000046}" />
+                            <Interface Id="{FD292C7C-DC49-43E0-AB23-E6F94AA56B56}" Name="_VertexAiAutoConfigDialog" ProxyStubClassId32="{00020424-0000-0000-C000-000000000046}" />
+                            <Interface Id="{FBD3B40A-6026-4E22-AE59-2A528DA552E1}" Name="_VertexAiEncConverter" ProxyStubClassId32="{00020424-0000-0000-C000-000000000046}" />
+                        </TypeLib>
                     </File>
                 </Component>
 
@@ -213,7 +213,7 @@
                                     Source="..\..\output\Win32\release\BackTranslationHelper.dll"/>
                 </Component>
 
-				<Component Id="Microsoft.Bcl.AsyncInterfaces.dll" Guid="{0DA1D8ED-D450-4338-BFF4-513AB038CD93}">
+                <Component Id="Microsoft.Bcl.AsyncInterfaces.dll" Guid="{0DA1D8ED-D450-4338-BFF4-513AB038CD93}">
                     <File Id="Microsoft.Bcl.AsyncInterfaces.dll" Name="Microsoft.Bcl.AsyncInterfaces.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="Microsoft.Bcl.AsyncInterfaces.dll" AssemblyApplication="Microsoft.Bcl.AsyncInterfaces.dll"
                           Source="..\..\output\Win32\release\Microsoft.Bcl.AsyncInterfaces.dll"/>
                 </Component>
@@ -293,6 +293,11 @@
                           Source="..\..\output\Win32\release\System.Buffers.dll"/>
                 </Component>
 
+                <Component Id="System.ClientModel.dll" Guid="{9F5AB310-21C9-4AB2-B997-A87AA99655F0}">
+                    <File Id="System.ClientModel.dll" Name="System.ClientModel.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="System.ClientModel.dll" AssemblyApplication="System.ClientModel.dll"
+                          Source="..\..\output\Win32\release\System.ClientModel.dll"/>
+                </Component>
+
                 <Component Id="System.ComponentModel.Annotations.dll" Guid="{69E27C0D-7761-4219-AAFC-D32CD3DEC1EE}">
                     <File Id="System.ComponentModel.Annotations.dll" Name="System.ComponentModel.Annotations.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="System.ComponentModel.Annotations.dll" AssemblyApplication="System.ComponentModel.Annotations.dll"
                           Source="..\..\output\Win32\release\System.ComponentModel.Annotations.dll"/>
@@ -358,7 +363,7 @@
                           Source="..\..\output\Win32\release\Google.Apis.Translate.v2.dll"/>
                 </Component>
 
-				<!-- These might be obsolete after the latest upgrade
+                <!-- These might be obsolete after the latest upgrade
                 <Component Id="Google.Apis.Auth.PlatformServices.dll" Guid="{0794425D-F123-49CA-A844-B3A86A793B0C}">
                     <File Id="Google.Apis.Auth.PlatformServices.dll" Name="Google.Apis.Auth.PlatformServices.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="Google.Apis.Auth.PlatformServices.dll" AssemblyApplication="Google.Apis.Auth.PlatformServices.dll"
                           Source="..\..\output\Win32\release\Google.Apis.Auth.PlatformServices.dll"/>
@@ -368,14 +373,14 @@
                     <File Id="Google.Apis.PlatformServices.dll" Name="Google.Apis.PlatformServices.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="Google.Apis.PlatformServices.dll" AssemblyApplication="Google.Apis.PlatformServices.dll"
                           Source="..\..\output\Win32\release\Google.Apis.PlatformServices.dll"/>
                 </Component>
-				-->
-				
+                -->
+                
                 <Component Id="Google.Apis.Auth.dll" Guid="{BDBCAE05-1B69-44AE-827B-16F6BF91ABB4}">
                     <File Id="Google.Apis.Auth.dll" Name="Google.Apis.Auth.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="Google.Apis.Auth.dll" AssemblyApplication="Google.Apis.Auth.dll"
                           Source="..\..\output\Win32\release\Google.Apis.Auth.dll"/>
                 </Component>
 
-				<Component Id="Google.Apis.dll" Guid="{F70841B8-D3A2-430C-9B38-89ACB291D0A6}">
+                <Component Id="Google.Apis.dll" Guid="{F70841B8-D3A2-430C-9B38-89ACB291D0A6}">
                     <File Id="Google.Apis.dll" Name="Google.Apis.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="Google.Apis.dll" AssemblyApplication="Google.Apis.dll"
                           Source="..\..\output\Win32\release\Google.Apis.dll"/>
                 </Component>
@@ -414,85 +419,85 @@
                     <File Id="AzureOpenAiExe.exe.config" Name="AzureOpenAiExe.exe.config" Vital="yes" KeyPath="yes" Source="..\..\output\Win32\release\AzureOpenAiExe.exe.config" />
                 </Component>
 
-				<Component Id="Google.Protobuf.dll" Guid="{EB85FE0C-4C8A-4B46-AF7D-3CADE1793677}">
-					<File Id="Google.Protobuf.dll" Name="Google.Protobuf.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="Google.Protobuf.dll" AssemblyApplication="Google.Protobuf.dll"
+                <Component Id="Google.Protobuf.dll" Guid="{EB85FE0C-4C8A-4B46-AF7D-3CADE1793677}">
+                    <File Id="Google.Protobuf.dll" Name="Google.Protobuf.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="Google.Protobuf.dll" AssemblyApplication="Google.Protobuf.dll"
                           Source="..\..\output\Win32\release\Google.Protobuf.dll"/>
-				</Component>
+                </Component>
 
-				<Component Id="Google.Api.Gax.Grpc.dll" Guid="{C1E94BE1-F483-4CF8-A4F4-0D563C4BA01F}">
-					<File Id="Google.Api.Gax.Grpc.dll" Name="Google.Api.Gax.Grpc.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="Google.Api.Gax.Grpc.dll" AssemblyApplication="Google.Api.Gax.Grpc.dll"
+                <Component Id="Google.Api.Gax.Grpc.dll" Guid="{C1E94BE1-F483-4CF8-A4F4-0D563C4BA01F}">
+                    <File Id="Google.Api.Gax.Grpc.dll" Name="Google.Api.Gax.Grpc.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="Google.Api.Gax.Grpc.dll" AssemblyApplication="Google.Api.Gax.Grpc.dll"
                           Source="..\..\output\Win32\release\Google.Api.Gax.Grpc.dll"/>
-				</Component>
+                </Component>
 
-				<Component Id="Google.Api.CommonProtos.dll" Guid="{B8A5E7E9-963B-4ED2-B673-2ADF8461EB46}">
-					<File Id="Google.Api.CommonProtos.dll" Name="Google.Api.CommonProtos.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="Google.Api.CommonProtos.dll" AssemblyApplication="Google.Api.CommonProtos.dll"
+                <Component Id="Google.Api.CommonProtos.dll" Guid="{B8A5E7E9-963B-4ED2-B673-2ADF8461EB46}">
+                    <File Id="Google.Api.CommonProtos.dll" Name="Google.Api.CommonProtos.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="Google.Api.CommonProtos.dll" AssemblyApplication="Google.Api.CommonProtos.dll"
                           Source="..\..\output\Win32\release\Google.Api.CommonProtos.dll"/>
-				</Component>
+                </Component>
 
-				<Component Id="Google.Cloud.AIPlatform.V1.dll" Guid="{4257E600-4513-4517-B9C6-7B83A20D4301}">
-					<File Id="Google.Cloud.AIPlatform.V1.dll" Name="Google.Cloud.AIPlatform.V1.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="Google.Cloud.AIPlatform.V1.dll" AssemblyApplication="Google.Cloud.AIPlatform.V1.dll"
+                <Component Id="Google.Cloud.AIPlatform.V1.dll" Guid="{4257E600-4513-4517-B9C6-7B83A20D4301}">
+                    <File Id="Google.Cloud.AIPlatform.V1.dll" Name="Google.Cloud.AIPlatform.V1.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="Google.Cloud.AIPlatform.V1.dll" AssemblyApplication="Google.Cloud.AIPlatform.V1.dll"
                           Source="..\..\output\Win32\release\Google.Cloud.AIPlatform.V1.dll"/>
-					</Component>
+                    </Component>
 
-				<Component Id="Google.Cloud.Iam.V1.dll" Guid="{FE5F94F3-4A4A-4AB6-AD74-28E33EB1B6EE}">
-					<File Id="Google.Cloud.Iam.V1.dll" Name="Google.Cloud.Iam.V1.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="Google.Cloud.Iam.V1.dll" AssemblyApplication="Google.Cloud.Iam.V1.dll"
+                <Component Id="Google.Cloud.Iam.V1.dll" Guid="{FE5F94F3-4A4A-4AB6-AD74-28E33EB1B6EE}">
+                    <File Id="Google.Cloud.Iam.V1.dll" Name="Google.Cloud.Iam.V1.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="Google.Cloud.Iam.V1.dll" AssemblyApplication="Google.Cloud.Iam.V1.dll"
                           Source="..\..\output\Win32\release\Google.Cloud.Iam.V1.dll"/>
-					</Component>
+                    </Component>
 
-				<Component Id="Google.Cloud.Location.dll" Guid="{6D9BB35E-51B8-4EEF-9405-915C74020E8D}">
-					<File Id="Google.Cloud.Location.dll" Name="Google.Cloud.Location.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="Google.Cloud.Location.dll" AssemblyApplication="Google.Cloud.Location.dll"
+                <Component Id="Google.Cloud.Location.dll" Guid="{6D9BB35E-51B8-4EEF-9405-915C74020E8D}">
+                    <File Id="Google.Cloud.Location.dll" Name="Google.Cloud.Location.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="Google.Cloud.Location.dll" AssemblyApplication="Google.Cloud.Location.dll"
                           Source="..\..\output\Win32\release\Google.Cloud.Location.dll"/>
-					</Component>
+                    </Component>
 
-				<Component Id="Google.LongRunning.dll" Guid="{A9A0A837-6B87-45A1-A99F-2D3BFA6F80FB}">
-					<File Id="Google.LongRunning.dll" Name="Google.LongRunning.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="Google.LongRunning.dll" AssemblyApplication="Google.LongRunning.dll"
+                <Component Id="Google.LongRunning.dll" Guid="{A9A0A837-6B87-45A1-A99F-2D3BFA6F80FB}">
+                    <File Id="Google.LongRunning.dll" Name="Google.LongRunning.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="Google.LongRunning.dll" AssemblyApplication="Google.LongRunning.dll"
                           Source="..\..\output\Win32\release\Google.LongRunning.dll"/>
-					</Component>
+                    </Component>
 
-				<Component Id="Grpc.Auth.dll" Guid="{25561BBE-5853-487D-832F-7E28F1D73F1E}">
-					<File Id="Grpc.Auth.dll" Name="Grpc.Auth.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="Grpc.Auth.dll" AssemblyApplication="Grpc.Auth.dll"
+                <Component Id="Grpc.Auth.dll" Guid="{25561BBE-5853-487D-832F-7E28F1D73F1E}">
+                    <File Id="Grpc.Auth.dll" Name="Grpc.Auth.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="Grpc.Auth.dll" AssemblyApplication="Grpc.Auth.dll"
                           Source="..\..\output\Win32\release\Grpc.Auth.dll"/>
-				</Component>
+                </Component>
 
-				<Component Id="Grpc.Core.Api.dll" Guid="{109C52DC-9BE9-4E6B-8C9B-F662322C8E9B}">
-					<File Id="Grpc.Core.Api.dll" Name="Grpc.Core.Api.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="Grpc.Core.Api.dll" AssemblyApplication="Grpc.Core.Api.dll"
+                <Component Id="Grpc.Core.Api.dll" Guid="{109C52DC-9BE9-4E6B-8C9B-F662322C8E9B}">
+                    <File Id="Grpc.Core.Api.dll" Name="Grpc.Core.Api.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="Grpc.Core.Api.dll" AssemblyApplication="Grpc.Core.Api.dll"
                           Source="..\..\output\Win32\release\Grpc.Core.Api.dll"/>
-				</Component>
+                </Component>
 
-				<Component Id="Grpc.Core.dll" Guid="{E02E6D62-EB57-4BF4-BD7D-238AEF924454}">
-					<File Id="Grpc.Core.dll" Name="Grpc.Core.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="Grpc.Core.dll" AssemblyApplication="Grpc.Core.dll"
+                <Component Id="Grpc.Core.dll" Guid="{E02E6D62-EB57-4BF4-BD7D-238AEF924454}">
+                    <File Id="Grpc.Core.dll" Name="Grpc.Core.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="Grpc.Core.dll" AssemblyApplication="Grpc.Core.dll"
                           Source="..\..\output\Win32\release\Grpc.Core.dll"/>
-				</Component>
+                </Component>
 
-				<Component Id="Grpc.Net.Client.dll" Guid="{8A7F1BA8-59BD-4F21-913B-94C222A395B5}">
-					<File Id="Grpc.Net.Client.dll" Name="Grpc.Net.Client.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="Grpc.Net.Client.dll" AssemblyApplication="Grpc.Net.Client.dll"
+                <Component Id="Grpc.Net.Client.dll" Guid="{8A7F1BA8-59BD-4F21-913B-94C222A395B5}">
+                    <File Id="Grpc.Net.Client.dll" Name="Grpc.Net.Client.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="Grpc.Net.Client.dll" AssemblyApplication="Grpc.Net.Client.dll"
                           Source="..\..\output\Win32\release\Grpc.Net.Client.dll"/>
-				</Component>
+                </Component>
 
-				<Component Id="Grpc.Net.Common.dll" Guid="{17020A8F-0F96-4E3D-9D33-62BF3378A07C}">
-					<File Id="Grpc.Net.Common.dll" Name="Grpc.Net.Common.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="Grpc.Net.Common.dll" AssemblyApplication="Grpc.Net.Common.dll"
+                <Component Id="Grpc.Net.Common.dll" Guid="{17020A8F-0F96-4E3D-9D33-62BF3378A07C}">
+                    <File Id="Grpc.Net.Common.dll" Name="Grpc.Net.Common.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="Grpc.Net.Common.dll" AssemblyApplication="Grpc.Net.Common.dll"
                           Source="..\..\output\Win32\release\Grpc.Net.Common.dll"/>
-				</Component>
+                </Component>
 
-				<!--don't ask... somehow they build Grpc.Core to require both of these (or maybe only this one) even in x64 apps-->
-				<Component Id="grpc_csharp_ext.x64.dll" Guid="{70CC0116-FCF2-4CBC-8A27-ED34773E87CA}">
-					<File Id="grpc_csharp_ext.x64.dll" Name="grpc_csharp_ext.x64.dll" KeyPath="yes" Source="..\..\output\Win32\release\grpc_csharp_ext.x64.dll" />
-				</Component>
+                <!--don't ask... somehow they build Grpc.Core to require both of these (or maybe only this one) even in x64 apps-->
+                <Component Id="grpc_csharp_ext.x64.dll" Guid="{70CC0116-FCF2-4CBC-8A27-ED34773E87CA}">
+                    <File Id="grpc_csharp_ext.x64.dll" Name="grpc_csharp_ext.x64.dll" KeyPath="yes" Source="..\..\output\Win32\release\grpc_csharp_ext.x64.dll" />
+                </Component>
 
-				<Component Id="grpc_csharp_ext.x86.dll" Guid="{73000E58-AA7D-4586-A31A-2DC1F927D3CE}">
-					<File Id="grpc_csharp_ext.x86.dll" Name="grpc_csharp_ext.x86.dll" KeyPath="yes" Source="..\..\output\Win32\release\grpc_csharp_ext.x86.dll" />
-				</Component>
+                <Component Id="grpc_csharp_ext.x86.dll" Guid="{73000E58-AA7D-4586-A31A-2DC1F927D3CE}">
+                    <File Id="grpc_csharp_ext.x86.dll" Name="grpc_csharp_ext.x86.dll" KeyPath="yes" Source="..\..\output\Win32\release\grpc_csharp_ext.x86.dll" />
+                </Component>
 
-				<Component Id="VertexAiExe.exe" Guid="{53479680-E0B7-4F42-AA42-9B9C38797916}">
-					<File Id="VertexAiExe.exe" Name="VertexAiExe.exe" KeyPath="yes" Assembly=".net" AssemblyManifest="VertexAiExe.exe" AssemblyApplication="VertexAiExe.exe"
+                <Component Id="VertexAiExe.exe" Guid="{53479680-E0B7-4F42-AA42-9B9C38797916}">
+                    <File Id="VertexAiExe.exe" Name="VertexAiExe.exe" KeyPath="yes" Assembly=".net" AssemblyManifest="VertexAiExe.exe" AssemblyApplication="VertexAiExe.exe"
                           Source="..\..\output\Win32\release\VertexAiExe.exe"/>
-				</Component>
+                </Component>
 
-				<Component Id="VertexAiExe.exe.config" Guid="{1A2C200C-A4BD-4364-A2D0-7D31322E3322}">
-					<File Id="VertexAiExe.exe.config" Name="VertexAiExe.exe.config" Vital="yes" KeyPath="yes" Source="..\..\output\Win32\release\VertexAiExe.exe.config" />
-				</Component>
+                <Component Id="VertexAiExe.exe.config" Guid="{1A2C200C-A4BD-4364-A2D0-7D31322E3322}">
+                    <File Id="VertexAiExe.exe.config" Name="VertexAiExe.exe.config" Vital="yes" KeyPath="yes" Source="..\..\output\Win32\release\VertexAiExe.exe.config" />
+                </Component>
 
-				<Directory Id="EcTranslatorsECFolder" Name="EC">
+                <Directory Id="EcTranslatorsECFolder" Name="EC">
                     <Directory Id="EcTranslatorsPluginsFolder" Name="Plugins">
                         <Component Id="Translators4.0.0.0PluginDetails.xml" Guid="{0EA6F96A-F273-4254-8367-20C87BA6663B}">
                             <File Id="Translators4.0.0.0PluginDetails.xml" Name="Translators 4.0.0.0 Plugin Details.xml" KeyPath="yes" Source="..\..\redist\EC\Plugins\Translators 4.0.0.0 Plugin Details.xml"/>
@@ -579,70 +584,72 @@
                                     <File Id="aoai_colorschememapping.xml" Name="colorschememapping.xml" Source="..\..\redist\Help\Azure_OpenAI_Translate_Plug-in_About_box_files\colorschememapping.xml"/>
                                     <File Id="aoai_themedata.thmx" Name="themedata.thmx" Source="..\..\redist\Help\Azure_OpenAI_Translate_Plug-in_About_box_files\themedata.thmx"/>
                                     <File Id="aoai_header.htm" Name="header.htm" Source="..\..\redist\Help\Azure_OpenAI_Translate_Plug-in_About_box_files\header.htm"/>
+                                    <File Id="aoai_image002.jpg" Name="image002.jpg" Source="..\..\redist\Help\Azure_OpenAI_Translate_Plug-in_About_box_files\image002.jpg"/>
                                     <File Id="aoai_image004.jpg" Name="image004.jpg" Source="..\..\redist\Help\Azure_OpenAI_Translate_Plug-in_About_box_files\image004.jpg"/>
                                     <File Id="aoai_image006.jpg" Name="image006.jpg" Source="..\..\redist\Help\Azure_OpenAI_Translate_Plug-in_About_box_files\image006.jpg"/>
                                     <File Id="aoai_image007.jpg" Name="image007.jpg" Source="..\..\redist\Help\Azure_OpenAI_Translate_Plug-in_About_box_files\image007.jpg"/>
                                     <File Id="aoai_image008.jpg" Name="image008.jpg" Source="..\..\redist\Help\Azure_OpenAI_Translate_Plug-in_About_box_files\image008.jpg"/>
                                     <File Id="aoai_image012.jpg" Name="image012.jpg" Source="..\..\redist\Help\Azure_OpenAI_Translate_Plug-in_About_box_files\image012.jpg"/>
                                     <File Id="aoai_image017.jpg" Name="image017.jpg" Source="..\..\redist\Help\Azure_OpenAI_Translate_Plug-in_About_box_files\image017.jpg"/>
-                                    <File Id="aoai_item0013.xml" Name="item0013.xml" Source="..\..\redist\Help\Azure_OpenAI_Translate_Plug-in_About_box_files\item0013.xml"/>
-                                    <File Id="aoai_props014.xml" Name="props014.xml" Source="..\..\redist\Help\Azure_OpenAI_Translate_Plug-in_About_box_files\props014.xml"/>
+                                    <File Id="aoai_item0015.xml" Name="item0015.xml" Source="..\..\redist\Help\Azure_OpenAI_Translate_Plug-in_About_box_files\item0015.xml"/>
+                                    <File Id="aoai_props016.xml" Name="props016.xml" Source="..\..\redist\Help\Azure_OpenAI_Translate_Plug-in_About_box_files\props016.xml"/>
                                 </Component>
                             </Directory>
 
-							<!--NLLB Translator Help-->
-							<Component Id="NnlbTranslatorHelp.htm" Guid="{D99F2F7C-D20E-4932-8A62-FFAA29A0CB31}">
-								<File Id="NnlbTranslatorHelp.htm" Name="NLLB_Translate_Plug-in_About_box.htm" KeyPath="yes" Source="..\..\redist\Help\NLLB_Translate_Plug-in_About_box.htm"/>
-								<Shortcut Id="NnlbTranslatorHelpHtm" Directory="EcTranslatorsHelp" Name="NNLB Plug-in Help" Description="View help document for the No Language Left Behind (NLLB) EncConverter/Translator Plug-in" IconIndex="0" Show="normal" Target="[#NnlbTranslatorHelp.htm]" WorkingDirectory="Help" Advertise="no" />
-							</Component>
-							<Directory Id="NLLB_Translate_Plugin_About_box" Name="NLLB_Translate_Plug-in_About_box_files">
-								<Component Id="NLLB_Translate_Plugin_About_boxComp" Guid="{0BC69E1F-9B41-48AD-BC4B-757E16F24599}">
-									<File Id="nt_filelist.xml" Name="filelist.xml" KeyPath="yes" Source="..\..\redist\Help\NLLB_Translate_Plug-in_About_box_files\filelist.xml"/>
-									<File Id="nt_colorschememapping.xml" Name="colorschememapping.xml" Source="..\..\redist\Help\NLLB_Translate_Plug-in_About_box_files\colorschememapping.xml"/>
-									<File Id="nt_themedata.thmx" Name="themedata.thmx" Source="..\..\redist\Help\NLLB_Translate_Plug-in_About_box_files\themedata.thmx"/>
-									<File Id="nt_header.htm" Name="header.htm" Source="..\..\redist\Help\NLLB_Translate_Plug-in_About_box_files\header.htm"/>
-									<File Id="nt_image001.jpg" Name="image001.jpg" Source="..\..\redist\Help\NLLB_Translate_Plug-in_About_box_files\image001.jpg"/>
-									<File Id="nt_image003.jpg" Name="image003.jpg" Source="..\..\redist\Help\NLLB_Translate_Plug-in_About_box_files\image003.jpg"/>
-									<File Id="nt_image004.jpg" Name="image004.jpg" Source="..\..\redist\Help\NLLB_Translate_Plug-in_About_box_files\image004.jpg"/>
-									<File Id="nt_image005.jpg" Name="image005.jpg" Source="..\..\redist\Help\NLLB_Translate_Plug-in_About_box_files\image005.jpg"/>
-									<File Id="nt_image006.jpg" Name="image006.jpg" Source="..\..\redist\Help\NLLB_Translate_Plug-in_About_box_files\image006.jpg"/>
-									<File Id="nt_image007.jpg" Name="image007.jpg" Source="..\..\redist\Help\NLLB_Translate_Plug-in_About_box_files\image007.jpg"/>
-									<File Id="nt_image008.jpg" Name="image008.jpg" Source="..\..\redist\Help\NLLB_Translate_Plug-in_About_box_files\image008.jpg"/>
-									<File Id="nt_image009.jpg" Name="image009.jpg" Source="..\..\redist\Help\NLLB_Translate_Plug-in_About_box_files\image009.jpg"/>
-									<File Id="nt_image010.jpg" Name="image010.jpg" Source="..\..\redist\Help\NLLB_Translate_Plug-in_About_box_files\image010.jpg"/>
-									<File Id="nt_image012.jpg" Name="image012.jpg" Source="..\..\redist\Help\NLLB_Translate_Plug-in_About_box_files\image012.jpg"/>
-									<File Id="nt_image016.jpg" Name="image016.jpg" Source="..\..\redist\Help\NLLB_Translate_Plug-in_About_box_files\image016.jpg"/>
-									<File Id="nt_image021.jpg" Name="image021.jpg" Source="..\..\redist\Help\NLLB_Translate_Plug-in_About_box_files\image021.jpg"/>
-									<File Id="nt_image023.jpg" Name="image023.jpg" Source="..\..\redist\Help\NLLB_Translate_Plug-in_About_box_files\image023.jpg"/>
-									<File Id="nt_image027.jpg" Name="image027.jpg" Source="..\..\redist\Help\NLLB_Translate_Plug-in_About_box_files\image027.jpg"/>
-									<File Id="nt_item0027.xml" Name="item0027.xml" Source="..\..\redist\Help\NLLB_Translate_Plug-in_About_box_files\item0027.xml"/>
-									<File Id="nt_props028.xml" Name="props028.xml" Source="..\..\redist\Help\NLLB_Translate_Plug-in_About_box_files\props028.xml"/>
-								</Component>
-							</Directory>
+                            <!--NLLB Translator Help-->
+                            <Component Id="NnlbTranslatorHelp.htm" Guid="{D99F2F7C-D20E-4932-8A62-FFAA29A0CB31}">
+                                <File Id="NnlbTranslatorHelp.htm" Name="NLLB_Translate_Plug-in_About_box.htm" KeyPath="yes" Source="..\..\redist\Help\NLLB_Translate_Plug-in_About_box.htm"/>
+                                <Shortcut Id="NnlbTranslatorHelpHtm" Directory="EcTranslatorsHelp" Name="NNLB Plug-in Help" Description="View help document for the No Language Left Behind (NLLB) EncConverter/Translator Plug-in" IconIndex="0" Show="normal" Target="[#NnlbTranslatorHelp.htm]" WorkingDirectory="Help" Advertise="no" />
+                            </Component>
+                            <Directory Id="NLLB_Translate_Plugin_About_box" Name="NLLB_Translate_Plug-in_About_box_files">
+                                <Component Id="NLLB_Translate_Plugin_About_boxComp" Guid="{0BC69E1F-9B41-48AD-BC4B-757E16F24599}">
+                                    <File Id="nt_filelist.xml" Name="filelist.xml" KeyPath="yes" Source="..\..\redist\Help\NLLB_Translate_Plug-in_About_box_files\filelist.xml"/>
+                                    <File Id="nt_colorschememapping.xml" Name="colorschememapping.xml" Source="..\..\redist\Help\NLLB_Translate_Plug-in_About_box_files\colorschememapping.xml"/>
+                                    <File Id="nt_themedata.thmx" Name="themedata.thmx" Source="..\..\redist\Help\NLLB_Translate_Plug-in_About_box_files\themedata.thmx"/>
+                                    <File Id="nt_header.htm" Name="header.htm" Source="..\..\redist\Help\NLLB_Translate_Plug-in_About_box_files\header.htm"/>
+                                    <File Id="nt_image001.jpg" Name="image001.jpg" Source="..\..\redist\Help\NLLB_Translate_Plug-in_About_box_files\image001.jpg"/>
+                                    <File Id="nt_image003.jpg" Name="image003.jpg" Source="..\..\redist\Help\NLLB_Translate_Plug-in_About_box_files\image003.jpg"/>
+                                    <File Id="nt_image004.jpg" Name="image004.jpg" Source="..\..\redist\Help\NLLB_Translate_Plug-in_About_box_files\image004.jpg"/>
+                                    <File Id="nt_image005.jpg" Name="image005.jpg" Source="..\..\redist\Help\NLLB_Translate_Plug-in_About_box_files\image005.jpg"/>
+                                    <File Id="nt_image006.jpg" Name="image006.jpg" Source="..\..\redist\Help\NLLB_Translate_Plug-in_About_box_files\image006.jpg"/>
+                                    <File Id="nt_image007.jpg" Name="image007.jpg" Source="..\..\redist\Help\NLLB_Translate_Plug-in_About_box_files\image007.jpg"/>
+                                    <File Id="nt_image008.jpg" Name="image008.jpg" Source="..\..\redist\Help\NLLB_Translate_Plug-in_About_box_files\image008.jpg"/>
+                                    <File Id="nt_image009.jpg" Name="image009.jpg" Source="..\..\redist\Help\NLLB_Translate_Plug-in_About_box_files\image009.jpg"/>
+                                    <File Id="nt_image010.jpg" Name="image010.jpg" Source="..\..\redist\Help\NLLB_Translate_Plug-in_About_box_files\image010.jpg"/>
+                                    <File Id="nt_image012.jpg" Name="image012.jpg" Source="..\..\redist\Help\NLLB_Translate_Plug-in_About_box_files\image012.jpg"/>
+                                    <File Id="nt_image016.jpg" Name="image016.jpg" Source="..\..\redist\Help\NLLB_Translate_Plug-in_About_box_files\image016.jpg"/>
+                                    <File Id="nt_image021.jpg" Name="image021.jpg" Source="..\..\redist\Help\NLLB_Translate_Plug-in_About_box_files\image021.jpg"/>
+                                    <File Id="nt_image023.jpg" Name="image023.jpg" Source="..\..\redist\Help\NLLB_Translate_Plug-in_About_box_files\image023.jpg"/>
+                                    <File Id="nt_image027.jpg" Name="image027.jpg" Source="..\..\redist\Help\NLLB_Translate_Plug-in_About_box_files\image027.jpg"/>
+                                    <File Id="nt_item0027.xml" Name="item0027.xml" Source="..\..\redist\Help\NLLB_Translate_Plug-in_About_box_files\item0027.xml"/>
+                                    <File Id="nt_props028.xml" Name="props028.xml" Source="..\..\redist\Help\NLLB_Translate_Plug-in_About_box_files\props028.xml"/>
+                                </Component>
+                            </Directory>
 
-							<!--Vertex AI Help-->
-							<Component Id="VertexAiHelp.htm" Guid="{87536E5C-ECC8-447C-A34C-13E6F02CC6BC}">
-								<File Id="VertexAiHelp.htm" Name="Vertex_AI_Translate_Plug-in_About_box.htm" KeyPath="yes" Source="..\..\redist\Help\Vertex_AI_Translate_Plug-in_About_box.htm"/>
-								<Shortcut Id="VertexAiHelpHtm" Directory="EcTranslatorsHelp" Name="Vertex AI Plug-in Help" Description="View help document for the Vertex AI Plug-in" IconIndex="0" Show="normal" Target="[#VertexAiHelp.htm]" WorkingDirectory="Help" Advertise="no" />
-							</Component>
-							<Directory Id="Vertex_AI_Translate_Plug_in_About_box" Name="Vertex_AI_Translate_Plug-in_About_box_files">
-								<Component Id="Vertex_AI_Translate_Plug_in_About_boxComp" Guid="{1214584D-E04D-480E-A60E-53CA4B0E8E17}">
-									<File Id="vai_filelist.xml" Name="filelist.xml" KeyPath="yes" Source="..\..\redist\Help\Vertex_AI_Translate_Plug-in_About_box_files\filelist.xml"/>
-									<File Id="vai_colorschememapping.xml" Name="colorschememapping.xml" Source="..\..\redist\Help\Vertex_AI_Translate_Plug-in_About_box_files\colorschememapping.xml"/>
-									<File Id="vai_themedata.thmx" Name="themedata.thmx" Source="..\..\redist\Help\Vertex_AI_Translate_Plug-in_About_box_files\themedata.thmx"/>
-									<File Id="vai_header.htm" Name="header.htm" Source="..\..\redist\Help\Vertex_AI_Translate_Plug-in_About_box_files\header.htm"/>
-									<File Id="vai_image001.jpg" Name="image001.jpg" Source="..\..\redist\Help\Vertex_AI_Translate_Plug-in_About_box_files\image001.jpg"/>
-									<File Id="vai_image002.jpg" Name="image002.jpg" Source="..\..\redist\Help\Vertex_AI_Translate_Plug-in_About_box_files\image002.jpg"/>
-									<File Id="vai_image003.jpg" Name="image003.jpg" Source="..\..\redist\Help\Vertex_AI_Translate_Plug-in_About_box_files\image003.jpg"/>
-									<File Id="vai_image005.jpg" Name="image005.jpg" Source="..\..\redist\Help\Vertex_AI_Translate_Plug-in_About_box_files\image005.jpg"/>
-									<File Id="vai_image007.jpg" Name="image007.jpg" Source="..\..\redist\Help\Vertex_AI_Translate_Plug-in_About_box_files\image007.jpg"/>
-									<File Id="vai_image012.jpg" Name="image012.jpg" Source="..\..\redist\Help\Vertex_AI_Translate_Plug-in_About_box_files\image012.jpg"/>
-									<File Id="vai_item0013.xml" Name="item0013.xml" Source="..\..\redist\Help\Vertex_AI_Translate_Plug-in_About_box_files\item0013.xml"/>
-									<File Id="vai_props014.xml" Name="props014.xml" Source="..\..\redist\Help\Vertex_AI_Translate_Plug-in_About_box_files\props014.xml"/>
-								</Component>
-							</Directory>
+                            <!--Vertex AI Help-->
+                            <Component Id="VertexAiHelp.htm" Guid="{87536E5C-ECC8-447C-A34C-13E6F02CC6BC}">
+                                <File Id="VertexAiHelp.htm" Name="Vertex_AI_Translate_Plug-in_About_box.htm" KeyPath="yes" Source="..\..\redist\Help\Vertex_AI_Translate_Plug-in_About_box.htm"/>
+                                <Shortcut Id="VertexAiHelpHtm" Directory="EcTranslatorsHelp" Name="Vertex AI Plug-in Help" Description="View help document for the Vertex AI Plug-in" IconIndex="0" Show="normal" Target="[#VertexAiHelp.htm]" WorkingDirectory="Help" Advertise="no" />
+                            </Component>
+                            <Directory Id="Vertex_AI_Translate_Plug_in_About_box" Name="Vertex_AI_Translate_Plug-in_About_box_files">
+                                <Component Id="Vertex_AI_Translate_Plug_in_About_boxComp" Guid="{1214584D-E04D-480E-A60E-53CA4B0E8E17}">
+                                    <File Id="vai_filelist.xml" Name="filelist.xml" KeyPath="yes" Source="..\..\redist\Help\Vertex_AI_Translate_Plug-in_About_box_files\filelist.xml"/>
+                                    <File Id="vai_colorschememapping.xml" Name="colorschememapping.xml" Source="..\..\redist\Help\Vertex_AI_Translate_Plug-in_About_box_files\colorschememapping.xml"/>
+                                    <File Id="vai_themedata.thmx" Name="themedata.thmx" Source="..\..\redist\Help\Vertex_AI_Translate_Plug-in_About_box_files\themedata.thmx"/>
+                                    <File Id="vai_header.htm" Name="header.htm" Source="..\..\redist\Help\Vertex_AI_Translate_Plug-in_About_box_files\header.htm"/>
+                                    <File Id="vai_image001.jpg" Name="image001.jpg" Source="..\..\redist\Help\Vertex_AI_Translate_Plug-in_About_box_files\image001.jpg"/>
+                                    <File Id="vai_image002.jpg" Name="image002.jpg" Source="..\..\redist\Help\Vertex_AI_Translate_Plug-in_About_box_files\image002.jpg"/>
+                                    <File Id="vai_image003.jpg" Name="image003.jpg" Source="..\..\redist\Help\Vertex_AI_Translate_Plug-in_About_box_files\image003.jpg"/>
+                                    <File Id="vai_image005.jpg" Name="image005.jpg" Source="..\..\redist\Help\Vertex_AI_Translate_Plug-in_About_box_files\image005.jpg"/>
+                                    <File Id="vai_image006.jpg" Name="image006.jpg" Source="..\..\redist\Help\Vertex_AI_Translate_Plug-in_About_box_files\image006.jpg"/>
+                                    <File Id="vai_image007.jpg" Name="image007.jpg" Source="..\..\redist\Help\Vertex_AI_Translate_Plug-in_About_box_files\image007.jpg"/>
+                                    <File Id="vai_image012.jpg" Name="image012.jpg" Source="..\..\redist\Help\Vertex_AI_Translate_Plug-in_About_box_files\image012.jpg"/>
+                                    <File Id="vai_item0015.xml" Name="item0015.xml" Source="..\..\redist\Help\Vertex_AI_Translate_Plug-in_About_box_files\item0015.xml"/>
+                                    <File Id="vai_props016.xml" Name="props016.xml" Source="..\..\redist\Help\Vertex_AI_Translate_Plug-in_About_box_files\props016.xml"/>
+                                </Component>
+                            </Directory>
 
-						</Directory>
+                        </Directory>
                     </Directory>
                 </Directory>
             </Directory>
