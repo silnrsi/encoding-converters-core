@@ -33,6 +33,12 @@ jobs:
     - name: Fetch nuget dependecies
       run: nuget restore "${{env.SOLUTION_FILE_PATH}}"
 
+    - name: Set path for candle and light
+      # force it to use 3.11, bkz 3.14ff causes an ICE103 error
+      # see https://github.com/orgs/wixtoolset/discussions/6524
+      run: echo "C:\Program Files (x86)\WiX Toolset v3.11\bin" >> $GITHUB_PATH
+      shell: bash
+
     - name: Build
       working-directory: ${{env.GITHUB_WORKSPACE}}
       # Add additional options to the MSBuild command line here (like platform or verbosity level).
