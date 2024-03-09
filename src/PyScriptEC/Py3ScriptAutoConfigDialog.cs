@@ -21,7 +21,7 @@ namespace SilEncConverters40
 		private const string OpenFileDialogDefaultExtBrowseForDll = "dll";
 		private const string OpenFileDialogDefaultExtBrowseForScript = "py";
 
-		private const string OpenFileDialogFilterBrowseForDll = "Python 3 DLL (Python3 DLL)|Python3??.dll";
+		private const string OpenFileDialogFilterBrowseForDll = "Python 3 DLL (Python3 DLL)|Python3*.dll";
 		private const string OpenFileDialogFilterBrowseForScript = "Python scripts (*.py)|*.py";
 
 		public Py3ScriptAutoConfigDialog(
@@ -184,6 +184,7 @@ namespace SilEncConverters40
 			openFileDialogBrowse.Title = title;
 			openFileDialogBrowse.DefaultExt = defaultExt;
 			openFileDialogBrowse.Filter = filter;
+			openFileDialogBrowse.FileName = fileName;
 		}
 
 		private void textBox_TextChanged(object sender, EventArgs e)
