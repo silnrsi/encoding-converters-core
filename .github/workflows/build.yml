@@ -25,10 +25,10 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4.1.1
 
     - name: Add MSBuild to PATH
-      uses: microsoft/setup-msbuild@v1.3.1
+      uses: microsoft/setup-msbuild@v2
 
     - name: Fetch nuget dependecies
       run: nuget restore "${{env.SOLUTION_FILE_PATH}}"
@@ -43,7 +43,7 @@ jobs:
       run: dir /s
       shell: cmd
 
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4.3.1
       with:
         name: build-artifacts-${{ matrix.build_platform }}-${{ matrix.build_configuration }}
         path: |
@@ -65,7 +65,7 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4.1.1
 
     - name: Download all workflow run artifacts
       uses: actions/download-artifact@v3
@@ -89,7 +89,7 @@ jobs:
       run: nuget pack ./Package.${{matrix.build_configuration}}.nuspec -OutputDirectory ./output/${{matrix.build_configuration}}
 
     - name: Upload NuGet Package as Artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4.3.1
       with:
         name: ${{matrix.build_configuration}}-nuget-package
         path: ./output/${{matrix.build_configuration}}/*.nupkg
@@ -115,7 +115,7 @@ jobs:
       run: sudo apt-get install --assume-yes automake g++ python2-dev python2 libicu-dev mono5-sil icu-dev-fw libteckit-dev
 
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4.1.1
 
     - name: List Files in Repository
       run: ls -R
