@@ -61,13 +61,13 @@ namespace SilEncConverters40.EcTranslators.VertexAi
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 50F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(659, 368);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(658, 368);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
             // buttonOK
             // 
             this.buttonOK.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.buttonOK.Location = new System.Drawing.Point(287, 342);
+            this.buttonOK.Location = new System.Drawing.Point(299, 342);
             this.buttonOK.Name = "buttonOK";
             this.buttonOK.Size = new System.Drawing.Size(75, 23);
             this.buttonOK.TabIndex = 6;
@@ -79,7 +79,7 @@ namespace SilEncConverters40.EcTranslators.VertexAi
             // 
             this.buttonCancel.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonCancel.Location = new System.Drawing.Point(368, 342);
+            this.buttonCancel.Location = new System.Drawing.Point(380, 342);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(75, 23);
             this.buttonCancel.TabIndex = 7;
@@ -92,7 +92,7 @@ namespace SilEncConverters40.EcTranslators.VertexAi
             this.labelTranslatorKey.AutoSize = true;
             this.labelTranslatorKey.Location = new System.Drawing.Point(3, 138);
             this.labelTranslatorKey.Name = "labelTranslatorKey";
-            this.labelTranslatorKey.Size = new System.Drawing.Size(202, 13);
+            this.labelTranslatorKey.Size = new System.Drawing.Size(220, 13);
             this.labelTranslatorKey.TabIndex = 1;
             this.labelTranslatorKey.Text = "Enter Google Cloud/Vertex Credentials (json):";
             // 
@@ -100,10 +100,11 @@ namespace SilEncConverters40.EcTranslators.VertexAi
             // 
             this.tableLayoutPanel1.SetColumnSpan(this.textBoxTranslatorKey, 2);
             this.textBoxTranslatorKey.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textBoxTranslatorKey.Location = new System.Drawing.Point(211, 3);
+            this.textBoxTranslatorKey.Location = new System.Drawing.Point(229, 3);
             this.textBoxTranslatorKey.Multiline = true;
             this.textBoxTranslatorKey.Name = "textBoxTranslatorKey";
-            this.textBoxTranslatorKey.Size = new System.Drawing.Size(445, 283);
+            this.textBoxTranslatorKey.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.textBoxTranslatorKey.Size = new System.Drawing.Size(426, 283);
             this.textBoxTranslatorKey.TabIndex = 2;
             // 
             // linkLabelInstructions
@@ -113,7 +114,7 @@ namespace SilEncConverters40.EcTranslators.VertexAi
             this.tableLayoutPanel1.SetColumnSpan(this.linkLabelInstructions, 3);
             this.linkLabelInstructions.Location = new System.Drawing.Point(3, 307);
             this.linkLabelInstructions.Name = "linkLabelInstructions";
-            this.linkLabelInstructions.Size = new System.Drawing.Size(347, 13);
+            this.linkLabelInstructions.Size = new System.Drawing.Size(365, 13);
             this.linkLabelInstructions.TabIndex = 5;
             this.linkLabelInstructions.TabStop = true;
             this.linkLabelInstructions.Text = "see {0} for instructions on creating your own Google Cloud/Vertex Resource";
