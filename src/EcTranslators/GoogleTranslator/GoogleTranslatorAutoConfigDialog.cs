@@ -62,6 +62,8 @@ namespace SilEncConverters40.EcTranslators.GoogleTranslator
             Util.DebugWriteLine(this, "called base.Initalize");
 
 			LanguagesSupported = GetCapabilities().GetAwaiter().GetResult();
+			if (LanguagesSupported == null)
+				return;
 
 			string fromLanguage = SourceLanguageNameAutoDetect, toLanguage = TargetLanguageNameMustBeConfigure;
 			InitializeSourceAndTargetLanguages(initializeTargetLanguageAlso: true);
@@ -306,10 +308,9 @@ namespace SilEncConverters40.EcTranslators.GoogleTranslator
 				translatorCredentialsOverride = EncryptionClass.Decrypt(translatorCredentialsOverride);
 
 			using var dlg = new QueryForGoogleCredentials(translatorCredentialsOverride);
-			if (dlg.ShowDialog() == DialogResult.Yes)
+			if (dlg.ShowDialog() == DialogResult.OK)
 			{
-				var translatorKey = EncryptionClass.Encrypt(dlg.TranslatorKey);
-				GoogleTranslatorSubscriptionKey = translatorKey;
+				GoogleTranslatorSubscriptionKey = dlg.TranslatorKey;
 				Properties.Settings.Default.Save();
 			}
 		}

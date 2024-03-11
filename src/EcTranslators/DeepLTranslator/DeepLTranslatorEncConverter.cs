@@ -6,17 +6,20 @@ using System.Net.Http;
 using System.Runtime.InteropServices;   // for the class attributes
 using System.Text;                      // for ASCIIEncoding
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using DeepL;
 using ECInterfaces;                     // for ConvType
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace SilEncConverters40.EcTranslators.DeepLTranslator
 {
 	/// <summary>
 	/// Managed DeepL Translator EncConverter.
 	/// </summary>
+#if X64
 	[GuidAttribute("4EA28F93-EDAD-49A4-8FB7-3E22C5EAD07B")]
+#else
+	[GuidAttribute("3345D59E-753F-4E0D-9877-7AC393C45C6A")]
+#endif
 	// normally these subclasses are treated as the base class (i.e. the 
 	//  client can use them orthogonally as IEncConverter interface pointers
 	//  so normally these individual subclasses would be invisible), but if 
@@ -227,13 +230,15 @@ namespace SilEncConverters40.EcTranslators.DeepLTranslator
 			}
 			catch (Exception ex)
 			{
-				LogExceptionMessage("DeepLEncConverter.GetCapabilities", ex);
-				throw;
+				var error = LogExceptionMessage($"{typeof(DeepLTranslatorEncConverter).Name}.GetCapabilities", ex);
+				if (error.Contains("The server name or address could not be resolved"))
+					error += String.Format("{0}{0}Unable to reach the {1} service. Are you connected to the internet?", Environment.NewLine, CstrDisplayName);
+				MessageBox.Show(error, EncConverters.cstrCaption);
 			}
+			return (null, null, null, null);
 		}
 
 		#endregion Initialization
-
 		#region Abstract Base Class Overrides
 
         [CLSCompliant(false)]
@@ -260,7 +265,9 @@ namespace SilEncConverters40.EcTranslators.DeepLTranslator
 			// here's our input string
 			var strInput = new string(caIn);
 
-			var strOutput = CallDeepLTranslator(strInput).Result;
+			var strOutput = String.IsNullOrEmpty(strInput)
+								? strInput
+								: CallDeepLTranslator(strInput).Result;
 
 			StringToProperByteStar(strOutput, lpOutBuffer, ref rnOutLen);
 		}

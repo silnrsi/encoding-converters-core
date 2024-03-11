@@ -11,7 +11,6 @@ namespace SilEncConverters40
         {
             Util.DebugWriteLine(this, "Default Font " +
                 this.Font.Name + ", Size " + this.Font.Size.ToString());
-            //this.Font = new System.Drawing.Font("Arial", 11);
         }
 
         protected override void OnPreviewKeyDown(System.Windows.Forms.PreviewKeyDownEventArgs e)
@@ -20,7 +19,12 @@ namespace SilEncConverters40
                 e.KeyValue, e.KeyCode, e.KeyData));
             if (e.Alt && (e.KeyCode == System.Windows.Forms.Keys.X))
                 ConvertNumberToChar(false);
-            base.OnPreviewKeyDown(e);
+
+			// don't know why, but the base.OnPreviewKeyDown doesn't do 'select all'
+			if (e.KeyData == (System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.A))
+				SelectAll();
+			else
+				base.OnPreviewKeyDown(e);
         }
 
         protected void ConvertNumberToChar(bool bIsLegacy)

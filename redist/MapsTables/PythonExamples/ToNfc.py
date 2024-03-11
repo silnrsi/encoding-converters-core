@@ -12,12 +12,12 @@ def Convert(u):
 if __name__ == '__main__':
     ## Warning: The following testing code will not work on Python 3.
     uInput = u"Ę" # NFD string
-    print u"sending: %s" % repr(uInput)
+    print(u"sending: %s" % repr(uInput))
     result = Convert(uInput)
-    print u"result: %s" % repr(result)
+    print(u"result: %s" % repr(result))
     expected = u"Ę" # NFC string
     if result == expected:
-        print "ok"
+        print("ok")
     else:
-        print u"unexpected result; expected %s" % repr(expected)
+        print(u"unexpected result; expected %s" % repr(expected))
 

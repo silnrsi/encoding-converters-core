@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Runtime.InteropServices;   // for the class attributes
 using System.Text;                      // for ASCIIEncoding
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using ECInterfaces;                     // for ConvType
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -15,7 +16,11 @@ namespace SilEncConverters40.EcTranslators.BingTranslator
 	/// <summary>
 	/// Managed Bing Translator EncConverter.
 	/// </summary>
+#if X64
 	[GuidAttribute("73742D80-5508-4500-9FAA-AF82E4756C35")]
+#else
+	[GuidAttribute("4F7DE175-EC0C-463A-8027-6FFB8799C050")]
+#endif
 	// normally these subclasses are treated as the base class (i.e. the 
 	//  client can use them orthogonally as IEncConverter interface pointers
 	//  so normally these individual subclasses would be invisible), but if 
@@ -166,13 +171,20 @@ namespace SilEncConverters40.EcTranslators.BingTranslator
 			}
 			catch (Exception ex)
 			{
-				return LogExceptionMessage("GetTranslationCapabilities", ex);
+				var error = LogExceptionMessage($"{typeof(BingTranslatorEncConverter).Name}.GetCapabilities", ex);
+				if (error.Contains("The remote name could not be resolved"))
+					error += String.Format("{0}{0}Unable to reach the {1} service. Are you connected to the internet?", Environment.NewLine, CstrDisplayName);
+				MessageBox.Show(error, EncConverters.cstrCaption);
 			}
+			return null;
 		}
 
 		public static (List<TranslationLanguage> translations, List<TransliterationLanguage> transliterations, List<DictionaryLanguage> dictionaryOptions) GetCapabilities()
 		{
 			var jsonCapabilities = GetTranslationCapabilities().Result;
+			if (jsonCapabilities == null)
+				return (null, null, null);
+
 			JObject capabilities = JObject.Parse(jsonCapabilities);
 			var translationTokens = capabilities["translation"].Children();
 			var translations = TranslationLanguage.LoadFromJTokens(translationTokens);
@@ -214,7 +226,9 @@ namespace SilEncConverters40.EcTranslators.BingTranslator
 			// here's our input string
 			var strInput = new string(caIn);
 
-			var strOutput = CallBingTranslator(strInput).Result;
+			var strOutput = String.IsNullOrEmpty(strInput)
+								? strInput
+								: CallBingTranslator(strInput).Result;
 
 			StringToProperByteStar(strOutput, lpOutBuffer, ref rnOutLen);
 		}

@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using System.IO;
 using ECInterfaces;
 using IcuEC.Properties;
+using System.Linq;
 
 // for IEncConverter
 
@@ -71,7 +72,7 @@ namespace SilEncConverters40
         private ComboBox comboBoxPreviousCustomTransliterators;
         private Label label1;
         private Button buttonDeletePreviousCustomTransliterators;  // set at the end of Initialize (to block certain events until we're ready for them)
-        private List<string> lstTranslitIDs;
+        private Dictionary<string, string> mapTransliteratorIdsToFriendlyNames;
 
         public IcuTranslitAutoConfigDialog(
             IEncConverters aECs,
@@ -86,7 +87,6 @@ namespace SilEncConverters40
         {
             Util.DebugWriteLine(this, "BEGIN");
             InitializeComponent();
-            fillListBox();
             Util.DebugWriteLine(this, "Initialized component.");
             base.Initialize(
                 aECs,
@@ -101,20 +101,29 @@ namespace SilEncConverters40
                 bIsInRepository);
             Util.DebugWriteLine(this, "Initialized base.");
 
-            // if we're editing, then set the Converter Spec and say it's unmodified
-            if (m_bEditMode)
+			mapTransliteratorIdsToFriendlyNames = GetSupportedTransliterators();
+			FillListBox(mapTransliteratorIdsToFriendlyNames);
+
+			// if we're editing, then set the Converter Spec and say it's unmodified
+			if (m_bEditMode)
             {
                 Util.DebugWriteLine(this, "Edit mode");
                 System.Diagnostics.Debug.Assert(!String.IsNullOrEmpty(ConverterIdentifier));
-                //listBoxTranslitName.SelectedValue = ConverterIdentifier;
-                for (int i = 0; i < lstTranslitIDs.Count; i++)
-                {
-                    if (lstTranslitIDs[i] == ConverterIdentifier)
-                    {
-                        listBoxTranslitName.SelectedIndex = i;
-                        break;
-                    }
-                }
+
+				// first see if the converter identifier is one of the values in the text box
+				var value = mapTransliteratorIdsToFriendlyNames.FirstOrDefault(kvp => kvp.Key == ConverterIdentifier || kvp.Value == ConverterIdentifier);
+				if (!value.Equals(default(KeyValuePair<string, string>)))
+				{
+					listBoxTranslitName.SelectedItem = value.Value;
+				}
+				else
+				{
+					// it's a custom transliterator, so set the other radio box and load the text box as is
+					textBoxCustomTransliterator.Text = ConverterIdentifier;
+					radioButtonCustom.Checked = true;
+					radioButtonCustom.PerformClick();
+				}
+
                 IsModified = false;
             }
 
@@ -127,7 +136,21 @@ namespace SilEncConverters40
             Util.DebugWriteLine(this, "END");
         }
 
-        public IcuTranslitAutoConfigDialog(
+		private Dictionary<string, string> GetSupportedTransliterators()
+		{
+			var count = CppConverterNameList_start();
+
+			var map = new Dictionary<string, string>();
+			for (int i = 0; i < count; i++)
+			{
+				var translitId = CppConverterNameList_next();
+				var translitName = CppGetDisplayName(translitId);
+				map[translitId] = translitName;
+			}
+			return map;
+		}
+
+		public IcuTranslitAutoConfigDialog(
             IEncConverters aECs,
             string strFriendlyName,
             string strConverterIdentifier,
@@ -135,7 +158,6 @@ namespace SilEncConverters40
             string strTestData)
         {
             InitializeComponent();
-            fillListBox();
             base.Initialize(
                 aECs,
                 strFriendlyName,
@@ -143,11 +165,14 @@ namespace SilEncConverters40
                 eConversionType,
                 strTestData);
             m_bInitialized = true;
-        }
 
-        // This code was NOT generated!
-        // So feel free to modify it as needed.
-        private void InitializeComponent()
+			mapTransliteratorIdsToFriendlyNames = GetSupportedTransliterators();
+			FillListBox(mapTransliteratorIdsToFriendlyNames);
+		}
+
+		// This code was NOT generated!
+		// So feel free to modify it as needed.
+		private void InitializeComponent()
         {
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.listBoxTranslitName = new System.Windows.Forms.ListBox();
@@ -219,6 +244,7 @@ namespace SilEncConverters40
             this.listBoxTranslitName.Name = "listBoxTranslitName";
             this.listBoxTranslitName.Size = new System.Drawing.Size(370, 212);
             this.listBoxTranslitName.TabIndex = 1;
+			this.listBoxTranslitName.Sorted = true;
             this.listBoxTranslitName.SelectedIndexChanged += new System.EventHandler(this.listBoxTranslitName_SelectedIndexChanged);
             //
             // radioButtonBuiltIn
@@ -244,7 +270,7 @@ namespace SilEncConverters40
             this.radioButtonCustom.TabStop = true;
             this.radioButtonCustom.Text = "&Custom transliterator";
             this.radioButtonCustom.UseVisualStyleBackColor = true;
-            this.radioButtonCustom.Click += new System.EventHandler(this.radioButtonCustom_Click);
+            this.radioButtonCustom.CheckedChanged += new System.EventHandler(this.radioButtonCustom_CheckedChanged);
             //
             // textBoxCustomTransliterator
             //
@@ -305,54 +331,13 @@ namespace SilEncConverters40
 
         }
 
-        private void fillListBox()
+        private void FillListBox(Dictionary<string, string> mapTransliteratorIdsToFriendlyNames)
         {
-            this.listBoxTranslitName.Items.Clear();
-            int count = 0;
-            count = CppConverterNameList_start();
-
-            // Store the IDs in an array, and put the display names in the
-            // list box.
-            lstTranslitIDs = new List<string>(count);
-            for (int i = 0; i < count; i++)
-            {
-                var translitId = CppConverterNameList_next();
-                lstTranslitIDs.Add(translitId);
-                string translitName = CppGetDisplayName(translitId);
-                this.listBoxTranslitName.Items.Add(translitName);
-            }
-
-            // Sort listbox and corresponding translitIDs by display name.
-            ListBox lb = this.listBoxTranslitName;  // shorter nickname
-            if (lb.Items.Count > 1)
-            {
-                bool swapped;
-                do
-                {
-                    int counter = lb.Items.Count - 1;
-                    swapped = false;
-
-                    while (counter > 0)
-                    {
-                        // Compare the items
-                        if (String.Compare(lb.Items[counter].ToString(),
-                                           lb.Items[counter - 1].ToString()) < 0)
-                        {
-                            // Swap the items.
-                            object tempName = lb.Items[counter];
-                            lb.Items[counter] = lb.Items[counter - 1];
-                            lb.Items[counter - 1] = tempName;
-                            string tempID = lstTranslitIDs[counter];
-                            lstTranslitIDs[counter] = lstTranslitIDs[counter - 1];
-                            lstTranslitIDs[counter - 1] = tempID;
-                            swapped = true;
-                        }
-                        // Decrement the counter.
-                        counter -= 1;
-                    }
-                }
-                while ((swapped == true));
-            }
+            // Put the display names in the list box.
+			foreach (var friendlyName in mapTransliteratorIdsToFriendlyNames.Values)
+			{
+				this.listBoxTranslitName.Items.Add(friendlyName);
+			}
         }
 
         protected override void SetConvTypeControls()
@@ -370,7 +355,7 @@ namespace SilEncConverters40
 
             // Get the converter identifier from the Setup tab controls.
             if (radioButtonBuiltIn.Checked && (listBoxTranslitName.SelectedIndex != -1))
-                ConverterIdentifier = lstTranslitIDs[listBoxTranslitName.SelectedIndex];
+                ConverterIdentifier = mapTransliteratorIdsToFriendlyNames.FirstOrDefault(kvp => kvp.Value == (string)listBoxTranslitName.SelectedItem).Key;
             else if (radioButtonCustom.Checked)
                 ConverterIdentifier = textBoxCustomTransliterator.Text;
 
@@ -398,23 +383,6 @@ namespace SilEncConverters40
             Util.DebugWriteLine(this, "END");
             return base.OnApply();
         }
-
-/*
-        protected override bool ShouldRemoveBeforeAdd
-        {
-            get { return true; }
-        }
-
-        protected override bool ShouldFriendlyNameBeReadOnly
-        {
-            get { return false; }
-        }
-
-        protected override bool GetFontMapping(string strFriendlyName, out string strLhsFont, out string strRhsFont)
-        {
-            return base.GetFontMapping(strFriendlyName, out strLhsFont, out strRhsFont);
-        }
-*/
 
         protected override string ProgID
         {
@@ -457,17 +425,20 @@ namespace SilEncConverters40
             textBoxCustomTransliterator.Enabled =
                 comboBoxPreviousCustomTransliterators.Enabled =
                 buttonDeletePreviousCustomTransliterators.Enabled = false;
+			IsModified = true;
         }
 
-        private void radioButtonCustom_Click(object sender, EventArgs e)
+        private void radioButtonCustom_CheckedChanged(object sender, EventArgs e)
         {
-            listBoxTranslitName.Enabled = false;
+			var value = radioButtonCustom.Checked;
+            listBoxTranslitName.Enabled = !value;
             textBoxCustomTransliterator.Enabled =
                 comboBoxPreviousCustomTransliterators.Enabled =
-                buttonDeletePreviousCustomTransliterators.Enabled = true;
-        }
+                buttonDeletePreviousCustomTransliterators.Enabled = value;
+			IsModified = true;
+		}
 
-        private void comboBoxPreviousCustomTransliterators_SelectedIndexChanged(object sender, EventArgs e)
+		private void comboBoxPreviousCustomTransliterators_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (!m_bInitialized)
                 return;

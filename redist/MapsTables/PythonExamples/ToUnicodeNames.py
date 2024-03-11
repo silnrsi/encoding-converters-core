@@ -18,11 +18,11 @@ def Convert(u):
 if __name__ == '__main__':
     ## Warning: The following testing code will not work on Python 3.
     uInput = u"क़"
-    print u"sending: %s" % repr(uInput)
+    print(u"sending: %s" % repr(uInput))
     result = Convert(uInput)
-    print "result: %s" % repr(result)
+    print("result: %s" % repr(result))
     expected = "DEVANAGARI LETTER KA; DEVANAGARI SIGN NUKTA; "
     if result == expected:
-        print "ok"
+        print("ok")
     else:
-        print "unexpected result; expected %s" % repr(expected)
+        print("unexpected result; expected %s" % repr(expected))

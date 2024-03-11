@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -151,7 +151,7 @@
     <value>The compiled mapping data is not recognizable</value>
   </data>
   <data name="IDS_kStatus_CompilationFailed" xml:space="preserve">
-    <value>mapping compilation failed (syntax errors, etc)</value>
+    <value>mapping compilation failed (syntax errors, etc): '{0}'</value>
   </data>
   <data name="IDS_kStatus_NameNotFound" xml:space="preserve">
     <value>couldn't find the requested name: '{0}'</value>
@@ -175,7 +175,7 @@
     <value>syntax error in the CC table</value>
   </data>
   <data name="IDS_CantOpenReadMap" xml:space="preserve">
-    <value>Unable to open or read the map file '{0}'</value>
+    <value>Unable to open or read the map file: '{0}'</value>
   </data>
   <data name="IDS_NoConverter" xml:space="preserve">
     <value>No encoding converter by the name '{0}'</value>

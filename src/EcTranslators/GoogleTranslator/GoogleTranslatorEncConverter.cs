@@ -13,13 +13,18 @@ using Google.Apis.Auth.OAuth2;
 using Google.Cloud.Translation.V2;
 using DeepL.Model;
 using Microsoft.Extensions.Options;
+using System.Windows.Forms;
 
 namespace SilEncConverters40.EcTranslators.GoogleTranslator
 {
 	/// <summary>
 	/// Managed Google Translate EncConverter.
 	/// </summary>
+#if X64
 	[GuidAttribute("A2C80989-EBBD-4257-9006-31FADC88646F")]
+#else
+	[GuidAttribute("A8C89778-D507-4DF5-8AB5-220D40177636")]
+#endif
 	// normally these subclasses are treated as the base class (i.e. the 
 	//  client can use them orthogonally as IEncConverter interface pointers
 	//  so normally these individual subclasses would be invisible), but if 
@@ -33,8 +38,6 @@ namespace SilEncConverters40.EcTranslators.GoogleTranslator
 		// by putting the google translate credentials in a settings file, users can get their own credentials to use, 
 		//  and enter it thru the UI if our key runs out of free stuff
 		// see https://console.cloud.google.com/apis/credentials
-
-
 		private static TranslationClient _translationClient;
 		public static TranslationClient TranslateClient
 		{
@@ -62,7 +65,8 @@ namespace SilEncConverters40.EcTranslators.GoogleTranslator
 			set
 			{
 				// the value is already encrypted by the time it gets here
-				Properties.Settings.Default.GoogleTranslatorCredentialsOverride = value;
+				var credentials = String.IsNullOrEmpty(value) ? value : EncryptionClass.Encrypt(value);
+				Properties.Settings.Default.GoogleTranslatorCredentialsOverride = credentials;
 			}
 		}
 
@@ -143,19 +147,30 @@ namespace SilEncConverters40.EcTranslators.GoogleTranslator
 		public async static Task<List<Google.Cloud.Translation.V2.Language>> GetCapabilities()
 #pragma warning restore CS3002 // Return type is not CLS-compliant
 		{
-			var resultLanguagesSupported = await Task.Run(async delegate
+			try
 			{
-				return (await TranslateClient.ListLanguagesAsync(LanguageCodes.English)).ToList();
-			}).ConfigureAwait(false);
+				var resultLanguagesSupported = await Task.Run(async delegate
+				{
+					return (await TranslateClient.ListLanguagesAsync(LanguageCodes.English)).ToList();
+				}).ConfigureAwait(false);
 
-			return resultLanguagesSupported;
+				return resultLanguagesSupported;
+			}
+			catch (Exception ex)
+			{
+				var error = LogExceptionMessage($"{typeof(GoogleTranslatorEncConverter).Name}.GetCapabilities", ex);
+				if (error.Contains("The remote name could not be resolved"))
+					error += String.Format("{0}{0}Unable to reach the {1} service. Are you connected to the internet?", Environment.NewLine, CstrDisplayName);
+				MessageBox.Show(error, EncConverters.cstrCaption);
+			}
+			return null;
 		}
 
 		#endregion Initialization
 
 		#region Abstract Base Class Overrides
 
-        [CLSCompliant(false)]
+		[CLSCompliant(false)]
         protected override unsafe void DoConvert
             (
             byte*       lpInBuffer,
@@ -179,7 +194,9 @@ namespace SilEncConverters40.EcTranslators.GoogleTranslator
 			// here's our input string
 			var strInput = new string(caIn);
 
-			var strOutput = CallGoogleTranslator(strInput).Result;
+			var strOutput = String.IsNullOrEmpty(strInput)
+								? strInput
+								: CallGoogleTranslator(strInput).Result;
 
 			StringToProperByteStar(strOutput, lpOutBuffer, ref rnOutLen);
 		}

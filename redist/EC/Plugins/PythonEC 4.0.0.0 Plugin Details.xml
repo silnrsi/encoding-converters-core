@@ -8,5 +8,13 @@
                    DefiningExtension=".py"
                    AssemblyReference="PyScriptEC, Version=4.0.0.0, Culture=neutral, PublicKeyToken=null"
 />
-                   <!--DefiningProcessType="256"-->
+  <ECPluginDetails ImplementationName="SIL.Py3Script"
+                   ImplementationProgId="SilEncConverters40.Py3ScriptEncConverter"
+                   Priority="3"
+                   DisplayName="Python 3 Script"
+                   ConfiguratorProgId="SilEncConverters40.Py3ScriptEncConverterConfig"
+                   DefiningExtension=".py"
+                   AssemblyReference="PyScriptEC, Version=4.0.0.0, Culture=neutral, PublicKeyToken=null"
+/>
+  <!--DefiningProcessType="256"-->
 </EncConverterPlugins>

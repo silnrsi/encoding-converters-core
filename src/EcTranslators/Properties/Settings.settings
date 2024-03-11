@@ -32,5 +32,63 @@
     <Setting Name="GoogleCloudBillingProjectName" Type="System.String" Scope="User">
       <Value Profile="(Default)">projects/bright-coyote-381812</Value>
     </Setting>
+    <Setting Name="AzureOpenAiEndpoint" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="AzureOpenAiDeploymentName" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="AzureOpenAiKeyOverride" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="AzureOpenAiKeyLocationDialogInstructionUrl" Type="System.String" Scope="User">
+      <Value Profile="(Default)">https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/create-resource</Value>
+    </Setting>
+    <Setting Name="AzureOpenAiSystemPromptAdditions" Type="System.Collections.Specialized.StringCollection" Scope="User">
+      <Value Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
+&lt;ArrayOfString xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"&gt;
+  &lt;string&gt;with a 'free translation' style&lt;/string&gt;
+  &lt;string&gt;with a 'literal translation' style&lt;/string&gt;
+  &lt;string&gt;with a 'free translation' style aimed at high school students&lt;/string&gt;
+  &lt;string&gt;in the Devanagari script&lt;/string&gt;
+  &lt;string&gt;using 'Yoda speak'&lt;/string&gt;
+  &lt;string&gt;UseSystemPrompt: Translate from Hindi into English.&lt;/string&gt;
+  &lt;string&gt;UseSystemPrompt: You will be given one or more sentences in Khmer script. Your job is to transliterate them into the Latin script and return only the transliterated Latin result.&lt;/string&gt;
+  &lt;string&gt;UseSystemPrompt: You will be given one or more sentences in Tibetan script. Your job is to transliterate them into the International Phonetic Alphabet (IPA) and return only the transliterated IPA result.&lt;/string&gt;
+&lt;/ArrayOfString&gt;</Value>
+    </Setting>
+    <Setting Name="NllbTranslatorKeyOverride" Type="System.String" Scope="User">
+      <Value Profile="(Default)">N3RK/o+wYtvEFMVGtYsmROIyLr/+RWh1</Value>
+    </Setting>
+    <Setting Name="NllbTranslatorEndpoint" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">http://localhost:8000</Value>
+    </Setting>
+    <Setting Name="NllbTranslatorEndpointOverride" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="NllbTranslatorPathToDockerProject" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="NllbSentenceFinalPunctuationRegex" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">(.*?)([\p{Po}-[,]])</Value>
+    </Setting>
+    <Setting Name="NllbProcessSentenceBySentence" Type="System.Boolean" Scope="Application">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="GoogleCloudVertexAiCredentialsOverride" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="GoogleCloudVertexAiProjectId" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="GoogleCloudVertexAiLocationId" Type="System.String" Scope="User">
+      <Value Profile="(Default)">us-central1</Value>
+    </Setting>
+    <Setting Name="GoogleCloudVertexAiPublisher" Type="System.String" Scope="User">
+      <Value Profile="(Default)">google</Value>
+    </Setting>
+    <Setting Name="GoogleCloudVertexAiModelId" Type="System.String" Scope="User">
+      <Value Profile="(Default)">chat-bison</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

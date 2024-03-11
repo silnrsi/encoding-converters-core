@@ -51,6 +51,9 @@ namespace SilEncConverters40.EcTranslators.BingTranslator
             Util.DebugWriteLine(this, "called base.Initalize");
 
 			var result = GetCapabilities();
+			if (result == (null, null, null))
+				return;
+
 			translationsPossible = result.translations;
 			transliterationsPossible = result.transliterations;
 			dictionaryLookupsPossible = result.dictionaryOptions;

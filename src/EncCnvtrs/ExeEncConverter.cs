@@ -7,6 +7,7 @@ using Microsoft.Win32;      // for Registry
 using System.Diagnostics;   // for ProcessStartInfo
 using System.Text;          // for ASCIIEncoding
 using ECInterfaces;                     // for IEncConverter
+using System.Linq;
 
 namespace SilEncConverters40
 {
@@ -144,7 +145,7 @@ namespace SilEncConverters40
                 {
                     var progpath = Path.Combine(WorkingDir, ExeName);
                     if (!File.Exists(progpath))
-                        progpath = ExeName;		// assume program is in the user's path.
+                        progpath = ExeName;        // assume program is in the user's path.
 
                     m_psi = new ProcessStartInfo(progpath)
                     {
@@ -183,6 +184,9 @@ namespace SilEncConverters40
         #region Implementation
         protected string DoExeCall(string sInput)
         {
+            if (String.IsNullOrEmpty(sInput))
+                return sInput;
+
             var si = ProcessStarter;
             string strOutput;
 
@@ -203,6 +207,7 @@ namespace SilEncConverters40
 
                 // call a virtual to do this in case the sub-classes have special behavior
                 strOutput = ReadFromExeOutputStream(sr, p.StandardError);
+                strOutput = CleanOutput(sInput, strOutput);
             }
             catch (Exception e)
             {
@@ -213,6 +218,36 @@ namespace SilEncConverters40
 
             return strOutput;
         }
+
+        private char[] charsToTrim = { '\n', '\r' };
+
+        /// <summary>
+        /// remove any final \n\r that might be added if the input doesn't have it (it seems that some standard outputs add it by default
+        /// </summary>
+        /// <param name="sInput"></param>
+        /// <param name="strOutput"></param>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        private string CleanOutput(string sInput, string strOutput)
+        {
+            return (!string.IsNullOrEmpty(sInput) && sInput.Length > 1 && !charsToTrim.Contains(sInput.Last()) &&
+                    !string.IsNullOrEmpty(strOutput) && strOutput.Length > 1 && charsToTrim.Contains(strOutput.Last()))
+                    ? strOutput.TrimEnd(charsToTrim)
+                    : strOutput;
+        }
+
+        private static unsafe bool ContainsCrLfs(byte* lpInBuffer, int nInLen)
+        {
+            var bContainsCrLfs = false;
+            for (int i = 0; (i < nInLen) && !bContainsCrLfs; i++)
+            {
+                if ((lpInBuffer[i] == '\r') && (lpInBuffer[i + 1] == '\n'))
+                    bContainsCrLfs = true;
+            }
+
+            return bContainsCrLfs;
+        }
+
         #endregion Implementation
 
         #region Abstract Base Class Overrides
@@ -226,6 +261,15 @@ namespace SilEncConverters40
             )
         {
             rnOutLen = 0;
+
+            // 2022-11-29 BE: it seems that some programs (e.g. Azure Open AI) eats '\r's... if the input 
+            //    has any '\r\n' sequences and the output has just '\n's, then insert the '\r's back in
+            // I was thinking we probably don't want to do this on Linux (if so, add "&& !Util.IsUnix")
+            //    but if Linux doesn't use CRs, then this function will return false anyway (and if it does
+            //    then Azure Open AI will probably (wrongly) strip them out and we (probably) want them put 
+            //    back in. Worst case, add a parameter to the converter Specification to indicate whether 
+            //    you want this to be done or not.
+            var bContainsCrLfs = ContainsCrLfs(lpInBuffer, nInLen);
 
             // we need to put it *back* into a string because the StreamWriter that will
             // ultimately write to the StandardInput uses a string. For now, the only user
@@ -260,6 +304,19 @@ namespace SilEncConverters40
             // put it in the output buffer
             rnOutLen = strOutput.Length * 2;
             rnOutLen = ECNormalizeData.StringToByteStar(strOutput, lpOutBuffer, rnOutLen, false);
+
+            if (bContainsCrLfs && !ContainsCrLfs(lpOutBuffer, rnOutLen))
+            {
+                // need to put the '\r's back in
+                for (int i = 0; i < rnOutLen; i++)
+                {
+                    if ((lpOutBuffer[i] == '\n') && ((i == 0) || (lpOutBuffer[i - 1] != '\r')))
+                    {
+                        ECNormalizeData.MemMove(lpOutBuffer + i + 1, lpOutBuffer + i, rnOutLen++ - i);
+                        lpOutBuffer[i] = (byte)'\r';
+                    }
+                }
+            }
         }
         #endregion Abstract Base Class Overrides
     }

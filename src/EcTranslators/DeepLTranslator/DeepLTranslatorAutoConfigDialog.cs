@@ -56,6 +56,9 @@ namespace SilEncConverters40.EcTranslators.DeepLTranslator
             Util.DebugWriteLine(this, "called base.Initalize");
 
 			var capabilities = GetCapabilities().GetAwaiter().GetResult();
+			if (capabilities == (null, null, null, null))
+				return;
+
 			languagesSource = capabilities.languagesSource;
 			languagesTarget = capabilities.languagesTarget;
 			glossaryLanguagePairs = capabilities.glossaryLanguagePairs;

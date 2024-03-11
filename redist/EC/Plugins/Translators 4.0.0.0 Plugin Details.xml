@@ -18,4 +18,22 @@
                    DisplayName="Google Translate"
                    ConfiguratorProgId="SilEncConverters40.EcTranslators.GoogleTranslator.GoogleTranslatorEncConverterConfig"
                    AssemblyReference="EcTranslators, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" />
+  <ECPluginDetails ImplementationName="SIL.NllbTranslator"
+                   ImplementationProgId="SilEncConverters40.EcTranslators.NllbTranslator.NllbTranslatorEncConverter"
+                   Priority="0"
+                   DisplayName="NLLB Translator"
+                   ConfiguratorProgId="SilEncConverters40.EcTranslators.NllbTranslator.NllbTranslatorEncConverterConfig"
+                   AssemblyReference="EcTranslators, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" />
+  <ECPluginDetails ImplementationName="SIL.AzureOpenAI"
+                   ImplementationProgId="SilEncConverters40.EcTranslators.AzureOpenAI.AzureOpenAiEncConverter"
+                   Priority="0"
+                   DisplayName="Azure OpenAI Translator"
+                   ConfiguratorProgId="SilEncConverters40.EcTranslators.AzureOpenAI.AzureOpenAiEncConverterConfig"
+                   AssemblyReference="EcTranslators, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" />
+  <ECPluginDetails ImplementationName="SIL.VertexAi"
+                   ImplementationProgId="SilEncConverters40.EcTranslators.VertexAi.VertexAiEncConverter"
+                   Priority="0"
+                   DisplayName="Vertex AI Translator"
+                   ConfiguratorProgId="SilEncConverters40.EcTranslators.VertexAi.VertexAiEncConverterConfig"
+                   AssemblyReference="EcTranslators, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" />
 </EncConverterPlugins>

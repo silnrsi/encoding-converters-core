@@ -11,7 +11,7 @@ namespace BackTranslationHelper
         Copy,
         WriteToTarget,
         MoveToNext,
-		Skip,
+        Skip,
         Cancel,
         Close
     }
@@ -19,10 +19,10 @@ namespace BackTranslationHelper
     public interface IBackTranslationHelperDataSource
     {
         Font SourceLanguageFont { get; }
-		bool SourceLanguageRightToLeft { get; }
+        bool SourceLanguageRightToLeft { get; }
         Font TargetLanguageFont { get; }
-		bool TargetLanguageRightToLeft { get; }
-		BackTranslationHelperModel Model { get; }
+        bool TargetLanguageRightToLeft { get; }
+        BackTranslationHelperModel Model { get; }
         string ProjectName { get; }
 
         void ActivateKeyboard();
@@ -30,7 +30,7 @@ namespace BackTranslationHelper
         bool WriteToTarget(string text);
         void MoveToNext();
         void Cancel();
-
+        void TranslatorSetChanged(List<IEncConverter> theTranslators);
         void SetDataUpdateProc(Action<BackTranslationHelperModel> updateControls);
         void ButtonPressed(ButtonPressed button);
     }

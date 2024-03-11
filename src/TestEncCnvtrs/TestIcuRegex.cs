@@ -55,9 +55,10 @@ namespace TestEncCnvtrs
 		[TestCase("\\u0930->r", "पोथी रथ", "पोथी rथ")]
 		[TestCase("र->r", "पोथी रथ", "पोथी rथ")]
 		// these don't work bkz the C++ side of it (or maybe a bug in ICU, I can't tell)
-		//  doesn't convert, for example, \\u200d to UTF8 properly
+		//  doesn't convert, for example, \\u200d (or …) to UTF8 properly
 		// [TestCase("[\\u200c\\u200d]->", "व्‍यक्‌ति", "व्यक्ति")]
 		// [TestCase("[\\u2020\\u2021\\u200c\\u200d\\u230a\\u230b]->", "⌊व्‍यक्‌ति⌋ † ‡", "व्यक्ति  ")]
+		// [TestCase("(a\uE03C|[⌊⌋\u0027\u002a\u2018\u2019\u201c\u201d\u0303\u0304\u0310\u0314\u0325\u200c\u200d\uE03C\uFFFD])->", "ham… ", "ham… ")]
 		public void TestRegexForUnicodeEscapeCharacters(string converterSpec, string strInput, string strOutput)
 		{
 			var rec = new IcuRegexEncConverter();

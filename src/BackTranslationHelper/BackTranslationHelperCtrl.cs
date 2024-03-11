@@ -1,6 +1,7 @@
 using ECInterfaces;
 using SilEncConverters40;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
@@ -8,13 +9,26 @@ using System.Drawing;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace BackTranslationHelper
 {
     public partial class BackTranslationHelperCtrl : UserControl
     {
-        public int MaxPossibleTargetTranslations = 3;  // to add more, you have to add new lines like the one starting at row 2
+        public const int MaxPossibleTargetTranslations = 4;  // to add more, you have to add new lines like the one starting at row 2
+
+        // I could make the EcTranslator project a dependency to this project and use NllbEncConverter.CstrDisplayName instead, but...
+        private const string NllbEncConverterDisplayName = "NLLB Translator";
+
+        private readonly List<string> PromptTranslatorConfiguratorDisplayNames = new List<string>
+        {
+            "Azure OpenAI Translator", "Vertex AI Translator"
+        };
+
+        private const string NllbEncConverterSplitSentencesPrefix = @"\SplitSentences ";
+
 
         #region Member variables
         // the form in which this UserControl is embedded will initialize these
@@ -24,6 +38,7 @@ namespace BackTranslationHelper
         public DirectableEncConverter TheFindReplaceConverter;
         public BackTranslationHelperModel _model;
         public bool IsModified = false;
+		public bool IsPaused = false;	// if the client form wants to stop the translations (e.g. Paratext when checking in different verses and the user doesn't want each one translated)
 
         /// <summary>
         /// keep track of some recently translated portions, so we can avoid calling to Bing again for the same input data
@@ -41,8 +56,8 @@ namespace BackTranslationHelper
             this.MouseWheel += new MouseEventHandler(this.UserControl_MouseWheel);
             this.textBoxTargetBackTranslation.MouseWheel += new MouseEventHandler(this.TargetBackTranslation_MouseWheel);
             hideCurrentTargetTextToolStripMenuItem.Checked = Properties.Settings.Default.HideCurrentTargetText;
-			hideSourceTextToolStripMenuItem.Checked = Properties.Settings.Default.HideSourceText;
-		}
+            hideSourceTextToolStripMenuItem.Checked = Properties.Settings.Default.HideSourceText;
+        }
 
         protected override void OnParentChanged(EventArgs e)
         {
@@ -56,18 +71,20 @@ namespace BackTranslationHelper
 
                 if (parent is Form parentForm)
                 {
-					buttonPinToTop.Image = global::BackTranslationHelper.Properties.Resources.pindown;
-					parentForm.TopMost = true;
-				}
-			}
+                    buttonPinToTop.Image = global::BackTranslationHelper.Properties.Resources.pindown;
+                    parentForm.TopMost = true;
+                }
+            }
         }
 
-		private void SettingsToolStripMenuItem_DropDownOpening(object sender, EventArgs e)
-		{
-			this.hideCurrentTargetTextToolStripMenuItem.Visible = (_model == null) || (_model.DisplayExistingTargetTranslation);
-		}
+        private void SettingsToolStripMenuItem_DropDownOpening(object sender, EventArgs e)
+        {
+            this.hideCurrentTargetTextToolStripMenuItem.Visible = (_model == null) || (_model.DisplayExistingTargetTranslation);
+            this.SentenceSplittingMenuItem.Enabled = TheTranslators.Any(t => t.Configurator?.ConfiguratorDisplayName == NllbEncConverterDisplayName);
+            this.AddExampleMenuItem.Enabled = this.PurgeExamplesMenuItem.Enabled = PromptTranslators.Any();
+        }
 
-		private void TargetBackTranslation_MouseWheel(object sender, MouseEventArgs e)
+        private void TargetBackTranslation_MouseWheel(object sender, MouseEventArgs e)
         {
             UserControl_MouseWheel(sender, e);
         }
@@ -100,129 +117,146 @@ namespace BackTranslationHelper
             }
         }
 
-		public void AddToSettingsMenu(System.Windows.Forms.ToolStripMenuItem menuItem)
-		{
-			settingsToolStripMenuItem.DropDownItems.Add(menuItem);
-		}
-		#endregion
+        public void AddToSettingsMenu(System.Windows.Forms.ToolStripMenuItem menuItem)
+        {
+            // sometimes the matrix form doesn't know if it's already been added or not. So if it has, let's remove the old one
+            var previousMenuItem = settingsToolStripMenuItem.DropDownItems.Cast<ToolStripMenuItem>().FirstOrDefault(i => i.Name == menuItem.Name);
+            if (previousMenuItem != null)
+            {
+                // let's remove the existing one
+                settingsToolStripMenuItem.DropDownItems.Remove(previousMenuItem);
+            }
 
-		public void Initialize(BackTranslationHelperModel model)
-		{
-			var displayExistingTargetTranslation = model.DisplayExistingTargetTranslation;
-			var targetIsEditable = model.IsTargetTranslationEditable;
+            settingsToolStripMenuItem.DropDownItems.Add(menuItem);
+        }
+        #endregion
 
-			CheckInitializeFindReplaceHelper();
-			BackTranslationHelperDataSource.SetDataUpdateProc(UpdateData);
+        public void Initialize(BackTranslationHelperModel model)
+        {
+            var displayExistingTargetTranslation = model.DisplayExistingTargetTranslation;
+            var targetIsEditable = model.IsTargetTranslationEditable;
 
-			// get the last used converter names from settings 
-			InitializeTheTranslators();
+            CheckInitializeFindReplaceHelper();
+            BackTranslationHelperDataSource.SetDataUpdateProc(UpdateData);
 
-			tableLayoutPanel.SuspendLayout();
-			SuspendLayout();
+            // get the last used converter names from settings 
+            InitializeTheTranslators();
 
-			hideColumn1LabelsToolStripMenuItem.Checked = Properties.Settings.Default.HideLabels;
-			InitializeLabelHiding();
+            tableLayoutPanel.SuspendLayout();
+            SuspendLayout();
 
-			var projectName = BackTranslationHelperDataSource.ProjectName;
-			toolStripTextBoxStatus.Size = CalculateStatusLineSize(toolStripTextBoxStatus, settingsToolStripMenuItem);
+            hideColumn1LabelsToolStripMenuItem.Checked = Properties.Settings.Default.HideLabels;
+            InitializeLabelHiding();
 
-			var nRowStyleOffset = 0;    // start w/ the Source Language text box
+            var projectName = BackTranslationHelperDataSource.ProjectName;
+            toolStripTextBoxStatus.Size = CalculateStatusLineSize(toolStripTextBoxStatus, settingsToolStripMenuItem);
 
-			ExpandOrCollapse(!Properties.Settings.Default.HideSourceText, nRowStyleOffset++,
-							 textBoxSourceData, GetSourceLanguageFontForProject(projectName), GetSourceLanguageRightToLeftForProject(projectName));
+            var showSourceText = !Properties.Settings.Default.HideSourceText;
+            var showCurrentTargetText = !Properties.Settings.Default.HideCurrentTargetText;
+            var numOfTranslators = TheTranslators.Count;
+            var totalTextBoxes = (showSourceText ? 1 : 0) +	// the total number of visible text boxes
+                        (showCurrentTargetText ? 1 : 0) +
+                        numOfTranslators + 1;
+            float percentageHeight = 100 / totalTextBoxes;
 
-			var targetLanguageFont = GetTargetLanguageFontForProject(projectName);
-			var targetLanguageRightToLeft = GetTargetLanguageRightToLeftForProject(projectName);
+            var nRowStyleOffset = 0;    // start w/ the Source Language text box
 
-			var hideCurrentTargetText = Properties.Settings.Default.HideCurrentTargetText;
-			ExpandOrCollapse(displayExistingTargetTranslation && !hideCurrentTargetText, nRowStyleOffset++,
-							 textBoxTargetTextExisting, targetLanguageFont, targetLanguageRightToLeft);
+            ExpandOrCollapse(showSourceText, nRowStyleOffset++, percentageHeight, 
+                             textBoxSourceData, GetSourceLanguageFontForProject(projectName), GetSourceLanguageRightToLeftForProject(projectName));
 
-			textBoxTargetBackTranslation.Font = targetLanguageFont;
-			textBoxTargetBackTranslation.RightToLeft = targetLanguageRightToLeft;
-			textBoxTargetBackTranslation.ReadOnly = !targetIsEditable;
+            var targetLanguageFont = GetTargetLanguageFontForProject(projectName);
+            var targetLanguageRightToLeft = GetTargetLanguageRightToLeftForProject(projectName);
 
-			// we're either showing the target translated suggestion in a textbox (if there's only 1 converter)
-			//  or in readonly textboxes (so they can have scroll bars) above it to choose from (if there are more than one converter)
-			var textBoxesPossibleTargetTranslations = tableLayoutPanel.Controls.OfType<TextBox>().Where(l => l.Name.Contains("textBoxPossibleTargetTranslation")).ToList();
-			var buttonsFillTargetOption = tableLayoutPanel.Controls.OfType<Button>().Where(b => b.Name.Contains("buttonFillTargetTextOption")).ToList();
-			var numOfTranslators = TheTranslators.Count;
+            ExpandOrCollapse(displayExistingTargetTranslation && showCurrentTargetText, nRowStyleOffset++, percentageHeight, 
+                             textBoxTargetTextExisting, targetLanguageFont, targetLanguageRightToLeft);
 
-			// if there's only one, then we don't need to display the 'possible' translations to start with.
-			// NB: but only if we're not displaying any pre-existing target translations. If we are (i.e. Paratext),
-			//  then we need to display even the one as an option, bkz the editable textbox will contain the
-			//  existing translation, which if it's not correct, we want to be able to fill it from the converted
-			//  value (which will be in the 1st targetoption box)
-			var i = 0;
-			if ((numOfTranslators == 1) && !displayExistingTargetTranslation && !hideCurrentTargetText)
-			{
-				// hide them all
-				for (; i < MaxPossibleTargetTranslations; i++)
-				{
-					var textBox = textBoxesPossibleTargetTranslations[i];
-					var button = buttonsFillTargetOption[i];
-					var rowStyle = tableLayoutPanel.RowStyles[nRowStyleOffset + i];
-					rowStyle.SizeType = SizeType.Absolute;
-					rowStyle.Height = 0;
-				}
-			}
-			else
-			{
-				// set up mnemonics for the buttons to make it easier to trigger
-				var mnemonicChar = 1;
-				if (displayExistingTargetTranslation)
-					buttonFillExistingTargetText.Text = $" &{mnemonicChar++}";  // so that Alt+1 will trigger the button (and space so the text won't show over the icon)
+            textBoxTargetBackTranslation.Font = targetLanguageFont;
+            textBoxTargetBackTranslation.RightToLeft = targetLanguageRightToLeft;
+            textBoxTargetBackTranslation.ReadOnly = !targetIsEditable;
 
-				for (; i < numOfTranslators; i++)
-				{
-					var textBox = textBoxesPossibleTargetTranslations[i];
-					var button = buttonsFillTargetOption[i];
-					button.Text = $" &{mnemonicChar++}";
-					textBox.Font = targetLanguageFont;
-					textBox.RightToLeft = targetLanguageRightToLeft;
-					var rowStyle = tableLayoutPanel.RowStyles[nRowStyleOffset + i];
-					rowStyle.SizeType = SizeType.Percent;   // gives it real estate
-					rowStyle.Height = 20F;
-					toolTip.SetToolTip(textBox, $"This is the translation from the {TheTranslators[i].Name} Translator");
-				}
+            // we're either showing the target translated suggestion in a textbox (if there's only 1 converter)
+            //  or in readonly textboxes (so they can have scroll bars) above it to choose from (if there are more than one converter)
+            var labelsPossibleTargetTranslations = tableLayoutPanel.Controls.OfType<Label>().Where(l => l.Name.Contains("labelForPossibleTargetTranslation")).ToList();
+            var textBoxesPossibleTargetTranslations = tableLayoutPanel.Controls.OfType<TextBox>().Where(l => l.Name.Contains("textBoxPossibleTargetTranslation")).ToList();
+            var buttonsFillTargetOption = tableLayoutPanel.Controls.OfType<Button>().Where(b => b.Name.Contains("buttonFillTargetTextOption")).ToList();
+            if (!labelsPossibleTargetTranslations.Any() || !textBoxesPossibleTargetTranslations.Any() || !buttonsFillTargetOption.Any())
+                return; // if we're closing, there might be any and it would be bad to continue
 
-				for (; i < MaxPossibleTargetTranslations; i++)
-				{
-					var textBox = textBoxesPossibleTargetTranslations[i];
-					var button = buttonsFillTargetOption[i];
-					var rowStyle = tableLayoutPanel.RowStyles[nRowStyleOffset + i];
-					rowStyle.SizeType = SizeType.Absolute;
-					rowStyle.Height = 0;
-				}
-			}
+            // if there's only one, then we don't need to display the 'possible' translations to start with.
+            // NB: but only if we're not displaying any pre-existing target translations. If we are (i.e. Paratext),
+            //  then we need to display even the one as an option, bkz the editable textbox will contain the
+            //  existing translation, which if it's not correct, we want to be able to fill it from the converted
+            //  value (which will be in the 1st targetoption box)
+            var i = 0;
+            if ((numOfTranslators == 1) && !displayExistingTargetTranslation && showCurrentTargetText)
+            {
+                // hide them all
+                for (; i < MaxPossibleTargetTranslations; i++)
+                {
+                    var rowStyle = tableLayoutPanel.RowStyles[nRowStyleOffset + i];
+                    rowStyle.SizeType = SizeType.Absolute;
+                    rowStyle.Height = 0;
+                }
+            }
+            else
+            {
+                // set up mnemonics for the buttons to make it easier to trigger
+                var mnemonicChar = 1;
+                if (displayExistingTargetTranslation)
+                    buttonFillExistingTargetText.Text = $" &{mnemonicChar++}";  // so that Alt+1 will trigger the button (and space so the text won't show over the icon)
 
-			buttonSubstitute.Visible = FindReplaceHelper.IsSpellFixerAvailable;
-			tableLayoutPanel.ResumeLayout(false);
-			tableLayoutPanel.PerformLayout();
-			ResumeLayout(false);
-			PerformLayout();
+                for (; i < numOfTranslators; i++)
+                {
+                    var label = labelsPossibleTargetTranslations[i];
+                    var textBox = textBoxesPossibleTargetTranslations[i];
+                    var button = buttonsFillTargetOption[i];
+                    var converterDisplayName = TheTranslators[i].Configurator?.ConfiguratorDisplayName;
+                    if (!String.IsNullOrEmpty(converterDisplayName))
+                        label.Text = converterDisplayName;
+                    button.Text = $" &{mnemonicChar++}";
+                    textBox.Font = targetLanguageFont;
+                    textBox.RightToLeft = targetLanguageRightToLeft;
+                    var rowStyle = tableLayoutPanel.RowStyles[nRowStyleOffset + i];
+                    rowStyle.SizeType = SizeType.Percent;   // gives it real estate
+                    rowStyle.Height = percentageHeight;
+                    toolTip.SetToolTip(textBox, $"This is the translation from the {TheTranslators[i].Name} Translator");
+                }
 
-			void ExpandOrCollapse(bool hasRealEstate, int rowOffset, TextBox textBox, Font font, RightToLeft isRightToLeft)
-			{
-				System.Diagnostics.Debug.WriteLine($"textBox: {textBox.Name}, hasRealEstate: {hasRealEstate}, font: {font.Name}, isRtL: {isRightToLeft}");
-				if (hasRealEstate)
-				{
-					var rowStyle = tableLayoutPanel.RowStyles[rowOffset];
-					rowStyle.SizeType = SizeType.Percent;   // gives it real estate
-					rowStyle.Height = 20F;
-					textBox.Font = font;
-					textBox.RightToLeft = isRightToLeft;
-				}
-				else
-				{
-					var rowStyle = tableLayoutPanel.RowStyles[rowOffset];
-					rowStyle.SizeType = SizeType.Absolute; // makes it disappear
-					rowStyle.Height = 0;
-				}
-			}
-		}
+                for (; i < MaxPossibleTargetTranslations; i++)
+                {
+                    var rowStyle = tableLayoutPanel.RowStyles[nRowStyleOffset + i];
+                    rowStyle.SizeType = SizeType.Absolute;
+                    rowStyle.Height = 0;
+                }
+            }
 
-		private Size CalculateStatusLineSize(ToolStripTextBox toolStripTextBoxStatus, ToolStripMenuItem settingsToolStripMenuItem)
+            buttonSubstitute.Visible = FindReplaceHelper.IsSpellFixerAvailable;
+            tableLayoutPanel.ResumeLayout(false);
+            tableLayoutPanel.PerformLayout();
+            ResumeLayout(false);
+            PerformLayout();
+
+            void ExpandOrCollapse(bool hasRealEstate, int rowOffset, float percentageHeight, TextBox textBox, Font font, RightToLeft isRightToLeft)
+            {
+                System.Diagnostics.Debug.WriteLine($"BTH: textBox: {textBox.Name}, hasRealEstate: {hasRealEstate}, font: {font.Name}, isRtL: {isRightToLeft}");
+                if (hasRealEstate)
+                {
+                    var rowStyle = tableLayoutPanel.RowStyles[rowOffset];
+                    rowStyle.SizeType = SizeType.Percent;   // gives it real estate
+                    rowStyle.Height = percentageHeight;
+                    textBox.Font = font;
+                    textBox.RightToLeft = isRightToLeft;
+                }
+                else
+                {
+                    var rowStyle = tableLayoutPanel.RowStyles[rowOffset];
+                    rowStyle.SizeType = SizeType.Absolute; // makes it disappear
+                    rowStyle.Height = 0;
+                }
+            }
+        }
+
+        private Size CalculateStatusLineSize(ToolStripTextBox toolStripTextBoxStatus, ToolStripMenuItem settingsToolStripMenuItem)
         {
             var width = this.Width - settingsToolStripMenuItem.Width - 50;  // Padding;
             return new Size(width, toolStripTextBoxStatus.Height);
@@ -326,30 +360,44 @@ namespace BackTranslationHelper
                 Properties.Settings.Default.MapProjectNameToEcTranslators = new StringCollection();
             var mapProjectNameToEcTranslators = SettingToDictionary(Properties.Settings.Default.MapProjectNameToEcTranslators);
             var projectName = BackTranslationHelperDataSource.ProjectName;
+
+            var somethingChanged = false;
             if (mapProjectNameToEcTranslators.TryGetValue(projectName, out List<string> translatorNames))
             {
                 foreach (var translatorName in translatorNames)
+                {
                     if (!TheTranslators.Any(t => t.Name == translatorName) && DirectableEncConverter.EncConverters.ContainsKey(translatorName))
+                    {
+                        somethingChanged = true;
                         TheTranslators.Add(DirectableEncConverter.EncConverters[translatorName]);
+                    }
+                }
             }
 
             // see how many converters are configured (if none, then query for one)
             if (!TheTranslators.Any())
             {
                 var aTranslator = QueryTranslator();
-                if (aTranslator == null)
-                    return;
+                if (aTranslator != null)
+                {
+                    var theTranslator = aTranslator.GetEncConverter;
+                    TheTranslators.Add(theTranslator);
 
-                var theTranslator = aTranslator.GetEncConverter;
-                TheTranslators.Add(theTranslator);
+                    // save it in settings for this project, so we can load it automatically next time
+                    if (mapProjectNameToEcTranslators.ContainsKey(projectName))
+                        mapProjectNameToEcTranslators.Remove(projectName);
+                    translatorNames = new List<string> { theTranslator.Name };
+                    mapProjectNameToEcTranslators[projectName] = translatorNames;
+                    Properties.Settings.Default.MapProjectNameToEcTranslators = SettingFromDictionary(mapProjectNameToEcTranslators);
+                    Properties.Settings.Default.Save();
+                }
 
-                // save it in settings for this project, so we can load it automatically next time
-                if (mapProjectNameToEcTranslators.ContainsKey(projectName))
-                    mapProjectNameToEcTranslators.Remove(projectName);
-                translatorNames = new List<string> { theTranslator.Name };
-                mapProjectNameToEcTranslators[projectName] = translatorNames;
-                Properties.Settings.Default.MapProjectNameToEcTranslators = SettingFromDictionary(mapProjectNameToEcTranslators);
-                Properties.Settings.Default.Save();
+                somethingChanged = true;
+            }
+
+            if (somethingChanged)
+            {
+                BackTranslationHelperDataSource.TranslatorSetChanged(TheTranslators);
             }
         }
 
@@ -388,16 +436,21 @@ namespace BackTranslationHelper
         public void SetNewTargetTexts(List<TargetPossible> newTargetTexts)
         {
             var textBoxesPossibleTargetTranslations = tableLayoutPanel.Controls.OfType<TextBox>().Where(l => l.Name.Contains("textBoxPossibleTargetTranslation")).ToList();
-            System.Diagnostics.Debug.Assert(newTargetTexts.Count == TheTranslators.Count);
 
-            for (var i = 0; i < TheTranslators.Count; i++)
+            // The parallel processing seems to return before all of it is finished, resulting in the newTargetTexts having nulls in it.
+            var targetTexts = newTargetTexts.Where(tt => tt != null).ToList();
+            System.Diagnostics.Debug.Assert(targetTexts.Count <= textBoxesPossibleTargetTranslations.Count);
+            foreach (var targetText in targetTexts)
             {
-                var textBox = textBoxesPossibleTargetTranslations[i];
-				textBox.Text = newTargetTexts[i].TargetData;
+                if (targetText.PossibleIndex >= textBoxesPossibleTargetTranslations.Count)
+                    continue;
+
+                var textBox = textBoxesPossibleTargetTranslations[targetText.PossibleIndex];
+                textBox.Text = targetText.TargetData;
             }
         }
 
-		#region Event handlers
+        #region Event handlers
         public void GetNewData(ref BackTranslationHelperModel model)
         {
             if (model == null)
@@ -410,17 +463,13 @@ namespace BackTranslationHelper
                 IsModified = false; // start over assuming it isn't edited
             }
 
-            for (var i = _model.TargetsPossible.Count; i < TheTranslators.Count; i++)
-            {
-                var theTranslator = TheTranslators[i];
-                var translatedText = ConvertText(theTranslator, _model.SourceToTranslate);
-                _model.TargetsPossible.Add(new TargetPossible { TargetData = translatedText, PossibleIndex = i, TranslatorName = theTranslator.Name });
-            }
-
+            // Do the various converters in parallel, so they'll finish faster 
+            CallTranslators(_model).Wait();
+            
             model = _model;
         }
 
-        private string ConvertText(IEncConverter theTranslator, string sourceData)
+        public string ConvertText(IEncConverter theTranslator, string sourceData)
         {
             if (!_mapOfRecentTranslations.TryGetValue(theTranslator.Name, out Dictionary<string, string> mapRecentTranslations))
             {
@@ -434,15 +483,15 @@ namespace BackTranslationHelper
                 {
                     targetData = theTranslator.Convert(sourceData);
 
-					// only save it if we get it back successfully
-					mapRecentTranslations[sourceData] = targetData;
-				}
-				catch (Exception ex)
+                    // only save it if we get it back successfully
+                    mapRecentTranslations[sourceData] = targetData;
+                }
+                catch (Exception ex)
                 {
-					var msg = ex.Message;
-                    MessageBox.Show($"{msg}. Press F5 in the 'Target Translation' text box to try the conversion again.", EncConverters.cstrCaption);
-					targetData = msg;	// but display this so the user sees it
-				}
+                    var msg = LogExceptionMessage("ConvertText", ex);
+                    targetData = msg;    // but display this so the user sees it
+                    SetStatusBox($"Translation failed. Press F5 to redo the conversion.");
+                }
             }
 
             return targetData;
@@ -461,7 +510,7 @@ namespace BackTranslationHelper
 
             textBoxTargetBackTranslation.Text = targetData; // may be null, in which case, setting NewTargetTexts below will fill it with the 1st translation
             textBoxTargetBackTranslation.DeselectAll();     // it shouldn't be pre-selected (which it seems to do)
-            
+
             // if we're keeping track of what was originally in the Target Project (i.e. Paratext usage), then put the current value in the label for
             //  the existing target field (just in case the user starts to edit or choose one of the other possibilities and then wants to revert it
             //  (it has a fill button also).
@@ -470,13 +519,8 @@ namespace BackTranslationHelper
             // some clients (i.e. Word) only pass 1 translated target text (bkz it only knows about 1 EncConverter/Translator)
             //  if we have fewer than the number of possible target translations (i.e. we added 1 or more addl Translators),
             //  then convert the missing ones to add to this collection
-            var numOfTranslators = TheTranslators.Count;
-            for (var i = model.TargetsPossible.Count; i < numOfTranslators; i++)
-            {
-                var theTranslator = TheTranslators[i];
-                var translatedText = ConvertText(theTranslator, model.SourceToTranslate);
-                model.TargetsPossible.Add(new TargetPossible { TargetData = translatedText, PossibleIndex = i, TranslatorName = theTranslator.Name });
-            }
+            // Do the various converters in parallel, so they'll finish faster 
+            CallTranslators(model).Wait();
 
             SetNewTargetTexts(model.TargetsPossible);
 
@@ -485,6 +529,112 @@ namespace BackTranslationHelper
             {
                 var targetPossible = model.TargetsPossible.FirstOrDefault();
                 textBoxTargetBackTranslation.Text = targetPossible?.TargetData;
+            }
+        }
+
+        public ManualResetEvent waitForAllTranslatorsToFinish;
+        private SemaphoreSlim semaphoreParallelProcessing = new SemaphoreSlim(1);
+
+        private async Task CallTranslators(BackTranslationHelperModel model)
+        {
+            try
+            {
+                /* make this run in parallel w/ a progressbar
+                for (var i = model.TargetsPossible.Count; i < numOfTranslators; i++)
+                {
+                    var theTranslator = TheTranslators[i];
+                    var translatedText = ConvertText(theTranslator, model.SourceToTranslate);
+                    model.TargetsPossible.Add(new TargetPossible { TargetData = translatedText, PossibleIndex = i, TranslatorName = theTranslator.Name });
+                }
+                */
+
+                // some of the possible target translators may have already been run by the client (e.g. Word always
+                //  does the 1st one). OR we may already have one or more and we're adding more...
+                //  So this is for any that haven't been done yet
+                var alreadyTranslatedTargetNames = model.TargetsPossible.Where(tt => tt != null).Select(tp => tp.TranslatorName).ToList();
+                var translators = TheTranslators.Where(t => !alreadyTranslatedTargetNames.Contains(t.Name))
+                                                .Select(t => new { TheTranslator = t, Index = TheTranslators.IndexOf(t) })
+                                                .ToList();
+                if (!translators.Any())
+                    return; // this can happen bkz the when the 'Form.Activate' retriggers the whole cycle (don't do it again!)
+
+                progressBar.Minimum = 0;
+                progressBar.Maximum = translators.Count + 1;
+                progressBar.Value = 1;            // start it at 1, so it looks like we're doing something
+                progressBar.Visible = true;     // hide it when not in use
+                InvokeIfRequired(progressBar, () => progressBar.Show());    // we're often not on the UI thread
+
+                waitForAllTranslatorsToFinish = new ManualResetEvent(false);
+
+                var thread = new Thread(() =>
+                {
+                    IEnumerable<(string TranslatedText, int Index)> results = Partitioner
+                        .Create(translators, EnumerablePartitionerOptions.None)
+                        .AsParallel()
+                        .WithMergeOptions(ParallelMergeOptions.FullyBuffered)
+                        .Select((theTranslatorPlusIndex) =>
+                        {
+                            var theTranslator = theTranslatorPlusIndex.TheTranslator;
+                            var index = theTranslatorPlusIndex.Index;
+                            var translatedText = ConvertText(theTranslatorPlusIndex.TheTranslator, model.SourceToTranslate);
+
+                            // list doesn't seem threadsafe...
+                            semaphoreParallelProcessing.Wait();
+                            try
+                            {
+                                model.TargetsPossible.Add(new TargetPossible { TargetData = translatedText, PossibleIndex = index, TranslatorName = theTranslator.Name });
+                            }
+                            catch { }
+                            finally
+                            {
+                                semaphoreParallelProcessing.Release();
+                            }
+
+                            System.Diagnostics.Debug.WriteLine($"BTH: progressBar: bumped Value from {theTranslator.Name}");
+                            InvokeIfRequired(progressBar, () => progressBar.Value = Math.Min(progressBar.Value + 1, progressBar.Maximum));
+                            return (translatedText, index);
+                        })
+                        .ToList();
+
+                    waitForAllTranslatorsToFinish.Set();
+                });
+                thread.Start();
+
+                // in order to not block the UI thread, check if the parallel processing thread is 
+                //  finished every 50ms and do events to allow the progressbar to keep working
+                while (!waitForAllTranslatorsToFinish.WaitOne(50))
+                    System.Windows.Forms.Application.DoEvents();
+            }
+            catch (Exception ex)
+            {
+                LogExceptionMessage("CallTranslators", ex);
+            }
+            finally
+            {
+                System.Diagnostics.Debug.WriteLine("BTH: progressBar: set invisible");
+                InvokeIfRequired(progressBar, () => progressBar.Visible = false);
+            }
+        }
+
+        public static void InvokeIfRequired(Control control, Action action)
+        {
+            try
+            {
+                // this can happen if the user is closing the form while we're still processing the translation calls.
+                if (control.IsDisposed)
+                    return;
+
+                if (control.InvokeRequired)
+                {
+                    control.Invoke(action);
+                }
+                else
+                {
+                    action();
+                }
+            }
+            catch
+            {
             }
         }
 
@@ -561,6 +711,8 @@ namespace BackTranslationHelper
                     return;
             }
             IsModified = false;
+
+            CheckCapturePropmptTranslatorExamples();
         }
 
         private void ButtonNextSection_Click(object sender, System.EventArgs e)
@@ -594,8 +746,12 @@ namespace BackTranslationHelper
                 }
             }
 
-			// removed the check for IsModified, bkz if the user clicks 'Next', it means write. If they meant to
-			//	not write it, they'd click 'Skip'.
+            // if the user clicks next, then they probably mean to not have it be 'Paused'
+            if (IsPaused)
+                SetPausedAndImage(false);
+
+            // removed the check for IsModified, bkz if the user clicks 'Next', it means write. If they meant to
+            //    not write it, they'd click 'Skip'.
             BackTranslationHelperDataSource.Log($"change target text from '{existingTargetText}' to '{newTargetText}'");
             if (!BackTranslationHelperDataSource.WriteToTarget(newTargetText))
             {
@@ -607,6 +763,8 @@ namespace BackTranslationHelper
             }
 
             IsModified = false;
+            CheckCapturePropmptTranslatorExamples();
+
             BackTranslationHelperDataSource.ButtonPressed(ButtonPressed.MoveToNext);
             BackTranslationHelperDataSource.MoveToNext();
         }
@@ -616,18 +774,24 @@ namespace BackTranslationHelper
             var dlg = new TranslatorListForm(TheTranslators);
             if (dlg.ShowDialog() == DialogResult.OK)
             {
-                var nameOfTranslatorBeingRemoved = dlg.SelectedDisplayName;
-                TheTranslators.RemoveAll(t => t.Name == nameOfTranslatorBeingRemoved);
-                _model.TargetsPossible.RemoveAll(tp => tp.TranslatorName == nameOfTranslatorBeingRemoved);
-                var mapProjectNameToEcTranslators = SettingToDictionary(Properties.Settings.Default.MapProjectNameToEcTranslators);
-                var projectName = BackTranslationHelperDataSource.ProjectName;
-                if (mapProjectNameToEcTranslators.TryGetValue(projectName, out List<string> translatorNames))
+                // remove the existing translators and add them back based on whether they still exist (and their order)
+                //    in the dialog's ConverterNamesInOrder list
+                var theTranslators = TheTranslators.ToList();
+                TheTranslators.Clear();
+                foreach (var translatorName in dlg.ConverterNamesInOrder)
                 {
-                    translatorNames.RemoveAll(t => t == nameOfTranslatorBeingRemoved);
-                    Properties.Settings.Default.MapProjectNameToEcTranslators = SettingFromDictionary(mapProjectNameToEcTranslators);
-                    Properties.Settings.Default.Save();
+                    var theEc = theTranslators.FirstOrDefault(t => t.Name == translatorName);
+                    if (theEc != null)
+                        TheTranslators.Add(theEc);
                 }
 
+                // clear out the possible target translations, so we reload them in the proper order
+                _model.TargetsPossible.Clear();
+                var mapProjectNameToEcTranslators = SettingToDictionary(Properties.Settings.Default.MapProjectNameToEcTranslators);
+                var projectName = BackTranslationHelperDataSource.ProjectName;
+                mapProjectNameToEcTranslators[projectName] = dlg.ConverterNamesInOrder;    // save new order
+                Properties.Settings.Default.MapProjectNameToEcTranslators = SettingFromDictionary(mapProjectNameToEcTranslators);
+                Properties.Settings.Default.Save();
                 Reload();
             }
         }
@@ -651,7 +815,7 @@ namespace BackTranslationHelper
             if (!mapProjectNameToEcTranslators.TryGetValue(projectName, out List<string> translatorNames))
             {
                 translatorNames = new List<string>();
-				mapProjectNameToEcTranslators[projectName] = translatorNames;
+                mapProjectNameToEcTranslators[projectName] = translatorNames;
             }
 
             if (!translatorNames.Any(n => n == theTranslator.Name))
@@ -679,7 +843,7 @@ namespace BackTranslationHelper
             // also put it in the model as the ‘TargetData’ (possibly overwriting the translated value) so
             //  it’ll show up there again, rather than being overwritten by something previous
             _model.TargetData =  textBoxTargetBackTranslation.Text = PreprocessTargetData(textBoxFrom.Text);
-            IsModified = true;	// mark it as modified now, since we changed from the default (which was the existing target text)
+            IsModified = true;    // mark it as modified now, since we changed from the default (which was the existing target text)
         }
 
         private void ButtonFillExistingTargetText_Click(object sender, EventArgs e)
@@ -702,6 +866,11 @@ namespace BackTranslationHelper
             UpdateEditableTextBox(textBoxPossibleTargetTranslation3);
         }
 
+        private void ButtonFillTargetTextOption4_Click(object sender, EventArgs e)
+        {
+            UpdateEditableTextBox(textBoxPossibleTargetTranslation4);
+        }
+
         private void TextBoxTargetBackTranslation_Enter(object sender, EventArgs e)
         {
             BackTranslationHelperDataSource?.ActivateKeyboard();
@@ -709,13 +878,20 @@ namespace BackTranslationHelper
 
         private void InitializeLabelHiding()
         {
+            var hideLabels = Properties.Settings.Default.HideLabels;
             labelForSourceData.Visible =
                 labelForExistingTargetData.Visible =
-                labelForTargetDataOptions.Visible =
-                labelForTargetTranslation.Visible = !Properties.Settings.Default.HideLabels;
-		}
+                labelForPossibleTargetTranslation1.Visible =
+                labelForPossibleTargetTranslation2.Visible =
+                labelForPossibleTargetTranslation3.Visible =
+                labelForPossibleTargetTranslation4.Visible =
+                    labelForTargetTranslation.Visible = !hideLabels;
 
-		private void HideColumn1LabelsToolStripMenuItem_CheckStateChanged(object sender, EventArgs e)
+            var columnStyle = tableLayoutPanel.ColumnStyles[0];
+            columnStyle.Width = hideLabels ? 0 : 108F;
+        }
+
+        private void HideColumn1LabelsToolStripMenuItem_CheckStateChanged(object sender, EventArgs e)
         {
             var newCheckState = hideColumn1LabelsToolStripMenuItem.Checked;
             if (newCheckState != Properties.Settings.Default.HideLabels)
@@ -727,6 +903,17 @@ namespace BackTranslationHelper
                     Reload();
                 }
             }
+        }
+
+        private void SplitSentencesMenuItem_CheckStateChanged(object sender, EventArgs e)
+        {
+            var theNllbEncConverter = TheTranslators.FirstOrDefault(t => t.Configurator?.ConfiguratorDisplayName == NllbEncConverterDisplayName);
+            if (theNllbEncConverter == null)
+                return;    // shouldn't be possible, but...
+
+            var polarity = (SentenceSplittingMenuItem.Checked) ? "ON" : "OFF";
+            theNllbEncConverter.Convert(NllbEncConverterSplitSentencesPrefix + polarity);
+            ProcessRetranslate(nllbOnly: true);
         }
 
         private void Reload()
@@ -868,8 +1055,8 @@ namespace BackTranslationHelper
                     textBoxPossibleTargetTranslation3.Font =
                     textBoxTargetBackTranslation.Font = fontDialog.Font;
 
-				mapProjectNameToTargetFontOverride[projectName] = fontOverride;
-				Properties.Settings.Default.MapProjectNameToTargetFontOverride = SettingFromDictionary(mapProjectNameToTargetFontOverride);
+                mapProjectNameToTargetFontOverride[projectName] = fontOverride;
+                Properties.Settings.Default.MapProjectNameToTargetFontOverride = SettingFromDictionary(mapProjectNameToTargetFontOverride);
                 Properties.Settings.Default.Save();
             }
         }
@@ -953,8 +1140,6 @@ namespace BackTranslationHelper
                     if (_queryAboutF5Meaning)
                     {
                         var msg = "By pressing F5, did you mean to re-execute the translator (e.g. after making changes to it)?";
-                        if (IsModified)
-                            msg += " Note: existing changes will be overwritten if you click 'Yes'.";
 
                         var res = MessageBox.Show(msg, BackTranslationHelperDataSource.ProjectName, MessageBoxButtons.YesNoCancel);
                         if ((res != DialogResult.Yes) || (_model == null))
@@ -963,14 +1148,7 @@ namespace BackTranslationHelper
                         _queryAboutF5Meaning = false;
                     }
 
-                    IsModified = false; // so it can be changed
-
-                    // I don't think I wanted to do this. This just means that if we originally processed the existing
-                    //  text (in Ptx), then it would just shift to the other one, which isn't what we probably want
-                    //  to do.
-                    //  _model.TargetData = null;   // so it'll be reinitialized
-                    _model.TargetsPossible.Clear();
-                    Reload();
+                    ProcessRetranslate(nllbOnly: false);
                     return;
             }
 
@@ -984,6 +1162,69 @@ namespace BackTranslationHelper
                 // otherwise, if this was a bonafide edit, then we have to be careful not to clobber it if something causes us to update
                 //  the data (e.g. adding a find-replace fix)
                 IsModified = true;
+            }
+        }
+
+        private void ProcessRetranslate(bool nllbOnly)
+        {
+            // I don't think I wanted to do this. This just means that if we originally processed the existing
+            //  text (in Ptx), then it would just shift to the other one, which isn't what we probably want
+            //  to do.
+            //  _model.TargetData = null;   // so it'll be reinitialized
+            // UPDATE: this is what we want to do in Word. Otherwise, if there's only one translator, we'll never
+            //  see the update.
+            if (!_model.DisplayExistingTargetTranslation && (TheTranslators.Count == 1))
+                _model.TargetData = String.Empty;
+
+            var targetsToClear = _model.TargetsPossible;
+            if (nllbOnly)
+            {
+                var nllbTranslatorNames = TheTranslators.Where(t => t.Configurator?.ConfiguratorDisplayName == NllbEncConverterDisplayName).Select(t => t.Name).ToHashSet();
+                targetsToClear = targetsToClear.Where(tp => nllbTranslatorNames.Contains(tp.TranslatorName))
+                .ToList();
+            }
+
+            _model.TargetsPossible.RemoveAll(tp => targetsToClear.Contains(tp));
+
+            // also remove any existing translations for the current sourceData, so it knows it needs to retranslate
+            var sourceToTranslate = _model.SourceToTranslate;
+            if (!string.IsNullOrEmpty(sourceToTranslate))
+            {
+                _mapOfRecentTranslations.Values.ToList().ForEach(m => m.Remove(sourceToTranslate));
+            }
+            Reload();
+        }
+
+        private void TextBoxPossibleTargetTranslation_PreviewKeyDown(object sender, System.Windows.Forms.PreviewKeyDownEventArgs e)
+        {
+            if (e.KeyData == (Keys.Control | Keys.Down))
+                CopySelectedTextToTargetTranslationTextBox(sender);
+        }
+
+        private void TextBoxPossibleTargetTranslation_MouseUp(object sender, System.Windows.Forms.MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+                CopySelectedTextToTargetTranslationTextBox(sender);
+        }
+
+        private void CopySelectedTextToTargetTranslationTextBox(object sender)
+        {
+            // if the user has text selected in one of the possible translation text boxes and an insertion point in the target Translation text box
+            //	AND if they press Ctrl+Down arrow, then copy that text down to the insertion point
+            var textBox = sender as TextBox;
+            var cursorPosition = textBoxTargetBackTranslation.SelectionStart;
+            var textToInsert = textBox.SelectedText;
+            var textToReplace = textBoxTargetBackTranslation.SelectedText;
+            if (!string.IsNullOrEmpty(textToInsert) && (cursorPosition >= 0))
+            {
+                if (!String.IsNullOrEmpty(textToReplace))
+                    textBoxTargetBackTranslation.SelectedText = String.Empty;
+
+                cursorPosition = textBoxTargetBackTranslation.SelectionStart;
+                textToReplace = textBoxTargetBackTranslation.Text;
+                textBoxTargetBackTranslation.Text = textBoxTargetBackTranslation.Text.Insert(cursorPosition, textToInsert);
+                textBoxTargetBackTranslation.SelectionStart = cursorPosition + textToInsert.Length;
+                textBoxTargetBackTranslation.Focus();
             }
         }
 
@@ -1134,8 +1375,127 @@ namespace BackTranslationHelper
             while (((parent = parent.Parent) != null) && !(parent is Form))
                 ;
 
-			if (parent is Form parentForm)
+            if (parent is Form parentForm)
                 parentForm.TopMost = newCheckState;
         }
-	}
+
+        public static string LogExceptionMessage(string className, Exception ex)
+        {
+            var message = ex.Message;
+            var msg = "Error occurred: " + message;
+            while (ex.InnerException != null)
+            {
+                ex = ex.InnerException;
+                if (message.Contains(ex.Message))
+                    continue;   // skip identical msgs
+                message = ex.Message;
+                msg += $"{Environment.NewLine}because: (InnerException): {message}";
+            }
+
+            Util.DebugWriteLine(className, msg);
+            return msg;
+        }
+
+        private void CheckCapturePropmptTranslatorExamples()
+        {
+            // if the user had the ctrl button pressed, then write the source and target to as examples to any EncConverters that derive
+			//	from PromptExeTranslator
+            if ((ModifierKeys & Keys.Control) != Keys.Control)
+                return;
+
+            AddExampleMenuItem_Click(null, null);
+        }
+
+        private void AddExampleMenuItem_Click(object sender, EventArgs e)
+        {
+            var inputText = textBoxSourceData.Text;
+            var outputText = textBoxTargetBackTranslation.Text;
+            var chatPromptTranslatorNames = PromptTranslators.Select(t => t.Configurator?.ConfiguratorDisplayName).ToList();
+            var dlg = new ExampleEditorDialog(inputText, textBoxSourceData.Font, outputText, textBoxTargetBackTranslation.Font, chatPromptTranslatorNames);
+            if (DialogResult.OK == dlg.ShowDialog())
+            {
+                SendExampleToPromptTranslators(dlg.ExampleInput, dlg.ExampleOutput, dlg.TranslatorNames);
+            }
+        }
+
+        private List<IEncConverter> PromptTranslators
+        {
+            get
+            {
+                return TheTranslators.Where(t => PromptTranslatorConfiguratorDisplayNames.Contains(t.Configurator?.ConfiguratorDisplayName)).ToList();
+            }
+        }
+
+        private void SendExampleToPromptTranslators(string inputText, string outputText, List<string> translatorNamesToSendTo)
+        {
+            try
+            {
+                var translatorsToSendTo = PromptTranslators.Where(t =>
+                {
+                    // no translatorNamesToSendTo means send to all (1) of them
+                    return !translatorNamesToSendTo.Any() || translatorNamesToSendTo.Contains(t.Configurator?.ConfiguratorDisplayName);
+                });
+
+                foreach (var translator in translatorsToSendTo)
+                {
+                    var type = translator.GetType();
+                    var methodInfo = type.GetMethod("AddExample");
+                    if (methodInfo == null)
+                        continue;
+
+                    var parameters = new object[] { inputText, outputText };
+                    methodInfo.Invoke(translator, parameters);
+                }
+            }
+            catch (Exception ex)
+            {
+                LogExceptionMessage("SendExampleToPromptTranslators", ex);
+            }
+        }
+
+        private void PurgeExamplesMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                foreach (var translator in PromptTranslators)
+                {
+                    var type = translator.GetType();
+                    var methodInfo = type.GetMethod("PurgeExamples");
+                    if (methodInfo == null)
+                        continue;
+
+                    methodInfo.Invoke(translator, null);
+                }
+            }
+            catch (Exception ex)
+            {
+                LogExceptionMessage("PurgeExamplesMenuItem_Click", ex);
+            }
+        }
+
+        private void ButtonPauseUpdating_Click(object sender, EventArgs e)
+        {
+            SetPausedAndImage(!IsPaused);
+
+            // if the user takes off the pause, then reload the data (which might retranslate if we don't already have it)
+            if (!IsPaused)
+                Reload();
+        }
+
+        public void SetPausedAndImage(bool value)
+        {
+            Debug.WriteLine($"SetPausedAndImage: curr value: {IsPaused}, new value: {value}");
+            IsPaused = value;
+            InvokeIfRequired(buttonPauseUpdating, () =>
+            {
+                Debug.WriteLine($"SetPausedAndImage: before buttonPauseUpdating.Image: {buttonPauseUpdating.Image}");
+
+                buttonPauseUpdating.Image = IsPaused
+                                            ? global::BackTranslationHelper.Properties.Resources.Play
+                                            : global::BackTranslationHelper.Properties.Resources.Pause;
+
+                Debug.WriteLine($"SetPausedAndImage: after buttonPauseUpdating.Image: {buttonPauseUpdating.Image}");
+            });
+        }
+    }
 }

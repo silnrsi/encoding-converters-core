@@ -117,11 +117,36 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="buildDocker" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\nllbtranslator\docker\builddocker.ps1;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
   <data name="DeepLTranslatorKeyDialogInstructionUrl" xml:space="preserve">
     <value>https://www.deepl.com/pro?cta=header-pro/</value>
   </data>
+  <data name="Dockerfile" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\nllbtranslator\docker\dockerfile;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="GoogleCloudVertexCredentialsDialogInstructionUrl" xml:space="preserve">
+    <value>https://cloud.google.com/vertex-ai/docs/start/cloud-environment</value>
+  </data>
   <data name="GoogleTranslatorKeyDialogInstructionUrl" xml:space="preserve">
     <value>https://cloud.google.com/translate/docs/setup#creating_service_accounts_and_keys</value>
+  </data>
+  <data name="HelpForAzureOpenAiAddYourOwnApiKey" xml:space="preserve">
+    <value>Click this button to enter your own Resource key and other information needed to use the Microsoft Azure Open AI Service. See https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/create-resource, for more information on how to get your own Azure Open AI Resource. Note: there is no default Resource for this converter; you must get your own to use it.</value>
+  </data>
+  <data name="HelpForAzureOpenAiSourceLanguageTextBox" xml:space="preserve">
+    <value>Enter the name of the language you want the Azure Open AI Resource to tranlate from (e.g. Hindi)</value>
+  </data>
+  <data name="HelpForAzureOpenAiSystemPromptAdditionsComboBox" xml:space="preserve">
+    <value>You can add one of the existing additions to the base system prompt using the values in this drop down box (or type in your own)</value>
+  </data>
+  <data name="HelpForAzureOpenAiSystemPromptTextBox" xml:space="preserve">
+    <value>This box shows the System Prompt that will be sent to the Azure Open AI Resource</value>
+  </data>
+  <data name="HelpForAzureOpenAiTargetLanguageTextBox" xml:space="preserve">
+    <value>Enter the name of the language you want the Azure Open AI Resource to tranlate into (e.g. English)</value>
   </data>
   <data name="HelpForBingTranslatorAddYourOwnApiKey" xml:space="preserve">
     <value>Click this button to enter your own API key from Microsoft Azure. See the "Prerequisites" section on the page, https://docs.microsoft.com/en-us/azure/cognitive-services/translator/quickstart-translator, for how to get your own key (e.g. if the default API key has run out of translation support -- note: the default API key is using the free pricing tier and is limited to 2 million characters/month)</value>
@@ -170,9 +195,60 @@ See https://docs.microsoft.com/en-us/azure/cognitive-services/translator/languag
     <value>Click this button to enter your own Google Cloud credential key. Follow the instructions on the page, https://cloud.google.com/translation-hub/docs/admin-setup, to get create your own Google Cloud Translate service and get your own credentials (e.g. if the default credentials have run out of translation support -- note: the default credentials are using the free pricing tier and is limited to 500K characters/month for all users)</value>
   </data>
   <data name="HelpForGoogleTranslatorSourceLanguagesComboBox" xml:space="preserve">
-    <value>Choose the language you want to translate or transliterate from. Choose 'Auto-Detect' if you want Google Translate to attempt to determine the input language.</value>
+    <value>Choose the language you want to translate from. Choose 'Auto-Detect' if you want Google Translate to attempt to determine the input language.</value>
   </data>
   <data name="HelpForGoogleTranslatorTargetLanguagesComboBox" xml:space="preserve">
     <value>Choose the language you want the input text to be translated into.</value>
+  </data>
+  <data name="HelpForNllbTranslatorAddYourOwnApiKey" xml:space="preserve">
+    <value>Click this button to configure the NLLB Parameters (e.g. which model to use, an API key, and the endpoint).</value>
+  </data>
+  <data name="HelpForNllbTranslatorSourceLanguagesComboBox" xml:space="preserve">
+    <value>Choose the language you want to translate from.</value>
+  </data>
+  <data name="HelpForNllbTranslatorTargetLanguagesComboBox" xml:space="preserve">
+    <value>Choose the language you want the input text to be translated into.</value>
+  </data>
+  <data name="HelpForVertexAiAddYourOwnApiKey" xml:space="preserve">
+    <value>Click this button to enter your own Google Cloud credential key. Follow the instructions on the page, https://cloud.google.com/vertex-ai/docs/start/cloud-environment, to get create your own Google Cloud Translate service and get your own credentials (e.g. if the default credentials have run out of translation support</value>
+  </data>
+  <data name="HelpForVertexAiLocationIdTextBox" xml:space="preserve">
+    <value>Enter the location id of the Google Cloud Vertex AI resource (e.g. us-central1)</value>
+  </data>
+  <data name="HelpForVertexAiModelIdTextBox" xml:space="preserve">
+    <value>Enter the model id of the Google Cloud Vertex AI resource (e.g. chat-bison, chat-bison-32k, or gemini-pro)</value>
+  </data>
+  <data name="HelpForVertexAiProjectIdTextBox" xml:space="preserve">
+    <value>Enter the id of the Google Cloud Project that contains the Vertex AI resource</value>
+  </data>
+  <data name="HelpForVertexAiPublisherTextBox" xml:space="preserve">
+    <value>Enter the publisher of the Google Cloud Vertex AI resource (e.g. google)</value>
+  </data>
+  <data name="HelpForVertexAiSourceLanguageTextBox" xml:space="preserve">
+    <value>Enter the name of the language you want the Vertex AI Model to tranlate from (e.g. Hindi)</value>
+  </data>
+  <data name="HelpForVertexAiSystemPromptAdditionsComboBox" xml:space="preserve">
+    <value>You can add one of the existing additions to the base system prompt using the values in this drop down box (or type in your own)</value>
+  </data>
+  <data name="HelpForVertexAiSystemPromptTextBox" xml:space="preserve">
+    <value>This box shows the System Prompt that will be sent to the Vertext AI Model</value>
+  </data>
+  <data name="HelpForVertexAiTargetLanguageTextBox" xml:space="preserve">
+    <value>Enter the name of the language you want the Vertex AI Model to tranlate into (e.g. English)</value>
+  </data>
+  <data name="import_model" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\nllbtranslator\docker\import_model.py;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="index" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\nllbtranslator\docker\templates\index.html;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="README" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\nllbtranslator\docker\readme.md;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="server" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\nllbtranslator\docker\server.py;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="settings" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\nllbtranslator\docker\settings.py;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
 </root>

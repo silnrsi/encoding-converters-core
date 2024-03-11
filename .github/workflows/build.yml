@@ -21,13 +21,14 @@ jobs:
        fail-fast: false
        matrix:
          build_configuration: ["Debug", "Release"]
+         build_platform: ["Win32", "x64"]
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4.1.1
 
     - name: Add MSBuild to PATH
-      uses: microsoft/setup-msbuild@v1.0.2
+      uses: microsoft/setup-msbuild@v2
 
     - name: Fetch nuget dependecies
       run: nuget restore "${{env.SOLUTION_FILE_PATH}}"
@@ -36,7 +37,62 @@ jobs:
       working-directory: ${{env.GITHUB_WORKSPACE}}
       # Add additional options to the MSBuild command line here (like platform or verbosity level).
       # See https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference
-      run: msbuild /m /p:Configuration=${{matrix.build_configuration}} "${{env.SOLUTION_FILE_PATH}}"
+      run: msbuild /m /p:Configuration=${{matrix.build_configuration}} /p:Platform=${{ matrix.build_platform }} "${{env.SOLUTION_FILE_PATH}}"
+
+    - name: List Files in Repository
+      run: dir /s
+      shell: cmd
+
+    - uses: actions/upload-artifact@v4.3.1
+      with:
+        name: build-artifacts-${{ matrix.build_platform }}-${{ matrix.build_configuration }}
+        path: |
+          output\${{ matrix.build_platform }}\${{ matrix.build_configuration }}\*.exe
+          output\${{ matrix.build_platform }}\${{ matrix.build_configuration }}\*.dll
+          output\${{ matrix.build_platform }}\${{ matrix.build_configuration }}\*.tlb
+          output\${{ matrix.build_platform }}\${{ matrix.build_configuration }}\*.config
+          output\MergeModules\**\*.*
+          retention-days: 1
+
+  publish_nuget:
+    needs: build-windows
+    runs-on: windows-2019
+    strategy:
+       # Keep building other jobs even if another fails, to show what _is_ still working.
+       fail-fast: false
+       matrix:
+         build_configuration: ["Release"]
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4.1.1
+
+    - name: Download all workflow run artifacts
+      uses: actions/download-artifact@v4.1.4
+
+    - name: Get Folder Names
+      id: get-folders
+      run: |
+          $folderNames = Get-ChildItem -Directory -Path . | Where-Object { $_.Name -like 'build-artifacts-*' } | Select-Object -ExpandProperty Name
+          $folderNames
+          foreach ($folderName in $folderNames) {
+            $source = "$folderName\*.*"
+            "xcopy /s /y $source .\"
+            xcopy /s /y $source .\
+          }
+
+    - name: List Files in Repository
+      run: dir /s
+      shell: cmd
+
+    - name: Create NuGet Package
+      run: nuget pack ./Package.${{matrix.build_configuration}}.nuspec -OutputDirectory ./output/${{matrix.build_configuration}}
+
+    - name: Upload NuGet Package as Artifact
+      uses: actions/upload-artifact@v4.3.1
+      with:
+        name: ${{matrix.build_configuration}}-nuget-package
+        path: ./output/${{matrix.build_configuration}}/*.nupkg
 
     # TODO Run tests
     #- name: Test
@@ -59,7 +115,13 @@ jobs:
       run: sudo apt-get install --assume-yes automake g++ python2-dev python2 libicu-dev mono5-sil icu-dev-fw libteckit-dev
 
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4.1.1
+
+    - name: List Files in Repository
+      run: ls -R
+
+    - name: Restore NuGet Packages
+      run: nuget restore "${{env.SOLUTION_FILE_PATH}}"
 
     - name: Autogen
       run: . environ && ./autogen.sh

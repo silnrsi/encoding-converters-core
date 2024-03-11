@@ -458,7 +458,7 @@ namespace SilEncConverters40
             strCaption += "' converter";
 
             if( MessageBox.Show(str, strCaption, MessageBoxButtons.OKCancel,MessageBoxIcon.Exclamation) == DialogResult.Cancel )
-                EncConverters.ThrowError(ErrStatus.CompilationFailed);
+                EncConverters.ThrowError(ErrStatus.CompilationFailed, str);
         }
 
         protected unsafe void CompileMap(string strFilename, ref string strCompiledFilename)

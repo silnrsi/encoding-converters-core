@@ -61,6 +61,17 @@ namespace SilEncConverters40.EcTranslators.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to docker build -t nllb{0} .
+        ///docker run -p {1}:{1} nllb{0}
+        ///# Start-Process http://localhost:{1}/.
+        /// </summary>
+        internal static string buildDocker {
+            get {
+                return ResourceManager.GetString("buildDocker", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to https://www.deepl.com/pro?cta=header-pro/.
         /// </summary>
         internal static string DeepLTranslatorKeyDialogInstructionUrl {
@@ -70,11 +81,81 @@ namespace SilEncConverters40.EcTranslators.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to FROM python:3.9
+        ///
+        ///# Install steps mostly taken from https://medium.com/mlearning-ai/text-translation-using-nllb-and-huggingface-tutorial-7e789e0f7816
+        ///
+        ///# Install main dependencies
+        ///RUN pip install transformers sentencepiece fasttext
+        ///# Install PyTorch. This command varies depending on your OS and other factors; see https://pytorch.org/get-started/locally/ for instructions for your system
+        ///RUN pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu   # if you have a gpu: r [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string Dockerfile {
+            get {
+                return ResourceManager.GetString("Dockerfile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to https://cloud.google.com/vertex-ai/docs/start/cloud-environment.
+        /// </summary>
+        internal static string GoogleCloudVertexCredentialsDialogInstructionUrl {
+            get {
+                return ResourceManager.GetString("GoogleCloudVertexCredentialsDialogInstructionUrl", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to https://cloud.google.com/translate/docs/setup#creating_service_accounts_and_keys.
         /// </summary>
         internal static string GoogleTranslatorKeyDialogInstructionUrl {
             get {
                 return ResourceManager.GetString("GoogleTranslatorKeyDialogInstructionUrl", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Click this button to enter your own Resource key and other information needed to use the Microsoft Azure Open AI Service. See https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/create-resource, for more information on how to get your own Azure Open AI Resource. Note: there is no default Resource for this converter; you must get your own to use it..
+        /// </summary>
+        internal static string HelpForAzureOpenAiAddYourOwnApiKey {
+            get {
+                return ResourceManager.GetString("HelpForAzureOpenAiAddYourOwnApiKey", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enter the name of the language you want the Azure Open AI Resource to tranlate from (e.g. Hindi).
+        /// </summary>
+        internal static string HelpForAzureOpenAiSourceLanguageTextBox {
+            get {
+                return ResourceManager.GetString("HelpForAzureOpenAiSourceLanguageTextBox", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You can add one of the existing additions to the base system prompt using the values in this drop down box (or type in your own).
+        /// </summary>
+        internal static string HelpForAzureOpenAiSystemPromptAdditionsComboBox {
+            get {
+                return ResourceManager.GetString("HelpForAzureOpenAiSystemPromptAdditionsComboBox", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This box shows the System Prompt that will be sent to the Azure Open AI Resource.
+        /// </summary>
+        internal static string HelpForAzureOpenAiSystemPromptTextBox {
+            get {
+                return ResourceManager.GetString("HelpForAzureOpenAiSystemPromptTextBox", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enter the name of the language you want the Azure Open AI Resource to tranlate into (e.g. English).
+        /// </summary>
+        internal static string HelpForAzureOpenAiTargetLanguageTextBox {
+            get {
+                return ResourceManager.GetString("HelpForAzureOpenAiTargetLanguageTextBox", resourceCulture);
             }
         }
         
@@ -209,7 +290,7 @@ namespace SilEncConverters40.EcTranslators.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Choose the language you want to translate or transliterate from. Choose &apos;Auto-Detect&apos; if you want Google Translate to attempt to determine the input language..
+        ///   Looks up a localized string similar to Choose the language you want to translate from. Choose &apos;Auto-Detect&apos; if you want Google Translate to attempt to determine the input language..
         /// </summary>
         internal static string HelpForGoogleTranslatorSourceLanguagesComboBox {
             get {
@@ -223,6 +304,222 @@ namespace SilEncConverters40.EcTranslators.Properties {
         internal static string HelpForGoogleTranslatorTargetLanguagesComboBox {
             get {
                 return ResourceManager.GetString("HelpForGoogleTranslatorTargetLanguagesComboBox", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Click this button to configure the NLLB Parameters (e.g. which model to use, an API key, and the endpoint)..
+        /// </summary>
+        internal static string HelpForNllbTranslatorAddYourOwnApiKey {
+            get {
+                return ResourceManager.GetString("HelpForNllbTranslatorAddYourOwnApiKey", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Choose the language you want to translate from..
+        /// </summary>
+        internal static string HelpForNllbTranslatorSourceLanguagesComboBox {
+            get {
+                return ResourceManager.GetString("HelpForNllbTranslatorSourceLanguagesComboBox", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Choose the language you want the input text to be translated into..
+        /// </summary>
+        internal static string HelpForNllbTranslatorTargetLanguagesComboBox {
+            get {
+                return ResourceManager.GetString("HelpForNllbTranslatorTargetLanguagesComboBox", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Click this button to enter your own Google Cloud credential key. Follow the instructions on the page, https://cloud.google.com/vertex-ai/docs/start/cloud-environment, to get create your own Google Cloud Translate service and get your own credentials (e.g. if the default credentials have run out of translation support.
+        /// </summary>
+        internal static string HelpForVertexAiAddYourOwnApiKey {
+            get {
+                return ResourceManager.GetString("HelpForVertexAiAddYourOwnApiKey", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enter the location id of the Google Cloud Vertex AI resource (e.g. us-central1).
+        /// </summary>
+        internal static string HelpForVertexAiLocationIdTextBox {
+            get {
+                return ResourceManager.GetString("HelpForVertexAiLocationIdTextBox", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enter the model id of the Google Cloud Vertex AI resource (e.g. chat-bison, chat-bison-32k, or gemini-pro).
+        /// </summary>
+        internal static string HelpForVertexAiModelIdTextBox {
+            get {
+                return ResourceManager.GetString("HelpForVertexAiModelIdTextBox", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enter the id of the Google Cloud Project that contains the Vertex AI resource.
+        /// </summary>
+        internal static string HelpForVertexAiProjectIdTextBox {
+            get {
+                return ResourceManager.GetString("HelpForVertexAiProjectIdTextBox", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enter the publisher of the Google Cloud Vertex AI resource (e.g. google).
+        /// </summary>
+        internal static string HelpForVertexAiPublisherTextBox {
+            get {
+                return ResourceManager.GetString("HelpForVertexAiPublisherTextBox", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enter the name of the language you want the Vertex AI Model to tranlate from (e.g. Hindi).
+        /// </summary>
+        internal static string HelpForVertexAiSourceLanguageTextBox {
+            get {
+                return ResourceManager.GetString("HelpForVertexAiSourceLanguageTextBox", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You can add one of the existing additions to the base system prompt using the values in this drop down box (or type in your own).
+        /// </summary>
+        internal static string HelpForVertexAiSystemPromptAdditionsComboBox {
+            get {
+                return ResourceManager.GetString("HelpForVertexAiSystemPromptAdditionsComboBox", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This box shows the System Prompt that will be sent to the Vertext AI Model.
+        /// </summary>
+        internal static string HelpForVertexAiSystemPromptTextBox {
+            get {
+                return ResourceManager.GetString("HelpForVertexAiSystemPromptTextBox", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enter the name of the language you want the Vertex AI Model to tranlate into (e.g. English).
+        /// </summary>
+        internal static string HelpForVertexAiTargetLanguageTextBox {
+            get {
+                return ResourceManager.GetString("HelpForVertexAiTargetLanguageTextBox", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to # This file exists because:
+        ///# 1. Documentation for using transformers often shows how to download them in Python
+        ///# 2. We want the download of the model to happen as part of the building of the image, not when it runs
+        ///
+        ///from settings import MODEL_NAME
+        ///
+        ///checkpoint = MODEL_NAME
+        ///from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, pipeline
+        ///model = AutoModelForSeq2SeqLM.from_pretrained(checkpoint)
+        ///tokenizer = AutoTokenizer.from_pretrained(checkpoint)
+        ///.
+        /// </summary>
+        internal static string import_model {
+            get {
+                return ResourceManager.GetString("import_model", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;!DOCTYPE html&gt;
+        ///&lt;html&gt;
+        ///  &lt;head&gt;
+        ///      &lt;title&gt;{{ MODEL_NAME }}&lt;/title&gt;
+        ///    &lt;style&gt;
+        ///      html {
+        ///        box-sizing: border-box;
+        ///      }
+        ///      *,
+        ///      *:before,
+        ///      *:after {
+        ///        box-sizing: inherit;
+        ///      }
+        ///      #wrapper {
+        ///        display: grid;
+        ///        grid-template-columns: 1fr 1fr;
+        ///        grid-column-gap: 2em;
+        ///      }
+        ///      #input,
+        ///      #output {
+        ///        width: 100%;
+        ///        height: 10em;
+        ///        border: 1px solid grey;
+        ///        font-size: 1rem;
+        ///        padding: 0.5rem;
+        ///  [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string index {
+            get {
+                return ResourceManager.GetString("index", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to # Usage: execute these commands in Powershell
+        ///
+        ///PS&gt; docker build -t nllb{0} .            # note: include the space and &apos;.&apos; at the end when copying to Powershell
+        ///PS&gt; docker run -p {1}:{1} nllb{0}
+        ///
+        ///Then in a web browser, navigate to http://localhost:{1}/
+        ///.
+        /// </summary>
+        internal static string README {
+            get {
+                return ResourceManager.GetString("README", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to from flask import Flask, render_template, request, jsonify
+        ///from settings import MODEL_NAME, PORT, API_KEY
+        ///from gevent.pywsgi import WSGIServer
+        ///
+        ///app = Flask(__name__)
+        ///
+        ///checkpoint = MODEL_NAME
+        ///from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, pipeline
+        ///model = AutoModelForSeq2SeqLM.from_pretrained(checkpoint)
+        ///tokenizer = AutoTokenizer.from_pretrained(checkpoint)
+        ///
+        ///def IsNullOrEmpty(s):
+        ///    return s is None or s == &apos;&apos;
+        ///
+        ///@app.route(&apos;/&apos;)
+        ///def send_report():
+        ///    # Check if the API key is  [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string server {
+            get {
+                return ResourceManager.GetString("server", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to # Define your API key: it can only be alphanumeric characters + &apos;-&apos;; nothing else (i.e. [a-zA-Z-])
+        ///# the prefix, &apos;SIL-NLLB-Auth-Key &apos; will be added, so if you&apos;re using this in the &apos;Nllb Translator&apos; 
+        ///# Setup tab of SILConverters, just enter the part after that (i.e. your-api-key-here)
+        ///API_KEY = {0}    # e.g. &apos;SIL-NLLB-Auth-Key your-api-key-here&apos;
+        ///
+        ///# You can either access the model locally via http://localhost:8000/ or from another machine on the network by using 
+        ///#  the IP address of the machine hosting [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string settings {
+            get {
+                return ResourceManager.GetString("settings", resourceCulture);
             }
         }
     }

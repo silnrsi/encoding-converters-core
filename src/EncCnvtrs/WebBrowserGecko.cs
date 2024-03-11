@@ -95,12 +95,11 @@ namespace SilEncConverters40
 
 		public override Task NavigateAsync(string filePath)
 		{
-			if (!File.Exists(filePath))
+			if (!filePath.StartsWith("http") && !File.Exists(filePath))
 			{
 				const string cstrFileNameToEditSaveAsHtml = "CantReadMhtFiles.htm";
 				filePath = Path.Combine(Path.GetDirectoryName(filePath),
 										cstrFileNameToEditSaveAsHtml);
-				System.Diagnostics.Debug.Assert(File.Exists(filePath));
 			}
 
 			// GeckoWebBrowser.Navigate("file://" + filePath);

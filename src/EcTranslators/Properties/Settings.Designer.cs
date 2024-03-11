@@ -181,5 +181,199 @@ namespace SilEncConverters40.EcTranslators.Properties {
                 this["GoogleCloudBillingProjectName"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string AzureOpenAiEndpoint {
+            get {
+                return ((string)(this["AzureOpenAiEndpoint"]));
+            }
+            set {
+                this["AzureOpenAiEndpoint"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string AzureOpenAiDeploymentName {
+            get {
+                return ((string)(this["AzureOpenAiDeploymentName"]));
+            }
+            set {
+                this["AzureOpenAiDeploymentName"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string AzureOpenAiKeyOverride {
+            get {
+                return ((string)(this["AzureOpenAiKeyOverride"]));
+            }
+            set {
+                this["AzureOpenAiKeyOverride"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/create-resource" +
+            "")]
+        public string AzureOpenAiKeyLocationDialogInstructionUrl {
+            get {
+                return ((string)(this["AzureOpenAiKeyLocationDialogInstructionUrl"]));
+            }
+            set {
+                this["AzureOpenAiKeyLocationDialogInstructionUrl"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute(@"<?xml version=""1.0"" encoding=""utf-16""?>
+<ArrayOfString xmlns:xsd=""http://www.w3.org/2001/XMLSchema"" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"">
+  <string>with a 'free translation' style</string>
+  <string>with a 'literal translation' style</string>
+  <string>with a 'free translation' style aimed at high school students</string>
+  <string>in the Devanagari script</string>
+  <string>using 'Yoda speak'</string>
+  <string>UseSystemPrompt: Translate from Hindi into English.</string>
+  <string>UseSystemPrompt: You will be given one or more sentences in Khmer script. Your job is to transliterate them into the Latin script and return only the transliterated Latin result.</string>
+  <string>UseSystemPrompt: You will be given one or more sentences in Tibetan script. Your job is to transliterate them into the International Phonetic Alphabet (IPA) and return only the transliterated IPA result.</string>
+</ArrayOfString>")]
+        public global::System.Collections.Specialized.StringCollection AzureOpenAiSystemPromptAdditions {
+            get {
+                return ((global::System.Collections.Specialized.StringCollection)(this["AzureOpenAiSystemPromptAdditions"]));
+            }
+            set {
+                this["AzureOpenAiSystemPromptAdditions"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("N3RK/o+wYtvEFMVGtYsmROIyLr/+RWh1")]
+        public string NllbTranslatorKeyOverride {
+            get {
+                return ((string)(this["NllbTranslatorKeyOverride"]));
+            }
+            set {
+                this["NllbTranslatorKeyOverride"] = value;
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://localhost:8000")]
+        public string NllbTranslatorEndpoint {
+            get {
+                return ((string)(this["NllbTranslatorEndpoint"]));
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string NllbTranslatorEndpointOverride {
+            get {
+                return ((string)(this["NllbTranslatorEndpointOverride"]));
+            }
+            set {
+                this["NllbTranslatorEndpointOverride"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string NllbTranslatorPathToDockerProject {
+            get {
+                return ((string)(this["NllbTranslatorPathToDockerProject"]));
+            }
+            set {
+                this["NllbTranslatorPathToDockerProject"] = value;
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("(.*?)([\\p{Po}-[,]])")]
+        public string NllbSentenceFinalPunctuationRegex {
+            get {
+                return ((string)(this["NllbSentenceFinalPunctuationRegex"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool NllbProcessSentenceBySentence {
+            get {
+                return ((bool)(this["NllbProcessSentenceBySentence"]));
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string GoogleCloudVertexAiCredentialsOverride {
+            get {
+                return ((string)(this["GoogleCloudVertexAiCredentialsOverride"]));
+            }
+            set {
+                this["GoogleCloudVertexAiCredentialsOverride"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string GoogleCloudVertexAiProjectId {
+            get {
+                return ((string)(this["GoogleCloudVertexAiProjectId"]));
+            }
+            set {
+                this["GoogleCloudVertexAiProjectId"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("us-central1")]
+        public string GoogleCloudVertexAiLocationId {
+            get {
+                return ((string)(this["GoogleCloudVertexAiLocationId"]));
+            }
+            set {
+                this["GoogleCloudVertexAiLocationId"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("google")]
+        public string GoogleCloudVertexAiPublisher {
+            get {
+                return ((string)(this["GoogleCloudVertexAiPublisher"]));
+            }
+            set {
+                this["GoogleCloudVertexAiPublisher"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("chat-bison")]
+        public string GoogleCloudVertexAiModelId {
+            get {
+                return ((string)(this["GoogleCloudVertexAiModelId"]));
+            }
+            set {
+                this["GoogleCloudVertexAiModelId"] = value;
+            }
+        }
     }
 }

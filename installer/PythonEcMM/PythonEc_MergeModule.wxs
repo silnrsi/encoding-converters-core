@@ -7,14 +7,20 @@
 
             <Directory Id="MergeRedirectFolder">
 
-                <Component Id="PyScriptEC.dll" Guid="{65242CE5-8A5E-4D3B-B597-3C422AD0D1AF}">
-                    <File Id="PyScriptEC.dll" KeyPath="yes" Source="..\..\output\Win32\release\PyScriptEC.dll" />
+                <Component Id="PyScriptEC.dll" Guid="{04087844-A18F-4A6E-B523-2CE18CE21F5F}">
+                    <File Id="PyScriptEC.dll" Name="PyScriptEC.dll" Vital="yes" KeyPath="yes" AssemblyManifest="PyScriptEC.dll" AssemblyApplication="PyScriptEC.dll" Assembly=".net"
+                          Source="..\..\output\Win32\release\PyScriptEC.dll"/>
                 </Component>
 
                 <Component Id="PyScriptEncConverter.dll" Guid="{1FFF8D39-DE10-4A6B-9BE3-19575F82DDBF}">
                     <File Id="PyScriptEncConverter.dll" KeyPath="yes" Source="..\..\output\Win32\release\PyScriptEncConverter.dll" />
                 </Component>
 
+                <Component Id="Python.Runtime.dll" Guid="{3B70DAC4-F7FD-45AC-B10D-10FC68040503}">
+                    <File Id="Python.Runtime.dll" Name="Python.Runtime.dll" Vital="yes" KeyPath="yes" AssemblyManifest="Python.Runtime.dll" AssemblyApplication="Python.Runtime.dll" Assembly=".net"
+                          Source="..\..\output\Win32\release\Python.Runtime.dll"/>
+                </Component>
+                
                 <Directory Id="PyScriptECFolder" Name="EC">
                     <Directory Id="PyScriptPluginsFolder" Name="Plugins">
                         <Component Id="PyScriptEC4.0.0.0PluginDetails.xml" Guid="{46FA6B6D-3C52-4D56-9649-3502432C2284}">
@@ -74,6 +80,24 @@
                                 </Component>
                             </Directory>
 
+                            <!--Python 3 scripting Help-->
+                            <Component Id="Python3Help.htm" Guid="{C83E7F73-0753-4DA2-B672-88A77124A768}">
+                                <File Id="Python3Help.htm" Name="Python_3_Script_Plug-in_About_box.htm" KeyPath="yes" Source="..\..\redist\Help\Python_3_Script_Plug-in_About_box.htm"/>
+                                <Shortcut Id="Python3HelpHtm" Directory="PythonHelp" Name="Help for Python 3 Script Plug-in" Description="View help document for the Python 3 Script Plug-in"
+                                          IconIndex="0" Show="normal" Target="[#Python3Help.htm]" WorkingDirectory="Help" Advertise="no" />
+                            </Component>
+                            <Directory Id="Python_3_Script_Plugin_About_box" Name="Python_3_Script_Plug-in_About_box_files">
+                                <Component Id="Python_3_Script_Plugin_About_boxComp" Guid="{694B33F9-FCDF-4B8A-A45C-92F5063B2B2F}">
+                                    <File Id="py3_filelist.xml" Name="filelist.xml" KeyPath="yes" Source="..\..\redist\Help\Python_3_Script_Plug-in_About_box_files\filelist.xml"/>
+                                    <File Id="py3_header.htm" Name="header.htm" Source="..\..\redist\Help\Python_3_Script_Plug-in_About_box_files\header.htm"/>
+                                    <File Id="py3_colorschememapping.xml" Name="colorschememapping.xml" Source="..\..\redist\Help\Python_3_Script_Plug-in_About_box_files\colorschememapping.xml"/>
+                                    <File Id="py3_themedata.thmx" Name="themedata.thmx" Source="..\..\redist\Help\Python_3_Script_Plug-in_About_box_files\themedata.thmx"/>
+                                    <File Id="py3_image004.jpg" Name="image004.jpg" Source="..\..\redist\Help\Python_3_Script_Plug-in_About_box_files\image004.jpg"/>
+                                    <File Id="py3_image006.jpg" Name="image006.jpg" Source="..\..\redist\Help\Python_3_Script_Plug-in_About_box_files\image006.jpg"/>
+                                    <File Id="py3_image010.jpg" Name="image010.jpg" Source="..\..\redist\Help\Python_3_Script_Plug-in_About_box_files\image010.jpg"/>
+                                </Component>
+                            </Directory>
+
                         </Directory>
                     </Directory>
                 </Directory>
@@ -86,5 +110,9 @@
             </Directory>
 
         </Directory>
+
+        <InstallExecuteSequence>
+            <RemoveShortcuts>Installed AND NOT UPGRADINGPRODUCTCODE AND REMOVE="ALL"</RemoveShortcuts>
+        </InstallExecuteSequence>
     </Module>
 </Wix>

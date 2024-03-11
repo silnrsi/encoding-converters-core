@@ -6,11 +6,16 @@
         <Directory Id="TARGETDIR" Name="SourceDir">
 
             <Directory Id="MergeRedirectFolder">
-                <Component Id="PyScriptEC.dll" Guid="{D755C1F5-66CC-4443-A803-250368F35130}">
-                    <File Id="PyScriptEC.dll" KeyPath="yes" Source="..\..\output\x64\release\PyScriptEC.dll" />
+                <Component Id="PyScriptEC.dll" Guid="{A9CDFCCF-A29F-49E5-A988-F49D907E0D5E}">
+                    <File Id="PyScriptEC.dll" Name="PyScriptEC.dll" Vital="yes" KeyPath="yes" AssemblyManifest="PyScriptEC.dll" AssemblyApplication="PyScriptEC.dll" Assembly=".net"
+                          Source="..\..\output\x64\release\PyScriptEC.dll"/>
                 </Component>
                 <Component Id="PyScriptEncConverter.dll" Guid="{2BA69E1E-47E8-4B32-A99C-65ED44175BCA}">
                     <File Id="PyScriptEncConverter.dll" KeyPath="yes" Source="..\..\output\x64\release\PyScriptEncConverter.dll" />
+                </Component>
+                <Component Id="Python.Runtime.dll" Guid="{3B70DAC4-F7FD-45AC-B10D-10FC68040503}">
+                    <File Id="Python.Runtime.dll" Name="Python.Runtime.dll" Vital="yes" KeyPath="yes" AssemblyManifest="Python.Runtime.dll" AssemblyApplication="Python.Runtime.dll" Assembly=".net"
+                          Source="..\..\output\x64\release\Python.Runtime.dll"/>
                 </Component>
                 <Directory Id="PyScriptECFolder" Name="EC">
                     <Directory Id="PyScriptPluginsFolder" Name="Plugins">
@@ -68,6 +73,24 @@
                                 </Component>
                             </Directory>
 
+                            <!--Python 3 scripting Help-->
+                            <Component Id="Python3Help.htm" Guid="{6E5C30CE-57D2-4843-A0C4-B1278788EA5B}">
+                                <File Id="Python3Help.htm" Name="Python_3_Script_Plug-in_About_box.htm" KeyPath="yes" Source="..\..\redist\Help\Python_3_Script_Plug-in_About_box.htm"/>
+                                <Shortcut Id="Python3HelpHtm" Directory="PythonHelp" Name="Help for Python 3 Script Plug-in" Description="View help document for the Python 3 Script Plug-in"
+                                          IconIndex="0" Show="normal" Target="[#Python3Help.htm]" WorkingDirectory="Help" Advertise="no" />
+                            </Component>
+                            <Directory Id="Python_3_Script_Plugin_About_box" Name="Python_3_Script_Plug-in_About_box_files">
+                                <Component Id="Python_3_Script_Plugin_About_boxComp" Guid="{644FF295-B4FC-4015-A60A-CF0D61D2CE0A}">
+                                    <File Id="py3_filelist.xml" Name="filelist.xml" KeyPath="yes" Source="..\..\redist\Help\Python_3_Script_Plug-in_About_box_files\filelist.xml"/>
+                                    <File Id="py3_header.htm" Name="header.htm" Source="..\..\redist\Help\Python_3_Script_Plug-in_About_box_files\header.htm"/>
+                                    <File Id="py3_colorschememapping.xml" Name="colorschememapping.xml" Source="..\..\redist\Help\Python_3_Script_Plug-in_About_box_files\colorschememapping.xml"/>
+                                    <File Id="py3_themedata.thmx" Name="themedata.thmx" Source="..\..\redist\Help\Python_3_Script_Plug-in_About_box_files\themedata.thmx"/>
+                                    <File Id="py3_image004.jpg" Name="image004.jpg" Source="..\..\redist\Help\Python_3_Script_Plug-in_About_box_files\image004.jpg"/>
+                                    <File Id="py3_image006.jpg" Name="image006.jpg" Source="..\..\redist\Help\Python_3_Script_Plug-in_About_box_files\image006.jpg"/>
+                                    <File Id="py3_image010.jpg" Name="image010.jpg" Source="..\..\redist\Help\Python_3_Script_Plug-in_About_box_files\image010.jpg"/>
+                                </Component>
+                            </Directory>
+
                         </Directory>
                     </Directory>
                 </Directory>
@@ -80,5 +103,9 @@
             </Directory>
 
         </Directory>
+
+        <InstallExecuteSequence>
+            <RemoveShortcuts>Installed AND NOT UPGRADINGPRODUCTCODE AND REMOVE="ALL"</RemoveShortcuts>
+        </InstallExecuteSequence>
     </Module>
 </Wix>

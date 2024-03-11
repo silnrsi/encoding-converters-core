@@ -35,4 +35,11 @@
                    DefiningProcessType="16"
                    ConfiguratorProgId="SilEncConverters40.CpEncConverterConfig"
                    AssemblyReference="SilEncConverters40, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" />
+  <ECPluginDetails ImplementationName="SIL.netRegex"
+                   ImplementationProgId="SilEncConverters40.NetRegexEncConverter"
+                   Priority="1"
+                   DefiningProcessType="128"
+                   DisplayName="Regular Expression Find and Replace (.Net)"
+                   ConfiguratorProgId="SilEncConverters40.NetRegexEncConverterConfig"
+                   AssemblyReference="SilEncConverters40, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" />
 </EncConverterPlugins>
