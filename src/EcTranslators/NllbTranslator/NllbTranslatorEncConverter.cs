@@ -434,11 +434,13 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
             return String.Join(Environment.NewLine, output);
         }
 
-        #endregion Abstract Base Class Overrides
+		public override bool HasUserOverriddenCredentials => true;
 
-        #region Misc helpers
+		#endregion Abstract Base Class Overrides
 
-        protected override string GetConfigTypeName
+		#region Misc helpers
+
+		protected override string GetConfigTypeName
         {
             get { return typeof(NllbTranslatorEncConverterConfig).AssemblyQualifiedName; }
         }

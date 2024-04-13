@@ -16,6 +16,8 @@ using SilEncConverters40.EcTranslators.AzureOpenAI;
 using SilEncConverters40.EcTranslators.NllbTranslator;
 using SilEncConverters40.EcTranslators.VertexAi;
 using System.Threading.Tasks;
+using SilEncConverters40.EcTranslators;
+using Grpc.Net.Client.Configuration;
 
 namespace TestEncCnvtrs
 {
@@ -206,7 +208,34 @@ namespace TestEncCnvtrs
             m_repoFile = null;
         }
 
-        private const string VertexAiConverterFriendlyName = "VertexAiTranslator";
+		[Test]
+		[TestCase(typeof(BingTranslatorEncConverter), "AzureTranslatorSubscriptionKey")]
+		[TestCase(typeof(DeepLTranslatorEncConverter), "DeepLTranslatorSubscriptionKey")]
+		[TestCase(typeof(GoogleTranslatorEncConverter), "GoogleTranslatorSubscriptionKey")]
+		public void TestTranslatorOverrideKeyExists(Type typeEncConverter, string fieldName)
+		{
+			var theEncConverters = DirectableEncConverter.EncConverters;
+			TranslatorConverter theTranslator = (TranslatorConverter)theEncConverters.InstantiateIEncConverter(typeEncConverter.FullName, null);
+			Assert.IsFalse(theTranslator.HasUserOverriddenCredentials);
+
+			var fieldInfo = typeEncConverter.GetMethod($"set_{fieldName}");
+			Assert.NotNull(fieldInfo);
+
+			const string Credentials = "asdg";
+			fieldInfo.Invoke(theTranslator, new[] { Credentials });
+			Assert.IsTrue(theTranslator.HasUserOverriddenCredentials);
+		}
+
+		// NLLB always has an 'override' key, bkz it's run locally
+		[Test]
+		public void TestNllbTranslatorOverrideKeyExists()
+		{
+			var theEncConverters = DirectableEncConverter.EncConverters;
+			TranslatorConverter theTranslator = (TranslatorConverter)theEncConverters.InstantiateIEncConverter(typeof(NllbTranslatorEncConverter).FullName, null);
+			Assert.IsTrue(theTranslator.HasUserOverriddenCredentials);
+		}
+
+		private const string VertexAiConverterFriendlyName = "VertexAiTranslator";
 
         [Test]
 //      [TestCase("Hindi;English;bright-coyote-381812;us-central1;google;chat-bison-32k;Translate from Hindi into English.", "यीशु ने यह भी कहा,", "Jesus also said,")]

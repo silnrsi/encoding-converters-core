@@ -70,6 +70,8 @@ namespace SilEncConverters40.EcTranslators.GoogleTranslator
 			}
 		}
 
+		public override bool HasUserOverriddenCredentials => !String.IsNullOrEmpty(Properties.Settings.Default.GoogleTranslatorCredentialsOverride);
+
 		public const string CstrDisplayName = "Google Translate";
         internal const string strHtmlFilename  = "Google_Translate_Plug-in_About_box.htm";
 		#endregion Const Definitions

@@ -12,6 +12,8 @@ namespace SilEncConverters40.EcTranslators
 
 		public int RequestCount { get; set; }
 
+		public abstract bool HasUserOverriddenCredentials { get; }
+
 		protected TranslatorConverter(string sProgId, string sImplementType)
 			: base(sProgId, sImplementType)
 		{
@@ -19,7 +21,7 @@ namespace SilEncConverters40.EcTranslators
 
 		protected void CheckOverusage()
 		{
-			if ((++RequestCount % WarnEveryXRequests) == 0)
+			if (!HasUserOverriddenCredentials && (++RequestCount % WarnEveryXRequests) == 0)
 			{
 				throw new ApplicationException($"The {ImplementType} converter is a metered and limited connection that is shared by all users of SILConverters/EncConverters. Please avoid using it to translate large quantities of text without getting your own resource key (as described in the About tab)");
 			}

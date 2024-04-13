@@ -52,6 +52,8 @@ namespace SilEncConverters40.EcTranslators.BingTranslator
 			}
 		}
 
+		public override bool HasUserOverriddenCredentials => !String.IsNullOrEmpty(Properties.Settings.Default.AzureTranslatorKeyOverride);
+
 		private static readonly string endpointTranslator = Properties.Settings.Default.AzureTranslatorTextTranslationEndpoint;
 		private static readonly string endpointCapabilities = $"{endpointTranslator}languages?api-version=3.0";
 
