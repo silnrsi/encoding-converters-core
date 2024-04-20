@@ -1,18 +1,19 @@
-using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Resources;                               // for CLSCompliantAttribute
 using System;
+using System.Reflection;
+using System.Resources;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Translating Encoding Converters (Bing, etc)")]
-[assembly: AssemblyDescription("Encoding Converters that Translate")]
+[assembly: AssemblyTitle("Converter for Paratext Project Data")]
+[assembly: AssemblyDescription("Transducer for Paratext Project Data (transduces a string like '01_001_001' (=Gen 1:1) into the data in the specified project in that verse w/ each text element on a separate line)")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("SIL")]
-[assembly: AssemblyProduct("EcTranslators")]
-[assembly: AssemblyCopyright("Copyright © 2021-2024 SIL. All rights reserved.")]
-[assembly: AssemblyTrademark("Copyright © 2021-2024 SIL. All rights reserved.")]
+[assembly: AssemblyProduct("PtxConverters")]
+[assembly: AssemblyCopyright("Copyright © 2024 SIL. All rights reserved.")]
+[assembly: AssemblyTrademark("Copyright © 2024 SIL. All rights reserved.")]
 [assembly: AssemblyCulture("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible
@@ -21,7 +22,7 @@ using System;
 [assembly: ComVisible(true)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("c4d0aa5b-f319-4e06-a982-a52e79eb57dc")]
+[assembly: Guid("e9764af7-2ea0-4829-9e83-c37b4b080f3f")]
 
 // Version information for an assembly consists of the following four values:
 //
@@ -34,6 +35,6 @@ using System;
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("4.0.0.0")]
-[assembly: AssemblyFileVersion("4.5.0.1")]
+[assembly: AssemblyFileVersion("4.0.0.0")]
 [assembly: CLSCompliantAttribute(true)]
 [assembly: NeutralResourcesLanguageAttribute("en")]

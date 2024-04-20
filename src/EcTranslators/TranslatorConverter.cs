@@ -28,7 +28,7 @@ namespace SilEncConverters40.EcTranslators
 		}
 
 		[CLSCompliant(false)]
-		internal static unsafe void StringToProperByteStar(string strOutput, byte* lpOutBuffer, ref int rnOutLen)
+		public static unsafe void StringToProperByteStar(string strOutput, byte* lpOutBuffer, ref int rnOutLen)
 		{
 			int nLen = strOutput.Length * 2;
 			if (nLen > (int)rnOutLen)
