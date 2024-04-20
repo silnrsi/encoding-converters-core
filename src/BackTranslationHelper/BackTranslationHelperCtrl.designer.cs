@@ -85,8 +85,8 @@ namespace BackTranslationHelper
             this.assignNewSubstitutionProjectMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.buttonPinToTop = new System.Windows.Forms.Button();
-            this.fontDialog = new System.Windows.Forms.FontDialog();
             this.buttonPauseUpdating = new System.Windows.Forms.Button();
+            this.fontDialog = new System.Windows.Forms.FontDialog();
             this.menuStrip.SuspendLayout();
             this.tableLayoutPanel.SuspendLayout();
             this.substitutionContextMenu.SuspendLayout();
@@ -100,8 +100,8 @@ namespace BackTranslationHelper
             this.toolStripTextBoxStatus});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
-            this.menuStrip.Size = new System.Drawing.Size(571, 27);
-            this.menuStrip.TabIndex = 0;
+			this.menuStrip.Size = new System.Drawing.Size(571, 27);
+			this.menuStrip.TabIndex = 0;
             this.menuStrip.Text = "menuStrip1";
             // 
             // settingsToolStripMenuItem
@@ -410,7 +410,7 @@ namespace BackTranslationHelper
             this.textBoxPossibleTargetTranslation1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.textBoxPossibleTargetTranslation1.Size = new System.Drawing.Size(548, 41);
             this.textBoxPossibleTargetTranslation1.TabIndex = 11;
-            this.textBoxPossibleTargetTranslation1.ContextMenu = contextMenuHideDefault;
+			this.textBoxPossibleTargetTranslation1.ContextMenu = contextMenuHideDefault;
 			this.textBoxPossibleTargetTranslation1.PreviewKeyDown += TextBoxPossibleTargetTranslation_PreviewKeyDown;
 			this.textBoxPossibleTargetTranslation1.MouseUp += TextBoxPossibleTargetTranslation_MouseUp;
 			// 
@@ -710,11 +710,6 @@ namespace BackTranslationHelper
             this.buttonPinToTop.UseVisualStyleBackColor = true;
             this.buttonPinToTop.Click += new System.EventHandler(this.ButtonPinToTop_Click);
             // 
-            // fontDialog
-            // 
-            this.fontDialog.Font = new System.Drawing.Font("Arial Unicode MS", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.fontDialog.ShowColor = true;
-            // 
             // buttonPauseUpdating
             // 
             this.buttonPauseUpdating.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -724,11 +719,16 @@ namespace BackTranslationHelper
             this.buttonPauseUpdating.Name = "buttonPauseUpdating";
             this.buttonPauseUpdating.Size = new System.Drawing.Size(30, 30);
             this.buttonPauseUpdating.TabIndex = 3;
-			this.buttonPauseUpdating.Visible = false;
-            this.buttonPauseUpdating.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+			this.buttonPauseUpdating.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
 			this.toolTip.SetToolTip(this.buttonPauseUpdating, "Toggle this button to pause/restart automatic translation when clicking in another verse in a Paratext Project (i.e. so the new verse doesn't automatically get translated)");
 			this.buttonPauseUpdating.UseVisualStyleBackColor = true;
+            this.buttonPauseUpdating.Visible = false;
             this.buttonPauseUpdating.Click += new System.EventHandler(this.ButtonPauseUpdating_Click);
+            // 
+            // fontDialog
+            // 
+            this.fontDialog.Font = new System.Drawing.Font("Arial Unicode MS", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.fontDialog.ShowColor = true;
             // 
             // BackTranslationHelperCtrl
             // 
