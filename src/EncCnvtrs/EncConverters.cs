@@ -3204,7 +3204,11 @@ namespace SilEncConverters40
 
                 // call its Configure method to do the UI
                 Util.DebugWriteLine(this, "Calling UI");
-                if (rConfigurator.Configure(this, strFriendlyName, eConversionTypeFilter, strLhsEncodingID, strRhsEncodingID))
+				if (rConfigurator == null)
+				{
+					MessageBox.Show("This converter type doesn't have a general purpose configurator. Check the related application for how to add one to the repository.");
+				}
+				else if (rConfigurator.Configure(this, strFriendlyName, eConversionTypeFilter, strLhsEncodingID, strRhsEncodingID))
                 {
                     Util.DebugWriteLine(this, "Returned True");
                     // if this is just a temporary converter (i.e. it isn't being added permanentally to the
