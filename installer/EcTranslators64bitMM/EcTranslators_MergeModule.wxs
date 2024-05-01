@@ -599,7 +599,8 @@
                                     <File Id="gt_colorschememapping.xml" Name="colorschememapping.xml" Source="..\..\redist\Help\Google_Translate_Plug-in_About_box_files\colorschememapping.xml"/>
                                     <File Id="gt_themedata.thmx" Name="themedata.thmx" Source="..\..\redist\Help\Google_Translate_Plug-in_About_box_files\themedata.thmx"/>
                                     <File Id="gt_header.htm" Name="header.htm" Source="..\..\redist\Help\Google_Translate_Plug-in_About_box_files\header.htm"/>
-                                    <File Id="gt_image003.jpg" Name="image003.jpg" Source="..\..\redist\Help\Google_Translate_Plug-in_About_box_files\image003.jpg"/>
+									<File Id="gt_image001.jpg" Name="image001.jpg" Source="..\..\redist\Help\Google_Translate_Plug-in_About_box_files\image001.jpg"/>
+									<File Id="gt_image003.jpg" Name="image003.jpg" Source="..\..\redist\Help\Google_Translate_Plug-in_About_box_files\image003.jpg"/>
                                     <File Id="gt_image008.jpg" Name="image008.jpg" Source="..\..\redist\Help\Google_Translate_Plug-in_About_box_files\image008.jpg"/>
                                     <File Id="gt_image011.png" Name="image011.png" Source="..\..\redist\Help\Google_Translate_Plug-in_About_box_files\image011.png"/>
                                     <File Id="gt_image012.jpg" Name="image012.jpg" Source="..\..\redist\Help\Google_Translate_Plug-in_About_box_files\image012.jpg"/>

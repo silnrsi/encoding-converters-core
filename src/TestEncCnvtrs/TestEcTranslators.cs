@@ -208,34 +208,34 @@ namespace TestEncCnvtrs
             m_repoFile = null;
         }
 
-		[Test]
-		[TestCase(typeof(BingTranslatorEncConverter), "AzureTranslatorSubscriptionKey")]
-		[TestCase(typeof(DeepLTranslatorEncConverter), "DeepLTranslatorSubscriptionKey")]
-		[TestCase(typeof(GoogleTranslatorEncConverter), "GoogleTranslatorSubscriptionKey")]
-		public void TestTranslatorOverrideKeyExists(Type typeEncConverter, string fieldName)
-		{
-			var theEncConverters = DirectableEncConverter.EncConverters;
-			TranslatorConverter theTranslator = (TranslatorConverter)theEncConverters.InstantiateIEncConverter(typeEncConverter.FullName, null);
-			Assert.IsFalse(theTranslator.HasUserOverriddenCredentials);
+        [Test]
+        [TestCase(typeof(BingTranslatorEncConverter), "AzureTranslatorSubscriptionKey")]
+        [TestCase(typeof(DeepLTranslatorEncConverter), "DeepLTranslatorSubscriptionKey")]
+        [TestCase(typeof(GoogleTranslatorEncConverter), "GoogleTranslatorSubscriptionKey")]
+        public void TestTranslatorOverrideKeyExists(Type typeEncConverter, string fieldName)
+        {
+            var theEncConverters = DirectableEncConverter.EncConverters;
+            TranslatorConverter theTranslator = (TranslatorConverter)theEncConverters.InstantiateIEncConverter(typeEncConverter.FullName, null);
+            Assert.IsFalse(theTranslator.HasUserOverriddenCredentials);
 
-			var fieldInfo = typeEncConverter.GetMethod($"set_{fieldName}");
-			Assert.NotNull(fieldInfo);
+            var fieldInfo = typeEncConverter.GetMethod($"set_{fieldName}");
+            Assert.NotNull(fieldInfo);
 
-			const string Credentials = "asdg";
-			fieldInfo.Invoke(theTranslator, new[] { Credentials });
-			Assert.IsTrue(theTranslator.HasUserOverriddenCredentials);
-		}
+            const string Credentials = "asdg";
+            fieldInfo.Invoke(theTranslator, new[] { Credentials });
+            Assert.IsTrue(theTranslator.HasUserOverriddenCredentials);
+        }
 
-		// NLLB always has an 'override' key, bkz it's run locally
-		[Test]
-		public void TestNllbTranslatorOverrideKeyExists()
-		{
-			var theEncConverters = DirectableEncConverter.EncConverters;
-			TranslatorConverter theTranslator = (TranslatorConverter)theEncConverters.InstantiateIEncConverter(typeof(NllbTranslatorEncConverter).FullName, null);
-			Assert.IsTrue(theTranslator.HasUserOverriddenCredentials);
-		}
+        // NLLB always has an 'override' key, bkz it's run locally
+        [Test]
+        public void TestNllbTranslatorOverrideKeyExists()
+        {
+            var theEncConverters = DirectableEncConverter.EncConverters;
+            TranslatorConverter theTranslator = (TranslatorConverter)theEncConverters.InstantiateIEncConverter(typeof(NllbTranslatorEncConverter).FullName, null);
+            Assert.IsTrue(theTranslator.HasUserOverriddenCredentials);
+        }
 
-		private const string VertexAiConverterFriendlyName = "VertexAiTranslator";
+        private const string VertexAiConverterFriendlyName = "VertexAiTranslator";
 
         [Test]
 //      [TestCase("Hindi;English;bright-coyote-381812;us-central1;google;chat-bison-32k;Translate from Hindi into English.", "यीशु ने यह भी कहा,", "Jesus also said,")]
@@ -493,7 +493,29 @@ God is my father.")]
         //    if they change the translation
         [Test]
         [TestCase("en;fr", "Hello, world!", "Bonjour le monde!")]
-        [TestCase("en;zh", "This Israel Field Guide has been developed to help you get to know the beautiful country of Israel.", "这本以色列实地指南旨在帮助您了解以色列这个美丽的国家。")]
+        [TestCase("en;zh", "How are you?", "你好吗？")]
+        [TestCase("en;de", "How are you?", "Wie geht es dir?")]
+        public void TestGoogleConverterWithEnvVariable(string converterSpec, string testInput, string testOutput)
+        {
+            Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", VertexAiCredentials);    // see C:\Users\pete_\source\repos\encoding-converters-core\src\EcTranslators\VertexAi\VertexAiExe\Program.cs
+
+            m_encConverters.AddConversionMap(GoogleTranslatorConverterFriendlyName, converterSpec, ConvType.Unicode_to_Unicode,
+                                             EncConverters.strTypeSILGoogleTranslator, "UNICODE", "UNICODE",
+                                             ProcessTypeFlags.Translation);
+
+            var theEc = m_encConverters[GoogleTranslatorConverterFriendlyName];
+
+            // do a forward conversion
+            var strOutput = theEc.Convert(testInput);
+            Assert.AreEqual(testOutput, strOutput);
+            Assert.True(((TranslatorConverter)theEc).HasUserOverriddenCredentials);
+        }
+
+        // these tests may fail if Google Translate resource no longer has any remaining juice... OR (more likely)
+        //    if they change the translation
+        [Test]
+        [TestCase("en;fr", "Hello, world!", "Bonjour le monde!")]
+        [TestCase("en;zh", "How are you?", "你好吗？")]
         [TestCase("en;de", "How are you?", "Wie geht es dir?")]
         public void TestGoogleConverter(string converterSpec, string testInput, string testOutput)
         {
@@ -506,6 +528,7 @@ God is my father.")]
             // do a forward conversion
             var strOutput = theEc.Convert(testInput);
             Assert.AreEqual(testOutput, strOutput);
+            Assert.False(((TranslatorConverter)theEc).HasUserOverriddenCredentials);
         }
 
         [Test]
