@@ -11,8 +11,8 @@ using System;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("SIL")]
 [assembly: AssemblyProduct("EcTranslators")]
-[assembly: AssemblyCopyright("Copyright © 2021 SIL. All rights reserved.")]
-[assembly: AssemblyTrademark("Copyright © 2021 SIL. All rights reserved.")]
+[assembly: AssemblyCopyright("Copyright © 2021-2024 SIL. All rights reserved.")]
+[assembly: AssemblyTrademark("Copyright © 2021-2024 SIL. All rights reserved.")]
 [assembly: AssemblyCulture("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible
@@ -34,6 +34,6 @@ using System;
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("4.0.0.0")]
-[assembly: AssemblyFileVersion("4.5.0.0")]
+[assembly: AssemblyFileVersion("4.5.0.2")]
 [assembly: CLSCompliantAttribute(true)]
 [assembly: NeutralResourcesLanguageAttribute("en")]

@@ -28,7 +28,7 @@ namespace BackTranslationHelper
         };
 
         private const string NllbEncConverterSplitSentencesPrefix = @"\SplitSentences ";
-
+		private const string PtxProjectConfiguratorDisplayName = "Paratext Project Data";
 
         #region Member variables
         // the form in which this UserControl is embedded will initialize these
@@ -210,16 +210,21 @@ namespace BackTranslationHelper
                     var label = labelsPossibleTargetTranslations[i];
                     var textBox = textBoxesPossibleTargetTranslations[i];
                     var button = buttonsFillTargetOption[i];
-                    var converterDisplayName = TheTranslators[i].Configurator?.ConfiguratorDisplayName;
+					var theTranslator = TheTranslators[i];
+					var converterDisplayName = theTranslator.Configurator?.ConfiguratorDisplayName;
+					if ((converterDisplayName == null) || (converterDisplayName == PtxProjectConfiguratorDisplayName))
+						converterDisplayName = theTranslator.ConverterIdentifier;	// for PtxProjectEncConverter, it's the ptx project's ShortName
+
                     if (!String.IsNullOrEmpty(converterDisplayName))
                         label.Text = converterDisplayName;
+
                     button.Text = $" &{mnemonicChar++}";
                     textBox.Font = targetLanguageFont;
                     textBox.RightToLeft = targetLanguageRightToLeft;
                     var rowStyle = tableLayoutPanel.RowStyles[nRowStyleOffset + i];
                     rowStyle.SizeType = SizeType.Percent;   // gives it real estate
                     rowStyle.Height = percentageHeight;
-                    toolTip.SetToolTip(textBox, $"This is the translation from the {TheTranslators[i].Name} Translator");
+					toolTip.SetToolTip(textBox, $"This is the translation from the {theTranslator.Name} Translator");
                 }
 
                 for (; i < MaxPossibleTargetTranslations; i++)
@@ -669,10 +674,17 @@ namespace BackTranslationHelper
 
         private void SetStatusBox(string value)
         {
-            toolStripTextBoxStatus.Text = value;
-            toolStripTextBoxStatus.BackColor = String.IsNullOrEmpty(value)
-                                                ? System.Drawing.SystemColors.Control
-                                                : System.Drawing.SystemColors.ButtonShadow;
+			try
+			{
+				toolStripTextBoxStatus.Text = value;
+				toolStripTextBoxStatus.BackColor = String.IsNullOrEmpty(value)
+													? System.Drawing.SystemColors.Control
+													: System.Drawing.SystemColors.ButtonShadow;
+			}
+			catch (Exception ex)
+			{
+				LogExceptionMessage("SetStatusBox", ex);
+			}
         }
 
         public static string Difference(string str1, string str2)
@@ -774,19 +786,12 @@ namespace BackTranslationHelper
             var dlg = new TranslatorListForm(TheTranslators);
             if (dlg.ShowDialog() == DialogResult.OK)
             {
-                // remove the existing translators and add them back based on whether they still exist (and their order)
-                //    in the dialog's ConverterNamesInOrder list
-                var theTranslators = TheTranslators.ToList();
-                TheTranslators.Clear();
-                foreach (var translatorName in dlg.ConverterNamesInOrder)
-                {
-                    var theEc = theTranslators.FirstOrDefault(t => t.Name == translatorName);
-                    if (theEc != null)
-                        TheTranslators.Add(theEc);
-                }
-
-                // clear out the possible target translations, so we reload them in the proper order
-                _model.TargetsPossible.Clear();
+				// remove the existing translators and add them back based on whether they still exist (and their order)
+				//  in the dialog's ConverterNamesInOrder list
+				// UPDATE: I think if we just remove them, they'll get re-initialized by Initialize in Reload below)
+				//	just add them to the settings
+				TheTranslators.Clear();
+				_model.TargetsPossible.Clear();
                 var mapProjectNameToEcTranslators = SettingToDictionary(Properties.Settings.Default.MapProjectNameToEcTranslators);
                 var projectName = BackTranslationHelperDataSource.ProjectName;
                 mapProjectNameToEcTranslators[projectName] = dlg.ConverterNamesInOrder;    // save new order
@@ -797,38 +802,45 @@ namespace BackTranslationHelper
         }
 
         private void AddEncConverterToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var newTranslator = QueryTranslator();
-            if (newTranslator == null)
-                return;
+		{
+			var newTranslator = QueryTranslator();
+			if (newTranslator == null)
+				return;
 
-            var theTranslator = newTranslator.GetEncConverter;
-            var projectName = BackTranslationHelperDataSource.ProjectName;
-            if (TheTranslators.Any(t => t.Name == theTranslator.Name))
-            {
-                MessageBox.Show($"You've already added the {theTranslator.Name} Translator/EncConverter", projectName);
-                return;
-            }
+			var theTranslator = newTranslator.GetEncConverter;
+			AddEncConverterToProject(theTranslator);
+		}
 
-            TheTranslators.Add(theTranslator);
-            var mapProjectNameToEcTranslators = SettingToDictionary(Properties.Settings.Default.MapProjectNameToEcTranslators);
-            if (!mapProjectNameToEcTranslators.TryGetValue(projectName, out List<string> translatorNames))
-            {
-                translatorNames = new List<string>();
-                mapProjectNameToEcTranslators[projectName] = translatorNames;
-            }
+		public void AddEncConverterToProject(IEncConverter theTranslator)
+		{
+			var projectName = BackTranslationHelperDataSource.ProjectName;
+			if (TheTranslators.Any(t => t.Name == theTranslator.Name))
+			{
+				MessageBox.Show($"You've already added the {theTranslator.Name} Translator/EncConverter", projectName);
+				return;
+			}
 
-            if (!translatorNames.Any(n => n == theTranslator.Name))
-            {
-                translatorNames.Add(theTranslator.Name);
-                Properties.Settings.Default.MapProjectNameToEcTranslators = SettingFromDictionary(mapProjectNameToEcTranslators);
-                Properties.Settings.Default.Save();
-            }
+			// Don't do this here, bkz Reload will try to do it and if we don't do it there, then the Ptx Plugin won't get the notification
+			//	adding it to the mapProjectNameToEcTranslators settings is enough for now
+			// TheTranslators.Add(newTranslator);
+			var mapProjectNameToEcTranslators = SettingToDictionary(Properties.Settings.Default.MapProjectNameToEcTranslators);
+			if (!mapProjectNameToEcTranslators.TryGetValue(projectName, out List<string> translatorNames))
+			{
+				translatorNames = new List<string>();
+				mapProjectNameToEcTranslators[projectName] = translatorNames;
+			}
 
-            Reload();
-        }
+			if (!translatorNames.Any(n => n == theTranslator.Name))
+			{
+				translatorNames.Add(theTranslator.Name);
+				Properties.Settings.Default.MapProjectNameToEcTranslators = SettingFromDictionary(mapProjectNameToEcTranslators);
+				Properties.Settings.Default.Save();
+			}
 
-        private void UpdateEditableTextBox(TextBox textBoxFrom)
+			Reload();
+		}
+
+		private void UpdateEditableTextBox(TextBox textBoxFrom)
         {
             if (IsModified)
             {

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="12.0">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
@@ -119,11 +119,11 @@
     <Reference Include="Geckofx-Winforms, Version=60.0.55.0, Culture=neutral, PublicKeyToken=3209ac31600d1857, processorArchitecture=x86" Condition="('$(Platform)' == 'x86') and ('$(OS)'=='Windows_NT')">
       <HintPath>..\..\packages\Geckofx60.32.60.0.55\lib\net45\Geckofx-Winforms.dll</HintPath>
     </Reference>
-    <Reference Include="Geckofx-Core, Version=60.0.55.0, Culture=neutral, PublicKeyToken=3209ac31600d1857, processorArchitecture=MSIL" Condition="('$(Platform)' == 'x64') and ('$(OS)'=='Windows_NT')">
-      <HintPath>..\..\packages\Geckofx60.64.60.0.55\lib\net45\Geckofx-Core.dll</HintPath>
+    <Reference Include="Geckofx-Core, Version=60.0.56.0, Culture=neutral, PublicKeyToken=3209ac31600d1857, processorArchitecture=MSIL" Condition="('$(Platform)' == 'x64') and ('$(OS)'=='Windows_NT')">
+      <HintPath>..\..\packages\Geckofx60.64.60.0.56\lib\net45\Geckofx-Core.dll</HintPath>
     </Reference>
-    <Reference Include="Geckofx-Winforms, Version=60.0.55.0, Culture=neutral, PublicKeyToken=3209ac31600d1857, processorArchitecture=MSIL" Condition="('$(Platform)' == 'x64') and ('$(OS)'=='Windows_NT')">
-      <HintPath>..\..\packages\Geckofx60.64.60.0.55\lib\net45\Geckofx-Winforms.dll</HintPath>
+    <Reference Include="Geckofx-Winforms, Version=60.0.56.0, Culture=neutral, PublicKeyToken=3209ac31600d1857, processorArchitecture=MSIL" Condition="('$(Platform)' == 'x64') and ('$(OS)'=='Windows_NT')">
+      <HintPath>..\..\packages\Geckofx60.64.60.0.56\lib\net45\Geckofx-Winforms.dll</HintPath>
     </Reference>
     <Reference Include="Geckofx-Core" Condition="'$(OS)'!='Windows_NT'">
       <Private>False</Private>
@@ -454,6 +454,7 @@
     <Content Include="Firefox\qipcap.dll" Condition="('$(Platform)' == 'x86') and ('$(OS)'=='Windows_NT')">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Firefox\qipcap64.dll" />
     <Content Include="Firefox\softokn3.dll" Condition="('$(Platform)' == 'x86') and ('$(OS)'=='Windows_NT')">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -522,13 +523,13 @@
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('..\..\packages\Geckofx60.32.60.0.55\build\Geckofx60.32.targets') and ('$(Platform)' == 'x86') and ('$(OS)'=='Windows_NT')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Geckofx60.32.60.0.55\build\Geckofx60.32.targets'))" />
-    <Error Condition="!Exists('..\..\packages\Geckofx60.64.60.0.55\build\Geckofx60.64.targets') and ('$(Platform)' == 'x64') and ('$(OS)'=='Windows_NT')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Geckofx60.64.60.0.55\build\Geckofx60.64.targets'))" />
     <Error Condition="!Exists('..\..\packages\Microsoft.Web.WebView2.1.0.2365.46\build\Microsoft.Web.WebView2.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.Web.WebView2.1.0.2365.46\build\Microsoft.Web.WebView2.targets'))" />
+    <Error Condition="!Exists('..\..\packages\Geckofx60.64.60.0.56\build\Geckofx60.64.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Geckofx60.64.60.0.56\build\Geckofx60.64.targets'))" />
   </Target>
   <!--BE: I had to manually add the extra conditions on these, so it will do the target (which copies files) from the correct package based on the platform.
       Also, I had to manually edit the 64 bit target so that it would now get the files from Firefox64, rather than Firefox it was looking at (which are the 86 binaries)
       This will all get undone if you update the gecko nuget packages -->
   <Import Project="..\..\packages\Geckofx60.32.60.0.55\build\Geckofx60.32.targets" Condition="Exists('..\..\packages\Geckofx60.32.60.0.55\build\Geckofx60.32.targets') and ('$(Platform)' == 'x86') and ('$(OS)'!='Windows_NT')" />
-  <Import Project="..\..\packages\Geckofx60.64.60.0.55\build\Geckofx60.64.targets" Condition="Exists('..\..\packages\Geckofx60.64.60.0.55\build\Geckofx60.64.targets') and ('$(Platform)' == 'x64') and ('$(OS)'!='Windows_NT')" />
   <Import Project="..\..\packages\Microsoft.Web.WebView2.1.0.2365.46\build\Microsoft.Web.WebView2.targets" Condition="Exists('..\..\packages\Microsoft.Web.WebView2.1.0.2365.46\build\Microsoft.Web.WebView2.targets')" />
+  <Import Project="..\..\packages\Geckofx60.64.60.0.56\build\Geckofx60.64.targets" Condition="Exists('..\..\packages\Geckofx60.64.60.0.56\build\Geckofx60.64.targets')" />
 </Project>

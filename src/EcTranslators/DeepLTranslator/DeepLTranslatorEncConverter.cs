@@ -77,6 +77,8 @@ namespace SilEncConverters40.EcTranslators.DeepLTranslator
 			}
 		}
 
+		public override bool HasUserOverriddenCredentials => !String.IsNullOrEmpty(Properties.Settings.Default.DeepLTranslatorKeyOverride);
+
 		public enum TransductionType
 		{
 			Unknown,

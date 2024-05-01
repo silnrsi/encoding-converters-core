@@ -173,8 +173,32 @@
 
                 </Component>
 
-                <Component Id="EcTranslators.dll.config" Guid="{1A4FE83D-7EDB-41BC-93E5-18485A3147F1}">
+				<Component Id="PtxConverters.dll" Guid="{9D8B45EF-78BA-4607-B285-39ABD5A9691D}">
+					<Class Id="{034F26A4-1827-4ADD-815B-593956C5EC8C}" Context="InprocServer32" Description="SilEncConverters40.PtxConverters.PtxProjectEncConverter" ThreadingModel="both" ForeignServer="mscoree.dll">
+						<ProgId Id="SilEncConverters40.PtxConverters.PtxProjectEncConverter" Description="SilEncConverters40.PtxConverters.PtxProjectEncConverter" />
+					</Class>
+
+					<File Id="PtxConverters.dll" Name="PtxConverters.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="PtxConverters.dll" AssemblyApplication="PtxConverters.dll"
+                          Source="..\..\output\x64\release\PtxConverters.dll" />
+
+					<RegistryValue Root="HKCR" Key="CLSID\{034F26A4-1827-4ADD-815B-593956C5EC8C}\Implemented Categories\{62C8FE65-4EBB-45e7-B440-6E39B2CDBF29}" Value="" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{034F26A4-1827-4ADD-815B-593956C5EC8C}\InprocServer32\4.0.0.0" Name="Class" Value="SilEncConverters40.PtxConverters.PtxProjectEncConverter" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{034F26A4-1827-4ADD-815B-593956C5EC8C}\InprocServer32\4.0.0.0" Name="Assembly" Value="PtxConverters, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{034F26A4-1827-4ADD-815B-593956C5EC8C}\InprocServer32\4.0.0.0" Name="RuntimeVersion" Value="v4.0.30319" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{034F26A4-1827-4ADD-815B-593956C5EC8C}\InprocServer32\4.0.0.0" Name="CodeBase" Value="file:///[#PtxConverters.dll]" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{034F26A4-1827-4ADD-815B-593956C5EC8C}\InprocServer32" Name="Class" Value="SilEncConverters40.PtxConverters.PtxProjectEncConverter" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{034F26A4-1827-4ADD-815B-593956C5EC8C}\InprocServer32" Name="Assembly" Value="PtxConverters, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{034F26A4-1827-4ADD-815B-593956C5EC8C}\InprocServer32" Name="RuntimeVersion" Value="v4.0.30319" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{034F26A4-1827-4ADD-815B-593956C5EC8C}\InprocServer32" Name="CodeBase" Value="file:///[#PtxConverters.dll]" Type="string" Action="write" />
+
+				</Component>
+
+				<Component Id="EcTranslators.dll.config" Guid="{1A4FE83D-7EDB-41BC-93E5-18485A3147F1}">
                     <File Id="EcTranslators.dll.config" Name="EcTranslators.dll.config" Vital="yes" KeyPath="yes" Source="..\..\output\x64\release\EcTranslators.dll.config" />
+                </Component>
+
+                <Component Id="PtxConverters.dll.config" Guid="{3E2D6A89-034C-4CC0-8E85-2ECB08D2AE00}">
+                    <File Id="PtxConverters.dll.config" Name="PtxConverters.dll.config" Vital="yes" KeyPath="yes" Source="..\..\output\x64\release\PtxConverters.dll.config" />
                 </Component>
 
                 <Component Id="EcTranslators.tlb" Guid="{16513342-61E1-4C4F-95DD-CC6283690EC4}">
@@ -202,7 +226,15 @@
                     </File>
                 </Component>
 
-                <!-- incorporated into EcTranslators
+				<Component Id="PtxConverters.tlb" Guid="{CFF093A1-1340-4587-AFB3-328802DDD335}">
+					<File Id="PtxConverters.tlb" Name="PtxConverters.tlb" Vital="yes" KeyPath="yes" Source="..\..\output\x64\release\PtxConverters.tlb">
+						<TypeLib Id="{8D1B7A56-5F4B-49E5-B983-DE9E6C141B01}" Description="Paratext Encoding Converters Library" HelpDirectory="MergeRedirectFolder" Language="0" MajorVersion="4" MinorVersion="0">
+							<Interface Id="{DBE66786-087E-4574-B02B-38B29CA9BE50}" Name="_PtxProjectEncConverter" ProxyStubClassId32="{00020424-0000-0000-C000-000000000046}" />
+						</TypeLib>
+					</File>
+				</Component>
+
+				<!-- incorporated into EcTranslators
                 <Component Id="DeepL.net.dll" Guid="{E58FFC49-0EB7-428F-8DA9-DD3792535EB1}">
                     <File Id="DeepL.net.dll" Name="DeepL.net.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="DeepL.net.dll" AssemblyApplication="DeepL.net.dll"
                           Source="..\..\output\x64\release\DeepL.net.dll"/>
@@ -502,7 +534,10 @@
                         <Component Id="Translators4.0.0.0PluginDetails.xml" Guid="{F71D8AD5-F9C8-4619-8507-E19A0A5B7A70}">
                             <File Id="Translators4.0.0.0PluginDetails.xml" Name="Translators 4.0.0.0 Plugin Details.xml" KeyPath="yes" Source="..\..\redist\EC\Plugins\Translators 4.0.0.0 Plugin Details.xml"/>
                         </Component>
-                    </Directory>
+						<Component Id="PtxProject4.0.0.0PluginDetails.xml" Guid="{ACBEAD05-18F0-462B-8BC3-76D39481FD65}">
+							<File Id="PtxProject4.0.0.0PluginDetails.xml" Name="PtxProject 4.0.0.0 Plugin Details.xml" KeyPath="yes" Source="..\..\redist\EC\Plugins\PtxProject 4.0.0.0 Plugin Details.xml"/>
+						</Component>
+					</Directory>
                 </Directory>
 
             </Directory>
@@ -564,7 +599,8 @@
                                     <File Id="gt_colorschememapping.xml" Name="colorschememapping.xml" Source="..\..\redist\Help\Google_Translate_Plug-in_About_box_files\colorschememapping.xml"/>
                                     <File Id="gt_themedata.thmx" Name="themedata.thmx" Source="..\..\redist\Help\Google_Translate_Plug-in_About_box_files\themedata.thmx"/>
                                     <File Id="gt_header.htm" Name="header.htm" Source="..\..\redist\Help\Google_Translate_Plug-in_About_box_files\header.htm"/>
-                                    <File Id="gt_image003.jpg" Name="image003.jpg" Source="..\..\redist\Help\Google_Translate_Plug-in_About_box_files\image003.jpg"/>
+									<File Id="gt_image001.jpg" Name="image001.jpg" Source="..\..\redist\Help\Google_Translate_Plug-in_About_box_files\image001.jpg"/>
+									<File Id="gt_image003.jpg" Name="image003.jpg" Source="..\..\redist\Help\Google_Translate_Plug-in_About_box_files\image003.jpg"/>
                                     <File Id="gt_image008.jpg" Name="image008.jpg" Source="..\..\redist\Help\Google_Translate_Plug-in_About_box_files\image008.jpg"/>
                                     <File Id="gt_image011.png" Name="image011.png" Source="..\..\redist\Help\Google_Translate_Plug-in_About_box_files\image011.png"/>
                                     <File Id="gt_image012.jpg" Name="image012.jpg" Source="..\..\redist\Help\Google_Translate_Plug-in_About_box_files\image012.jpg"/>
