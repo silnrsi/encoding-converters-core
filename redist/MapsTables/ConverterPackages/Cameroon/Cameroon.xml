@@ -3,9 +3,9 @@
     <MapsTables>
         <MapTable
             mappingName="Cameroon&lt;&gt;UNICODE"
-            converterSpec="Cameroon2Unicode2007.tec"
+            converterSpec="Cameroon2Unicode.tec"
             IsConverterSpecAFile="true"
-            description="Cameroon TECkit table converter between CamCam and Unicode (2007)"
+            description="Cameroon TECkit table converter between CamCam and Unicode"
             implementType="SIL.tec"
             conversionType="LegacyToFromUnicode"
             leftEncoding="Cameroon"
