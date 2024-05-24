@@ -1,0 +1,8 @@
+https://github.com/silnrsi/wsresources/tree/master/scripts/Deva/legacy/nlci-winscript-devanagari/mappings
+https://github.com/silnrsi/wsresources/tree/master/scripts/Orya/legacy/nlci-winscript-oriya/mappings
+https://github.com/silnrsi/wsresources/tree/master/scripts/Mlym/legacy/nlci-winscript-malayalam/mappings
+https://github.com/silnrsi/wsresources/tree/master/scripts/Gujr/legacy/nlci-winscript-gujarati/mappings
+https://github.com/silnrsi/wsresources/tree/master/scripts/Orya/legacy/nlci-sl-oriya/mappings
+https://github.com/silnrsi/wsresources/tree/master/scripts/Latn/legacy/nlci-phn-indus/mappings
+https://github.com/silnrsi/wsresources/tree/master/scripts/Taml/legacy/nlci-winscript-tamil/mappings
+https://github.com/silnrsi/wsresources/tree/master/scripts/Telu/legacy/nlci-winscript-telugu/mappings

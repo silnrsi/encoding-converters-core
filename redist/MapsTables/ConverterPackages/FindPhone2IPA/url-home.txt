@@ -1,0 +1,1 @@
+https://github.com/silnrsi/wsresources/tree/master/scripts/Latn/legacy/findphone/mappings

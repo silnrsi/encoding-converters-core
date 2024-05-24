@@ -1,0 +1,6 @@
+https://github.com/silnrsi/wsresources/tree/master/scripts/Deva/legacy/annapurna/mappings
+https://github.com/silnrsi/wsresources/tree/master/scripts/Orya/legacy/akruti-ori-sarala-99/mappings
+https://github.com/silnrsi/wsresources/tree/master/scripts/Latn/legacy/sag-ipa/mappings
+https://github.com/silnrsi/wsresources/tree/master/scripts/Latn/legacy/sag-ipa-super/mappings
+https://github.com/silnrsi/wsresources/tree/master/scripts/Latn/legacy/trans-roman/mappings
+https://github.com/silnrsi/wsresources/tree/master/scripts/Deva/legacy/win-dts/mappings

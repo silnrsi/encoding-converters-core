@@ -1,0 +1,16 @@
+https://github.com/silnrsi/wsresources/tree/master/regions/Africa/BF/legacy/sil-93linb/mappings
+https://github.com/silnrsi/wsresources/tree/master/regions/Africa/CI/legacy/ubs-abidjan/mappings
+https://github.com/silnrsi/wsresources/tree/master/langs/b/bam/legacy/sil-bambara/mappings
+https://github.com/silnrsi/wsresources/tree/master/regions/Africa/BF/legacy/sil-bf-times/mappings
+https://github.com/silnrsi/wsresources/tree/master/regions/Africa/BF/legacy/sil-burkina-faso/mappings
+https://github.com/silnrsi/wsresources/tree/master/regions/Africa/ML/legacy/sil-fhp-fulfulde/mappings
+https://github.com/silnrsi/wsresources/tree/master/regions/Africa/GH/legacy/sil-ghana/mappings
+https://github.com/silnrsi/wsresources/tree/master/regions/Africa/ML/legacy/sil-mali-standard/mappings
+https://github.com/silnrsi/wsresources/tree/master/regions/Africa/CI/legacy/sil-rci-std/mappings
+https://github.com/silnrsi/wsresources/tree/master/langs/s/sef/legacy/sil-senufo/mappings
+https://github.com/silnrsi/wsresources/tree/master/langs/x/xrb/legacy/sil-karaboro/mappings
+https://github.com/silnrsi/wsresources/tree/master/regions/Africa/ML/legacy/sil-samogho/mappings
+https://github.com/silnrsi/wsresources/tree/master/langs/s/ses/legacy/sil-songhai/mappings
+https://github.com/silnrsi/wsresources/tree/master/regions/Africa/ML/legacy/sil-tombouctou-dutch/mappings
+https://github.com/silnrsi/wsresources/tree/master/langs/k/kst/legacy/sil-burkina-winye/mappings
+

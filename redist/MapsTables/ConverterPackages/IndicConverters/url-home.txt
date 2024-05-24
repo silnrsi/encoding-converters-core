@@ -1,0 +1,12 @@
+https://github.com/silnrsi/wsresources/tree/master/scripts/Gujr/legacy/gujarati-ls/mappings
+https://github.com/silnrsi/wsresources/tree/master/scripts/Deva/legacy/sag-himalli/mappings
+https://github.com/silnrsi/wsresources/tree/master/scripts/Deva/legacy/sil-himali-new/mappings
+https://github.com/silnrsi/wsresources/tree/master/scripts/Deva/legacy/kantipur/mappings
+https://github.com/silnrsi/wsresources/tree/master/scripts/Deva/legacy/kruti-dev-010/mappings
+https://github.com/silnrsi/wsresources/tree/master/scripts/Deva/legacy/kruti-dev-011/mappings
+https://github.com/silnrsi/wsresources/tree/master/scripts/Deva/legacy/kruti-dev-290/mappings
+https://github.com/silnrsi/wsresources/tree/master/scripts/Deva/legacy/sag-preeti/mappings
+https://github.com/silnrsi/wsresources/tree/master/scripts/Deva/legacy/shusha/mappings
+https://github.com/silnrsi/wsresources/tree/master/scripts/Deva/mappings/deva-ipa
+https://github.com/silnrsi/wsresources/tree/master/scripts/Telu/legacy/telegu-anu/mappings
+https://github.com/silnrsi/wsresources/tree/master/scripts/Tibt/legacy/tibetan-modern-a/mappings

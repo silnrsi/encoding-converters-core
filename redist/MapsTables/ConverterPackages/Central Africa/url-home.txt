@@ -1,0 +1,2 @@
+https://github.com/silnrsi/wsresources/tree/master/regions/Africa/CF/legacy/angb4/mappings
+https://github.com/silnrsi/wsresources/tree/master/langs/n/nga/legacy/marcel-ngbaka/mappings

@@ -183,7 +183,7 @@
     </MapTable>
     <MapTable
         mappingName="SIL Togo-Benin Tbb font family&lt;&gt;UNICODE"
-        converterSpec="Tbb4.tec"
+        converterSpec="Tbb.tec"
         IsConverterSpecAFile="true"
         description="SIL Togo-Benin Tbb font family to Unicode mapping"
         implementType="SIL.tec"

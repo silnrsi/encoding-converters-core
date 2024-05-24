@@ -1,0 +1,2 @@
+https://github.com/silnrsi/wsresources/tree/master/regions/Africa/UG/legacy/bantu-und/mappings
+https://github.com/silnrsi/wsresources/tree/master/regions/Africa/generic/legacy/times-african/mappings

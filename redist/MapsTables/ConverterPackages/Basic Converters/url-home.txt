@@ -1,0 +1,8 @@
+https://github.com/silnrsi/wsresources/tree/master/scripts/Latn/legacy/sil-amer-phon/mappings
+https://github.com/silnrsi/wsresources/tree/master/scripts/Latn/legacy/iso-8859/mappings
+https://github.com/silnrsi/wsresources/tree/master/scripts/Latn/legacy/sil-ipa-1990/mappings
+https://github.com/silnrsi/wsresources/tree/master/scripts/Latn/legacy/sil-ipa-1993/mappings
+https://github.com/silnrsi/wsresources/tree/master/scripts/Grek/legacy/sil-galatia/mappings
+https://github.com/silnrsi/wsresources/tree/master/scripts/Latn/mappings/sil-pua
+https://github.com/silnrsi/wsresources/tree/master/scripts/Latn/legacy/windows-symbol-cp42/mappings
+https://github.com/silnrsi/wsresources/tree/master/scripts/Latn/legacy/windows-symbol-cp1252/mappings

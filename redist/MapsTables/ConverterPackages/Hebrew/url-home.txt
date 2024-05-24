@@ -1,0 +1,2 @@
+https://github.com/silnrsi/wsresources/tree/master/scripts/Hebr/legacy/sil-ezra/mappings
+https://github.com/silnrsi/wsresources/tree/master/scripts/Hebr/mappings/ezra-sil-20-to-25

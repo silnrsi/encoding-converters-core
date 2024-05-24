@@ -1,0 +1,7 @@
+https://github.com/silnrsi/wsresources/tree/master/regions/Africa/CD/legacy/sil-ecg/mappings
+https://github.com/silnrsi/wsresources/tree/master/langs/m/mdm/legacy/mayogo/mappings
+https://github.com/silnrsi/wsresources/tree/master/langs/k/kmw/legacy/komo-ascii/mappings
+https://github.com/silnrsi/wsresources/tree/master/langs/k/kmw/legacy/komo/mappings
+https://github.com/silnrsi/wsresources/tree/master/langs/b/bhy/legacy/bhele-ascii/mappings
+https://github.com/silnrsi/wsresources/tree/master/langs/b/buu/legacy/budu/mappings
+https://github.com/silnrsi/wsresources/tree/master/langs/b/buu/legacy/budu-ascii/mappings
