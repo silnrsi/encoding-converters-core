@@ -1237,6 +1237,7 @@ namespace BackTranslationHelper
                 textBoxTargetBackTranslation.Text = textBoxTargetBackTranslation.Text.Insert(cursorPosition, textToInsert);
                 textBoxTargetBackTranslation.SelectionStart = cursorPosition + textToInsert.Length;
                 textBoxTargetBackTranslation.Focus();
+				IsModified = true;
             }
         }
 
