@@ -1491,7 +1491,12 @@ namespace BackTranslationHelper
 
             // if the user takes off the pause, then reload the data (which might retranslate if we don't already have it)
             if (!IsPaused)
+			{
                 Reload();
+
+				// (for Ptx, this might be another verse, so send a note to the Form to do the reload if desired
+				BackTranslationHelperDataSource.ButtonPressed(ButtonPressed.UpdateToCurrent);
+			}
         }
 
         public void SetPausedAndImage(bool value)

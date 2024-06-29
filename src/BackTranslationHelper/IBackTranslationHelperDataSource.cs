@@ -13,7 +13,8 @@ namespace BackTranslationHelper
         MoveToNext,
         Skip,
         Cancel,
-        Close
+        Close,
+		UpdateToCurrent
     }
 
     public interface IBackTranslationHelperDataSource
