@@ -101,9 +101,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="PerlExpressionAutoConfigDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="PerlExpressionAutoConfigDialog.cs" />
     <Compile Include="PerlExpressionEncConverter.cs" />
     <Compile Include="PerlExpressionEncConverterConfig.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

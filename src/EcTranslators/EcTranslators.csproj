@@ -73,9 +73,7 @@
   <ItemGroup>
     <Compile Include="AzureOpenAi\AzureOpenAiEncConverter.cs" />
     <Compile Include="AzureOpenAi\AzureOpenAiEncConverterConfig.cs" />
-    <Compile Include="AzureOpenAi\AzureOpenAiAutoConfigDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="AzureOpenAi\AzureOpenAiAutoConfigDialog.cs" />
     <Compile Include="AzureOpenAi\AzureOpenAiAutoConfigDialog.designer.cs">
       <DependentUpon>AzureOpenAiAutoConfigDialog.cs</DependentUpon>
     </Compile>
@@ -86,9 +84,7 @@
       <DependentUpon>QueryForAzureKeyDeploymentNameAndEndpoint.cs</DependentUpon>
     </Compile>
     <Compile Include="AzureOpenAi\AzureOpenAiPromptExeTranslatorCommandLineArgs.cs" />
-    <Compile Include="BingTranslator\BingTranslatorAutoConfigDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="BingTranslator\BingTranslatorAutoConfigDialog.cs" />
     <Compile Include="BingTranslator\BingTranslatorAutoConfigDialog.designer.cs">
       <DependentUpon>BingTranslatorAutoConfigDialog.cs</DependentUpon>
     </Compile>
@@ -102,9 +98,7 @@
       <DependentUpon>QueryForAzureKeyAndLocation.cs</DependentUpon>
     </Compile>
     <Compile Include="DeepLTranslator\DeepLTranslatorEncConverterConfig.cs" Condition="('$(OS)'=='Windows_NT')" />
-    <Compile Include="DeepLTranslator\DeepLTranslatorAutoConfigDialog.cs" Condition="('$(OS)'=='Windows_NT')">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="DeepLTranslator\DeepLTranslatorAutoConfigDialog.cs" Condition="('$(OS)'=='Windows_NT')" />
     <Compile Include="DeepLTranslator\DeepLTranslatorAutoConfigDialog.designer.cs" Condition="('$(OS)'=='Windows_NT')">
       <DependentUpon>DeepLTranslatorAutoConfigDialog.cs</DependentUpon>
     </Compile>
@@ -134,9 +128,7 @@
     <Compile Include="DeepLTranslator\QueryForDeepLKey.Designer.cs" Condition="('$(OS)'=='Windows_NT')">
       <DependentUpon>QueryForDeepLKey.cs</DependentUpon>
     </Compile>
-    <Compile Include="GoogleTranslator\GoogleTranslatorAutoConfigDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="GoogleTranslator\GoogleTranslatorAutoConfigDialog.cs" />
     <Compile Include="GoogleTranslator\GoogleTranslatorAutoConfigDialog.designer.cs">
       <DependentUpon>GoogleTranslatorAutoConfigDialog.cs</DependentUpon>
     </Compile>
@@ -148,9 +140,7 @@
     <Compile Include="GoogleTranslator\QueryForGoogleCredentials.Designer.cs">
       <DependentUpon>QueryForGoogleCredentials.cs</DependentUpon>
     </Compile>
-    <Compile Include="NllbTranslator\NllbTranslatorAutoConfigDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="NllbTranslator\NllbTranslatorAutoConfigDialog.cs" />
     <Compile Include="NllbTranslator\NllbTranslatorAutoConfigDialog.designer.cs">
       <DependentUpon>NllbTranslatorAutoConfigDialog.cs</DependentUpon>
     </Compile>
@@ -185,9 +175,7 @@
     <Compile Include="VertexAi\QueryForGoogleCredentials.Designer.cs">
       <DependentUpon>QueryForGoogleCredentials.cs</DependentUpon>
     </Compile>
-    <Compile Include="VertexAi\VertexAiAutoConfigDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="VertexAi\VertexAiAutoConfigDialog.cs" />
     <Compile Include="VertexAi\VertexAiAutoConfigDialog.designer.cs">
       <DependentUpon>VertexAiAutoConfigDialog.cs</DependentUpon>
     </Compile>

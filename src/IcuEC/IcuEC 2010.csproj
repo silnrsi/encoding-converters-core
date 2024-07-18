@@ -102,23 +102,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IcuBreakIteratorEncConverter.cs" Condition="'$(OS)'=='Windows_NT'" />
-    <Compile Include="IcuBreakIteratorAutoConfigDialog.cs" Condition="'$(OS)'=='Windows_NT'">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="IcuBreakIteratorAutoConfigDialog.cs" Condition="'$(OS)'=='Windows_NT'" />
     <Compile Include="IcuBreakIteratorConfig.cs" Condition="'$(OS)'=='Windows_NT'" />
-    <Compile Include="IcuConvAutoConfigDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="IcuConvAutoConfigDialog.cs" />
     <Compile Include="IcuConvConfig.cs" />
     <Compile Include="IcuConvEncConverter.cs" />
-    <Compile Include="IcuRegexAutoConfigDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="IcuRegexAutoConfigDialog.cs" />
     <Compile Include="IcuRegexConfig.cs" />
     <Compile Include="IcuRegexEncConverter.cs" />
-    <Compile Include="IcuTranslitAutoConfigDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="IcuTranslitAutoConfigDialog.cs" />
     <Compile Include="IcuTranslitConfig.cs" />
     <Compile Include="IcuTranslitEncConverter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
