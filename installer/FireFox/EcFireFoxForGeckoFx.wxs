@@ -8,7 +8,7 @@
         <Directory Id="TARGETDIR" Name="SourceDir">
 
             <Component Id="RegisterECFolders" Guid="{70FA8D6E-6B37-445C-996D-D7A9F822FED9}">
-                <RegistryValue Root="HKLM" Key="Software\SIL\SilEncConverters40" Name="UseMozilla" Type="string" Value="True"/>
+                <RegistryValue Root="HKLM" Key="Software\SIL\SilEncConverters40" Name="UseMozilla" Type="string" Value="False"/>
             </Component>
 
             <Directory Id="MergeRedirectFolder">
