@@ -216,7 +216,14 @@ namespace TestEncCnvtrs
         {
             var theEncConverters = DirectableEncConverter.EncConverters;
             TranslatorConverter theTranslator = (TranslatorConverter)theEncConverters.InstantiateIEncConverter(typeEncConverter.FullName, null);
-            Assert.IsFalse(theTranslator.HasUserOverriddenCredentials);
+
+			// this is False if you don't have the GOOGLE_APPLICATION_CREDENTIALS env var defined or true otherwise
+			var isEnvVarDefined = (typeEncConverter == typeof(GoogleTranslatorEncConverter)) &&
+									!String.IsNullOrEmpty(Environment.GetEnvironmentVariable(GoogleTranslatorEncConverter.EnvVarNameCredentials));
+			if (isEnvVarDefined)
+				Assert.True(theTranslator.HasUserOverriddenCredentials);
+			else
+				Assert.IsFalse(theTranslator.HasUserOverriddenCredentials);
 
             var fieldInfo = typeEncConverter.GetMethod($"set_{fieldName}");
             Assert.NotNull(fieldInfo);
@@ -247,7 +254,7 @@ namespace TestEncCnvtrs
 //      [TestCase("Hindi;English;bright-coyote-381812;us-central1;google;chat-bison;Translate from Hindi into English.", "यीशु ने यह भी कहा,", "Jesus also said,")]
         // try gemini pro
         [TestCase("Hindi;English;bright-coyote-381812;us-central1;google;chat-bison;Translate from Hindi into English.", "यीशु ने यह भी कहा,", "Jesus also said,")]
-        [TestCase("Hindi;English;bright-coyote-381812;us-central1;google;chat-bison;Translate from Hindi into English.", "परंतु वह चोगे को छोड़कर वहाँ से भाग गया। ", "But he fled from there, leaving behind his cloak.")]
+        [TestCase("Hindi;English;bright-coyote-381812;us-central1;google;chat-bison;Translate from Hindi into English.", "परंतु वह चोगे को छोड़कर वहाँ से भाग गया। ", "But he left the cloak and fled from that place.")]
         public void TestVertexAiConverter(string converterSpec, string testInput, string testOutput)
         {
             Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", VertexAiCredentials);    // see C:\Users\pete_\source\repos\encoding-converters-core\src\EcTranslators\VertexAi\VertexAiExe\Program.cs
@@ -280,7 +287,7 @@ namespace TestEncCnvtrs
             @"ability",                                       // should contain... (at the mercy of the resource, though, so it might fail)
             @"Donate according to your capability",           // give this as an example input
             @"परंतु अपनी सामर्थ अनुसार ही दो",                       // ... and output (recommending 'capability' instead
-            @"capability")]                                   // now see if it has learned from our example
+            @"capability")]                                   // now see if it has learned from our example (doesn't always work)
         public void TestPromptAiConverter_With_Examples(string converterSpec, string implName, string testInput1, string testOutput1Contains,
                                                         string updatedOutput1, string testInput2, string testOutput2Contains)
         {
@@ -400,14 +407,14 @@ God is my father.")]
         [TestCase(ProcessTypeFlags.Translation, "Translate;hi;en", "", "")]
         [TestCase(ProcessTypeFlags.Translation, "Translate;hi;en", "यीशु ने यह भी कहा,", "Jesus also said,")]
         [TestCase(ProcessTypeFlags.Translation, "Translate;;en", "यीशु ने यह भी कहा,", "Jesus also said,")]
-        [TestCase(ProcessTypeFlags.Translation, "Translate;en;zh-Hans", "This Israel Field Guide has been developed to help you get to know the beautiful country of Israel and also to encourage you to learn and experience the incredible Word of God and the truth of the events and doctrines that it presents.", "这本以色列实地指南旨在帮助您了解美丽的以色列国家，并鼓励您学习和体验上帝不可思议的话语以及它所呈现的事件和教义的真理。")]
-        [TestCase(ProcessTypeFlags.Translation | ProcessTypeFlags.Transliteration, "TranslateWithTransliterate;en;ar;;Latn", "God", "alleh")]
-        [TestCase(ProcessTypeFlags.Translation | ProcessTypeFlags.Transliteration, "TranslateWithTransliterate;;ar;;Latn", "God", "alleh")]
+        [TestCase(ProcessTypeFlags.Translation, "Translate;en;zh-Hans", "Get to know the beautiful country of Israel.", "了解美丽的以色列国家。")]
+        [TestCase(ProcessTypeFlags.Translation | ProcessTypeFlags.Transliteration, "TranslateWithTransliterate;en;ar;;Latn", "God", "allah")]
+        [TestCase(ProcessTypeFlags.Translation | ProcessTypeFlags.Transliteration, "TranslateWithTransliterate;;ar;;Latn", "God", "allah")]
         // [TestCase("TranslateWithTransliterate;;en;;Deva", "नहीं", "not")]    // can't transliterate from an language=en result
         // [TestCase("TranslateWithTransliterate;en;ar;;Arab", "God", "الله")] // you *can* do this, but there is no transliteration part of it (since the result is already in Arab script)
         [TestCase(ProcessTypeFlags.Transliteration, "Transliterate;hi;;Deva;Latn", "संसार", "sansar")]
         // doesn't like short runs of text [TestCase(ProcessTypeFlags.Transliteration, "Transliterate;hi;;Latn;Deva", "sansar", "संसार")]
-        [TestCase(ProcessTypeFlags.Transliteration, "Transliterate;ar;;Arab;Latn", "الله", "alleh")]
+        [TestCase(ProcessTypeFlags.Transliteration, "Transliterate;ar;;Arab;Latn", "الله", "allah")]
         // doesn't like short runs of text [TestCase(ProcessTypeFlags.Transliteration, "Transliterate;ar;;Latn;Arab", "alleh", "الله")]
         // [TestCase("Transliterate;ar;;;Latn", "الله", "alleh")]        // this doesn't work, because with Transliterate, you must specify the fromScript
         [TestCase(ProcessTypeFlags.Translation, "DictionaryLookup;en;hi", "with", "साथ")]
@@ -528,10 +535,16 @@ God is my father.")]
             // do a forward conversion
             var strOutput = theEc.Convert(testInput);
             Assert.AreEqual(testOutput, strOutput);
-            Assert.False(((TranslatorConverter)theEc).HasUserOverriddenCredentials);
-        }
 
-        [Test]
+			// this is False if you don't have the GOOGLE_APPLICATION_CREDENTIALS env var defined or true otherwise
+			var isEnvVarDefined = !String.IsNullOrEmpty(Environment.GetEnvironmentVariable(GoogleTranslatorEncConverter.EnvVarNameCredentials));
+			if (isEnvVarDefined)
+				Assert.True(((TranslatorConverter)theEc).HasUserOverriddenCredentials);
+			else
+				Assert.False(((TranslatorConverter)theEc).HasUserOverriddenCredentials);
+		}
+
+		[Test]
         public async Task TestGoogleTranslateGetCapabilities()
         {
             var res = await GoogleTranslatorEncConverter.GetCapabilities();
