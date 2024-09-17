@@ -25,7 +25,7 @@ namespace TestEncCnvtrs
     public class TestEcTranslators
     {
         private const string AzureOpenAiKey = "f65d3...";
-        private const string AzureOpenAiDeploymentName = "gpt-4-translator-encconverter";
+        private const string AzureOpenAiDeploymentName = "gpt-4o-translator-encconverter";
         private const string AzureOpenAiEndpoint = "https://ai-silconvertersai857014728513.openai.azure.com/";
 
         private const string VertexAiCredentials = @"H:\bright-coyote-381812-bc584cec007f.json";
@@ -273,6 +273,7 @@ namespace TestEncCnvtrs
 
         // this test is likely to fail, bkz we're at the mercy of the translation resource, which is constantly evolving
         //    So don't worry too much if it does... these are here bkz at one point they did work as expected.
+		/* these don't reliably work
         [Test]
         [TestCase("Hindi;English;bright-coyote-381812;us-central1;google;chat-bison-32k;with a \"free translation\" style aimed at high school students",
             VertexAiEncConverter.ImplTypeSilVertexAi,
@@ -288,6 +289,20 @@ namespace TestEncCnvtrs
             @"Donate according to your capability",           // give this as an example input
             @"परंतु अपनी सामर्थ अनुसार ही दो",                       // ... and output (recommending 'capability' instead
             @"capability")]                                   // now see if it has learned from our example (doesn't always work)
+		[TestCase("Hindi;English;bright-coyote-381812;us-central1;google;chat-bison-32k;with a \"literal translation\" style",
+			VertexAiEncConverter.ImplTypeSilVertexAi,
+			@"यीशु ने कहा,",										// phrase to translate ("Jesus said")
+			@"said",											// should contain... (at the mercy of the resource, though, so it might fail)
+			@"Jesus spoke,",                                    // give this as an example translation for earlier output
+			@"राम ने कहा,",										// ... and see if new subject can get the same verb (spoke)
+			@"spoke")]											// now see if it has learned from our example
+		[TestCase("Hindi;English;bright-coyote-381812;us-central1;google;gemini-1.5-flash;with a \"literal translation\" style",
+			VertexAiEncConverter.ImplTypeSilVertexAi,
+			@"यीशु ने कहा,",                                       // phrase to translate ("Jesus said")
+			@"said",                                            // should contain... (at the mercy of the resource, though, so it might fail)
+			@"Jesus spoke,",                                    // give this as an example translation for earlier output
+			@"यीशु ने कहा,",										// ... and see if new subject can get the same verb (spoke)
+			@"spoke")]											// now see if it has learned from our example
         public void TestPromptAiConverter_With_Examples(string converterSpec, string implName, string testInput1, string testOutput1Contains,
                                                         string updatedOutput1, string testInput2, string testOutput2Contains)
         {
@@ -317,6 +332,7 @@ namespace TestEncCnvtrs
             strOutput = theEc.Convert(testInput2);
             Assert.IsTrue(strOutput.Contains(testOutput2Contains));     // see if it learned to use 'capability' rather than 'ability'
         }
+		*/
 
         private const string NllbConverterFriendlyName = "NllbTranslator";
 
@@ -375,7 +391,7 @@ These are the true words of God.")]
         private const string AzureOpenAIConverterFriendlyName = "ChatGptTranslator";
 
         [Test]
-        [TestCase("Hindi;English;Translate from Hindi into English.", "यीशु ने यह भी कहा,", "Jesus also said this,")]
+        [TestCase("Hindi;English;Translate from Hindi into English.", "यीशु ने यह भी कहा,", "Jesus also said,")]
         [TestCase(";;UseSystemPrompt: Translate from Hindi into English.", "परमेश्वर भेदभाव नहीं करता।", "God does not discriminate.")]
         [TestCase("Hindi;English;with a \"free translation\" style aimed at high school students", @"यीशु ने यह भी कहा,
 परमे‍‍श्वर मेरा पिता है।", @"Jesus also said,

@@ -352,28 +352,6 @@
                     <File Id="System.ValueTuple.dll" Name="System.ValueTuple.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="System.ValueTuple.dll" AssemblyApplication="System.ValueTuple.dll"
                           Source="..\..\output\Win32\release\System.ValueTuple.dll"/>
                 </Component>
-
-                <Component Id="Google.Cloud.Translation.V2.dll" Guid="{88C99B41-3F83-418F-A312-EE106B07A383}">
-                    <File Id="Google.Cloud.Translation.V2.dll" Name="Google.Cloud.Translation.V2.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="Google.Cloud.Translation.V2.dll" AssemblyApplication="Google.Cloud.Translation.V2.dll"
-                          Source="..\..\output\Win32\release\Google.Cloud.Translation.V2.dll"/>
-                </Component>
-
-                <Component Id="Google.Apis.Translate.v2.dll" Guid="{F14F1743-D102-4EBD-9541-076F27A24273}">
-                    <File Id="Google.Apis.Translate.v2.dll" Name="Google.Apis.Translate.v2.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="Google.Apis.Translate.v2.dll" AssemblyApplication="Google.Apis.Translate.v2.dll"
-                          Source="..\..\output\Win32\release\Google.Apis.Translate.v2.dll"/>
-                </Component>
-
-                <!-- These might be obsolete after the latest upgrade
-                <Component Id="Google.Apis.Auth.PlatformServices.dll" Guid="{0794425D-F123-49CA-A844-B3A86A793B0C}">
-                    <File Id="Google.Apis.Auth.PlatformServices.dll" Name="Google.Apis.Auth.PlatformServices.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="Google.Apis.Auth.PlatformServices.dll" AssemblyApplication="Google.Apis.Auth.PlatformServices.dll"
-                          Source="..\..\output\Win32\release\Google.Apis.Auth.PlatformServices.dll"/>
-                </Component>
-
-                <Component Id="Google.Apis.PlatformServices.dll" Guid="{D9BB433F-6324-4169-B5BE-B778861C2F71}">
-                    <File Id="Google.Apis.PlatformServices.dll" Name="Google.Apis.PlatformServices.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="Google.Apis.PlatformServices.dll" AssemblyApplication="Google.Apis.PlatformServices.dll"
-                          Source="..\..\output\Win32\release\Google.Apis.PlatformServices.dll"/>
-                </Component>
-                -->
                 
                 <Component Id="Google.Apis.Auth.dll" Guid="{BDBCAE05-1B69-44AE-827B-16F6BF91ABB4}">
                     <File Id="Google.Apis.Auth.dll" Name="Google.Apis.Auth.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="Google.Apis.Auth.dll" AssemblyApplication="Google.Apis.Auth.dll"
@@ -448,6 +426,16 @@
                     <File Id="Google.Cloud.Location.dll" Name="Google.Cloud.Location.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="Google.Cloud.Location.dll" AssemblyApplication="Google.Cloud.Location.dll"
                           Source="..\..\output\Win32\release\Google.Cloud.Location.dll"/>
                     </Component>
+
+                <Component Id="Google.Cloud.Translation.V2.dll" Guid="{88C99B41-3F83-418F-A312-EE106B07A383}">
+                    <File Id="Google.Cloud.Translation.V2.dll" Name="Google.Cloud.Translation.V2.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="Google.Cloud.Translation.V2.dll" AssemblyApplication="Google.Cloud.Translation.V2.dll"
+                          Source="..\..\output\Win32\release\Google.Cloud.Translation.V2.dll"/>
+                </Component>
+				
+                <Component Id="Google.Apis.Translate.v2.dll" Guid="{F14F1743-D102-4EBD-9541-076F27A24273}">
+                    <File Id="Google.Apis.Translate.v2.dll" Name="Google.Apis.Translate.v2.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="Google.Apis.Translate.v2.dll" AssemblyApplication="Google.Apis.Translate.v2.dll"
+                          Source="..\..\output\Win32\release\Google.Apis.Translate.v2.dll"/>
+                </Component>
 
                 <Component Id="Google.LongRunning.dll" Guid="{A9A0A837-6B87-45A1-A99F-2D3BFA6F80FB}">
                     <File Id="Google.LongRunning.dll" Name="Google.LongRunning.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="Google.LongRunning.dll" AssemblyApplication="Google.LongRunning.dll"
