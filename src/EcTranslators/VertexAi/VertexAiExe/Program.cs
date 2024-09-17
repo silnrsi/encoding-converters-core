@@ -17,6 +17,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 using static Google.Rpc.Context.AttributeContext.Types;
@@ -65,8 +66,11 @@ namespace SilEncConverters40.EcTranslators.VertexAi.VertexAiExe
 									   out string systemPrompt))
                     return;
 
-                await ProcessRequest(arguments, client, endpointName, systemPrompt);
-            }
+				if (arguments.ModelId.StartsWith("gemini"))
+					await ProcessRequestGemini(arguments, client, endpointName, systemPrompt);
+				else
+					await ProcessRequest(arguments, client, endpointName, systemPrompt);
+			}
             catch (Exception ex)
             {
                 Console.WriteLine(GetExceptionMessage(ex));
@@ -88,35 +92,58 @@ namespace SilEncConverters40.EcTranslators.VertexAi.VertexAiExe
             }
         }
 
-        private static async Task<bool> ProcessRequest(VertexAiPromptExeTranslatorCommandLineArgs arguments, PredictionServiceClient client,
-                                                       EndpointName endpointName, string systemPrompt)
+        private static async Task<bool> ProcessRequestGemini(VertexAiPromptExeTranslatorCommandLineArgs arguments, PredictionServiceClient client,
+															 EndpointName endpointName, string systemPrompt)
         {
-            var chatConversation = new ChatConversation
-            {
-                context = $"You are a Language Translator that Translates between different languages. Your job is to translate the text in the user prompt into the requested language according to the following instructions: {systemPrompt}",
-                examples = new List<Example>(),
-                messages = new List<ChatMessage>()
-            };
+			var generateContentRequest = new GenerateContentRequest()
+			{
+				Model = endpointName.ToString(),
+				Contents =
+						{
+							new Content
+							{
+								Role = "USER",
+								Parts =
+								{
+									new Part { Text = $"You are a Language Translator that Translates between different languages. Your job is to translate the text in the user prompt into the requested language according to the following instructions: {systemPrompt}", }
+								}
+							}
+						},
 
-            var numberOfExamples = arguments.ExamplesInputString.Count;
-            for (int i = 0; i < numberOfExamples; i++)
-            {
-                chatConversation.examples.Add(new Example
-                {
-                    input = new Input { content = arguments.ExamplesInputString[i] },
-                    output = new Output { content = arguments.ExamplesOutputString[i] }
-                });
-            }
+				GenerationConfig = new GenerationConfig
+				{
+					Temperature = (float)((arguments.Temperature == null) ? 0.3 : arguments.Temperature),
+					TopP = (float)((arguments.TopP == null) ? 0.8 : arguments.TopP),
+					TopK = (float)((arguments.TopK == null) ? 40 : arguments.TopK),
+					CandidateCount = 1,
+				}
+			};
 
-            // You can construct Protobuf from JSON.
-            var parametersJson = JsonConvert.SerializeObject(new
-            {
-                temperature = (arguments.Temperature == null) ? 0.3 : (double)arguments.Temperature,
-                maxDecodeSteps = (arguments.MaxDecodeSteps == null) ? 200 : (int)arguments.MaxDecodeSteps,
-                topP = (arguments.TopP == null) ? 0.8 : arguments.TopP,
-                topK = (arguments.TopK == null) ? 40 : arguments.TopK,
-            });
-            var parameters = Value.Parser.ParseJson(parametersJson);
+			var numberOfExamples = arguments.ExamplesInputString.Count;
+			if (numberOfExamples > 0)
+			{
+				var examples = "For example, ";
+				for (int i = 0; i < numberOfExamples; i++)
+				{
+					examples += $"if I send you /{arguments.ExamplesInputString[i]}/, you would send me back: /{arguments.ExamplesOutputString[i]}/" + Environment.NewLine;
+				}
+
+				generateContentRequest.Contents.Add(new Content
+				{
+					Role = "USER",
+					Parts =
+					{
+						new Part { Text = examples }
+					}
+				});
+			}
+
+			// call the service to process the user msg based on the given system prompt
+			// Make the request.
+			var json = generateContentRequest.ToString();
+#if LogResults
+			File.AppendAllText(LogFilePath, json + Environment.NewLine);
+#endif
 
             // in case there are multiple lines (e.g. what Paratext will do if the verse has multiple paragraphs),
             //  process in a while loop
@@ -134,30 +161,44 @@ namespace SilEncConverters40.EcTranslators.VertexAi.VertexAiExe
                 if (String.IsNullOrEmpty(strInput?.Trim(TrimmableChars)))   // don't actually trim them, but just for the sake of finding nothing to translate...
                     continue;
 
-                // add the string to be translated to as the 'user' message
-                chatConversation.messages.Add(new ChatMessage { author = "user", content = strInput });
+				generateContentRequest.Contents.Add(new Content
+				{
+					Role = "USER",
+					Parts =
+							{
+								new Part { Text = strInput }
+							}
+				});
 
-                // call the service to process the user msg based on the given system prompt
-                // Make the request.
-                var json = chatConversation.ToString();
+				// call the service to process the user msg based on the given system prompt
+				// Make the request.
+				json = generateContentRequest.ToString();
 #if LogResults
-                File.AppendAllText(LogFilePath, json + Environment.NewLine);
+				File.AppendAllText(LogFilePath, json + Environment.NewLine);
 #endif
-                var response = client.Predict(endpointName, new List<Value> { Value.Parser.ParseJson(json) }, parameters);
 
-                var fields = response.Predictions.First().StructValue.Fields;
-                // clean up and return the "assistent's response"
-                var strOutput = HarvestResult(strInput, fields);
+				var responseGemini = await client.GenerateContentAsync(generateContentRequest);
 
-                // put that back in the chat, in case we are processing multiple lines
-                //    (this'll make them 'related' for better translation)
-                chatConversation.messages.Add(new ChatMessage { author = "1", content = strOutput });
-            }
+				var strOutput = String.Empty;
+				if ((responseGemini.Candidates[0].Content == null) && (responseGemini.Candidates[0].FinishReason == Candidate.Types.FinishReason.Safety))
+				{
+					// must have run afoul of the 'SAFETY' issues
+					strOutput = HarvestResult(strInput, responseGemini.Candidates[0].SafetyRatings);
+				}
+				else
+				{
+					strOutput = responseGemini.Candidates[0].Content?.Parts?[0].Text;
+				}
 
-            for (var i = 0; i < chatConversation.messages.Count;)
+				// put that back in the chat, in case we are processing multiple lines
+				//    (this'll make them 'related' for better translation)
+				generateContentRequest.Contents.Add(new Content { Role = "model", Parts = { new Part { Text = strOutput } } });
+			}
+
+            for (var i = numberOfExamples > 0 ? 2 : 1; i < generateContentRequest.Contents.Count;)
             {
-                var strInput = chatConversation.messages[i++].content;
-                var strOutput = chatConversation.messages[i++].content;
+                var strInput = generateContentRequest.Contents[i++].Parts[0].Text;
+                var strOutput = generateContentRequest.Contents[i++].Parts[0].Text;
 
 #if LogResults
                 File.AppendAllText(LogFilePath, string.Format("{1}=>{2}:{3}=>{4}{0}", Environment.NewLine, systemPrompt, i / 2, strInput, strOutput));
@@ -169,7 +210,100 @@ namespace SilEncConverters40.EcTranslators.VertexAi.VertexAiExe
             return true;
         }
 
-        private static string HarvestResult(string strInput, MapField<string, Value> fields)
+		private static async Task<bool> ProcessRequest(VertexAiPromptExeTranslatorCommandLineArgs arguments, PredictionServiceClient client,
+													   EndpointName endpointName, string systemPrompt)
+		{
+			var chatConversation = new ChatConversation
+			{
+				context = $"You are a Language Translator that Translates between different languages. Your job is to translate the text in the user prompt into the requested language according to the following instructions: {systemPrompt}",
+				examples = new List<Example>(),
+				messages = new List<ChatMessage>()
+			};
+
+			var numberOfExamples = arguments.ExamplesInputString.Count;
+			for (int i = 0; i < numberOfExamples; i++)
+			{
+				chatConversation.examples.Add(new Example
+				{
+					input = new Input { content = arguments.ExamplesInputString[i] },
+					output = new Output { content = arguments.ExamplesOutputString[i] }
+				});
+			}
+
+			// You can construct Protobuf from JSON.
+			var parametersJson = JsonConvert.SerializeObject(new
+			{
+				temperature = (arguments.Temperature == null) ? 0.3 : (double)arguments.Temperature,
+				maxDecodeSteps = (arguments.MaxDecodeSteps == null) ? 200 : (int)arguments.MaxDecodeSteps,
+				topP = (arguments.TopP == null) ? 0.8 : arguments.TopP,
+				topK = (arguments.TopK == null) ? 40 : arguments.TopK,
+			});
+			var parameters = Value.Parser.ParseJson(parametersJson);
+
+			// in case there are multiple lines (e.g. what Paratext will do if the verse has multiple paragraphs),
+			//  process in a while loop
+			var index = 0;
+#if UseLocalExamples
+			List<string> input = new List<string> { "उसने सब लोग जान से मारा।", "वहाँ वह विश्राम के दिन प्रार्थना घर में जाकर लोगों को परमेश्वर का वचन सुनाने लगा। सब लोग सुनकर चकित हो गये।", "", "परंतु कई तो यह भी कहने लगे, “यह ज्ञान इसको कहाँ से आया!? और ऐसे सामर्थ्‍य के काम यह कैसे करता है, जिसकी चर्चा सब लोग कर रहे हैं!?" };
+#else
+            List<string> input = null; // new List<string> { "वहाँ वह विश्राम के दिन प्रार्थना घर में जाकर लोगों को परमेश्वर का वचन सुनाने लगा। सब लोग सुनकर चकित हो गये।", "", "परंतु कई तो यह भी कहने लगे, “यह ज्ञान इसको कहाँ से आया!? और ऐसे सामर्थ्‍य के काम यह कैसे करता है, जिसकी चर्चा सब लोग कर रहे हैं!?" };
+#endif
+			while ((input != null && input.Count > index) || (input == null && Console.In.Peek() != -1))
+			{
+				var strInput = (input != null)
+								? input[index++]
+								: Console.ReadLine();
+				if (String.IsNullOrEmpty(strInput?.Trim(TrimmableChars)))   // don't actually trim them, but just for the sake of finding nothing to translate...
+					continue;
+
+				// add the string to be translated to as the 'user' message
+				chatConversation.messages.Add(new ChatMessage { author = "user", content = strInput });
+
+				// call the service to process the user msg based on the given system prompt
+				// Make the request.
+				var json = chatConversation.ToString();
+#if LogResults
+				File.AppendAllText(LogFilePath, json + Environment.NewLine);
+#endif
+				var response = client.Predict(endpointName, new List<Value> { Value.Parser.ParseJson(json) }, parameters);
+
+				var fields = response.Predictions.First().StructValue.Fields;
+
+				// clean up and return the "assistent's response"
+				var strOutput = HarvestResult(strInput, fields);
+
+				// put that back in the chat, in case we are processing multiple lines
+				//    (this'll make them 'related' for better translation)
+				chatConversation.messages.Add(new ChatMessage { author = "1", content = strOutput });
+			}
+
+			for (var i = 0; i < chatConversation.messages.Count;)
+			{
+				var strInput = chatConversation.messages[i++].content;
+				var strOutput = chatConversation.messages[i++].content;
+
+#if LogResults
+				File.AppendAllText(LogFilePath, string.Format("{1}=>{2}:{3}=>{4}{0}", Environment.NewLine, systemPrompt, i / 2, strInput, strOutput));
+#endif
+				// write the responses to the standard out to return it
+				Console.WriteLine(strOutput);
+			}
+
+			return true;
+		}
+
+		private static string HarvestResult(string strInput, RepeatedField<SafetyRating> safetyRatings)
+		{
+			var responseContent = "<VertexAI didn't translate the sentence due to the following Content Filtering reasons: ";
+			foreach (var safetyRating in safetyRatings.Where(sr => sr.Blocked))
+			{
+				responseContent += Environment.NewLine + safetyRating.Category;
+			}
+
+			return CleanString(strInput, responseContent + ">");
+		}
+
+		private static string HarvestResult(string strInput, MapField<string, Value> fields)
         {
             var responseContent = fields["candidates"].ListValue.Values[0].StructValue.Fields["content"].StringValue;
 

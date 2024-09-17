@@ -254,8 +254,9 @@ namespace TestEncCnvtrs
 //      [TestCase("Hindi;English;bright-coyote-381812;us-central1;google;chat-bison;Translate from Hindi into English.", "यीशु ने यह भी कहा,", "Jesus also said,")]
         // try gemini pro
         [TestCase("Hindi;English;bright-coyote-381812;us-central1;google;chat-bison;Translate from Hindi into English.", "यीशु ने यह भी कहा,", "Jesus also said,")]
-        [TestCase("Hindi;English;bright-coyote-381812;us-central1;google;chat-bison;Translate from Hindi into English.", "परंतु वह चोगे को छोड़कर वहाँ से भाग गया। ", "But he left the cloak and fled from that place.")]
-        public void TestVertexAiConverter(string converterSpec, string testInput, string testOutput)
+        [TestCase("Hindi;English;bright-coyote-381812;us-central1;google;chat-bison;Translate from Hindi into English.", "परंतु वह चोगे को छोड़कर वहाँ से भाग गया। ", "But he fled from there, leaving his cloak behind.")]
+		[TestCase("Hindi;English;bright-coyote-381812;us-central1;google;gemini-1.5-flash;Translate from Hindi into English.", "यीशु ने कहा,", "Jesus said, ")]
+		public void TestVertexAiConverter(string converterSpec, string testInput, string testOutput)
         {
             Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", VertexAiCredentials);    // see C:\Users\pete_\source\repos\encoding-converters-core\src\EcTranslators\VertexAi\VertexAiExe\Program.cs
 
@@ -271,8 +272,8 @@ namespace TestEncCnvtrs
 
         private const string PromptAiConverterFriendlyName = "PromptAiTranslator";  // either vertex or azure open ai, but system prompt-based transducer
 
-        // this test is likely to fail, bkz we're at the mercy of the translation resource, which is constantly evolving
-        //    So don't worry too much if it does... these are here bkz at one point they did work as expected.
+		// this test is likely to fail, bkz we're at the mercy of the translation resource, which is constantly evolving
+		//    So don't worry too much if it does... these are here bkz at one point they did work as expected.
 		/* these don't reliably work
         [Test]
         [TestCase("Hindi;English;bright-coyote-381812;us-central1;google;chat-bison-32k;with a \"free translation\" style aimed at high school students",
@@ -303,7 +304,7 @@ namespace TestEncCnvtrs
 			@"Jesus spoke,",                                    // give this as an example translation for earlier output
 			@"यीशु ने कहा,",										// ... and see if new subject can get the same verb (spoke)
 			@"spoke")]											// now see if it has learned from our example
-        public void TestPromptAiConverter_With_Examples(string converterSpec, string implName, string testInput1, string testOutput1Contains,
+		public void TestPromptAiConverter_With_Examples(string converterSpec, string implName, string testInput1, string testOutput1Contains,
                                                         string updatedOutput1, string testInput2, string testOutput2Contains)
         {
             // normally, these values get to the program that calls the AzureOpenAI endpoint via command line parameters that
@@ -334,7 +335,7 @@ namespace TestEncCnvtrs
         }
 		*/
 
-        private const string NllbConverterFriendlyName = "NllbTranslator";
+		private const string NllbConverterFriendlyName = "NllbTranslator";
 
         /// <summary>
         /// To run this test, you need to go thru the instructions in have the $(SolutionDir)redist\Help\NLLB_Translate_Plug-in_About_box.htm
