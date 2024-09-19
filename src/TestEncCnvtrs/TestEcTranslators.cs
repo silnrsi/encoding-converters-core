@@ -256,6 +256,10 @@ namespace TestEncCnvtrs
         [TestCase("Hindi;English;bright-coyote-381812;us-central1;google;chat-bison;Translate from Hindi into English.", "यीशु ने यह भी कहा,", "Jesus also said,")]
         [TestCase("Hindi;English;bright-coyote-381812;us-central1;google;chat-bison;Translate from Hindi into English.", "परंतु वह चोगे को छोड़कर वहाँ से भाग गया। ", "But he fled from there, leaving his cloak behind.")]
 		[TestCase("Hindi;English;bright-coyote-381812;us-central1;google;gemini-1.5-flash;Translate from Hindi into English.", "यीशु ने कहा,", "Jesus said, ")]
+		// multiple lines
+		[TestCase("Hindi;English;bright-coyote-381812;us-central1;google;gemini-1.5-flash;Translate from Hindi into English.", @"यीशु ने कहा,
+परमे‍‍श्वर मेरा पिता है।", @"Jesus said, 
+God is my Father. ")]
 		public void TestVertexAiConverter(string converterSpec, string testInput, string testOutput)
         {
             Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", VertexAiCredentials);    // see C:\Users\pete_\source\repos\encoding-converters-core\src\EcTranslators\VertexAi\VertexAiExe\Program.cs
@@ -423,7 +427,11 @@ God is my father.")]
         [Test]
         [TestCase(ProcessTypeFlags.Translation, "Translate;hi;en", "", "")]
         [TestCase(ProcessTypeFlags.Translation, "Translate;hi;en", "यीशु ने यह भी कहा,", "Jesus also said,")]
-        [TestCase(ProcessTypeFlags.Translation, "Translate;;en", "यीशु ने यह भी कहा,", "Jesus also said,")]
+		// multi-line translations
+		[TestCase(ProcessTypeFlags.Translation, "Translate;hi;en", @"यीशु ने कहा,
+परमे‍‍श्वर मेरा पिता है।", @"Jesus said,
+God is my Father.")]
+		[TestCase(ProcessTypeFlags.Translation, "Translate;;en", "यीशु ने यह भी कहा,", "Jesus also said,")]
         [TestCase(ProcessTypeFlags.Translation, "Translate;en;zh-Hans", "Get to know the beautiful country of Israel.", "了解美丽的以色列国家。")]
         [TestCase(ProcessTypeFlags.Translation | ProcessTypeFlags.Transliteration, "TranslateWithTransliterate;en;ar;;Latn", "God", "allah")]
         [TestCase(ProcessTypeFlags.Translation | ProcessTypeFlags.Transliteration, "TranslateWithTransliterate;;ar;;Latn", "God", "allah")]
@@ -486,7 +494,11 @@ God is my father.")]
         [TestCase(ProcessTypeFlags.Translation, "Translate;en;zh", "How are you?", "你好吗？")]
         [TestCase(ProcessTypeFlags.Translation, "Translate;en;de;Less", "How are you?", "Wie geht es dir?")]
         [TestCase(ProcessTypeFlags.Translation, "Translate;en;de;More", "How are you?", "Wie geht es Ihnen?")]
-        public void TestDeepLConverter(ProcessTypeFlags processType, string converterSpec, string testInput, string testOutput)
+		// multi-line translations
+		[TestCase(ProcessTypeFlags.Translation, "Translate;en;fr", @"Jesus said,
+God is my father.", @"Jésus a dit,
+Dieu est mon père.")]
+		public void TestDeepLConverter(ProcessTypeFlags processType, string converterSpec, string testInput, string testOutput)
         {
             m_encConverters.AddConversionMap(DeepLTranslatorConverterFriendlyName, converterSpec, ConvType.Unicode_to_Unicode,
                                              EncConverters.strTypeSILDeepLTranslator, "UNICODE", "UNICODE",
@@ -519,7 +531,11 @@ God is my father.")]
         [TestCase("en;fr", "Hello, world!", "Bonjour le monde!")]
         [TestCase("en;zh", "How are you?", "你好吗？")]
         [TestCase("en;de", "How are you?", "Wie geht es dir?")]
-        public void TestGoogleConverterWithEnvVariable(string converterSpec, string testInput, string testOutput)
+		// multi-line translations
+		[TestCase("hi;en", @"यीशु ने कहा,
+परमे‍‍श्वर मेरा पिता है।", @"Jesus said,
+God is my father.")]
+		public void TestGoogleConverterWithEnvVariable(string converterSpec, string testInput, string testOutput)
         {
             Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", VertexAiCredentials);    // see C:\Users\pete_\source\repos\encoding-converters-core\src\EcTranslators\VertexAi\VertexAiExe\Program.cs
 
@@ -541,7 +557,11 @@ God is my father.")]
         [TestCase("en;fr", "Hello, world!", "Bonjour le monde!")]
         [TestCase("en;zh", "How are you?", "你好吗？")]
         [TestCase("en;de", "How are you?", "Wie geht es dir?")]
-        public void TestGoogleConverter(string converterSpec, string testInput, string testOutput)
+		// multi-line translations
+		[TestCase("hi;en", @"यीशु ने कहा,
+परमे‍‍श्वर मेरा पिता है।", @"Jesus said,
+God is my father.")]
+		public void TestGoogleConverter(string converterSpec, string testInput, string testOutput)
         {
             m_encConverters.AddConversionMap(GoogleTranslatorConverterFriendlyName, converterSpec, ConvType.Unicode_to_Unicode,
                                              EncConverters.strTypeSILGoogleTranslator, "UNICODE", "UNICODE",

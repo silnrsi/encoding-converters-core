@@ -208,6 +208,10 @@ namespace SilEncConverters40
                 // call a virtual to do this in case the sub-classes have special behavior
                 strOutput = ReadFromExeOutputStream(sr, p.StandardError);
                 strOutput = CleanOutput(sInput, strOutput);
+
+				// some processes do a linux style having converted the \r\n into just a \n, so split on that and rebuild w/ Environment.NewLine
+				var lines = strOutput.Split(charsToTrim, StringSplitOptions.RemoveEmptyEntries);
+				strOutput = string.Join(Environment.NewLine, lines);
             }
             catch (Exception e)
             {

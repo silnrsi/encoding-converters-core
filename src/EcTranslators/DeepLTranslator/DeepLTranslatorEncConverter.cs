@@ -281,10 +281,12 @@ namespace SilEncConverters40.EcTranslators.DeepLTranslator
 				var options = (FormalityLevel != Formality.Default) ? new TextTranslateOptions { Formality = FormalityLevel } : null;
 				var translatedText = await Task.Run(async delegate
 				{
-					return await DeepLTranslator.TranslateTextAsync(strInput, FromLanguage, ToLanguage, options);
+					var lines = strInput.Split(crlf, StringSplitOptions.RemoveEmptyEntries);
+					var result = await DeepLTranslator.TranslateTextAsync(lines, FromLanguage, ToLanguage, options);
+					return string.Join(Environment.NewLine, result.Select(r => r.Text));
 				}).ConfigureAwait(false);
 
-				return translatedText.Text;
+				return translatedText;
 			}
 			catch (Exception ex)
 			{

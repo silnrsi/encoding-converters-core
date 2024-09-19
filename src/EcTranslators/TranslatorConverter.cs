@@ -10,6 +10,8 @@ namespace SilEncConverters40.EcTranslators
 	{
 		public const int WarnEveryXRequests = 100;
 
+		public readonly char[] crlf = new[] { '\r', '\n' };
+
 		public int RequestCount { get; set; }
 
 		public abstract bool HasUserOverriddenCredentials { get; }

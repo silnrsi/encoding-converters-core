@@ -229,10 +229,13 @@ namespace SilEncConverters40.EcTranslators.GoogleTranslator
             {
                 var result = await Task.Run(async delegate
                 {
-                    return await TranslateClient.TranslateTextAsync(strInput, toLanguage, fromLanguage);
-                }).ConfigureAwait(false);
+					var lines = strInput.Split(crlf, StringSplitOptions.RemoveEmptyEntries);
+                    var result = await TranslateClient.TranslateTextAsync(lines, toLanguage, fromLanguage);
+					return String.Join(Environment.NewLine, result.Select(r => r.TranslatedText));
 
-                return result.TranslatedText;
+				}).ConfigureAwait(false);
+
+                return result;
             }
             catch (Exception ex)
             {
