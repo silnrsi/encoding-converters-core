@@ -2,7 +2,10 @@
 // 28-Nov-11 JDK  Wrap Perl expression and write in temp file, rather than requiring input file.
 //
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -21,6 +24,8 @@ namespace SilEncConverters40
         public const string strHtmlFilename = "Net_Regular_Expression_Plug-in_About_box.htm";
 
 		public const string RegexDelimiter = "->";
+		public const ushort DisabledBitFlag = 0x8000;
+		public const string SeparatorRegularExpressions = "\u241E";
 
 		public bool TransliteratorInitialized { get; set; }
 
@@ -29,9 +34,9 @@ namespace SilEncConverters40
 		// e.g.
 		//  {[aeiou]}->{V};1
 		// (meaing: for convert latin vowels to 'V' and make it case insensitive. That is, 1 = RegexOption.IgnoreCase)
-		private static readonly Regex _reParseConverterIdentifier = new("{(.+)}->{(.*)};?(.*)");
-		private Regex _reConverter;
-		private string _replaceWith;
+		private static readonly Regex _reParseConverterIdentifier = new("{(.+?)}->{(.*?)};?(.*)");
+		private List<Regex> _reConverters = new();
+		private List<string> _replaceWiths = new();
 
 		#endregion Const Definitions
 
@@ -85,32 +90,50 @@ namespace SilEncConverters40
 		}
 
 		internal static bool ParseConverterIdentifier(string strConverterSpec,
-								out string strFindWhat, out string strReplaceWith, out RegexOptions options)
+			out List<string> findWhats, out List<string> replaceWiths, out List<RegexOptions> regexOptions, out List<bool> disabled)
 		{
-			var match = _reParseConverterIdentifier.Match(strConverterSpec);
-			if (match.Success)
+			var aregexs = strConverterSpec.Split([SeparatorRegularExpressions], StringSplitOptions.RemoveEmptyEntries);
+			regexOptions = new List<RegexOptions>(aregexs.Length);
+			findWhats = new List<string>(aregexs.Length);
+			replaceWiths = new List<string>(aregexs.Length);
+			disabled = new List<bool>(aregexs.Length);
+
+			foreach (var aregex in aregexs)
 			{
-				var strOptions = match.Groups[3].Value;
-				if (String.IsNullOrEmpty(strOptions))
+				var match = _reParseConverterIdentifier.Match(aregex);
+				if (match.Success)
 				{
-					options = RegexOptions.None;
+					var disabledFlag = false;
+					var options = RegexOptions.None;
+					var strOptions = match.Groups[3].Value;
+					if (!String.IsNullOrEmpty(strOptions))
+					{
+						var numberStyle = NumberStyles.Integer;
+						if (strOptions.StartsWith("0x"))
+						{
+							numberStyle = NumberStyles.HexNumber;
+							strOptions = strOptions.Substring(2);	// strip off the '0x'
+						}
+						ushort nOptions = ushort.Parse(strOptions, numberStyle); // the high bit, if set, indicates that it's disabled
+						disabledFlag = (nOptions & DisabledBitFlag) == DisabledBitFlag;
+						unchecked
+						{
+							nOptions &= (ushort)~DisabledBitFlag;
+						}
+						options = (RegexOptions)nOptions;
+					}
+					disabled.Add(disabledFlag);
+					regexOptions.Add(options);
+
+					findWhats.Add(match.Groups[1].Value);
+					replaceWiths.Add(match.Groups[2].Value);
 				}
 				else
 				{
-					options = (RegexOptions)int.Parse(strOptions);
+					return false;
 				}
-
-				strFindWhat = match.Groups[1].Value;
-				strReplaceWith = match.Groups[2].Value;
-
-				return true;
 			}
-			else
-			{
-				options = RegexOptions.None;
-				strFindWhat = strReplaceWith = null;
-				return false;
-			}
+			return true;
 		}
 
 		protected unsafe void Load(string converterIdentifier)
@@ -120,17 +143,42 @@ namespace SilEncConverters40
 			if (TransliteratorInitialized)
 				return;
 
-			if (!ParseConverterIdentifier(converterIdentifier, out string findWhat, out string replaceWith, out RegexOptions options))
+			if (!ParseConverterIdentifier(converterIdentifier,
+				out List<string> findWhats, out List<string> replaceWiths, out List<RegexOptions> options, out List<bool> disable))
 			{
 				throw new ApplicationException($"{DisplayName} not properly configured! converterName: {converterIdentifier} (should be in the format {{<findWhat>}}->{{<replaceWith>}};<RegexOptions as Int>)");
 			}
 
-			_replaceWith = replaceWith;
-			_reConverter = new Regex(findWhat, options | RegexOptions.Compiled);
+			_replaceWiths.Clear();
+			_reConverters.Clear();
+
+			for (int i = 0; i < findWhats.Count; i++)
+			{
+				if (disable[i])
+					continue;
+
+				var findWhat = SafeUnescape(findWhats[i]);
+				_replaceWiths.Add(SafeUnescape(replaceWiths[i]));
+
+				var reConverter = new Regex(findWhat, options[i] | RegexOptions.Compiled);
+				_reConverters.Add(reConverter);
+			}
 
 			TransliteratorInitialized = true;  // so we don't to do this with each call to Convert
 
 			Util.DebugWriteLine(this, "END");
+
+			static unsafe string SafeUnescape(string regexString)
+			{
+				try
+				{
+					// it'll throw an exception w/ something like \s+, but not \n
+					regexString = Regex.Unescape(regexString);
+				}
+				catch { }
+
+				return regexString;
+			}
 		}
 
 		#endregion Misc helpers
@@ -170,8 +218,13 @@ namespace SilEncConverters40
 
 			// here's our input string
 			var strInput = new string(caIn);
-
-			var strOutput = _reConverter.Replace(strInput, _replaceWith);
+			var strOutput = (!_reConverters.Any()) ? strInput : String.Empty;
+			for (int i = 0; i < _reConverters.Count; i++)
+			{
+				var reConverter = _reConverters[i];
+				var replaceWith = _replaceWiths[i];
+				strInput = strOutput = reConverter.Replace(strInput, replaceWith);
+			}
 
 			StringToProperByteStar(strOutput, lpOutBuffer, ref rnOutLen);
 		}

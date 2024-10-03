@@ -34,6 +34,7 @@ namespace SilEncConverters40
 		private void InitializeComponent()
 		{
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(NetRegexAutoConfigDialog));
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.textBoxReplaceWith = new System.Windows.Forms.TextBox();
             this.labelSearchFor = new System.Windows.Forms.Label();
@@ -54,6 +55,12 @@ namespace SilEncConverters40
             this.checkBoxRightToLeft = new System.Windows.Forms.CheckBox();
             this.checkBoxECMAScript = new System.Windows.Forms.CheckBox();
             this.checkBoxCultureInvariant = new System.Windows.Forms.CheckBox();
+            this.buttonAddRegularExpression = new System.Windows.Forms.Button();
+            this.dataGridViewRegularExpressions = new System.Windows.Forms.DataGridView();
+            this.ColumnEnabled = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.ColumnFindWhat = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ColumnReplaceWith = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ColumnOptions = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.contextMenuRegexChars = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.toolStripAnyChar = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip0orMore = new System.Windows.Forms.ToolStripMenuItem();
@@ -88,6 +95,7 @@ namespace SilEncConverters40
             this.tableLayoutPanel1.SuspendLayout();
             this.groupBoxRegexOptions.SuspendLayout();
             this.flowLayoutPanelOptions.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewRegularExpressions)).BeginInit();
             this.contextMenuRegexChars.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -126,29 +134,31 @@ namespace SilEncConverters40
             this.tableLayoutPanel1.Controls.Add(this.textBoxSearchFor, 1, 1);
             this.tableLayoutPanel1.Controls.Add(this.buttonPopupHelper, 2, 1);
             this.tableLayoutPanel1.Controls.Add(this.labelReplaceWith, 0, 2);
-            this.tableLayoutPanel1.Controls.Add(this.label1, 0, 5);
-            this.tableLayoutPanel1.Controls.Add(this.comboBoxPreviousSearches, 1, 5);
-            this.tableLayoutPanel1.Controls.Add(this.buttonDeleteSavedExpression, 2, 5);
-            this.tableLayoutPanel1.Controls.Add(this.linkLabelOpenQuickReference, 1, 6);
+            this.tableLayoutPanel1.Controls.Add(this.label1, 0, 4);
+            this.tableLayoutPanel1.Controls.Add(this.comboBoxPreviousSearches, 1, 4);
+            this.tableLayoutPanel1.Controls.Add(this.buttonDeleteSavedExpression, 2, 4);
+            this.tableLayoutPanel1.Controls.Add(this.linkLabelOpenQuickReference, 1, 5);
             this.tableLayoutPanel1.Controls.Add(this.groupBoxRegexOptions, 1, 3);
+            this.tableLayoutPanel1.Controls.Add(this.buttonAddRegularExpression, 2, 3);
+            this.tableLayoutPanel1.Controls.Add(this.dataGridViewRegularExpressions, 1, 0);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(3, 3);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 7;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 50F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 50F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 50F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
+            this.tableLayoutPanel1.RowCount = 6;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 50F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(596, 394);
             this.tableLayoutPanel1.TabIndex = 1;
             // 
             // textBoxReplaceWith
             // 
             this.textBoxReplaceWith.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textBoxReplaceWith.Location = new System.Drawing.Point(118, 103);
+            this.textBoxReplaceWith.Location = new System.Drawing.Point(118, 209);
             this.textBoxReplaceWith.Name = "textBoxReplaceWith";
             this.textBoxReplaceWith.Size = new System.Drawing.Size(380, 20);
             this.textBoxReplaceWith.TabIndex = 3;
@@ -158,7 +168,7 @@ namespace SilEncConverters40
             // 
             this.labelSearchFor.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.labelSearchFor.AutoSize = true;
-            this.labelSearchFor.Location = new System.Drawing.Point(53, 50);
+            this.labelSearchFor.Location = new System.Drawing.Point(53, 166);
             this.labelSearchFor.Name = "labelSearchFor";
             this.labelSearchFor.Size = new System.Drawing.Size(59, 13);
             this.labelSearchFor.TabIndex = 0;
@@ -167,7 +177,7 @@ namespace SilEncConverters40
             // textBoxSearchFor
             // 
             this.textBoxSearchFor.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textBoxSearchFor.Location = new System.Drawing.Point(118, 53);
+            this.textBoxSearchFor.Location = new System.Drawing.Point(118, 169);
             this.textBoxSearchFor.Name = "textBoxSearchFor";
             this.textBoxSearchFor.Size = new System.Drawing.Size(380, 20);
             this.textBoxSearchFor.TabIndex = 1;
@@ -175,7 +185,7 @@ namespace SilEncConverters40
             // 
             // buttonPopupHelper
             // 
-            this.buttonPopupHelper.Location = new System.Drawing.Point(504, 53);
+            this.buttonPopupHelper.Location = new System.Drawing.Point(504, 169);
             this.buttonPopupHelper.Name = "buttonPopupHelper";
             this.buttonPopupHelper.Size = new System.Drawing.Size(20, 22);
             this.buttonPopupHelper.TabIndex = 2;
@@ -187,7 +197,7 @@ namespace SilEncConverters40
             // 
             this.labelReplaceWith.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.labelReplaceWith.AutoSize = true;
-            this.labelReplaceWith.Location = new System.Drawing.Point(40, 100);
+            this.labelReplaceWith.Location = new System.Drawing.Point(40, 206);
             this.labelReplaceWith.Name = "labelReplaceWith";
             this.labelReplaceWith.Size = new System.Drawing.Size(72, 13);
             this.labelReplaceWith.TabIndex = 0;
@@ -197,7 +207,7 @@ namespace SilEncConverters40
             // 
             this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(3, 286);
+            this.label1.Location = new System.Drawing.Point(3, 352);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(109, 13);
             this.label1.TabIndex = 0;
@@ -207,7 +217,7 @@ namespace SilEncConverters40
             // 
             this.comboBoxPreviousSearches.Dock = System.Windows.Forms.DockStyle.Fill;
             this.comboBoxPreviousSearches.FormattingEnabled = true;
-            this.comboBoxPreviousSearches.Location = new System.Drawing.Point(118, 289);
+            this.comboBoxPreviousSearches.Location = new System.Drawing.Point(118, 355);
             this.comboBoxPreviousSearches.Name = "comboBoxPreviousSearches";
             this.comboBoxPreviousSearches.Size = new System.Drawing.Size(380, 21);
             this.comboBoxPreviousSearches.TabIndex = 5;
@@ -215,7 +225,7 @@ namespace SilEncConverters40
             // 
             // buttonDeleteSavedExpression
             // 
-            this.buttonDeleteSavedExpression.Location = new System.Drawing.Point(504, 289);
+            this.buttonDeleteSavedExpression.Location = new System.Drawing.Point(504, 355);
             this.buttonDeleteSavedExpression.Name = "buttonDeleteSavedExpression";
             this.buttonDeleteSavedExpression.Size = new System.Drawing.Size(89, 23);
             this.buttonDeleteSavedExpression.TabIndex = 6;
@@ -226,7 +236,7 @@ namespace SilEncConverters40
             // linkLabelOpenQuickReference
             // 
             this.linkLabelOpenQuickReference.AutoSize = true;
-            this.linkLabelOpenQuickReference.Location = new System.Drawing.Point(118, 344);
+            this.linkLabelOpenQuickReference.Location = new System.Drawing.Point(118, 381);
             this.linkLabelOpenQuickReference.Name = "linkLabelOpenQuickReference";
             this.linkLabelOpenQuickReference.Size = new System.Drawing.Size(205, 13);
             this.linkLabelOpenQuickReference.TabIndex = 8;
@@ -238,7 +248,7 @@ namespace SilEncConverters40
             // 
             this.groupBoxRegexOptions.Controls.Add(this.flowLayoutPanelOptions);
             this.groupBoxRegexOptions.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.groupBoxRegexOptions.Location = new System.Drawing.Point(118, 153);
+            this.groupBoxRegexOptions.Location = new System.Drawing.Point(118, 249);
             this.groupBoxRegexOptions.Name = "groupBoxRegexOptions";
             this.groupBoxRegexOptions.Size = new System.Drawing.Size(380, 100);
             this.groupBoxRegexOptions.TabIndex = 9;
@@ -362,6 +372,68 @@ namespace SilEncConverters40
             this.toolTip.SetToolTip(this.checkBoxCultureInvariant, "Ignore cultural differences in language.");
             this.checkBoxCultureInvariant.UseVisualStyleBackColor = true;
             this.checkBoxCultureInvariant.CheckedChanged += new System.EventHandler(this.controlChangedModified);
+            // 
+            // buttonAddRegularExpression
+            // 
+            this.buttonAddRegularExpression.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonAddRegularExpression.Location = new System.Drawing.Point(504, 287);
+            this.buttonAddRegularExpression.Name = "buttonAddRegularExpression";
+            this.buttonAddRegularExpression.Size = new System.Drawing.Size(89, 23);
+            this.buttonAddRegularExpression.TabIndex = 11;
+            this.buttonAddRegularExpression.Text = "S&ave";
+            this.toolTip.SetToolTip(this.buttonAddRegularExpression, "Choose your expression for \'Search for\' and \'Replace With\', set any options you w" +
+        "ant and click the \'Add\' button to add the operation to the queue of possible reg" +
+        "ular expression operations");
+            this.buttonAddRegularExpression.UseVisualStyleBackColor = true;
+            this.buttonAddRegularExpression.Click += new System.EventHandler(this.buttonAddRegularExpression_Click);
+            // 
+            // dataGridViewRegularExpressions
+            // 
+            this.dataGridViewRegularExpressions.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.DisplayedCells;
+            this.dataGridViewRegularExpressions.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridViewRegularExpressions.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.ColumnEnabled,
+            this.ColumnFindWhat,
+            this.ColumnReplaceWith,
+            this.ColumnOptions});
+            this.dataGridViewRegularExpressions.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dataGridViewRegularExpressions.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnF2;
+            this.dataGridViewRegularExpressions.Location = new System.Drawing.Point(118, 3);
+            this.dataGridViewRegularExpressions.MultiSelect = false;
+            this.dataGridViewRegularExpressions.Name = "dataGridViewRegularExpressions";
+            this.dataGridViewRegularExpressions.RowHeadersVisible = false;
+            this.dataGridViewRegularExpressions.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.dataGridViewRegularExpressions.Size = new System.Drawing.Size(380, 160);
+            this.dataGridViewRegularExpressions.TabIndex = 12;
+            this.toolTip.SetToolTip(this.dataGridViewRegularExpressions, resources.GetString("dataGridViewRegularExpressions.ToolTip"));
+            this.dataGridViewRegularExpressions.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewRegularExpressions_CellEndEdit);
+            this.dataGridViewRegularExpressions.CurrentCellDirtyStateChanged += new System.EventHandler(this.dataGridViewRegularExpressions_CurrentCellDirtyStateChanged);
+            this.dataGridViewRegularExpressions.SelectionChanged += new System.EventHandler(this.dataGridViewRegularExpressions_SelectionChanged);
+            // 
+            // ColumnEnabled
+            // 
+            this.ColumnEnabled.HeaderText = "Enabled";
+            this.ColumnEnabled.Name = "ColumnEnabled";
+            this.ColumnEnabled.Width = 52;
+            // 
+            // ColumnFindWhat
+            // 
+            this.ColumnFindWhat.HeaderText = "Find What";
+            this.ColumnFindWhat.Name = "ColumnFindWhat";
+            this.ColumnFindWhat.Width = 81;
+            // 
+            // ColumnReplaceWith
+            // 
+            this.ColumnReplaceWith.HeaderText = "Replace With";
+            this.ColumnReplaceWith.Name = "ColumnReplaceWith";
+            this.ColumnReplaceWith.Width = 97;
+            // 
+            // ColumnOptions
+            // 
+            this.ColumnOptions.HeaderText = "Options";
+            this.ColumnOptions.Name = "ColumnOptions";
+            this.ColumnOptions.ReadOnly = true;
+            this.ColumnOptions.Width = 68;
             // 
             // contextMenuRegexChars
             // 
@@ -610,6 +682,7 @@ namespace SilEncConverters40
             this.groupBoxRegexOptions.ResumeLayout(false);
             this.flowLayoutPanelOptions.ResumeLayout(false);
             this.flowLayoutPanelOptions.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewRegularExpressions)).EndInit();
             this.contextMenuRegexChars.ResumeLayout(false);
             this.ResumeLayout(false);
 
@@ -667,5 +740,11 @@ namespace SilEncConverters40
 		private ToolStripMenuItem toolStripMatchN2MtimesAsFewAsPossible;
 		private LinkLabel linkLabelOpenQuickReference;
 		private GroupBox groupBoxRegexOptions;
+		private Button buttonAddRegularExpression;
+		private DataGridView dataGridViewRegularExpressions;
+		private DataGridViewCheckBoxColumn ColumnEnabled;
+		private DataGridViewTextBoxColumn ColumnFindWhat;
+		private DataGridViewTextBoxColumn ColumnReplaceWith;
+		private DataGridViewTextBoxColumn ColumnOptions;
 	}
 }
