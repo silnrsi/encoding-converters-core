@@ -60,8 +60,11 @@ namespace ECFileConverter
                 {
                     DirectionForward = false;
                 }
-
-                if( arg == "n" )
+				else if (arg == "at")
+				{
+					m_bProcessFileAsText = true;
+				}
+				else if ( arg == "n" )
                 {
                     m_eParamState = ParamState.eParamConverterName;
                 }
@@ -150,9 +153,14 @@ namespace ECFileConverter
             get { return m_bDirectionForward; } 
             set { m_bDirectionForward = value; } 
         }
+		public bool ProcessAsText
+		{
+			get { return m_bProcessFileAsText; }
+			set { m_bProcessFileAsText = value; }
+		}
 
 
-        private const string sUsage = "Usage:\nECFileConverter (/n <ConverterName> /r(everse)) {/i|i8|i16} <InputFileName> /{o|o8|o16} <OutputFileName>\n\nwhere:\n  no ConverterName parameter means no conversion (except the file encoding)\n  ConverterName askMe displays the converter selection dialog\n  r means run the converter in reverse\n  i causes the the input file to be read as an Ansi encoded file (also for narrow, legacy-encoded, non-Ansi files)\n  i8 causes it to be read as a UTF8 encoded file\n  i16 causes it to be read as a UTF16 encoded file\n  (same details for the 'o' forms for encoding the output file)";
+		private const string sUsage = "Usage:\nECFileConverter (/at) (/n <ConverterName> /r(everse)) {/i|i8|i16} <InputFileName> /{o|o8|o16} <OutputFileName>\n\nwhere:\n  no ConverterName parameter means no conversion (except the file encoding)\n  ConverterName askMe displays the converter selection dialog\n  at means to process the entire file as a single string\n  r means run the converter in reverse\n  i causes the the input file to be read as an Ansi encoded file (also for narrow, legacy-encoded, non-Ansi files)\n  i8 causes it to be read as a UTF8 encoded file\n  i16 causes it to be read as a UTF16 encoded file\n  (same details for the 'o' forms for encoding the output file)";
         
         protected enum ParamState   
         {
@@ -168,7 +176,9 @@ namespace ECFileConverter
         protected System.Text.Encoding  m_encInputEncoding;
         protected System.Text.Encoding  m_encOutputEncoding;
         protected bool                  m_bDirectionForward;
+		protected bool					m_bProcessFileAsText;
     }
+
 	/// <summary>
 	/// CSharp program for converting a file using a given EncConverter.
 	/// </summary>
@@ -198,7 +208,7 @@ namespace ECFileConverter
                         cl.ConverterName,
                         cl.OutputFileName, cl.OutputEncoding,
                         cl.InputFileName, cl.InputEncoding,
-                        cl.DirectionForward);
+                        cl.DirectionForward, cl.ProcessAsText);
                 }
                 catch(NullReferenceException e) 
                 {
@@ -234,7 +244,8 @@ namespace ECFileConverter
             System.Text.Encoding    outEnc,
             string                  strInputFileName,
             System.Text.Encoding    inEnc,
-            bool                    bDirectionForward
+            bool                    bDirectionForward,
+			bool					bProcessFileAsText
             )
         {
 #if VERBOSE_DEBUGGING
@@ -289,31 +300,41 @@ namespace ECFileConverter
 #endif
             }
 
-            // open the input and output files using the given encoding formats
-            StreamReader srReadLine = new StreamReader(strInputFileName, inEnc, true);
-            srReadLine.BaseStream.Seek(0, SeekOrigin.Begin);
-            StreamWriter swWriteLine = new StreamWriter(strOutputFileName, false, outEnc);
+			// tell the converter to go the other way, if the user selected 'reverse'
+			if (!bDirectionForward && bIsConverter)
+				aEC.DirectionForward = false;
 
-            // tell the converter to go the other way, if the user selected 'reverse'
-            if( !bDirectionForward && bIsConverter )
-                aEC.DirectionForward = false;
+			if (bProcessFileAsText)
+			{
+				var contents = File.ReadAllText(strInputFileName);
+				var sOutput = aEC.Convert(contents);
+				File.WriteAllText(strOutputFileName, sOutput);
+			}
+			else
+			{
+				// open the input and output files using the given encoding formats
+				StreamReader srReadLine = new StreamReader(strInputFileName, inEnc, true);
+				srReadLine.BaseStream.Seek(0, SeekOrigin.Begin);
+				StreamWriter swWriteLine = new StreamWriter(strOutputFileName, false, outEnc);
 
-            // read the lines of the input file, (optionally convert,) and write them out.
-			string sOutput, sInput;
-            while (srReadLine.Peek() > -1) 
-            {
-                sInput = srReadLine.ReadLine();
+				// read the lines of the input file, (optionally convert,) and write them out.
+				string sOutput, sInput;
+				while (srReadLine.Peek() > -1)
+				{
+					sInput = srReadLine.ReadLine();
 
-                if( bIsConverter )
-                    sOutput = aEC.Convert(sInput);
-                else
-                    sOutput = sInput;
+					if (bIsConverter)
+						sOutput = aEC.Convert(sInput);
+					else
+						sOutput = sInput;
 
-                swWriteLine.WriteLine(sOutput);
-            }
+					swWriteLine.WriteLine(sOutput);
+				}
 
-            srReadLine.Close();
-            swWriteLine.Close();
+				srReadLine.Close();
+				swWriteLine.Close();
+			}
+
 #if VERBOSE_DEBUGGING
             Console.WriteLine("ECFileConv: DoFileConvert END");
 #endif
