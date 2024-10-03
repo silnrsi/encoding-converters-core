@@ -260,6 +260,11 @@ namespace TestEncCnvtrs
 		[TestCase("Hindi;English;bright-coyote-381812;us-central1;google;gemini-1.5-flash;Translate from Hindi into English.", @"यीशु ने कहा,
 परमे‍‍श्वर मेरा पिता है।", @"Jesus said, 
 God is my Father. ")]
+		[TestCase("Hindi;English;bright-coyote-381812;us-central1;google;gemini-1.5-pro;Translate from Hindi into English.", "यीशु ने कहा,", "Jesus said, ")]
+		// multiple lines
+		[TestCase("Hindi;English;bright-coyote-381812;us-central1;google;gemini-1.5-pro;Translate from Hindi into English.", @"यीशु ने कहा,
+परमे‍‍श्वर मेरा पिता है।", @"Jesus said, 
+God is my Father. ")]
 		public void TestVertexAiConverter(string converterSpec, string testInput, string testOutput)
         {
             Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", VertexAiCredentials);    // see C:\Users\pete_\source\repos\encoding-converters-core\src\EcTranslators\VertexAi\VertexAiExe\Program.cs
