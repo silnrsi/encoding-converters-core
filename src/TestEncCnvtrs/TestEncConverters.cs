@@ -424,8 +424,8 @@ namespace TestEncCnvtrs
 						EncConverters.strTypeSILadaptit, "UNICODE", "UNICODE",
 						ProcessTypeFlags.DontKnow);
 			var theEc = theEcs[cstrFriendlyName];
-			string m_hindiInput = "यह परीक्षा है";
-			string m_englishOutput = "%3%this%she%he% %2%examination%test% %2%PRES%is%";
+			string m_hindiInput = "यह, परीक्षा है?";
+			string m_englishOutput = "%3%this%she%he%, %2%examination%test% %2%PRES%is%?";
 
 			var strOutput = theEc.Convert(m_hindiInput);
 			Assert.AreEqual(strOutput, m_englishOutput);

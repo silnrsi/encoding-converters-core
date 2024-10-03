@@ -40,23 +40,23 @@ namespace SilEncConverters40
 
         public const string cstrAdaptItXmlNamespace = "http://www.sil.org/computing/schemas/AdaptIt KB.xsd";
         public const string cstrAdaptItProjectFilename = "AI-ProjectConfiguration.aic";
-        public const string cstrAdaptItPunctuationPairsNRSource = "PunctuationPairsSourceSet(stores space for an empty cell)	";
-        public const string cstrAdaptItPunctuationPairsNRTarget = "PunctuationPairsTargetSet(stores space for an empty cell)	";
-        public const string cstrAdaptItPunctuationPairsLegacy = "PunctuationPairs(stores space for an empty cell)	";
+        public const string cstrAdaptItPunctuationPairsNRSource = "PunctuationPairsSourceSet(stores space for an empty cell)\t";
+        public const string cstrAdaptItPunctuationPairsNRTarget = "PunctuationPairsTargetSet(stores space for an empty cell)\t";
+        public const string cstrAdaptItPunctuationPairsLegacy = "PunctuationPairs(stores space for an empty cell)\t";
         public const string CstrAdaptItPunct = "?.,;:\"'!()<>{}[]“”‘’…-";
 
         private const string CstrSourceFont = "SourceFont";
         private const string CstrTargetFont = "TargetFont";
         private const string CstrNavTextFont = "NavTextFont";
 
-        private const string CstrRtlSource = "SourceIsRTL";
-        private const string CstrRtlTarget = "TargetIsRTL";
-        private const string CstrRtlNavText = "NavTextIsRTL";
+        private const string CstrRtlSource = "SourceIsRTL\t";
+        private const string CstrRtlTarget = "TargetIsRTL\t";
+        private const string CstrRtlNavText = "NavTextIsRTL\t";
 
-        private const string CstrSourceLanguageName	= "SourceLanguageName";
-        private const string CstrTargetLanguageName = "TargetLanguageName";
+        private const string CstrSourceLanguageName	= "SourceLanguageName\t";
+        private const string CstrTargetLanguageName = "TargetLanguageName\t";
 
-        private const string CstrFaceName = "FaceName";
+        private const string CstrFaceName = "FaceName\t";
         private const string cstrDefaultFont = "Arial Unicode MS";
 
         public static char[] CaSplitChars = new [] { '\r', '\n', '\t', ' ' };
@@ -1250,7 +1250,7 @@ namespace SilEncConverters40
                 int nIndex = strProjectFileContents.IndexOf(strElementName, StringComparison.Ordinal);
                 if (nIndex != -1)
                 {
-                    nIndex += strElementName.Length + 1;
+                    nIndex += strElementName.Length;
                     int nLength = strProjectFileContents.IndexOf('\n', nIndex) - nIndex - 1;
                     return strProjectFileContents.Substring(nIndex, nLength);
                 }
