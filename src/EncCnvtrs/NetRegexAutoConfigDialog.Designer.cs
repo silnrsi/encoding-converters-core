@@ -389,6 +389,7 @@ namespace SilEncConverters40
             // 
             // dataGridViewRegularExpressions
             // 
+            this.dataGridViewRegularExpressions.AllowDrop = true;
             this.dataGridViewRegularExpressions.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.DisplayedCells;
             this.dataGridViewRegularExpressions.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridViewRegularExpressions.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
@@ -409,6 +410,9 @@ namespace SilEncConverters40
             this.dataGridViewRegularExpressions.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewRegularExpressions_CellEndEdit);
             this.dataGridViewRegularExpressions.CurrentCellDirtyStateChanged += new System.EventHandler(this.dataGridViewRegularExpressions_CurrentCellDirtyStateChanged);
             this.dataGridViewRegularExpressions.SelectionChanged += new System.EventHandler(this.dataGridViewRegularExpressions_SelectionChanged);
+            this.dataGridViewRegularExpressions.DragDrop += new System.Windows.Forms.DragEventHandler(this.dataGridViewRegularExpressions_DragDrop);
+            this.dataGridViewRegularExpressions.DragOver += new System.Windows.Forms.DragEventHandler(this.dataGridViewRegularExpressions_DragOver);
+            this.dataGridViewRegularExpressions.MouseDown += new System.Windows.Forms.MouseEventHandler(this.dataGridViewRegularExpressions_MouseDown);
             // 
             // ColumnEnabled
             // 

@@ -22,12 +22,12 @@ namespace SilEncConverters40
 {
     public partial class NetRegexAutoConfigDialog : SilEncConverters40.AutoConfigDialog
     {
-		public const int ColumnIndexEnabled = 0;
-		public const int ColumnIndexFindWhat = 1;
-		public const int ColumnIndexReplaceWith = 2;
-		public const int ColumnIndexRegexOptions = 3;
+        public const int ColumnIndexEnabled = 0;
+        public const int ColumnIndexFindWhat = 1;
+        public const int ColumnIndexReplaceWith = 2;
+        public const int ColumnIndexRegexOptions = 3;
 
-		public NetRegexAutoConfigDialog (
+        public NetRegexAutoConfigDialog (
             IEncConverters aECs,
             string strDisplayName,
             string strFriendlyName,
@@ -41,11 +41,11 @@ namespace SilEncConverters40
 #if VERBOSE_DEBUGGING
             Console.WriteLine("NetRegexAutoConfigDialog ctor BEGIN");
 #endif
-			InitializeComponent();
+            InitializeComponent();
 #if VERBOSE_DEBUGGING
             Console.WriteLine("Initialized NetRegexAutoConfigDialog component.");
 #endif
-			base.Initialize (
+            base.Initialize (
                 aECs,
                 NetRegexEncConverter.strHtmlFilename,
                 strDisplayName,
@@ -380,6 +380,54 @@ namespace SilEncConverters40
 		{
 			System.Diagnostics.Process.Start(Properties.Resources.NetRegexQuickReferenceLink);
 		}
-	}
+
+        private int rowIndexFromMouseDown;
+        private int rowIndexOfItemUnderMouseToDrop;
+
+        private void dataGridViewRegularExpressions_MouseDown(object sender, MouseEventArgs e)
+        {
+            // Get the index of the row to drag
+            rowIndexFromMouseDown = dataGridViewRegularExpressions.HitTest(e.X, e.Y).RowIndex;
+            if ((rowIndexFromMouseDown < 0) || (rowIndexFromMouseDown > dataGridViewRegularExpressions.Rows.Count - 2))
+                return;
+            System.Diagnostics.Debug.WriteLine($"Select row index: {rowIndexFromMouseDown}");
+
+            if (rowIndexFromMouseDown != -1)
+            {
+                dataGridViewRegularExpressions.DoDragDrop(dataGridViewRegularExpressions.Rows[rowIndexFromMouseDown], DragDropEffects.Move | DragDropEffects.Copy);
+            }
+        }
+
+        private void dataGridViewRegularExpressions_DragOver(object sender, DragEventArgs e)
+        {
+            // Provide visual feedback during the drag operation
+            Point clientPoint = dataGridViewRegularExpressions.PointToClient(new Point(e.X, e.Y));
+            rowIndexOfItemUnderMouseToDrop = dataGridViewRegularExpressions.HitTest(clientPoint.X, clientPoint.Y).RowIndex;
+            if ((rowIndexOfItemUnderMouseToDrop < 0) || (rowIndexOfItemUnderMouseToDrop > dataGridViewRegularExpressions.Rows.Count - 2))
+            {
+                e.Effect = DragDropEffects.None;
+                return;
+            }
+
+            var row = dataGridViewRegularExpressions.Rows[rowIndexOfItemUnderMouseToDrop];
+            e.Effect = row.IsNewRow ? DragDropEffects.None : DragDropEffects.Move;
+        }
+
+        private void dataGridViewRegularExpressions_DragDrop(object sender, DragEventArgs e)
+        {
+            // Get the row index where the row will be dropped
+            Point clientPoint = dataGridViewRegularExpressions.PointToClient(new Point(e.X, e.Y));
+            rowIndexOfItemUnderMouseToDrop = dataGridViewRegularExpressions.HitTest(clientPoint.X, clientPoint.Y).RowIndex;
+
+            if (rowIndexOfItemUnderMouseToDrop != -1 && rowIndexFromMouseDown != -1)
+            {
+                // Perform the row reordering
+                var rowToMove = dataGridViewRegularExpressions.Rows[rowIndexFromMouseDown];
+                dataGridViewRegularExpressions.Rows.RemoveAt(rowIndexFromMouseDown);
+                dataGridViewRegularExpressions.Rows.Insert(rowIndexOfItemUnderMouseToDrop, rowToMove);
+                IsModified = true;
+            }
+        }
+    }
 }
 

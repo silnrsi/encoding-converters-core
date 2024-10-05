@@ -3,20 +3,17 @@
 //
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using ECInterfaces;                     // for IEncConverter
-using SilEncConverters40.Properties;
 
 namespace SilEncConverters40
 {
-    /// <summary>
-    /// Managed Net Regex EncConverter
-    /// </summary>
+	/// <summary>
+	/// Managed Net Regex EncConverter
+	/// </summary>
 	public class NetRegexEncConverter : EncConverter
     {
         #region Const Definitions
@@ -167,23 +164,36 @@ namespace SilEncConverters40
 			TransliteratorInitialized = true;  // so we don't to do this with each call to Convert
 
 			Util.DebugWriteLine(this, "END");
-
-			static unsafe string SafeUnescape(string regexString)
-			{
-				try
-				{
-					// it'll throw an exception w/ something like \s+, but not \n
-					regexString = Regex.Unescape(regexString);
-				}
-				catch { }
-
-				return regexString;
-			}
 		}
 
-		#endregion Misc helpers
+		// this is a bit of a kludge, but I'm not sure what better way to do it is
+		//  Use the string in this setting variable to determine whether we want to
+		//	unescape the regexString or not. Generally, we do for \n, \r, or \t but not
+		//	for much else and I don't know if that's a complete list or not, so I'm
+		//	making it a setting so that a user could add to it in a pinch
+		// This regular expression is saying any of \
+		protected string _unescapeClues = $@"(?<!\\)\\[{Properties.Settings.Default.RegexNetLettersToUnescape}]";
 
-			#region Abstract Base Class Overrides
+		protected string SafeUnescape(string regexString)
+		{
+			try
+			{
+				// Look for escaped sequences (e.g. \n, \r) and unescape them,
+				// but only if they are not already escaped.
+				return Regex.Replace(regexString, _unescapeClues, match =>
+				{
+					// Convert the matched escape sequence into an actual unescaped string
+					return Regex.Unescape(match.Value);
+				});
+			}
+			catch { }
+
+			return regexString;
+		}
+
+#endregion Misc helpers
+
+		#region Abstract Base Class Overrides
 		protected override void PreConvert
             (
             EncodingForm        eInEncodingForm,
@@ -243,6 +253,6 @@ namespace SilEncConverters40
 			rnOutLen = nLen;
 			ECNormalizeData.StringToByteStar(strOutput, lpOutBuffer, rnOutLen, false);
 		}
-        #endregion Abstract Base Class Overrides
+		#endregion Abstract Base Class Overrides
     }
 }

@@ -73,7 +73,8 @@ lines", "multiple lines")]
 ")]
 		[TestCase("{a}->{b};0␞{b}->{A};0", "a", "A")]
 		[TestCase("{a}->{b};0␞{b}->{A};65535", "a", "b")]   // 65535 means the 2nd regex is disabled
-		[TestCase("{a}->{b};0␞{b}->{A};0x8000", "a", "b")]	// 0x8000 can also be used to mean the 2nd regex is disabled
+		[TestCase("{a}->{b};0␞{b}->{A};0x8000", "a", "b")]  // 0x8000 can also be used to mean the 2nd regex is disabled
+		[TestCase(@"{ *\\\\rq .*?\\\\rq\*}->{};0", @"\\q2 राज करेगा। \\rq भजन 2:8-9 \\rq*", @"\\q2 राज करेगा।")]	// make sure that while \r gets unescaped, \rq doesn't
 		public void TestRegexForUnicodeEscapeCharacters(string converterSpec, string strInput, string strOutput)
 		{
 			var rec = new NetRegexEncConverter();

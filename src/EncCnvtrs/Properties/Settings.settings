@@ -10,5 +10,8 @@
   &lt;string&gt;{[\u0027\u002a\u2018\u2019\u201c\u201d\u0303\u0304\u0310\u0314\u0325\u200c\u200d\uE03C\uFFFD]}-&amp;gt;{};&lt;/string&gt;
 &lt;/ArrayOfString&gt;</Value>
     </Setting>
+    <Setting Name="RegexNetLettersToUnescape" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">rnt</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
