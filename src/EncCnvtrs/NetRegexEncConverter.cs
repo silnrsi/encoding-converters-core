@@ -89,7 +89,7 @@ namespace SilEncConverters40
 		internal static bool ParseConverterIdentifier(string strConverterSpec,
 			out List<string> findWhats, out List<string> replaceWiths, out List<RegexOptions> regexOptions, out List<bool> disabled)
 		{
-			var aregexs = strConverterSpec.Split([SeparatorRegularExpressions], StringSplitOptions.RemoveEmptyEntries);
+			var aregexs = strConverterSpec.Split(new [] { SeparatorRegularExpressions }, StringSplitOptions.RemoveEmptyEntries);
 			regexOptions = new List<RegexOptions>(aregexs.Length);
 			findWhats = new List<string>(aregexs.Length);
 			replaceWiths = new List<string>(aregexs.Length);
