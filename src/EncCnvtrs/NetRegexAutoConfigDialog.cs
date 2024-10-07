@@ -384,21 +384,40 @@ namespace SilEncConverters40
         private int rowIndexFromMouseDown;
         private int rowIndexOfItemUnderMouseToDrop;
 
-        private void dataGridViewRegularExpressions_MouseDown(object sender, MouseEventArgs e)
+		private void dataGridViewRegularExpressions_MouseDown(object sender, MouseEventArgs e)
         {
-            // Get the index of the row to drag
-            rowIndexFromMouseDown = dataGridViewRegularExpressions.HitTest(e.X, e.Y).RowIndex;
-            if ((rowIndexFromMouseDown < 0) || (rowIndexFromMouseDown > dataGridViewRegularExpressions.Rows.Count - 2))
-                return;
-            System.Diagnostics.Debug.WriteLine($"Select row index: {rowIndexFromMouseDown}");
+			// Get the index of the row to drag
+			var hitTestInfo = dataGridViewRegularExpressions.HitTest(e.X, e.Y);
+			rowIndexFromMouseDown = hitTestInfo.RowIndex;
+			var columnIndex = hitTestInfo.ColumnIndex;
 
-            if (rowIndexFromMouseDown != -1)
-            {
-                dataGridViewRegularExpressions.DoDragDrop(dataGridViewRegularExpressions.Rows[rowIndexFromMouseDown], DragDropEffects.Move | DragDropEffects.Copy);
-            }
-        }
+			// make sure it's a valid row and column (don't process DragDrop for checkbox column
+			//	or it won't toggle the Enabled checkbox)
+			if ((rowIndexFromMouseDown < 0) || (rowIndexFromMouseDown > dataGridViewRegularExpressions.Rows.Count - 2) ||
+				(columnIndex < 0) || dataGridViewRegularExpressions.Columns[columnIndex] is DataGridViewCheckBoxColumn)
+			{
+				return;
+			}
 
-        private void dataGridViewRegularExpressions_DragOver(object sender, DragEventArgs e)
+			System.Diagnostics.Debug.WriteLine($"Select row index: {rowIndexFromMouseDown}");
+
+			if ((rowIndexFromMouseDown != -1) && (e.Button == MouseButtons.Left))
+			{
+				dataGridViewRegularExpressions.DoDragDrop(dataGridViewRegularExpressions.Rows[rowIndexFromMouseDown], DragDropEffects.Move | DragDropEffects.Copy);
+			}
+		}
+
+		private void dataGridViewRegularExpressions_CellContentClick(object sender, DataGridViewCellEventArgs e)
+		{
+			// Toggle the checkbox value
+			var cell = dataGridViewRegularExpressions[e.ColumnIndex, e.RowIndex];
+			bool newValue = !(bool)(cell.Value ?? false); // Default to false if null
+			cell.Value = newValue;
+
+			controlChangedModified(null, null);
+		}
+
+		private void dataGridViewRegularExpressions_DragOver(object sender, DragEventArgs e)
         {
             // Provide visual feedback during the drag operation
             Point clientPoint = dataGridViewRegularExpressions.PointToClient(new Point(e.X, e.Y));
@@ -428,6 +447,6 @@ namespace SilEncConverters40
                 IsModified = true;
             }
         }
-    }
+	}
 }
 

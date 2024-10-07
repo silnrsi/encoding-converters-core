@@ -407,6 +407,7 @@ namespace SilEncConverters40
             this.dataGridViewRegularExpressions.Size = new System.Drawing.Size(380, 160);
             this.dataGridViewRegularExpressions.TabIndex = 12;
             this.toolTip.SetToolTip(this.dataGridViewRegularExpressions, resources.GetString("dataGridViewRegularExpressions.ToolTip"));
+            this.dataGridViewRegularExpressions.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewRegularExpressions_CellContentClick);
             this.dataGridViewRegularExpressions.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewRegularExpressions_CellEndEdit);
             this.dataGridViewRegularExpressions.CurrentCellDirtyStateChanged += new System.EventHandler(this.dataGridViewRegularExpressions_CurrentCellDirtyStateChanged);
             this.dataGridViewRegularExpressions.SelectionChanged += new System.EventHandler(this.dataGridViewRegularExpressions_SelectionChanged);
