@@ -364,8 +364,17 @@ namespace SilEncConverters40
             if (!m_bInitialized || _isModifiedChangesDisabled)
                 return;
 
-            var strConverterSpec = comboBoxPreviousSearches.SelectedItem.ToString();
-            InitRegexControls(strConverterSpec);
+			try
+			{
+				_isModifiedChangesDisabled = true;	// something in the below is bothered if a change is made
+				var strConverterSpec = comboBoxPreviousSearches.SelectedItem.ToString();
+				InitRegexControls(strConverterSpec);
+			}
+			catch { }
+			finally
+			{
+				_isModifiedChangesDisabled = false;
+			}
         }
 
         private void buttonDeleteSavedExpression_Click(object sender, EventArgs e)

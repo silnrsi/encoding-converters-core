@@ -362,7 +362,7 @@ namespace BackTranslationHelper
             }
 
             var sourceLanguageFont = BackTranslationHelperDataSource.SourceLanguageFont;
-            return sourceLanguageFont ?? throw new ApplicationException("Your implementation of IBackTranslationHelperDataSource must return a non-null value for SourceLanguageFont");
+            return sourceLanguageFont ?? textBoxSourceData.Font;
         }
 
         private Font GetTargetLanguageFontForProject(string projectName)
@@ -378,7 +378,7 @@ namespace BackTranslationHelper
             }
 
             var targetLanguageFont = BackTranslationHelperDataSource.TargetLanguageFont;
-            return targetLanguageFont ?? throw new ApplicationException("Your implementation of IBackTranslationHelperDataSource must return a non-null value for TargetLanguageFont");
+            return targetLanguageFont ?? textBoxTargetTextExisting.Font;
         }
 
         private void InitializeTheTranslators()
