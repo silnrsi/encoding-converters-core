@@ -401,7 +401,8 @@ These are the true words of God.")]
         private const string AzureOpenAIConverterFriendlyName = "ChatGptTranslator";
 
         [Test]
-        [TestCase("Hindi;English;Translate from Hindi into English.", "यीशु ने यह भी कहा,", "Jesus also said,")]
+		[TestCase("Hindi;English;Translate from Hindi into English.", "जब भी उसको सांकलों और बेड़ियों से बाँधते थे, तो वह उन्‍हें तोड़कर टुकड़े-टुकड़े कर देता था। उसको कोई भी अपने नियंत्रण में नहीं कर सकता था।", "Omitted content due to a content filter flag.")]	 // something that violates Content Filtering rules
+		[TestCase("Hindi;English;Translate from Hindi into English.", "यीशु ने यह भी कहा,", "Jesus also said,")]
         [TestCase(";;UseSystemPrompt: Translate from Hindi into English.", "परमेश्वर भेदभाव नहीं करता।", "God does not discriminate.")]
         [TestCase("Hindi;English;with a \"free translation\" style aimed at high school students", @"यीशु ने यह भी कहा,
 परमे‍‍श्वर मेरा पिता है।", @"Jesus also said,

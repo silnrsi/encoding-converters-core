@@ -421,7 +421,17 @@
                           Source="..\..\output\x64\release\Azure.AI.OpenAI.dll"/>
                 </Component>
 
-                <Component Id="AzureOpenAiExe.exe" Guid="{D48AF09E-FA26-4F20-A3B9-A75201590B72}">
+                <Component Id="OpenAI.dll" Guid="{47EB52DC-3B20-4260-8A9A-186AA16FCCFD}">
+                    <File Id="OpenAI.dll" Name="OpenAI.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="OpenAI.dll" AssemblyApplication="OpenAI.dll"
+                          Source="..\..\output\x64\release\OpenAI.dll"/>
+                </Component>
+
+				<Component Id="System.IO.Pipelines.dll" Guid="{80BFED4F-9600-4A8B-85C0-F50953858A5C}">
+					<File Id="System.IO.Pipelines.dll" Name="System.IO.Pipelines.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="System.IO.Pipelines.dll" AssemblyApplication="System.IO.Pipelines.dll"
+                          Source="..\..\output\x64\release\System.IO.Pipelines.dll"/>
+				</Component>
+
+				<Component Id="AzureOpenAiExe.exe" Guid="{D48AF09E-FA26-4F20-A3B9-A75201590B72}">
                     <File Id="AzureOpenAiExe.exe" Name="AzureOpenAiExe.exe" KeyPath="yes" Assembly=".net" AssemblyManifest="AzureOpenAiExe.exe" AssemblyApplication="AzureOpenAiExe.exe"
                           Source="..\..\output\x64\release\AzureOpenAiExe.exe"/>
                 </Component>
@@ -465,11 +475,12 @@
                           Source="..\..\output\x64\release\Google.Cloud.Translation.V2.dll"/>
                 </Component>
 
+				<!-- This has to be redistributed, bkz Google.Cloud.Translation.V2.dll uses it -->
 				<Component Id="Google.Apis.Translate.v2.dll" Guid="{F14F1743-D102-4EBD-9541-076F27A24273}">
 					<File Id="Google.Apis.Translate.v2.dll" Name="Google.Apis.Translate.v2.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="Google.Apis.Translate.v2.dll" AssemblyApplication="Google.Apis.Translate.v2.dll"
                           Source="..\..\output\x64\release\Google.Apis.Translate.v2.dll"/>
 				</Component>
-
+				
 				<Component Id="Google.LongRunning.dll" Guid="{49279B06-D591-4739-95BE-51298E3AD05F}">
                     <File Id="Google.LongRunning.dll" Name="Google.LongRunning.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="Google.LongRunning.dll" AssemblyApplication="Google.LongRunning.dll"
                           Source="..\..\output\x64\release\Google.LongRunning.dll"/>

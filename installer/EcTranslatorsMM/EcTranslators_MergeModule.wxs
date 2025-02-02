@@ -388,7 +388,17 @@
                           Source="..\..\output\Win32\release\Azure.AI.OpenAI.dll"/>
                 </Component>
 
-                <Component Id="AzureOpenAiExe.exe" Guid="{53510C8B-7FA8-4D55-8959-94CC72A44121}">
+				<Component Id="OpenAI.dll" Guid="{C8EAA549-81DA-48EE-B974-A46EDF84CC3A}">
+					<File Id="OpenAI.dll" Name="OpenAI.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="OpenAI.dll" AssemblyApplication="OpenAI.dll"
+                          Source="..\..\output\Win32\release\OpenAI.dll"/>
+				</Component>
+
+				<Component Id="System.IO.Pipelines.dll" Guid="{CC2AF0B3-353A-4054-9F41-B65F047218DC}">
+					<File Id="System.IO.Pipelines.dll" Name="System.IO.Pipelines.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="System.IO.Pipelines.dll" AssemblyApplication="System.IO.Pipelines.dll"
+                          Source="..\..\output\Win32\release\System.IO.Pipelines.dll"/>
+				</Component>
+
+				<Component Id="AzureOpenAiExe.exe" Guid="{53510C8B-7FA8-4D55-8959-94CC72A44121}">
                     <File Id="AzureOpenAiExe.exe" Name="AzureOpenAiExe.exe" KeyPath="yes" Assembly=".net" AssemblyManifest="AzureOpenAiExe.exe" AssemblyApplication="AzureOpenAiExe.exe"
                           Source="..\..\output\Win32\release\AzureOpenAiExe.exe"/>
                 </Component>
@@ -431,8 +441,9 @@
                     <File Id="Google.Cloud.Translation.V2.dll" Name="Google.Cloud.Translation.V2.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="Google.Cloud.Translation.V2.dll" AssemblyApplication="Google.Cloud.Translation.V2.dll"
                           Source="..\..\output\Win32\release\Google.Cloud.Translation.V2.dll"/>
                 </Component>
-				
-                <Component Id="Google.Apis.Translate.v2.dll" Guid="{F14F1743-D102-4EBD-9541-076F27A24273}">
+
+				<!-- This has to be redistributed, bkz Google.Cloud.Translation.V2.dll uses it -->
+				<Component Id="Google.Apis.Translate.v2.dll" Guid="{F14F1743-D102-4EBD-9541-076F27A24273}">
                     <File Id="Google.Apis.Translate.v2.dll" Name="Google.Apis.Translate.v2.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="Google.Apis.Translate.v2.dll" AssemblyApplication="Google.Apis.Translate.v2.dll"
                           Source="..\..\output\Win32\release\Google.Apis.Translate.v2.dll"/>
                 </Component>
