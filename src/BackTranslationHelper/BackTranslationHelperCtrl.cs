@@ -1226,7 +1226,7 @@ namespace BackTranslationHelper
             if (!_model.DisplayExistingTargetTranslation && (TheTranslators.Count == 1))
                 _model.TargetData = String.Empty;
 
-            var targetsToClear = _model.TargetsPossible;
+            var targetsToClear = _model.TargetsPossible.ToList();
             if (nllbOnly)
             {
                 var nllbTranslatorNames = TheTranslators.Where(t => t.Configurator?.ConfiguratorDisplayName == NllbEncConverterDisplayName).Select(t => t.Name).ToHashSet();
@@ -1234,7 +1234,11 @@ namespace BackTranslationHelper
                 .ToList();
             }
 
-            _model.TargetsPossible.RemoveAll(tp => targetsToClear.Contains(tp));
+			// we also want to remove any that were from PtxProjects (since those won't have changed)
+			var ptxProjectTranslatorNames = TheTranslators.Where(t => t.Configurator?.ConfiguratorDisplayName == PtxProjectConfiguratorDisplayName).Select(t => t.Name).ToHashSet();
+			targetsToClear.RemoveAll(tp => ptxProjectTranslatorNames.Contains(tp.TranslatorName));
+
+			_model.TargetsPossible.RemoveAll(tp => targetsToClear.Contains(tp));
 
             // also remove any existing translations for the current sourceData, so it knows it needs to retranslate
             var sourceToTranslate = _model.SourceToTranslate;
