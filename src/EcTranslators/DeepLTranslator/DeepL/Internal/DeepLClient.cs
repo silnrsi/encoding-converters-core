@@ -72,8 +72,8 @@ namespace DeepL.Internal {
     }
     // 'System.Runtime.CompilerServices.Unsafe, Version=4.0.4.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
     private Dictionary<string, AssemblyRedirect> _assemblyRedirects = new Dictionary<string, AssemblyRedirect> {
-      { "System.Memory", new AssemblyRedirect(new Version(4, 0, 1, 2), "cc7b13ffcd2ddd51") },
-      { "System.Runtime.CompilerServices.Unsafe", new AssemblyRedirect(new Version(6, 0, 0, 0), "b03f5f7f11d50a3a") },
+      { "System.Memory", new AssemblyRedirect(new Version(4, 0, 2, 0), "cc7b13ffcd2ddd51") },
+      { "System.Runtime.CompilerServices.Unsafe", new AssemblyRedirect(new Version(6, 0, 1, 0), "b03f5f7f11d50a3a") },
     };
 
     public class AssemblyRedirect {
