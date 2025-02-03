@@ -171,13 +171,17 @@ namespace BackTranslationHelper
             ExpandOrCollapse(displayExistingTargetTranslation && showCurrentTargetText, nRowStyleOffset++, percentageHeight, 
                              textBoxTargetTextExisting, targetLanguageFont, targetLanguageRightToLeft);
 
+			// settings for the editable box:
             textBoxTargetBackTranslation.Font = targetLanguageFont;
             textBoxTargetBackTranslation.RightToLeft = targetLanguageRightToLeft;
             textBoxTargetBackTranslation.ReadOnly = !targetIsEditable;
+			var rowStyle = tableLayoutPanel.RowStyles[tableLayoutPanel.RowCount - 2];   // the panel row for the editable box
+			rowStyle.SizeType = SizeType.Percent;
+			rowStyle.Height = percentageHeight;
 
-            // we're either showing the target translated suggestion in a textbox (if there's only 1 converter)
-            //  or in readonly textboxes (so they can have scroll bars) above it to choose from (if there are more than one converter)
-            var labelsPossibleTargetTranslations = tableLayoutPanel.Controls.OfType<Label>().Where(l => l.Name.Contains("labelForPossibleTargetTranslation")).ToList();
+			// we're either showing the target translated suggestion in a textbox (if there's only 1 converter)
+			//  or in readonly textboxes (so they can have scroll bars) above it to choose from (if there are more than one converter)
+			var labelsPossibleTargetTranslations = tableLayoutPanel.Controls.OfType<Label>().Where(l => l.Name.Contains("labelForPossibleTargetTranslation")).ToList();
             var textBoxesPossibleTargetTranslations = tableLayoutPanel.Controls.OfType<TextBox>().Where(l => l.Name.Contains("textBoxPossibleTargetTranslation")).ToList();
             var buttonsFillTargetOption = tableLayoutPanel.Controls.OfType<Button>().Where(b => b.Name.Contains("buttonFillTargetTextOption")).ToList();
             if (!labelsPossibleTargetTranslations.Any() || !textBoxesPossibleTargetTranslations.Any() || !buttonsFillTargetOption.Any())
@@ -194,7 +198,7 @@ namespace BackTranslationHelper
                 // hide them all
                 for (; i < MaxPossibleTargetTranslations; i++)
                 {
-                    var rowStyle = tableLayoutPanel.RowStyles[nRowStyleOffset + i];
+                    rowStyle = tableLayoutPanel.RowStyles[nRowStyleOffset + i];
                     rowStyle.SizeType = SizeType.Absolute;
                     rowStyle.Height = 0;
                 }
@@ -222,7 +226,7 @@ namespace BackTranslationHelper
                     button.Text = $" &{mnemonicChar++}";
                     textBox.Font = targetLanguageFont;
                     textBox.RightToLeft = targetLanguageRightToLeft;
-                    var rowStyle = tableLayoutPanel.RowStyles[nRowStyleOffset + i];
+                    rowStyle = tableLayoutPanel.RowStyles[nRowStyleOffset + i];
                     rowStyle.SizeType = SizeType.Percent;   // gives it real estate
                     rowStyle.Height = percentageHeight;
                     toolTip.SetToolTip(textBox, $"This is the translation from the {theTranslator.Name} Translator");
@@ -230,7 +234,7 @@ namespace BackTranslationHelper
 
                 for (; i < MaxPossibleTargetTranslations; i++)
                 {
-                    var rowStyle = tableLayoutPanel.RowStyles[nRowStyleOffset + i];
+                    rowStyle = tableLayoutPanel.RowStyles[nRowStyleOffset + i];
                     rowStyle.SizeType = SizeType.Absolute;
                     rowStyle.Height = 0;
                 }
