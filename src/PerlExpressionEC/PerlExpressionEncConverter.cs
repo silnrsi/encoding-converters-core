@@ -166,14 +166,12 @@ namespace SilEncConverters40
                     strExpression.Contains("print '"))
                 {
                     throw new Exception (
-                        "The Perl expression must not print output, as this will " +
-                        "interfere with the resulting value.");
+                        "The Perl expression must not use the 'print' statement for output, as this will interfere with writing the result to $strOut.");
                 }
                 if (strExpression.Contains("STDIN"))
                 {
                     throw new Exception (
-                        "The Perl expression must not read from STDIN, as this will " +
-                        "interfere with the input string.");
+                        "The Perl expression must not read from STDIN, as this will interfere with reading the input string.");
                 }
             }
 
@@ -196,9 +194,9 @@ namespace SilEncConverters40
                 }
                 tw.WriteLine(strExpression);
                 if (useInOut)
-                    tw.WriteLine("print $strInOut;");
+                    tw.WriteLine("; print $strInOut;");
                 else
-                    tw.WriteLine("print $strOut;");
+                    tw.WriteLine("; print $strOut;");
                 tw.Close();
             }
             catch (Exception ex)

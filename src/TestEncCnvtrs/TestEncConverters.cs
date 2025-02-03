@@ -742,10 +742,16 @@ namespace TestEncCnvtrs
 		}
 
 		[Test]
-		public void TestPerlEncConverter()
+		[TestCase("$strOut = reverse($strIn);")]
+		[TestCase("$strOut = reverse($strIn)")]     // Wes suggested it shouldn't require a ';' at the end
+		[TestCase("{ $strOut = reverse($strIn);}")]
+		[TestCase("{ $strOut = reverse($strIn)}")]
+		[TestCase("{ $strOut = reverse($strIn);};")]
+		[TestCase("{ $strOut = reverse($strIn)};")]
+		public void TestPerlEncConverter(string perlExpression)
 		{
 			int countOrig = m_encConverters.Count;
-			m_encConverters.Add("UnitTesting-ReverseString", "$strOut = reverse($strIn);",
+			m_encConverters.Add("UnitTesting-ReverseString", perlExpression,
 				ConvType.Unicode_to_from_Unicode,
 				"UNICODE", "UNICODE", ProcessTypeFlags.PerlExpression);
 			int countNew = m_encConverters.Count;

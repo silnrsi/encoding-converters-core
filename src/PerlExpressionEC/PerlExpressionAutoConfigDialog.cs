@@ -257,7 +257,15 @@ namespace SilEncConverters40
         protected override string DefaultFriendlyName
         {
             // don't give it a default (bkz it won't be a valid filename)
-            get { return ""; }
+            get
+			{
+				var i = 1;
+				string name;
+				while (m_aECs[(name = $"PerlExpression-{i++}")] != null)
+					;
+
+				return name;
+			}
         }
 
         private void textBoxExpression_TextChanged(object sender, EventArgs e)
