@@ -845,6 +845,13 @@ namespace BackTranslationHelper
 
         private void AddEncConverterToolStripMenuItem_Click(object sender, EventArgs e)
         {
+			if (TheTranslators.Count >= MaxPossibleTargetTranslations)
+			{
+				MessageBox.Show($"There is a limit of '{MaxPossibleTargetTranslations}' translators. You can remove one of the existing ones to add this one by using the '{settingsToolStripMenuItem.Text.Replace("&",null)}', '{removeEncConverterToolStripMenuItem.Text.Replace("&", null)}' command.",
+								GetProjectName, MessageBoxButtons.OKCancel);
+				return;
+			}
+
             var newTranslator = QueryTranslator();
             if (newTranslator == null)
                 return;
