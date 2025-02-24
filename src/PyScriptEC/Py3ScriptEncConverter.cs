@@ -277,9 +277,9 @@ namespace SilEncConverters40
                 using (Py.GIL())
                 {
                     string strOutput = moduleImported?.Convert(strInput);
-                    StringToProperByteStar(strOutput, lpOutBuffer, ref rnOutLen);
-                    Util.DebugWriteLine(this, "Result len " + rnOutLen.ToString());
-                    Util.DebugWriteLine(this, "END");
+					StringToProperByteStar(strOutput, lpOutBuffer, ref rnOutLen);
+					Util.DebugWriteLine(this, "Result len " + rnOutLen.ToString());
+					Util.DebugWriteLine(this, "END");
                 }
             }
 
@@ -294,14 +294,21 @@ namespace SilEncConverters40
             get { return typeof(Py3ScriptEncConverterConfig).AssemblyQualifiedName; }
         }
 
-        internal static unsafe void StringToProperByteStar(string strOutput, byte* lpOutBuffer, ref int rnOutLen)
-        {
-            int nLen = strOutput.Length * 2;
-            if (nLen > (int)rnOutLen)
-                EncConverters.ThrowError(ErrStatus.OutputBufferFull);
-            rnOutLen = nLen;
-            ECNormalizeData.StringToByteStar(strOutput, lpOutBuffer, rnOutLen, false);
-        }
+		internal static unsafe void StringToProperByteStar(string strOutput, byte* lpOutBuffer, ref int rnOutLen)
+		{
+			if (String.IsNullOrEmpty(strOutput))
+			{
+				rnOutLen = 0;
+			}
+			else
+			{
+				int nLen = strOutput.Length * 2;
+				if (nLen > (int)rnOutLen)
+					EncConverters.ThrowError(ErrStatus.OutputBufferFull);
+				rnOutLen = nLen;
+				ECNormalizeData.StringToByteStar(strOutput, lpOutBuffer, rnOutLen, false);
+			}
+		}
 
         internal static string LogExceptionMessage(string className, Exception ex)
         {
