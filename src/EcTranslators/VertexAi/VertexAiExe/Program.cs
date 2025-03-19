@@ -180,10 +180,22 @@ namespace SilEncConverters40.EcTranslators.VertexAi.VertexAiExe
 				var responseGemini = await client.GenerateContentAsync(generateContentRequest);
 
 				var strOutput = String.Empty;
-				if ((responseGemini.Candidates[0].Content == null) && (responseGemini.Candidates[0].FinishReason == Candidate.Types.FinishReason.Safety))
+				if (!responseGemini.Candidates.Any())
+				{
+					// GEN 29:23 gave us: "promptFeedback": { "blockReason": "PROHIBITED_CONTENT" },
+					var error = (responseGemini.PromptFeedback != null)
+									? responseGemini.PromptFeedback.BlockReason.ToString()
+									: responseGemini.ToString();
+					strOutput = HarvestResult(strInput, error);
+				}
+				else if ((responseGemini.Candidates[0].Content == null) && (responseGemini.Candidates[0].FinishReason == Candidate.Types.FinishReason.Safety))
 				{
 					// must have run afoul of the 'SAFETY' issues
 					strOutput = HarvestResult(strInput, responseGemini.Candidates[0].SafetyRatings);
+				}
+				else if (responseGemini.Candidates[0].FinishReason == Candidate.Types.FinishReason.Recitation)
+				{
+					strOutput = HarvestResult(strInput, responseGemini.Candidates[0]);
 				}
 				else
 				{
@@ -265,7 +277,7 @@ namespace SilEncConverters40.EcTranslators.VertexAi.VertexAiExe
 #if LogResults
 				File.AppendAllText(LogFilePath, json + Environment.NewLine);
 #endif
-				var response = client.Predict(endpointName, new List<Value> { Value.Parser.ParseJson(json) }, parameters);
+				var response = await client.PredictAsync(endpointName, new List<Value> { Value.Parser.ParseJson(json) }, parameters);
 
 				var fields = response.Predictions.First().StructValue.Fields;
 
@@ -290,6 +302,18 @@ namespace SilEncConverters40.EcTranslators.VertexAi.VertexAiExe
 			}
 
 			return true;
+		}
+
+		private static string HarvestResult(string strInput, Candidate candidate)
+		{
+			var responseContent = $"<VertexAI didn't translate the sentence because it thinks it might be copywrited material. Consider changing the name of the Source Language to add \"original, user-created\" to the language name to see if that helps. Gemini response: {candidate.ToString()}>";
+			return CleanString(strInput, responseContent);
+		}
+
+		private static string HarvestResult(string strInput, string blockReason)
+		{
+			var responseContent = $"<VertexAI wouldn't translate the sentence because it sees it as: {blockReason}>";
+			return CleanString(strInput, responseContent);
 		}
 
 		private static string HarvestResult(string strInput, RepeatedField<SafetyRating> safetyRatings)
