@@ -284,6 +284,18 @@ namespace SilEncConverters40.EcTranslators.AzureOpenAI
             }
         }
 
-        #endregion Abstract Base Class Overrides
-    }
+		protected override string InternalConvert(EncodingForm eInEncodingForm, string sInput, EncodingForm eOutEncodingForm, NormalizeFlags eNormalizeOutput, bool bForward)
+		{
+			var strOutput = base.InternalConvert(eInEncodingForm, sInput, eOutEncodingForm, eNormalizeOutput, bForward);
+
+			// something in the latest version is inserting something unintended here...
+			const string BogusHeader = "Allowed header names:\r\n";
+			if (!string.IsNullOrEmpty(strOutput) && strOutput.StartsWith(BogusHeader))
+				strOutput = strOutput.Substring(BogusHeader.Length);
+
+			return strOutput;
+		}
+
+		#endregion Abstract Base Class Overrides
+	}
 }

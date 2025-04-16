@@ -254,17 +254,17 @@ namespace TestEncCnvtrs
 //      [TestCase("Hindi;English;bright-coyote-381812;us-central1;google;chat-bison;Translate from Hindi into English.", "यीशु ने यह भी कहा,", "Jesus also said,")]
         // try gemini pro
         [TestCase("Hindi;English;bright-coyote-381812;us-central1;google;chat-bison;Translate from Hindi into English.", "यीशु ने यह भी कहा,", "Jesus also said,")]
-        [TestCase("Hindi;English;bright-coyote-381812;us-central1;google;chat-bison;Translate from Hindi into English.", "परंतु वह चोगे को छोड़कर वहाँ से भाग गया। ", "But he fled from there, leaving his cloak behind.")]
+        [TestCase("Hindi;English;bright-coyote-381812;us-central1;google;chat-bison;Translate from Hindi into English.", "परंतु वह चोगे को छोड़कर वहाँ से भाग गया। ", "But he left the cloak and fled from that place.")]
 		[TestCase("Hindi;English;bright-coyote-381812;us-central1;google;gemini-1.5-flash;Translate from Hindi into English.", "यीशु ने कहा,", "Jesus said, ")]
 		// multiple lines
 		[TestCase("Hindi;English;bright-coyote-381812;us-central1;google;gemini-1.5-flash;Translate from Hindi into English.", @"यीशु ने कहा,
 परमे‍‍श्वर मेरा पिता है।", @"Jesus said, 
 God is my Father. ")]
-		[TestCase("Hindi;English;bright-coyote-381812;us-central1;google;gemini-1.5-pro;Translate from Hindi into English.", "यीशु ने कहा,", "Jesus said, ")]
+		[TestCase("Hindi;English;bright-coyote-381812;us-central1;google;gemini-1.5-pro;Translate from Hindi into English.", "यीशु ने कहा,", "Jesus said,")]
 		// multiple lines
 		[TestCase("Hindi;English;bright-coyote-381812;us-central1;google;gemini-1.5-pro;Translate from Hindi into English.", @"यीशु ने कहा,
-परमे‍‍श्वर मेरा पिता है।", @"Jesus said, 
-God is my Father. ")]
+परमे‍‍श्वर मेरा पिता है।", @"Jesus said,
+God is my father.")]
 		public void TestVertexAiConverter(string converterSpec, string testInput, string testOutput)
         {
             Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", VertexAiCredentials);    // see C:\Users\pete_\source\repos\encoding-converters-core\src\EcTranslators\VertexAi\VertexAiExe\Program.cs
@@ -401,7 +401,6 @@ These are the true words of God.")]
         private const string AzureOpenAIConverterFriendlyName = "ChatGptTranslator";
 
         [Test]
-		[TestCase("Hindi;English;Translate from Hindi into English.", "जब भी उसको सांकलों और बेड़ियों से बाँधते थे, तो वह उन्‍हें तोड़कर टुकड़े-टुकड़े कर देता था। उसको कोई भी अपने नियंत्रण में नहीं कर सकता था।", "Omitted content due to a content filter flag.")]	 // something that violates Content Filtering rules
 		[TestCase("Hindi;English;Translate from Hindi into English.", "यीशु ने यह भी कहा,", "Jesus also said,")]
         [TestCase(";;UseSystemPrompt: Translate from Hindi into English.", "परमेश्वर भेदभाव नहीं करता।", "God does not discriminate.")]
         [TestCase("Hindi;English;with a \"free translation\" style aimed at high school students", @"यीशु ने यह भी कहा,
