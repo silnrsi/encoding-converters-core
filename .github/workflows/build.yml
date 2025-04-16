@@ -99,7 +99,7 @@ jobs:
     #  run: output/Win32/${{matrix.build_configuration}}/RunTests.exe
 
   build-linux:
-    runs-on: [ubuntu-20.04]
+    runs-on: [ubuntu-latest]
     strategy:
        matrix:
          build_configuration: ["Debug", "Release"]
