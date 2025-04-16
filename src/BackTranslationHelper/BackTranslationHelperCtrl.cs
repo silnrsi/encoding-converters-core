@@ -1039,29 +1039,39 @@ namespace BackTranslationHelper
 
         private void ButtonClose_Click(object sender, EventArgs e)
         {
-            BackTranslationHelperDataSource?.ButtonPressed(ButtonPressed.Close);
+			if (!CheckForLoseModified())
+				return;
+
+			BackTranslationHelperDataSource?.ButtonPressed(ButtonPressed.Close);
             BackTranslationHelperDataSource?.Cancel();
         }
 
         private void ButtonSkip_Click(object sender, EventArgs e)
-        {
-            if (IsModified)
-            {
-                var res = MessageBox.Show($"You have unsaved changes in the 'Target Translation' box. Click 'Yes' to lose them and continue (or click 'No' and then the 'Save Changes' or 'Next' buttons instead to keep them)",
-                                          GetProjectName,
-                                          MessageBoxButtons.YesNo);
-                if (res != DialogResult.Yes)
-                {
-                    return;
-                }
-            }
+		{
+			if (!CheckForLoseModified())
+				return;
 
-            IsModified = false; // so it will lose the changes and move on
-            BackTranslationHelperDataSource?.ButtonPressed(ButtonPressed.Skip);
-            BackTranslationHelperDataSource?.MoveToNext();
-        }
+			IsModified = false; // so it will lose the changes and move on
+			BackTranslationHelperDataSource?.ButtonPressed(ButtonPressed.Skip);
+			BackTranslationHelperDataSource?.MoveToNext();
+		}
 
-        private void SourceTextToolStripMenuItem_Click(object sender, EventArgs e)
+		private bool CheckForLoseModified()
+		{
+			if (IsModified)
+			{
+				var res = MessageBox.Show($"You have unsaved changes in the 'Target Translation' box. Click 'Yes' to lose them and continue (or click 'No' and then the 'Save Changes' or 'Next' buttons instead to keep them)",
+										  GetProjectName,
+										  MessageBoxButtons.YesNo);
+				if (res != DialogResult.Yes)
+				{
+					return false;
+				}
+			}
+			return true;
+		}
+
+		private void SourceTextToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (Properties.Settings.Default.MapProjectNameToSourceFontOverride == null)
                 Properties.Settings.Default.MapProjectNameToSourceFontOverride = new StringCollection();
