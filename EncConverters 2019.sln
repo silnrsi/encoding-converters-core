@@ -11,6 +11,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EncCnvtrs 2010", "src\EncCnvtrs\EncCnvtrs 2010.csproj", "{3E4B908A-4F96-43C5-981B-1AA4B73CCC26}"
 	ProjectSection(ProjectDependencies) = postProject
 		{2935E02F-43ED-4670-9A00-A91B0AD3D66C} = {2935E02F-43ED-4670-9A00-A91B0AD3D66C}
+		{823FD7A4-C5F9-4600-A9B8-49EF274BF5B8} = {823FD7A4-C5F9-4600-A9B8-49EF274BF5B8}
+		{E4DE895C-B714-4FA7-B9DE-20EB2E4D78FD} = {E4DE895C-B714-4FA7-B9DE-20EB2E4D78FD}
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ECFileConverter 2010", "src\ECFileConverter\ECFileConverter 2010.csproj", "{1E45DBF2-3629-4413-AC1F-61E6AA33B9B6}"
@@ -25,6 +27,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AIGuesserEC 2010", "src\AIG
 		{2935E02F-43ED-4670-9A00-A91B0AD3D66C} = {2935E02F-43ED-4670-9A00-A91B0AD3D66C}
 		{2E70A627-605F-4625-8637-A7109DB8B35C} = {2E70A627-605F-4625-8637-A7109DB8B35C}
 		{3E4B908A-4F96-43C5-981B-1AA4B73CCC26} = {3E4B908A-4F96-43C5-981B-1AA4B73CCC26}
+		{7F906C15-8DCD-466E-9AF3-2EF50E7FC046} = {7F906C15-8DCD-466E-9AF3-2EF50E7FC046}
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DriveAiEncConverter 2010", "src\DriveAiEncConverter\DriveAiEncConverter 2010.csproj", "{088E2974-9588-4EDA-AF7F-869A10DF402A}"
@@ -48,10 +51,19 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ECDriver", "src\ECDriver\wi
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IcuConvEC", "src\IcuEC\IcuConvCpp\IcuConvEC 2010.vcxproj", "{B6F84043-658E-4732-AFCA-BBE07FF465CB}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3E4B908A-4F96-43C5-981B-1AA4B73CCC26} = {3E4B908A-4F96-43C5-981B-1AA4B73CCC26}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IcuRegexEC", "src\IcuEC\IcuRegexCpp\IcuRegexEC 2010.vcxproj", "{F77C7224-DF82-4ADF-A761-773D21B58EF4}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3E4B908A-4F96-43C5-981B-1AA4B73CCC26} = {3E4B908A-4F96-43C5-981B-1AA4B73CCC26}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IcuTranslitEC", "src\IcuEC\IcuTransitCpp\IcuTranslitEC 2010.vcxproj", "{1D0DA000-6192-4B57-A377-7A0A5AB1A121}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3E4B908A-4F96-43C5-981B-1AA4B73CCC26} = {3E4B908A-4F96-43C5-981B-1AA4B73CCC26}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IcuEC 2010", "src\IcuEC\IcuEC 2010.csproj", "{D1BAE593-A552-4F1A-8B08-5A1C27875C2F}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -61,6 +73,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IcuEC 2010", "src\IcuEC\Icu
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PyScriptEncConverter", "src\PyScriptEC\PyScriptCpp\PyScriptEncConverter 2010.vcxproj", "{C5808AC0-A52F-4D77-9903-AE6709712B62}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3E4B908A-4F96-43C5-981B-1AA4B73CCC26} = {3E4B908A-4F96-43C5-981B-1AA4B73CCC26}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PyScriptEC 2010", "src\PyScriptEC\PyScriptEC 2010.csproj", "{0DFDDA0B-9EBF-4238-8A2B-D4C2B4F745D7}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -153,9 +168,10 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{AE15D9B7-3CAA-44E7-8CB8-8943DF1AA069}"
 	ProjectSection(SolutionItems) = preProject
 		.github\workflows\build.yml = .github\workflows\build.yml
+		DetermineBindingRedirectVersion.ps1 = DetermineBindingRedirectVersion.ps1
 		build\Encoding-Converters-Core.props = build\Encoding-Converters-Core.props
-		new redirects for 0.8.6.txt = new redirects for 0.8.6.txt
 		Package.Debug.nuspec = Package.Debug.nuspec
+		latest redirects.txt = latest redirects.txt
 		Package.Release.nuspec = Package.Release.nuspec
 	EndProjectSection
 EndProject
@@ -167,10 +183,25 @@ Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "AIGuesser64bitMM", "install
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ICU4NET", "src\icu4net\ICU4NET\ICU4NET.vcxproj", "{2FADFE38-0429-489F-B910-8A5EC9AB5717}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3E4B908A-4F96-43C5-981B-1AA4B73CCC26} = {3E4B908A-4F96-43C5-981B-1AA4B73CCC26}
+	EndProjectSection
 EndProject
 Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "ICU_40", "installer\ICU_40\ICU_40.wixproj", "{F590396D-0C09-44E1-A0AA-E093924BF679}"
+	ProjectSection(ProjectDependencies) = postProject
+		{1D0DA000-6192-4B57-A377-7A0A5AB1A121} = {1D0DA000-6192-4B57-A377-7A0A5AB1A121}
+		{B6F84043-658E-4732-AFCA-BBE07FF465CB} = {B6F84043-658E-4732-AFCA-BBE07FF465CB}
+		{D1BAE593-A552-4F1A-8B08-5A1C27875C2F} = {D1BAE593-A552-4F1A-8B08-5A1C27875C2F}
+		{F77C7224-DF82-4ADF-A761-773D21B58EF4} = {F77C7224-DF82-4ADF-A761-773D21B58EF4}
+	EndProjectSection
 EndProject
 Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "ICU_40_64bit", "installer\ICU_40_64bit\ICU_40_64bit.wixproj", "{4684B87B-462C-4C30-909F-A0D792245207}"
+	ProjectSection(ProjectDependencies) = postProject
+		{1D0DA000-6192-4B57-A377-7A0A5AB1A121} = {1D0DA000-6192-4B57-A377-7A0A5AB1A121}
+		{B6F84043-658E-4732-AFCA-BBE07FF465CB} = {B6F84043-658E-4732-AFCA-BBE07FF465CB}
+		{D1BAE593-A552-4F1A-8B08-5A1C27875C2F} = {D1BAE593-A552-4F1A-8B08-5A1C27875C2F}
+		{F77C7224-DF82-4ADF-A761-773D21B58EF4} = {F77C7224-DF82-4ADF-A761-773D21B58EF4}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RunTests 2010", "src\RunTests\RunTests 2010.csproj", "{05A68C57-DC5D-4B49-AB0F-0AEC64A49716}"
 EndProject
@@ -207,8 +238,14 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BackTranslationHelper", "src\BackTranslationHelper\BackTranslationHelper.csproj", "{3E74CE98-6558-4AF0-BB0C-C7E436208B1B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureOpenAiExe", "src\EcTranslators\AzureOpenAi\AzureOpenAiExe\AzureOpenAiExe.csproj", "{4F6FF8AD-6BEB-4104-B123-7FA9C2DC0BBE}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3E4B908A-4F96-43C5-981B-1AA4B73CCC26} = {3E4B908A-4F96-43C5-981B-1AA4B73CCC26}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VertexAiExe", "src\EcTranslators\VertexAi\VertexAiExe\VertexAiExe.csproj", "{5E1021B4-61AE-4E96-8D5A-7CDF6D5F7982}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3E4B908A-4F96-43C5-981B-1AA4B73CCC26} = {3E4B908A-4F96-43C5-981B-1AA4B73CCC26}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PtxConverters", "src\PtxConverters\PtxConverters.csproj", "{E9764AF7-2EA0-4829-9E83-C37B4B080F3F}"
 EndProject
@@ -655,7 +692,6 @@ Global
 		{5E1021B4-61AE-4E96-8D5A-7CDF6D5F7982}.Template|x64.ActiveCfg = Debug|Any CPU
 		{5E1021B4-61AE-4E96-8D5A-7CDF6D5F7982}.Template|x64.Build.0 = Debug|Any CPU
 		{E9764AF7-2EA0-4829-9E83-C37B4B080F3F}.Debug|Win32.ActiveCfg = Debug|x86
-		{E9764AF7-2EA0-4829-9E83-C37B4B080F3F}.Debug|Win32.Build.0 = Debug|x86
 		{E9764AF7-2EA0-4829-9E83-C37B4B080F3F}.Debug|x64.ActiveCfg = Debug|x64
 		{E9764AF7-2EA0-4829-9E83-C37B4B080F3F}.Debug|x64.Build.0 = Debug|x64
 		{E9764AF7-2EA0-4829-9E83-C37B4B080F3F}.Release|Win32.ActiveCfg = Release|x86
