@@ -38,12 +38,7 @@ Grpc.Core.Api 2.70
 Grpc.Net.Client 2.70
 Grpc.Net.Common 2.70
 
-System.Buffers 4.6.0
-			<dependentAssembly>
-				<assemblyIdentity name="System.Buffers" publicKeyToken="cc7b13ffcd2ddd51" culture="neutral" />
-				<bindingRedirect oldVersion="0.0.0.0-4.0.4.0" newVersion="4.0.4.0" />
-			</dependentAssembly>
-
+System.Buffers 4.6.1
 System.ClientModel 1.2.1 (new)
 
 			<dependentAssembly>
@@ -111,7 +106,7 @@ System.Threading.Tasks.Extensions 4.6.0
 				<bindingRedirect oldVersion="0.0.0.0-4.2.1.0" newVersion="4.2.1.0" />
 			</dependentAssembly>
 
-System.ValueTuple (stayed on 4.0.3.0)
+System.ValueTuple (stayed on 4.0.5.0)
 
 
 UPDATED:
