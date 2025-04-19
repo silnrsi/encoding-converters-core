@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Management;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using static System.Environment;
@@ -15,6 +16,10 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
 
         public const string DefaultPort = "8000";
         public const string DefaultModelName = "facebook/nllb-200-distilled-600M";
+        public const int DefaultDeviceIndex = -1;
+        public const string AddGpuToDockerRunCommandFormat = "--gpus \"device={0}\" ";
+
+        private const int RowStyleIndexUseGpu = 3;
 
         // these are the files that we write out to build the Docker container from
         private const string FileNameIndexHtml = "index.html";
@@ -35,6 +40,7 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
         private readonly Regex _regexPort = new Regex(@"PORT = (\d+)");
         private readonly Regex _regexModelName = new Regex(@"MODEL_NAME = '(.*?)'");
         private readonly Regex _regexFindPortInEndpoint = new Regex(@":(\d+)");
+        private readonly Regex _regexDevice = new Regex(@"DEVICE = (-?\d+)");
 
         private string _pathToDockerProjectFolder;
 
@@ -48,6 +54,8 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
             if (!Directory.Exists(_pathToDockerProjectFolder))
                 Directory.CreateDirectory(_pathToDockerProjectFolder);
 
+			var hasGpu = HasGpu();
+			var nDevice = hasGpu ? 0 : DefaultDeviceIndex;
             var action = "create";
             var filesInFolder = Directory.GetFiles(_pathToDockerProjectFolder)?.ToList();
             var filesExist = filesInFolder.Any(fi => FileNames.Any(fn => fi.Contains(fn)));
@@ -74,8 +82,25 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
                     SearchForSetting(_regexPort, settingsFileContents, ref port);
                     if (endpointPort != port)
                         endpoint = endpoint.Replace(endpointPort, port);
+
                     SearchForSetting(_regexModelName, settingsFileContents, ref modelName);
+
+                    var device = $"{DefaultDeviceIndex}";   // assume cpu
+                    SearchForSetting(_regexDevice, settingsFileContents, ref device);
+                    nDevice = Int32.Parse(device);
                 }
+            }
+
+            if ((nDevice == DefaultDeviceIndex) && !hasGpu)
+			{
+				// no GPU found, so hide the row in the table layout panel
+				var rowStyle = tableLayoutPanel.RowStyles[RowStyleIndexUseGpu];
+				checkBoxUseGpu.Visible = false;
+				rowStyle.Height = 0;
+            }
+            else
+            {
+                checkBoxUseGpu.Checked = (nDevice != DefaultDeviceIndex);
             }
 
             toolTip.SetToolTip(buttonOK, $"Click this button to {action} the Docker Project Files in the '{_pathToDockerProjectFolder}' folder with the above settings.");
@@ -94,6 +119,21 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
             }
         }
 
+        public static bool HasGpu()
+        {
+            using (var searcher = new ManagementObjectSearcher("select * from Win32_VideoController"))
+            {
+				foreach (var obj in searcher.Get())
+				{
+					var name = obj["Name"]?.ToString();
+					if (name != null && (name.Contains("NVIDIA") || name.Contains("AMD")))
+					{
+						return true;
+					}
+				}
+			}
+			return false;
+		}
 
         public string TranslatorApiKey
         {
@@ -145,6 +185,13 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
             set => _port = value;
         }
 
+        private int _device = DefaultDeviceIndex;
+        public int Device
+        {
+            get => _device;
+            set => _device = value;
+        }
+
         private void buttonOK_Click(object sender, System.EventArgs e)
         {
             if (buttonOK.Text == ButtonLabelOverwriteProject)
@@ -164,6 +211,8 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
 
             ModelName = comboBoxNllbModel.SelectedItem.ToString();
 
+            Device = checkBoxUseGpu.Checked ? 0 : DefaultDeviceIndex;
+
             //  first the index.html template
             var htmlFilePath = Path.Combine(_pathToDockerProjectFolder, "templates");
             if (!Directory.Exists(htmlFilePath)) 
@@ -177,7 +226,13 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
             File.WriteAllText(Path.Combine(_pathToDockerProjectFolder, FileNamePyImportModel), Properties.Resources.import_model);
 
             // the README.md file
-            var readmeFileContents = String.Format(Properties.Resources.README, ModelNameSuffix, Port);
+            var gpuAddition = String.Empty;
+            if (Device >= 0)
+            {
+                gpuAddition = String.Format(AddGpuToDockerRunCommandFormat, Device);
+            }
+
+            var readmeFileContents = String.Format(Properties.Resources.README, ModelNameSuffix, Port, gpuAddition);
             var pathToReadme = Path.Combine(_pathToDockerProjectFolder, FileNameReadme);
             File.WriteAllText(pathToReadme, readmeFileContents);
 
@@ -186,19 +241,19 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
             //    so the instructions now say, look in the README.md file to see what the commands to run manually are.
             //    but for those users who know how to enable this... create it anyway
             var pathToPsScript = Path.Combine(_pathToDockerProjectFolder, FileNamePs1BuildDocker);
-            var buildPsScriptContents = String.Format(Properties.Resources.buildDocker, ModelNameSuffix, Port);
+            var buildPsScriptContents = String.Format(Properties.Resources.buildDocker, ModelNameSuffix, Port, gpuAddition);
             File.WriteAllText(pathToPsScript, buildPsScriptContents);
 
             // the server.py file
             File.WriteAllText(Path.Combine(_pathToDockerProjectFolder, FileNamePyServer), Properties.Resources.server);
 
-			// the settings.py file
-			var translatorApiKey = TranslatorApiKey?.Trim();
-			if (!String.IsNullOrEmpty(translatorApiKey))
-				translatorApiKey = NllbTranslatorEncConverter.NllbAuthenticationPrefix + translatorApiKey;
+            // the settings.py file
+            var translatorApiKey = TranslatorApiKey?.Trim();
+            if (!String.IsNullOrEmpty(translatorApiKey))
+                translatorApiKey = NllbTranslatorEncConverter.NllbAuthenticationPrefix + translatorApiKey;
 
-			var settingsFileContents = string.Format(Properties.Resources.settings,
-                                                     $"'{translatorApiKey}'", Port, $"'{ModelName}'");
+            var settingsFileContents = string.Format(Properties.Resources.settings,
+                                                     $"'{translatorApiKey}'", Port, $"'{ModelName}'", Device);
             File.WriteAllText(Path.Combine(_pathToDockerProjectFolder, FileNamePySettings), settingsFileContents);
 
             MessageBox.Show($"If you have Docker installed and a recent version of Powershell (see instructions on the About tab), open a Powershell Window and run the two 'docker' commands listed in the '{pathToReadme}' file to build the NLLB Docker project (or run them in the '{pathToPsScript}' script if you know how to enable running scripts from the internet). When finished, return to this message and click 'OK' to connect to the launched endpoint and continue.",

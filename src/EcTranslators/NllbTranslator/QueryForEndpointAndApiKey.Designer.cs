@@ -38,6 +38,7 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
             this.textBoxNllbApiKey = new System.Windows.Forms.TextBox();
             this.labelNllbEndpoint = new System.Windows.Forms.Label();
             this.textBoxNllbEndpoint = new System.Windows.Forms.TextBox();
+            this.checkBoxUseGpu = new System.Windows.Forms.CheckBox();
             this.labelNllbInstructions = new System.Windows.Forms.Label();
             this.buttonOK = new System.Windows.Forms.Button();
             this.buttonCancel = new System.Windows.Forms.Button();
@@ -60,12 +61,14 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
             this.tableLayoutPanel.Controls.Add(this.textBoxNllbApiKey, 1, 1);
             this.tableLayoutPanel.Controls.Add(this.labelNllbEndpoint, 0, 2);
             this.tableLayoutPanel.Controls.Add(this.textBoxNllbEndpoint, 1, 2);
-            this.tableLayoutPanel.Controls.Add(this.labelNllbInstructions, 0, 3);
-            this.tableLayoutPanel.Controls.Add(this.buttonOK, 1, 4);
-            this.tableLayoutPanel.Controls.Add(this.buttonCancel, 2, 4);
+            this.tableLayoutPanel.Controls.Add(this.checkBoxUseGpu, 1, 3);
+            this.tableLayoutPanel.Controls.Add(this.labelNllbInstructions, 0, 4);
+            this.tableLayoutPanel.Controls.Add(this.buttonOK, 1, 5);
+            this.tableLayoutPanel.Controls.Add(this.buttonCancel, 2, 5);
             this.tableLayoutPanel.Location = new System.Drawing.Point(12, 12);
             this.tableLayoutPanel.Name = "tableLayoutPanel";
-            this.tableLayoutPanel.RowCount = 5;
+            this.tableLayoutPanel.RowCount = 6;
+            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 50F));
             this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 50F));
             this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 50F));
             this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 50F));
@@ -143,14 +146,27 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
         "an leave this blank to revert to http://localhost:8000. (Stored in the settings." +
         "py file)\r\n");
             // 
+            // checkBoxUseGpu
+            // 
+            this.checkBoxUseGpu.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.checkBoxUseGpu.AutoSize = true;
+            this.checkBoxUseGpu.Location = new System.Drawing.Point(79, 166);
+            this.checkBoxUseGpu.Name = "checkBoxUseGpu";
+            this.checkBoxUseGpu.Size = new System.Drawing.Size(115, 17);
+            this.checkBoxUseGpu.TabIndex = 12;
+            this.checkBoxUseGpu.Text = "Check to use GPU";
+            this.toolTip.SetToolTip(this.checkBoxUseGpu, "Check this box if you want the NLLB translator to use your system\'s GPU (for impr" +
+        "oved performance)");
+            this.checkBoxUseGpu.UseVisualStyleBackColor = true;
+            // 
             // labelNllbInstructions
             // 
             this.labelNllbInstructions.AutoSize = true;
             this.tableLayoutPanel.SetColumnSpan(this.labelNllbInstructions, 3);
             this.labelNllbInstructions.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.labelNllbInstructions.Location = new System.Drawing.Point(3, 150);
+            this.labelNllbInstructions.Location = new System.Drawing.Point(3, 200);
             this.labelNllbInstructions.Name = "labelNllbInstructions";
-            this.labelNllbInstructions.Size = new System.Drawing.Size(605, 125);
+            this.labelNllbInstructions.Size = new System.Drawing.Size(605, 75);
             this.labelNllbInstructions.TabIndex = 9;
             this.labelNllbInstructions.Text = "See the instructions on the About tab for how to build your NLLB Docker Container" +
     " to support an API Key, modify the port number and serve it to the local area ne" +
@@ -209,5 +225,6 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
         private System.Windows.Forms.TextBox textBoxNllbApiKey;
         private System.Windows.Forms.TextBox textBoxNllbEndpoint;
         private System.Windows.Forms.ComboBox comboBoxNllbModel;
-    }
+		private System.Windows.Forms.CheckBox checkBoxUseGpu;
+	}
 }

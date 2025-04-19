@@ -6,12 +6,8 @@ using ECInterfaces;                     // for IEncConverter
 using static SilEncConverters40.EcTranslators.NllbTranslator.NllbTranslatorEncConverter;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
-using SilEncConverters40.EcTranslators.NllbTranslator;
 using System.Net;
-using Newtonsoft.Json;
 using System.IO;
-using System.Text;
 using static System.Environment;
 
 namespace SilEncConverters40.EcTranslators.NllbTranslator
@@ -20,7 +16,7 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
     {
         private readonly ComboBoxItem SourceLanguageNameMustBeConfigured = new ComboBoxItem { Display = "Select Source Language" };
         private readonly ComboBoxItem TargetLanguageNameMustBeConfigured = new ComboBoxItem { Display = "Select Target Language" };
-		private string ModelNameSuffix = String.Empty;	// so we can add it to the friendly name -- but only works if the user edits (which they should do, but...)
+        private string ModelNameSuffix = String.Empty;	// so we can add it to the friendly name -- but only works if the user edits (which they should do, but...)
 
         public NllbTranslatorAutoConfigDialog
             (
@@ -80,8 +76,11 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
 
                 var apiKey = NllbTranslatorApiKey;
                 var endpoint = NllbTranslatorEndpoint;
-                if (!String.IsNullOrEmpty(apiKey) && !String.IsNullOrEmpty(endpoint))
+                if (!String.IsNullOrEmpty(apiKey) && !String.IsNullOrEmpty(endpoint)
+                    && IsHttpServerListeningAsync(endpoint).Result)
+                {
                     GetLanguagesSupportedAndInitializeComboBoxes(false, apiKey, endpoint);
+                }
                 else
                     buttonConfigureNllbModel.Enabled = !String.IsNullOrEmpty(DockerProjectFolderPath);    // until the path is chosen
 
@@ -209,7 +208,7 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
                 return $"NLLB{ModelNameSuffix} Translate {selectedSourceLanguage} to {selectedTargetLanguage}";
             }
 
-		}
+        }
 
         /// <summary>
         /// Initialize the source and possibly target language combo boxes with the translation languages possible.
@@ -263,17 +262,17 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
                 return;
             }
 
-			var apiKey = NllbTranslatorApiKey;
-			var endpoint = NllbTranslatorEndpoint;
-			if (m_aEC != null)
-			{
-				var theTranslator = (NllbTranslatorEncConverter)m_aEC;
-				apiKey = theTranslator.ApiKey;
-				endpoint = theTranslator.Endpoint;
-			}
+            var apiKey = NllbTranslatorApiKey;
+            var endpoint = NllbTranslatorEndpoint;
+            if (m_aEC != null)
+            {
+                var theTranslator = (NllbTranslatorEncConverter)m_aEC;
+                apiKey = theTranslator.ApiKey;
+                endpoint = theTranslator.Endpoint;
+            }
 
 
-			using var dlg = new QueryForEndpointAndApiKey(dockerProjectFolderPath, apiKey, endpoint);
+            using var dlg = new QueryForEndpointAndApiKey(dockerProjectFolderPath, apiKey, endpoint);
             if (dlg.ShowDialog() == DialogResult.OK)
             {
                 // if the user configures a model, then save the API Key and Endpoint for any new converters they create
@@ -286,10 +285,10 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
                 Properties.Settings.Default.Save();
 
                 m_aEC = null;    // reset the associated EncConverter instance so it'll get rebuilt w/ the new parameters
-				ModelNameSuffix = dlg.ModelNameSuffix;	// so we can add it to the DefaultFriendlyName
+                ModelNameSuffix = dlg.ModelNameSuffix;	// so we can add it to the DefaultFriendlyName
 
-				// in case something changed, reinitialize the combo boxes
-				GetLanguagesSupportedAndInitializeComboBoxes(m_bInitialized, dlg.TranslatorApiKey, dlg.Endpoint);
+                // in case something changed, reinitialize the combo boxes
+                GetLanguagesSupportedAndInitializeComboBoxes(m_bInitialized, dlg.TranslatorApiKey, dlg.Endpoint);
             }
         }
 

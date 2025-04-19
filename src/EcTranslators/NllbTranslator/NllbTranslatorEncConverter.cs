@@ -13,9 +13,8 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using static Nllb.ITranslator;
 using System.Windows.Forms;
-using SilEncConverters40.EcTranslators.Properties;
-using System.Collections;
 using System.Text.RegularExpressions;
+using System.Net.Sockets;
 
 namespace SilEncConverters40.EcTranslators.NllbTranslator
 {
@@ -211,15 +210,38 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
             return true;
         }
 
+		public static async Task<bool> IsHttpServerListeningAsync(string endpoint, int timeoutMs = 500)
+		{
+			var uri = new Uri(endpoint);
+
+			var host = uri.Host;   // "localhost"
+			var port = uri.Port;   // 8000
+
+			var isEndpointLive = await Task.Run(async delegate
+			{
+				using var client = new TcpClient();
+				var connectTask = client.ConnectAsync(host, port);
+				var timeoutTask = Task.Delay(timeoutMs);
+				var completedTask = await Task.WhenAny(connectTask, timeoutTask);
+				return connectTask.IsCompleted && client.Connected;
+
+			}).ConfigureAwait(false);
+
+			return isEndpointLive;
+		}
+
 #pragma warning disable CS3002 // Return type is not CLS-compliant
-        public async Task<Dictionary<string, string>> GetCapabilities(bool showError)
+		public async Task<Dictionary<string, string>> GetCapabilities(bool showError)
 #pragma warning restore CS3002 // Return type is not CLS-compliant
         {
             try
             {
                 var resultLanguagesSupported = await Task.Run(async delegate
-                {
-                    return (await NllbTranslator.GetSupportedLanguagesAsync()).ToList();
+				{
+					var isEndpointLive = await IsHttpServerListeningAsync(Endpoint);
+					return (!isEndpointLive)
+							? new List<string> { "Unable to connect to the NLLB server." }
+							: (await NllbTranslator.GetSupportedLanguagesAsync()).ToList();
                 }).ConfigureAwait(false);
 
                 var json = LoadEmbeddedResourceFileAsStringExecutingAssembly("NllbHumanReadableLgNames.json");
