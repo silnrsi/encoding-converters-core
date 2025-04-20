@@ -5,7 +5,7 @@ FROM python:3.9
 # Install main dependencies
 RUN pip install transformers sentencepiece fasttext-wheel
 # Install PyTorch. This command varies depending on your OS and other factors; see https://pytorch.org/get-started/locally/ for instructions for your system
-RUN pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu   # if you have a gpu: remove: https://download.pytorch.org/whl/cpu
+RUN pip install torch torchvision torchaudio {0}
 
 COPY settings.py .
 COPY import_model.py .

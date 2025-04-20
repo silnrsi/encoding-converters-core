@@ -79,18 +79,18 @@ namespace SilEncConverters40.EcTranslators.Properties {
                 return ResourceManager.GetString("DeepLTranslatorKeyDialogInstructionUrl", resourceCulture);
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to FROM python:3.9
-        ///
-        ///# Install steps mostly taken from https://medium.com/mlearning-ai/text-translation-using-nllb-and-huggingface-tutorial-7e789e0f7816
-        ///
-        ///# Install main dependencies
-        ///RUN pip install transformers sentencepiece fasttext
-        ///# Install PyTorch. This command varies depending on your OS and other factors; see https://pytorch.org/get-started/locally/ for instructions for your system
-        ///RUN pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu   # if you have a gpu: r [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string Dockerfile {
+
+		/// <summary>
+		///   Looks up a localized string similar to FROM python:3.9
+		///
+		///# Install steps mostly taken from https://medium.com/mlearning-ai/text-translation-using-nllb-and-huggingface-tutorial-7e789e0f7816
+		///
+		///# Install main dependencies
+		///RUN pip install transformers sentencepiece fasttext
+		///# Install PyTorch. This command varies depending on your OS and other factors; see https://pytorch.org/get-started/locally/ for instructions for your system
+		///RUN pip install torch torchvision torchaudio {0} [rest of string was truncated]&quot;;.
+		/// </summary>
+		internal static string Dockerfile {
             get {
                 return ResourceManager.GetString("Dockerfile", resourceCulture);
             }

@@ -18,6 +18,8 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
         public const string DefaultModelName = "facebook/nllb-200-distilled-600M";
         public const int DefaultDeviceIndex = -1;
         public const string AddGpuToDockerRunCommandFormat = "--gpus \"device={0}\" ";
+        public const string AddDockerCpu = "--index-url https://download.pytorch.org/whl/cpu   # if you switch to using a gpu: comment out: --index-url https://download.pytorch.org/whl/cpu";
+        public const string AddDockerGpu = "# --index-url https://download.pytorch.org/whl/cpu   # if you switch to using a cpu: uncomment out: --index-url https://download.pytorch.org/whl/cpu";
 
         private const int RowStyleIndexUseGpu = 3;
 
@@ -54,8 +56,8 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
             if (!Directory.Exists(_pathToDockerProjectFolder))
                 Directory.CreateDirectory(_pathToDockerProjectFolder);
 
-			var hasGpu = HasGpu();
-			var nDevice = hasGpu ? 0 : DefaultDeviceIndex;
+            var hasGpu = HasGpu();
+            var nDevice = hasGpu ? 0 : DefaultDeviceIndex;
             var action = "create";
             var filesInFolder = Directory.GetFiles(_pathToDockerProjectFolder)?.ToList();
             var filesExist = filesInFolder.Any(fi => FileNames.Any(fn => fi.Contains(fn)));
@@ -92,11 +94,11 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
             }
 
             if ((nDevice == DefaultDeviceIndex) && !hasGpu)
-			{
-				// no GPU found, so hide the row in the table layout panel
-				var rowStyle = tableLayoutPanel.RowStyles[RowStyleIndexUseGpu];
-				checkBoxUseGpu.Visible = false;
-				rowStyle.Height = 0;
+            {
+                // no GPU found, so hide the row in the table layout panel
+                var rowStyle = tableLayoutPanel.RowStyles[RowStyleIndexUseGpu];
+                checkBoxUseGpu.Visible = false;
+                rowStyle.Height = 0;
             }
             else
             {
@@ -123,17 +125,17 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
         {
             using (var searcher = new ManagementObjectSearcher("select * from Win32_VideoController"))
             {
-				foreach (var obj in searcher.Get())
-				{
-					var name = obj["Name"]?.ToString();
-					if (name != null && (name.Contains("NVIDIA") || name.Contains("AMD")))
-					{
-						return true;
-					}
-				}
-			}
-			return false;
-		}
+                foreach (var obj in searcher.Get())
+                {
+                    var name = obj["Name"]?.ToString();
+                    if (name != null && (name.Contains("NVIDIA") || name.Contains("AMD")))
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
 
         public string TranslatorApiKey
         {
@@ -220,7 +222,14 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
             File.WriteAllText(Path.Combine(htmlFilePath, FileNameIndexHtml), Properties.Resources.index);
 
             // the Dockerfile
-            File.WriteAllText(Path.Combine(_pathToDockerProjectFolder, FileNameDockerfile), Properties.Resources.Dockerfile);
+            var cpuAddition = AddDockerCpu;
+            if (Device >= 0)
+            {
+                cpuAddition = AddDockerGpu;
+            }
+
+            var dockerFileContents = String.Format(Properties.Resources.Dockerfile, cpuAddition);
+            File.WriteAllText(Path.Combine(_pathToDockerProjectFolder, FileNameDockerfile), dockerFileContents);
 
             // the import_model.py file
             File.WriteAllText(Path.Combine(_pathToDockerProjectFolder, FileNamePyImportModel), Properties.Resources.import_model);
