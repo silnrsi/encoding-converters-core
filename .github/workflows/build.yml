@@ -98,43 +98,44 @@ jobs:
     #- name: Test
     #  run: output/Win32/${{matrix.build_configuration}}/RunTests.exe
 
-  build-linux:
-    runs-on: [ubuntu-22.04]
-    strategy:
-       matrix:
-         build_configuration: ["Debug", "Release"]
+  # looks like this won't run on ubuntu-22.04 anymore and the dependences like python2-dev, mono5-sil, etc., aren't there in newer ubuntu versions
+  # build-linux:
+  #   runs-on: [ubuntu-22.04]
+  #   strategy:
+  #      matrix:
+  #        build_configuration: ["Debug", "Release"]
 
-    steps:
-    - name: Add repo packages.sil.org
-      run: |
-        (wget -O- https://packages.sil.org/keys/pso-keyring-2016.gpg | sudo tee /etc/apt/trusted.gpg.d/pso-keyring-2016.gpg)&>/dev/null
-        (. /etc/os-release && sudo tee /etc/apt/sources.list.d/packages-sil-org.list>/dev/null <<< "deb http://packages.sil.org/$ID $VERSION_CODENAME main")
-        sudo apt-get update
+  #   steps:
+  #   - name: Add repo packages.sil.org
+  #     run: |
+  #       (wget -O- https://packages.sil.org/keys/pso-keyring-2016.gpg | sudo tee /etc/apt/trusted.gpg.d/pso-keyring-2016.gpg)&>/dev/null
+  #       (. /etc/os-release && sudo tee /etc/apt/sources.list.d/packages-sil-org.list>/dev/null <<< "deb http://packages.sil.org/$ID $VERSION_CODENAME main")
+  #       sudo apt-get update
 
-    - name: Install dependencies
-      run: sudo apt-get install --assume-yes automake g++ python2-dev python2 libicu-dev mono5-sil icu-dev-fw libteckit-dev
+  #   - name: Install dependencies
+  #     run: sudo apt-get install --assume-yes automake g++ python2-dev python2 libicu-dev mono5-sil icu-dev-fw libteckit-dev
 
-    - name: Checkout
-      uses: actions/checkout@v4.1.1
+  #   - name: Checkout
+  #     uses: actions/checkout@v4.1.1
 
-    - name: List Files in Repository
-      run: ls -R
+  #   - name: List Files in Repository
+  #     run: ls -R
 
-    - name: Restore NuGet Packages
-      run: nuget restore "${{env.SOLUTION_FILE_PATH}}"
+  #   - name: Restore NuGet Packages
+  #     run: nuget restore "${{env.SOLUTION_FILE_PATH}}"
 
-    - name: Autogen
-      run: . environ && ./autogen.sh
+  #   - name: Autogen
+  #     run: . environ && ./autogen.sh
 
-    - name: Build
-      run: . environ && make
+  #   - name: Build
+  #     run: . environ && make
 
-    - name: Test
-      if: matrix.build_configuration == 'Debug'
-      run: |
-        . environ
-        export EC_COMMON_APPLICATION_DATA_PATH="$(pwd)/ec-common"
-        export MONO_REGISTRY_PATH="${EC_COMMON_APPLICATION_DATA_PATH}/registry"
-        cp -a src/RunTests/bin/x64/${{matrix.build_configuration}}/RunTests.exe output/x64/${{matrix.build_configuration}}/
-        # Note that currently, many tests fail and it doesn't fail this build step.
-        mono output/x64/${{matrix.build_configuration}}/RunTests.exe
+  #   - name: Test
+  #     if: matrix.build_configuration == 'Debug'
+  #     run: |
+  #       . environ
+  #       export EC_COMMON_APPLICATION_DATA_PATH="$(pwd)/ec-common"
+  #       export MONO_REGISTRY_PATH="${EC_COMMON_APPLICATION_DATA_PATH}/registry"
+  #       cp -a src/RunTests/bin/x64/${{matrix.build_configuration}}/RunTests.exe output/x64/${{matrix.build_configuration}}/
+  #       # Note that currently, many tests fail and it doesn't fail this build step.
+  #       mono output/x64/${{matrix.build_configuration}}/RunTests.exe
