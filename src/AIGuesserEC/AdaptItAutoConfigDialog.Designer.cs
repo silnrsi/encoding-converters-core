@@ -39,6 +39,8 @@ namespace SilEncConverters40
             this.buttonBrowseNormalizationMap = new System.Windows.Forms.Button();
             this.buttonCreateNewProject = new System.Windows.Forms.Button();
             this.buttonViewKb = new System.Windows.Forms.Button();
+            this.labelFallbackDirection = new System.Windows.Forms.Label();
+            this.checkBoxFallbackReverseDirection = new System.Windows.Forms.CheckBox();
             this.openFileDialogBrowse = new System.Windows.Forms.OpenFileDialog();
             this.tabControl.SuspendLayout();
             this.tabPageSetup.SuspendLayout();
@@ -84,13 +86,16 @@ namespace SilEncConverters40
             this.tableLayoutPanel1.Controls.Add(this.buttonBrowseNormalizationMap, 2, 4);
             this.tableLayoutPanel1.Controls.Add(this.buttonCreateNewProject, 1, 3);
             this.tableLayoutPanel1.Controls.Add(this.buttonViewKb, 0, 3);
+            this.tableLayoutPanel1.Controls.Add(this.labelFallbackDirection, 0, 5);
+            this.tableLayoutPanel1.Controls.Add(this.checkBoxFallbackReverseDirection, 1, 5);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(3, 3);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 5;
+            this.tableLayoutPanel1.RowCount = 6;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.Size = new System.Drawing.Size(596, 394);
@@ -112,7 +117,7 @@ namespace SilEncConverters40
             this.listBoxProjects.FormattingEnabled = true;
             this.listBoxProjects.Location = new System.Drawing.Point(3, 75);
             this.listBoxProjects.Name = "listBoxProjects";
-            this.listBoxProjects.Size = new System.Drawing.Size(590, 258);
+            this.listBoxProjects.Size = new System.Drawing.Size(590, 235);
             this.listBoxProjects.TabIndex = 2;
             this.listBoxProjects.SelectedIndexChanged += new System.EventHandler(this.listBoxProjects_SelectedIndexChanged);
             // 
@@ -120,11 +125,11 @@ namespace SilEncConverters40
             // 
             this.labelNormalizationConverter.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.labelNormalizationConverter.AutoSize = true;
-            this.labelNormalizationConverter.Location = new System.Drawing.Point(23, 373);
+            this.labelNormalizationConverter.Location = new System.Drawing.Point(3, 350);
             this.labelNormalizationConverter.Name = "labelNormalizationConverter";
-            this.labelNormalizationConverter.Size = new System.Drawing.Size(117, 13);
+            this.labelNormalizationConverter.Size = new System.Drawing.Size(137, 13);
             this.labelNormalizationConverter.TabIndex = 3;
-            this.labelNormalizationConverter.Text = "Optional input checker:";
+            this.labelNormalizationConverter.Text = "Optional fallback converter:";
             // 
             // groupBox1
             // 
@@ -170,14 +175,18 @@ namespace SilEncConverters40
             // textBoxNormalizationPath
             // 
             this.textBoxNormalizationPath.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textBoxNormalizationPath.Location = new System.Drawing.Point(146, 368);
+            this.helpProvider.SetHelpString(this.textBoxNormalizationPath, "Enter the path to the fallback TECkit map (use the .map file to auto-reload when " +
+        "changes are made, or use .tec file path)\r\n");
+            this.textBoxNormalizationPath.Location = new System.Drawing.Point(146, 345);
             this.textBoxNormalizationPath.Name = "textBoxNormalizationPath";
+            this.helpProvider.SetShowHelp(this.textBoxNormalizationPath, true);
             this.textBoxNormalizationPath.Size = new System.Drawing.Size(417, 20);
             this.textBoxNormalizationPath.TabIndex = 4;
+            this.textBoxNormalizationPath.TextChanged += new System.EventHandler(this.textBoxNormalizationPath_TextChanged);
             // 
             // buttonBrowseNormalizationMap
             // 
-            this.buttonBrowseNormalizationMap.Location = new System.Drawing.Point(569, 368);
+            this.buttonBrowseNormalizationMap.Location = new System.Drawing.Point(569, 345);
             this.buttonBrowseNormalizationMap.Name = "buttonBrowseNormalizationMap";
             this.buttonBrowseNormalizationMap.Size = new System.Drawing.Size(24, 23);
             this.buttonBrowseNormalizationMap.TabIndex = 5;
@@ -187,7 +196,7 @@ namespace SilEncConverters40
             // 
             // buttonCreateNewProject
             // 
-            this.buttonCreateNewProject.Location = new System.Drawing.Point(146, 339);
+            this.buttonCreateNewProject.Location = new System.Drawing.Point(146, 316);
             this.buttonCreateNewProject.Name = "buttonCreateNewProject";
             this.buttonCreateNewProject.Size = new System.Drawing.Size(148, 23);
             this.buttonCreateNewProject.TabIndex = 6;
@@ -198,7 +207,7 @@ namespace SilEncConverters40
             // buttonViewKb
             // 
             this.buttonViewKb.Enabled = false;
-            this.buttonViewKb.Location = new System.Drawing.Point(3, 339);
+            this.buttonViewKb.Location = new System.Drawing.Point(3, 316);
             this.buttonViewKb.Name = "buttonViewKb";
             this.buttonViewKb.Size = new System.Drawing.Size(137, 23);
             this.buttonViewKb.TabIndex = 7;
@@ -206,10 +215,36 @@ namespace SilEncConverters40
             this.buttonViewKb.UseVisualStyleBackColor = true;
             this.buttonViewKb.Click += new System.EventHandler(this.ButtonViewKbClick);
             // 
+            // labelFallbackDirection
+            // 
+            this.labelFallbackDirection.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.labelFallbackDirection.AutoSize = true;
+            this.labelFallbackDirection.Location = new System.Drawing.Point(3, 376);
+            this.labelFallbackDirection.Name = "labelFallbackDirection";
+            this.labelFallbackDirection.Size = new System.Drawing.Size(95, 13);
+            this.labelFallbackDirection.TabIndex = 9;
+            this.labelFallbackDirection.Text = "Fallback Direction:";
+            this.labelFallbackDirection.Visible = false;
+            // 
+            // checkBoxFallbackReverseDirection
+            // 
+            this.checkBoxFallbackReverseDirection.AutoSize = true;
+            this.helpProvider.SetHelpString(this.checkBoxFallbackReverseDirection, "Check this to have the fallback TECkit map run in the reverse direction (for bi-d" +
+        "irectional maps)");
+            this.checkBoxFallbackReverseDirection.Location = new System.Drawing.Point(146, 374);
+            this.checkBoxFallbackReverseDirection.Name = "checkBoxFallbackReverseDirection";
+            this.helpProvider.SetShowHelp(this.checkBoxFallbackReverseDirection, true);
+            this.checkBoxFallbackReverseDirection.Size = new System.Drawing.Size(66, 17);
+            this.checkBoxFallbackReverseDirection.TabIndex = 10;
+            this.checkBoxFallbackReverseDirection.Text = "&Reverse";
+            this.checkBoxFallbackReverseDirection.UseVisualStyleBackColor = true;
+            this.checkBoxFallbackReverseDirection.Visible = false;
+            this.checkBoxFallbackReverseDirection.CheckedChanged += new System.EventHandler(this.checkBoxFallbackReverseDirection_CheckedChanged);
+            // 
             // openFileDialogBrowse
             // 
             this.openFileDialogBrowse.DefaultExt = "cct";
-            this.openFileDialogBrowse.Filter = "CC Tables Files (*.cct)|*.cct";
+            this.openFileDialogBrowse.Filter = "TECkit Map Files (*.map;*.tec)|*.map;*.tec|CC Tables Files (*.cct)|*.cct\r\n";
             this.openFileDialogBrowse.Title = "Browse for CC Table";
             // 
             // AdaptItAutoConfigDialog
@@ -245,5 +280,7 @@ namespace SilEncConverters40
         private System.Windows.Forms.OpenFileDialog openFileDialogBrowse;
         private System.Windows.Forms.Button buttonCreateNewProject;
         private System.Windows.Forms.Button buttonViewKb;
-    }
+		private System.Windows.Forms.Label labelFallbackDirection;
+		private System.Windows.Forms.CheckBox checkBoxFallbackReverseDirection;
+	}
 }

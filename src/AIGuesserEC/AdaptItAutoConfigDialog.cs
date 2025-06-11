@@ -19,7 +19,8 @@ namespace SilEncConverters40
 
         protected bool m_bLegacy = false;
         protected string m_strXmlTitle = null;
-        
+        protected NormalizeFlags m_nfNormalizationFlags = NormalizeFlags.None;
+
         /// <summary>
         /// This is the base class for the two different AdaptIt EncConverters: the Lookup transducer and the 
         /// Guesser API transducer. Since both of these types have the same configuration dialog, most of the
@@ -58,7 +59,6 @@ namespace SilEncConverters40
             
             m_bQueryForConvType = false;    // don't need to do this for this converter type (or we do, but differently)
 
-#if !NotUsingNormalizer
             // in the new situation, the converter spec has two pieces of information:
             //  a) the same as the original one -- the path to the KB file
             //  b) the path to a normalizing entity (e.g. cct, tec, map, or a custom
@@ -67,18 +67,19 @@ namespace SilEncConverters40
             if (m_bEditMode)
             {
                 System.Diagnostics.Debug.Assert(!String.IsNullOrEmpty(strConverterIdentifier));
-                string[] astrPaths = strConverterIdentifier.Split(new[] {';'});
-                string strKnowledgeBaseFileSpec = astrPaths[0];
 
-                if (astrPaths.Length >= 2)
-                    textBoxNormalizationPath.Text = astrPaths[1];
-                
-                m_bLegacy = (strKnowledgeBaseFileSpec.IndexOf(cstrAdaptItWorkingDirLegacy) != -1);
+                AdaptItKBReader.ParseConverterSpec(strConverterIdentifier,
+                    out string knowledgebaseFileSpec, out string normalizerFileSpec,
+                    out bool normalizerDirectionForward, out NormalizeFlags normalizeFlags);
+
+                textBoxNormalizationPath.Text = normalizerFileSpec;
+                checkBoxFallbackReverseDirection.Checked = !normalizerDirectionForward;
+                if (normalizeFlags != NormalizeFlags.None)
+                    m_nfNormalizationFlags = normalizeFlags;
+
+                m_bLegacy = knowledgebaseFileSpec.Contains(cstrAdaptItWorkingDirLegacy);
             }
-#else
-            if (m_bEditMode)
-                m_bLegacy = (strConverterIdentifier.IndexOf(cstrAdaptItWorkingDirLegacy) != -1);
-#endif
+
 
             if (m_bLegacy)
             {
@@ -210,11 +211,28 @@ namespace SilEncConverters40
                 m_strXmlTitle);
 
             ConverterIdentifier = strKBFileSpec;
-            
+
             // see if we need to tack on the normalization file path.
-            string strNormalizationFilePath = textBoxNormalizationPath.Text;
+            var strNormalizationFilePath = textBoxNormalizationPath.Text;
             if (!String.IsNullOrEmpty(strNormalizationFilePath))
-                ConverterIdentifier += String.Format(";{0}", strNormalizationFilePath);
+            {
+                if (strNormalizationFilePath[0] != ';')
+                    strNormalizationFilePath = ";" + strNormalizationFilePath;
+
+                ConverterIdentifier += strNormalizationFilePath;
+            }
+
+            // see if we need to tack on a reverse on the fallback TECkit map
+            if (checkBoxFallbackReverseDirection.Checked)
+            {
+                ConverterIdentifier += ";false";
+            }
+
+            // and finally, see if we need to tack on an exist (non-UI entered) normalization flag
+            if (m_nfNormalizationFlags != NormalizeFlags.None)
+            {
+                ConverterIdentifier += $";{m_nfNormalizationFlags}";
+            }
 
             // if we're actually on the setup tab, then give the exact error.
             if (tabControl.SelectedTab == tabPageSetup)
@@ -280,8 +298,24 @@ namespace SilEncConverters40
 
             var theEc = m_aEC as AdaptItEncConverter;
             if (theEc != null) 
-                theEc.EditKnowledgeBase(null);
+                theEc.EditKnowledgeBase(null, useShow: true);
             Cursor = Cursors.Default;
+        }
+
+        private void textBoxNormalizationPath_TextChanged(object sender, EventArgs e)
+        {
+            var notEmpty = !String.IsNullOrEmpty(textBoxNormalizationPath.Text);
+            checkBoxFallbackReverseDirection.Visible =
+                labelFallbackDirection.Visible = notEmpty;
+
+            if (!notEmpty)
+                checkBoxFallbackReverseDirection.Checked = false;
+            IsModified = true;
+        }
+
+        private void checkBoxFallbackReverseDirection_CheckedChanged(object sender, EventArgs e)
+        {
+            IsModified = true;
         }
     }
 }

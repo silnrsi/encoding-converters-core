@@ -10,9 +10,39 @@
             <Directory Id="MergeRedirectFolder">
 
                 <Component Id="AIGuesserEC.dll" Guid="{E811CF99-7684-4493-B61F-2F8E7F0CD35A}">
-                    <File Id="AIGuesserEC.dll" Name="AIGuesserEC.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="AIGuesserEC.dll" AssemblyApplication="AIGuesserEC.dll"
+
+					<Class Id="{2734A74B-6E88-40c4-8D0A-016A421D26CF}" Context="InprocServer32" Description="SilEncConverters40.AdaptItEncConverter" ThreadingModel="both" ForeignServer="mscoree.dll">
+						<ProgId Id="SilEncConverters40.AdaptItEncConverter" Description="SilEncConverters40.AdaptItEncConverter" />
+					</Class>
+
+					<Class Id="{9DC06A75-6E3F-48A8-9227-C6504487F787}" Context="InprocServer32" Description="SilEncConverters40.AdaptItEncConverterConfig" ThreadingModel="both" ForeignServer="mscoree.dll">
+						<ProgId Id="SilEncConverters40.AdaptItEncConverterConfig" Description="SilEncConverters40.AdaptItEncConverterConfig" />
+					</Class>
+
+					<File Id="AIGuesserEC.dll" Name="AIGuesserEC.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="AIGuesserEC.dll" AssemblyApplication="AIGuesserEC.dll"
                           Source="..\..\output\x64\release\AIGuesserEC.dll" />
-                </Component>
+
+					<RegistryValue Root="HKCR" Key="CLSID\{2734A74B-6E88-40c4-8D0A-016A421D26CF}\Implemented Categories\{62C8FE65-4EBB-45e7-B440-6E39B2CDBF29}" Value="" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{2734A74B-6E88-40c4-8D0A-016A421D26CF}\InprocServer32\4.0.0.0" Name="Class" Value="SilEncConverters40.AdaptItEncConverter" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{2734A74B-6E88-40c4-8D0A-016A421D26CF}\InprocServer32\4.0.0.0" Name="Assembly" Value="SilEncConverters40, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{2734A74B-6E88-40c4-8D0A-016A421D26CF}\InprocServer32\4.0.0.0" Name="RuntimeVersion" Value="v4.0.30319" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{2734A74B-6E88-40c4-8D0A-016A421D26CF}\InprocServer32\4.0.0.0" Name="CodeBase" Value="file:///[#AIGuesserEC.dll]" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{2734A74B-6E88-40c4-8D0A-016A421D26CF}\InprocServer32" Name="Class" Value="SilEncConverters40.AdaptItEncConverter" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{2734A74B-6E88-40c4-8D0A-016A421D26CF}\InprocServer32" Name="Assembly" Value="SilEncConverters40, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{2734A74B-6E88-40c4-8D0A-016A421D26CF}\InprocServer32" Name="RuntimeVersion" Value="v4.0.30319" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{2734A74B-6E88-40c4-8D0A-016A421D26CF}\InprocServer32" Name="CodeBase" Value="file:///[#AIGuesserEC.dll]" Type="string" Action="write" />
+
+					<RegistryValue Root="HKCR" Key="CLSID\{9DC06A75-6E3F-48A8-9227-C6504487F787}\Implemented Categories\{62C8FE65-4EBB-45e7-B440-6E39B2CDBF29}" Value="" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{9DC06A75-6E3F-48A8-9227-C6504487F787}\InprocServer32\4.0.0.0" Name="Class" Value="SilEncConverters40.AdaptItEncConverterConfig" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{9DC06A75-6E3F-48A8-9227-C6504487F787}\InprocServer32\4.0.0.0" Name="Assembly" Value="SilEncConverters40, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{9DC06A75-6E3F-48A8-9227-C6504487F787}\InprocServer32\4.0.0.0" Name="RuntimeVersion" Value="v4.0.30319" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{9DC06A75-6E3F-48A8-9227-C6504487F787}\InprocServer32\4.0.0.0" Name="CodeBase" Value="file:///[#AIGuesserEC.dll]" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{9DC06A75-6E3F-48A8-9227-C6504487F787}\InprocServer32" Name="Class" Value="SilEncConverters40.AdaptItEncConverterConfig" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{9DC06A75-6E3F-48A8-9227-C6504487F787}\InprocServer32" Name="Assembly" Value="SilEncConverters40, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{9DC06A75-6E3F-48A8-9227-C6504487F787}\InprocServer32" Name="RuntimeVersion" Value="v4.0.30319" Type="string" Action="write" />
+					<RegistryValue Root="HKCR" Key="CLSID\{9DC06A75-6E3F-48A8-9227-C6504487F787}\InprocServer32" Name="CodeBase" Value="file:///[#AIGuesserEC.dll]" Type="string" Action="write" />
+
+				</Component>
 
                 <Directory Id="AiECFolder" Name="EC">
                     <Directory Id="AiPluginsFolder" Name="Plugins">

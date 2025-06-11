@@ -10,10 +10,10 @@ using ECInterfaces;                     // for IEncConverter
 
 namespace SilEncConverters40
 {
-	/// <summary>
-	/// Base class for an AdaptIt Knowledge Base EncConverter
-	/// </summary>
-	public abstract class AdaptItKBReader : EncConverter
+    /// <summary>
+    /// Base class for an AdaptIt Knowledge Base EncConverter
+    /// </summary>
+    public abstract class AdaptItKBReader : EncConverter
     {
         #region Member Variable Definitions
 
@@ -31,6 +31,9 @@ namespace SilEncConverters40
         protected string      m_strKnowledgeBaseFileSpec;
         protected string m_strNormalizerFileSpec;
         protected string m_strProjectFileSpec;
+        public bool              NormalizerDirectionForward = true;
+        public NormalizeFlags    NormalizerFlags = NormalizeFlags.None;
+
         protected bool        m_bLegacy;
         protected bool        m_bReverseLookup;   // we have to keep track of the direction since it might be different than m_bForward
         protected bool m_bHasNamespace = true;
@@ -62,6 +65,7 @@ namespace SilEncConverters40
         public static char[] CaSplitChars = new [] { '\r', '\n', '\t', ' ' };
 
         protected IEncConverter theNormalizerEc;
+        protected DirectableEncConverter theFallbackEc;
 
         public bool FileHasNamespace
         {
@@ -81,32 +85,22 @@ namespace SilEncConverters40
             ref string lhsEncodingID, ref string rhsEncodingID, ref ConvType conversionType, 
             ref Int32 processTypeFlags, Int32 codePageInput, Int32 codePageOutput, bool bAdding)
         {
-            base.Initialize(converterName, converterSpec, ref lhsEncodingID, ref rhsEncodingID, ref conversionType, ref processTypeFlags, codePageInput, codePageOutput, bAdding );
+            base.Initialize(converterName, converterSpec, ref lhsEncodingID, ref rhsEncodingID, ref conversionType, ref processTypeFlags, codePageInput, codePageOutput, bAdding);
 
             m_bLegacy = (EncConverter.NormalizeLhsConversionType(conversionType) == NormConversionType.eLegacy);
 
-#if !NotUsingNormalizer
-            // in the new situation, the converter spec has two pieces of information:
-            //  a) the same as the original one -- the path to the KB file
-            //  b) the path to a normalizing entity (e.g. cct, tec, map, or a custom
-            //      XML file that has the normalizing correspondences (ala. ???)
-            // these two are separated by a ';'
-            string[] astrPaths = converterSpec.Split(new[] {';'});
-            if (astrPaths.Length >= 1)
-                m_strKnowledgeBaseFileSpec = astrPaths[0];
+            ParseConverterSpec(converterSpec, out string knowledgebaseFileSpec, out string normalizerFileSpec,
+                               out bool normalizerDirectionForward, out NormalizeFlags normalizeFlags);
 
-            if (astrPaths.Length >= 2)
-                m_strNormalizerFileSpec = astrPaths[1];
+            m_strKnowledgeBaseFileSpec = knowledgebaseFileSpec;
+            m_strNormalizerFileSpec = normalizerFileSpec;
+            NormalizerDirectionForward = normalizerDirectionForward;
+            NormalizerFlags = normalizeFlags;
 
-#else
-            // get the filespec to the project file and the knowledge base
-            //  (the KB path *is* the converter spec)
-            m_strKnowledgeBaseFileSpec = converterSpec;
-#endif
             string strProjectFolder = Path.GetDirectoryName(m_strKnowledgeBaseFileSpec);
             m_strProjectFileSpec = Path.Combine(strProjectFolder, cstrAdaptItProjectFilename);
 
-            if( bAdding )
+            if (bAdding)
             {
                 // if we're supposedly adding this one, then clobber our copy of its last modified 
                 // (there was a problem with us instantiating lots of these things in a row and
@@ -115,6 +109,37 @@ namespace SilEncConverters40
                 m_timeModifiedKB = m_timeModifiedProj = DateTime.MinValue;
             }
         }
+
+        public static void ParseConverterSpec(string converterSpec, out string knowledgebaseFileSpec, out string normalizerFileSpec,
+                                       out bool normalizerDirectionForward, out NormalizeFlags normalizeFlags)
+        {
+            knowledgebaseFileSpec = normalizerFileSpec = null;
+            normalizerDirectionForward = true; // default is forward
+            normalizeFlags = NormalizeFlags.None; // default is no flags
+
+            // the converter spec has 1-4 pieces of information:
+            //  a) the same as the original one -- the path to the KB file
+            //  b) the path to a normalizing entity (e.g. cct, tec, map, or a custom
+            //      XML file that has the normalizing correspondences (ala. ???)
+            //    c) if the "normalizing entity" is a tec file, then the path to the fallback
+            //      tec file (which is used when we don't find a hit in the AI map), in that
+            //        case, it can also have a ';false' tacked on to make it go in reverse
+            //        and a normalized form specifier
+            // these two are separated by a ';'
+            string[] astrPaths = converterSpec.Split(new[] { ';' });
+            if (astrPaths.Length >= 1)
+                knowledgebaseFileSpec = astrPaths[0];
+
+            if (astrPaths.Length >= 2)
+                normalizerFileSpec = astrPaths[1];
+
+            if (astrPaths.Length >= 3)
+                normalizerDirectionForward = !(astrPaths[2].ToLower() == "false");
+
+            if (astrPaths.Length == 4)
+                normalizeFlags = (NormalizeFlags)Enum.Parse(typeof(NormalizeFlags), astrPaths[3], true);
+        }
+
         #endregion Initialization
 
         #region Misc helpers
@@ -402,32 +427,53 @@ namespace SilEncConverters40
                         //  form
                         m_mapNormalFormToSourcePhrases.Clear();
 
-                        if (theNormalizerEc == null)
+                        int nDummy = 0;
+                        string strDummy = null;
+                        var filepathlen = m_strNormalizerFileSpec.Length;
+                        if (filepathlen > 3 &&
+                            (m_strNormalizerFileSpec.Substring(filepathlen-3, 3).ToLower() == "cct"))
                         {
-                            // Get the (for now) EncConverter that does the normalizing
-                            int nDummy = 0;
-                            string strDummy = null;
-                            int processTypeFlags = (int)ProcessTypeFlags.SpellingFixerProject;
-                            ConvType ct = ConvType.Unicode_to_Unicode;
-                            theNormalizerEc = new CcEncConverter();
-                            theNormalizerEc.Initialize(m_strNormalizerFileSpec, m_strNormalizerFileSpec,
-                                ref strDummy, ref strDummy, ref ct,
-                                ref processTypeFlags, nDummy, nDummy, true);
-                        }
-
-                        foreach (var mapOfSourceWordsToTargetWords in m_mapOfMaps.Values)
-                        {
-                            foreach (string strSourceWords in mapOfSourceWordsToTargetWords.Keys)
+                            if (theNormalizerEc == null)
                             {
-                                string strNormalizedSourceWords = CallSafeNormalizedConvert(strSourceWords);
-                                List<string> lstNormalizedForms;
-                                if (!m_mapNormalFormToSourcePhrases.TryGetValue(strNormalizedSourceWords, out lstNormalizedForms))
+                                // Get the (for now) EncConverter that does the normalizing
+                                int processTypeFlags = (int)ProcessTypeFlags.SpellingFixerProject;
+                                ConvType ct = ConvType.Unicode_to_Unicode;
+                                theNormalizerEc = new CcEncConverter();
+                                theNormalizerEc.Initialize(m_strNormalizerFileSpec, m_strNormalizerFileSpec,
+                                    ref strDummy, ref strDummy, ref ct,
+                                    ref processTypeFlags, nDummy, nDummy, true);
+                            }
+
+                            foreach (var mapOfSourceWordsToTargetWords in m_mapOfMaps.Values)
+                            {
+                                foreach (string strSourceWords in mapOfSourceWordsToTargetWords.Keys)
                                 {
-                                    lstNormalizedForms = new List<string>();
-                                    m_mapNormalFormToSourcePhrases.Add(strNormalizedSourceWords, lstNormalizedForms);
+                                    string strNormalizedSourceWords = CallSafeNormalizedConvert(strSourceWords);
+                                    List<string> lstNormalizedForms;
+                                    if (!m_mapNormalFormToSourcePhrases.TryGetValue(strNormalizedSourceWords, out lstNormalizedForms))
+                                    {
+                                        lstNormalizedForms = new List<string>();
+                                        m_mapNormalFormToSourcePhrases.Add(strNormalizedSourceWords, lstNormalizedForms);
+                                    }
+                                    if (!lstNormalizedForms.Contains(strSourceWords))
+                                        lstNormalizedForms.Add(strSourceWords);
                                 }
-                                if (!lstNormalizedForms.Contains(strSourceWords))
-                                    lstNormalizedForms.Add(strSourceWords);
+                            }
+                        }
+                        else
+                        {
+                            // until I can redo this, if it's a teckit map, assume it's an algorithmic conversion as fall-back
+                            if (theFallbackEc == null)
+                            {
+                                ConvType ct = ConvType.Unicode_to_from_Unicode;
+                                int processTypeFlags = (int)ProcessTypeFlags.Transliteration;
+                                var fallback = new TecEncConverter();
+                                fallback.Initialize(m_strNormalizerFileSpec, m_strNormalizerFileSpec,
+                                    ref strDummy, ref strDummy, ref ct,
+                                    ref processTypeFlags, nDummy, nDummy, true);
+                                fallback.DirectionForward = NormalizerDirectionForward;
+                                fallback.NormalizeOutput = NormalizerFlags;
+                                theFallbackEc = new DirectableEncConverter(fallback);
                             }
                         }
 
@@ -518,151 +564,6 @@ namespace SilEncConverters40
                 manager.AddNamespace("aikb", cstrAdaptItXmlNamespace);
         }
 
-         /* this is now deprecated since only the other approach knows about 
-          * AdaptIt KB v2
-        /// <summary>
-        /// This version will add a lookup pair to the Adapt It knowledge base and
-        /// save the result immediately (with the negative point that it doesn't 
-        /// save the new item in the proper sort order). But it should be quicker
-        /// than the alternative which is "AddEntryPairNoSave" + "AddEntryPairSave"
-        /// </summary>
-        /// <param name="strSourceWord"></param>
-        /// <param name="strTargetWord"></param>
-        public void AddEntryPair(string strSourceWord, string strTargetWord)
-        {
-            // trim up the input words in case the user didn't
-            strSourceWord = strSourceWord.Trim(m_caDelimitersForward ?? CaSplitChars);
-            strTargetWord = strTargetWord.Trim(m_caDelimitersReverse ?? CaSplitChars);
-
-            // first see if this pair is already there
-            int nMapValue;
-            string strTargetWordsInMap;
-            Dictionary<string, string> mapLookup;
-            if (TryGetTargetForm(strSourceWord, out strTargetWordsInMap, out nMapValue, out mapLookup))
-            {
-                if ((strTargetWordsInMap == strTargetWord) || (strTargetWordsInMap.IndexOf(String.Format("%{0}%", strTargetWord)) != -1))
-                    return;    // already there
-            }
-
-            // otherwise, we need to add it.
-#if !NotUseSchemaGeneratedClass
-            try
-            {
-                XmlDocument doc;
-                XPathNavigator navigator;
-                XmlNamespaceManager manager;
-                GetXmlDocument(out doc, out navigator, out manager);
-
-                if (doc.DocumentElement != null)
-                {
-                    XmlNode nodeKbNode = doc.DocumentElement.SelectSingleNode(XPathToKB, manager);
-                    if (nodeKbNode == null)
-                    {
-                        doc.CreateElement(XPathToKB);   // no KB element, so create one
-                        nodeKbNode = doc.DocumentElement.SelectSingleNode(XPathToKB, manager);
-                    }
-
-                    // see if the proper map entry is present (so we can add it, if not)
-                    string strMapSelect = XPathToSpecificMAP(nMapValue);
-                    XmlNode nodeMapEntry = nodeKbNode.SelectSingleNode(strMapSelect, manager);
-                    if (nodeMapEntry == null)
-                    {
-                        // if not, then add it.
-                        // xpathnavs are easier to use to add child elements
-                        XPathNavigator xpnMap = nodeKbNode.CreateNavigator();
-                        xpnMap.AppendChild(String.Format("<MAP mn=\"{0}\"/>", nMapValue));
-
-                        // now try it again
-                        nodeMapEntry = nodeKbNode.SelectSingleNode(strMapSelect, manager);
-                    }
-
-                    // see if the source word exists (so we can add it if not)
-                    string strSourceWordSelect = XPathToSpecificTU(strSourceWord);
-                    XmlNode nodeSourceWordEntry = nodeMapEntry.SelectSingleNode(strSourceWordSelect, manager);
-                    if (nodeSourceWordEntry == null)
-                    {
-                        // add it.
-                        XPathNavigator xpnSourceWord = nodeMapEntry.CreateNavigator();
-                        xpnSourceWord.AppendChild(String.Format("<TU f=\"0\" k=\"{0}\"/>", strSourceWord));
-
-                        // now try it again
-                        nodeSourceWordEntry = nodeMapEntry.SelectSingleNode(strSourceWordSelect, manager);
-                    }
-
-                    // the target word shouldn't exist (or we wouldn't be here... unless it was *just* added
-                    //  but to avoid doing two loads... just be sure we're not adding it twice here
-                    string strTargetWordSelect = XPathToSpecificRS(strTargetWord);
-                    XmlNode nodeTargetWordEntry = nodeSourceWordEntry.SelectSingleNode(strTargetWordSelect, manager);
-                    if (nodeTargetWordEntry != null)
-                        return; // nothing to do, because it's already in there.
-
-                    // add it.
-                    XPathNavigator xpnTargetWord = nodeSourceWordEntry.CreateNavigator();
-                    xpnTargetWord.AppendChild(String.Format("<RS n=\"1\" a=\"{0}\"/>", strTargetWord));
-
-                    File.Copy(m_strKnowledgeBaseFileSpec, m_strKnowledgeBaseFileSpec + ".bak", true);
-
-                    XmlTextWriter writer = new XmlTextWriter(m_strKnowledgeBaseFileSpec, Encoding.UTF8);
-                    writer.Formatting = Formatting.Indented;
-                    doc.Save(writer);
-                    writer.Close();
-                }
-            }
-            catch (System.Data.DataException ex)
-            {
-                if (ex.Message == "A child row has multiple parents.")
-                {
-                    // this happens when the knowledge base has invalid data in it (e.g. when there is two
-                    //  canonically equivalent words in different records). This is technically a bug in 
-                    //  AdaptIt.
-                    throw new ApplicationException("The AdaptIt knowledge base has invalid data in it! Contact silconverters_support@sil.org", ex);
-                }
-
-                throw ex;
-            }
-#else
-            AdaptItKnowledgeBase aikb = new AdaptItKnowledgeBase();
-            aikb.ReadXml(m_strKnowledgeBaseFileSpec);
-
-            // make sure there's a KB record (if AI created it, there will be, but why not allow users to create
-            //  AI KBs without AI...)
-            AdaptItKnowledgeBase.KBRow aKBRow = null;
-            if (aikb.KB.Count == 0)
-                aKBRow = aikb.KB.AddKBRow("4", null, null, "1");
-            else
-                aKBRow = aikb.KB[0];
-
-            // get the proper MAP element
-            AdaptItKnowledgeBase.MAPRow aMAPRow = aikb.MAP.FindBymn(nMapValue.ToString());
-            if (aMAPRow == null)
-            {
-                // have to add it
-                System.Diagnostics.Debug.Assert(aKBRow != null);
-                aMAPRow = aikb.MAP.AddMAPRow(nMapValue.ToString(), aKBRow);
-            }
-
-            // get the proper Source Word element
-            AdaptItKnowledgeBase.TURow aTURow = aikb.TU.FindByk(strSourceWord);
-            if (aTURow == null)
-            {
-                System.Diagnostics.Debug.Assert(aMAPRow != null);
-                aTURow = aikb.TU.AddTURow("0", strSourceWord, aMAPRow);
-            }
-
-            // see if the particular target word entry is there...
-            System.Diagnostics.Debug.Assert(aTURow != null);
-            foreach (AdaptItKnowledgeBase.RSRow aRSRow in aTURow.GetRSRows())
-                if (aRSRow.a == strTargetWord)
-                    return;
-
-            // otherwise, add a new RS element for this word
-            aikb.RS.AddRSRow("1", strTargetWord, aTURow);
-            File.Copy(m_strKnowledgeBaseFileSpec, m_strKnowledgeBaseFileSpec + ".bak", true);
-            aikb.WriteXml(m_strKnowledgeBaseFileSpec);
-#endif
-        }
-        */
-
         // for a NonRoman AI Project, the punctuation is in adjacent rows e.g.:
         // PunctuationPairsSourceSet(stores space for an empty cell)	?.,;:"!()<>{}[]“”‘’
         // PunctuationPairsTargetSet(stores space for an empty cell)	?.,;:"!()<>{}[]“”‘’
@@ -723,7 +624,7 @@ namespace SilEncConverters40
         /// Edit the knowledgebase and optionally return the selected source word
         /// </summary>
         /// <returns>the source word selected in the edit dialog</returns>
-        public string EditKnowledgeBase(string strFilter)
+        public string EditKnowledgeBase(string strFilter, bool useShow = false)
         {
             if (!String.IsNullOrEmpty(strFilter))
                 strFilter = strFilter.Trim(m_caDelimitersForward ?? CaSplitChars);
@@ -739,9 +640,14 @@ namespace SilEncConverters40
 
             _dlgSourceFormsForm.SelectedWord = strFilter;
 
-            if (_dlgSourceFormsForm.ShowDialog() == DialogResult.OK)
+            if (useShow)
+            {
+                _dlgSourceFormsForm.Show();
+            }
+            else if (_dlgSourceFormsForm.ShowDialog() == DialogResult.OK)
+            {
                 return _dlgSourceFormsForm.SelectedWord;
-
+            }
             return null;
         }
 

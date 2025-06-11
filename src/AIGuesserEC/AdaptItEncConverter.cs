@@ -9,14 +9,18 @@ namespace SilEncConverters40
 	/// <summary>
 	/// Managed EncConverter for AdaptIt Knowledge Base data
 	/// </summary>
-	[GuidAttribute("2734A74B-6E88-40c4-8D0A-016A421D26CF")] 
-    // normally these subclasses are treated as the base class (i.e. the 
-    //  client can use them orthogonally as IEncConverter interface pointers
-    //  so normally these individual subclasses would be invisible), but if 
-    //  we add 'ComVisible = false', then it doesn't get the registry 
-    //  'HKEY_CLASSES_ROOT\SilEncConverters40.TecEncConverter' which is the basis of 
-    //  how it is started (see EncConverters.AddEx).
-    public class AdaptItEncConverter : AdaptItKBReader
+#if X64
+	[GuidAttribute("2734A74B-6E88-40c4-8D0A-016A421D26CF")]
+#else
+	[GuidAttribute("B421C839-D95E-40E4-86BF-A3B0E4510252")]
+#endif
+	// normally these subclasses are treated as the base class (i.e. the 
+	//  client can use them orthogonally as IEncConverter interface pointers
+	//  so normally these individual subclasses would be invisible), but if 
+	//  we add 'ComVisible = false', then it doesn't get the registry 
+	//  'HKEY_CLASSES_ROOT\SilEncConverters40.TecEncConverter' which is the basis of 
+	//  how it is started (see EncConverters.AddEx).
+	public class AdaptItEncConverter : AdaptItKBReader
     {
         public const string strDisplayName = "AdaptIt Knowledge Base Converter";
         public const string strHtmlFilename = "AdaptIt_Plug-in_About_box.htm";
@@ -305,6 +309,11 @@ namespace SilEncConverters40
                 // go thru the words by chunks...
                 for (nWordIndex = 0; nWordIndex <= (lstInputTokens.Count - nMapNumber); nWordIndex++)
                 {
+					// we might have already done this word if it were part of a longer string of words. So
+					//	skip it if so
+					if (lstOutputTokens[nWordIndex]?.Contains(chNeverUsedChar) ?? false)
+						continue;
+
                     // the string to search for might be composed of multiple tokens (e.g. if we're doing kb.map=2)
                     string strSearchToken = lstInputTokens[nWordIndex];
                     if (nMapNumber > 1)
@@ -340,16 +349,24 @@ namespace SilEncConverters40
                         Util.DebugWriteLine(this, "A dict elem is '" + key + "'");
                         break;  // stop after first time
                     }
-                    string strLookedup;
-                    if (mapLookup.TryGetValue(strSearchToken, out strLookedup))
-                    {
-                        // capture the converted word here. The multiple tokens of a multi-word search phrase, 
-                        //  however, may be replaced by a single word, so we have to adjust the lists to account
-                        //  for this.
-                        AdjustLists(strSearchToken, strLookedup, nMapNumber, nWordIndex, 
-                            ref lstInputTokens, ref lstOutputTokens,
-                            ref lstInputInBetweenTokens, ref lstOutputInBetweenTokens);
-                    }
+
+					if (!mapLookup.TryGetValue(strSearchToken, out string strLookedup))
+					{
+						// unless we have a fallback converter, just skip past this word if we didn't find a lookup
+						//	in the AI maps. But we only use the fallback converter if we're doing a word at a time (i.e. nMapNumber = 1)
+						if ((theFallbackEc == null) || (nMapNumber > 1))
+							continue;
+
+						// otherwise, we have a fallback converter, so use it to convert the word
+						strLookedup = theFallbackEc.Convert(strSearchToken);
+					}
+
+					// capture the converted word here. The multiple tokens of a multi-word search phrase, 
+					//  however, may be replaced by a single word, so we have to adjust the lists to account
+					//  for this.
+					AdjustLists(strSearchToken, strLookedup, nMapNumber, nWordIndex, 
+                        ref lstInputTokens, ref lstOutputTokens,
+                        ref lstInputInBetweenTokens, ref lstOutputInBetweenTokens);
                 }
             }
 
