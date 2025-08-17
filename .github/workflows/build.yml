@@ -69,7 +69,7 @@ jobs:
 
   publish_nuget:
     needs: build-windows
-    runs-on: windows-2019
+    runs-on: windows-latest
     strategy:
        # Keep building other jobs even if another fails, to show what _is_ still working.
        fail-fast: false
