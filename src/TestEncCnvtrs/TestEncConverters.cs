@@ -12,9 +12,6 @@ using ECInterfaces;
 using SilEncConverters40;
 using System.Reflection;
 using System.Threading;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Security.Cryptography;
 
 namespace TestEncCnvtrs
 {
@@ -412,23 +409,51 @@ namespace TestEncCnvtrs
 		}
 
 		[Test]
-		public void TestAdaptItKnowledgebaseConverter()
+		[TestCase("UnitTesting-AiKbConverter-Hindi", "Hindi to English adaptations", "यह, परीक्षा है?", "%3%this%she%he%, %2%examination%test% %2%PRES%is%?")]  // non-roman
+		[TestCase("UnitTesting-AiKbConverter-Urdu-1", "Urdu to PBS Roman adaptations", "طرف ہُوی خُداواند", "taraf ہُوی Khudawand")]                            // rtl
+		[TestCase("UnitTesting-AiKbConverter-Urdu-2", "Urdu to PBS Roman adaptations", "طرف کر کے خُداواند", "taraf karke Khudawand")]                       // 2->1 mapping
+		public void TestAdaptItKnowledgebaseConverter(string friendlyName, string adaptItProjectName, string input, string output)
 		{
-			const string cstrFriendlyName = "UnitTesting-AiKbConverter";
 			var theEcs = DirectableEncConverter.EncConverters;
 
 			var dir = GetTestSourceFolder();
-			var pathToAiKbFile = Path.Combine(Path.Combine(dir, "Hindi to English adaptations"), "Hindi to English adaptations.xml");
+			var pathToAiKbFile = Path.Combine(Path.Combine(dir, adaptItProjectName), $"{adaptItProjectName}.xml");
 
-			theEcs.AddConversionMap(cstrFriendlyName, pathToAiKbFile, ConvType.Unicode_to_from_Unicode,
+			theEcs.AddConversionMap(friendlyName, pathToAiKbFile, ConvType.Unicode_to_from_Unicode,
 						EncConverters.strTypeSILadaptit, "UNICODE", "UNICODE",
 						ProcessTypeFlags.DontKnow);
-			var theEc = theEcs[cstrFriendlyName];
-			string m_hindiInput = "यह, परीक्षा है?";
-			string m_englishOutput = "%3%this%she%he%, %2%examination%test% %2%PRES%is%?";
+			var theEc = theEcs[friendlyName];
 
-			var strOutput = theEc.Convert(m_hindiInput);
-			Assert.AreEqual(strOutput, m_englishOutput);
+			var strOutput = theEc.Convert(input);
+			Assert.AreEqual(strOutput, output);
+		}
+
+		[Test]
+		[TestCase("UnitTesting-AiKbConverter-Urdu-fallback-1", "Urdu to PBS Roman adaptations", "PBS2urdu-bb-Pxt.tec", "false",
+					"طرف ہُوی خُداواند", "taraf húí Khudawand")]                          // rtl
+		[TestCase("UnitTesting-AiKbConverter-Urdu-fallback-2", "Urdu to PBS Roman adaptations", "PBS2urdu-bb-Pxt.tec", "true",
+					"طرف ہُوی خُداواند", "taraf ہُوی Khudawand")]                          // rtl
+		public void TestAdaptItKnowledgebaseConverterAsPrimaryWithFallback(string friendlyName, string adaptItProjectName,
+			string fallbackPath, string directionForward, string input, string output)
+		{
+			var theEcs = DirectableEncConverter.EncConverters;
+
+			var dir = GetTestSourceFolder();
+			var pathToAiKbFile = Path.Combine(Path.Combine(dir, adaptItProjectName), $"{adaptItProjectName}.xml");
+			var fallbackFileSpec = Path.Combine(dir, fallbackPath);
+            var fallbackConverterName = Path.GetFileNameWithoutExtension(fallbackFileSpec);
+            theEcs.AddConversionMap(fallbackConverterName, fallbackFileSpec,
+						ConvType.Unicode_to_from_Unicode, EncConverters.strTypeSILtec, "UNICODE", "UNICODE",
+						ProcessTypeFlags.Transliteration);
+
+			var converterSpec = $"{pathToAiKbFile};{fallbackConverterName};{directionForward}";
+			theEcs.AddConversionMap(friendlyName, converterSpec, ConvType.Unicode_to_from_Unicode,
+						EncConverters.strTypeSILadaptit, "UNICODE", "UNICODE",
+						ProcessTypeFlags.Transliteration);
+			var theEc = theEcs[friendlyName];
+
+			var strOutput = theEc.Convert(input);
+			Assert.AreEqual(strOutput, output);
 		}
 
 		byte[] m_bytesSenufo = new byte[] {
