@@ -170,8 +170,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.github\workflows\build.yml = .github\workflows\build.yml
 		DetermineBindingRedirectVersion.ps1 = DetermineBindingRedirectVersion.ps1
 		build\Encoding-Converters-Core.props = build\Encoding-Converters-Core.props
-		latest redirects.txt = latest redirects.txt
 		Package.Debug.nuspec = Package.Debug.nuspec
+		LatestRedirects.config = LatestRedirects.config
 		Package.Release.nuspec = Package.Release.nuspec
 		build\VerifyDllVersions.ps1 = build\VerifyDllVersions.ps1
 	EndProjectSection

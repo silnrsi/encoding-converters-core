@@ -522,13 +522,16 @@
                         </TypeLib>
                     </File>
                 </Component>
+                <Component Id="LatestRedirects.config" Guid="{3DD9F5FD-CEF3-4423-837C-43C32246782E}">
+                    <File Id="LatestRedirects.config" Name="LatestRedirects.config" KeyPath="yes" Source="..\..\LatestRedirects.config"/>
+                </Component>
                 <Component Id="EncConvertersAppDataMover40.exe" Guid="{10382D5D-6A0D-4FA2-AEE7-B03F98BD973F}">
                     <File Id="EncConvertersAppDataMover40.exe" Name="EncConvertersAppDataMover40.exe" ReadOnly="yes" KeyPath="yes" Source="..\..\output\x64\release\EncConvertersAppDataMover40.exe" Assembly=".net" AssemblyApplication="EncConvertersAppDataMover40.exe" AssemblyManifest="EncConvertersAppDataMover40.exe"/>
                 </Component>
-				<Component Id="ECFileConverter.exe" Guid="{4A7AF833-0476-4C03-9CE7-3EC5668149FC}">
-					<File Id="ECFileConverter.exe" Name="ECFileConverter.exe" ReadOnly="yes" KeyPath="yes" Source="..\..\output\x64\release\ECFileConverter.exe" Assembly=".net" AssemblyApplication="ECFileConverter.exe" AssemblyManifest="ECFileConverter.exe"/>
-				</Component>
-				<Component Id="Geckofx_Core.dll" Guid="{C49DCC6A-B05E-4A28-8421-FBFBB591A233}">
+                <Component Id="ECFileConverter.exe" Guid="{4A7AF833-0476-4C03-9CE7-3EC5668149FC}">
+                    <File Id="ECFileConverter.exe" Name="ECFileConverter.exe" ReadOnly="yes" KeyPath="yes" Source="..\..\output\x64\release\ECFileConverter.exe" Assembly=".net" AssemblyApplication="ECFileConverter.exe" AssemblyManifest="ECFileConverter.exe"/>
+                </Component>
+                <Component Id="Geckofx_Core.dll" Guid="{C49DCC6A-B05E-4A28-8421-FBFBB591A233}">
                     <File Id="Geckofx_Core.dll" Name="Geckofx-Core.dll" Vital="yes" KeyPath="yes" AssemblyManifest="Geckofx_Core.dll" AssemblyApplication="Geckofx_Core.dll" Assembly=".net" Source="..\..\output\x64\release\GeckoFx-Core.dll"/>
                 </Component>
                 <Component Id="Geckofx_Winforms.dll" Guid="{FF439F0E-7A49-4224-8733-8AA642C33D26}">

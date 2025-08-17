@@ -177,9 +177,7 @@
     <Compile Include="AutoConfigDialog.Designer.cs">
       <DependentUpon>AutoConfigDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="CmpdAutoConfigDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="CmpdAutoConfigDialog.cs" />
     <Compile Include="CmpdAutoConfigDialog.Designer.cs">
       <DependentUpon>CmpdAutoConfigDialog.cs</DependentUpon>
     </Compile>
@@ -187,9 +185,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="CmpdEncConverterConfig.cs" />
-    <Compile Include="CpAutoConfigDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="CpAutoConfigDialog.cs" />
     <Compile Include="CpAutoConfigDialog.Designer.cs">
       <DependentUpon>CpAutoConfigDialog.cs</DependentUpon>
     </Compile>
@@ -214,9 +210,7 @@
     <Compile Include="ExeEncConverter.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="FallbackAutoConfigDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="FallbackAutoConfigDialog.cs" />
     <Compile Include="FallbackAutoConfigDialog.Designer.cs">
       <DependentUpon>FallbackAutoConfigDialog.cs</DependentUpon>
     </Compile>
@@ -253,9 +247,7 @@
     <Compile Include="ImplTypeList.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="MetaCmpdAutoConfigDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="MetaCmpdAutoConfigDialog.cs" />
     <Compile Include="MetaCmpdAutoConfigDialog.Designer.cs">
       <DependentUpon>MetaCmpdAutoConfigDialog.cs</DependentUpon>
     </Compile>
