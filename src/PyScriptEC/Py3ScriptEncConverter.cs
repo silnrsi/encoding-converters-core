@@ -2,13 +2,9 @@
 //
 using System;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Text;
-using Microsoft.Win32;                  // for RegistryKey
 using ECInterfaces;                     // for IEncConverter
 using Python.Runtime;
-using System.Windows.Forms;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace SilEncConverters40
 {
@@ -79,7 +75,10 @@ namespace SilEncConverters40
                 m_timeModified = DateTime.MinValue;
 
                 // do the load at this point; not that we need it, but for checking that everything's okay.
-                Load();
+                // UPDATE (2025-07-21): Don't do this now, bkz it might be on a different thread and Python.Net
+                //    doesn't allow that (this causes an error disposing of the GILState object when used in Clipboard
+                //    EncConverter, bkz it seems this causes us to release the GIL on a different thread).
+                // Load();
             }
             Util.DebugWriteLine(this, "END");
         }
@@ -179,32 +178,32 @@ namespace SilEncConverters40
                 var strErrorExtraValue = strScriptPath;
                 try
                 {
-					var distroPath = DistroPath(ConverterIdentifier);
-					try
-					{
-						if (Runtime.PythonDLL != distroPath)
-							Runtime.PythonDLL = distroPath;
+                    var distroPath = DistroPath(ConverterIdentifier);
+                    try
+                    {
+                        if (Runtime.PythonDLL != distroPath)
+                            Runtime.PythonDLL = distroPath;
 
-						if (!PythonEngine.IsInitialized)
-						{
-							PythonEngine.Initialize();
-						}
-					}
-					catch (Exception e)
-					{
-						if (e.Message.Contains("This property must be set before runtime is initialized") && (Runtime.PythonDLL != distroPath))
-						{
-							EncConverters.ThrowError(ErrStatus.CantOpenReadMap, $"You have to restart the {strDisplayName} Setup dialog to reset the Python interface");
-						}
+                        if (!PythonEngine.IsInitialized)
+                        {
+                            PythonEngine.Initialize();
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        if (e.Message.Contains("This property must be set before runtime is initialized") && (Runtime.PythonDLL != distroPath))
+                        {
+                            EncConverters.ThrowError(ErrStatus.CantOpenReadMap, $"You have to restart the {strDisplayName} Setup dialog to reset the Python interface");
+                        }
 
-						// see if this helps (it doesn't seem to, but it also doesn't die...
-						PythonEngine.Shutdown();
-						throw;
-					}
+                        // see if this helps (it doesn't seem to, but it also doesn't die...
+                        PythonEngine.Shutdown();
+                        throw;
+                    }
 
-					// causes access violation and may not be needed (since this isn't async):
-					//  PythonEngine.BeginAllowThreads();
-					dynamic sysModule = Py.Import("sys");
+                    // causes access violation and may not be needed (since this isn't async):
+                    //  PythonEngine.BeginAllowThreads();
+                    dynamic sysModule = Py.Import("sys");
                     strScriptDir = strScriptDir.Replace(@"\", "/");
                     sysModule.path.insert(0, strScriptDir);
 
@@ -277,9 +276,9 @@ namespace SilEncConverters40
                 using (Py.GIL())
                 {
                     string strOutput = moduleImported?.Convert(strInput);
-					StringToProperByteStar(strOutput, lpOutBuffer, ref rnOutLen);
-					Util.DebugWriteLine(this, "Result len " + rnOutLen.ToString());
-					Util.DebugWriteLine(this, "END");
+                    StringToProperByteStar(strOutput, lpOutBuffer, ref rnOutLen);
+                    Util.DebugWriteLine(this, "Result len " + rnOutLen.ToString());
+                    Util.DebugWriteLine(this, "END");
                 }
             }
 
@@ -294,21 +293,21 @@ namespace SilEncConverters40
             get { return typeof(Py3ScriptEncConverterConfig).AssemblyQualifiedName; }
         }
 
-		internal static unsafe void StringToProperByteStar(string strOutput, byte* lpOutBuffer, ref int rnOutLen)
-		{
-			if (String.IsNullOrEmpty(strOutput))
-			{
-				rnOutLen = 0;
-			}
-			else
-			{
-				int nLen = strOutput.Length * 2;
-				if (nLen > (int)rnOutLen)
-					EncConverters.ThrowError(ErrStatus.OutputBufferFull);
-				rnOutLen = nLen;
-				ECNormalizeData.StringToByteStar(strOutput, lpOutBuffer, rnOutLen, false);
-			}
-		}
+        internal static unsafe void StringToProperByteStar(string strOutput, byte* lpOutBuffer, ref int rnOutLen)
+        {
+            if (String.IsNullOrEmpty(strOutput))
+            {
+                rnOutLen = 0;
+            }
+            else
+            {
+                int nLen = strOutput.Length * 2;
+                if (nLen > (int)rnOutLen)
+                    EncConverters.ThrowError(ErrStatus.OutputBufferFull);
+                rnOutLen = nLen;
+                ECNormalizeData.StringToByteStar(strOutput, lpOutBuffer, rnOutLen, false);
+            }
+        }
 
         internal static string LogExceptionMessage(string className, Exception ex)
         {
@@ -323,6 +322,6 @@ namespace SilEncConverters40
             return msg;
         }
 
-        #endregion Abstract Base Class Overrides
+#endregion Abstract Base Class Overrides
     }
 }

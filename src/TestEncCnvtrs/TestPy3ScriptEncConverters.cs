@@ -29,8 +29,8 @@ namespace TestEncCnvtrs
         string m_repoFile;
 
         // best if you use these as the install path for the two flavors of 3.9 Python for these tests
-        private const string PathPython64 = @"D:\Python\Python39";
-        private const string PathPython86 = @"D:\Python\Python39-32";
+        private const string PathPython64 = @"C:\Users\pete_\AppData\Local\Programs\Python\Python39\Python39.dll";
+        private const string PathPython86 = @"C:\Python37-32\Python37.dll";
 
         private const string EnvironmentVariableNamePythonHome = "PYTHONHOME";
 
@@ -75,7 +75,7 @@ namespace TestEncCnvtrs
 
                 if (Environment.Is64BitProcess)
                 {
-                    if (!Directory.Exists(PathPython64))
+                    if (!File.Exists(PathPython64))
                     {
                         Assert.Fail("The Python tests below will not work unless you have a x64 version of Python installed");
                     }
@@ -86,7 +86,7 @@ namespace TestEncCnvtrs
                 }
                 else  // x86
                 {
-                    if (!Directory.Exists(PathPython86))
+                    if (!File.Exists(PathPython86))
                     {
                         Assert.Fail("The Python tests below will not work unless you have a x86 version of Python installed");
                     }
@@ -96,7 +96,7 @@ namespace TestEncCnvtrs
                     }
                 }
 
-                InitializePythonHomePath(m_testPythonHome);
+                InitializePythonHomePath(Path.GetDirectoryName(m_testPythonHome));
             }
 
             m_repoFile = null;
@@ -233,7 +233,7 @@ namespace TestEncCnvtrs
         {
             var converterName = "UnitTesting-Python3-ReverseString-Unicode";
             var dir = Path.Combine(TestEncConverters.GetMapsTablesFolder(), "PythonExamples");
-            var converterIdentifierForPython3 = @$"{Path.Combine(dir, "ReverseString.py")};{m_testPythonHome}\python39.dll";
+            var converterIdentifierForPython3 = @$"{Path.Combine(dir, "ReverseString.py")};{m_testPythonHome}";
             m_encConverters.AddConversionMap(converterName, converterIdentifierForPython3,
                                              ConvType.Unicode_to_from_Unicode, EncConverters.strTypeSILPy3Script,
                                              "UNICODE", "UNICODE", ProcessTypeFlags.PythonScript);
