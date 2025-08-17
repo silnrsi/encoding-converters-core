@@ -29,7 +29,7 @@ namespace SilEncConverters40
         protected char[] m_caDelimitersForward;
         protected char[] m_caDelimitersReverse;
         protected string      m_strKnowledgeBaseFileSpec;
-        protected string m_strNormalizerFileSpec;
+        protected string m_strFallbackConverterName;
         protected string m_strProjectFileSpec;
         public bool              NormalizerDirectionForward = true;
         public NormalizeFlags    NormalizerFlags = NormalizeFlags.None;
@@ -64,7 +64,6 @@ namespace SilEncConverters40
 
         public static char[] CaSplitChars = new [] { '\r', '\n', '\t', ' ' };
 
-        protected IEncConverter theNormalizerEc;
         protected DirectableEncConverter theFallbackEc;
 
         public bool FileHasNamespace
@@ -89,11 +88,11 @@ namespace SilEncConverters40
 
             m_bLegacy = (EncConverter.NormalizeLhsConversionType(conversionType) == NormConversionType.eLegacy);
 
-            ParseConverterSpec(converterSpec, out string knowledgebaseFileSpec, out string normalizerFileSpec,
+            ParseConverterSpec(converterSpec, out string knowledgebaseFileSpec, out string fallbackConverterName,
                                out bool normalizerDirectionForward, out NormalizeFlags normalizeFlags);
 
             m_strKnowledgeBaseFileSpec = knowledgebaseFileSpec;
-            m_strNormalizerFileSpec = normalizerFileSpec;
+            m_strFallbackConverterName = fallbackConverterName;
             NormalizerDirectionForward = normalizerDirectionForward;
             NormalizerFlags = normalizeFlags;
 
@@ -110,28 +109,23 @@ namespace SilEncConverters40
             }
         }
 
-        public static void ParseConverterSpec(string converterSpec, out string knowledgebaseFileSpec, out string normalizerFileSpec,
+        public static void ParseConverterSpec(string converterSpec, out string knowledgebaseFileSpec, out string fallbackConverterName,
                                        out bool normalizerDirectionForward, out NormalizeFlags normalizeFlags)
         {
-            knowledgebaseFileSpec = normalizerFileSpec = null;
+            knowledgebaseFileSpec = fallbackConverterName = null;
             normalizerDirectionForward = true; // default is forward
             normalizeFlags = NormalizeFlags.None; // default is no flags
 
             // the converter spec has 1-4 pieces of information:
             //  a) the same as the original one -- the path to the KB file
-            //  b) the path to a normalizing entity (e.g. cct, tec, map, or a custom
-            //      XML file that has the normalizing correspondences (ala. ???)
-            //    c) if the "normalizing entity" is a tec file, then the path to the fallback
-            //      tec file (which is used when we don't find a hit in the AI map), in that
-            //        case, it can also have a ';false' tacked on to make it go in reverse
-            //        and a normalized form specifier
-            // these two are separated by a ';'
+            //  b) the name of the fallback converter to call for words not in the AI KB
+            //  c & d) settings of direction and normalization form for the fallback converter
             string[] astrPaths = converterSpec.Split(new[] { ';' });
             if (astrPaths.Length >= 1)
                 knowledgebaseFileSpec = astrPaths[0];
 
             if (astrPaths.Length >= 2)
-                normalizerFileSpec = astrPaths[1];
+                fallbackConverterName = astrPaths[1];
 
             if (astrPaths.Length >= 3)
                 normalizerDirectionForward = !(astrPaths[2].ToLower() == "false");
@@ -278,7 +272,6 @@ namespace SilEncConverters40
                     m_mapOfMaps.Clear();
                     m_mapOfReversalMaps = null;
 
-#if !NotUseSchemaGeneratedClass
                     // Since AdaptIt will make different records for two words which are canonically
                     //  equivalent, if we use the class object to read it in via ReadXml, that will throw
                     //  an exception in such a case. So see if using XmlDocument is any less restrictive
@@ -356,131 +349,12 @@ namespace SilEncConverters40
                     // keep track of the modified date, so we can detect a new version to reload
                     m_timeModifiedKB = timeModified;
                     bSomethingChanged = true;
-
-#else
-                AdaptItKnowledgeBase aikb = new AdaptItKnowledgeBase();
-                try
-                {
-                    aikb.ReadXml(m_strKnowledgeBaseFileSpec);
-                    if (aikb.KB.Count > 0)
-                    {
-                        AdaptItKnowledgeBase.KBRow aKBRow = aikb.KB[0];
-                        foreach (AdaptItKnowledgeBase.MAPRow aMapRow in aKBRow.GetMAPRows())
-                        {
-                            foreach (AdaptItKnowledgeBase.TURow aTURow in aMapRow.GetTURows())
-                            {
-                                string strValue = null;
-                                AdaptItKnowledgeBase.RSRow[] aRSRows = aTURow.GetRSRows();
-                                if (aRSRows.Length > 1)
-                                {
-                                    // if there is more than one mapping, then make it %count%val1%val2%...
-                                    //  so people can use the Word Pick macro to choose it
-                                    strValue = String.Format("%{0}%", aRSRows.Length);
-                                    foreach (AdaptItKnowledgeBase.RSRow aRSRow in aRSRows)
-                                        strValue += String.Format("{0}%", aRSRow.a);
-                                }
-                                else if (aRSRows.Length == 1)
-                                {
-                                    AdaptItKnowledgeBase.RSRow aRSRow = aRSRows[0];
-                                    if (aRSRow.a == "<Not In KB>")
-                                        continue;   // skip this one so we *don't* get a match later on.
-                                    else
-                                        strValue = aRSRow.a;
-                                }
-
-                                m_mapLookup[aTURow.k] = strValue;
-                            }
-                        }
-                    }
-                }
-                catch (System.Data.DataException ex)
-                {
-                    if (ex.Message == "A child row has multiple parents.")
-                    {
-                        // this happens when the knowledge base has invalid data in it (e.g. when there is two
-                        //  canonically equivalent words in different records). This is technically a bug in 
-                        //  AdaptIt.
-                        throw new ApplicationException("The AdaptIt knowledge base has invalid data in it! Contact silconverters_support@sil.org", ex);
-                    }
-
-                    throw ex;
-                }
-#endif
                 }
 
-                // next check on the normalizer file... if we have one...
-                if (!String.IsNullOrEmpty(m_strNormalizerFileSpec))
+                // next check on the fallback converter... if we have one...
+                if (!String.IsNullOrEmpty(m_strFallbackConverterName) && (theFallbackEc == null))
                 {
-                    // make sure it's there and get the last 
-                    //  time it was modified
-                    timeModified = DateTime.Now; // don't care really, but have to initialize it.
-                    if (!DoesFileExist(m_strNormalizerFileSpec, ref timeModified))
-                        EncConverters.ThrowError(ErrStatus.CantOpenReadMap, m_strNormalizerFileSpec);
-
-                    // if it has been modified or it's not already loaded...
-                    if (timeModified > m_timeModifiedNorm)
-                    {
-                        // this map represents the lookup between unique normalized form
-                        //  and source phrases (i.e. words on the lhs of one of the maps)
-                        //  that have that same normalized form. a tryget on this map will
-                        //  give a List<string> of all source phrases with the same normalized
-                        //  form
-                        m_mapNormalFormToSourcePhrases.Clear();
-
-                        int nDummy = 0;
-                        string strDummy = null;
-                        var filepathlen = m_strNormalizerFileSpec.Length;
-                        if (filepathlen > 3 &&
-                            (m_strNormalizerFileSpec.Substring(filepathlen-3, 3).ToLower() == "cct"))
-                        {
-                            if (theNormalizerEc == null)
-                            {
-                                // Get the (for now) EncConverter that does the normalizing
-                                int processTypeFlags = (int)ProcessTypeFlags.SpellingFixerProject;
-                                ConvType ct = ConvType.Unicode_to_Unicode;
-                                theNormalizerEc = new CcEncConverter();
-                                theNormalizerEc.Initialize(m_strNormalizerFileSpec, m_strNormalizerFileSpec,
-                                    ref strDummy, ref strDummy, ref ct,
-                                    ref processTypeFlags, nDummy, nDummy, true);
-                            }
-
-                            foreach (var mapOfSourceWordsToTargetWords in m_mapOfMaps.Values)
-                            {
-                                foreach (string strSourceWords in mapOfSourceWordsToTargetWords.Keys)
-                                {
-                                    string strNormalizedSourceWords = CallSafeNormalizedConvert(strSourceWords);
-                                    List<string> lstNormalizedForms;
-                                    if (!m_mapNormalFormToSourcePhrases.TryGetValue(strNormalizedSourceWords, out lstNormalizedForms))
-                                    {
-                                        lstNormalizedForms = new List<string>();
-                                        m_mapNormalFormToSourcePhrases.Add(strNormalizedSourceWords, lstNormalizedForms);
-                                    }
-                                    if (!lstNormalizedForms.Contains(strSourceWords))
-                                        lstNormalizedForms.Add(strSourceWords);
-                                }
-                            }
-                        }
-                        else
-                        {
-                            // until I can redo this, if it's a teckit map, assume it's an algorithmic conversion as fall-back
-                            if (theFallbackEc == null)
-                            {
-                                ConvType ct = ConvType.Unicode_to_from_Unicode;
-                                int processTypeFlags = (int)ProcessTypeFlags.Transliteration;
-                                var fallback = new TecEncConverter();
-                                fallback.Initialize(m_strNormalizerFileSpec, m_strNormalizerFileSpec,
-                                    ref strDummy, ref strDummy, ref ct,
-                                    ref processTypeFlags, nDummy, nDummy, true);
-                                fallback.DirectionForward = NormalizerDirectionForward;
-                                fallback.NormalizeOutput = NormalizerFlags;
-                                theFallbackEc = new DirectableEncConverter(fallback);
-                            }
-                        }
-
-                        // keep track of the modified date, so we can detect a new version to reload
-                        m_timeModifiedNorm = timeModified;
-                        bSomethingChanged = true;
-                    }
+                    theFallbackEc = new DirectableEncConverter(m_strFallbackConverterName, NormalizerDirectionForward, NormalizerFlags);
                 }
             }
 
@@ -491,8 +365,8 @@ namespace SilEncConverters40
         {
             try
             {
-                if (theNormalizerEc != null)
-                    return theNormalizerEc.Convert(strSourceWords);
+                if (theFallbackEc != null)
+                    return theFallbackEc.Convert(strSourceWords);
             }
             catch
             {
@@ -500,6 +374,7 @@ namespace SilEncConverters40
             return strSourceWords;
         }
 
+        /*
         /// <summary>
         /// return the list of words/phrases that are similar to given source word.
         /// "similar" is defined as having the same normalized form as given in by
@@ -539,6 +414,7 @@ namespace SilEncConverters40
 
             return null;
         }
+        */
 
         private static string GetLanguageElement(string strProjectFileContents, string strLanguageType, 
             string strEntryName, string strDefaultValue)
@@ -629,7 +505,7 @@ namespace SilEncConverters40
             if (!String.IsNullOrEmpty(strFilter))
                 strFilter = strFilter.Trim(m_caDelimitersForward ?? CaSplitChars);
 
-            if (Load(true) || (_dlgSourceFormsForm == null))
+            if (Load(true) || useShow || (_dlgSourceFormsForm == null))
                 _dlgSourceFormsForm = new ViewSourceFormsForm(MapOfMaps, _liSourceLang,
                                                               _liTargetLang,
                                                               m_caDelimitersForward ?? CaSplitChars,

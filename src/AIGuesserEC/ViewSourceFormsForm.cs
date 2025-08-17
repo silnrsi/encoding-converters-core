@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -234,7 +234,22 @@ namespace SilEncConverters40
             progressBar.Visible = false;
         }
 
-        private void mergeProjectsToolStripMenuItem_Click(object sender, EventArgs e)
+		private void buttonOtherCommands_MouseDown(object sender, MouseEventArgs e)
+		{
+			contextMenuStripOtherCommands.Show(buttonOtherCommands, new Point(0, buttonOtherCommands.Height));
+		}
+
+		private void buttonCancel_Click(object sender, EventArgs e)
+		{
+			this.Close();
+		}
+
+		private void targetFormDisplayControl_Load(object sender, EventArgs e)
+		{
+
+		}
+
+		private void mergeProjectsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             progressBar.Visible = true;
             Parent.MergeKb(progressBar);

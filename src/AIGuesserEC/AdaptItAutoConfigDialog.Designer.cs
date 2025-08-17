@@ -28,6 +28,7 @@ namespace SilEncConverters40
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AdaptItAutoConfigDialog));
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.label1 = new System.Windows.Forms.Label();
             this.listBoxProjects = new System.Windows.Forms.ListBox();
@@ -127,9 +128,9 @@ namespace SilEncConverters40
             this.labelNormalizationConverter.AutoSize = true;
             this.labelNormalizationConverter.Location = new System.Drawing.Point(3, 350);
             this.labelNormalizationConverter.Name = "labelNormalizationConverter";
-            this.labelNormalizationConverter.Size = new System.Drawing.Size(137, 13);
+            this.labelNormalizationConverter.Size = new System.Drawing.Size(140, 13);
             this.labelNormalizationConverter.TabIndex = 3;
-            this.labelNormalizationConverter.Text = "Optional fallback converter:";
+            this.labelNormalizationConverter.Text = "Optional Fallback converter:";
             // 
             // groupBox1
             // 
@@ -175,12 +176,11 @@ namespace SilEncConverters40
             // textBoxNormalizationPath
             // 
             this.textBoxNormalizationPath.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.helpProvider.SetHelpString(this.textBoxNormalizationPath, "Enter the path to the fallback TECkit map (use the .map file to auto-reload when " +
-        "changes are made, or use .tec file path)\r\n");
-            this.textBoxNormalizationPath.Location = new System.Drawing.Point(146, 345);
+            this.helpProvider.SetHelpString(this.textBoxNormalizationPath, resources.GetString("textBoxNormalizationPath.HelpString"));
+            this.textBoxNormalizationPath.Location = new System.Drawing.Point(149, 345);
             this.textBoxNormalizationPath.Name = "textBoxNormalizationPath";
             this.helpProvider.SetShowHelp(this.textBoxNormalizationPath, true);
-            this.textBoxNormalizationPath.Size = new System.Drawing.Size(417, 20);
+            this.textBoxNormalizationPath.Size = new System.Drawing.Size(414, 20);
             this.textBoxNormalizationPath.TabIndex = 4;
             this.textBoxNormalizationPath.TextChanged += new System.EventHandler(this.textBoxNormalizationPath_TextChanged);
             // 
@@ -196,7 +196,7 @@ namespace SilEncConverters40
             // 
             // buttonCreateNewProject
             // 
-            this.buttonCreateNewProject.Location = new System.Drawing.Point(146, 316);
+            this.buttonCreateNewProject.Location = new System.Drawing.Point(149, 316);
             this.buttonCreateNewProject.Name = "buttonCreateNewProject";
             this.buttonCreateNewProject.Size = new System.Drawing.Size(148, 23);
             this.buttonCreateNewProject.TabIndex = 6;
@@ -231,7 +231,7 @@ namespace SilEncConverters40
             this.checkBoxFallbackReverseDirection.AutoSize = true;
             this.helpProvider.SetHelpString(this.checkBoxFallbackReverseDirection, "Check this to have the fallback TECkit map run in the reverse direction (for bi-d" +
         "irectional maps)");
-            this.checkBoxFallbackReverseDirection.Location = new System.Drawing.Point(146, 374);
+            this.checkBoxFallbackReverseDirection.Location = new System.Drawing.Point(149, 374);
             this.checkBoxFallbackReverseDirection.Name = "checkBoxFallbackReverseDirection";
             this.helpProvider.SetShowHelp(this.checkBoxFallbackReverseDirection, true);
             this.checkBoxFallbackReverseDirection.Size = new System.Drawing.Size(66, 17);
@@ -280,7 +280,7 @@ namespace SilEncConverters40
         private System.Windows.Forms.OpenFileDialog openFileDialogBrowse;
         private System.Windows.Forms.Button buttonCreateNewProject;
         private System.Windows.Forms.Button buttonViewKb;
-		private System.Windows.Forms.Label labelFallbackDirection;
-		private System.Windows.Forms.CheckBox checkBoxFallbackReverseDirection;
-	}
+        private System.Windows.Forms.Label labelFallbackDirection;
+        private System.Windows.Forms.CheckBox checkBoxFallbackReverseDirection;
+    }
 }

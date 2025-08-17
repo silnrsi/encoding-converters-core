@@ -69,10 +69,10 @@ namespace SilEncConverters40
                 System.Diagnostics.Debug.Assert(!String.IsNullOrEmpty(strConverterIdentifier));
 
                 AdaptItKBReader.ParseConverterSpec(strConverterIdentifier,
-                    out string knowledgebaseFileSpec, out string normalizerFileSpec,
+                    out string knowledgebaseFileSpec, out string fallbackConverterName,
                     out bool normalizerDirectionForward, out NormalizeFlags normalizeFlags);
 
-                textBoxNormalizationPath.Text = normalizerFileSpec;
+                textBoxNormalizationPath.Text = fallbackConverterName;
                 checkBoxFallbackReverseDirection.Checked = !normalizerDirectionForward;
                 if (normalizeFlags != NormalizeFlags.None)
                     m_nfNormalizationFlags = normalizeFlags;
@@ -217,21 +217,21 @@ namespace SilEncConverters40
             if (!String.IsNullOrEmpty(strNormalizationFilePath))
             {
                 if (strNormalizationFilePath[0] != ';')
-                    strNormalizationFilePath = ";" + strNormalizationFilePath;
+                    strNormalizationFilePath = $";{strNormalizationFilePath};";
+
+                // see if we need to tack on a reverse on the fallback TECkit map
+                if (checkBoxFallbackReverseDirection.Checked)
+                {
+                    strNormalizationFilePath += "false";
+                }
+
+                // and finally, see if we need to tack on an exist (non-UI entered) normalization flag
+                if (m_nfNormalizationFlags != NormalizeFlags.None)
+                {
+                    strNormalizationFilePath += $";{m_nfNormalizationFlags}";
+                }
 
                 ConverterIdentifier += strNormalizationFilePath;
-            }
-
-            // see if we need to tack on a reverse on the fallback TECkit map
-            if (checkBoxFallbackReverseDirection.Checked)
-            {
-                ConverterIdentifier += ";false";
-            }
-
-            // and finally, see if we need to tack on an exist (non-UI entered) normalization flag
-            if (m_nfNormalizationFlags != NormalizeFlags.None)
-            {
-                ConverterIdentifier += $";{m_nfNormalizationFlags}";
             }
 
             // if we're actually on the setup tab, then give the exact error.
@@ -268,10 +268,31 @@ namespace SilEncConverters40
 
         private void buttonBrowseNormalizationMap_Click(object sender, EventArgs e)
         {
+#if !UseFileBrowseDialog
+            var theECs = DirectableEncConverter.EncConverters;
+            var theEc = theECs.AutoSelectWithTitle(ConvType.Unknown, "Select the Fallback Converter to use when a word in the input string is not in the AdaptIt knowledgebase");
+
+            if (theEc != null)
+            {
+                if ((((ProcessTypeFlags)theEc.ProcessType) & ProcessTypeFlags.Translation) == ProcessTypeFlags.Translation)
+                    MessageBox.Show(this, "The selected converter is an online translation converter and probably not what you want to use for a transliteration project (it could take hours and use up global usage limits).", EncConverters.cstrCaption);
+
+                textBoxNormalizationPath.Text = theEc.Name;
+
+                checkBoxFallbackReverseDirection.Checked = !theEc.DirectionForward;
+                m_nfNormalizationFlags = theEc.NormalizeOutput;
+                IsModified = true;
+            }
+            else
+            {
+                textBoxNormalizationPath.Text = String.Empty;
+            }
+#else
             if (openFileDialogBrowse.ShowDialog() == DialogResult.OK)
             {
                 textBoxNormalizationPath.Text = openFileDialogBrowse.FileName;
             }
+#endif
         }
 
         private void ButtonCreateNewProjectClick(object sender, EventArgs e)
