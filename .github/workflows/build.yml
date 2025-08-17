@@ -28,19 +28,13 @@ jobs:
       uses: actions/checkout@v4.1.1
 
     # ✅ Install ATL/MFC support
-    - name: Install ATL/MFC components
+    - name: Install missing Visual Studio ATL components
       run: |
-        $vsPaths = @(
-          "C:\Program Files\Microsoft Visual Studio\2022\Enterprise",
-          "C:\Program Files\Microsoft Visual Studio\2022\Community",
-          "C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools"
-        )
-        $vsPath = $vsPaths | Where-Object { Test-Path $_ } | Select-Object -First 1
-        if (-not $vsPath) { throw "Could not find Visual Studio installation." }
-        & "$vsPath\Installer\vs_installer.exe" modify --installPath "$vsPath" `
-          --add Microsoft.VisualStudio.Component.VC.ATL `
-          --add Microsoft.VisualStudio.Component.VC.ATLMFC `
-          --quiet --norestart --wait
+        Set-Location "C:\Program Files (x86)\Microsoft Visual Studio\Installer\"
+        $vsInstallPath = & .\vswhere.exe -latest -products * -requires Microsoft.Component.MSBuild -property installationPath
+        $atlComponent = '--add Microsoft.VisualStudio.Component.VC.ATL'
+        $args = @('modify', "--installPath", "`"$vsInstallPath`"", $atlComponent, '--quiet', '--norestart', '--nocache')
+        Start-Process -FilePath .\vs_installer.exe -ArgumentList $args -Wait -PassThru -WindowStyle Hidden
 
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v2
