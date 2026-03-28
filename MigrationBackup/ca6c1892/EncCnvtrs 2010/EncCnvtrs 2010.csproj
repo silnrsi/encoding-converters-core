@@ -1,0 +1,536 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="12.0">
+  <PropertyGroup>
+    <ProjectType>Local</ProjectType>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{3E4B908A-4F96-43C5-981B-1AA4B73CCC26}</ProjectGuid>
+    <SccProjectName>
+    </SccProjectName>
+    <SccLocalPath>
+    </SccLocalPath>
+    <SccProvider>
+    </SccProvider>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ApplicationIcon>TRFFC17.ICO</ApplicationIcon>
+    <AssemblyKeyContainerName>
+    </AssemblyKeyContainerName>
+    <AssemblyName>SilEncConverters40</AssemblyName>
+    <AssemblyOriginatorKeyFile>..\FieldWorks.snk</AssemblyOriginatorKeyFile>
+    <DefaultClientScript>VBScript</DefaultClientScript>
+    <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+    <DefaultTargetSchema>IE50</DefaultTargetSchema>
+    <DelaySign>false</DelaySign>
+    <OutputType>Library</OutputType>
+    <RootNamespace>SilEncConverters40</RootNamespace>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+    <StartupObject>
+    </StartupObject>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <SccAuxPath>
+    </SccAuxPath>
+    <SignAssembly>true</SignAssembly>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <TargetFrameworkVersion Condition="('$(OS)'!='Windows_NT')">v4.7.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion Condition="('$(OS)'=='Windows_NT')">v4.8</TargetFrameworkVersion>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
+    <RegisterForComInterop Condition="('$(OS)'=='Windows_NT')">true</RegisterForComInterop>
+    <RegisterForComInterop Condition="('$(OS)'!='Windows_NT')">false</RegisterForComInterop>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>$(SolutionDir)output\$(Platform)\$(Configuration)\</OutputPath>
+    <DefineConstants>TRACE;LoadGeckoLibs;X64</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Optimize>true</Optimize>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>latest</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>$(SolutionDir)output\$(Platform)\$(Configuration)\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;LoadGeckoLibs;X64</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>latest</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>$(SolutionDir)output\Win32\$(Configuration)\</OutputPath>
+    <DefineConstants>TRACE;LoadGeckoLibs</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Optimize>true</Optimize>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <LangVersion>latest</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>$(SolutionDir)output\Win32\$(Configuration)\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;LoadGeckoLibs</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <LangVersion>latest</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <!--BE: I had to manually add the conditions on these Geckofx dlls, so it will include the correct dlls based on the platform
+      This will all get undone if you update the gecko nuget packages-->
+    <Reference Include="Geckofx-Core, Version=60.0.55.0, Culture=neutral, PublicKeyToken=3209ac31600d1857, processorArchitecture=x86" Condition="('$(Platform)' == 'x86') and ('$(OS)'=='Windows_NT')">
+      <HintPath>..\..\packages\Geckofx60.32.60.0.55\lib\net45\Geckofx-Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Geckofx-Winforms, Version=60.0.55.0, Culture=neutral, PublicKeyToken=3209ac31600d1857, processorArchitecture=x86" Condition="('$(Platform)' == 'x86') and ('$(OS)'=='Windows_NT')">
+      <HintPath>..\..\packages\Geckofx60.32.60.0.55\lib\net45\Geckofx-Winforms.dll</HintPath>
+    </Reference>
+    <Reference Include="Geckofx-Core, Version=60.0.56.0, Culture=neutral, PublicKeyToken=3209ac31600d1857, processorArchitecture=MSIL" Condition="('$(Platform)' == 'x64') and ('$(OS)'=='Windows_NT')">
+      <HintPath>..\..\packages\Geckofx60.64.60.0.56\lib\net45\Geckofx-Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Geckofx-Winforms, Version=60.0.56.0, Culture=neutral, PublicKeyToken=3209ac31600d1857, processorArchitecture=MSIL" Condition="('$(Platform)' == 'x64') and ('$(OS)'=='Windows_NT')">
+      <HintPath>..\..\packages\Geckofx60.64.60.0.56\lib\net45\Geckofx-Winforms.dll</HintPath>
+    </Reference>
+    <Reference Include="Geckofx-Core" Condition="'$(OS)'!='Windows_NT'">
+      <Private>False</Private>
+      <HintPath>../../packages/Geckofx60.64.Linux.60.0.51/lib/net40/Geckofx-Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Geckofx-Winforms" Condition="'$(OS)'!='Windows_NT'">
+      <Private>False</Private>
+      <HintPath>../../packages/Geckofx60.64.Linux.60.0.51/lib/net40/Geckofx-Winforms.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="Microsoft.Web.WebView2.Core, Version=1.0.3179.45, Culture=neutral, PublicKeyToken=2a8ab48044d2601e, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Web.WebView2.1.0.3179.45\lib\net462\Microsoft.Web.WebView2.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Web.WebView2.WinForms, Version=1.0.3179.45, Culture=neutral, PublicKeyToken=2a8ab48044d2601e, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Web.WebView2.1.0.3179.45\lib\net462\Microsoft.Web.WebView2.WinForms.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Web.WebView2.Wpf, Version=1.0.3179.45, Culture=neutral, PublicKeyToken=2a8ab48044d2601e, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Web.WebView2.1.0.3179.45\lib\net462\Microsoft.Web.WebView2.Wpf.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System">
+      <Name>System</Name>
+    </Reference>
+    <Reference Include="System.Configuration.Install" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data">
+      <Name>System.Data</Name>
+    </Reference>
+    <Reference Include="System.Drawing">
+      <Name>System.Drawing</Name>
+    </Reference>
+    <Reference Include="System.Windows.Forms">
+      <Name>System.Windows.Forms</Name>
+    </Reference>
+    <Reference Include="System.Xml">
+      <Name>System.XML</Name>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="AutoConfigDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AutoConfigDialog.Designer.cs">
+      <DependentUpon>AutoConfigDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CmpdAutoConfigDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CmpdAutoConfigDialog.Designer.cs">
+      <DependentUpon>CmpdAutoConfigDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CmpdEncConverter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CmpdEncConverterConfig.cs" />
+    <Compile Include="CpAutoConfigDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CpAutoConfigDialog.Designer.cs">
+      <DependentUpon>CpAutoConfigDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CpEncConverter.cs" />
+    <Compile Include="CpEncConverterConfig.cs" />
+    <Compile Include="DirectableEncConverter.cs" />
+    <Compile Include="ECNormalizeData.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ECPlugins.cs">
+      <DependentUpon>ECPlugins.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="EcTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="EncConverter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="EncConverters.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ExeEncConverter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FallbackAutoConfigDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FallbackAutoConfigDialog.Designer.cs">
+      <DependentUpon>FallbackAutoConfigDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FallbackEncConverter.cs" />
+    <Compile Include="FallbackEncConverterConfig.cs" />
+    <Compile Include="NetRegexAutoConfigDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="NetRegexEncConverterConfig.cs" />
+    <Compile Include="NetRegexEncConverter.cs" />
+    <Compile Include="NetRegexAutoConfigDialog.Designer.cs">
+      <DependentUpon>NetRegexAutoConfigDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="IEncConverterConfig.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="WebBrowserGecko.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="WebBrowserEdge.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="WebBrowserInstructions.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="WebBrowserIE.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ImplTypeList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MetaCmpdAutoConfigDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MetaCmpdAutoConfigDialog.Designer.cs">
+      <DependentUpon>MetaCmpdAutoConfigDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="QueryConverterNameForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="QueryConverterNameForm.Designer.cs">
+      <DependentUpon>QueryConverterNameForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SelectConverter.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SpellFixer.cs" />
+    <Compile Include="TecAutoConfigDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TecAutoConfigDialog.designer.cs">
+      <DependentUpon>TecAutoConfigDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TecEncConverter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TecEncConverterConfig.cs" />
+    <Compile Include="WebBrowserAdaptor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="WebBrowserAdaptor.Designer.cs">
+      <DependentUpon>WebBrowserAdaptor.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="AutoConfigDialog.resx">
+      <DependentUpon>AutoConfigDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CmpdAutoConfigDialog.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>CmpdAutoConfigDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CpAutoConfigDialog.resx">
+      <DependentUpon>CpAutoConfigDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EncCnvtrs.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FallbackAutoConfigDialog.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>FallbackAutoConfigDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="NetRegexAutoConfigDialog.resx">
+      <DependentUpon>NetRegexAutoConfigDialog.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ImplTypeList.resx">
+      <DependentUpon>ImplTypeList.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="QueryConverterNameForm.resx">
+      <DependentUpon>QueryConverterNameForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SelectConverter.resx">
+      <DependentUpon>SelectConverter.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TecAutoConfigDialog.resx">
+      <DependentUpon>TecAutoConfigDialog.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Content Include="buildinclude.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <!--BE: I had to manually add the conditions on these Geckofx dlls, so it will include the correct dlls based on the platform.
+        the nuget will try to put them both in the 'Firefox' folder, so you have to make sure to manually copy the files from
+        packages to these different (manually created) folders. This will all get undone if you update the gecko nuget packages-->
+    <Content Include="Firefox64\AccessibleHandler.dll" Condition="('$(Platform)' == 'x64') and ('$(OS)'=='Windows_NT')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Firefox64\AccessibleMarshal.dll" Condition="('$(Platform)' == 'x64') and ('$(OS)'=='Windows_NT')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Firefox64\d3dcompiler_47.dll" Condition="('$(Platform)' == 'x64') and ('$(OS)'=='Windows_NT')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Firefox64\freebl3.dll" Condition="('$(Platform)' == 'x64') and ('$(OS)'=='Windows_NT')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Firefox64\IA2Marshal.dll" Condition="('$(Platform)' == 'x64') and ('$(OS)'=='Windows_NT')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Firefox64\lgpllibs.dll" Condition="('$(Platform)' == 'x64') and ('$(OS)'=='Windows_NT')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Firefox64\libEGL.dll" Condition="('$(Platform)' == 'x64') and ('$(OS)'=='Windows_NT')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Firefox64\libGLESv2.dll" Condition="('$(Platform)' == 'x64') and ('$(OS)'=='Windows_NT')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Firefox64\mozavcodec.dll" Condition="('$(Platform)' == 'x64') and ('$(OS)'=='Windows_NT')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Firefox64\mozavutil.dll" Condition="('$(Platform)' == 'x64') and ('$(OS)'=='Windows_NT')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Firefox64\mozglue.dll" Condition="('$(Platform)' == 'x64') and ('$(OS)'=='Windows_NT')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Firefox64\nss3.dll" Condition="('$(Platform)' == 'x64') and ('$(OS)'=='Windows_NT')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Firefox64\nssckbi.dll" Condition="('$(Platform)' == 'x64') and ('$(OS)'=='Windows_NT')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Firefox64\nssdbm3.dll" Condition="('$(Platform)' == 'x64') and ('$(OS)'=='Windows_NT')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Firefox64\omni.ja" Condition="('$(Platform)' == 'x64') and ('$(OS)'=='Windows_NT')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Firefox64\plugin-container.exe" Condition="('$(Platform)' == 'x64') and ('$(OS)'=='Windows_NT')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Firefox64\plugin-hang-ui.exe" Condition="('$(Platform)' == 'x64') and ('$(OS)'=='Windows_NT')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Firefox64\qipcap64.dll" Condition="('$(Platform)' == 'x64') and ('$(OS)'=='Windows_NT')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Firefox64\softokn3.dll" Condition="('$(Platform)' == 'x64') and ('$(OS)'=='Windows_NT')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Firefox64\xul.dll" Condition="('$(Platform)' == 'x64') and ('$(OS)'=='Windows_NT')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Firefox\AccessibleHandler.dll" Condition="('$(Platform)' == 'x86') and ('$(OS)'=='Windows_NT')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Firefox\AccessibleMarshal.dll" Condition="('$(Platform)' == 'x86') and ('$(OS)'=='Windows_NT')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Firefox\breakpadinjector.dll" Condition="('$(Platform)' == 'x86') and ('$(OS)'=='Windows_NT')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Firefox\d3dcompiler_47.dll" Condition="('$(Platform)' == 'x86') and ('$(OS)'=='Windows_NT')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Firefox\freebl3.dll" Condition="('$(Platform)' == 'x86') and ('$(OS)'=='Windows_NT')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Firefox\IA2Marshal.dll" Condition="('$(Platform)' == 'x86') and ('$(OS)'=='Windows_NT')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Firefox\lgpllibs.dll" Condition="('$(Platform)' == 'x86') and ('$(OS)'=='Windows_NT')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Firefox\libEGL.dll" Condition="('$(Platform)' == 'x86') and ('$(OS)'=='Windows_NT')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Firefox\libGLESv2.dll" Condition="('$(Platform)' == 'x86') and ('$(OS)'=='Windows_NT')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Firefox\mozavcodec.dll" Condition="('$(Platform)' == 'x86') and ('$(OS)'=='Windows_NT')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Firefox\mozavutil.dll" Condition="('$(Platform)' == 'x86') and ('$(OS)'=='Windows_NT')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Firefox\mozglue.dll" Condition="('$(Platform)' == 'x86') and ('$(OS)'=='Windows_NT')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Firefox\nss3.dll" Condition="('$(Platform)' == 'x86') and ('$(OS)'=='Windows_NT')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Firefox\nssckbi.dll" Condition="('$(Platform)' == 'x86') and ('$(OS)'=='Windows_NT')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Firefox\nssdbm3.dll" Condition="('$(Platform)' == 'x86') and ('$(OS)'=='Windows_NT')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Firefox\omni.ja" Condition="('$(Platform)' == 'x86') and ('$(OS)'=='Windows_NT')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Firefox\plugin-container.exe" Condition="('$(Platform)' == 'x86') and ('$(OS)'=='Windows_NT')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Firefox\plugin-hang-ui.exe" Condition="('$(Platform)' == 'x86') and ('$(OS)'=='Windows_NT')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Firefox\qipcap.dll" Condition="('$(Platform)' == 'x86') and ('$(OS)'=='Windows_NT')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Firefox\qipcap64.dll" />
+    <Content Include="Firefox\softokn3.dll" Condition="('$(Platform)' == 'x86') and ('$(OS)'=='Windows_NT')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Firefox\xul.dll" Condition="('$(Platform)' == 'x86') and ('$(OS)'=='Windows_NT')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TRFFC17.ICO" Condition="('$(Platform)' == 'x86') and ('$(OS)'=='Windows_NT')" />
+    <EmbeddedResource Include="WebBrowserAdaptor.resx">
+      <DependentUpon>WebBrowserAdaptor.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include="..\FieldWorks.snk">
+      <Link>FieldWorks.snk</Link>
+    </None>
+    <None Include="app.config" />
+    <None Include="app.manifest" />
+    <None Include="ECPlugins.xsc">
+      <DependentUpon>ECPlugins.xsd</DependentUpon>
+    </None>
+    <None Include="ECPlugins.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="ECPlugins.xsx">
+      <DependentUpon>ECPlugins.xsd</DependentUpon>
+    </None>
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="lib\" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ECInterfaces\ECInterfaces 2010.csproj">
+      <Project>{2935e02f-43ed-4670-9a00-a91b0ad3d66c}</Project>
+      <Name>ECInterfaces 2010</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\..\packages\Geckofx60.32.60.0.55\build\Geckofx60.32.targets') and ('$(Platform)' == 'x86') and ('$(OS)'=='Windows_NT')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Geckofx60.32.60.0.55\build\Geckofx60.32.targets'))" />
+    <Error Condition="!Exists('..\..\packages\Geckofx60.64.60.0.56\build\Geckofx60.64.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Geckofx60.64.60.0.56\build\Geckofx60.64.targets'))" />
+    <Error Condition="!Exists('..\..\packages\Microsoft.Web.WebView2.1.0.3179.45\build\Microsoft.Web.WebView2.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.Web.WebView2.1.0.3179.45\build\Microsoft.Web.WebView2.targets'))" />
+  </Target>
+  <!--BE: I had to manually add the extra conditions on these, so it will do the target (which copies files) from the correct package based on the platform.
+      Also, I had to manually edit the 64 bit target so that it would now get the files from Firefox64, rather than Firefox it was looking at (which are the 86 binaries)
+      This will all get undone if you update the gecko nuget packages -->
+  <Import Project="..\..\packages\Geckofx60.32.60.0.55\build\Geckofx60.32.targets" Condition="Exists('..\..\packages\Geckofx60.32.60.0.55\build\Geckofx60.32.targets') and ('$(Platform)' == 'x86') and ('$(OS)'!='Windows_NT')" />
+  <Import Project="..\..\packages\Geckofx60.64.60.0.56\build\Geckofx60.64.targets" Condition="Exists('..\..\packages\Geckofx60.64.60.0.56\build\Geckofx60.64.targets')" />
+  <Import Project="..\..\packages\Microsoft.Web.WebView2.1.0.3179.45\build\Microsoft.Web.WebView2.targets" Condition="Exists('..\..\packages\Microsoft.Web.WebView2.1.0.3179.45\build\Microsoft.Web.WebView2.targets')" />
+</Project>
