@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema id="SpellFixerVernScript" targetNamespace="http://www.sil.org/computing/schemas/SpellFixerVernScript.xsd"
+	xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns="http://www.sil.org/computing/schemas/SpellFixerVernScript.xsd"
+	xmlns:mstns="http://www.sil.org/computing/schemas/SpellFixerVernScript.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:msprop="urn:schemas-microsoft-com:xml-msprop" attributeFormDefault="qualified" elementFormDefault="qualified"
+	version="1.0">
+	<xs:element name="VernScriptSystem" msdata:IsDataSet="true" msdata:EnforceConstraints="false">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="VernScriptSystemProperties">
+					<xs:complexType>
+						<xs:sequence></xs:sequence>
+						<xs:attribute name="progId" type="xs:string" form="unqualified" />
+						<xs:attribute name="name" type="xs:string" form="unqualified" />
+						<xs:attribute name="description" type="xs:string" form="unqualified" />
+						<xs:attribute name="TransliteratorEncConverterName" type="xs:string" form="unqualified" />
+						<xs:attribute name="TransliteratorEncConverterDirectionForward" type="xs:boolean" form="unqualified" />
+						<xs:attribute name="TransliteratorEncConverterNormalize" type="xs:string" form="unqualified" />
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="ExtraPunctuation" minOccurs="1" maxOccurs="1">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="IgnorePunctuation" minOccurs="1" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:simpleContent msdata:ColumnName="IgnoreCharacter_Text" msdata:Ordinal="1">
+										<xs:extension base="xs:string">
+											<xs:attribute name="description" form="unqualified" type="xs:string" />
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+						<xs:attribute name="description" form="unqualified" type="xs:string" />
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="IgnoreCharactersBeforeTransliteration" minOccurs="1" maxOccurs="1">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="IgnoreCharacterBeforeTransliteration" minOccurs="1" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:simpleContent msdata:ColumnName="IgnoreCharacterBeforeTransliteration_Text" msdata:Ordinal="1">
+										<xs:extension base="xs:string">
+											<xs:attribute name="description" form="unqualified" type="xs:string" />
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+						<xs:attribute name="description" form="unqualified" type="xs:string" />
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="IgnoreCharactersAfterTransliteration" minOccurs="1" maxOccurs="1">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="IgnoreCharacterAfterTransliteration" minOccurs="1" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:simpleContent msdata:ColumnName="IgnoreCharacterAfterTransliteration_Text" msdata:Ordinal="1">
+										<xs:extension base="xs:string">
+											<xs:attribute name="description" form="unqualified" type="xs:string" />
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+						<xs:attribute name="description" form="unqualified" type="xs:string" />
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="Distinctions" minOccurs="1" maxOccurs="1">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Distinction" minOccurs="1" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="NormalizeRule" minOccurs="1" maxOccurs="unbounded">
+											<xs:complexType>
+												<xs:all>
+													<xs:element name="NormalizedForm" type="xs:string" minOccurs="1" maxOccurs="1" />
+													<xs:element name="CharactersToNormalize" minOccurs="1" maxOccurs="1">
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="CharacterToNormalize" type="xs:string" minOccurs="1" maxOccurs="unbounded" />
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+												</xs:all>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+									<xs:attribute name="name" form="unqualified" type="xs:string" />
+									<xs:attribute name="description" form="unqualified" type="xs:string" />
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+						<xs:attribute name="compareDoubleCharacters" form="unqualified" type="xs:boolean" />
+						<xs:attribute name="ignoreCase" form="unqualified" type="xs:boolean" />
+						<xs:attribute name="description" form="unqualified" type="xs:string" />
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+		<xs:key name="DistinctionRuleKey" msdata:PrimaryKey="true">
+			<xs:selector xpath=".//mstns:Distinction" />
+			<xs:field xpath="@name" />
+		</xs:key>
+	</xs:element>
+</xs:schema>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="HashtableStore" targetNamespace="http://www.sil.org/computing/schemas/HashtableStore.xsd" elementFormDefault="qualified" xmlns="http://www.sil.org/computing/schemas/HashtableStore.xsd" xmlns:mstns="http://www.sil.org/computing/schemas/HashtableStore.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+  <xs:element name="SpellFixerHashtableStore">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="Item" minOccurs="0" maxOccurs="unbounded">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="ContextList" minOccurs="0" maxOccurs="1">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="Context" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+            <xs:attribute name="key" type="xs:string" use="required" />
+            <xs:attribute name="value" type="xs:string" use="required" />
+            <xs:attribute name="count" type="xs:int" use="optional" />
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+    <xs:key name="SpellFixerHashtableStoreKey" msdata:PrimaryKey="true">
+      <xs:selector xpath=".//mstns:Item" />
+      <xs:field xpath="@key" />
+    </xs:key>
+  </xs:element>
+</xs:schema>

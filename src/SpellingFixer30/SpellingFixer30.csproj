@@ -1,0 +1,363 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="12.0">
+  <PropertyGroup>
+    <ProjectType>Local</ProjectType>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{1F6E3722-B445-4638-90D6-22DDE860DCC6}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ApplicationIcon>
+    </ApplicationIcon>
+    <AssemblyKeyContainerName>
+    </AssemblyKeyContainerName>
+    <AssemblyName>SpellingFixer30</AssemblyName>
+    <AssemblyOriginatorKeyFile>FieldWorks.snk</AssemblyOriginatorKeyFile>
+    <DefaultClientScript>VBScript</DefaultClientScript>
+    <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+    <DefaultTargetSchema>IE50</DefaultTargetSchema>
+    <DelaySign>false</DelaySign>
+    <OutputType>Library</OutputType>
+    <RootNamespace>SpellingFixer30</RootNamespace>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+    <StartupObject>
+    </StartupObject>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <SignAssembly>true</SignAssembly>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <OldToolsVersion>2.0</OldToolsVersion>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <LangVersion>latest</LangVersion>
+    <TargetFrameworkProfile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>..\..\output\Win32\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <FileAlignment>4096</FileAlignment>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <CodeAnalysisLogFile>..\..\..\Src\FW_4.0\Lib\debug\SpellingFixer30.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
+    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>..\..\output\Win32\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <Optimize>true</Optimize>
+    <FileAlignment>4096</FileAlignment>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <CodeAnalysisLogFile>..\..\..\Src\FW_4.0\Lib\release\SpellingFixer30.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
+    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>..\..\output\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <FileAlignment>4096</FileAlignment>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
+    <RegisterForComInterop>true</RegisterForComInterop>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>..\..\output\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <Optimize>false</Optimize>
+    <FileAlignment>4096</FileAlignment>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="System">
+      <Name>System</Name>
+    </Reference>
+    <Reference Include="System.Data">
+      <Name>System.Data</Name>
+    </Reference>
+    <Reference Include="System.Drawing">
+      <Name>System.Drawing</Name>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization.Formatters.Soap" />
+    <Reference Include="System.Windows.Forms">
+      <Name>System.Windows.Forms</Name>
+    </Reference>
+    <Reference Include="System.Xml">
+      <Name>System.XML</Name>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AddNewProjectForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AddNewProjectForm.Designer.cs">
+      <DependentUpon>AddNewProjectForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="AmbiguityListMap.cs" />
+    <Compile Include="Bad2GoodMap.cs" />
+    <Compile Include="BulkAmbiguityPicker.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="BulkAmbiguityPicker.Designer.cs">
+      <DependentUpon>BulkAmbiguityPicker.cs</DependentUpon>
+    </Compile>
+    <Compile Include="AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CorrectSpellingPicker.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CorrectSpellingPicker.Designer.cs">
+      <DependentUpon>CorrectSpellingPicker.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CscProjectStore.cs" />
+    <Compile Include="CustomToolTipForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DistinctionTreeEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DistinctionTreeEditor.Designer.cs">
+      <DependentUpon>DistinctionTreeEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="HashtableStore.cs">
+      <DependentUpon>HashtableStore.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="LoginSF.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="LoginSF.Designer.cs">
+      <DependentUpon>LoginSF.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MyCollections.cs" />
+    <Compile Include="CscIndicProject.cs" />
+    <Compile Include="CscProject.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="QueryDistinctionName.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="QueryDistinctionName.Designer.cs">
+      <DependentUpon>QueryDistinctionName.cs</DependentUpon>
+    </Compile>
+    <Compile Include="QueryFindReplaceDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="QueryFindReplaceDialog.Designer.cs">
+      <DependentUpon>QueryFindReplaceDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="QueryGoodSpelling.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="QueryGoodSpelling.Designer.cs">
+      <DependentUpon>QueryGoodSpelling.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SelectProject.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SelectProject.designer.cs">
+      <DependentUpon>SelectProject.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Settings.cs" />
+    <Compile Include="SFProjectForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SFProjectForm.Designer.cs">
+      <DependentUpon>SFProjectForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SpellFixerModeSelect.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SpellFixerModeSelect.designer.cs">
+      <DependentUpon>SpellFixerModeSelect.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SpellingFixer.cs" />
+    <Compile Include="ViewBadGoodPairsDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ViewBadGoodPairsDlg.Designer.cs">
+      <DependentUpon>ViewBadGoodPairsDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="VSVs\VsvXmlModel.cs" />
+    <EmbeddedResource Include="AddNewProjectForm.resx">
+      <DependentUpon>AddNewProjectForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="BulkAmbiguityPicker.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>BulkAmbiguityPicker.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CorrectSpellingPicker.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>CorrectSpellingPicker.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DistinctionTreeEditor.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>DistinctionTreeEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LoginSF.resx">
+      <DependentUpon>LoginSF.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="QueryDistinctionName.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>QueryDistinctionName.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="QueryFindReplaceDialog.resx">
+      <DependentUpon>QueryFindReplaceDialog.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="QueryGoodSpelling.resx">
+      <DependentUpon>QueryGoodSpelling.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SelectProject.resx">
+      <DependentUpon>SelectProject.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SFProjectForm.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>SFProjectForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SpellFixerModeSelect.resx">
+      <DependentUpon>SpellFixerModeSelect.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ViewBadGoodPairsDlg.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>ViewBadGoodPairsDlg.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\..\..\..\..\ProgramData\SIL\Consistent Spelling Fixer\Projects\Kangri\Kangri.csf">
+      <Link>CscProjects\Kangri.csf</Link>
+    </None>
+    <None Include="FieldWorks.snk" />
+    <None Include="SpellFixerVernScript.xsc">
+      <DependentUpon>SpellFixerVernScript.xsd</DependentUpon>
+    </None>
+    <None Include="SpellFixerVernScript.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="SpellFixerVernScript.xss">
+      <DependentUpon>SpellFixerVernScript.xsd</DependentUpon>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\B2G.bmp" />
+    <Content Include="Resources\LeftArrow.ico" />
+    <Content Include="VSVs\Indic.xml" />
+    <Content Include="VSVs\Kangri.xml" />
+    <None Include="Resources\NoOp.bmp" />
+    <None Include="app.config" />
+    <None Include="HashtableStore.xsc">
+      <DependentUpon>HashtableStore.xsd</DependentUpon>
+    </None>
+    <None Include="HashtableStore.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="HashtableStore.xsx">
+      <DependentUpon>HashtableStore.xsd</DependentUpon>
+    </None>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="Resources\G2G.bmp" />
+    <None Include="Resources\G2B.bmp" />
+    <None Include="Resources\Select.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Images\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CcEC\CcEC 2010.csproj">
+      <Project>{2e70a627-605f-4625-8637-a7109db8b35c}</Project>
+      <Name>CcEC 2010</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ECInterfaces\ECInterfaces 2010.csproj">
+      <Project>{2935e02f-43ed-4670-9a00-a91b0ad3d66c}</Project>
+      <Name>ECInterfaces 2010</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EncCnvtrs\EncCnvtrs 2010.csproj">
+      <Project>{3e4b908a-4f96-43c5-981b-1aa4b73ccc26}</Project>
+      <Name>EncCnvtrs 2010</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+    <PostBuildEvent>@echo xcopy /y "$(TargetDir)*.*" $(SolutionDir)output\$(PlatformName)\$(ConfigurationName)
+
+IF EXIST "%25ProgramData%25\SIL\ConsistentSpellingFixer\ScriptSystems" goto checkCopyXmls
+md "%25ProgramData%25\SIL\ConsistentSpellingFixer\ScriptSystems"
+
+:checkCopyXmls
+IF EXIST "%25ProgramData%25\SIL\ConsistentSpellingFixer\ScriptSystems\Indic.xml" goto nocopy
+
+@echo Copying VSV files to '"%25ProgramData%25\SIL\ConsistentSpellingFixer\ScriptSystems' folder
+xcopy "$(ProjectDir)VSVs\*.xml" "%25ProgramData%25\SIL\ConsistentSpellingFixer\ScriptSystems" /y /i /c
+
+:nocopy</PostBuildEvent>
+  </PropertyGroup>
+</Project>

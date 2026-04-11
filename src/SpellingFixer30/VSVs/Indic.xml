@@ -1,0 +1,268 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<VernScriptSystem xmlns="http://www.sil.org/computing/schemas/SpellFixerVernScript.xsd" >
+    <VernScriptSystemProperties name="Indic" isRightToLeft="false" description="This is the simplification information for Indic languages" progId="SpellingFixer30.CscIndicProject" TransliteratorEncConverterName="Any to Latin" TransliteratorEncConverterDirectionForward="true" TransliteratorEncConverterNormalize="None"/>
+    <ExtraPunctuation description="These are characters which may occur at the edges of words, which you want to be stripped off before processing a word. By default, you automatically get the regular punctuation characters in Unicode, but this is for any that you want to add because they otherwise aren't behaving properly.">
+        <IgnorePunctuation description="Devanagari Danda">।</IgnorePunctuation>
+        <IgnorePunctuation description="vertical bar">|</IgnorePunctuation>
+    </ExtraPunctuation>
+    <IgnoreCharactersBeforeTransliteration description="These are characters which will be stripped out of words to check (including from within words)--before the word has been transliterated--so that a word with it will be considered ambiguous with a word without it">
+        <IgnoreCharacterBeforeTransliteration description="Nukta">़</IgnoreCharacterBeforeTransliteration>
+    </IgnoreCharactersBeforeTransliteration>
+    <IgnoreCharactersAfterTransliteration description="These are characters which will be stripped out of words to check (including from within words)--after the word has been transliterated--so that a word with it will be considered ambiguous with a word without it">
+        <IgnoreCharacterAfterTransliteration description="apostrophe">'</IgnoreCharacterAfterTransliteration>
+        <IgnoreCharacterAfterTransliteration description="hyphen">-</IgnoreCharacterAfterTransliteration>
+        <IgnoreCharacterAfterTransliteration description="combining macron">̄</IgnoreCharacterAfterTransliteration>
+        <IgnoreCharacterAfterTransliteration description="combining reversed comma above">̔</IgnoreCharacterAfterTransliteration>
+        <IgnoreCharacterAfterTransliteration description="zero width joiner">‍</IgnoreCharacterAfterTransliteration>
+        <IgnoreCharacterAfterTransliteration description="zero width non-joiner">‌</IgnoreCharacterAfterTransliteration>
+        <IgnoreCharacterAfterTransliteration description="The 'Any to Latin' result of an unexpected Nukta"></IgnoreCharacterAfterTransliteration>
+    </IgnoreCharactersAfterTransliteration>
+    <PreprocessDataViaRegex description="These are regular expressions that can be used to preprocess any input text before chunking into words to check for consistent spelling.">
+      <RegexChange description="Remove variant verse numbering inline markers including any data inside them (e.g. remove '\va 3,4b\va*' totally)" pattern="\\(va|rq) .*?\\(va|rq)\*" replaceWith="" />
+      <RegexChange description="Remove \k ... \k* markers leaving the data inside them" pattern="\\k (.*?)\\k\*" replaceWith="$1" />
+      <RegexChange description="Remove \w ... \w* markers leaving the (word; not key term) data inside them" pattern="\\w (.*?)(\|.*?)?\\w\*" replaceWith="$1" />
+    </PreprocessDataViaRegex>
+    <Distinctions compareDoubleCharacters="true" ignoreCase="false" description="The following elements show the rules for simplifying words for comparison based on the output of the above defined transliterator">
+      <Distinction name="Vowel Length" description="Compare vowel lengths when detecting ambiguities">
+        <NormalizeRule>
+          <CharactersToNormalize>
+            <CharacterToNormalize>ā</CharacterToNormalize>
+          </CharactersToNormalize>
+          <NormalizedForm>a</NormalizedForm>
+        </NormalizeRule>
+        <NormalizeRule>
+          <CharactersToNormalize>
+            <CharacterToNormalize>ē</CharacterToNormalize>
+          </CharactersToNormalize>
+          <NormalizedForm>e</NormalizedForm>
+        </NormalizeRule>
+        <NormalizeRule>
+          <CharactersToNormalize>
+            <CharacterToNormalize>ī</CharacterToNormalize>
+          </CharactersToNormalize>
+          <NormalizedForm>i</NormalizedForm>
+        </NormalizeRule>
+        <NormalizeRule>
+          <CharactersToNormalize>
+            <CharacterToNormalize>ō</CharacterToNormalize>
+          </CharactersToNormalize>
+          <NormalizedForm>o</NormalizedForm>
+        </NormalizeRule>
+        <NormalizeRule>
+          <CharactersToNormalize>
+            <CharacterToNormalize>ū</CharacterToNormalize>
+          </CharactersToNormalize>
+          <NormalizedForm>u</NormalizedForm>
+        </NormalizeRule>
+      </Distinction>
+      <Distinction name="Vowel Glides" description="Compare vowel lengths when detecting ambiguities">
+        <NormalizeRule>
+          <CharactersToNormalize>
+            <CharacterToNormalize>ay</CharacterToNormalize>
+            <CharacterToNormalize>āy</CharacterToNormalize>
+            <CharacterToNormalize>ey</CharacterToNormalize>
+            <CharacterToNormalize>ēy</CharacterToNormalize>
+          </CharactersToNormalize>
+          <NormalizedForm>ai</NormalizedForm>
+        </NormalizeRule>
+        <NormalizeRule>
+          <CharactersToNormalize>
+            <CharacterToNormalize>av</CharacterToNormalize>
+            <CharacterToNormalize>āv</CharacterToNormalize>
+            <CharacterToNormalize>ov</CharacterToNormalize>
+            <CharacterToNormalize>ōv</CharacterToNormalize>
+          </CharactersToNormalize>
+          <NormalizedForm>au</NormalizedForm>
+        </NormalizeRule>
+      </Distinction>
+      <Distinction name="Aspiration" description="Compare consonants with and without aspiration when detecting ambiguities">
+        <NormalizeRule>
+          <CharactersToNormalize>
+            <CharacterToNormalize>kh</CharacterToNormalize>
+          </CharactersToNormalize>
+          <NormalizedForm>k</NormalizedForm>
+        </NormalizeRule>
+        <NormalizeRule>
+          <CharactersToNormalize>
+            <CharacterToNormalize>ḵẖ</CharacterToNormalize>
+          </CharactersToNormalize>
+          <NormalizedForm>q</NormalizedForm>
+        </NormalizeRule>
+        <NormalizeRule>
+          <CharactersToNormalize>
+            <CharacterToNormalize>gh</CharacterToNormalize>
+          </CharactersToNormalize>
+          <NormalizedForm>g</NormalizedForm>
+        </NormalizeRule>
+        <NormalizeRule>
+          <CharactersToNormalize>
+            <CharacterToNormalize>ch</CharacterToNormalize>
+          </CharactersToNormalize>
+          <NormalizedForm>c</NormalizedForm>
+        </NormalizeRule>
+        <NormalizeRule>
+          <CharactersToNormalize>
+            <CharacterToNormalize>jh</CharacterToNormalize>
+          </CharactersToNormalize>
+          <NormalizedForm>j</NormalizedForm>
+        </NormalizeRule>
+        <NormalizeRule>
+          <CharactersToNormalize>
+            <CharacterToNormalize>ṭh</CharacterToNormalize>
+          </CharactersToNormalize>
+          <NormalizedForm>ṭ</NormalizedForm>
+        </NormalizeRule>
+        <NormalizeRule>
+          <CharactersToNormalize>
+            <CharacterToNormalize>ḍh</CharacterToNormalize>
+          </CharactersToNormalize>
+          <NormalizedForm>ḍ</NormalizedForm>
+        </NormalizeRule>
+        <NormalizeRule>
+          <CharactersToNormalize>
+            <CharacterToNormalize>ṛh</CharacterToNormalize>
+          </CharactersToNormalize>
+          <NormalizedForm>ṛ</NormalizedForm>
+        </NormalizeRule>
+        <NormalizeRule>
+          <CharactersToNormalize>
+            <CharacterToNormalize>th</CharacterToNormalize>
+          </CharactersToNormalize>
+          <NormalizedForm>t</NormalizedForm>
+        </NormalizeRule>
+        <NormalizeRule>
+          <CharactersToNormalize>
+            <CharacterToNormalize>dh</CharacterToNormalize>
+          </CharactersToNormalize>
+          <NormalizedForm>d</NormalizedForm>
+        </NormalizeRule>
+        <NormalizeRule>
+          <CharactersToNormalize>
+            <CharacterToNormalize>ph</CharacterToNormalize>
+          </CharactersToNormalize>
+          <NormalizedForm>p</NormalizedForm>
+        </NormalizeRule>
+        <NormalizeRule>
+          <CharactersToNormalize>
+            <CharacterToNormalize>bh</CharacterToNormalize>
+          </CharactersToNormalize>
+          <NormalizedForm>b</NormalizedForm>
+        </NormalizeRule>
+      </Distinction>
+      <Distinction name="Articulation" description="Compare related dental-retroflex consonants when detecting ambiguities">
+        <NormalizeRule>
+          <CharactersToNormalize>
+            <CharacterToNormalize>ṭ</CharacterToNormalize>
+          </CharactersToNormalize>
+          <NormalizedForm>t</NormalizedForm>
+        </NormalizeRule>
+        <NormalizeRule>
+          <CharactersToNormalize>
+            <CharacterToNormalize>ṭh</CharacterToNormalize>
+          </CharactersToNormalize>
+          <NormalizedForm>th</NormalizedForm>
+        </NormalizeRule>
+        <NormalizeRule>
+          <CharactersToNormalize>
+            <CharacterToNormalize>ḍ</CharacterToNormalize>
+          </CharactersToNormalize>
+          <NormalizedForm>d</NormalizedForm>
+        </NormalizeRule>
+        <NormalizeRule>
+          <CharactersToNormalize>
+            <CharacterToNormalize>ḍh</CharacterToNormalize>
+          </CharactersToNormalize>
+          <NormalizedForm>dh</NormalizedForm>
+        </NormalizeRule>
+      </Distinction>
+      <Distinction name="Sibilants" description="Compare related sibilant consonants when detecting ambiguities">
+        <NormalizeRule>
+          <CharactersToNormalize>
+            <CharacterToNormalize>ś</CharacterToNormalize>
+            <CharacterToNormalize>ṣ</CharacterToNormalize>
+          </CharactersToNormalize>
+          <NormalizedForm>s</NormalizedForm>
+        </NormalizeRule>
+      </Distinction>
+      <Distinction name="Nukta" description="Compare consonants with and without a Nukta present when detecting ambiguities">
+        <NormalizeRule>
+          <CharactersToNormalize>
+            <CharacterToNormalize>ṟ</CharacterToNormalize>
+          </CharactersToNormalize>
+          <NormalizedForm>r</NormalizedForm>
+        </NormalizeRule>
+        <NormalizeRule>
+          <CharactersToNormalize>
+            <CharacterToNormalize>ḻ</CharacterToNormalize>
+          </CharactersToNormalize>
+          <NormalizedForm>l</NormalizedForm>
+        </NormalizeRule>
+        <NormalizeRule>
+          <CharactersToNormalize>
+            <CharacterToNormalize>q</CharacterToNormalize>
+          </CharactersToNormalize>
+          <NormalizedForm>k</NormalizedForm>
+        </NormalizeRule>
+        <NormalizeRule>
+          <CharactersToNormalize>
+            <CharacterToNormalize>ṉ</CharacterToNormalize>
+          </CharactersToNormalize>
+          <NormalizedForm>n</NormalizedForm>
+        </NormalizeRule>
+        <NormalizeRule>
+          <CharactersToNormalize>
+            <CharacterToNormalize>ḵẖ</CharacterToNormalize>
+          </CharactersToNormalize>
+          <NormalizedForm>kh</NormalizedForm>
+        </NormalizeRule>
+        <NormalizeRule>
+          <CharactersToNormalize>
+            <CharacterToNormalize>ġ</CharacterToNormalize>
+          </CharactersToNormalize>
+          <NormalizedForm>g</NormalizedForm>
+        </NormalizeRule>
+        <NormalizeRule>
+          <CharactersToNormalize>
+            <CharacterToNormalize>z</CharacterToNormalize>
+          </CharactersToNormalize>
+          <NormalizedForm>j</NormalizedForm>
+        </NormalizeRule>
+        <NormalizeRule>
+          <CharactersToNormalize>
+            <CharacterToNormalize>ṛ</CharacterToNormalize>
+          </CharactersToNormalize>
+          <NormalizedForm>ḍ</NormalizedForm>
+        </NormalizeRule>
+        <NormalizeRule>
+          <CharactersToNormalize>
+            <CharacterToNormalize>ṛh</CharacterToNormalize>
+          </CharactersToNormalize>
+          <NormalizedForm>ḍh</NormalizedForm>
+        </NormalizeRule>
+        <NormalizeRule>
+          <CharactersToNormalize>
+            <CharacterToNormalize>f</CharacterToNormalize>
+          </CharactersToNormalize>
+          <NormalizedForm>ph</NormalizedForm>
+        </NormalizeRule>
+        <NormalizeRule>
+          <CharactersToNormalize>
+            <CharacterToNormalize>ẏ</CharacterToNormalize>
+          </CharactersToNormalize>
+          <NormalizedForm>y</NormalizedForm>
+        </NormalizeRule>
+      </Distinction>
+      <Distinction name="Nasal" description="Compare nasal consonants when detecting ambiguities">
+        <NormalizeRule>
+          <CharactersToNormalize>
+            <CharacterToNormalize>ṇ</CharacterToNormalize>
+            <CharacterToNormalize>ñ</CharacterToNormalize>
+            <CharacterToNormalize>ṅ</CharacterToNormalize>
+            <CharacterToNormalize>ṁ</CharacterToNormalize>
+            <CharacterToNormalize>m̐</CharacterToNormalize>
+          </CharactersToNormalize>
+          <NormalizedForm>n</NormalizedForm>
+        </NormalizeRule>
+      </Distinction>
+    </Distinctions>
+</VernScriptSystem>
