@@ -100,8 +100,8 @@ namespace BackTranslationHelper
             this.toolStripTextBoxStatus});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
-			this.menuStrip.Size = new System.Drawing.Size(571, 27);
-			this.menuStrip.TabIndex = 0;
+            this.menuStrip.Size = new System.Drawing.Size(571, 27);
+            this.menuStrip.TabIndex = 0;
             this.menuStrip.Text = "menuStrip1";
             // 
             // settingsToolStripMenuItem
@@ -803,8 +803,8 @@ namespace BackTranslationHelper
         private System.Windows.Forms.Label labelForPossibleTargetTranslation4;
         private System.Windows.Forms.ContextMenu contextMenuHideDefault;
         public System.Windows.Forms.ToolStripMenuItem SentenceSplittingMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem AddExampleMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem PurgeExamplesMenuItem;
-		public System.Windows.Forms.Button buttonPauseUpdating;
-	}
+        private System.Windows.Forms.ToolStripMenuItem AddExampleMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem PurgeExamplesMenuItem;
+        public System.Windows.Forms.Button buttonPauseUpdating;
+    }
 }

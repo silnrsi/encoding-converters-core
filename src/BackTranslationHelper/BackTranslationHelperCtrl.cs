@@ -7,12 +7,10 @@ using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
-using System.Reflection;
-using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Xml.Linq;
 
 namespace BackTranslationHelper
 {
@@ -31,9 +29,12 @@ namespace BackTranslationHelper
         private const string NllbEncConverterSplitSentencesPrefix = @"\SplitSentences ";
         private const string PtxProjectConfiguratorDisplayName = "Paratext Project Data";
 
-        #region Member variables
-        // the form in which this UserControl is embedded will initialize these
-        public IBackTranslationHelperDataSource BackTranslationHelperDataSource;
+		// from https://chatgpt.com/share/69cae88d-a188-832f-ab1b-1cd2683ca38c
+		private static readonly Regex _reForSentenceSplitting = new Regex(@"(.+?[.!?।؟۔።။။｡。]+['""’”]*\s*)");
+
+		#region Member variables
+		// the form in which this UserControl is embedded will initialize these
+		public IBackTranslationHelperDataSource BackTranslationHelperDataSource;
         public List<IEncConverter> TheTranslators = new List<IEncConverter>();
         public FindReplaceHelper TheFindReplaceProject;
         public DirectableEncConverter TheFindReplaceConverter;
@@ -296,6 +297,7 @@ namespace BackTranslationHelper
 						return findReplaceConverterName; // must have canceled
 
 					findReplaceConverterName = TheFindReplaceProject.SpellFixerEncConverterName;
+					Debug.Assert(!String.IsNullOrEmpty(findReplaceConverterName));
 					lstFriendlyName = new List<string> { findReplaceConverterName };
 					mapProjectNameToFindReplaceProjects[projectName] = lstFriendlyName;
 					Properties.Settings.Default.MapProjectNameToFindReplaceProject = SettingFromDictionary(mapProjectNameToFindReplaceProjects);
@@ -303,7 +305,7 @@ namespace BackTranslationHelper
 				}
 
 				findReplaceConverterName = lstFriendlyName.FirstOrDefault();
-				TheFindReplaceProject = new FindReplaceHelper(findReplaceConverterName);
+				TheFindReplaceProject ??= new FindReplaceHelper(findReplaceConverterName);
 				TheFindReplaceConverter = (DirectableEncConverter.EncConverters.ContainsKey(findReplaceConverterName))
 											? new DirectableEncConverter(DirectableEncConverter.EncConverters[findReplaceConverterName])
 											: null;
@@ -512,35 +514,85 @@ namespace BackTranslationHelper
             model = _model;
         }
 
-        public string ConvertText(IEncConverter theTranslator, string sourceData)
+		// if sourceSentences (from _model) is supplied (as an empty List), then we'll split the sourceData into sentences and translate each one 
+		// separately (which may be better for certain translators). I wrote this, because I was going to use an NLLB converter to process a Word 
+		// document. So for the SILConverters for Office plugin, I was going to supply a List for sourceSentences, which gets filled below. But then 
+		// I found out that the NLLBTranslator already does sentence splitting (see NllbTranslatorEncConverter.SplitSentencesPrefix above and
+		// in the translator itself). So this might not be necessary for any translator... but since it's written, I thought I'd leave it 
+		public string ConvertText(IEncConverter theTranslator, string sourceData, List<string> sourceSentences)
         {
-            if (!_mapOfRecentTranslations.TryGetValue(theTranslator.Name, out Dictionary<string, string> mapRecentTranslations))
-            {
-                mapRecentTranslations = new Dictionary<string, string>();
-                _mapOfRecentTranslations[theTranslator.Name] = mapRecentTranslations;
-            }
+			if (sourceSentences != null)
+			{
+				sourceSentences.Clear();
+				if (!String.IsNullOrEmpty(sourceData))
+				{
+					_reForSentenceSplitting.Replace(sourceData, FindSentence);
+				}
+			}
+			else
+			{
+				return ConvertText(theTranslator, sourceData);
+			}
 
-            if (!mapRecentTranslations.TryGetValue(sourceData, out string targetData))
-            {
-                try
-                {
-                    targetData = theTranslator.Convert(sourceData);
+#if !RunInSeries
+			var results = sourceSentences
+							.AsParallel()
+							.AsOrdered()
+							.WithDegreeOfParallelism(4) // tune this
+							.Select(sentence => ConvertText(theTranslator, sentence))
+							.ToList();
 
-                    // only save it if we get it back successfully
-                    mapRecentTranslations[sourceData] = targetData;
-                }
-                catch (Exception ex)
-                {
-                    var msg = LogExceptionMessage("ConvertText", ex);
-                    targetData = msg;    // but display this so the user sees it
-                    SetStatusBox($"Translation failed. Press F5 to redo the conversion.");
-                }
-            }
+			string targetData = string.Join(" ", results);
+#else
+			string targetData = String.Empty;
+			foreach (var sentence in sourceSentences)
+				targetData += ConvertText(theTranslator, sentence) + " ";
+#endif
+			return targetData;
 
-            return targetData;
-        }
+			string ConvertText(IEncConverter theTranslator, string sourceData)
+			{
+				if (!_mapOfRecentTranslations.TryGetValue(theTranslator.Name, out Dictionary<string, string> mapRecentTranslations))
+				{
+					mapRecentTranslations = new Dictionary<string, string>();
+					_mapOfRecentTranslations[theTranslator.Name] = mapRecentTranslations;
+				}
 
-        public void UpdateData(BackTranslationHelperModel model)
+				if (!mapRecentTranslations.TryGetValue(sourceData, out string targetData))
+				{
+					try
+					{
+						targetData = theTranslator.Convert(sourceData);
+
+						// only save it if we get it back successfully
+						mapRecentTranslations[sourceData] = targetData;
+					}
+					catch (Exception ex)
+					{
+						var msg = LogExceptionMessage("ConvertText", ex);
+						targetData = msg;    // but display this so the user sees it
+						SetStatusBox($"Translation failed. Press F5 to redo the conversion.");
+					}
+				}
+
+				return targetData;
+			}
+
+			string FindSentence(Match match)
+			{
+				var sentence = match.ToString();
+
+				if (String.IsNullOrEmpty(sentence?.Trim()))
+				{
+					return null;
+				}
+
+				sourceSentences.Add(sentence);
+				return sentence;    // always return the matched item, so we can see if we got the whole thing
+			}
+		}
+
+		public void UpdateData(BackTranslationHelperModel model)
         {
             textBoxSourceData.Text = model.SourceData;
 
@@ -619,7 +671,7 @@ namespace BackTranslationHelper
                         {
                             var theTranslator = theTranslatorPlusIndex.TheTranslator;
                             var index = theTranslatorPlusIndex.Index;
-                            var translatedText = ConvertText(theTranslatorPlusIndex.TheTranslator, model.SourceToTranslate);
+                            var translatedText = ConvertText(theTranslatorPlusIndex.TheTranslator, model.SourceToTranslate, model.SourceSentences);
 
                             // list doesn't seem threadsafe...
                             semaphoreParallelProcessing.Wait();
@@ -657,7 +709,9 @@ namespace BackTranslationHelper
                 System.Diagnostics.Debug.WriteLine("BTH: progressBar: set invisible");
                 InvokeIfRequired(progressBar, () => progressBar.Visible = false);
             }
-        }
+
+			await Task.Delay(0);
+		}
 
         public static void InvokeIfRequired(Control control, Action action)
         {
@@ -1329,8 +1383,9 @@ namespace BackTranslationHelper
                 return;
 
             TheFindReplaceProject.AssignCorrectSpelling(findWhat);
+			IsModified |= _model.TargetData == null;	// if the target data is null, then set it as modified, so it'll get the data from the text box
 
-            Reload();
+			Reload();
         }
 
         private string GetRequiredSelectedText()

@@ -30,6 +30,12 @@ namespace BackTranslationHelper
 			get { return SourceDataAlternate ?? SourceData; }
 		}
 
+		/// This collection is used to keep track of the SourceToTranslate text that has been broken into sentences (some translators
+		/// want them done sentence-by-sentence--e.g. NLLB). If this collection is initialized (rather than being null), then the SourceToTranslate
+		/// should be split up into sentences and the translation done sentence-by-sentence, with the results combined and put back into
+		/// the TargetData fields. If this collection is null, then the SourceToTranslate should be translated as a whole unit.
+		public List<string> SourceSentences { get; set; } = null;
+
 		/// <summary>
 		/// The one or more translations/conversions from the SourceData field value via the one or more EncConverter Translators
 		/// </summary>
