@@ -479,30 +479,24 @@
       <Name>ECInterfaces 2010</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup Condition="'$(Platform)' == 'x86' and '$(OS)' == 'Windows_NT'">
-    <PackageReference Include="Geckofx60.32">
-      <Version>60.0.55</Version>
-    </PackageReference>
+  <PropertyGroup>
+    <GeckoVersion Condition="'$(Platform)' == 'x86'">60.0.55</GeckoVersion>
+    <GeckoVersion Condition="'$(Platform)' == 'x64'">60.0.56</GeckoVersion>
+    <GeckoPackage Condition="'$(Platform)' == 'x86'">Geckofx60.32</GeckoPackage>
+    <GeckoPackage Condition="'$(Platform)' == 'x64'">Geckofx60.64</GeckoPackage>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="$(GeckoPackage)" Version="$(GeckoVersion)" />
   </ItemGroup>
-
-  <ItemGroup Condition="'$(Platform)' == 'x64' and '$(OS)' == 'Windows_NT'">
-    <PackageReference Include="Geckofx60.64">
-      <Version>60.0.56</Version>
-    </PackageReference>
-  </ItemGroup>
-
   <ItemGroup Condition="'$(OS)' != 'Windows_NT'">
-    <PackageReference Include="Geckofx60.64.Linux">
-      <Version>60.0.51</Version>
-    </PackageReference>
+    <PackageReference Include="Geckofx60.64.Linux" Version="60.0.51" />
   </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="Microsoft.Web.WebView2">
-      <Version>1.0.3179.45</Version>
+      <Version>1.0.3856.49</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
-      <Version>13.0.3</Version>
+      <Version>13.0.4</Version>
     </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
@@ -512,13 +506,7 @@
     <PostBuildEvent>
     </PostBuildEvent>
   </PropertyGroup>
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\..\packages\Geckofx60.32.60.0.55\build\Geckofx60.32.targets') and ('$(Platform)' == 'x86') and ('$(OS)'=='Windows_NT')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Geckofx60.32.60.0.55\build\Geckofx60.32.targets'))" />
+  <Target Name="DebugPlatform" BeforeTargets="Build">
+    <Message Text="MyCheck: Platform=$(Platform), PlatformTarget=$(PlatformTarget), PlatformName=$(PlatformName)" Importance="High" />
   </Target>
-  <!--BE: I had to manually add the extra conditions on these, so it will do the target (which copies files) from the correct package based on the platform.
-      Also, I had to manually edit the 64 bit target so that it would now get the files from Firefox64, rather than Firefox it was looking at (which are the 86 binaries)
-      This will all get undone if you update the gecko nuget packages -->
 </Project>

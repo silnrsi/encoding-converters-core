@@ -2,14 +2,14 @@
 // Use of this source code is governed by an MIT
 // license that can be found in the LICENSE file.
 
+using DeepL.Internal;
+using DeepL.Model;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
-using DeepL.Internal;
-using DeepL.Model;
 
 namespace Nllb
 {
@@ -139,6 +139,19 @@ namespace Nllb
                   DeepL.TextTranslateOptions? options = null,
                   CancellationToken cancellationToken = default)
             {
+#if !UseSplit
+                // our regex will split by paragraphs as it is, so we can just send the whole text in one go and let the server handle it
+                var bodyParams = new TranslateMsg { SourceLanguage = sourceLanguageCode, TargetLanguage = targetLanguageCode, Text = text };
+
+                using var responseMessage = await _client
+                      .ApiPostJsonAsync("/api/v1/translate/", cancellationToken, bodyParams).ConfigureAwait(false);
+
+                // Read response as a string.
+                var result = await responseMessage.Content.ReadAsStringAsync();
+
+                if (!responseMessage.IsSuccessStatusCode)
+                    throw new ApplicationException(result);
+#else
                 // call it once for each paragraph of text
                 var strings = text.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
                 var result = String.Empty;
@@ -156,6 +169,7 @@ namespace Nllb
                     if (!responseMessage.IsSuccessStatusCode)
                         throw new ApplicationException(result);
                 }
+#endif
                 return $"[{result}]";
             }
 

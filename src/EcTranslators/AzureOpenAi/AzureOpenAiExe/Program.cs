@@ -3,8 +3,6 @@
 // #define DEBUG_LIVE
 #endif
 
-using Azure.AI.OpenAI;
-using Azure;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +10,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using Newtonsoft.Json;
-using System.Security.Policy;
+using Azure.AI.OpenAI;
+using Azure;
 using OpenAI.Chat;
 
 namespace SilEncConverters40.EcTranslators.AzureOpenAI.AzureOpenAiExe
@@ -105,7 +104,11 @@ namespace SilEncConverters40.EcTranslators.AzureOpenAI.AzureOpenAiExe
             var prefixMessages = chatMessages.Count;
 			var chatCompletionOptions = new ChatCompletionOptions
 			{
-				Temperature = arguments.Temperature
+				MaxOutputTokenCount = 8192,
+				Temperature = arguments.Temperature,
+				TopP = 0.95f,
+				FrequencyPenalty = 0.0f,
+				PresencePenalty = 0.0f,
 			};
 
             // in case there are multiple lines (e.g. what Paratext will do if the verse has multiple paragraphs),
@@ -122,11 +125,6 @@ namespace SilEncConverters40.EcTranslators.AzureOpenAI.AzureOpenAiExe
 
 				// add the string to be translated to as the 'user' message
 				chatMessages.Add(new UserChatMessage(strInput));
-
-#if LogResults
-				var json = JsonConvert.SerializeObject(chatCompletionOptions, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling = DefaultValueHandling.Ignore });
-				File.AppendAllText(LogFilePath, json + Environment.NewLine);
-#endif
 
 				// call the service to process the user msg based on the given system prompt
 				var chatCompletions = await chatClient.CompleteChatAsync(chatMessages, chatCompletionOptions);

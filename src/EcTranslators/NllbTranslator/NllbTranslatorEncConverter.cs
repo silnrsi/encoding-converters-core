@@ -59,6 +59,7 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
 
         public Regex SentenceSplitter = new Regex(Properties.Settings.Default.NllbSentenceFinalPunctuationRegex);
         public bool IsSplitSentences = Properties.Settings.Default.NllbProcessSentenceBySentence;
+        private Regex _hasParagraphTerminators = new Regex(@"(\r\n|\r|\n)$");
 
         public int RepeatsOfLastInputString { get; set; } = 0;
         public string LastInputString { get; set; }
@@ -210,38 +211,38 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
             return true;
         }
 
-		public static async Task<bool> IsHttpServerListeningAsync(string endpoint, int timeoutMs = 500)
-		{
-			var uri = new Uri(endpoint);
+        public static async Task<bool> IsHttpServerListeningAsync(string endpoint, int timeoutMs = 500)
+        {
+            var uri = new Uri(endpoint);
 
-			var host = uri.Host;   // "localhost"
-			var port = uri.Port;   // 8000
+            var host = uri.Host;   // "localhost"
+            var port = uri.Port;   // 8000
 
-			var isEndpointLive = await Task.Run(async delegate
-			{
-				using var client = new TcpClient();
-				var connectTask = client.ConnectAsync(host, port);
-				var timeoutTask = Task.Delay(timeoutMs);
-				var completedTask = await Task.WhenAny(connectTask, timeoutTask);
-				return connectTask.IsCompleted && client.Connected;
+            var isEndpointLive = await Task.Run(async delegate
+            {
+                using var client = new TcpClient();
+                var connectTask = client.ConnectAsync(host, port);
+                var timeoutTask = Task.Delay(timeoutMs);
+                var completedTask = await Task.WhenAny(connectTask, timeoutTask);
+                return connectTask.IsCompleted && client.Connected;
 
-			}).ConfigureAwait(false);
+            }).ConfigureAwait(false);
 
-			return isEndpointLive;
-		}
+            return isEndpointLive;
+        }
 
 #pragma warning disable CS3002 // Return type is not CLS-compliant
-		public async Task<Dictionary<string, string>> GetCapabilities(bool showError)
+        public async Task<Dictionary<string, string>> GetCapabilities(bool showError)
 #pragma warning restore CS3002 // Return type is not CLS-compliant
         {
             try
             {
                 var resultLanguagesSupported = await Task.Run(async delegate
-				{
-					var isEndpointLive = await IsHttpServerListeningAsync(Endpoint);
-					return (!isEndpointLive)
-							? new List<string> { "Unable to connect to the NLLB server." }
-							: (await NllbTranslator.GetSupportedLanguagesAsync()).ToList();
+                {
+                    var isEndpointLive = await IsHttpServerListeningAsync(Endpoint);
+                    return (!isEndpointLive)
+                            ? new List<string> { "Unable to connect to the NLLB server." }
+                            : (await NllbTranslator.GetSupportedLanguagesAsync()).ToList();
                 }).ConfigureAwait(false);
 
                 var json = LoadEmbeddedResourceFileAsStringExecutingAssembly("NllbHumanReadableLgNames.json");
@@ -375,7 +376,7 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
                                     : CallNllbTranslator(sentence).Result;
 
                 // make sure the space isn't lost between the sentences
-                if ((strOutput.LastOrDefault() != default) && (output?.First() != ' '))
+                if ((strOutput.LastOrDefault() != default) && !_hasParagraphTerminators.IsMatch(strOutput) && (output?.First() != ' '))
                     strOutput += ' ';
 
                 strOutput += output;
@@ -429,6 +430,13 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
                 }).ConfigureAwait(false);
 
                 var result = HarvestResult(translatedText);
+
+                var match = _hasParagraphTerminators.Match(strInput);
+                if (match.Success)
+                {
+                    result += match.Value;
+                }
+
                 return result;
             }
             catch (Exception ex)
@@ -456,13 +464,13 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
             return String.Join(Environment.NewLine, output);
         }
 
-		public override bool HasUserOverriddenCredentials => true;
+        public override bool HasUserOverriddenCredentials => true;
 
-		#endregion Abstract Base Class Overrides
+        #endregion Abstract Base Class Overrides
 
-		#region Misc helpers
+        #region Misc helpers
 
-		protected override string GetConfigTypeName
+        protected override string GetConfigTypeName
         {
             get { return typeof(NllbTranslatorEncConverterConfig).AssemblyQualifiedName; }
         }

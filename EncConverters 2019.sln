@@ -170,9 +170,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.github\workflows\build.yml = .github\workflows\build.yml
 		DetermineBindingRedirectVersion.ps1 = DetermineBindingRedirectVersion.ps1
 		build\Encoding-Converters-Core.props = build\Encoding-Converters-Core.props
-		Package.Debug.nuspec = Package.Debug.nuspec
 		LatestRedirects.config = LatestRedirects.config
+		Package.Debug.nuspec = Package.Debug.nuspec
 		Package.Release.nuspec = Package.Release.nuspec
+		SharedItems.props = SharedItems.props
 		build\VerifyDllVersions.ps1 = build\VerifyDllVersions.ps1
 	EndProjectSection
 EndProject
@@ -256,8 +257,19 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PtxConverters", "src\PtxCon
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 	ProjectSection(SolutionItems) = preProject
-		build\dll_versions.json = build\dll_versions.json
 		build\VerifyDllVersions.ps1 = build\VerifyDllVersions.ps1
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpellingFixer30", "src\SpellingFixer30\SpellingFixer30.csproj", "{1F6E3722-B445-4638-90D6-22DDE860DCC6}"
+EndProject
+Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "SpellFixerEcMM", "installer\SpellFixerEcMM\SpellFixerEcMM.wixproj", "{906F2914-563F-4B12-8AC9-54117D29D2B5}"
+	ProjectSection(ProjectDependencies) = postProject
+		{1F6E3722-B445-4638-90D6-22DDE860DCC6} = {1F6E3722-B445-4638-90D6-22DDE860DCC6}
+	EndProjectSection
+EndProject
+Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "SpellFixerEc64bitMM", "installer\SpellFixerEc64bitMM\SpellFixerEc64bitMM.wixproj", "{CE9026BE-14CC-40C0-8BA9-8C5383A37570}"
+	ProjectSection(ProjectDependencies) = postProject
+		{1F6E3722-B445-4638-90D6-22DDE860DCC6} = {1F6E3722-B445-4638-90D6-22DDE860DCC6}
 	EndProjectSection
 EndProject
 Global
@@ -713,6 +725,36 @@ Global
 		{E9764AF7-2EA0-4829-9E83-C37B4B080F3F}.Template|Win32.Build.0 = Release|x86
 		{E9764AF7-2EA0-4829-9E83-C37B4B080F3F}.Template|x64.ActiveCfg = Release|x64
 		{E9764AF7-2EA0-4829-9E83-C37B4B080F3F}.Template|x64.Build.0 = Release|x64
+		{1F6E3722-B445-4638-90D6-22DDE860DCC6}.Debug|Win32.ActiveCfg = Debug|x86
+		{1F6E3722-B445-4638-90D6-22DDE860DCC6}.Debug|Win32.Build.0 = Debug|x86
+		{1F6E3722-B445-4638-90D6-22DDE860DCC6}.Debug|x64.ActiveCfg = Debug|x64
+		{1F6E3722-B445-4638-90D6-22DDE860DCC6}.Debug|x64.Build.0 = Debug|x64
+		{1F6E3722-B445-4638-90D6-22DDE860DCC6}.Release|Win32.ActiveCfg = Release|x86
+		{1F6E3722-B445-4638-90D6-22DDE860DCC6}.Release|Win32.Build.0 = Release|x86
+		{1F6E3722-B445-4638-90D6-22DDE860DCC6}.Release|x64.ActiveCfg = Release|x64
+		{1F6E3722-B445-4638-90D6-22DDE860DCC6}.Release|x64.Build.0 = Release|x64
+		{1F6E3722-B445-4638-90D6-22DDE860DCC6}.Template|Win32.ActiveCfg = Debug|x86
+		{1F6E3722-B445-4638-90D6-22DDE860DCC6}.Template|Win32.Build.0 = Debug|x86
+		{1F6E3722-B445-4638-90D6-22DDE860DCC6}.Template|x64.ActiveCfg = Debug|x64
+		{1F6E3722-B445-4638-90D6-22DDE860DCC6}.Template|x64.Build.0 = Debug|x64
+		{906F2914-563F-4B12-8AC9-54117D29D2B5}.Debug|Win32.ActiveCfg = Debug|x86
+		{906F2914-563F-4B12-8AC9-54117D29D2B5}.Debug|x64.ActiveCfg = Debug|x86
+		{906F2914-563F-4B12-8AC9-54117D29D2B5}.Release|Win32.ActiveCfg = Release|x86
+		{906F2914-563F-4B12-8AC9-54117D29D2B5}.Release|Win32.Build.0 = Release|x86
+		{906F2914-563F-4B12-8AC9-54117D29D2B5}.Release|x64.ActiveCfg = Release|x86
+		{906F2914-563F-4B12-8AC9-54117D29D2B5}.Template|Win32.ActiveCfg = Debug|x86
+		{906F2914-563F-4B12-8AC9-54117D29D2B5}.Template|Win32.Build.0 = Debug|x86
+		{906F2914-563F-4B12-8AC9-54117D29D2B5}.Template|x64.ActiveCfg = Debug|x86
+		{906F2914-563F-4B12-8AC9-54117D29D2B5}.Template|x64.Build.0 = Debug|x86
+		{CE9026BE-14CC-40C0-8BA9-8C5383A37570}.Debug|Win32.ActiveCfg = Debug|x64
+		{CE9026BE-14CC-40C0-8BA9-8C5383A37570}.Debug|x64.ActiveCfg = Debug|x64
+		{CE9026BE-14CC-40C0-8BA9-8C5383A37570}.Release|Win32.ActiveCfg = Release|x64
+		{CE9026BE-14CC-40C0-8BA9-8C5383A37570}.Release|x64.ActiveCfg = Release|x64
+		{CE9026BE-14CC-40C0-8BA9-8C5383A37570}.Release|x64.Build.0 = Release|x64
+		{CE9026BE-14CC-40C0-8BA9-8C5383A37570}.Template|Win32.ActiveCfg = Debug|x64
+		{CE9026BE-14CC-40C0-8BA9-8C5383A37570}.Template|Win32.Build.0 = Debug|x64
+		{CE9026BE-14CC-40C0-8BA9-8C5383A37570}.Template|x64.ActiveCfg = Debug|x64
+		{CE9026BE-14CC-40C0-8BA9-8C5383A37570}.Template|x64.Build.0 = Debug|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -740,6 +782,8 @@ Global
 		{9FAB4338-F089-4279-A5DF-AF5FC0368783} = {D3355CC9-A400-49B7-ADCE-F623A816D1B5}
 		{9628E44E-C407-4EA3-95AF-C7E4310EB9D3} = {D3355CC9-A400-49B7-ADCE-F623A816D1B5}
 		{02EA681E-C7D8-13C7-8484-4AC65E1B71E8} = {AE15D9B7-3CAA-44E7-8CB8-8943DF1AA069}
+		{906F2914-563F-4B12-8AC9-54117D29D2B5} = {D3355CC9-A400-49B7-ADCE-F623A816D1B5}
+		{CE9026BE-14CC-40C0-8BA9-8C5383A37570} = {D3355CC9-A400-49B7-ADCE-F623A816D1B5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6FE31029-BBCA-40A0-81A4-79C05FE08285}
