@@ -233,7 +233,9 @@ namespace BackTranslationHelper
             // 
             // SentenceSplittingMenuItem
             // 
+            this.SentenceSplittingMenuItem.Checked = true;
             this.SentenceSplittingMenuItem.CheckOnClick = true;
+            this.SentenceSplittingMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.SentenceSplittingMenuItem.Name = "SentenceSplittingMenuItem";
             this.SentenceSplittingMenuItem.Size = new System.Drawing.Size(341, 22);
             this.SentenceSplittingMenuItem.Text = "Sentence S&plitting";

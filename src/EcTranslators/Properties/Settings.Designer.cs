@@ -12,7 +12,7 @@ namespace SilEncConverters40.EcTranslators.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.5.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.14.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -300,7 +300,7 @@ namespace SilEncConverters40.EcTranslators.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("(.*?)([\\p{Po}-[,]])")]
+        [global::System.Configuration.DefaultSettingValueAttribute("(.+?[.!?।؟۔።။။｡。]+[\'\"\"’”]*\\s*)")]
         public string NllbSentenceFinalPunctuationRegex {
             get {
                 return ((string)(this["NllbSentenceFinalPunctuationRegex"]));
@@ -309,7 +309,7 @@ namespace SilEncConverters40.EcTranslators.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool NllbProcessSentenceBySentence {
             get {
                 return ((bool)(this["NllbProcessSentenceBySentence"]));
@@ -366,7 +366,7 @@ namespace SilEncConverters40.EcTranslators.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("chat-bison")]
+        [global::System.Configuration.DefaultSettingValueAttribute("gemini-2.5-flash")]
         public string GoogleCloudVertexAiModelId {
             get {
                 return ((string)(this["GoogleCloudVertexAiModelId"]));
