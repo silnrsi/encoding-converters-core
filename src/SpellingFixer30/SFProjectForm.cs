@@ -8,6 +8,7 @@ using System.IO;
 using System.Globalization;
 using ECInterfaces;
 using SilEncConverters40;
+using SpellingFixer30.Properties;
 
 namespace SpellingFixer30
 {
@@ -24,7 +25,8 @@ namespace SpellingFixer30
             m_project = project;
             m_bSaveVSS = false;
 
-            if (Directory.Exists(CscProject.VernacularScriptSystemsDirectory))
+			var _implementationClass = "SpellingFixer30.CscBaseProject";
+			if (Directory.Exists(CscProject.VernacularScriptSystemsDirectory))
 			{
                 string strVssDir = CscProject.VernacularScriptSystemsDirectory;
                 saveFileDialogVssFile.InitialDirectory = strVssDir;
@@ -34,6 +36,12 @@ namespace SpellingFixer30
 				{
 					string strName = fiVSSs.Name;
 					this.comboBoxVernScriptType.Items.Add(strName.Substring(0, strName.Length - fiVSSs.Extension.Length));
+
+					if (strName == Settings.Default.LastVernScriptType)
+					{
+						var sfssp = VernScriptSystem.LoadVsvXml(fiVSSs.FullName);
+						_implementationClass = sfssp.Properties.ProgId ?? _implementationClass;
+					}
 				}
 			}
 
@@ -53,8 +61,8 @@ namespace SpellingFixer30
                 // if we aren't editing, then set all check boxes to true.
                 if (m_project == null)
                 {
-                    // start w/ Indic
-                    Type typeProject = Type.GetType("SpellingFixer30.CscIndicProject");
+					// start w/ Indic
+					Type typeProject = Type.GetType(_implementationClass);
                     m_project = (CscProject)Activator.CreateInstance(typeProject);
                 }
 
@@ -267,23 +275,26 @@ namespace SpellingFixer30
                 VernScriptSystem sfssp = null;
                 if (m_project != null)
                 {
-                    var strVernScriptFilename = Path.Combine(CscProject.VernacularScriptSystemsDirectory,
-                        $"{this.comboBoxVernScriptType.SelectedItem}.{CscProject.VernacularScriptSystemFileExt}");
-
+                    var strVernScriptFilename = CscProject.CreateVernacularScriptSystemFileSpec(comboBoxVernScriptType.SelectedItem?.ToString());
                     sfssp = VernScriptSystem.LoadVsvXml(strVernScriptFilename);
                 }
 
                 // if we aren't editing, then set all check boxes to true.
                 else if (m_project == null)
                 {
-                    var strProgId = sfssp.Properties.ProgId ?? "SpellingFixer30.CscIndicProject";
+                    var strProgId = sfssp.Properties.ProgId ?? "SpellingFixer30.CscBaseProject";
                     Type typeProject = Type.GetType(strProgId);
                     m_project = (CscProject)Activator.CreateInstance(typeProject);
                     sfssp = m_project.Init();
                 }
 
-                // now we can allow the user to set font.
-                buttonFont.Enabled = true;
+				textBoxAdditionalPunctuation.Text = m_project.ExtraPunctuation;
+				string punctuationToolTip = $"Enter any additional punctuation or whitespace characters needed for this language, separated by spaces (these are used for boundary condition checking). No need to include any of these, which are already included: {SpellingFixer.GetDefaultPunctuation}";
+				toolTip.SetToolTip(labelAddlPunct, punctuationToolTip);
+				toolTip.SetToolTip(textBoxAdditionalPunctuation, punctuationToolTip);
+
+				// now we can allow the user to set font.
+				buttonFont.Enabled = true;
 
                 if (sfssp.Distinctions.DistinctionList.Count > 0)
                 {
@@ -310,7 +321,8 @@ namespace SpellingFixer30
                     }
                 }
 			}
-        }
+
+		}
 
         protected DistinctionRuleCheckBox AddCheckBoxToTab(Distinction aRow)
         {

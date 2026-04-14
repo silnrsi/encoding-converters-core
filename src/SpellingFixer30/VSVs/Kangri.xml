@@ -1,6 +1,8 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <VernScriptSystem xmlns="http://www.sil.org/computing/schemas/SpellFixerVernScript.xsd" >
-    <VernScriptSystemProperties name="Kangri" description="This is the simplification information for Kangri languages" progId="SpellingFixer30.CscIndicProject" TransliteratorEncConverterName="Any-Latin" TransliteratorEncConverterDirectionForward="true" TransliteratorEncConverterNormalize="None"/>
+    <VernScriptSystemProperties
+      name="Kangri" description="This is the simplification information for Kangri languages" progId="SpellingFixer30.CscBaseProject"
+      TransliteratorEncConverterName="Any-Latin" TransliteratorEncConverterDirectionForward="true" TransliteratorEncConverterNormalize="None"/>
     <ExtraPunctuation description="These are characters which may occur at the edges of words, which you want to be stripped off before processing a word. By default, you automatically get the regular punctuation characters in Unicode, but this is for any that you want to add because they otherwise aren't behaving properly.">
         <IgnorePunctuation description="Devanagari Danda">।</IgnorePunctuation>
         <IgnorePunctuation description="vertical bar">|</IgnorePunctuation>

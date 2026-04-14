@@ -33,21 +33,21 @@ namespace SpellingFixer30
             this.tabControl = new System.Windows.Forms.TabControl();
             this.tabPageLanguage = new System.Windows.Forms.TabPage();
             this.tableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
-            this.labelTransliterationFont = new System.Windows.Forms.Label();
-            this.labelTransliterator = new System.Windows.Forms.Label();
-            this.buttonTransliteratorFont = new System.Windows.Forms.Button();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
-            this.labelVernFont = new System.Windows.Forms.Label();
             this.labelProjectName = new System.Windows.Forms.Label();
             this.textBoxProjectName = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.comboBoxLocale = new System.Windows.Forms.ComboBox();
             this.labelScriptSystemParameter = new System.Windows.Forms.Label();
             this.comboBoxVernScriptType = new System.Windows.Forms.ComboBox();
+            this.labelVernFont = new System.Windows.Forms.Label();
             this.buttonFont = new System.Windows.Forms.Button();
-            this.buttonChooseTransliterator = new System.Windows.Forms.Button();
             this.labelVFont = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
+            this.buttonChooseTransliterator = new System.Windows.Forms.Button();
+            this.labelTransliterator = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.buttonTransliteratorFont = new System.Windows.Forms.Button();
+            this.labelTransliterationFont = new System.Windows.Forms.Label();
             this.tabPageDistinctionRules = new System.Windows.Forms.TabPage();
             this.tableLayoutPanelDistinctions = new System.Windows.Forms.TableLayoutPanel();
             this.buttonSetAll = new System.Windows.Forms.Button();
@@ -64,6 +64,8 @@ namespace SpellingFixer30
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.helpProvider = new System.Windows.Forms.HelpProvider();
             this.saveFileDialogVssFile = new System.Windows.Forms.SaveFileDialog();
+            this.labelAddlPunct = new System.Windows.Forms.Label();
+            this.textBoxAdditionalPunctuation = new System.Windows.Forms.TextBox();
             this.tabControl.SuspendLayout();
             this.tabPageLanguage.SuspendLayout();
             this.tableLayoutPanel.SuspendLayout();
@@ -99,107 +101,46 @@ namespace SpellingFixer30
             // tableLayoutPanel
             // 
             this.tableLayoutPanel.ColumnCount = 3;
-            this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 150F));
             this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this.tableLayoutPanel.Controls.Add(this.labelProjectName, 0, 0);
-			this.tableLayoutPanel.Controls.Add(this.textBoxProjectName, 1, 0);
-			this.tableLayoutPanel.Controls.Add(this.label2, 0, 1);
-			this.tableLayoutPanel.Controls.Add(this.comboBoxLocale, 1, 1);
-			this.tableLayoutPanel.Controls.Add(this.labelScriptSystemParameter, 0, 2);
-			this.tableLayoutPanel.Controls.Add(this.comboBoxVernScriptType, 1, 2);
-			this.tableLayoutPanel.Controls.Add(this.labelVernFont, 0, 3);
-			this.tableLayoutPanel.Controls.Add(this.buttonFont, 1, 3);
-			this.tableLayoutPanel.Controls.Add(this.labelVFont, 2, 3);
-			this.tableLayoutPanel.Controls.Add(this.label1, 0, 4);
-			this.tableLayoutPanel.Controls.Add(this.buttonChooseTransliterator, 1, 4);
-			this.tableLayoutPanel.Controls.Add(this.labelTransliterator, 2, 4);
-			this.tableLayoutPanel.Controls.Add(this.label3, 0, 5);
-			this.tableLayoutPanel.Controls.Add(this.buttonTransliteratorFont, 1, 5);
-			this.tableLayoutPanel.Controls.Add(this.labelTransliterationFont, 2, 5);
-            this.tableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel.Controls.Add(this.labelProjectName, 0, 0);
+            this.tableLayoutPanel.Controls.Add(this.textBoxProjectName, 1, 0);
+            this.tableLayoutPanel.Controls.Add(this.label2, 0, 1);
+            this.tableLayoutPanel.Controls.Add(this.comboBoxLocale, 1, 1);
+            this.tableLayoutPanel.Controls.Add(this.labelScriptSystemParameter, 0, 2);
+            this.tableLayoutPanel.Controls.Add(this.comboBoxVernScriptType, 1, 2);
+            this.tableLayoutPanel.Controls.Add(this.labelVernFont, 0, 3);
+            this.tableLayoutPanel.Controls.Add(this.buttonFont, 1, 3);
+            this.tableLayoutPanel.Controls.Add(this.labelVFont, 2, 3);
+            this.tableLayoutPanel.Controls.Add(this.label1, 0, 4);
+            this.tableLayoutPanel.Controls.Add(this.buttonChooseTransliterator, 1, 4);
+            this.tableLayoutPanel.Controls.Add(this.labelTransliterator, 2, 4);
+            this.tableLayoutPanel.Controls.Add(this.label3, 0, 5);
+            this.tableLayoutPanel.Controls.Add(this.buttonTransliteratorFont, 1, 5);
+            this.tableLayoutPanel.Controls.Add(this.labelTransliterationFont, 2, 5);
+			this.tableLayoutPanel.Controls.Add(this.labelAddlPunct, 0, 6);
+			this.tableLayoutPanel.Controls.Add(this.textBoxAdditionalPunctuation, 1, 6);
+			this.tableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel.Location = new System.Drawing.Point(3, 3);
             this.tableLayoutPanel.Name = "tableLayoutPanel";
-            this.tableLayoutPanel.RowCount = 7;
+            this.tableLayoutPanel.RowCount = 8;
             this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel.Size = new System.Drawing.Size(464, 322);
             this.tableLayoutPanel.TabIndex = 0;
-            // 
-            // labelTransliterationFont
-            // 
-            this.labelTransliterationFont.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.labelTransliterationFont.AutoSize = true;
-            this.labelTransliterationFont.Location = new System.Drawing.Point(264, 146);
-            this.labelTransliterationFont.Name = "labelTransliterationFont";
-            this.labelTransliterationFont.Size = new System.Drawing.Size(116, 13);
-            this.labelTransliterationFont.TabIndex = 12;
-            this.labelTransliterationFont.Text = "labelTransliterationFont";
-            // 
-            // labelTransliterator
-            // 
-            this.labelTransliterator.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.labelTransliterator.AutoSize = true;
-            this.labelTransliterator.Location = new System.Drawing.Point(264, 117);
-            this.labelTransliterator.Name = "labelTransliterator";
-            this.labelTransliterator.Size = new System.Drawing.Size(90, 13);
-            this.labelTransliterator.TabIndex = 11;
-            this.labelTransliterator.Text = "labelTransliterator";
-            // 
-            // buttonTransliteratorFont
-            // 
-            this.buttonTransliteratorFont.AutoSize = true;
-            this.helpProvider.SetHelpString(this.buttonTransliteratorFont, "Select the font to be used when displaying transliteration data for this project " +
-        "(default is \'Doulos SIL\'; 12 pt)");
-            this.buttonTransliteratorFont.Location = new System.Drawing.Point(141, 141);
-            this.buttonTransliteratorFont.Name = "buttonTransliteratorFont";
-            this.helpProvider.SetShowHelp(this.buttonTransliteratorFont, true);
-            this.buttonTransliteratorFont.Size = new System.Drawing.Size(94, 23);
-            this.buttonTransliteratorFont.TabIndex = 9;
-            this.buttonTransliteratorFont.Text = "Choose &Font";
-            this.buttonTransliteratorFont.UseVisualStyleBackColor = true;
-            this.buttonTransliteratorFont.Click += new System.EventHandler(this.buttonTransliteratorFont_Click);
-            // 
-            // label3
-            // 
-            this.label3.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(40, 146);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(95, 13);
-            this.label3.TabIndex = 8;
-            this.label3.Text = "Transliterator Font:";
-            // 
-            // label1
-            // 
-            this.label1.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(64, 117);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(71, 13);
-            this.label1.TabIndex = 6;
-            this.label1.Text = "Transliterator:";
-            // 
-            // labelVernFont
-            // 
-            this.labelVernFont.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.labelVernFont.AutoSize = true;
-            this.labelVernFont.Location = new System.Drawing.Point(20, 88);
-            this.labelVernFont.Name = "labelVernFont";
-            this.labelVernFont.Size = new System.Drawing.Size(115, 13);
-            this.labelVernFont.TabIndex = 5;
-            this.labelVernFont.Text = "Vernacular &Script Font:";
             // 
             // labelProjectName
             // 
             this.labelProjectName.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.labelProjectName.AutoSize = true;
-            this.labelProjectName.Location = new System.Drawing.Point(8, 6);
+            this.labelProjectName.Location = new System.Drawing.Point(20, 6);
             this.labelProjectName.Name = "labelProjectName";
             this.labelProjectName.Size = new System.Drawing.Size(127, 13);
             this.labelProjectName.TabIndex = 0;
@@ -210,17 +151,17 @@ namespace SpellingFixer30
             this.tableLayoutPanel.SetColumnSpan(this.textBoxProjectName, 2);
             this.textBoxProjectName.Dock = System.Windows.Forms.DockStyle.Fill;
             this.helpProvider.SetHelpString(this.textBoxProjectName, resources.GetString("textBoxProjectName.HelpString"));
-            this.textBoxProjectName.Location = new System.Drawing.Point(141, 3);
+            this.textBoxProjectName.Location = new System.Drawing.Point(153, 3);
             this.textBoxProjectName.Name = "textBoxProjectName";
             this.helpProvider.SetShowHelp(this.textBoxProjectName, true);
-            this.textBoxProjectName.Size = new System.Drawing.Size(320, 20);
+            this.textBoxProjectName.Size = new System.Drawing.Size(308, 20);
             this.textBoxProjectName.TabIndex = 0;
             // 
             // label2
             // 
             this.label2.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(3, 33);
+            this.label2.Location = new System.Drawing.Point(15, 33);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(132, 13);
             this.label2.TabIndex = 2;
@@ -235,10 +176,10 @@ namespace SpellingFixer30
             this.comboBoxLocale.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxLocale.FormattingEnabled = true;
             this.helpProvider.SetHelpString(this.comboBoxLocale, resources.GetString("comboBoxLocale.HelpString"));
-            this.comboBoxLocale.Location = new System.Drawing.Point(141, 29);
+            this.comboBoxLocale.Location = new System.Drawing.Point(153, 29);
             this.comboBoxLocale.Name = "comboBoxLocale";
             this.helpProvider.SetShowHelp(this.comboBoxLocale, true);
-            this.comboBoxLocale.Size = new System.Drawing.Size(320, 21);
+            this.comboBoxLocale.Size = new System.Drawing.Size(308, 21);
             this.comboBoxLocale.Sorted = true;
             this.comboBoxLocale.TabIndex = 1;
             // 
@@ -246,7 +187,7 @@ namespace SpellingFixer30
             // 
             this.labelScriptSystemParameter.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.labelScriptSystemParameter.AutoSize = true;
-            this.labelScriptSystemParameter.Location = new System.Drawing.Point(17, 60);
+            this.labelScriptSystemParameter.Location = new System.Drawing.Point(29, 60);
             this.labelScriptSystemParameter.Name = "labelScriptSystemParameter";
             this.labelScriptSystemParameter.Size = new System.Drawing.Size(118, 13);
             this.labelScriptSystemParameter.TabIndex = 4;
@@ -261,12 +202,22 @@ namespace SpellingFixer30
             this.comboBoxVernScriptType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxVernScriptType.FormattingEnabled = true;
             this.helpProvider.SetHelpString(this.comboBoxVernScriptType, "The Vernacular Script Type");
-            this.comboBoxVernScriptType.Location = new System.Drawing.Point(141, 56);
+            this.comboBoxVernScriptType.Location = new System.Drawing.Point(153, 56);
             this.comboBoxVernScriptType.Name = "comboBoxVernScriptType";
             this.helpProvider.SetShowHelp(this.comboBoxVernScriptType, true);
-            this.comboBoxVernScriptType.Size = new System.Drawing.Size(320, 21);
+            this.comboBoxVernScriptType.Size = new System.Drawing.Size(308, 21);
             this.comboBoxVernScriptType.TabIndex = 2;
             this.comboBoxVernScriptType.SelectedIndexChanged += new System.EventHandler(this.comboBoxVernScriptType_SelectedIndexChanged);
+            // 
+            // labelVernFont
+            // 
+            this.labelVernFont.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.labelVernFont.AutoSize = true;
+            this.labelVernFont.Location = new System.Drawing.Point(32, 88);
+            this.labelVernFont.Name = "labelVernFont";
+            this.labelVernFont.Size = new System.Drawing.Size(115, 13);
+            this.labelVernFont.TabIndex = 5;
+            this.labelVernFont.Text = "Vernacular &Script Font:";
             // 
             // buttonFont
             // 
@@ -274,7 +225,7 @@ namespace SpellingFixer30
             this.buttonFont.Enabled = false;
             this.helpProvider.SetHelpString(this.buttonFont, "Select the font to be used when displaying vernacular data for this project (defa" +
         "ult is \'Arial Unicode MS\'; 14 pt)");
-            this.buttonFont.Location = new System.Drawing.Point(141, 83);
+            this.buttonFont.Location = new System.Drawing.Point(153, 83);
             this.buttonFont.Name = "buttonFont";
             this.helpProvider.SetShowHelp(this.buttonFont, true);
             this.buttonFont.Size = new System.Drawing.Size(94, 23);
@@ -283,12 +234,32 @@ namespace SpellingFixer30
             this.buttonFont.UseVisualStyleBackColor = true;
             this.buttonFont.Click += new System.EventHandler(this.buttonFont_Click);
             // 
+            // labelVFont
+            // 
+            this.labelVFont.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.labelVFont.AutoSize = true;
+            this.labelVFont.Location = new System.Drawing.Point(276, 88);
+            this.labelVFont.Name = "labelVFont";
+            this.labelVFont.Size = new System.Drawing.Size(72, 13);
+            this.labelVFont.TabIndex = 10;
+            this.labelVFont.Text = "labelVernFont";
+            // 
+            // label1
+            // 
+            this.label1.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(76, 117);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(71, 13);
+            this.label1.TabIndex = 6;
+            this.label1.Text = "Transliterator:";
+            // 
             // buttonChooseTransliterator
             // 
             this.buttonChooseTransliterator.AutoSize = true;
             this.helpProvider.SetHelpString(this.buttonChooseTransliterator, "Select the transliterator to be used for this project (default is \'Any to Latin\')" +
         "");
-            this.buttonChooseTransliterator.Location = new System.Drawing.Point(141, 112);
+            this.buttonChooseTransliterator.Location = new System.Drawing.Point(153, 112);
             this.buttonChooseTransliterator.Name = "buttonChooseTransliterator";
             this.helpProvider.SetShowHelp(this.buttonChooseTransliterator, true);
             this.buttonChooseTransliterator.Size = new System.Drawing.Size(117, 23);
@@ -297,15 +268,49 @@ namespace SpellingFixer30
             this.buttonChooseTransliterator.UseVisualStyleBackColor = true;
             this.buttonChooseTransliterator.Click += new System.EventHandler(this.buttonChooseTransliterator_Click);
             // 
-            // labelVFont
+            // labelTransliterator
             // 
-            this.labelVFont.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.labelVFont.AutoSize = true;
-            this.labelVFont.Location = new System.Drawing.Point(264, 88);
-            this.labelVFont.Name = "labelVFont";
-            this.labelVFont.Size = new System.Drawing.Size(72, 13);
-            this.labelVFont.TabIndex = 10;
-            this.labelVFont.Text = "labelVernFont";
+            this.labelTransliterator.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.labelTransliterator.AutoSize = true;
+            this.labelTransliterator.Location = new System.Drawing.Point(276, 117);
+            this.labelTransliterator.Name = "labelTransliterator";
+            this.labelTransliterator.Size = new System.Drawing.Size(90, 13);
+            this.labelTransliterator.TabIndex = 11;
+            this.labelTransliterator.Text = "labelTransliterator";
+            // 
+            // label3
+            // 
+            this.label3.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(52, 146);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(95, 13);
+            this.label3.TabIndex = 8;
+            this.label3.Text = "Transliterator Font:";
+            // 
+            // buttonTransliteratorFont
+            // 
+            this.buttonTransliteratorFont.AutoSize = true;
+            this.helpProvider.SetHelpString(this.buttonTransliteratorFont, "Select the font to be used when displaying transliteration data for this project " +
+        "(default is \'Doulos SIL\'; 12 pt)");
+            this.buttonTransliteratorFont.Location = new System.Drawing.Point(153, 141);
+            this.buttonTransliteratorFont.Name = "buttonTransliteratorFont";
+            this.helpProvider.SetShowHelp(this.buttonTransliteratorFont, true);
+            this.buttonTransliteratorFont.Size = new System.Drawing.Size(94, 23);
+            this.buttonTransliteratorFont.TabIndex = 9;
+            this.buttonTransliteratorFont.Text = "Choose &Font";
+            this.buttonTransliteratorFont.UseVisualStyleBackColor = true;
+            this.buttonTransliteratorFont.Click += new System.EventHandler(this.buttonTransliteratorFont_Click);
+            // 
+            // labelTransliterationFont
+            // 
+            this.labelTransliterationFont.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.labelTransliterationFont.AutoSize = true;
+            this.labelTransliterationFont.Location = new System.Drawing.Point(276, 146);
+            this.labelTransliterationFont.Name = "labelTransliterationFont";
+            this.labelTransliterationFont.Size = new System.Drawing.Size(116, 13);
+            this.labelTransliterationFont.TabIndex = 12;
+            this.labelTransliterationFont.Text = "labelTransliterationFont";
             // 
             // tabPageDistinctionRules
             // 
@@ -476,6 +481,32 @@ namespace SpellingFixer30
             this.saveFileDialogVssFile.FileName = "Script";
             this.saveFileDialogVssFile.Filter = "Vernacular Script System files (*.xml)|*.xml";
             // 
+            // labelAddlPunct
+            // 
+            this.labelAddlPunct.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.labelAddlPunct.AutoSize = true;
+            this.labelAddlPunct.Location = new System.Drawing.Point(11, 167);
+            this.labelAddlPunct.Name = "labelAddlPunct";
+            this.labelAddlPunct.Size = new System.Drawing.Size(136, 26);
+            this.labelAddlPunct.TabIndex = 24;
+            this.labelAddlPunct.Text = "Additional &punctuation and whitespace:";
+            this.labelAddlPunct.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.toolTip.SetToolTip(this.labelAddlPunct, "Enter any additional punctuation or whitespace characters needed for this languag" +
+        "e, separated by spaces (these are used for boundary condition checking)");
+            // 
+            // textBoxAdditionalPunctuation
+            // 
+            this.tableLayoutPanel.SetColumnSpan(this.textBoxAdditionalPunctuation, 2);
+            this.textBoxAdditionalPunctuation.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.helpProvider.SetHelpString(this.textBoxAdditionalPunctuation, resources.GetString("textBoxAdditionalPunctuation.HelpString"));
+            this.textBoxAdditionalPunctuation.Location = new System.Drawing.Point(153, 170);
+            this.textBoxAdditionalPunctuation.Name = "textBoxAdditionalPunctuation";
+            this.helpProvider.SetShowHelp(this.textBoxAdditionalPunctuation, true);
+            this.textBoxAdditionalPunctuation.Size = new System.Drawing.Size(308, 20);
+            this.textBoxAdditionalPunctuation.TabIndex = 25;
+            this.toolTip.SetToolTip(this.textBoxAdditionalPunctuation, "Enter any additional punctuation or whitespace characters needed for this languag" +
+        "e, separated by spaces (these are used for boundary condition checking)");
+            // 
             // SFProjectForm
             // 
             this.AcceptButton = this.buttonOK;
@@ -537,5 +568,7 @@ namespace SpellingFixer30
         private System.Windows.Forms.Label labelTransliterator;
         private System.Windows.Forms.Button buttonAddNew;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel;
-    }
+		private System.Windows.Forms.Label labelAddlPunct;
+		private System.Windows.Forms.TextBox textBoxAdditionalPunctuation;
+	}
 }

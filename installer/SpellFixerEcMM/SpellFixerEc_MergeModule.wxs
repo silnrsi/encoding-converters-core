@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
+  <Module Id="SpellFixerEcMM" Language="1033" Version="1.0.0.0">
+    <Package Id="{4D120452-EC32-41D3-B8C4-92C142E4DCC1}" Comments="SpellFixer Macro Word document template"
+         Description="Document Template for doing spelling corrections using EncConverters in MS Word" InstallerVersion="500" Keywords="SILConverters; Spell Fixing in MS Word"
+         Manufacturer="SIL" />
+
+    <Directory Id="TARGETDIR" Name="SourceDir">
+
+      <Directory Id="MergeRedirectFolder">
+
+        <Component Id="SpellingFixer30.dll" Guid="982F9A4E-D183-4AD0-A775-65BEF3E26B17">
+          <Class Id="{CFDB9B1A-DAE6-40BE-8A34-5A3CA1A71463}" Context="InprocServer32" Description="SpellingFixer30.SpellingFixer" ThreadingModel="both" ForeignServer="mscoree.dll">
+            <ProgId Id="SpellingFixer30.SpellingFixer" Description="SpellingFixer30.SpellingFixer" />
+          </Class>
+          <File Id="SpellingFixer30.dll" Name="SpellingFixer30.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="SpellingFixer30.dll" AssemblyApplication="SpellingFixer30.dll"
+                Source="..\..\output\Win32\release\SpellingFixer30.dll" />
+          <RegistryValue Root="HKCR" Key="CLSID\{CFDB9B1A-DAE6-40BE-8A34-5A3CA1A71463}\Implemented Categories\{62C8FE65-4EBB-45e7-B440-6E39B2CDBF29}" Value="" Type="string" Action="write" />
+          <RegistryValue Root="HKCR" Key="CLSID\{CFDB9B1A-DAE6-40BE-8A34-5A3CA1A71463}\InprocServer32\5.0.0.0" Name="Class" Value="SpellingFixer30.SpellingFixer" Type="string" Action="write" />
+          <RegistryValue Root="HKCR" Key="CLSID\{CFDB9B1A-DAE6-40BE-8A34-5A3CA1A71463}\InprocServer32\5.0.0.0" Name="Assembly" Value="SpellingFixer30, Version=5.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" Type="string" Action="write" />
+          <RegistryValue Root="HKCR" Key="CLSID\{CFDB9B1A-DAE6-40BE-8A34-5A3CA1A71463}\InprocServer32\5.0.0.0" Name="RuntimeVersion" Value="v4.0.30319" Type="string" Action="write" />
+          <RegistryValue Root="HKCR" Key="CLSID\{CFDB9B1A-DAE6-40BE-8A34-5A3CA1A71463}\InprocServer32\5.0.0.0" Name="CodeBase" Value="file:///[#SpellingFixer30.dll]" Type="string" Action="write" />
+          <RegistryValue Root="HKCR" Key="CLSID\{CFDB9B1A-DAE6-40BE-8A34-5A3CA1A71463}\InprocServer32" Name="Class" Value="SpellingFixer30.SpellingFixer" Type="string" Action="write" />
+          <RegistryValue Root="HKCR" Key="CLSID\{CFDB9B1A-DAE6-40BE-8A34-5A3CA1A71463}\InprocServer32" Name="Assembly" Value="SpellingFixer30, Version=5.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" Type="string" Action="write" />
+          <RegistryValue Root="HKCR" Key="CLSID\{CFDB9B1A-DAE6-40BE-8A34-5A3CA1A71463}\InprocServer32" Name="RuntimeVersion" Value="v4.0.30319" Type="string" Action="write" />
+          <RegistryValue Root="HKCR" Key="CLSID\{CFDB9B1A-DAE6-40BE-8A34-5A3CA1A71463}\InprocServer32" Name="CodeBase" Value="file:///[#SpellingFixer30.dll]" Type="string" Action="write" />
+        </Component>
+
+      </Directory>
+
+      <Directory Id="CommonAppDataFolder" SourceName="AppData">
+        <Directory Id="AppDataSIL" Name="SIL">
+          <Directory Id="AllUserAppDataSILConsistentSpellingFixer" Name="ConsistentSpellingFixer">
+            <Directory Id="AppDataSILCscScriptSystems" Name="ScriptSystems">
+              <Component Id="CreateScriptSystemsFolder" Guid="{DFE38704-BA79-4B0A-A783-077ABD9FE51C}">
+                <CreateFolder>
+                  <util:PermissionEx User="AuthenticatedUser" GenericAll="yes" />
+                </CreateFolder>
+              </Component>
+              <Component Id="ScriptSystemIndic" Guid="{C07CCEBB-C127-4AC3-85D1-59D68712513B}">
+                <File Id="Indic.xml" Name="Indic.xml" KeyPath="yes" Source="..\..\src\SpellingFixer30\VSVs\Indic.xml" />
+              </Component>
+              <Component Id="ScriptSystemKangri" Guid="{F06B6EB8-713B-4A6C-AF4B-2E5898EF31F9}">
+                <File Id="Kangri.xml" Name="Kangri.xml" KeyPath="yes" Source="..\..\src\SpellingFixer30\VSVs\Kangri.xml" />
+              </Component>
+				<Component Id="ScriptSystemGeneric" Guid="{2BE294AC-B86A-497D-8DFB-3EF2DF331196}">
+					<File Id="Generic.xml" Name="Generic.xml" KeyPath="yes" Source="..\..\src\SpellingFixer30\VSVs\Generic.xml" />
+				</Component>
+			</Directory>
+
+            <Directory Id="AppDataSILCscProjects" Name="Projects">
+              <Component Id="CreateProjectsFolder" Guid="{A440BE66-8D45-41D6-B3F1-A45A4CC2ECD6}">
+                <CreateFolder>
+                  <util:PermissionEx User="AuthenticatedUser" GenericAll="yes" />
+                </CreateFolder>
+              </Component>
+            </Directory>
+          </Directory>
+        </Directory>
+      </Directory>
+
+      <Directory Id="WORD_DOT_FOLDER" Name="Word DOT Folder">
+        <Component Id="SpellFixer.dot" Guid="{56498D8E-5A6A-46A8-9AA5-13D022E4E914}">
+          <File Id="SpellFixer.dot" Name="SpellFixer.dot" KeyPath="yes" Source="DistFiles\SpellFixer.dot" />
+          <Shortcut Id="SpellFixer.dot" Directory="SILConvHelp" Name="Help for the SpellFixer macro" Description="Help information for the SpellFixer MS Word document template" Show="normal" WorkingDirectory="WORD_DOT_FOLDER" Advertise="yes" />
+        </Component>
+      </Directory>
+
+      <Directory Id="StartMenuFolder" SourceName="Start Menu">
+        <Directory Id="ProgramMenuFolder" SourceName="Programs">
+          <Directory Id="SIL_Converters" Name="SIL Converters">
+            <Directory Id="SILConvHelp" Name="Help" />
+          </Directory>
+        </Directory>
+      </Directory>
+
+    </Directory>
+
+    <InstallExecuteSequence>
+      <RemoveShortcuts>Installed AND NOT UPGRADINGPRODUCTCODE AND REMOVE="ALL"</RemoveShortcuts>
+    </InstallExecuteSequence>
+  </Module>
+</Wix>

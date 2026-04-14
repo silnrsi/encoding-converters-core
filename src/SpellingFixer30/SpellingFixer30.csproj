@@ -177,7 +177,7 @@
       <DependentUpon>LoginSF.cs</DependentUpon>
     </Compile>
     <Compile Include="MyCollections.cs" />
-    <Compile Include="CscIndicProject.cs" />
+    <Compile Include="CscBaseProject.cs" />
     <Compile Include="CscProject.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -305,6 +305,7 @@
   <ItemGroup>
     <Content Include="Resources\B2G.bmp" />
     <Content Include="Resources\LeftArrow.ico" />
+    <Content Include="VSVs\Generic.xml" />
     <Content Include="VSVs\Indic.xml" />
     <Content Include="VSVs\Kangri.xml" />
     <None Include="Resources\NoOp.bmp" />

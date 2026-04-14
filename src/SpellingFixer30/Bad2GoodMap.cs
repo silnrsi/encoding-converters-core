@@ -163,7 +163,7 @@ namespace SpellingFixer30
                     // always surround the word with delimiters, because in this application
                     //  it's always full word form searching
                     string strOrigWord = kvp.Key;
-                    string strBadSpelling = String.Format($"{WordBoundaryCharacter}{0}{WordBoundaryCharacter}", strOrigWord);
+                    string strBadSpelling = $"{WordBoundaryCharacter}{strOrigWord}{WordBoundaryCharacter}";
                     string strReplacement = kvp.Value;
                     sw.WriteLine(SpellingFixer.FormatSubstitutionRule(strBadSpelling, strReplacement, WordBoundaryCharacter, strOrigWord));
                 }

@@ -174,6 +174,8 @@ namespace SpellingFixer30
             this.labelAddlPunct.TabIndex = 23;
             this.labelAddlPunct.Text = "Additional &punctuation and whitespace:";
             this.labelAddlPunct.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.toolTips.SetToolTip(this.labelAddlPunct, "Enter any additional punctuation or whitespace characters needed for this languag" +
+        "e, separated by spaces (these are used for boundary condition checking)");
             // 
             // textBoxAddlPunctuation
             // 

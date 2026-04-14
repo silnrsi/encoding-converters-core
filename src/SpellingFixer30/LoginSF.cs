@@ -9,6 +9,7 @@ using System.Text;                      // for Encoding
 using System.Data;                      // for DataTable
 using ECInterfaces;
 using SilEncConverters40;
+using System.Diagnostics;
 
 namespace SpellingFixer30
 {
@@ -121,7 +122,11 @@ namespace SpellingFixer30
 
         internal static void CreateCCTable(string strCCTableSpec, string strEncConverterName, string strPunctuation)
         {
-            CreateCCTable(new FileStream(strCCTableSpec, FileMode.Create), strEncConverterName, strPunctuation);
+			if (!Directory.Exists(Path.GetDirectoryName(strCCTableSpec)))
+			{
+				Directory.CreateDirectory(Path.GetDirectoryName(strCCTableSpec));
+			}
+			CreateCCTable(new FileStream(strCCTableSpec, FileMode.Create), strEncConverterName, strPunctuation);
         }
 
         internal static void CreateCCTable(FileStream fs, string strEncConverterName, string strPunctuation)
@@ -418,11 +423,20 @@ namespace SpellingFixer30
 
             // get the EncConverter that should have been added above by 'AddNewProject' button
             var aECs = new EncConverters();
-            var possibleConverterName = FullName(strProjectName);
+            var possibleConverterName = strProjectName;
 			if (!aECs.ContainsKey(possibleConverterName))
-				possibleConverterName = FullNameCsc(strProjectName);
+			{
+				possibleConverterName = FullName(strProjectName);
+			}
 			else if (!aECs.ContainsKey(possibleConverterName))
+			{
+				Debug.Assert(false, "this shouldn't happen (it should have used CscProject.LoadProject)");
+				possibleConverterName = FullNameCsc(strProjectName);
+			}
+			else if (!aECs.ContainsKey(possibleConverterName))
+			{
 				possibleConverterName = strProjectName;
+			}
 
             IEncConverter aEC = aECs[possibleConverterName];
             if (aEC != null)
@@ -445,7 +459,7 @@ namespace SpellingFixer30
                     || String.IsNullOrEmpty(sFontSize)
                     || String.IsNullOrEmpty(m_strWordBoundaryDelimiter))
                 {
-                    MessageBox.Show("This converter is missing some important properties. You'll need to edit it again to set the font, and other values.");
+                    MessageBox.Show("This converter is missing some important properties. You'll need to edit it again to set the font, and other values.", SpellingFixer.cstrCaption);
                     DoEdit(strProjectName, strFontName, sFontSize);
                     return false;
                 }

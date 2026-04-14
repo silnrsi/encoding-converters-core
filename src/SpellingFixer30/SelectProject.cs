@@ -120,8 +120,11 @@ namespace SpellingFixer30
                     {
                         CscProject.DeleteProject(strProjectName);
                         checkedListBoxProjectNames.Items.Remove(strProjectName);
-                        if (checkedListBoxProjectNames.Items.Count > 0)
-                            checkedListBoxProjectNames.SetItemCheckState(Math.Max(0, nIndex - 1), CheckState.Checked);
+
+						// if there are still projects left, select the next one in the list (or the previous one if we just deleted the last one)
+						//	but only if no other projects are already selected.
+						if ((checkedListBoxProjectNames.Items.Count > 0) && (checkedListBoxProjectNames.CheckedItems.Count == 0))
+							checkedListBoxProjectNames.SetItemCheckState(Math.Max(0, nIndex - 1), CheckState.Checked);
                     }
                     catch { }
                 }

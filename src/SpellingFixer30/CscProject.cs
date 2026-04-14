@@ -390,7 +390,9 @@ namespace SpellingFixer30
         {
             get
             {
-                string strExtraPunctuation = null;
+				if (m_achTrimPunctuation == null || m_achTrimPunctuation.Count == 0)
+					return String.Empty;
+				string strExtraPunctuation = null;
                 foreach (char ch in m_achTrimPunctuation)
                     strExtraPunctuation += String.Format("'{0}' ", ch);
                 return strExtraPunctuation.Substring(0, strExtraPunctuation.Length - 1);
@@ -471,17 +473,22 @@ namespace SpellingFixer30
         internal string VernacularScriptSystemFileSpec
         {
             get
-            {
-                return Path.Combine(VernacularScriptSystemsDirectory,
-                    $"{VernacularScriptSystemName}.{VernacularScriptSystemFileExt}");
-            }
-        }
+			{
+				return CreateVernacularScriptSystemFileSpec(VernacularScriptSystemName);
+			}
+		}
 
-        /// <summary>
-        /// Returns the root folder for the Vernacular Script System folder (by default: 'C:\ProgramData\SIL\ConsistentSpellingFixer\ScriptSystems')
-        /// To change it, set the 'RegistryCscRootKey' property
-        /// </summary>
-        public static string VernacularScriptSystemsDirectory
+		public static string CreateVernacularScriptSystemFileSpec(string vernacularScriptSystemName)
+		{
+			return Path.Combine(VernacularScriptSystemsDirectory,
+								$"{vernacularScriptSystemName}.{VernacularScriptSystemFileExt}");
+		}
+
+		/// <summary>
+		/// Returns the root folder for the Vernacular Script System folder (by default: 'C:\ProgramData\SIL\ConsistentSpellingFixer\ScriptSystems')
+		/// To change it, set the 'RegistryCscRootKey' property
+		/// </summary>
+		public static string VernacularScriptSystemsDirectory
         {
             get
             {
@@ -730,7 +737,7 @@ namespace SpellingFixer30
             var projectDirectory = GetProjectDirectory(projectName);
             var projectPath = Path.Combine(projectDirectory, $"{projectName}.{ProjectFileExt}");
 
-            CscProject project = new CscIndicProject();
+            CscProject project = new CscBaseProject();
             try
             {
                 CscProjectStore.TransferToCscProject(projectPath, project);
@@ -766,23 +773,23 @@ namespace SpellingFixer30
 						File.Delete(encConverterSpec);
 					}
 				}
+
+				// now add the EncConverter
+				// TODO: EncConverters needs a new interface to get the defining encodingID from 
+				//  a FontName (so we can use it in this call) just like we can 'try' to get the
+				//  code page given a font name (see 'CodePage' below)
+				var eConvType = ConvType.Unicode_to_Unicode;
+
+				aECs.Add(encConverterName, encConverterSpec, eConvType, null, null, SpellingFixer.SFProcessType);
+
+				// add this 'displaying font' information to the converter as properties/attributes
+				ECAttributes aECAttrs = aECs.Attributes(encConverterName, AttributeType.Converter);
+				aECAttrs.Add(SpellingFixer.cstrAttributeFontToUse, _projectFont.Name);
+				aECAttrs.Add(SpellingFixer.cstrAttributeFontRightToLeft, false);    // since we transliterate it to latin, it isn't L2R anymore)
+				aECAttrs.Add(SpellingFixer.cstrAttributeFontSizeToUse, _projectFont.Size);
+				aECAttrs.Add(SpellingFixer.cstrAttributeWordBoundaryDelimiter, Bad2GoodMap.WordBoundaryCharacter);  // not sure this is needed anymore, since this doesn't do non-whole word forms
+				aECAttrs.Add(SpellingFixer.cstrAttributeNonWordChars, GetWordBoundaryPunctuation);
 			}
-
-			// now add the EncConverter
-			// TODO: EncConverters needs a new interface to get the defining encodingID from 
-			//  a FontName (so we can use it in this call) just like we can 'try' to get the
-			//  code page given a font name (see 'CodePage' below)
-			var eConvType = ConvType.Unicode_to_Unicode;
-
-			aECs.Add(encConverterName, encConverterSpec, eConvType, null, null, SpellingFixer.SFProcessType);
-
-			// add this 'displaying font' information to the converter as properties/attributes
-			ECAttributes aECAttrs = aECs.Attributes(encConverterName, AttributeType.Converter);
-			aECAttrs.Add(SpellingFixer.cstrAttributeFontToUse, _projectFont.Name);
-			aECAttrs.Add(SpellingFixer.cstrAttributeFontRightToLeft, false);    // since we transliterate it to latin, it isn't L2R anymore)
-			aECAttrs.Add(SpellingFixer.cstrAttributeFontSizeToUse, _projectFont.Size);
-			aECAttrs.Add(SpellingFixer.cstrAttributeWordBoundaryDelimiter, Bad2GoodMap.WordBoundaryCharacter);  // not sure this is needed anymore, since this doesn't do non-whole word forms
-			aECAttrs.Add(SpellingFixer.cstrAttributeNonWordChars, GetWordBoundaryPunctuation);
 
 			if (!File.Exists(encConverterSpec))
 			{
@@ -1066,8 +1073,11 @@ namespace SpellingFixer30
                 strReplacement = m_mapS2SBad2GoodWords[strBadWord];
 
             var aQuery = new QueryGoodSpelling(Font);
-            if ((aQuery.ShowDialog(strBadWord, strReplacement, strBadWord, false) == DialogResult.OK))
-                AssignCorrectSpelling(aQuery.BadSpelling, aQuery.GoodSpelling, bNoUI: false, ContextForReplacement: null);
+			if (aQuery.ShowDialog(strBadWord, strReplacement, strBadWord, false) == DialogResult.OK)
+			{
+				// UPDATE: 2026-04-14: I was passing 'false' for bNoUI, but since this always shows a dialog, it should be yes, right?
+				AssignCorrectSpelling(aQuery.BadSpelling, aQuery.GoodSpelling, bNoUI: true, ContextForReplacement: null);
+			}
         }
 
         /// <summary>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <VernScriptSystem xmlns="http://www.sil.org/computing/schemas/SpellFixerVernScript.xsd">
 	<VernScriptSystemProperties
-      name="Indic" isRightToLeft="false" description="This is the simplification information for Indic languages"
+      name="Generic" isRightToLeft="false" description="This is a generic implementation for any language that the 'Any-to-Latin' ICU Transliterator supports"
       progId="SpellingFixer30.CscBaseProject" TransliteratorEncConverterName="Any to Latin" TransliteratorEncConverterDirectionForward="true"
       TransliteratorEncConverterNormalize="None"/>
 	<ExtraPunctuation description="These are characters which may occur at the edges of words, which you want to be stripped off before processing a word. By default, you automatically get the regular punctuation characters in Unicode, but this is for any that you want to add because they otherwise aren't behaving properly.">

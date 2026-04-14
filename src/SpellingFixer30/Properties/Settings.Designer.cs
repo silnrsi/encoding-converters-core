@@ -37,7 +37,7 @@ namespace SpellingFixer30.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Indic")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Generic")]
         public string LastVernScriptType {
             get {
                 return ((string)(this["LastVernScriptType"]));

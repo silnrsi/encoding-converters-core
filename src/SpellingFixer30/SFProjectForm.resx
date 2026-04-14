@@ -120,15 +120,18 @@
   <metadata name="helpProvider.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>240, 17</value>
   </metadata>
+  <data name="textBoxAdditionalPunctuation.HelpString" xml:space="preserve">
+    <value>This field represents the unique name you want to give this project. Typically this will be the name of the language (e.g. Hindi). All data files (e.g. dictionary of known good words and database of bad to good spelling fix rules) will be stored in a folder with this name. You may move this folder to any location you want, but if you do, you must keep all the files in the same folder.</value>
+  </data>
+  <metadata name="toolTip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>155, 17</value>
+  </metadata>
   <data name="textBoxProjectName.HelpString" xml:space="preserve">
     <value>This field represents the unique name you want to give this project. Typically this will be the name of the language (e.g. Hindi). All data files (e.g. dictionary of known good words and database of bad to good spelling fix rules) will be stored in a folder with this name. You may move this folder to any location you want, but if you do, you must keep all the files in the same folder.</value>
   </data>
   <data name="comboBoxLocale.HelpString" xml:space="preserve">
     <value>The System Language/Locale selection is used to associate your database of known good words with the custom dictionary for that language so that it can be used in different applications, such as Microsoft Word, to show words which are correctly spelled.</value>
   </data>
-  <metadata name="toolTip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>155, 17</value>
-  </metadata>
   <metadata name="fontDialogDisplay.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
