@@ -6,8 +6,6 @@ using NUnit.Framework;
 
 using ECInterfaces;
 using SilEncConverters40;
-using System.Reflection;
-using System.Threading;
 using System.Linq;
 using SilEncConverters40.EcTranslators.BingTranslator;
 using SilEncConverters40.EcTranslators.DeepLTranslator;
@@ -17,16 +15,15 @@ using SilEncConverters40.EcTranslators.NllbTranslator;
 using SilEncConverters40.EcTranslators.VertexAi;
 using System.Threading.Tasks;
 using SilEncConverters40.EcTranslators;
-using Grpc.Net.Client.Configuration;
 
 namespace TestEncCnvtrs
 {
     [TestFixture]
     public class TestEcTranslators
     {
-        private const string AzureOpenAiKey = "f65d3...";
-        private const string AzureOpenAiDeploymentName = "gpt-4o-translator-encconverter";
-        private const string AzureOpenAiEndpoint = "https://ai-silconvertersai857014728513.openai.azure.com/";
+        private const string AzureOpenAiKey = "16ZNuS...";
+        private const string AzureOpenAiDeploymentName = "model-router-2";
+        private const string AzureOpenAiEndpoint = "https://ai-beaton9343ai639356232696.cognitiveservices.azure.com/";
 
         private const string VertexAiCredentials = @"H:\bright-coyote-381812-bc584cec007f.json";
 
@@ -217,13 +214,13 @@ namespace TestEncCnvtrs
             var theEncConverters = DirectableEncConverter.EncConverters;
             TranslatorConverter theTranslator = (TranslatorConverter)theEncConverters.InstantiateIEncConverter(typeEncConverter.FullName, null);
 
-			// this is False if you don't have the GOOGLE_APPLICATION_CREDENTIALS env var defined or true otherwise
-			var isEnvVarDefined = (typeEncConverter == typeof(GoogleTranslatorEncConverter)) &&
-									!String.IsNullOrEmpty(Environment.GetEnvironmentVariable(GoogleTranslatorEncConverter.EnvVarNameCredentials));
-			if (isEnvVarDefined)
-				Assert.True(theTranslator.HasUserOverriddenCredentials);
-			else
-				Assert.IsFalse(theTranslator.HasUserOverriddenCredentials);
+            // this is False if you don't have the GOOGLE_APPLICATION_CREDENTIALS env var defined or true otherwise
+            var isEnvVarDefined = (typeEncConverter == typeof(GoogleTranslatorEncConverter)) &&
+                                    !String.IsNullOrEmpty(Environment.GetEnvironmentVariable(GoogleTranslatorEncConverter.EnvVarNameCredentials));
+            if (isEnvVarDefined)
+                Assert.True(theTranslator.HasUserOverriddenCredentials);
+            else
+                Assert.IsFalse(theTranslator.HasUserOverriddenCredentials);
 
             var fieldInfo = typeEncConverter.GetMethod($"set_{fieldName}");
             Assert.NotNull(fieldInfo);
@@ -244,6 +241,7 @@ namespace TestEncCnvtrs
 
         private const string VertexAiConverterFriendlyName = "VertexAiTranslator";
 
+        // here is where you can find current model IDs for Vertex AI: https://docs.cloud.google.com/vertex-ai/generative-ai/docs/learn/model-versions#latest-stable
         [Test]
 //      [TestCase("Hindi;English;bright-coyote-381812;us-central1;google;chat-bison-32k;Translate from Hindi into English.", "यीशु ने यह भी कहा,", "Jesus also said,")]
 //      [TestCase(";;bright-coyote-381812;us-central1;google;chat-bison-32k;UseSystemPrompt: Translate from Hindi into English.", "परमेश्वर भेदभाव नहीं करता।", "God is impartial.")]
@@ -253,19 +251,20 @@ namespace TestEncCnvtrs
 //      // For the NMT model, the model ID is general/nmt
 //      [TestCase("Hindi;English;bright-coyote-381812;us-central1;google;chat-bison;Translate from Hindi into English.", "यीशु ने यह भी कहा,", "Jesus also said,")]
         // try gemini pro
-        [TestCase("Hindi;English;bright-coyote-381812;us-central1;google;chat-bison;Translate from Hindi into English.", "यीशु ने यह भी कहा,", "Jesus also said,")]
-        [TestCase("Hindi;English;bright-coyote-381812;us-central1;google;chat-bison;Translate from Hindi into English.", "परंतु वह चोगे को छोड़कर वहाँ से भाग गया। ", "But he left the cloak and fled from that place.")]
-		[TestCase("Hindi;English;bright-coyote-381812;us-central1;google;gemini-1.5-flash;Translate from Hindi into English.", "यीशु ने कहा,", "Jesus said, ")]
-		// multiple lines
-		[TestCase("Hindi;English;bright-coyote-381812;us-central1;google;gemini-1.5-flash;Translate from Hindi into English.", @"यीशु ने कहा,
-परमे‍‍श्वर मेरा पिता है।", @"Jesus said, 
-God is my Father. ")]
-		[TestCase("Hindi;English;bright-coyote-381812;us-central1;google;gemini-1.5-pro;Translate from Hindi into English.", "यीशु ने कहा,", "Jesus said,")]
-		// multiple lines
-		[TestCase("Hindi;English;bright-coyote-381812;us-central1;google;gemini-1.5-pro;Translate from Hindi into English.", @"यीशु ने कहा,
+        [TestCase("Hindi;English;bright-coyote-381812;us-central1;google;gemini-2.5-flash-lite;Translate from Hindi into English.", "यीशु ने यह भी कहा,", "Jesus also said,")]
+        [TestCase("Hindi;English;bright-coyote-381812;us-central1;google;gemini-2.0-flash-001;Translate from Hindi into English.", "परंतु वह चोगे को छोड़कर वहाँ से भाग गया। ",
+            "But he left the cloak behind and fled.")]
+        [TestCase("Hindi;English;bright-coyote-381812;us-central1;google;gemini-2.0-flash-lite-001;Translate from Hindi into English.", "यीशु ने कहा,", "Jesus said,")]
+        // multiple lines
+        [TestCase("Hindi;English;bright-coyote-381812;us-central1;google;gemini-2.5-flash;Translate from Hindi into English.", @"यीशु ने कहा,
+परमे‍‍श्वर मेरा पिता है।", @"Jesus said,
+God is my Father.")]
+        [TestCase("Hindi;English;bright-coyote-381812;us-central1;google;gemini-2.5-pro;Translate from Hindi into English.", "यीशु ने कहा,", "Jesus said,")]
+        // multiple lines
+        [TestCase("Hindi;English;bright-coyote-381812;us-central1;google;gemini-2.5-pro;Translate from Hindi into English.", @"यीशु ने कहा,
 परमे‍‍श्वर मेरा पिता है।", @"Jesus said,
 God is my father.")]
-		public void TestVertexAiConverter(string converterSpec, string testInput, string testOutput)
+        public void TestVertexAiConverter(string converterSpec, string testInput, string testOutput)
         {
             Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", VertexAiCredentials);    // see C:\Users\pete_\source\repos\encoding-converters-core\src\EcTranslators\VertexAi\VertexAiExe\Program.cs
 
@@ -281,9 +280,9 @@ God is my father.")]
 
         private const string PromptAiConverterFriendlyName = "PromptAiTranslator";  // either vertex or azure open ai, but system prompt-based transducer
 
-		// this test is likely to fail, bkz we're at the mercy of the translation resource, which is constantly evolving
-		//    So don't worry too much if it does... these are here bkz at one point they did work as expected.
-		/* these don't reliably work
+        // this test is likely to fail, bkz we're at the mercy of the translation resource, which is constantly evolving
+        //    So don't worry too much if it does... these are here bkz at one point they did work as expected.
+        /* these don't reliably work
         [Test]
         [TestCase("Hindi;English;bright-coyote-381812;us-central1;google;chat-bison-32k;with a \"free translation\" style aimed at high school students",
             VertexAiEncConverter.ImplTypeSilVertexAi,
@@ -299,21 +298,21 @@ God is my father.")]
             @"Donate according to your capability",           // give this as an example input
             @"परंतु अपनी सामर्थ अनुसार ही दो",                       // ... and output (recommending 'capability' instead
             @"capability")]                                   // now see if it has learned from our example (doesn't always work)
-		[TestCase("Hindi;English;bright-coyote-381812;us-central1;google;chat-bison-32k;with a \"literal translation\" style",
-			VertexAiEncConverter.ImplTypeSilVertexAi,
-			@"यीशु ने कहा,",										// phrase to translate ("Jesus said")
-			@"said",											// should contain... (at the mercy of the resource, though, so it might fail)
-			@"Jesus spoke,",                                    // give this as an example translation for earlier output
-			@"राम ने कहा,",										// ... and see if new subject can get the same verb (spoke)
-			@"spoke")]											// now see if it has learned from our example
-		[TestCase("Hindi;English;bright-coyote-381812;us-central1;google;gemini-1.5-flash;with a \"literal translation\" style",
-			VertexAiEncConverter.ImplTypeSilVertexAi,
-			@"यीशु ने कहा,",                                       // phrase to translate ("Jesus said")
-			@"said",                                            // should contain... (at the mercy of the resource, though, so it might fail)
-			@"Jesus spoke,",                                    // give this as an example translation for earlier output
-			@"यीशु ने कहा,",										// ... and see if new subject can get the same verb (spoke)
-			@"spoke")]											// now see if it has learned from our example
-		public void TestPromptAiConverter_With_Examples(string converterSpec, string implName, string testInput1, string testOutput1Contains,
+        [TestCase("Hindi;English;bright-coyote-381812;us-central1;google;chat-bison-32k;with a \"literal translation\" style",
+            VertexAiEncConverter.ImplTypeSilVertexAi,
+            @"यीशु ने कहा,",										// phrase to translate ("Jesus said")
+            @"said",											// should contain... (at the mercy of the resource, though, so it might fail)
+            @"Jesus spoke,",                                    // give this as an example translation for earlier output
+            @"राम ने कहा,",										// ... and see if new subject can get the same verb (spoke)
+            @"spoke")]											// now see if it has learned from our example
+        [TestCase("Hindi;English;bright-coyote-381812;us-central1;google;gemini-1.5-flash;with a \"literal translation\" style",
+            VertexAiEncConverter.ImplTypeSilVertexAi,
+            @"यीशु ने कहा,",                                       // phrase to translate ("Jesus said")
+            @"said",                                            // should contain... (at the mercy of the resource, though, so it might fail)
+            @"Jesus spoke,",                                    // give this as an example translation for earlier output
+            @"यीशु ने कहा,",										// ... and see if new subject can get the same verb (spoke)
+            @"spoke")]											// now see if it has learned from our example
+        public void TestPromptAiConverter_With_Examples(string converterSpec, string implName, string testInput1, string testOutput1Contains,
                                                         string updatedOutput1, string testInput2, string testOutput2Contains)
         {
             // normally, these values get to the program that calls the AzureOpenAI endpoint via command line parameters that
@@ -342,38 +341,38 @@ God is my father.")]
             strOutput = theEc.Convert(testInput2);
             Assert.IsTrue(strOutput.Contains(testOutput2Contains));     // see if it learned to use 'capability' rather than 'ability'
         }
-		*/
+        */
 
-		private const string NllbConverterFriendlyName = "NllbTranslator";
+        private const string NllbConverterFriendlyName = "NllbTranslator";
 
         /// <summary>
         /// To run this test, you need to go thru the instructions in have the $(SolutionDir)redist\Help\NLLB_Translate_Plug-in_About_box.htm
         /// file to create a docker container for the NLLB 600m model and run it on your local machine.
         /// Two additional notes:
         /// 1) have no api key in the NLLB Model Config dialog (or set up an env var with it--see TestAzureOpenAiConverter for an eg)
-        /// 2) Change the @"D:\NLLB\test" path to wherever you chose as the Docker Project folder.
+        /// 2) Change the @"C:\NLLB\test" path to wherever you chose as the Docker Project folder.
         /// </summary>
         /// <param name="converterSpec">ConverterIdentifier of the NLLB converter to be used to convert the text</param>
         /// <param name="testInput">The text to be translated</param>
         /// <param name="testOutput">The expected translation</param>
         [Test]
-        [TestCase(@"D:\NLLB\test;hin_Deva;eng_Latn",
+        [TestCase(@"C:\NLLB\test;hin_Deva;eng_Latn",
             @"फिर एक स्‍वर्गदूत ने मुझसे कहा, ""इस बात को लिख ले: वे धन्य हैं, जिनको मेमने के विवाह के भोज का निमन्‍त्रण है।
 यह परमेश्वर के सच्‍चे बोल हैं।",
-            @"Then an angel said to me, ""Write: Blessed are those who are invited to the wedding banquet of the Lamb"".
+            @"Then the angel said to me, ""Write: Blessed are those who are invited to the wedding banquet of the Lamb"".
 These are the true words of God.")]
-        [TestCase(@"D:\NLLB\nllb-600m;hin_Deva;eng_Latn;http://localhost:8000;N3RK/o+wYtvEFMVGtYsmROIyLr/+RWh1",
+        [TestCase(@"C:\NLLB\nllb-600m;hin_Deva;eng_Latn;http://localhost:8000;N3RK/o+wYtvEFMVGtYsmROIyLr/+RWh1",
             "वे जानते हैं कि परमेश्वर का अस्तित्व है और यह सब कुछ उनके लिए ही बनाया है। परंतु फिर भी न तो वे परमेश्वर का कोई सम्‍मान, और न ही तो उसका धन्यवाद करते हैं। इसलिए उनकी आँखें में पर्दा पड़ गया है, और परमेश्वर के विषय में उनका जो विचार है, वह गलत हो चुका है।",
-            "They know that God exists and that everything was made for them. Yet they do not give glory to God or give him thanks. Their minds are blinded and their thoughts are in error.")]
-        [TestCase(@"D:\NLLB\nllb-600m;hin_Deva;eng_Latn;http://localhost:8000;N3RK/o+wYtvEFMVGtYsmROIyLr/+RWh1",
+            "They know that God exists and that he created everything for them. Yet they neither glorified God nor gave him thanks. Therefore their eyes are blinded, and their thoughts are deceitful toward God.")]
+        [TestCase(@"C:\NLLB\nllb-600m;hin_Deva;eng_Latn;http://localhost:8000;N3RK/o+wYtvEFMVGtYsmROIyLr/+RWh1",
             "(केवल ये शहीद और न्याय करने वाले लोग हजार वर्षों वाले उस युग के आरंभ में पुनर्जीवित हो जाएँगे। इस बार जीवित होने को “पहला जीवित होना” कहते हैं। बाकि जो मरे हुए हैं, परमेश्वर उन सबको तब तक पुनर्जीवित नहीं करेगा, जब तक उस हजार वर्षों वाले युग का अंत नहीं होगा।)",
-            "(The only resurrection will be the ones who died and judged at the beginning of the thousand years. This resurrection is called the First Resurrection. The rest of the dead God did not raise until the thousand years were over.)")]
-        [TestCase(@"D:\NLLB\nllb-600m;hin_Deva;eng_Latn;http://localhost:8000;N3RK/o+wYtvEFMVGtYsmROIyLr/+RWh1",
+            "(Only these martyrs and judges will be resurrected at the beginning of that millennial age. This time being alive is called being alive first. The rest of the dead God did not bring back to life until the thousand years were over. )")]
+        [TestCase(@"C:\NLLB\nllb-600m;hin_Deva;eng_Latn;http://localhost:8000;N3RK/o+wYtvEFMVGtYsmROIyLr/+RWh1",
             "केवल ये शहीद और न्याय करने वाले लोग हजार वर्षों वाले उस युग के आरंभ में पुनर्जीवित हो जाएँगे। इस बार जीवित होने को “पहला जीवित होना” कहते हैं। बाकि जो मरे हुए हैं, परमेश्वर उन सबको तब तक पुनर्जीवित नहीं करेगा, जब तक उस हजार वर्षों वाले युग का अंत नहीं होगा,",
-            "Only these martyrs and judges will be resurrected at the beginning of that millennial age. This time the resurrection is called the First Resurrection. The rest of the dead God did not raise until the thousand years were over.")]
-        [TestCase(@"D:\NLLB\nllb-600m;hin_Deva;eng_Latn;http://localhost:8000;N3RK/o+wYtvEFMVGtYsmROIyLr/+RWh1",
+            "Only these martyrs and judges will be resurrected at the beginning of that millennial age. This time being alive is called being alive first. The rest of the dead God did not bring back to life until the thousand years were over.")]
+        [TestCase(@"C:\NLLB\nllb-600m;hin_Deva;eng_Latn;http://localhost:8000;N3RK/o+wYtvEFMVGtYsmROIyLr/+RWh1",
             "बाकि जो मरे हुए हैं, परमेश्वर उन सबको तब तक पुनर्जीवित नहीं करेगा, जब तक उस हजार वर्षों वाले युग का अंत नहीं होगा,",
-            "The rest of the dead God did not raise until the thousand years were over.")]    // yes, NLLB changes the final ',' to a '.'
+            "The rest of the dead God did not bring back to life until the thousand years were over.")]    // yes, NLLB changes the final ',' to a '.'
         public void TestNllbConverter(string converterSpec, string testInput, string testOutput)
         {
             m_encConverters.AddConversionMap(NllbConverterFriendlyName, converterSpec, ConvType.Unicode_to_Unicode,
@@ -383,25 +382,13 @@ These are the true words of God.")]
 
             // do a forward conversion
             var strOutput = theEc.Convert(testInput);
-            if (testOutput != strOutput)
-            {
-                // if you do the same conversion a 3rd time, then it will limit the token count and process the text is sentence chunks
-                strOutput = theEc.Convert(testInput);
-                strOutput = theEc.Convert(testInput);
-
-                // OR you can do this:
-                theEc.Convert(NllbTranslatorEncConverter.SplitSentencesPrefix + "ON");
-                strOutput = theEc.Convert(testInput);
-            }
-
             Assert.AreEqual(testOutput, strOutput);
-            theEc.Convert(NllbTranslatorEncConverter.SplitSentencesPrefix + "OFF");    // to turn it off for the next run
         }
 
         private const string AzureOpenAIConverterFriendlyName = "ChatGptTranslator";
 
         [Test]
-		[TestCase("Hindi;English;Translate from Hindi into English.", "यीशु ने यह भी कहा,", "Jesus also said,")]
+        [TestCase("Hindi;English;Translate from Hindi into English.", "यीशु ने यह भी कहा,", "Jesus also said,")]
         [TestCase(";;UseSystemPrompt: Translate from Hindi into English.", "परमेश्वर भेदभाव नहीं करता।", "God does not discriminate.")]
         [TestCase("Hindi;English;with a \"free translation\" style aimed at high school students", @"यीशु ने यह भी कहा,
 परमे‍‍श्वर मेरा पिता है।", @"Jesus also said,
@@ -432,19 +419,19 @@ God is my father.")]
         [Test]
         [TestCase(ProcessTypeFlags.Translation, "Translate;hi;en", "", "")]
         [TestCase(ProcessTypeFlags.Translation, "Translate;hi;en", "यीशु ने यह भी कहा,", "Jesus also said,")]
-		// multi-line translations
-		[TestCase(ProcessTypeFlags.Translation, "Translate;hi;en", @"यीशु ने कहा,
+        // multi-line translations
+        [TestCase(ProcessTypeFlags.Translation, "Translate;hi;en", @"यीशु ने कहा,
 परमे‍‍श्वर मेरा पिता है।", @"Jesus said,
 God is my Father.")]
-		[TestCase(ProcessTypeFlags.Translation, "Translate;;en", "यीशु ने यह भी कहा,", "Jesus also said,")]
+        [TestCase(ProcessTypeFlags.Translation, "Translate;;en", "यीशु ने यह भी कहा,", "Jesus also said,")]
         [TestCase(ProcessTypeFlags.Translation, "Translate;en;zh-Hans", "Get to know the beautiful country of Israel.", "了解美丽的以色列国家。")]
-        [TestCase(ProcessTypeFlags.Translation | ProcessTypeFlags.Transliteration, "TranslateWithTransliterate;en;ar;;Latn", "God", "allah")]
-        [TestCase(ProcessTypeFlags.Translation | ProcessTypeFlags.Transliteration, "TranslateWithTransliterate;;ar;;Latn", "God", "allah")]
+        [TestCase(ProcessTypeFlags.Translation | ProcessTypeFlags.Transliteration, "TranslateWithTransliterate;en;ar;;Latn", "God", "Ya ilahi")]
+        [TestCase(ProcessTypeFlags.Translation | ProcessTypeFlags.Transliteration, "TranslateWithTransliterate;;ar;;Latn", "God", "Ya ilahi")]
         // [TestCase("TranslateWithTransliterate;;en;;Deva", "नहीं", "not")]    // can't transliterate from an language=en result
         // [TestCase("TranslateWithTransliterate;en;ar;;Arab", "God", "الله")] // you *can* do this, but there is no transliteration part of it (since the result is already in Arab script)
         [TestCase(ProcessTypeFlags.Transliteration, "Transliterate;hi;;Deva;Latn", "संसार", "sansar")]
         // doesn't like short runs of text [TestCase(ProcessTypeFlags.Transliteration, "Transliterate;hi;;Latn;Deva", "sansar", "संसार")]
-        [TestCase(ProcessTypeFlags.Transliteration, "Transliterate;ar;;Arab;Latn", "الله", "allah")]
+        [TestCase(ProcessTypeFlags.Transliteration, "Transliterate;ar;;Arab;Latn", "الله", "Allah")]
         // doesn't like short runs of text [TestCase(ProcessTypeFlags.Transliteration, "Transliterate;ar;;Latn;Arab", "alleh", "الله")]
         // [TestCase("Transliterate;ar;;;Latn", "الله", "alleh")]        // this doesn't work, because with Transliterate, you must specify the fromScript
         [TestCase(ProcessTypeFlags.Translation, "DictionaryLookup;en;hi", "with", "साथ")]
@@ -499,11 +486,11 @@ God is my Father.")]
         [TestCase(ProcessTypeFlags.Translation, "Translate;en;zh", "How are you?", "你好吗？")]
         [TestCase(ProcessTypeFlags.Translation, "Translate;en;de;Less", "How are you?", "Wie geht es dir?")]
         [TestCase(ProcessTypeFlags.Translation, "Translate;en;de;More", "How are you?", "Wie geht es Ihnen?")]
-		// multi-line translations
-		[TestCase(ProcessTypeFlags.Translation, "Translate;en;fr", @"Jesus said,
+        // multi-line translations
+        [TestCase(ProcessTypeFlags.Translation, "Translate;en;fr", @"Jesus said,
 God is my father.", @"Jésus a dit,
 Dieu est mon père.")]
-		public void TestDeepLConverter(ProcessTypeFlags processType, string converterSpec, string testInput, string testOutput)
+        public void TestDeepLConverter(ProcessTypeFlags processType, string converterSpec, string testInput, string testOutput)
         {
             m_encConverters.AddConversionMap(DeepLTranslatorConverterFriendlyName, converterSpec, ConvType.Unicode_to_Unicode,
                                              EncConverters.strTypeSILDeepLTranslator, "UNICODE", "UNICODE",
@@ -536,11 +523,11 @@ Dieu est mon père.")]
         [TestCase("en;fr", "Hello, world!", "Bonjour le monde!")]
         [TestCase("en;zh", "How are you?", "你好吗？")]
         [TestCase("en;de", "How are you?", "Wie geht es dir?")]
-		// multi-line translations
-		[TestCase("hi;en", @"यीशु ने कहा,
+        // multi-line translations
+        [TestCase("hi;en", @"यीशु ने कहा,
 परमे‍‍श्वर मेरा पिता है।", @"Jesus said,
 God is my father.")]
-		public void TestGoogleConverterWithEnvVariable(string converterSpec, string testInput, string testOutput)
+        public void TestGoogleConverterWithEnvVariable(string converterSpec, string testInput, string testOutput)
         {
             Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", VertexAiCredentials);    // see C:\Users\pete_\source\repos\encoding-converters-core\src\EcTranslators\VertexAi\VertexAiExe\Program.cs
 
@@ -562,11 +549,11 @@ God is my father.")]
         [TestCase("en;fr", "Hello, world!", "Bonjour le monde!")]
         [TestCase("en;zh", "How are you?", "你好吗？")]
         [TestCase("en;de", "How are you?", "Wie geht es dir?")]
-		// multi-line translations
-		[TestCase("hi;en", @"यीशु ने कहा,
+        // multi-line translations
+        [TestCase("hi;en", @"यीशु ने कहा,
 परमे‍‍श्वर मेरा पिता है।", @"Jesus said,
 God is my father.")]
-		public void TestGoogleConverter(string converterSpec, string testInput, string testOutput)
+        public void TestGoogleConverter(string converterSpec, string testInput, string testOutput)
         {
             m_encConverters.AddConversionMap(GoogleTranslatorConverterFriendlyName, converterSpec, ConvType.Unicode_to_Unicode,
                                              EncConverters.strTypeSILGoogleTranslator, "UNICODE", "UNICODE",
@@ -578,15 +565,15 @@ God is my father.")]
             var strOutput = theEc.Convert(testInput);
             Assert.AreEqual(testOutput, strOutput);
 
-			// this is False if you don't have the GOOGLE_APPLICATION_CREDENTIALS env var defined or true otherwise
-			var isEnvVarDefined = !String.IsNullOrEmpty(Environment.GetEnvironmentVariable(GoogleTranslatorEncConverter.EnvVarNameCredentials));
-			if (isEnvVarDefined)
-				Assert.True(((TranslatorConverter)theEc).HasUserOverriddenCredentials);
-			else
-				Assert.False(((TranslatorConverter)theEc).HasUserOverriddenCredentials);
-		}
+            // this is False if you don't have the GOOGLE_APPLICATION_CREDENTIALS env var defined or true otherwise
+            var isEnvVarDefined = !String.IsNullOrEmpty(Environment.GetEnvironmentVariable(GoogleTranslatorEncConverter.EnvVarNameCredentials));
+            if (isEnvVarDefined)
+                Assert.True(((TranslatorConverter)theEc).HasUserOverriddenCredentials);
+            else
+                Assert.False(((TranslatorConverter)theEc).HasUserOverriddenCredentials);
+        }
 
-		[Test]
+        [Test]
         public async Task TestGoogleTranslateGetCapabilities()
         {
             var res = await GoogleTranslatorEncConverter.GetCapabilities();
