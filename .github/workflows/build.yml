@@ -118,15 +118,13 @@ jobs:
     - name: Download artifacts
       uses: actions/download-artifact@v4
 
-    - name: Combine artifacts
+    - name: Restore artifact layout
       shell: powershell
       run: |
-        New-Item -ItemType Directory -Force -Path combined | Out-Null
-
         $folders = Get-ChildItem -Directory -Path . | Where-Object { $_.Name -like 'build-artifacts-*' }
 
         foreach ($folder in $folders) {
-          Copy-Item "$($folder.FullName)\*" -Destination combined -Recurse -Force
+          Copy-Item "$($folder.FullName)\*" -Destination . -Recurse -Force
         }
 
     - name: List combined files
