@@ -134,12 +134,7 @@ jobs:
       run: dir /s
 
     - name: Setup NuGet
-      shell: cmd
-      run: >
-        "%MSBUILD_PATH%"
-        /t:Restore
-        "${{env.SOLUTION_FILE_PATH}}"
-      # uses: NuGet/setup-nuget@v2
+      uses: NuGet/setup-nuget@v2
 
     - name: Create NuGet package
       run: >
