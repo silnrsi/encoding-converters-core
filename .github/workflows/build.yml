@@ -127,9 +127,9 @@ jobs:
           Copy-Item "$($folder.FullName)\*" -Destination . -Recurse -Force
         }
 
-    - name: List combined files
+    - name: List files
       shell: cmd
-      run: dir /s combined
+      run: dir /s
 
     - name: Setup NuGet
       uses: NuGet/setup-nuget@v2
