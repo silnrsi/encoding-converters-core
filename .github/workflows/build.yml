@@ -125,20 +125,20 @@ jobs:
           $folderNames
           foreach ($folderName in $folderNames) {
             $source = "$folderName\*.*"
-            "xcopy /s /y $source .\"
-            xcopy /s /y $source .\
+            "xcopy /s /y $source .\\"
+            xcopy /s /y $source .\\
           }
-
 
     - name: List files
       shell: cmd
       run: dir /s
 
     - name: Setup NuGet
+      shell: cmd
       run: >
         "%MSBUILD_PATH%"
-        "${{env.SOLUTION_FILE_PATH}}"
         /t:Restore'
+        "${{env.SOLUTION_FILE_PATH}}"
       # uses: NuGet/setup-nuget@v2
 
     - name: Create NuGet package
