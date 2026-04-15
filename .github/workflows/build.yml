@@ -15,48 +15,88 @@ env:
 
 jobs:
   build-windows:
-    runs-on: [windows-latest]
+    runs-on: windows-2022
     strategy:
-       # Keep building other jobs even if another fails, to show what _is_ still working.
-       fail-fast: false
-       matrix:
-         build_configuration: ["Debug", "Release"]
-         build_platform: ["Win32", "x64"]
+      # Keep building other jobs even if another fails, to show what _is_ still working.
+      fail-fast: false
+      matrix:
+        build_configuration: ["Debug", "Release"]
+        build_platform: ["Win32", "x64"]
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v4.1.1
+      uses: actions/checkout@v5
 
-    # ✅ Install ATL/MFC support
-    - name: Install missing Visual Studio ATL components
+    # Install ATL/MFC (for windows-2022, this is v143)
+    - name: Install Visual Studio ATL/MFC components
+      shell: powershell
       run: |
         Set-Location "C:\Program Files (x86)\Microsoft Visual Studio\Installer\"
-        $vsInstallPath = & .\vswhere.exe -latest -products * -requires Microsoft.Component.MSBuild -property installationPath
-        $atlComponent = @(
-        '--add Microsoft.VisualStudio.Component.VC.14.29.16.11.x86.x64',
-        '--add Microsoft.VisualStudio.Component.VC.14.29.16.11.ATL',
-        '--add Microsoft.VisualStudio.Component.VC.14.29.16.11.MFC'
+        $vsInstallPath = & .\vswhere.exe -latest -products * -property installationPath
+
+        $components = @(
+          "--add Microsoft.VisualStudio.Component.VC.ATL",
+          "--add Microsoft.VisualStudio.Component.VC.MFC"
         ) -join ' '
-        $args = @('modify', "--installPath", "`"$vsInstallPath`"", $atlComponent, '--quiet', '--norestart', '--nocache')
-        Start-Process -FilePath .\vs_installer.exe -ArgumentList $args -Wait -PassThru -WindowStyle Hidden
 
-    - name: Add MSBuild to PATH
-      uses: microsoft/setup-msbuild@v2
+        $args = @(
+          "modify",
+          "--installPath `"$vsInstallPath`"",
+          $components,
+          "--quiet",
+          "--norestart",
+          "--nocache"
+        )
 
-    - name: Fetch nuget dependecies
+        Start-Process -FilePath .\vs_installer.exe -ArgumentList $args -Wait -NoNewWindow
+
+    # Locate MSBuild (no Node dependency)
+    - name: Locate MSBuild
+      id: msbuild
+      shell: powershell
+      run: |
+        $path = & "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" `
+          -latest -products * -requires Microsoft.Component.MSBuild `
+          -find MSBuild\**\Bin\MSBuild.exe
+
+        echo "MSBUILD_PATH=$path" >> $env:GITHUB_ENV
+
+    # Setup NuGet
+    - name: Setup NuGet
+      uses: NuGet/setup-nuget@v2
+
+    # Cache NuGet packages
+    - name: Cache NuGet packages
+      uses: actions/cache@v4
+      with:
+        path: ~/.nuget/packages
+        key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.sln') }}
+        restore-keys: |
+          ${{ runner.os }}-nuget-
+
+    - name: Restore NuGet dependencies
       run: nuget restore "${{env.SOLUTION_FILE_PATH}}"
 
     - name: Build
-      working-directory: ${{env.GITHUB_WORKSPACE}}
-      # Add additional options to the MSBuild command line here (like platform or verbosity level).
-      # See https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference
-      run: msbuild /m /p:Configuration=${{matrix.build_configuration}} /p:Platform=${{ matrix.build_platform }} "${{env.SOLUTION_FILE_PATH}}"
-
-    - name: List Files in Repository
-      run: dir /s
       shell: cmd
+      run: >
+        "%MSBUILD_PATH%"
+        /m
+        /v:m
+        /bl:build-${{matrix.build_platform}}-${{matrix.build_configuration}}.binlog
+        /p:Configuration=${{matrix.build_configuration}}
+        /p:Platform=${{matrix.build_platform}}
+        "${{env.SOLUTION_FILE_PATH}}"
 
-    - uses: actions/upload-artifact@v4.3.1
+    - name: Upload build logs
+      uses: actions/upload-artifact@v4
+      with:
+        name: logs-${{ matrix.build_platform }}-${{ matrix.build_configuration }}
+        path: build-*.binlog
+
+    - name: Upload build artifacts
+      if: matrix.build_configuration == 'Release'
+      uses: actions/upload-artifact@v4
       with:
         name: build-artifacts-${{ matrix.build_platform }}-${{ matrix.build_configuration }}
         path: |
@@ -65,90 +105,44 @@ jobs:
           output\${{ matrix.build_platform }}\${{ matrix.build_configuration }}\*.tlb
           output\${{ matrix.build_platform }}\${{ matrix.build_configuration }}\*.config
           output\MergeModules\**\*.*
-          retention-days: 1
+        retention-days: 1
 
   publish_nuget:
     needs: build-windows
-    runs-on: windows-latest
-    strategy:
-       # Keep building other jobs even if another fails, to show what _is_ still working.
-       fail-fast: false
-       matrix:
-         build_configuration: ["Release"]
+    runs-on: windows-2022
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v4.1.1
+      uses: actions/checkout@v5
 
-    - name: Download all workflow run artifacts
-      uses: actions/download-artifact@v4.1.7
+    - name: Download artifacts
+      uses: actions/download-artifact@v4
 
-    - name: Get Folder Names
-      id: get-folders
+    - name: Combine artifacts
+      shell: powershell
       run: |
-          $folderNames = Get-ChildItem -Directory -Path . | Where-Object { $_.Name -like 'build-artifacts-*' } | Select-Object -ExpandProperty Name
-          $folderNames
-          foreach ($folderName in $folderNames) {
-            $source = "$folderName\*.*"
-            "xcopy /s /y $source .\"
-            xcopy /s /y $source .\
-          }
+        New-Item -ItemType Directory -Force -Path combined | Out-Null
 
-    - name: List Files in Repository
-      run: dir /s
+        $folders = Get-ChildItem -Directory -Path . | Where-Object { $_.Name -like 'build-artifacts-*' }
+
+        foreach ($folder in $folders) {
+          Copy-Item "$($folder.FullName)\*" -Destination combined -Recurse -Force
+        }
+
+    - name: List combined files
       shell: cmd
+      run: dir /s combined
 
-    - name: Create NuGet Package
-      run: nuget pack ./Package.${{matrix.build_configuration}}.nuspec -OutputDirectory ./output/${{matrix.build_configuration}}
+    - name: Setup NuGet
+      uses: NuGet/setup-nuget@v2
 
-    - name: Upload NuGet Package as Artifact
-      uses: actions/upload-artifact@v4.3.1
+    - name: Create NuGet package
+      run: >
+        nuget pack ./Package.Release.nuspec
+        -OutputDirectory ./output/Release
+
+    - name: Upload NuGet package
+      uses: actions/upload-artifact@v4
       with:
-        name: ${{matrix.build_configuration}}-nuget-package
-        path: ./output/${{matrix.build_configuration}}/*.nupkg
-
-    # TODO Run tests
-    #- name: Test
-    #  run: output/Win32/${{matrix.build_configuration}}/RunTests.exe
-
-  # looks like this won't run on ubuntu-22.04 anymore and the dependences like python2-dev, mono5-sil, etc., aren't there in newer ubuntu versions
-  # build-linux:
-  #   runs-on: [ubuntu-22.04]
-  #   strategy:
-  #      matrix:
-  #        build_configuration: ["Debug", "Release"]
-
-  #   steps:
-  #   - name: Add repo packages.sil.org
-  #     run: |
-  #       (wget -O- https://packages.sil.org/keys/pso-keyring-2016.gpg | sudo tee /etc/apt/trusted.gpg.d/pso-keyring-2016.gpg)&>/dev/null
-  #       (. /etc/os-release && sudo tee /etc/apt/sources.list.d/packages-sil-org.list>/dev/null <<< "deb http://packages.sil.org/$ID $VERSION_CODENAME main")
-  #       sudo apt-get update
-
-  #   - name: Install dependencies
-  #     run: sudo apt-get install --assume-yes automake g++ python2-dev python2 libicu-dev mono5-sil icu-dev-fw libteckit-dev
-
-  #   - name: Checkout
-  #     uses: actions/checkout@v4.1.1
-
-  #   - name: List Files in Repository
-  #     run: ls -R
-
-  #   - name: Restore NuGet Packages
-  #     run: nuget restore "${{env.SOLUTION_FILE_PATH}}"
-
-  #   - name: Autogen
-  #     run: . environ && ./autogen.sh
-
-  #   - name: Build
-  #     run: . environ && make
-
-  #   - name: Test
-  #     if: matrix.build_configuration == 'Debug'
-  #     run: |
-  #       . environ
-  #       export EC_COMMON_APPLICATION_DATA_PATH="$(pwd)/ec-common"
-  #       export MONO_REGISTRY_PATH="${EC_COMMON_APPLICATION_DATA_PATH}/registry"
-  #       cp -a src/RunTests/bin/x64/${{matrix.build_configuration}}/RunTests.exe output/x64/${{matrix.build_configuration}}/
-  #       # Note that currently, many tests fail and it doesn't fail this build step.
-  #       mono output/x64/${{matrix.build_configuration}}/RunTests.exe
+        name: release-nuget-package
+        path: ./output/Release/*.nupkg
