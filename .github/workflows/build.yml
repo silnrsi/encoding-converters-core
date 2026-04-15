@@ -89,14 +89,14 @@ jobs:
         "${{env.SOLUTION_FILE_PATH}}"
 
     - name: Upload build logs
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       with:
         name: logs-${{ matrix.build_platform }}-${{ matrix.build_configuration }}
         path: build-*.binlog
 
     - name: Upload build artifacts
       if: matrix.build_configuration == 'Release'
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       with:
         name: build-artifacts-${{ matrix.build_platform }}-${{ matrix.build_configuration }}
         path: |
@@ -107,7 +107,7 @@ jobs:
           output\MergeModules\**\*.*
         retention-days: 1
 
-  publish_nuget:
+  build_nuget:
     needs: build-windows
     runs-on: windows-2022
 
@@ -119,20 +119,24 @@ jobs:
       uses: actions/download-artifact@v4
 
     - name: Restore artifact layout
-      shell: powershell
+      id: get-folders
       run: |
-        $folders = Get-ChildItem -Directory -Path . | Where-Object { $_.Name -like 'build-artifacts-*' }
+          $folderNames = Get-ChildItem -Directory -Path . | Where-Object { $_.Name -like 'build-artifacts-*' } | Select-Object -ExpandProperty Name
+          $folderNames
+          foreach ($folderName in $folderNames) {
+            $source = "$folderName\*.*"
+            "xcopy /s /y $source .\"
+            xcopy /s /y $source .\
+          }
 
-        foreach ($folder in $folders) {
-          Copy-Item "$($folder.FullName)\*" -Destination . -Recurse -Force
-        }
 
     - name: List files
       shell: cmd
       run: dir /s
 
     - name: Setup NuGet
-      uses: NuGet/setup-nuget@v2
+      # uses: NuGet/setup-nuget@v2
+      run: msbuild "${{env.SOLUTION_FILE_PATH}}" /t:Restore
 
     - name: Create NuGet package
       run: >
@@ -140,7 +144,7 @@ jobs:
         -OutputDirectory ./output/Release
 
     - name: Upload NuGet package
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       with:
         name: release-nuget-package
         path: ./output/Release/*.nupkg
