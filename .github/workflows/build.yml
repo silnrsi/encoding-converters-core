@@ -137,7 +137,7 @@ jobs:
       shell: cmd
       run: >
         "%MSBUILD_PATH%"
-        /t:Restore'
+        /t:Restore
         "${{env.SOLUTION_FILE_PATH}}"
       # uses: NuGet/setup-nuget@v2
 
