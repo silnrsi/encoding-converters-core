@@ -119,22 +119,40 @@ jobs:
       uses: actions/download-artifact@v4
 
     - name: Restore artifact layout
-      id: get-folders
+      shell: powershell
       run: |
-          $folderNames = Get-ChildItem -Directory -Path . | Where-Object { $_.Name -like 'build-artifacts-*' } | Select-Object -ExpandProperty Name
-          $folderNames
-          foreach ($folderName in $folderNames) {
-            $source = "$folderName\*.*"
-            "xcopy /s /y $source .\\"
-            xcopy /s /y $source .\\
-          }
+        New-Item -ItemType Directory -Force -Path output | Out-Null
+
+        $folders = Get-ChildItem -Directory -Path . | Where-Object { $_.Name -like 'build-artifacts-*' }
+
+        foreach ($folder in $folders) {
+          Copy-Item "$($folder.FullName)\*" -Destination output -Recurse -Force
+        }
 
     - name: List files
       shell: cmd
       run: dir /s
 
+    # Locate MSBuild (no Node dependency)
+    - name: Locate MSBuild
+      id: msbuild
+      shell: powershell
+      run: |
+        $path = & "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" `
+          -latest -products * -requires Microsoft.Component.MSBuild `
+          -find MSBuild\**\Bin\MSBuild.exe
+
+        echo "MSBUILD_PATH=$path" >> $env:GITHUB_ENV
+
     - name: Setup NuGet
-      uses: NuGet/setup-nuget@v2
+      shell: cmd
+      run: >
+        "%MSBUILD_PATH%"
+        "${{env.SOLUTION_FILE_PATH}}"
+        /t:Restore
+
+#    - name: Setup NuGet
+#      uses: NuGet/setup-nuget@v2
 
     - name: Create NuGet package
       run: >
