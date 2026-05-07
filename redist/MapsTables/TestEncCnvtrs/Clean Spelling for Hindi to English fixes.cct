@@ -1,0 +1,16 @@
+c This cc table was created by SpellingFixerEC.dll v5.0.0.0 on 2/20/2023.
+c It can be accessed as the 'Clean Spelling for Hindi to English fixes' EncConverter
+c If you know how to program CC, you can add special processing between the
+c 'start custom changes' and 'end custom changes' comments below.
+begin > utf8
+    store(ws) ' ' tab nl '.' ',' '!' ':' ';' '-' "'" '"' '‘' '’' '“' '”' '(' ')' '[' ']' '{' '}' '?' endstore
+
+c +----------start custom changes----------+
+c +----------end custom changes----------+
+
+c Last Header Line: DON'T modify the table beyond this point (or your changes may be overwritten)
+    "Jakri" > "Zechariah" c rule added while fixing: 'Jakri'
+    "Yahoona" > "John" c rule added while fixing: 'Yahoona'
+    "prayer hall" > "temple" c rule added while fixing: 'temple'
+    "Mariam" > "Mary" c rule added while fixing: 'Mariam'
+    "My brothers and sisters" > "Brothers and sisters" c rule added while fixing: 'My brothers and sisters'

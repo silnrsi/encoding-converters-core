@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--
+	 Note: Using Microsoft WORD 2003 or later is not a good way to edit this xml file.
+	 Instead, use NotePad or WordPad. -->
+<KB docVersion="4" srcName="Urdu" tgtName="PBS Roman" max="1">
+  <MAP mn="1">
+    <TU f="0" k="خُداواند">
+      <RS n="1" a="Khudawand" />
+    </TU>
+    <TU f="0" k="ستارا">
+      <RS n="1" a="sitara" />
+    </TU>
+    <TU f="0" k="طرف">
+      <RS n="1" a="taraf" />
+    </TU>
+    <TU f="0" k="گھر">
+      <RS n="1" a="ghar" />
+    </TU>
+    <TU f="0" k="مسِیح">
+      <RS n="1" a="masih" />
+    </TU>
+    <TU f="0" k="نبی">
+      <RS n="1" a="nabi" />
+    </TU>
+  </MAP>
+  <MAP mn="2">
+    <TU f="0" k="جُھک کر">
+      <RS n="1" a="jhukkar" />
+    </TU>
+    <TU f="0" k="کر کے">
+      <RS n="1" a="karke" />
+    </TU>
+  </MAP>
+</KB>

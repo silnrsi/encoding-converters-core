@@ -1,0 +1,1057 @@
+﻿; This file was edited using TECkitMappingEditorU.exe v4.0.0.0 on 12/18/2021.
+;   Conversion Type = Unicode_to_from_Unicode
+;   Left-hand side font = Microsoft Sans Serif;11.25
+;   Right-hand side font = Microsoft Sans Serif;11.25
+;   Main Window Position = 0,0,750,680
+;   Left-hand side Character Map Window Position = 745,0,457,447
+;   Right-hand side Character Map Window Position = 742,441,457,239
+;   Left-hand range = 0000-007F
+;   Right-hand range = 0280-02FF
+
+; TECkit mapping file for PBS Urdu Romanization to Urdu Unicode,
+; with SIL DoulosNPC (phonetic) as an intermediary.
+; No attempt is made to handle unwritten vowels.
+
+; Version 0.1 -- bb --   7 February 2004  Very rough draft.
+; Version 0.2 -- bb -- 18 December 2021 Map to ICU Latin, add short vowel
+;												(later changed to stay with Indological)
+; Version 0.2 -- bb --  5 February 2022  Add fathatan
+; Version 0.4 -- bb -- 17 May 2022  Adjust for dev test
+; Version 0.5 -- bb -- 07 Sep 2022  Change name to indol2urdu-bb.map, and 
+;											use short i for hamza instead of long i (needs research)
+;											fixed more hamza cases, and aspiration.
+; Version 0.6 -- bb -- 07 Sep 2022  Add non-Urdu characters
+; Version 0.7 -- bb -- 16 Dec 2022  Fix some shadda behavior, other tweaks
+; Version 0.8 -- bb -- 18 Dec 2022  Harmonize with map for other languages
+; Version 0.9 -- bb -- 18 Dec 2022  Add rules for quote marks
+; Version 1.0 -- bb -- 13 Jan 2023	Adjust for Paratext UI: map roman to roman, fix apostrophe, no digit mapping
+; Version 1.1 -- bb -- 03 Jun 2025	Adjust to incorporate the PBS Roman->NPC map as a layer 
+; Version 1.2 -- bb -- 20 Jun 2025	Try inserting short vowel again
+
+LHSName	"PBS-Latin"
+LHSDescription	"PBS Latin Urdu"
+RHSName	"Urdu-ABS"
+RHSDescription	"Urdu ABS Unicode"
+
+
+;; Separate pass for Capitalization
+pass(Unicode)
+
+Class [Lower] = ( latin_small_letter_a .. latin_small_letter_z latin_small_letter_a_with_acute latin_small_letter_i_with_acute latin_small_letter_u_with_acute )
+Class [Upper] = ( latin_capital_letter_a .. latin_capital_letter_z latin_capital_letter_a_with_acute latin_capital_letter_i_with_acute latin_capital_letter_u_with_acute )
+
+[Upper]		<>	[Lower] / greek_capital_letter_psi _ 
+
+;; Remove the flag for capitalization
+[Upper]=Ltr		< 	greek_capital_letter_psi [Lower]=Ltr
+ 
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; First do some normalizing
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+pass(Unicode)
+
+Class [PhCons] = (\
+latin_small_letter_f			 \
+latin_small_letter_gamma		 \
+latin_small_letter_x			 \
+latin_small_letter_h \
+modifier_letter_small_h \
+latin_small_letter_l			 \
+latin_small_letter_l_with_dot_below	 \
+latin_small_letter_m			 \
+latin_small_letter_n			 \
+latin_small_letter_n_with_dot_below	 \
+latin_small_letter_r			 \
+latin_small_letter_r_with_dot_below	 \
+latin_small_letter_s			 \
+latin_small_letter_s_with_acute		 \
+latin_small_letter_s_with_caron		 \
+latin_small_letter_s_with_dot_below	 \
+latin_small_letter_z 			 \
+latin_small_letter_b 			 \
+latin_small_letter_d 			 \
+latin_small_letter_d_with_dot_below 	 \
+latin_small_letter_j 	 \
+latin_small_letter_j_with_caron 	 \
+latin_small_letter_g  			 \
+latin_small_letter_p 			 \
+latin_small_letter_t 			 \
+latin_small_letter_t_with_dot_below	 \
+latin_small_letter_c_with_caron 	 \
+latin_small_letter_k  			 \
+latin_small_letter_q			 \
+latin_small_letter_w latin_small_letter_y latin_small_letter_v \
+)
+
+Class  [PhVowel] = ( \
+latin_small_letter_a \
+latin_small_letter_a_with_macron \
+latin_small_letter_e \
+latin_small_letter_i \
+latin_small_letter_i_with_macron \
+latin_small_letter_o \
+latin_small_letter_open_o \
+latin_small_letter_u \
+latin_small_letter_u_with_macron \
+latin_small_letter_schwa \
+latin_small_letter_open_e )
+
+Class [PhLtr] = ( \
+[PhCons] [PhVowel] \
+tilde					 \
+apostrophe \
+modifier_letter_triangular_colon \
+combining_grave_accent combining_acute_accent combining_macron \
+)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Map for PBS characters to Indological (NPC)
+
+;; For aspiration rules
+;; Voiced Phonetic obstruents
+;; (Including l for dulha)
+Class [VdPhObs] = ( \
+latin_small_letter_b \
+latin_small_letter_d \
+latin_small_letter_d_with_dot_below \
+latin_small_letter_l \
+latin_small_letter_r \
+latin_small_letter_r_with_dot_below \
+latin_small_letter_j \
+latin_small_letter_g \
+)
+
+;; Voiceless Phonetic obstruents
+Class [VlPhObs] = ( \
+latin_small_letter_p \
+latin_small_letter_t \
+latin_small_letter_t_with_dot_below \
+latin_small_letter_c_with_caron \
+latin_small_letter_k \
+)
+
+Class [Obs] = ( \
+[VdPhObs] [VlPhObs] \
+)
+
+;; Aspiration
+latin_small_letter_h / [Obs] _		<>	modifier_letter_small_h
+
+
+;; Affricates/fricatives
+latin_small_letter_j									<>	latin_small_letter_j_with_caron
+latin_small_letter_c latin_small_letter_h	<>	latin_small_letter_c_with_caron
+latin_small_letter_z latin_small_letter_h	<>	latin_small_letter_z_with_caron
+latin_small_letter_s latin_small_letter_h	<>	latin_small_letter_s_with_caron
+latin_small_letter_k combining_dot_below latin_small_letter_h	<>	latin_small_letter_x
+;; They are not writing ghain different from gaf, so we only can map in one direction
+;latin_small_letter_g combining_dot_below	<>	latin_small_letter_gamma
+latin_small_letter_g										< 	latin_small_letter_gamma
+
+;; Other letters
+;; Not needed
+; latin_small_letter_g	<>		latin_small_letter_g_with_bowl
+
+;; Check on words like "color" rang
+;latin_small_letter_n_with_line_below latin_small_letter_g		<>	tilde	latin_small_letter_g
+latin_small_letter_n_with_line_below		<>	tilde
+
+;; Now this map uses w instead of v, so we don't need this mapping
+;latin_small_letter_w			<>		latin_small_letter_v		;; different between PBS and ICU
+
+;; Vowels
+; They want a-circumflex for zabar.  We'll map it here.  No, holding back
+;latin_small_letter_a_with_circumflex	<>	latin_small_letter_a
+latin_small_letter_a combining_circumflex_accent	> latin_small_letter_a
+; For all the long vowels, they want acute
+latin_small_letter_a_with_acute		<>	latin_small_letter_a_with_macron
+latin_small_letter_i_with_acute			<>	latin_small_letter_i_with_macron
+latin_small_letter_u_with_acute		<>	latin_small_letter_u_with_macron
+
+;; Diphthongs
+;; Can't tell the difference between long e and short e at the end of a word
+latin_small_letter_a latin_small_letter_i / _ ^[PhLtr] 		<>	latin_small_letter_open_e
+latin_small_letter_a latin_small_letter_i 						 >	latin_small_letter_e
+;latin_small_letter_e			 < 	latin_small_letter_open_e
+latin_small_letter_a latin_small_letter_u		<>	latin_small_letter_open_o
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Fixes for NPC and ICU.
+; In some versions of NPC (when?), the caron is separate from the c.
+; But the ABS map is easier to write if they're a single character.
+; Leave it combined for the ICU Latin version.
+latin_small_letter_c combining_caron	 >	latin_small_letter_c_with_caron
+
+; Fix potential problems in the encoding
+latin_small_letter_script_g		 >	latin_small_letter_g
+combining_overline					 >	combining_macron
+latin_small_letter_dotless_i		 >	latin_small_letter_i
+latin_small_letter_a combining_macron	 >	latin_small_letter_a_with_macron
+;latin_small_letter_a_with_macron 	<>	latin_small_letter_a combining_macron
+;latin_small_letter_i_with_macron 		<>	latin_small_letter_i combining__macron
+;latin_small_letter_u_with_macron 	<>	latin_small_letter_u combining_macron
+;latin_small_letter_t_with_dot_below 	<>	latin_small_letter_t combining_dot_below
+
+; For some sources, put RLM around the left and right "floor" marks
+left_floor      <>      left_to_right_mark left_floor
+right_floor      <>      left_to_right_mark right_floor
+; Probably don't need zero-width joiner, for going to latin or Urdu script
+; (TODO: but we would like to add it back in, going the other direction)
+zero_width_joiner    >  
+
+; For now, delete any possible tone marks
+combining_grave_accent 	 >	
+combining_acute_accent	 >	
+
+
+;; Separate pass for Geminates
+
+;; GEMINATES
+
+latin_small_letter_p latin_small_letter_p		<>	latin_small_letter_p modifier_letter_triangular_colon
+latin_small_letter_t latin_small_letter_t		<>	latin_small_letter_t modifier_letter_triangular_colon
+latin_small_letter_t_with_dot_below latin_small_letter_t_with_dot_below <>	latin_small_letter_t_with_dot_below modifier_letter_triangular_colon
+latin_small_letter_c combining_caron latin_small_letter_c combining_caron	 >	latin_small_letter_c_with_caron modifier_letter_triangular_colon
+latin_small_letter_c_with_caron latin_small_letter_c_with_caron	<>	latin_small_letter_c_with_caron modifier_letter_triangular_colon
+latin_small_letter_k latin_small_letter_k		<>	latin_small_letter_k modifier_letter_triangular_colon
+latin_small_letter_b latin_small_letter_b		<>	latin_small_letter_b modifier_letter_triangular_colon
+latin_small_letter_d latin_small_letter_d		<>	latin_small_letter_d modifier_letter_triangular_colon
+latin_small_letter_d_with_dot_below latin_small_letter_d_with_dot_below <>	latin_small_letter_d_with_dot_below modifier_letter_triangular_colon
+latin_small_letter_j_with_caron latin_small_letter_j_with_caron	<>	latin_small_letter_j_with_caron modifier_letter_triangular_colon
+latin_small_letter_g latin_small_letter_g		<>	latin_small_letter_g modifier_letter_triangular_colon
+latin_small_letter_f latin_small_letter_f		<>	latin_small_letter_f modifier_letter_triangular_colon
+latin_small_letter_gamma latin_small_letter_gamma	<>	latin_small_letter_gamma modifier_letter_triangular_colon
+latin_small_letter_x latin_small_letter_x		<>	latin_small_letter_x modifier_letter_triangular_colon
+latin_small_letter_l latin_small_letter_l		<>	latin_small_letter_l modifier_letter_triangular_colon
+latin_small_letter_l_with_dot_below latin_small_letter_l_with_dot_below <>	latin_small_letter_l_with_dot_below modifier_letter_triangular_colon
+latin_small_letter_m latin_small_letter_m		<>	latin_small_letter_m modifier_letter_triangular_colon
+latin_small_letter_n latin_small_letter_n		<>	latin_small_letter_n modifier_letter_triangular_colon
+latin_small_letter_n_with_dot_below latin_small_letter_n_with_dot_below <>	latin_small_letter_n_with_dot_below modifier_letter_triangular_colon
+latin_small_letter_q latin_small_letter_q	<>	latin_small_letter_q modifier_letter_triangular_colon
+latin_small_letter_r latin_small_letter_r		<>	latin_small_letter_r modifier_letter_triangular_colon
+latin_small_letter_r_with_dot_below latin_small_letter_r_with_dot_below <>	latin_small_letter_r_with_dot_below modifier_letter_triangular_colon
+latin_small_letter_s latin_small_letter_s		<>	latin_small_letter_s modifier_letter_triangular_colon
+latin_small_letter_s_with_caron latin_small_letter_s_with_caron	<>	latin_small_letter_s_with_caron modifier_letter_triangular_colon
+latin_small_letter_z latin_small_letter_z		<>	latin_small_letter_z modifier_letter_triangular_colon
+
+latin_small_letter_w latin_small_letter_w		<>	latin_small_letter_w modifier_letter_triangular_colon
+latin_small_letter_i_with_macron latin_small_letter_y		<>	latin_small_letter_i_with_macron modifier_letter_triangular_colon
+
+
+pass(Unicode)
+
+;; Tried to Make a version that omits length and aspiration
+Class [PhConsNoMod] = (\
+latin_small_letter_f			 \
+latin_small_letter_gamma		 \
+latin_small_letter_x			 \
+latin_small_letter_l			 \
+latin_small_letter_l_with_dot_below	 \
+latin_small_letter_m			 \
+latin_small_letter_n			 \
+latin_small_letter_n_with_dot_below	 \
+latin_small_letter_r			 \
+latin_small_letter_r_with_dot_below	 \
+latin_small_letter_s			 \
+latin_small_letter_s_with_acute		 \
+latin_small_letter_s_with_caron		 \
+latin_small_letter_s_with_dot_below	 \
+latin_small_letter_z 			 \
+latin_small_letter_b 			 \
+latin_small_letter_d 			 \
+latin_small_letter_d_with_dot_below 	 \
+latin_small_letter_j_with_caron 	 \
+latin_small_letter_g  			 \
+latin_small_letter_p 			 \
+latin_small_letter_t 			 \
+latin_small_letter_t_with_dot_below	 \
+latin_small_letter_c_with_caron 	 \
+latin_small_letter_k  			 \
+latin_small_letter_q			 \
+latin_small_letter_w latin_small_letter_y latin_small_letter_v \
+latin_small_letter_h \
+)
+
+Class [PhCons] = (\
+[PhConsNoMod] \
+modifier_letter_small_h \
+modifier_letter_triangular_colon \
+)
+
+; Turn this off?  I was getting aspiration where I should have gotten an h.
+
+; Attempt to put a short a between all consonant clusters, 
+; and after final consonants? omit this part for now۔
+; Try to put it between the first and second, but not second and third.
+; Not sure what will happen with longer words.
+; Insert on Latin side; [could delete on ABS side, but let's not for now]
+; Don't insert between a consonant and a length marker or aspiration (NoMod).  After is okay.
+; Try omitting heh gol also?  No, that didn't work.
+; I'd like to see if I could treat "dh" and "ht" as a single consonant somehow.
+;([PhCons])=cons1 latin_small_letter_a ([PhCons])=cons2 ([PhCons])=cons3 latin_small_letter_a ([PhCons])=cons4         <   ( @cons1 ) ( @cons2 ) ( @cons3 ) ( @cons4 ) / _ [PhConsNoMod]
+;([PhCons])=cons1 latin_small_letter_a ([PhCons])=cons2 ([PhCons])=cons3 latin_small_letter_a         <   ( @cons1 ) ( @cons2 ) ( @cons3 ) / _ [PhConsNoMod]
+([PhCons])=cons1 latin_small_letter_a ([PhCons])=cons2 ([PhCons])=cons3 latin_small_letter_a ([PhCons])=cons4         <   ( @cons1 ) ( @cons2 ) ( @cons3 ) ( @cons4 )
+([PhCons])=cons1 latin_small_letter_a ([PhCons])=cons2 ([PhCons])=cons3         <   ( @cons1 ) ( @cons2 ) ( @cons3 )
+([PhCons])=cons latin_small_letter_a         <   ( @cons ) / _ [PhConsNoMod]
+
+
+
+
+pass(NFC)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Main mapping
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+pass(Unicode)
+
+;; For aspiration rules
+;; Voiced Phonetic obstruents
+Class [VdPhObs] = ( \
+latin_small_letter_b \
+latin_small_letter_d \
+latin_small_letter_d_with_dot_below \
+latin_small_letter_j_with_caron \
+latin_small_letter_g \
+latin_small_letter_r \
+)
+
+;; Voiceless Phonetic obstruents
+Class [VlPhObs] = ( \
+latin_small_letter_p \
+latin_small_letter_t \
+latin_small_letter_t_with_dot_below \
+latin_small_letter_c_with_caron \
+latin_small_letter_k \
+)
+
+Class [PhObs] = ( \
+[VdPhObs] \
+[VlPhObs] \
+latin_small_letter_r \
+)
+
+;; Inventories
+Class [PhConsNoMod] = (\
+latin_small_letter_f			 \
+latin_small_letter_gamma		 \
+latin_small_letter_x			 \
+latin_small_letter_l			 \
+latin_small_letter_l_with_dot_below	 \
+latin_small_letter_m			 \
+latin_small_letter_n			 \
+latin_small_letter_n_with_dot_below	 \
+latin_small_letter_r			 \
+latin_small_letter_r_with_dot_below	 \
+latin_small_letter_s			 \
+latin_small_letter_s_with_acute		 \
+latin_small_letter_s_with_caron		 \
+latin_small_letter_s_with_dot_below	 \
+latin_small_letter_z 			 \
+latin_small_letter_b 			 \
+latin_small_letter_d 			 \
+latin_small_letter_d_with_dot_below 	 \
+latin_small_letter_j_with_caron 	 \
+latin_small_letter_g  			 \
+latin_small_letter_p 			 \
+latin_small_letter_t 			 \
+latin_small_letter_t_with_dot_below	 \
+latin_small_letter_c_with_caron 	 \
+latin_small_letter_k  			 \
+latin_small_letter_q			 \
+latin_small_letter_h			\
+)
+
+Class [PhCons] = (\
+[PhConsNoMod] \
+modifier_letter_small_h \
+modifier_letter_triangular_colon \
+)
+Class  [PhVowel] = ( \
+latin_small_letter_a \
+latin_small_letter_a_with_macron \
+latin_small_letter_e \
+latin_small_letter_i \
+latin_small_letter_i_with_macron \
+latin_small_letter_o \
+latin_small_letter_open_o \
+latin_small_letter_u \
+latin_small_letter_u_with_macron \
+latin_small_letter_schwa \
+latin_small_letter_open_e \
+)
+
+Class [PhLtr] = ( \
+[PhCons] [PhVowel] \
+tilde					 \
+apostrophe \
+latin_small_letter_w latin_small_letter_y latin_small_letter_v \
+combining_grave_accent combining_acute_accent combining_macron \
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+Class [ArCons] = ( \
+arabic_letter_feh				 \
+arabic_letter_ghain				 \
+arabic_letter_khah				 \
+arabic_letter_lam				 \
+arabic_letter_meem				 \
+arabic_letter_noon				 \
+arabic_letter_reh				 \
+arabic_letter_rreh				 \
+arabic_letter_seen				 \
+arabic_letter_sheen				 \
+arabic_letter_zain				 \
+arabic_letter_beh 				 \
+arabic_letter_dal 				 \
+arabic_letter_ddal				 \
+arabic_letter_jeem				 \
+arabic_letter_gaf 				 \
+arabic_letter_peh   				 \
+arabic_letter_teh   				 \
+arabic_letter_tteh  				 \
+arabic_letter_tcheh 				 \
+arabic_letter_keheh 				 \
+arabic_letter_qaf				 \
+arabic_letter_noon_ghunna			\
+arabic_fathatan                         \
+\
+arabic_letter_ain		 \
+arabic_letter_hah		 \
+arabic_letter_sad		 \
+arabic_letter_theh		 \
+arabic_letter_tah		 \
+arabic_letter_zah		 \
+arabic_letter_dad		 \
+arabic_letter_thal		 \
+arabic_letter_teh_marbuta	 \
+\
+arabic_letter_tcheheh 				 \
+arabic_letter_reh_with_four_dots_above				 \
+arabic_letter_seen_with_four_dots_above				 \
+arabic_letter_sheen combining_dot_below		 \
+arabic_letter_lam_with_small_arabic_letter_tah_above			 \
+arabic_letter_lam_with_small_v			 \
+arabic_letter_rnoon				 \
+arabic_letter_noon_with_small_tah	 \
+arabic_letter_noon_with_small_v	 \
+arabic_letter_nyeh 				 \
+)
+
+Class [ArShortVowel] = ( \
+U+064E \
+arabic_kasra \
+arabic_damma  \
+)
+
+Class [ArVowel] = ( \
+arabic_letter_alef_with_madda_above \
+arabic_letter_alef	 \
+arabic_letter_yeh_barree \
+arabic_letter_farsi_yeh  \
+arabic_letter_yeh \
+arabic_letter_waw \
+)
+
+Class [ArVowelHamza] = ( \
+arabic_letter_yeh_with_hamza_above \
+arabic_letter_waw_with_hamza_above \
+arabic_hamza_above \
+)
+
+Class [ArLtr] = ( \
+[ArCons] [ArVowel] [ArShortVowel] [ArVowelHamza] \
+arabic_letter_heh_goal arabic_letter_heh_doachashmee \
+arabic_shadda \
+)
+
+Class [Hamza] = ( arabic_hamza_above )
+Class [Shadda] = ( arabic_shadda )
+
+;; Main map
+
+; aspiration  [CHECK the ABS->NPC direction for these rules]
+; map regular h only in the ->ABS direction
+; use superscript h for latin direction
+;latin_small_letter_h combining_ring_below	 >	arabic_letter_heh_doachashmee
+latin_small_letter_h / [PhObs] modifier_letter_triangular_colon _	 >	arabic_letter_heh_doachashmee
+latin_small_letter_h / [PhObs] _	 >	arabic_letter_heh_doachashmee
+modifier_letter_small_h / [PhObs] modifier_letter_triangular_colon  _	<>	arabic_letter_heh_doachashmee
+modifier_letter_small_h / [PhObs]  _	<>	arabic_letter_heh_doachashmee
+; Mapping heh goal in the other direction below, so it comes after more specific rules
+latin_small_letter_h			 > 	arabic_letter_heh_goal
+
+
+; Continuants
+latin_small_letter_f			<>	arabic_letter_feh				
+latin_small_letter_gamma		<>	arabic_letter_ghain				
+latin_small_letter_x			<>	arabic_letter_khah				
+latin_small_letter_l			<>	arabic_letter_lam				
+latin_small_letter_l_with_dot_below	< 	arabic_letter_lam_with_small_v			
+latin_small_letter_l_with_dot_below	<> 	arabic_letter_lam_with_small_arabic_letter_tah_above				
+latin_small_letter_m			<>	arabic_letter_meem				
+latin_small_letter_n			<>	arabic_letter_noon				
+; Before a g, noon is often a nasal rather than an 'n'
+latin_small_letter_n_with_dot_below / _ latin_small_letter_g	<>	arabic_letter_rnoon / _ arabic_letter_gaf				
+latin_small_letter_n_with_dot_below	<>	arabic_letter_rnoon				
+latin_small_letter_n_with_dot_below	< 	arabic_letter_noon_with_small_tah				
+latin_small_letter_n_with_dot_below	< 	arabic_letter_noon_with_small_v				
+;latin_small_letter_n_with_dot_below	<	arabic_letter_reh arabic_letter_noon		; For Hindko; test		
+latin_small_letter_r			<>	arabic_letter_reh				
+latin_small_letter_r_with_dot_below	<>	arabic_letter_rreh				
+latin_small_letter_s			<>	arabic_letter_seen				
+latin_small_letter_s_with_acute		 >	arabic_letter_sheen				
+latin_small_letter_s_with_caron		<>	arabic_letter_sheen				
+latin_small_letter_s_with_dot_below	<>	arabic_letter_seen_with_four_dots_above				
+latin_small_letter_z 			<>	arabic_letter_zain				
+
+; Voiced Obstruents
+latin_small_letter_b 			<>	arabic_letter_beh 
+latin_small_letter_d 			<>	arabic_letter_dal 
+latin_small_letter_d_with_dot_below 	<>	arabic_letter_ddal
+latin_small_letter_j_with_caron 	<>	arabic_letter_jeem
+latin_small_letter_j combining_dot_below		<>	arabic_letter_reh_with_four_dots_above				
+latin_small_letter_g  			<>	arabic_letter_gaf 
+
+; Voiceless Obstruents
+latin_small_letter_p 			<>	arabic_letter_peh   
+latin_small_letter_t 			<>	arabic_letter_teh   
+latin_small_letter_t_with_dot_below	<>	arabic_letter_tteh  
+latin_small_letter_c_with_caron 	<>	arabic_letter_tcheh 
+latin_small_letter_c combining_dot_below	<>	arabic_letter_tcheheh			
+latin_small_letter_k  			<>	arabic_letter_keheh 				
+latin_small_letter_q			<>	arabic_letter_qaf		
+
+; map to tilde in Latin direction; allow fathatan in other direction
+combining_tilde	 >	 	arabic_letter_noon_ghunna
+tilde				        <>	arabic_letter_noon_ghunna
+tilde						<		arabic_fathatan
+
+
+;; GEMINATES
+modifier_letter_triangular_colon	<>	arabic_shadda
+; kasra and damma apparently get reordered before the shadda.
+; To get the colon on the right side of the vowel when going to indological,
+; need special rules.
+modifier_letter_triangular_colon latin_small_letter_i	<	arabic_kasra arabic_shadda
+modifier_letter_triangular_colon latin_small_letter_u	<	arabic_damma arabic_shadda
+; When there is a shadda after aspiration, it applies to the consonant before the aspiration
+modifier_letter_triangular_colon modifier_letter_small_h <>     arabic_letter_heh_doachashmee arabic_shadda
+; When there is a shadda after vau, the vau is a consonant
+latin_small_letter_w modifier_letter_triangular_colon <>     arabic_letter_waw arabic_shadda
+
+;; LONG VOWELS
+
+; No tone
+
+latin_small_letter_a_with_macron			<>	arabic_letter_alef_with_madda_above
+latin_small_letter_a_with_macron / [PhLtr] _	<>	arabic_letter_alef / [ArLtr] _ 
+
+;; Need to work on hamza on y between a and e   impv you (fam/pol) come/go, you(pol) eat, you(pol) sleep, you(pol) drink 
+
+
+; Word-final yeh with nasalization is usually bari yeh/phonetic open-e 
+; (but not in nahi~ or yahi~ or me~)
+latin_small_letter_open_e				< 	arabic_letter_farsi_yeh / _ arabic_letter_noon_ghunna ^[ArLtr]
+
+;Extra yeh characters that might be on the ABS side, and hamza
+latin_small_letter_i_with_macron apostrophe		 >  	arabic_letter_farsi_yeh arabic_hamza_above
+latin_small_letter_i_with_macron latin_small_letter_y		 >  	arabic_letter_farsi_yeh arabic_hamza_above
+; Should it be long or short i on the Latin side? (short, and with y, not apostrophe)
+;latin_small_letter_i_with_macron apostrophe		 >  	arabic_letter_yeh_with_hamza_above
+latin_small_letter_i_with_macron latin_small_letter_y		 >  	arabic_letter_yeh_with_hamza_above
+latin_small_letter_i_with_macron				< 	arabic_letter_farsi_yeh
+; Is it usually a short or long i? (short)
+;latin_small_letter_i apostrophe		<> 	arabic_letter_yeh_with_hamza_above
+;latin_small_letter_i latin_small_letter_y		<> 	arabic_letter_yeh_with_hamza_above
+latin_small_letter_y		<> 	arabic_letter_yeh_with_hamza_above
+
+;apostrophe latin_small_letter_i_with_macron		<>	arabic_letter_yeh_with_hamza_above arabic_letter_farsi_yeh
+latin_small_letter_y latin_small_letter_i_with_macron		<>	arabic_letter_yeh_with_hamza_above arabic_letter_farsi_yeh
+
+;;; Needed for other languages.  Are these useful?
+;; For other languages:  ā'i'ai
+;;apostrophe latin_small_letter_i_with_macron apostrophe latin_small_letter_a latin_small_letter_i		<>	arabic_letter_yeh_with_hamza_above arabic_letter_yeh_barree
+;apostrophe latin_small_letter_i_with_macron apostrophe latin_small_letter_open_e		<>	arabic_letter_yeh_with_hamza_above arabic_letter_yeh_barree
+;; For other languages:  u'ai
+;;latin_small_letter_u apostrophe latin_small_letter_a latin_small_letter_i		<>	arabic_letter_alef arabic_damma arabic_letter_yeh_barree
+;latin_small_letter_u apostrophe latin_small_letter_open_e		<>	arabic_letter_alef arabic_damma arabic_letter_yeh_barree
+;
+;; added for other languages: 'e
+;apostrophe latin_small_letter_e      / _ [PhLtr]	<>	arabic_letter_yeh_with_hamza_above arabic_letter_farsi_yeh
+;apostrophe latin_small_letter_e                  	<>	arabic_letter_yeh_with_hamza_above arabic_letter_yeh_barree
+;;; End of "for other languages"
+
+latin_small_letter_i_with_macron / [PhLtr] _ [PhLtr] <>	arabic_kasra arabic_letter_farsi_yeh
+latin_small_letter_i_with_macron / _ [PhLtr]	<>	arabic_letter_alef arabic_kasra arabic_letter_farsi_yeh
+;latin_small_letter_i_with_macron			<>	arabic_letter_alef arabic_letter_farsi_yeh / ^[ArLtr] _ 
+latin_small_letter_i_with_macron			<>	arabic_letter_alef arabic_kasra arabic_letter_farsi_yeh / ^[ArLtr] _ 
+
+latin_small_letter_y					<>	arabic_letter_farsi_yeh / ^[ArLtr] _ 
+latin_small_letter_y					<>	arabic_letter_farsi_yeh / _ [ArVowel] ^[Hamza]
+latin_small_letter_y					<>	arabic_letter_farsi_yeh / [ArVowel] _
+latin_small_letter_i_with_macron / [PhLtr] _	<>	arabic_letter_farsi_yeh / _ ^[ArLtr]
+
+latin_small_letter_e					<	arabic_letter_alef arabic_letter_yeh_barree / ^[ArLtr] _ 
+latin_small_letter_e / ^[PhLtr] _			<>	arabic_letter_alef arabic_letter_farsi_yeh / ^[ArLtr] _ 
+latin_small_letter_e / _ ^[PhLtr]			<>	arabic_letter_yeh_barree
+latin_small_letter_e        		      		<>	arabic_letter_farsi_yeh / [ArCons] _ [ArCons]
+
+; This shouldn't be in the data
+latin_small_letter_e combining_macron			 >	latin_capital_letter_E
+
+
+latin_small_letter_u_with_macron / [PhLtr] _	<>	arabic_damma arabic_letter_waw / _ ^[Shadda]
+latin_small_letter_u_with_macron			<>	arabic_letter_alef arabic_damma arabic_letter_waw
+;latin_small_letter_u_with_macron / [PhLtr] latin_small_letter_a_with_macron _	<>	arabic_letter_waw_with_hamza_above    ; Test the LHS context
+;latin_small_letter_u_with_macron apostrophe / [PhLtr] _	<>	arabic_damma arabic_letter_waw_with_hamza_above
+latin_small_letter_u_with_macron / [PhLtr] _	<>	arabic_damma arabic_letter_waw_with_hamza_above
+;latin_small_letter_u_with_macron apostrophe / [PhLtr] _	<	arabic_damma arabic_letter_waw arabic_hamza_above
+latin_small_letter_u_with_macron / [PhLtr] _	<	arabic_damma arabic_letter_waw arabic_hamza_above
+
+;; Need to work on hamza for o followinɡ aleph
+latin_small_letter_o / ^[PhLtr] _					<>	arabic_letter_alef arabic_letter_waw / ^[ArLtr] _ 
+latin_small_letter_w					<>	arabic_letter_waw / ^[ArLtr] _
+;apostrophe latin_small_letter_o			<>	arabic_letter_waw_with_hamza_above
+; What should the rule be going from roman?  Needs a context
+latin_small_letter_o			<		arabic_letter_waw_with_hamza_above
+; After a vowel, make it w.  Is this only after alef, or any vowel?
+latin_small_letter_w					< 	arabic_letter_waw / [ArVowel] _
+latin_small_letter_w					<>	arabic_letter_waw / _ [ArVowel] ^[Hamza]
+latin_small_letter_v					 >	arabic_letter_waw / _ [ArVowel] ^[Hamza]
+latin_small_letter_o / [PhLtr] _			  >	arabic_letter_waw
+;; What should the "elsewhere" rule for waw be?  Assuming they have written pesh, then this should be o
+latin_small_letter_o			 < 	arabic_letter_waw
+;; (Be sure this same rule is commented out below.  Use only one.)
+;latin_small_letter_u_with_macron			 < 	arabic_letter_waw
+;; other languages: Are these useful?
+;;apostrophe latin_small_letter_u_with_macron	<>	arabic_damma arabic_letter_waw_with_hamza_above
+;apostrophe latin_small_letter_u_with_macron	<>	arabic_letter_waw_with_hamza_above
+
+;; This version has no letter under it.
+;apostrophe                              <>      arabic_hamza_above
+;; See if this is not too general
+;apostrophe		<> 	arabic_letter_yeh_with_hamza_above
+;; This is done above; this is a duplicate.
+;latin_small_letter_y		<> 	arabic_letter_yeh_with_hamza_above
+
+; This shouldn't be in the data
+latin_small_letter_o combining_macron			 >	latin_capital_letter_o
+
+
+;; SHORT VOWELS
+
+;; No tone
+
+latin_small_letter_a_with_acute / _ ^[PhLtr]	< 	arabic_letter_heh_goal / [ArCons] _ ^[ArLtr]
+;latin_small_letter_i / _ ^[PhLtr]	 >	arabic_letter_heh_goal / ^[ArLtr] _ 
+; All other occurrences of heh_goal should go to "h"
+latin_small_letter_h			< 	arabic_letter_heh_goal
+
+latin_small_letter_i / _ ^[PhLtr]	 >	arabic_letter_farsi_yeh
+latin_small_letter_i / ^[PhLtr] _			<>	arabic_letter_alef arabic_kasra / ^[ArLtr] _ 
+latin_small_letter_i / [PhLtr] _	<>	arabic_kasra
+
+;U+064E is fatha/zabar.  I couldn't get this rule to work with the Unicode name.
+latin_small_letter_open_e / [PhLtr] _ [PhLtr]	<>	U+064E arabic_letter_farsi_yeh
+latin_small_letter_open_e / _ ^[PhLtr]		<>	U+064E arabic_letter_yeh_barree
+latin_small_letter_open_e / ^[PhLtr] _		<>	arabic_letter_alef U+064E arabic_letter_farsi_yeh
+latin_small_letter_open_e / ^[PhLtr] _ ^[PhLtr]			<>	arabic_letter_alef U+064E arabic_letter_yeh_barree
+
+latin_small_letter_u / ^[PhLtr] _				<>	arabic_letter_alef arabic_damma / ^[ArLtr] _ 
+latin_small_letter_u / [PhLtr] _		<>	arabic_damma
+;; other languages: u'a
+;latin_small_letter_u apostrophe latin_small_letter_a / [PhLtr] _    <>  arabic_damma arabic_letter_alef
+
+;latin_small_letter_open_o / ^latin_small_letter_h _	<>	arabic_letter_alef U+064E arabic_letter_waw
+latin_small_letter_open_o / ^[PhLtr] _				<>	arabic_letter_alef arabic_fatha arabic_letter_waw / ^[ArLtr] _ 
+;; This one is defined above
+;latin_small_letter_o / ^[PhLtr] _				<>	arabic_letter_alef arabic_letter_waw / ^[ArLtr] _ 
+latin_small_letter_open_o / [PhLtr] _		<>	U+064E arabic_letter_waw / [ArLtr] _    ; Is this always 'o' or sometimes 'v'?  They wouldn't write zabar if it was a v.
+
+;; Put these last, because the deletion should only happen if something else didn't match.
+; Often short a isn't written, but we want it in the map for the reverse direction.
+latin_small_letter_a / ^[PhLtr] _			<>	arabic_letter_alef arabic_fatha / ^[ArLtr] _ 
+latin_small_letter_a / ^[PhLtr] _			<>		arabic_letter_alef / ^[ArLtr] _ 
+latin_small_letter_a / _ ^[PhLtr]			  >	arabic_letter_heh_goal / ^[ArLtr] _ 
+latin_small_letter_a / [PhLtr] _	< 	arabic_fatha	  ; The environment on the left isn't doing anything if the arrow only points left
+latin_small_letter_a			< 	arabic_letter_alef
+latin_small_letter_a			 >
+
+;; END OF VOWELS
+
+
+;; MISC MAPPINGS
+
+; These are here just to see if any don't get mapped.
+; All occurrences should be accounted for by more specific rules.
+combining_circumflex_accent	 >	replacement_character
+combining_macron		 >	replacement_character
+combining_dot_below		 >	latin_capital_letter_d
+modifier_letter_triangular_colon  >	replacement_character  ; this is length; shouldn't be used in this orthography
+latin_small_letter_dotless_i	 >	replacement_character
+
+;combining_grave_accent		 >	replacement_character  ; low tone	
+;combining_acute_accent		 >	replacement_character
+
+; These are characters that might have been used for vowels, but probably weren't.
+;latin_small_letter_schwa		 >	arabic_fatha
+latin_small_letter_schwa		 >	
+;latin_small_letter_turned_v	 >	arabic_fatha
+latin_small_letter_turned_v	 >	
+latin_letter_small_capital_i	 >	arabic_kasra
+
+; Extra Vowels
+
+;latin_small_letter_a_with_diaeresis	<>	
+;latin_small_letter_ae	<>	
+;latin_small_letter_alpha	<>	
+;latin_small_letter_u_bar	<>	
+;latin_small_letter_upsilon	<>	
+
+
+; Others
+
+latin_small_letter_v		 >	arabic_letter_waw
+latin_small_letter_w		 >	arabic_letter_waw
+
+; letters with extra representations on the ABS side
+;latin_small_letter_a apostrophe			<	arabic_letter_ain
+latin_small_letter_a modifier_letter_turned_comma			<	arabic_letter_ain
+latin_small_letter_h		<	arabic_letter_hah
+latin_small_letter_s		< 	arabic_letter_sad
+latin_small_letter_s		< 	arabic_letter_theh
+latin_small_letter_t		<	arabic_letter_tah
+latin_small_letter_z		< 	arabic_letter_zah
+latin_small_letter_z		< 	arabic_letter_dad
+latin_small_letter_z		< 	arabic_letter_thal
+latin_small_letter_t		< 	arabic_letter_teh_marbuta
+latin_small_letter_i		< 	arabic_hamza_above		
+
+; honorifics
+left_parenthesis latin_small_letter_p latin_small_letter_b latin_small_letter_u latin_small_letter_h right_parenthesis	< 	0x0611
+left_parenthesis latin_small_letter_p latin_small_letter_b latin_small_letter_u latin_small_letter_h right_parenthesis	< 	0x0613
+
+; Just in case these are accidentally on the NPC side.
+modifier_letter_small_h		 >	arabic_letter_heh_doachashmee
+latin_small_letter_j		 >	arabic_letter_jeem
+latin_small_letter_c		 >	arabic_letter_tcheh
+
+question_mark			<>	arabic_question_mark
+semicolon			<>	arabic_semicolon
+comma				<>	arabic_comma
+full_stop			<>	arabic_full_stop
+
+digit_zero			<>	extended_arabic_indic_digit_zero
+digit_one			<>	extended_arabic_indic_digit_one
+digit_two			<>	extended_arabic_indic_digit_two
+digit_three			<>	extended_arabic_indic_digit_three
+digit_four			<>	extended_arabic_indic_digit_four
+digit_five			<>	extended_arabic_indic_digit_five
+digit_six			<>	extended_arabic_indic_digit_six
+digit_seven			<>	extended_arabic_indic_digit_seven
+digit_eight			<>	extended_arabic_indic_digit_eight
+digit_nine			<>	extended_arabic_indic_digit_nine
+
+digit_zero			<>	digit_zero
+digit_one			<>	digit_one
+digit_two			<>	digit_two
+digit_three			<>	digit_three
+digit_four			<>	digit_four
+digit_five			<>	digit_five
+digit_six			<>	digit_six
+digit_seven			<>	digit_seven
+digit_eight			<>	digit_eight
+digit_nine			<>	digit_nine
+
+Class [RomanLtr] = (latin_small_letter_a .. latin_small_letter_z latin_capital_letter_A .. latin_capital_letter_Z)
+
+;; This is only set up for the Urdu to Roman direction, for Paratext strings
+;; But it really needs to be in the other direction.  Hard to do, with so many layers.
+[RomanLtr]      <       [RomanLtr]
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Final cleanup
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+pass(Unicode)
+
+Class [ArCons] = ( \
+arabic_letter_feh		 \
+arabic_letter_ghain		 \
+arabic_letter_khah		 \
+arabic_letter_lam		 \
+arabic_letter_lam_with_small_v	 \
+arabic_letter_meem		 \
+arabic_letter_noon		 \
+arabic_letter_rnoon		 \
+arabic_letter_reh		 \
+arabic_letter_rreh		 \
+arabic_letter_seen		 \
+arabic_letter_sheen		 \
+combining_dot_below		 \
+arabic_letter_zain		 \
+arabic_letter_beh 		 \
+arabic_letter_dal 		 \
+arabic_letter_ddal		 \
+arabic_letter_jeem		 \
+arabic_letter_gaf 		 \
+arabic_letter_peh   		 \
+arabic_letter_teh   		 \
+arabic_letter_tteh  		 \
+arabic_letter_tcheh 		 \
+arabic_letter_keheh 		 \
+arabic_letter_qaf	 \
+arabic_letter_noon_ghunna \
+arabic_fathatan             \
+\
+arabic_letter_ain		 \
+arabic_letter_hah		 \
+arabic_letter_sad		 \
+arabic_letter_theh		 \
+arabic_letter_tah		 \
+arabic_letter_zah		 \
+arabic_letter_dad		 \
+arabic_letter_thal		 \
+arabic_letter_teh_marbuta	 \
+\
+arabic_letter_tcheheh 				 \
+arabic_letter_reh_with_four_dots_above				 \
+arabic_letter_seen_with_four_dots_above				 \
+arabic_letter_sheen combining_dot_below		 \
+arabic_letter_lam_with_small_arabic_letter_tah_above			 \
+arabic_letter_lam_with_small_v			 \
+arabic_letter_rnoon				 \
+arabic_letter_noon_with_small_tah	 \
+arabic_letter_noon_with_small_v	 \
+arabic_letter_nyeh 				 \
+)
+
+Class [ArVowel] = ( \
+U+064E \
+arabic_kasra \
+arabic_damma  \
+arabic_letter_alef_with_madda_above \
+arabic_letter_alef	 \
+arabic_letter_yeh_barree \
+arabic_letter_farsi_yeh  \
+arabic_letter_yeh \
+arabic_letter_yeh_with_hamza_above \
+arabic_letter_waw \
+arabic_letter_waw_with_hamza_above \
+arabic_hamza_above \
+)
+
+Class [ArLtr] = ( \
+[ArCons] \
+[ArVowel] \
+arabic_letter_heh_doachashmee \
+arabic_letter_heh_goal \
+arabic_shadda \
+)
+
+;;;  Do I need these in both directions??
+;;; zer doesn't appear with written vowels word-finally
+arabic_kasra arabic_letter_farsi_yeh / _ ^[ArLtr]	 <>	arabic_letter_farsi_yeh  / _ ^[ArLtr]
+;U+064E arabic_letter_yeh_barree / _ ^[ArLtr]	 >	arabic_letter_yeh_barree  / _ ^[ArLtr]
+U+064E arabic_letter_waw / _ ^[ArLtr]		 >	arabic_letter_waw
+
+;;; FIX:  Check if hamza vowels are in ArVowel
+;; hamza for word-final vowel sequences [what other sequences do we need?]  [I haven't included "word final" in these rules--do they need it?]
+;arabic_letter_alef arabic_letter_farsi_yeh	<>	arabic_letter_alef arabic_letter_yeh_with_hamza_above arabic_letter_farsi_yeh
+[ArVowel]					< 	[ArVowel] arabic_letter_yeh_with_hamza_above / _ ^[ArLtr]
+;[ArVowel]					< 	[ArVowel] arabic_hamza_above
+
+;; For now, just delete the raised alef.  I'm not sure what it does.
+[ArLtr]					< 	[ArLtr] arabic_letter_superscript_alef
+
+;; Delete the name marker that was left in when we set the flag for capitalization.
+[ArLtr]=Ltr 										<	[ArLtr]=Ltr arabic_sign_takhallus
+;; (In next pass)  If there is a name marker anywhere in the word, set a flag so we can make the initial letter capital in a different pass.
+;greek_capital_letter_psi [ArLtr]=Ltr 										<	@Ltr / ^[ArLtr] _ [ArLtr]* arabic_sign_takhallus 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Specific words
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+pass(Unicode)
+
+;; Inventories
+Class [PhConsNoMod] = (\
+latin_small_letter_f			 \
+latin_small_letter_gamma		 \
+latin_small_letter_x			 \
+latin_small_letter_l			 \
+latin_small_letter_l_with_dot_below	 \
+latin_small_letter_m			 \
+latin_small_letter_n			 \
+latin_small_letter_n_with_dot_below	 \
+latin_small_letter_r			 \
+latin_small_letter_r_with_dot_below	 \
+latin_small_letter_s			 \
+latin_small_letter_s_with_acute		 \
+latin_small_letter_s_with_caron		 \
+latin_small_letter_s_with_dot_below	 \
+latin_small_letter_z 			 \
+latin_small_letter_b 			 \
+latin_small_letter_d 			 \
+latin_small_letter_d_with_dot_below 	 \
+latin_small_letter_j_with_caron 	 \
+latin_small_letter_g  			 \
+latin_small_letter_p 			 \
+latin_small_letter_t 			 \
+latin_small_letter_t_with_dot_below	 \
+latin_small_letter_c_with_caron 	 \
+latin_small_letter_k  			 \
+latin_small_letter_q			 \
+latin_small_letter_h			\
+)
+
+Class [PhCons] = (\
+[PhConsNoMod] \
+modifier_letter_small_h \
+modifier_letter_triangular_colon \
+)
+Class  [PhVowel] = ( \
+latin_small_letter_a \
+latin_small_letter_a_with_macron \
+latin_small_letter_e \
+latin_small_letter_i \
+latin_small_letter_i_with_macron \
+latin_small_letter_o \
+latin_small_letter_open_o \
+latin_small_letter_u \
+latin_small_letter_u_with_macron \
+latin_small_letter_schwa \
+latin_small_letter_open_e \
+)
+
+Class [PhLtr] = ( \
+[PhCons] [PhVowel] \
+tilde					 \
+apostrophe \
+latin_small_letter_w latin_small_letter_y latin_small_letter_v \
+combining_grave_accent combining_acute_accent combining_macron \
+)
+
+Class [ArCons] = ( \
+arabic_letter_feh		 \
+arabic_letter_ghain		 \
+arabic_letter_khah		 \
+arabic_letter_lam		 \
+arabic_letter_lam_with_small_v	 \
+arabic_letter_meem		 \
+arabic_letter_noon		 \
+arabic_letter_rnoon		 \
+arabic_letter_reh		 \
+arabic_letter_rreh		 \
+arabic_letter_seen		 \
+arabic_letter_sheen		 \
+combining_dot_below		 \
+arabic_letter_zain		 \
+arabic_letter_beh 		 \
+arabic_letter_dal 		 \
+arabic_letter_ddal		 \
+arabic_letter_jeem		 \
+arabic_letter_gaf 		 \
+arabic_letter_peh   		 \
+arabic_letter_teh   		 \
+arabic_letter_tteh  		 \
+arabic_letter_tcheh 		 \
+arabic_letter_keheh 		 \
+arabic_letter_qaf	 \
+arabic_letter_noon_ghunna \
+arabic_fathatan             \
+\
+arabic_letter_ain		 \
+arabic_letter_hah		 \
+arabic_letter_sad		 \
+arabic_letter_theh		 \
+arabic_letter_tah		 \
+arabic_letter_zah		 \
+arabic_letter_dad		 \
+arabic_letter_thal		 \
+arabic_letter_teh_marbuta	 \
+\
+arabic_letter_tcheheh 				 \
+arabic_letter_reh_with_four_dots_above				 \
+arabic_letter_seen_with_four_dots_above				 \
+arabic_letter_sheen combining_dot_below		 \
+arabic_letter_lam_with_small_arabic_letter_tah_above			 \
+arabic_letter_lam_with_small_v			 \
+arabic_letter_rnoon				 \
+arabic_letter_noon_with_small_tah	 \
+arabic_letter_noon_with_small_v	 \
+arabic_letter_nyeh 				 \
+)
+
+Class [ArVowel] = ( \
+U+064E \
+arabic_kasra \
+arabic_damma  \
+arabic_letter_alef_with_madda_above \
+arabic_letter_alef	 \
+arabic_letter_yeh_barree \
+arabic_letter_farsi_yeh  \
+arabic_letter_yeh \
+arabic_letter_yeh_with_hamza_above \
+arabic_letter_waw \
+arabic_letter_waw_with_hamza_above \
+arabic_hamza_above \
+)
+
+Class [ArLtr] = ( \
+[ArCons] \
+[ArVowel] \
+arabic_letter_heh_doachashmee \
+arabic_letter_heh_goal \
+arabic_shadda \
+)
+
+;; Handle capitalization.  The name marker will be deleted in the next pass ("final cleanup")
+;; FIX: Isn't working when takhallus is word final
+greek_capital_letter_psi [ArLtr]=Ltr 										<	@Ltr / ^[ArLtr] _ [ArLtr]* arabic_sign_takhallus 
+
+; کہ  ki
+latin_small_letter_k latin_small_letter_i / ^[PhLtr] _ ^[PhLtr]	<>	arabic_letter_keheh arabic_letter_heh_goal / ^[ArLtr]  _ ^[ArLtr]
+; کیوںکہ  kyúṉki
+latin_small_letter_k latin_small_letter_y latin_small_letter_u_with_acute latin_small_letter_n_with_line_below latin_small_letter_k latin_small_letter_i / ^[PhLtr] _ ^[PhLtr]	<>	arabic_letter_keheh arabic_letter_farsi_yeh arabic_letter_waw arabic_letter_noon arabic_letter_keheh arabic_letter_heh_goal / ^[ArLtr]  _ ^[ArLtr]
+latin_small_letter_k latin_small_letter_y latin_small_letter_u_with_acute latin_small_letter_n_with_line_below latin_small_letter_k latin_small_letter_i / ^[PhLtr] _ ^[PhLtr]	< 		arabic_letter_keheh arabic_letter_farsi_yeh arabic_letter_waw arabic_letter_noon_ghunna arabic_letter_keheh arabic_letter_heh_goal / ^[ArLtr]  _ ^[ArLtr]
+; کے  ke
+latin_small_letter_k latin_small_letter_e / ^[PhLtr] _ ^[PhLtr]	<>	arabic_letter_keheh arabic_letter_yeh_barree / ^[ArLtr]  _ ^[ArLtr]
+; ہے  hai
+latin_small_letter_h latin_small_letter_a latin_small_letter_i / ^[PhLtr] _ ^[PhLtr]	<>	arabic_letter_heh_goal arabic_letter_yeh_barree / ^[ArLtr]  _ ^[ArLtr]
+; گیا  gaya
+latin_small_letter_g latin_small_letter_a latin_small_letter_y latin_small_letter_a / ^[PhLtr] _ ^[PhLtr]	<>	arabic_letter_gaf arabic_letter_farsi_yeh arabic_letter_alef / ^[ArLtr]  _ ^[ArLtr]
+; گئے  gayí
+latin_small_letter_g latin_small_letter_a latin_small_letter_y latin_small_letter_i_with_macron / ^[PhLtr] _ ^[PhLtr]	<>	arabic_letter_gaf arabic_letter_yeh_with_hamza_above arabic_letter_farsi_yeh / ^[ArLtr]  _ ^[ArLtr]
+; گئے  gaye
+latin_small_letter_g latin_small_letter_a latin_small_letter_y latin_small_letter_e / ^[PhLtr] _ ^[PhLtr]	<>	arabic_letter_gaf arabic_letter_yeh_with_hamza_above arabic_letter_yeh_barree / ^[ArLtr]  _ ^[ArLtr]
+; ہُوئی  hui
+latin_small_letter_h latin_small_letter_u_with_macron latin_small_letter_i / ^[PhLtr] _ ^[PhLtr]	<>	arabic_letter_heh_goal arabic_damma arabic_letter_waw arabic_letter_yeh_with_hamza_above arabic_letter_farsi_yeh / ^[ArLtr]  _ ^[ArLtr]
+; میں  meṉ
+latin_small_letter_m latin_small_letter_e tilde / ^[PhLtr] _ ^[PhLtr]	<>	arabic_letter_meem arabic_letter_farsi_yeh arabic_letter_noon_ghunna / ^[ArLtr]  _ ^[ArLtr]
+; نہیں  nahiṉ
+latin_small_letter_n latin_small_letter_a latin_small_letter_h latin_small_letter_i_with_macron tilde / ^[PhLtr] _ ^[PhLtr]	<>	arabic_letter_noon arabic_letter_heh_goal arabic_letter_farsi_yeh arabic_letter_noon_ghunna / ^[ArLtr]  _ ^[ArLtr]
+; یہیں  yahiṉ
+latin_small_letter_y latin_small_letter_a latin_small_letter_h latin_small_letter_i_with_macron tilde / ^[PhLtr] _ ^[PhLtr]	<>	arabic_letter_farsi_yeh arabic_letter_heh_goal arabic_letter_farsi_yeh arabic_letter_noon_ghunna / ^[ArLtr]  _ ^[ArLtr]
+; یہ  yih
+latin_small_letter_y latin_small_letter_i latin_small_letter_h / ^[PhLtr] _ ^[PhLtr]	<>	arabic_letter_farsi_yeh arabic_letter_heh_goal / ^[ArLtr]  _ ^[ArLtr]
+; وہ  wuh
+latin_small_letter_w latin_small_letter_u latin_small_letter_h / ^[PhLtr] _ ^[PhLtr]	<>	arabic_letter_waw arabic_letter_heh_goal / ^[ArLtr]  _ ^[ArLtr]
+; اور  aur  (could also be 'or' but that is less frequent)
+latin_small_letter_a latin_small_letter_u latin_small_letter_r / ^[PhLtr] _ ^[PhLtr]	<>	arabic_letter_alef arabic_letter_waw arabic_letter_reh / ^[ArLtr]  _ ^[ArLtr]
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Final cleanup: Normalize (composed)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+pass(NFC)
+

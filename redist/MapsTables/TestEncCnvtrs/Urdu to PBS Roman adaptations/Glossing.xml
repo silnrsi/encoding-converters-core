@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+	 Note: Using Microsoft WORD 2003 or later is not a good way to edit this xml file.
+	 Instead, use NotePad, WordPad or Windows Explorer.
+	 Please note: the order of the TU elements in this xml file might differ each time the knowledge base is saved. This is not an error. -->
+<KB docVersion="4" srcName="Urdu" tgtName="PBS Roman" max="1">
+	<MAP mn="1">
+	</MAP>
+</KB>
