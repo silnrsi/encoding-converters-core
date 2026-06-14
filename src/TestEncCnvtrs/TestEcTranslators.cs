@@ -300,18 +300,18 @@ God is my father.")]
             @"capability")]                                   // now see if it has learned from our example (doesn't always work)
         [TestCase("Hindi;English;bright-coyote-381812;us-central1;google;chat-bison-32k;with a \"literal translation\" style",
             VertexAiEncConverter.ImplTypeSilVertexAi,
-            @"यीशु ने कहा,",										// phrase to translate ("Jesus said")
-            @"said",											// should contain... (at the mercy of the resource, though, so it might fail)
+            @"यीशु ने कहा,",                                        // phrase to translate ("Jesus said")
+            @"said",                                            // should contain... (at the mercy of the resource, though, so it might fail)
             @"Jesus spoke,",                                    // give this as an example translation for earlier output
-            @"राम ने कहा,",										// ... and see if new subject can get the same verb (spoke)
-            @"spoke")]											// now see if it has learned from our example
+            @"राम ने कहा,",                                        // ... and see if new subject can get the same verb (spoke)
+            @"spoke")]                                            // now see if it has learned from our example
         [TestCase("Hindi;English;bright-coyote-381812;us-central1;google;gemini-1.5-flash;with a \"literal translation\" style",
             VertexAiEncConverter.ImplTypeSilVertexAi,
             @"यीशु ने कहा,",                                       // phrase to translate ("Jesus said")
             @"said",                                            // should contain... (at the mercy of the resource, though, so it might fail)
             @"Jesus spoke,",                                    // give this as an example translation for earlier output
-            @"यीशु ने कहा,",										// ... and see if new subject can get the same verb (spoke)
-            @"spoke")]											// now see if it has learned from our example
+            @"यीशु ने कहा,",                                        // ... and see if new subject can get the same verb (spoke)
+            @"spoke")]                                            // now see if it has learned from our example
         public void TestPromptAiConverter_With_Examples(string converterSpec, string implName, string testInput1, string testOutput1Contains,
                                                         string updatedOutput1, string testInput2, string testOutput2Contains)
         {

@@ -44,10 +44,10 @@
               <Component Id="ScriptSystemKangri" Guid="{F06B6EB8-713B-4A6C-AF4B-2E5898EF31F9}">
                 <File Id="Kangri.xml" Name="Kangri.xml" KeyPath="yes" Source="..\..\src\SpellingFixer30\VSVs\Kangri.xml" />
               </Component>
-				<Component Id="ScriptSystemGeneric" Guid="{2BE294AC-B86A-497D-8DFB-3EF2DF331196}">
-					<File Id="Generic.xml" Name="Generic.xml" KeyPath="yes" Source="..\..\src\SpellingFixer30\VSVs\Generic.xml" />
-				</Component>
-			</Directory>
+                <Component Id="ScriptSystemGeneric" Guid="{2BE294AC-B86A-497D-8DFB-3EF2DF331196}">
+                    <File Id="Generic.xml" Name="Generic.xml" KeyPath="yes" Source="..\..\src\SpellingFixer30\VSVs\Generic.xml" />
+                </Component>
+            </Directory>
 
             <Directory Id="AppDataSILCscProjects" Name="Projects">
               <Component Id="CreateProjectsFolder" Guid="{A440BE66-8D45-41D6-B3F1-A45A4CC2ECD6}">
