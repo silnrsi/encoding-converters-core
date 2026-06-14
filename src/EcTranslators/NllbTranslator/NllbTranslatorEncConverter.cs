@@ -15,6 +15,7 @@ using static Nllb.ITranslator;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
 using System.Net.Sockets;
+using System.IO;
 
 namespace SilEncConverters40.EcTranslators.NllbTranslator
 {
@@ -41,6 +42,7 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
         internal const string strHtmlFilename = "NLLB_Translate_Plug-in_About_box.htm";
 
         public const string NllbAuthenticationPrefix = "SIL-NLLB-Auth-Key ";
+        public static readonly Regex RegexLocalModelPath = new Regex(@"LOCAL_MODEL_PATH = '(.*?)'");
 
         public const string EnvVarNameEndPoint = "EncConverters_NllbEndpoint";
         public const string EnvVarNameKey = "EncConverters_NllbApiKey";
@@ -56,6 +58,7 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
         public string PathToDockerProject;
         public string ApiKey;        // always clear text
         public string Endpoint;
+        public string PathToLocalModel;
 
         public Regex SentenceSplitter = new Regex(Properties.Settings.Default.NllbSentenceFinalPunctuationRegex);
         public bool IsSplitSentences = Properties.Settings.Default.NllbProcessSentenceBySentence;
@@ -165,7 +168,7 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
                 ref conversionType, ref processTypeFlags, codePageInput, codePageOutput, bAdding );
 
             if (!ParseConverterIdentifier(converterSpec, out string pathToDockerProject, out FromLanguage, out ToLanguage,
-                                         out ApiKey, out Endpoint))
+                                         out ApiKey, out Endpoint, out PathToLocalModel))
             {
                 throw new ApplicationException($"{CstrDisplayName} not properly configured! converterName: {converterName}");
             }
@@ -191,8 +194,17 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
             Util.DebugWriteLine(this, "END");
         }
 
+        public static void SearchForSetting(Regex regex, string settingsFileContents, ref string apiKey)
+        {
+            var match = regex.Match(settingsFileContents);
+            if (match.Success)
+            {
+                apiKey = match.Groups[1].Value;
+            }
+        }
+
         internal static bool ParseConverterIdentifier(string converterSpec, out string pathToDockerProject,
-            out string fromLanguage, out string toLanguage, out string apiKey, out string endpoint)
+            out string fromLanguage, out string toLanguage, out string apiKey, out string endpoint, out string pathToLocalModel)
         {
             toLanguage = null;
 
@@ -208,7 +220,50 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
             endpoint = (astrs.Length >= 4) ? astrs[3] : NllbTranslatorEndpoint;
             apiKey = (astrs.Length >= 5) ? EncryptionClass.Decrypt(astrs[4]) : NllbTranslatorApiKey;
 
+            // check if the settings.py file has a value for LOCAL_MODEL_PATH, and if so, then that's the path to the local model.
+            pathToLocalModel = null;
+            var pathToSettingsPy = Path.Combine(pathToDockerProject, "settings.py");
+            if (File.Exists(pathToSettingsPy))
+            {
+                SearchForSetting(RegexLocalModelPath, File.ReadAllText(pathToSettingsPy), ref pathToLocalModel);
+            }
             return true;
+        }
+
+        public static bool LocalModelFoundExists(string text)
+        {
+            return !String.IsNullOrEmpty(text) && Directory.Exists(text);
+        }
+
+        public static void FindLanguageNames(string srcLgCode, string trgLgCode, out string srcLgName, out string trgLgName)
+        {
+            var langCodeToName = LoadLanguageDictionary(Properties.Resources.LangCodeToNameMap);
+            srcLgName = langCodeToName.ContainsKey(srcLgCode) ? langCodeToName[srcLgCode] : srcLgCode;
+            trgLgName = langCodeToName.ContainsKey(trgLgCode) ? langCodeToName[trgLgCode] : trgLgCode;
+        }
+
+        private static Dictionary<string, string> LoadLanguageDictionary(string resourceText)
+        {
+            var dict = new Dictionary<string, string>();
+
+            foreach (var line in resourceText.Split(
+                new[] { "\r\n", "\n" },
+                StringSplitOptions.RemoveEmptyEntries).Skip(1))
+            {
+                var parts = line.Split('\t');
+
+                if (parts.Length < 2)
+                    continue;
+
+                var key = parts[0].Trim();
+                var value = parts[1].Trim();
+
+                // file has duplicate keys, but we only want to add the first occurrence to the dictionary, so check before adding
+                if (!dict.ContainsKey(key))
+                    dict.Add(key, value);
+            }
+
+            return dict;
         }
 
         public static async Task<bool> IsHttpServerListeningAsync(string endpoint, int timeoutMs = 500)

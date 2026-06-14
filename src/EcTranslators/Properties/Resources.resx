@@ -119,13 +119,19 @@
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="buildDocker" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\nllbtranslator\docker\builddocker.ps1;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\nllbtranslator\docker\builddocker.ps1;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="builddockerLocalModel" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\NllbTranslator\Docker\builddockerLocalModel.ps1;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
   <data name="DeepLTranslatorKeyDialogInstructionUrl" xml:space="preserve">
     <value>https://www.deepl.com/pro?cta=header-pro/</value>
   </data>
   <data name="Dockerfile" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\nllbtranslator\docker\dockerfile;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\nllbtranslator\docker\dockerfile;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="DockerfileLocalModel" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\NllbTranslator\Docker\DockerfileLocalModel;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
   <data name="GoogleCloudVertexCredentialsDialogInstructionUrl" xml:space="preserve">
     <value>https://cloud.google.com/vertex-ai/docs/start/cloud-environment</value>
@@ -237,18 +243,33 @@ See https://docs.microsoft.com/en-us/azure/cognitive-services/translator/languag
     <value>Enter the name of the language you want the Vertex AI Model to tranlate into (e.g. English)</value>
   </data>
   <data name="import_model" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\nllbtranslator\docker\import_model.py;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\nllbtranslator\docker\import_model.py;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
   <data name="index" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\nllbtranslator\docker\templates\index.html;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\nllbtranslator\docker\templates\index.html;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="indexLocalModel" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\NllbTranslator\Docker\templates\indexLocalModel.html;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="LangCodeToNameMap" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\LangCodeToNameMap.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
   <data name="README" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\nllbtranslator\docker\readme.md;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\nllbtranslator\docker\readme.md;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="READMELocalModel" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\NllbTranslator\Docker\READMELocalModel.md;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
   <data name="server" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\nllbtranslator\docker\server.py;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\nllbtranslator\docker\server.py;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="serverLocalModel" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\NllbTranslator\Docker\serverLocalModel.py;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
   <data name="settings" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\nllbtranslator\docker\settings.py;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\nllbtranslator\docker\settings.py;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="settingsLocalModel" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\NllbTranslator\Docker\settingsLocalModel.py;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
 </root>

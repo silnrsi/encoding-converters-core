@@ -6,7 +6,6 @@ using System.Linq;
 using System.Management;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using static System.Environment;
 
 namespace SilEncConverters40.EcTranslators.NllbTranslator
 {
@@ -75,20 +74,30 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
                     //  API_KEY = 'SIL-NLLB-Auth-Key your-api-key-here'
                     //  PORT = 8000
                     //  MODEL_NAME = 'facebook/nllb-200-distilled-600M'
-                    SearchForSetting(_regexApiKey, settingsFileContents, ref apiKey);
+                    NllbTranslatorEncConverter.SearchForSetting(_regexApiKey, settingsFileContents, ref apiKey);
                     var port = DefaultPort;
-                    SearchForSetting(_regexFindPortInEndpoint, endpoint, ref port);
+                    NllbTranslatorEncConverter.SearchForSetting(_regexFindPortInEndpoint, endpoint, ref port);
 
                     // port now contains the value that came in from the caller. Keep it so we can replace it after the next step
                     var endpointPort = port;
-                    SearchForSetting(_regexPort, settingsFileContents, ref port);
+                    NllbTranslatorEncConverter.SearchForSetting(_regexPort, settingsFileContents, ref port);
                     if (endpointPort != port)
                         endpoint = endpoint.Replace(endpointPort, port);
 
-                    SearchForSetting(_regexModelName, settingsFileContents, ref modelName);
+                    // first check if the model is local
+                    string localModelPath = null;
+                    NllbTranslatorEncConverter.SearchForSetting(NllbTranslatorEncConverter.RegexLocalModelPath, settingsFileContents, ref localModelPath);
+                    if (NllbTranslatorEncConverter.LocalModelFoundExists(localModelPath))
+                    {
+                        modelName = localModelPath;
+                    }
+                    else
+                    {
+                        NllbTranslatorEncConverter.SearchForSetting(_regexModelName, settingsFileContents, ref modelName);
+                    }
 
                     var device = $"{DefaultDeviceIndex}";   // assume cpu
-                    SearchForSetting(_regexDevice, settingsFileContents, ref device);
+                    NllbTranslatorEncConverter.SearchForSetting(_regexDevice, settingsFileContents, ref device);
                     nDevice = Int32.Parse(device);
                 }
             }
@@ -107,18 +116,14 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
 
             toolTip.SetToolTip(buttonOK, $"Click this button to {action} the Docker Project Files in the '{_pathToDockerProjectFolder}' folder with the above settings.");
 
-            comboBoxNllbModel.SelectedItem = modelName;
+            // Set the combobox value - if the value exists in Items select it, otherwise put it in the editable text
+            if (comboBoxNllbModel.Items.Contains(modelName))
+                comboBoxNllbModel.SelectedItem = modelName;
+            else
+                comboBoxNllbModel.Text = modelName;
+
             TranslatorApiKey = apiKey;
             Endpoint = endpoint;
-        }
-
-        private void SearchForSetting(Regex regex, string settingsFileContents, ref string apiKey)
-        {
-            var match = regex.Match(settingsFileContents);
-            if (match.Success)
-            {
-                apiKey = match.Groups[1].Value;
-            }
         }
 
         public static bool HasGpu()
@@ -180,6 +185,10 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
             }
         }
 
+        public string FromLanguageName;
+
+        public string ToLanguageName;
+
         private string _port = DefaultPort;
         public string Port
         {
@@ -208,18 +217,21 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
             // create the files using the entered information. All the model configuration settings will
             //    be stored in the settings.py file and used from there for the other scripts/files.
             var port = DefaultPort;
-            SearchForSetting(_regexFindPortInEndpoint, textBoxNllbEndpoint.Text, ref port);
+            NllbTranslatorEncConverter.SearchForSetting(_regexFindPortInEndpoint, textBoxNllbEndpoint.Text, ref port);
             Port = port;
 
-            ModelName = comboBoxNllbModel.SelectedItem.ToString();
+            // use the editable text of the combobox so either a HF model or a local path is supported
+            ModelName = comboBoxNllbModel.Text;
+
+            var isLocalModel = radioButtonLocalModel.Checked && NllbTranslatorEncConverter.LocalModelFoundExists(ModelName);
 
             Device = checkBoxUseGpu.Checked ? 0 : DefaultDeviceIndex;
 
             //  first the index.html template
             var htmlFilePath = Path.Combine(_pathToDockerProjectFolder, "templates");
-            if (!Directory.Exists(htmlFilePath)) 
+            if (!Directory.Exists(htmlFilePath))
                 Directory.CreateDirectory(htmlFilePath);
-            File.WriteAllText(Path.Combine(htmlFilePath, FileNameIndexHtml), Properties.Resources.index);
+            File.WriteAllText(Path.Combine(htmlFilePath, FileNameIndexHtml), isLocalModel ? Properties.Resources.indexLocalModel : Properties.Resources.index);
 
             // the Dockerfile
             var cpuAddition = AddDockerCpu;
@@ -228,11 +240,12 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
                 cpuAddition = AddDockerGpu;
             }
 
-            var dockerFileContents = String.Format(Properties.Resources.Dockerfile, cpuAddition);
+            var dockerFileContents = String.Format(isLocalModel ?  Properties.Resources.DockerfileLocalModel : Properties.Resources.Dockerfile, cpuAddition);
             File.WriteAllText(Path.Combine(_pathToDockerProjectFolder, FileNameDockerfile), dockerFileContents);
 
-            // the import_model.py file
-            File.WriteAllText(Path.Combine(_pathToDockerProjectFolder, FileNamePyImportModel), Properties.Resources.import_model);
+            // the import_model.py file (not needed for the local model)
+            if (!isLocalModel)
+                File.WriteAllText(Path.Combine(_pathToDockerProjectFolder, FileNamePyImportModel),Properties.Resources.import_model);
 
             // the README.md file
             var gpuAddition = String.Empty;
@@ -241,35 +254,149 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
                 gpuAddition = String.Format(AddGpuToDockerRunCommandFormat, Device);
             }
 
-            var readmeFileContents = String.Format(Properties.Resources.README, ModelNameSuffix, Port, gpuAddition);
-            var pathToReadme = Path.Combine(_pathToDockerProjectFolder, FileNameReadme);
-            File.WriteAllText(pathToReadme, readmeFileContents);
+            // the settings.py file
+            var translatorApiKey = TranslatorApiKey?.Trim();
+            if (!String.IsNullOrEmpty(translatorApiKey))
+                translatorApiKey = NllbTranslatorEncConverter.NllbAuthenticationPrefix + translatorApiKey;
 
             // the build powershell script file
             //  NB: this turned out to be a mostly non-starter, since script we would create here can't be run normally
             //    so the instructions now say, look in the README.md file to see what the commands to run manually are.
             //    but for those users who know how to enable this... create it anyway
             var pathToPsScript = Path.Combine(_pathToDockerProjectFolder, FileNamePs1BuildDocker);
-            var buildPsScriptContents = String.Format(Properties.Resources.buildDocker, ModelNameSuffix, Port, gpuAddition);
+            var pathToReadme = Path.Combine(_pathToDockerProjectFolder, FileNameReadme);
+
+            var srcLgCode = "src";
+            var trgLgCode = "trg";
+            string buildPsScriptContents, readmeFileContents, settingsFileContents;
+            if (isLocalModel)
+            {
+                // for local models, we need to get the source and target lang codes from the config.yaml file, which looks like this:
+                //    src: hi-xnrhin_2026_02_16
+                //    trg: xnr-xnr_2026_02_16
+                // or in regex: "src:\s(.*?)-.*?trg:\s(.*?)-"
+                var configFile = Directory.GetFiles(ModelName, "config.yml", SearchOption.AllDirectories).FirstOrDefault();
+                if (!String.IsNullOrEmpty(configFile) && File.Exists(configFile))
+                {
+                    var configFileContents = File.ReadAllText(configFile);
+                    var match = Regex.Match(configFileContents, @"src:\s(.*?)-.*?trg:\s(.*?)-", RegexOptions.Singleline);
+                    if (match.Success)
+                    {
+                        FromLanguageName = srcLgCode = match.Groups[1].ToString();
+                        ToLanguageName = trgLgCode = match.Groups[2].ToString();
+                    }
+                }
+
+                buildPsScriptContents = String.Format(Properties.Resources.builddockerLocalModel,
+                                                      srcLgCode, trgLgCode, Port, ModelName, gpuAddition);
+
+                string srcLgName, trgLgName;
+                NllbTranslatorEncConverter.FindLanguageNames(srcLgCode, trgLgCode, out srcLgName, out trgLgName);
+
+                readmeFileContents = String.Format(Properties.Resources.READMELocalModel, srcLgCode, trgLgCode, Port, ModelName, gpuAddition,
+                                                srcLgName, trgLgName);
+
+                settingsFileContents = string.Format(Properties.Resources.settingsLocalModel, $"'{translatorApiKey}'", Port, ModelName, Device, srcLgCode, trgLgCode, srcLgName, trgLgName);
+            }
+            else
+            {
+                buildPsScriptContents = String.Format(Properties.Resources.buildDocker, ModelNameSuffix, Port, gpuAddition);
+                readmeFileContents = String.Format(Properties.Resources.README, ModelName, Port, gpuAddition);
+                settingsFileContents = string.Format(Properties.Resources.settings, $"'{translatorApiKey}'", Port, $"'{ModelName}'", Device);
+            }
+
             File.WriteAllText(pathToPsScript, buildPsScriptContents);
+            File.WriteAllText(pathToReadme, readmeFileContents);
 
             // the server.py file
-            File.WriteAllText(Path.Combine(_pathToDockerProjectFolder, FileNamePyServer), Properties.Resources.server);
+            File.WriteAllText(Path.Combine(_pathToDockerProjectFolder, FileNamePyServer),
+                                isLocalModel ? Properties.Resources.serverLocalModel : Properties.Resources.server);
 
-            // the settings.py file
-            var translatorApiKey = TranslatorApiKey?.Trim();
-            if (!String.IsNullOrEmpty(translatorApiKey))
-                translatorApiKey = NllbTranslatorEncConverter.NllbAuthenticationPrefix + translatorApiKey;
-
-            var settingsFileContents = string.Format(Properties.Resources.settings,
-                                                     $"'{translatorApiKey}'", Port, $"'{ModelName}'", Device);
             File.WriteAllText(Path.Combine(_pathToDockerProjectFolder, FileNamePySettings), settingsFileContents);
 
             MessageBox.Show($"If you have Docker installed and a recent version of Powershell (see instructions on the About tab), open a Powershell Window and run the two 'docker' commands listed in the '{pathToReadme}' file to build the NLLB Docker project (or run them in the '{pathToPsScript}' script if you know how to enable running scripts from the internet). When finished, return to this message and click 'OK' to connect to the launched endpoint and continue.",
                             EncConverters.cstrCaption);
 
+            LaunchProgram(textBoxNllbEndpoint.Text, null);
+
             DialogResult = DialogResult.OK;
             Close();
+        }
+
+        static protected void LaunchProgram(string strProgram, string strArguments)
+        {
+            try
+            {
+                Process myProcess = new Process();
+
+                myProcess.StartInfo.FileName = strProgram;
+                myProcess.StartInfo.Arguments = strArguments;
+                myProcess.Start();
+                // we don't want to wait...
+                // myProcess.WaitForExit();    // wait until finished, so we can reinitialize when done add/removing
+            }
+            catch { }    // we tried...
+        }
+
+        // When model location radio selection changes:
+        // - If local folder selected: show a FolderBrowserDialog. If user picks a folder, put the path into the combobox text.
+        // - If the user cancels the folder picker, revert selection back to Hugging Face.
+        private void radioButtonModelLocation_CheckedChanged(object sender, EventArgs e)
+        {
+            var radioButton = sender as RadioButton;
+            if (!radioButton.Checked && (radioButton == radioButtonLocalModel))
+            {
+                // this means a Local Model path was set in the combo box, but the user clicked the Hugging face radio button
+                comboBoxNllbModel.SelectedIndex = 1;
+            }
+
+            if (NllbTranslatorEncConverter.LocalModelFoundExists(comboBoxNllbModel.Text))
+            {
+                if (radioButton.Checked && (radioButton == radioButtonHuggingFace))
+                    return;
+                if (!radioButtonLocalModel.Checked)
+                    radioButtonLocalModel.Checked = true;
+                return;
+            }
+            if ((radioButton.Checked == radioButtonLocalModel.Checked) && radioButtonLocalModel.Checked)
+            {
+                using (var dlg = new FolderBrowserDialog())
+                {
+                    dlg.Description = "Select local fine-tuned NLLB model folder";
+                    dlg.ShowNewFolderButton = false;
+                    if (dlg.ShowDialog() == DialogResult.OK)
+                    {
+                        var path = dlg.SelectedPath;
+                        // Add to combobox items for convenience and set as text/selection
+                        if (!comboBoxNllbModel.Items.Contains(path))
+                            comboBoxNllbModel.Items.Insert(0, path);
+                        comboBoxNllbModel.Text = path;
+                    }
+                    else
+                    {
+                        // user cancelled - revert to hugging face option
+                        radioButtonHuggingFace.Checked = true;
+                    }
+                }
+            }
+            else
+            {
+                // Hugging Face selected: keep existing items (predefined HF model names).
+                // If the combobox currently contains a local path as text, don't change it automatically.
+                comboBoxNllbModel.SelectedIndex = 1;
+            }
+        }
+
+        private void comboBoxNllbModel_TextChanged(object sender, EventArgs e)
+        {
+            if (NllbTranslatorEncConverter.LocalModelFoundExists(comboBoxNllbModel.Text))
+            {
+                radioButtonLocalModel.Checked = true;
+            }
+            else
+            {
+                radioButtonHuggingFace.Checked = true;
+            }
         }
     }
 }

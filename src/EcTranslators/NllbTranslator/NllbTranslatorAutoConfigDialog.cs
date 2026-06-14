@@ -16,7 +16,7 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
     {
         private readonly ComboBoxItem SourceLanguageNameMustBeConfigured = new ComboBoxItem { Display = "Select Source Language" };
         private readonly ComboBoxItem TargetLanguageNameMustBeConfigured = new ComboBoxItem { Display = "Select Target Language" };
-        private string ModelNameSuffix = String.Empty;	// so we can add it to the friendly name -- but only works if the user edits (which they should do, but...)
+        private string ModelNameSuffix = String.Empty;    // so we can add it to the friendly name -- but only works if the user edits (which they should do, but...)
 
         public NllbTranslatorAutoConfigDialog
             (
@@ -57,17 +57,19 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
                 System.Diagnostics.Debug.Assert(!String.IsNullOrEmpty(ConverterIdentifier));
 
                 ParseConverterIdentifier(ConverterIdentifier, out string pathToDockerProject, out string fromLanguage, out string toLanguage,
-                                         out string apiKey, out string endpoint);
+                                         out string apiKey, out string endpoint, out string localModelPath);
 
-                var languagesSupported = GetLanguagesSupportedAndInitializeComboBoxes(true, apiKey, endpoint);
-                if (languagesSupported == null)
+				DockerProjectFolderPath = pathToDockerProject;
+				IsModified = false;
+
+				var isLocalModel = LocalModelFoundExists(localModelPath);
+				var languagesSupported = GetLanguagesSupportedAndInitializeComboBoxes(true, apiKey, endpoint, fromLanguage, toLanguage, isLocalModel);
+                if ((languagesSupported == null) && !isLocalModel)
                     return;
 
-                DockerProjectFolderPath = pathToDockerProject;
                 var selectedItem = comboBoxSourceLanguages.Items.Cast<ComboBoxItem>().FirstOrDefault(l => l.Code == fromLanguage);
                 comboBoxSourceLanguages.SelectedItem = selectedItem;
                 comboBoxTargetLanguages.SelectedItem = languagesSupported.FirstOrDefault(l => l.Code == toLanguage);
-                IsModified = false;
             }
             else
             {
@@ -79,7 +81,7 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
                 if (!String.IsNullOrEmpty(apiKey) && !String.IsNullOrEmpty(endpoint)
                     && IsHttpServerListeningAsync(endpoint).Result)
                 {
-                    GetLanguagesSupportedAndInitializeComboBoxes(false, apiKey, endpoint);
+                    GetLanguagesSupportedAndInitializeComboBoxes(false, apiKey, endpoint, null, null, isLocalModel: false);
                 }
                 else
                     buttonConfigureNllbModel.Enabled = !String.IsNullOrEmpty(DockerProjectFolderPath);    // until the path is chosen
@@ -97,26 +99,44 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
             Util.DebugWriteLine(this, "END");
         }
 
-        private List<ComboBoxItem> GetLanguagesSupportedAndInitializeComboBoxes(bool showError, string apiKey, string endpoint)
+        private List<ComboBoxItem> GetLanguagesSupportedAndInitializeComboBoxes(bool showError, string apiKey, string endpoint,
+                                                                                string fromLanguage, string toLanguage, bool isLocalModel)
         {
-            // for our purposes here, we only need the Model configuration (so we can hit the endpoint for languages supported);
-            //  not the specific languages we want to convert To/From. So we don't want to use 'OnApply' here, bkz it will fails
-            //  so just create a temporary one and set the key/endpoint and use it to get the languages supported.
-            var theNllbEncConverter = new NllbTranslatorEncConverter
-            {
-                ApiKey = apiKey,
-                Endpoint = endpoint
-            };
-            var langMap = theNllbEncConverter.GetCapabilities(showError).GetAwaiter().GetResult();
-            if (langMap == null)
-                return null;
+			Dictionary<string, string> langMap;
+			if (isLocalModel)
+			{
+				FindLanguageNames(fromLanguage, toLanguage, out string srcLgName, out string tgtLgName);
+				comboBoxSourceLanguages.Items.Clear();
+				var srcItem = new ComboBoxItem { Code = fromLanguage, Display = srcLgName };
+				var trgItem = new ComboBoxItem { Code = toLanguage, Display = tgtLgName };
+				comboBoxSourceLanguages.Items.Add(srcItem);
+				comboBoxSourceLanguages.SelectedItem = srcItem;
+				comboBoxTargetLanguages.Items.Clear();
+				comboBoxTargetLanguages.Items.Add(trgItem);
+				comboBoxTargetLanguages.SelectedItem = trgItem;
+				return null;
+			}
+			else
+			{
+				// for our purposes here, we only need the Model configuration (so we can hit the endpoint for languages supported);
+				//  not the specific languages we want to convert To/From. So we don't want to use 'OnApply' here, bkz it will fails
+				//  so just create a temporary one and set the key/endpoint and use it to get the languages supported.
+				var theNllbEncConverter = new NllbTranslatorEncConverter
+				{
+					ApiKey = apiKey,
+					Endpoint = endpoint
+				};
+				langMap = theNllbEncConverter.GetCapabilities(showError).GetAwaiter().GetResult();
+				if (langMap == null)
+					return null;
 
-            var languagesSupported = langMap.Select(kvp => new ComboBoxItem { Code = kvp.Key, Display = kvp.Value })
-                                            .OrderBy(c => c.Display)
-                                            .ToList();
-            InitializeSourceAndTargetLanguages(languagesSupported);
-            return languagesSupported;
-        }
+				var languagesSupported = langMap.Select(kvp => new ComboBoxItem { Code = kvp.Key, Display = kvp.Value })
+												.OrderBy(c => c.Display)
+												.ToList();
+				InitializeSourceAndTargetLanguages(languagesSupported);
+				return languagesSupported;
+			}
+		}
 
         public NllbTranslatorAutoConfigDialog
             (
@@ -170,7 +190,7 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
             // for this converter, use the source and target language codes (e.g. hin_Deva) as the converter identifier
             // UPDATE: also include the path to the project and the API key (encrypted) and the Endpoint, since it's
             //  possible to have multiple models running. The latter two can be blank, though to just revert to the
-            //  defaults (i.e. your-api-key-here and http://localhost:8000, respectively)
+            //  defaults (i.e. '' and http://localhost:8000, respectively)
             // P.S. no need to validate them, bkz if they don't exist, then we wouldn't have the selectedLgs either
             ConverterIdentifier = String.Format("{0};{1};{2};{3};{4}",
                 dockerProjectFolder,
@@ -285,10 +305,11 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
                 Properties.Settings.Default.Save();
 
                 m_aEC = null;    // reset the associated EncConverter instance so it'll get rebuilt w/ the new parameters
-                ModelNameSuffix = dlg.ModelNameSuffix;	// so we can add it to the DefaultFriendlyName
+                ModelNameSuffix = dlg.ModelNameSuffix;    // so we can add it to the DefaultFriendlyName
 
                 // in case something changed, reinitialize the combo boxes
-                GetLanguagesSupportedAndInitializeComboBoxes(m_bInitialized, dlg.TranslatorApiKey, dlg.Endpoint);
+                GetLanguagesSupportedAndInitializeComboBoxes(m_bInitialized, dlg.TranslatorApiKey, dlg.Endpoint,
+															 dlg.FromLanguageName, dlg.ToLanguageName, LocalModelFoundExists(dlg.ModelName));
             }
         }
 
@@ -316,6 +337,15 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
         private void ComboBoxTargetLanguages_SelectedIndexChanged_1(object sender, EventArgs e)
         {
             IsModified = true;
+        }
+
+        private void textBoxDockerProjectFolder_TextChanged(object sender, EventArgs e)
+            {
+            if (!String.IsNullOrEmpty(textBoxDockerProjectFolder.Text))
+            {
+                IsModified = true;
+                buttonConfigureNllbModel.Enabled = true;
+            }
         }
     }
 }

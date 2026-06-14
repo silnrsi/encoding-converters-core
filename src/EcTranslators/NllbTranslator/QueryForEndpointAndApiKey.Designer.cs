@@ -1,4 +1,3 @@
-
 namespace SilEncConverters40.EcTranslators.NllbTranslator
 {
     partial class QueryForEndpointAndApiKey
@@ -32,6 +31,9 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(QueryForEndpointAndApiKey));
             this.tableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
+            this.groupBoxModelLocation = new System.Windows.Forms.GroupBox();
+            this.radioButtonLocalModel = new System.Windows.Forms.RadioButton();
+            this.radioButtonHuggingFace = new System.Windows.Forms.RadioButton();
             this.labelNllbModel = new System.Windows.Forms.Label();
             this.comboBoxNllbModel = new System.Windows.Forms.ComboBox();
             this.labelNllbApiKey = new System.Windows.Forms.Label();
@@ -44,6 +46,7 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
             this.buttonCancel = new System.Windows.Forms.Button();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.tableLayoutPanel.SuspendLayout();
+            this.groupBoxModelLocation.SuspendLayout();
             this.SuspendLayout();
             // 
             // tableLayoutPanel
@@ -55,33 +58,77 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
             this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 40F));
             this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 60F));
-            this.tableLayoutPanel.Controls.Add(this.labelNllbModel, 0, 0);
-            this.tableLayoutPanel.Controls.Add(this.comboBoxNllbModel, 1, 0);
-            this.tableLayoutPanel.Controls.Add(this.labelNllbApiKey, 0, 1);
-            this.tableLayoutPanel.Controls.Add(this.textBoxNllbApiKey, 1, 1);
-            this.tableLayoutPanel.Controls.Add(this.labelNllbEndpoint, 0, 2);
-            this.tableLayoutPanel.Controls.Add(this.textBoxNllbEndpoint, 1, 2);
-            this.tableLayoutPanel.Controls.Add(this.checkBoxUseGpu, 1, 3);
-            this.tableLayoutPanel.Controls.Add(this.labelNllbInstructions, 0, 4);
-            this.tableLayoutPanel.Controls.Add(this.buttonOK, 1, 5);
-            this.tableLayoutPanel.Controls.Add(this.buttonCancel, 2, 5);
+            this.tableLayoutPanel.Controls.Add(this.groupBoxModelLocation, 1, 0);
+            this.tableLayoutPanel.Controls.Add(this.labelNllbModel, 0, 1);
+            this.tableLayoutPanel.Controls.Add(this.comboBoxNllbModel, 1, 1);
+            this.tableLayoutPanel.Controls.Add(this.labelNllbApiKey, 0, 2);
+            this.tableLayoutPanel.Controls.Add(this.textBoxNllbApiKey, 1, 2);
+            this.tableLayoutPanel.Controls.Add(this.labelNllbEndpoint, 0, 3);
+            this.tableLayoutPanel.Controls.Add(this.textBoxNllbEndpoint, 1, 3);
+            this.tableLayoutPanel.Controls.Add(this.checkBoxUseGpu, 1, 4);
+            this.tableLayoutPanel.Controls.Add(this.labelNllbInstructions, 0, 5);
+            this.tableLayoutPanel.Controls.Add(this.buttonOK, 1, 6);
+            this.tableLayoutPanel.Controls.Add(this.buttonCancel, 2, 6);
             this.tableLayoutPanel.Location = new System.Drawing.Point(12, 12);
             this.tableLayoutPanel.Name = "tableLayoutPanel";
-            this.tableLayoutPanel.RowCount = 6;
+            this.tableLayoutPanel.RowCount = 7;
+            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 50F));
             this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 50F));
             this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 50F));
             this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 50F));
             this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 50F));
             this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel.Size = new System.Drawing.Size(611, 304);
+            this.tableLayoutPanel.Size = new System.Drawing.Size(611, 377);
             this.tableLayoutPanel.TabIndex = 0;
+            // 
+            // groupBoxModelLocation
+            // 
+            this.tableLayoutPanel.SetColumnSpan(this.groupBoxModelLocation, 2);
+            this.groupBoxModelLocation.Controls.Add(this.radioButtonLocalModel);
+            this.groupBoxModelLocation.Controls.Add(this.radioButtonHuggingFace);
+            this.groupBoxModelLocation.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.groupBoxModelLocation.Location = new System.Drawing.Point(79, 3);
+            this.groupBoxModelLocation.Name = "groupBoxModelLocation";
+            this.groupBoxModelLocation.Size = new System.Drawing.Size(529, 44);
+            this.groupBoxModelLocation.TabIndex = 13;
+            this.groupBoxModelLocation.TabStop = false;
+            this.groupBoxModelLocation.Text = "Model &Location";
+            // 
+            // radioButtonLocalModel
+            // 
+            this.radioButtonLocalModel.AutoSize = true;
+            this.radioButtonLocalModel.Location = new System.Drawing.Point(264, 19);
+            this.radioButtonLocalModel.Name = "radioButtonLocalModel";
+            this.radioButtonLocalModel.Size = new System.Drawing.Size(83, 17);
+            this.radioButtonLocalModel.TabIndex = 1;
+            this.radioButtonLocalModel.Text = "Local Folder";
+            this.toolTip.SetToolTip(this.radioButtonLocalModel, "Select this option if you have a local model downloaded on this computer to use. " +
+        "Be sure that all the *.safetensors and model configuration *.json files are in t" +
+        "he folder you select.");
+            this.radioButtonLocalModel.UseVisualStyleBackColor = true;
+            this.radioButtonLocalModel.CheckedChanged += new System.EventHandler(this.radioButtonModelLocation_CheckedChanged);
+            // 
+            // radioButtonHuggingFace
+            // 
+            this.radioButtonHuggingFace.AutoSize = true;
+            this.radioButtonHuggingFace.Checked = true;
+            this.radioButtonHuggingFace.Location = new System.Drawing.Point(94, 19);
+            this.radioButtonHuggingFace.Name = "radioButtonHuggingFace";
+            this.radioButtonHuggingFace.Size = new System.Drawing.Size(92, 17);
+            this.radioButtonHuggingFace.TabIndex = 0;
+            this.radioButtonHuggingFace.TabStop = true;
+            this.radioButtonHuggingFace.Text = "&Hugging Face";
+            this.toolTip.SetToolTip(this.radioButtonHuggingFace, "Select this option to choose one of the existing NLLB models on Hugging Face from" +
+        " the drop-down list");
+            this.radioButtonHuggingFace.UseVisualStyleBackColor = true;
+            this.radioButtonHuggingFace.CheckedChanged += new System.EventHandler(this.radioButtonModelLocation_CheckedChanged);
             // 
             // labelNllbModel
             // 
             this.labelNllbModel.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.labelNllbModel.AutoSize = true;
-            this.labelNllbModel.Location = new System.Drawing.Point(4, 18);
+            this.labelNllbModel.Location = new System.Drawing.Point(4, 68);
             this.labelNllbModel.Name = "labelNllbModel";
             this.labelNllbModel.Size = new System.Drawing.Size(69, 13);
             this.labelNllbModel.TabIndex = 1;
@@ -91,23 +138,23 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
             // 
             this.comboBoxNllbModel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.tableLayoutPanel.SetColumnSpan(this.comboBoxNllbModel, 2);
-            this.comboBoxNllbModel.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxNllbModel.FormattingEnabled = true;
             this.comboBoxNllbModel.Items.AddRange(new object[] {
             "facebook/nllb-200-distilled-600M",
             "facebook/nllb-200-distilled-1.3B",
             "facebook/nllb-200-3.3B"});
-            this.comboBoxNllbModel.Location = new System.Drawing.Point(79, 14);
+            this.comboBoxNllbModel.Location = new System.Drawing.Point(79, 64);
             this.comboBoxNllbModel.Name = "comboBoxNllbModel";
             this.comboBoxNllbModel.Size = new System.Drawing.Size(529, 21);
             this.comboBoxNllbModel.TabIndex = 2;
             this.toolTip.SetToolTip(this.comboBoxNllbModel, resources.GetString("comboBoxNllbModel.ToolTip"));
+            this.comboBoxNllbModel.TextChanged += new System.EventHandler(this.comboBoxNllbModel_TextChanged);
             // 
             // labelNllbApiKey
             // 
             this.labelNllbApiKey.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.labelNllbApiKey.AutoSize = true;
-            this.labelNllbApiKey.Location = new System.Drawing.Point(27, 68);
+            this.labelNllbApiKey.Location = new System.Drawing.Point(27, 118);
             this.labelNllbApiKey.Name = "labelNllbApiKey";
             this.labelNllbApiKey.Size = new System.Drawing.Size(46, 13);
             this.labelNllbApiKey.TabIndex = 3;
@@ -117,7 +164,7 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
             // 
             this.textBoxNllbApiKey.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.tableLayoutPanel.SetColumnSpan(this.textBoxNllbApiKey, 2);
-            this.textBoxNllbApiKey.Location = new System.Drawing.Point(79, 65);
+            this.textBoxNllbApiKey.Location = new System.Drawing.Point(79, 115);
             this.textBoxNllbApiKey.Name = "textBoxNllbApiKey";
             this.textBoxNllbApiKey.Size = new System.Drawing.Size(529, 20);
             this.textBoxNllbApiKey.TabIndex = 4;
@@ -128,7 +175,7 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
             // 
             this.labelNllbEndpoint.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.labelNllbEndpoint.AutoSize = true;
-            this.labelNllbEndpoint.Location = new System.Drawing.Point(3, 118);
+            this.labelNllbEndpoint.Location = new System.Drawing.Point(3, 168);
             this.labelNllbEndpoint.Name = "labelNllbEndpoint";
             this.labelNllbEndpoint.Size = new System.Drawing.Size(70, 13);
             this.labelNllbEndpoint.TabIndex = 5;
@@ -138,7 +185,7 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
             // 
             this.textBoxNllbEndpoint.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.tableLayoutPanel.SetColumnSpan(this.textBoxNllbEndpoint, 2);
-            this.textBoxNllbEndpoint.Location = new System.Drawing.Point(79, 115);
+            this.textBoxNllbEndpoint.Location = new System.Drawing.Point(79, 165);
             this.textBoxNllbEndpoint.Name = "textBoxNllbEndpoint";
             this.textBoxNllbEndpoint.Size = new System.Drawing.Size(529, 20);
             this.textBoxNllbEndpoint.TabIndex = 6;
@@ -150,7 +197,7 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
             // 
             this.checkBoxUseGpu.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.checkBoxUseGpu.AutoSize = true;
-            this.checkBoxUseGpu.Location = new System.Drawing.Point(79, 166);
+            this.checkBoxUseGpu.Location = new System.Drawing.Point(79, 216);
             this.checkBoxUseGpu.Name = "checkBoxUseGpu";
             this.checkBoxUseGpu.Size = new System.Drawing.Size(115, 17);
             this.checkBoxUseGpu.TabIndex = 12;
@@ -164,9 +211,9 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
             this.labelNllbInstructions.AutoSize = true;
             this.tableLayoutPanel.SetColumnSpan(this.labelNllbInstructions, 3);
             this.labelNllbInstructions.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.labelNllbInstructions.Location = new System.Drawing.Point(3, 200);
+            this.labelNllbInstructions.Location = new System.Drawing.Point(3, 250);
             this.labelNllbInstructions.Name = "labelNllbInstructions";
-            this.labelNllbInstructions.Size = new System.Drawing.Size(605, 75);
+            this.labelNllbInstructions.Size = new System.Drawing.Size(605, 98);
             this.labelNllbInstructions.TabIndex = 9;
             this.labelNllbInstructions.Text = "See the instructions on the About tab for how to build your NLLB Docker Container" +
     " to support an API Key, modify the port number and serve it to the local area ne" +
@@ -176,7 +223,7 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
             // buttonOK
             // 
             this.buttonOK.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.buttonOK.Location = new System.Drawing.Point(132, 278);
+            this.buttonOK.Location = new System.Drawing.Point(132, 351);
             this.buttonOK.Name = "buttonOK";
             this.buttonOK.Size = new System.Drawing.Size(155, 23);
             this.buttonOK.TabIndex = 10;
@@ -188,7 +235,7 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
             // 
             this.buttonCancel.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonCancel.Location = new System.Drawing.Point(293, 278);
+            this.buttonCancel.Location = new System.Drawing.Point(293, 351);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(75, 23);
             this.buttonCancel.TabIndex = 11;
@@ -201,13 +248,15 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonCancel;
-            this.ClientSize = new System.Drawing.Size(635, 328);
+            this.ClientSize = new System.Drawing.Size(635, 401);
             this.Controls.Add(this.tableLayoutPanel);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "QueryForEndpointAndApiKey";
             this.Text = "NLLB Model Configuration";
             this.tableLayoutPanel.ResumeLayout(false);
             this.tableLayoutPanel.PerformLayout();
+            this.groupBoxModelLocation.ResumeLayout(false);
+            this.groupBoxModelLocation.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -225,6 +274,9 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
         private System.Windows.Forms.TextBox textBoxNllbApiKey;
         private System.Windows.Forms.TextBox textBoxNllbEndpoint;
         private System.Windows.Forms.ComboBox comboBoxNllbModel;
-		private System.Windows.Forms.CheckBox checkBoxUseGpu;
-	}
+        private System.Windows.Forms.CheckBox checkBoxUseGpu;
+        private System.Windows.Forms.GroupBox groupBoxModelLocation;
+        private System.Windows.Forms.RadioButton radioButtonHuggingFace;
+        private System.Windows.Forms.RadioButton radioButtonLocalModel;
+    }
 }

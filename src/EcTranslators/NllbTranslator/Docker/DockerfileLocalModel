@@ -10,9 +10,6 @@ RUN pip install protobuf
 
 # Copy settings first so import_model.py can validate paths
 COPY settings.py .
-COPY import_model.py .
-
-RUN python import_model.py
 
 # Validate model availability (this will check if model exists on host when container is run with proper volume mount)
 # Note: The actual model validation happens at runtime in server.py since this container uses

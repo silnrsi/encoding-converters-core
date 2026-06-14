@@ -49,8 +49,8 @@ def translate_text():
         text_to_translate = data['text']
 
         translator = pipeline('translation', model=model, tokenizer=tokenizer,
-		                      src_lang=source_language, tgt_lang=target_language,
-							  max_length=400, device=DEVICE)
+                              src_lang=source_language, tgt_lang=target_language,
+                              max_length=400, device=DEVICE)
 
         translated_text = translator(text_to_translate)[0]['translation_text']
 

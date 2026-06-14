@@ -115,6 +115,7 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
             this.textBoxDockerProjectFolder.Name = "textBoxDockerProjectFolder";
             this.textBoxDockerProjectFolder.Size = new System.Drawing.Size(439, 20);
             this.textBoxDockerProjectFolder.TabIndex = 2;
+            this.textBoxDockerProjectFolder.TextChanged += new System.EventHandler(this.textBoxDockerProjectFolder_TextChanged);
             // 
             // buttonBrowse
             // 

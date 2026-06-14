@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ SOURCE_LANG_NAME }} to {{ TARGET_LANG_NAME }} Translator</title>
+    <style>
+        html {
+            box-sizing: border-box;
+        }
+
+        *,
+        *:before,
+        *:after {
+            box-sizing: inherit;
+        }
+
+        #wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-column-gap: 2em;
+        }
+
+        #input,
+        #output {
+            width: 100%;
+            height: 10em;
+            border: 1px solid grey;
+            font-size: 1rem;
+            padding: 0.5rem;
+        }
+
+        #translateButton {
+            font-size: 1rem;
+        }
+
+        #endpoints {
+            font-family: monospace;
+        }
+
+        .language-info {
+            background-color: #f0f0f0;
+            padding: 1rem;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <h1>{{ SOURCE_LANG_NAME }} to {{ TARGET_LANG_NAME }} Translator</h1>
+    <div class="language-info">
+        <p><strong>Source Language:</strong> {{ SOURCE_LANG_NAME }} ({{ SOURCE_LANG }})</p>
+        <p><strong>Target Language:</strong> {{ TARGET_LANG_NAME }} ({{ TARGET_LANG }})</p>
+    </div>
+    <div id="wrapper">
+        <div id="source">
+            <h2>Source ({{ SOURCE_LANG_NAME }})</h2>
+            <textarea id="input" placeholder="Enter text to translate..."></textarea>
+            <button id="translateButton">Translate</button>
+        </div>
+        <div id="target">
+            <h2>Target ({{ TARGET_LANG_NAME }})</h2>
+            <div id="output" placeholder="Translated text will appear here..."></div>
+        </div>
+    </div>
+    <h2>API Instructions</h2>
+    <ul id="endpoints">
+        <li>GET /api/v1/translate/languages/</li>
+        <li>POST /api/v1/translate/ with sourceLanguage, targetLanguage, text</li>
+    </ul>
+    <script>
+      // Fetch supported languages on page load
+      async function start() {
+        const URL = `${location.origin}/api/v1/translate/languages/`;
+        console.log("Fetching languages from:", URL);
+        try {
+          const response = await fetch(URL, {
+            headers: { "Content-Type": "application/json" },
+          });
+          const languages = await response.json();
+          console.log("Languages:", languages);
+        } catch (e) {
+          console.error("Error fetching languages:", e);
+        }
+      }
+      start();
+
+      translateButton.addEventListener("click", async () => {
+        const text = input.value;
+        if (!text.trim()) {
+          alert("Please enter text to translate");
+          return;
+        }
+
+        const data = {
+          sourceLanguage: "{{ SOURCE_LANG }}",
+          targetLanguage: "{{ TARGET_LANG }}",
+          text,
+        };
+        try {
+          output.textContent = "Translating...";
+          const response = await fetch(`${location.origin}/api/v1/translate/`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+          });
+          const responseBody = await response.json();
+          if (!response.ok) {
+            console.error(response);
+            output.textContent = "Error: " + response.statusText;
+            alert("Error: " + (responseBody.error || response.statusText));
+          } else {
+            output.textContent = responseBody.translatedText;
+          }
+        } catch (e) {
+          console.error(e);
+          output.textContent = "Error: " + e.message;
+        }
+      });
+
+      // Allow Enter key to trigger translation
+      input.addEventListener("keydown", (e) => {
+        if (e.ctrlKey && e.key === "Enter") {
+          translateButton.click();
+        }
+      });
+    </script>
+</body>
+</html>
