@@ -41,6 +41,7 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
             this.labelNllbEndpoint = new System.Windows.Forms.Label();
             this.textBoxNllbEndpoint = new System.Windows.Forms.TextBox();
             this.checkBoxUseGpu = new System.Windows.Forms.CheckBox();
+            this.checkBoxPrivateHuggingFaceModel = new System.Windows.Forms.CheckBox();
             this.labelNllbInstructions = new System.Windows.Forms.Label();
             this.buttonOK = new System.Windows.Forms.Button();
             this.buttonCancel = new System.Windows.Forms.Button();
@@ -66,12 +67,14 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
             this.tableLayoutPanel.Controls.Add(this.labelNllbEndpoint, 0, 3);
             this.tableLayoutPanel.Controls.Add(this.textBoxNllbEndpoint, 1, 3);
             this.tableLayoutPanel.Controls.Add(this.checkBoxUseGpu, 1, 4);
-            this.tableLayoutPanel.Controls.Add(this.labelNllbInstructions, 0, 5);
-            this.tableLayoutPanel.Controls.Add(this.buttonOK, 1, 6);
-            this.tableLayoutPanel.Controls.Add(this.buttonCancel, 2, 6);
+            this.tableLayoutPanel.Controls.Add(this.checkBoxPrivateHuggingFaceModel, 1, 5);
+            this.tableLayoutPanel.Controls.Add(this.labelNllbInstructions, 0, 6);
+            this.tableLayoutPanel.Controls.Add(this.buttonOK, 1, 7);
+            this.tableLayoutPanel.Controls.Add(this.buttonCancel, 2, 7);
             this.tableLayoutPanel.Location = new System.Drawing.Point(12, 12);
             this.tableLayoutPanel.Name = "tableLayoutPanel";
-            this.tableLayoutPanel.RowCount = 7;
+            this.tableLayoutPanel.RowCount = 8;
+            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 50F));
             this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 50F));
             this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 50F));
             this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 50F));
@@ -79,7 +82,7 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
             this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 50F));
             this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel.Size = new System.Drawing.Size(611, 377);
+            this.tableLayoutPanel.Size = new System.Drawing.Size(611, 427);
             this.tableLayoutPanel.TabIndex = 0;
             // 
             // groupBoxModelLocation
@@ -205,13 +208,27 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
             this.toolTip.SetToolTip(this.checkBoxUseGpu, "Check this box if you want the NLLB translator to use your system\'s GPU (for impr" +
         "oved performance)");
             this.checkBoxUseGpu.UseVisualStyleBackColor = true;
-            // 
+            //
+            // checkBoxPrivateHuggingFaceModel
+            //
+            this.checkBoxPrivateHuggingFaceModel.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.checkBoxPrivateHuggingFaceModel.AutoSize = true;
+            this.checkBoxPrivateHuggingFaceModel.Location = new System.Drawing.Point(79, 266);
+            this.checkBoxPrivateHuggingFaceModel.Name = "checkBoxPrivateHuggingFaceModel";
+            this.checkBoxPrivateHuggingFaceModel.Size = new System.Drawing.Size(115, 17);
+            this.checkBoxPrivateHuggingFaceModel.TabIndex = 14;
+            this.checkBoxPrivateHuggingFaceModel.Text = "Private Hugging Face Model";
+            this.toolTip.SetToolTip(this.checkBoxPrivateHuggingFaceModel, "Check this box if the base model used to build the local fine-tuned model is in a " +
+        "private Hugging Face repo, so the Docker build can authenticate using your HF_TOKEN " +
+        "environment variable when downloading it (you must also add it as an environment variable to your system if it's not already).");
+            this.checkBoxPrivateHuggingFaceModel.UseVisualStyleBackColor = true;
+            //
             // labelNllbInstructions
-            // 
+            //
             this.labelNllbInstructions.AutoSize = true;
             this.tableLayoutPanel.SetColumnSpan(this.labelNllbInstructions, 3);
             this.labelNllbInstructions.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.labelNllbInstructions.Location = new System.Drawing.Point(3, 250);
+            this.labelNllbInstructions.Location = new System.Drawing.Point(3, 300);
             this.labelNllbInstructions.Name = "labelNllbInstructions";
             this.labelNllbInstructions.Size = new System.Drawing.Size(605, 98);
             this.labelNllbInstructions.TabIndex = 9;
@@ -223,7 +240,7 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
             // buttonOK
             // 
             this.buttonOK.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.buttonOK.Location = new System.Drawing.Point(132, 351);
+            this.buttonOK.Location = new System.Drawing.Point(132, 401);
             this.buttonOK.Name = "buttonOK";
             this.buttonOK.Size = new System.Drawing.Size(155, 23);
             this.buttonOK.TabIndex = 10;
@@ -235,7 +252,7 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
             // 
             this.buttonCancel.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonCancel.Location = new System.Drawing.Point(293, 351);
+            this.buttonCancel.Location = new System.Drawing.Point(293, 401);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(75, 23);
             this.buttonCancel.TabIndex = 11;
@@ -248,7 +265,7 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonCancel;
-            this.ClientSize = new System.Drawing.Size(635, 401);
+            this.ClientSize = new System.Drawing.Size(635, 451);
             this.Controls.Add(this.tableLayoutPanel);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "QueryForEndpointAndApiKey";
@@ -275,6 +292,7 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
         private System.Windows.Forms.TextBox textBoxNllbEndpoint;
         private System.Windows.Forms.ComboBox comboBoxNllbModel;
         private System.Windows.Forms.CheckBox checkBoxUseGpu;
+        private System.Windows.Forms.CheckBox checkBoxPrivateHuggingFaceModel;
         private System.Windows.Forms.GroupBox groupBoxModelLocation;
         private System.Windows.Forms.RadioButton radioButtonHuggingFace;
         private System.Windows.Forms.RadioButton radioButtonLocalModel;

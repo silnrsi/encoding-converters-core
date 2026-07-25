@@ -1,5 +1,9 @@
 FROM python:3.9
-    
+
+# Accept optional HuggingFace token as a build argument (passed via --build-arg HF_TOKEN=<your_token>)
+ARG HF_TOKEN
+ENV HF_TOKEN=${HF_TOKEN}
+
 # Install steps mostly taken from https://medium.com/mlearning-ai/text-translation-using-nllb-and-huggingface-tutorial-7e789e0f7816
 
 # Install main dependencies

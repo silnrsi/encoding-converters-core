@@ -17,6 +17,7 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
         public const string DefaultModelName = "facebook/nllb-200-distilled-600M";
         public const int DefaultDeviceIndex = -1;
         public const string AddGpuToDockerRunCommandFormat = "--gpus \"device={0}\" ";
+        public const string AddHuggingFaceTokenToDockerBuildCommand = "--build-arg HF_TOKEN=$env:HF_TOKEN ";
         public const string AddDockerCpu = "--index-url https://download.pytorch.org/whl/cpu   # if you switch to using a gpu: comment out: --index-url https://download.pytorch.org/whl/cpu";
         public const string AddDockerGpu = "# --index-url https://download.pytorch.org/whl/cpu   # if you switch to using a cpu: uncomment out: --index-url https://download.pytorch.org/whl/cpu";
 
@@ -42,6 +43,7 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
         private readonly Regex _regexModelName = new Regex(@"MODEL_NAME = '(.*?)'");
         private readonly Regex _regexFindPortInEndpoint = new Regex(@":(\d+)");
         private readonly Regex _regexDevice = new Regex(@"DEVICE = (-?\d+)");
+        private readonly Regex _regexHfTokenBuildArg = new Regex("(" + Regex.Escape(AddHuggingFaceTokenToDockerBuildCommand) + ")");
 
         private string _pathToDockerProjectFolder;
 
@@ -99,6 +101,17 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
                     var device = $"{DefaultDeviceIndex}";   // assume cpu
                     NllbTranslatorEncConverter.SearchForSetting(_regexDevice, settingsFileContents, ref device);
                     nDevice = Int32.Parse(device);
+                }
+
+                // if we're editing an existing build script, check whether it was previously built to pull
+                //  the base model from a private Hugging Face repo, and if so, check the checkbox to match.
+                var pathToPs1Script = filesInFolder.FirstOrDefault(fn => fn.Contains(FileNamePs1BuildDocker));
+                if (pathToPs1Script != null)
+                {
+                    var buildPs1ScriptContents = File.ReadAllText(pathToPs1Script);
+                    string hfTokenBuildArg = null;
+                    NllbTranslatorEncConverter.SearchForSetting(_regexHfTokenBuildArg, buildPs1ScriptContents, ref hfTokenBuildArg);
+                    checkBoxPrivateHuggingFaceModel.Checked = hfTokenBuildArg != null;
                 }
             }
 
@@ -287,8 +300,13 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
                     }
                 }
 
-                buildPsScriptContents = String.Format(Properties.Resources.builddockerLocalModel,
-                                                      srcLgCode, trgLgCode, Port, ModelName, gpuAddition);
+				var isPrivateHuggingFaceModel = checkBoxPrivateHuggingFaceModel.Checked;
+
+				var possibleHuggingFaceTokenBuildAddition = isPrivateHuggingFaceModel ? AddHuggingFaceTokenToDockerBuildCommand : string.Empty;
+
+
+				buildPsScriptContents = String.Format(Properties.Resources.builddockerLocalModel,
+                                                      srcLgCode, trgLgCode, possibleHuggingFaceTokenBuildAddition, Port, ModelName, gpuAddition);
 
                 string srcLgName, trgLgName;
                 NllbTranslatorEncConverter.FindLanguageNames(srcLgCode, trgLgCode, out srcLgName, out trgLgName);
