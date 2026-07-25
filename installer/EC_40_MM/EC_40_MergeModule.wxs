@@ -522,7 +522,10 @@
                         </TypeLib>
                     </File>
                 </Component>
-                <Component Id="LatestRedirects.config" Guid="{29834D39-3E70-4E2D-AAD3-85CA82BF979F}">
+				<Component Id="SilEncConverters40.config" Guid="{A41FAD7F-A8B6-4A82-9210-EE3BBCA3E8FB}">
+					<File Id="SilEncConverters40.config" Name="SilEncConverters40.config" Vital="yes" KeyPath="yes" Source="..\..\output\Win32\release\SilEncConverters40.config" />
+				</Component>
+				<Component Id="LatestRedirects.config" Guid="{29834D39-3E70-4E2D-AAD3-85CA82BF979F}">
                     <File Id="LatestRedirects.config" Name="LatestRedirects.config" KeyPath="yes" Source="..\..\LatestRedirects.config"/>
                 </Component>
                 <Component Id="EncConvertersAppDataMover40.exe" Guid="4F57740F-5033-42f2-A41A-ED8022731CE0">
