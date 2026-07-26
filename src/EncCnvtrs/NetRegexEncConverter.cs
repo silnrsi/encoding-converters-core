@@ -31,7 +31,7 @@ namespace SilEncConverters40
 		// e.g.
 		//  {[aeiou]}->{V};1
 		// (meaing: for convert latin vowels to 'V' and make it case insensitive. That is, 1 = RegexOption.IgnoreCase)
-		private static readonly Regex _reParseConverterIdentifier = new("{(.+?)}->{(.*?)};?(.*)");
+		private static readonly Regex _reParseConverterIdentifier = new("{(.+?)}->{(.*?)};?(.*)", RegexOptions.Singleline);
 		private List<Regex> _reConverters = new();
 		private List<string> _replaceWiths = new();
 
@@ -154,7 +154,7 @@ namespace SilEncConverters40
 				if (disable[i])
 					continue;
 
-				var findWhat = SafeUnescape(findWhats[i]);
+				var findWhat = findWhats[i];
 				_replaceWiths.Add(SafeUnescape(replaceWiths[i]));
 
 				var reConverter = new Regex(findWhat, options[i] | RegexOptions.Compiled);
@@ -172,15 +172,15 @@ namespace SilEncConverters40
 		//	for much else and I don't know if that's a complete list or not, so I'm
 		//	making it a setting so that a user could add to it in a pinch
 		// This regular expression is saying any of \
-		protected string _unescapeClues = $@"(?<!\\)\\[{Properties.Settings.Default.RegexNetLettersToUnescape}]";
+		protected string _unescapeClues = $@"(?<!\\)({Properties.Settings.Default.RegexNetLettersToUnescape})";
 
-		protected string SafeUnescape(string regexString)
+		protected string SafeUnescape(string inputString)
 		{
 			try
 			{
 				// Look for escaped sequences (e.g. \n, \r) and unescape them,
 				// but only if they are not already escaped.
-				return Regex.Replace(regexString, _unescapeClues, match =>
+				return Regex.Replace(inputString, _unescapeClues, match =>
 				{
 					// Convert the matched escape sequence into an actual unescaped string
 					return Regex.Unescape(match.Value);
@@ -188,9 +188,8 @@ namespace SilEncConverters40
 			}
 			catch { }
 
-			return regexString;
+			return inputString;
 		}
-
 #endregion Misc helpers
 
 		#region Abstract Base Class Overrides
@@ -233,7 +232,8 @@ namespace SilEncConverters40
 			{
 				var reConverter = _reConverters[i];
 				var replaceWith = _replaceWiths[i];
-				strInput = strOutput = reConverter.Replace(strInput, replaceWith);
+				strOutput = reConverter.Replace(strInput, replaceWith);
+				strInput = strOutput;
 			}
 
 			StringToProperByteStar(strOutput, lpOutBuffer, ref rnOutLen);
