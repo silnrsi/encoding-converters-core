@@ -522,8 +522,8 @@
                         </TypeLib>
                     </File>
                 </Component>
-				<Component Id="SilEncConverters40.config" Guid="{A51A9360-6F54-4849-A671-12BD0ED9CD37}">
-					<File Id="SilEncConverters40.config" Name="SilEncConverters40.config" Vital="yes" KeyPath="yes" Source="..\..\output\x64\release\SilEncConverters40.config" />
+				<Component Id="SilEncConverters40.dll.config" Guid="{A51A9360-6F54-4849-A671-12BD0ED9CD37}">
+					<File Id="SilEncConverters40.dll.config" Name="SilEncConverters40.dll.config" Vital="yes" KeyPath="yes" Source="..\..\output\x64\release\SilEncConverters40.dll.config" />
 				</Component>
 				<Component Id="LatestRedirects.config" Guid="{3DD9F5FD-CEF3-4423-837C-43C32246782E}">
                     <File Id="LatestRedirects.config" Name="LatestRedirects.config" KeyPath="yes" Source="..\..\LatestRedirects.config"/>
