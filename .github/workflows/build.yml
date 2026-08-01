@@ -77,6 +77,19 @@ jobs:
     - name: Restore NuGet dependencies
       run: nuget restore "${{env.SOLUTION_FILE_PATH}}"
 
+    # The installer/*.wixproj projects are now SDK-style (WixToolset.Sdk, PackageReference-based).
+    # Classic `nuget restore` doesn't evaluate SDK-style projects at all, so they need an
+    # MSBuild-based restore too. Harmless to run alongside the existing packages.config-style
+    # restore above for the rest of the solution.
+    - name: Restore SDK-style (PackageReference) projects
+      shell: cmd
+      run: >
+        "%MSBUILD_PATH%"
+        /t:Restore
+        /p:Configuration=${{matrix.build_configuration}}
+        /p:Platform=${{matrix.build_platform}}
+        "${{env.SOLUTION_FILE_PATH}}"
+
     - name: Build
       shell: cmd
       run: >
