@@ -29,7 +29,7 @@ namespace SilEncConverters40
         /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
-        private void InitializeComponent(SilEncConverters40.WebBrowserAdaptor webBrowser)
+        private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AutoConfigDialog));
@@ -93,7 +93,6 @@ namespace SilEncConverters40
             this.buttonSaveInRepository = new System.Windows.Forms.Button();
             this.helpProvider = new System.Windows.Forms.HelpProvider();
             this.fontDialog = new System.Windows.Forms.FontDialog();
-            this.webBrowser = webBrowser;
             this.ecTextBoxInput = new SilEncConverters40.EcTextBox();
             this.ecTextBoxOutput = new SilEncConverters40.EcTextBox();
             this.tabControl.SuspendLayout();
@@ -752,14 +751,6 @@ namespace SilEncConverters40
             this.fontDialog.AllowScriptChange = false;
             this.fontDialog.ShowColor = true;
             // 
-            // webBrowser
-            // 
-            this.webBrowser.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.webBrowser.Location = new System.Drawing.Point(3, 3);
-            this.webBrowser.Name = "webBrowser";
-            this.webBrowser.Size = new System.Drawing.Size(596, 394);
-            this.webBrowser.TabIndex = 0;
-            // 
             // ecTextBoxInput
             // 
             this.tableLayoutPanelTestPage.SetColumnSpan(this.ecTextBoxInput, 4);
@@ -821,7 +812,6 @@ namespace SilEncConverters40
 
         public System.Windows.Forms.TabControl tabControl;
         public System.Windows.Forms.TabPage tabPageAbout;
-        public System.Windows.Forms.WebBrowser webBrowserHelp;
         public System.Windows.Forms.TabPage tabPageSetup;
         public System.Windows.Forms.TabPage tabPageTestArea;
         public System.Windows.Forms.TableLayoutPanel tableLayoutPanelTestPage;
@@ -882,6 +872,5 @@ namespace SilEncConverters40
         private System.Windows.Forms.ToolStripMenuItem right2LeftToolStripMenuItem;
         protected internal System.Windows.Forms.FontDialog fontDialog;
         private System.Windows.Forms.ComboBox comboBoxFont;
-        private WebBrowserAdaptor webBrowser;
     }
 }

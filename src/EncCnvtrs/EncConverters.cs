@@ -61,7 +61,6 @@ namespace SilEncConverters40
 #endif
         public const string strRegKeyForSelfRegistering = "RegisterSelf";
         internal const string strShowToolTipsStateKey   = "ShowToolTips";
-        internal const string CstrUseGeckoRegKey = "UseMozilla";
         internal const string CstrUseEdgeRegKey = "UseEdge";
 
         // implement types define in EncCnvtrs.dll (public so users can use them in .Net

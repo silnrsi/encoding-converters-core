@@ -12,61 +12,21 @@ namespace SilEncConverters40
         public WebBrowserInstructions()
             : base(WhichBrowser.Instructions)
         {
-            // if the initialization of Gecko fails, then prepare an 'instruction' pane for the caller
+            // if the initialization of the browser fails, then prepare an 'instruction' pane for the caller
             //    this is assuming that the caller is putting what it was going to get in a Form, but not all
             //    callers do that... So it's up to them to do this if they get back 'null':
             // this.Controls.Add(WebBrowserAdaptor.LabelsPanel);
-            Util.DebugWriteLine("WebBrowserInstructions", "Could not use GeckoFx");
+            Util.DebugWriteLine("WebBrowserInstructions", "Could not use Edge");
             LabelsPanel = new TableLayoutPanel
             {
                 Dock = DockStyle.Fill,
                 ColumnCount = 1,
-                RowCount = (Util.IsUnix) ? 2 : 3,
+                RowCount = 1,
             };
-            LabelsPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 30F));
-            LabelsPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 35F));
-            LabelsPanel.Controls.Add(InstructionsForFireFox, 0, 1);
-            if (!Util.IsUnix)
-            {
-                LabelsPanel.RowCount = 3;
-                LabelsPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 35F));
-                LabelsPanel.Controls.Add(InstructionsLinkLabelEdge, 0, 2);
-            }
+            LabelsPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            LabelsPanel.Controls.Add(InstructionsLinkLabelEdge, 0, 0);
             Controls.Add(LabelsPanel);
         }
-
-
-        public static Label InstructionsForFireFox
-        {
-            get
-            {
-                string strInstructions;
-                if (Util.IsUnix)
-                {
-                    strInstructions = "To use Mozilla to display the help file, install the firefox-geckofx package.";
-                }
-                else
-                {
-                    strInstructions = "You seem to be missing the Firefox native DLLs that are usually in the \"<Install Directory>\\Firefox\" folder. You should re-run the installer and make sure Firefox is selected to be installed,"
-                                        + string.Format(@" or change the registry key 'HKLM\{0}\{1}' to False",
-#if X64
-                                                     EncConverters.SEC_ROOT_KEY,
-#else
-                                                     EncConverters.SEC_ROOT_KEY.Replace("SOFTWARE", @"SOFTWARE\WOW6432Node"),
-#endif
-                                                     EncConverters.CstrUseGeckoRegKey);
-                }
-
-                var labelInstructions = new Label
-                {
-                    Text = strInstructions,                        
-                    Dock = DockStyle.Fill
-                };
-
-                return labelInstructions;
-            }
-        }
-
 
         public static LinkLabel InstructionsLinkLabelEdge
         {

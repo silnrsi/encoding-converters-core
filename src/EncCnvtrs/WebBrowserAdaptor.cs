@@ -1,5 +1,4 @@
 // 21-May-2013 JDK  Add link to help file in instructions.
-// 24-Jun-2013 JDK  Loading Gecko libs may fail, so supply a macro to disable.
 // 6-Sept-2021 BE    Added Edge browser WebView2 and moved them all to sub-classes
 
 using System;
@@ -15,7 +14,7 @@ using System.IO;
 namespace SilEncConverters40
 {
     /// <summary>
-    /// This class is an attempt at providing a very basic WebBrowser like control, but which can be used for GeckoFx (Mozilla) if it exists instead
+    /// This class is an attempt at providing a very basic WebBrowser like control
     /// </summary>
     public abstract partial class WebBrowserAdaptor : UserControl
     {
@@ -23,7 +22,6 @@ namespace SilEncConverters40
         {
             Undefined = 0,
             InternetExplorer,
-            GeckoFx,
             Instructions,   // instructions to install browser libs
             Edge
         }
@@ -43,29 +41,15 @@ namespace SilEncConverters40
                 case WhichBrowser.InternetExplorer:
                     webBrowserAdaptor = new WebBrowserIE();
                     break;
-                case WhichBrowser.GeckoFx:
-                    webBrowserAdaptor = new WebBrowserGecko();
-                    break;
                 case WhichBrowser.Edge:
                     webBrowserAdaptor = CreateWebBrowserEdge();
                     break;
 
                 default:
-                    // means for us to figure it out based on OS and reg settings
-                    // on linux, only Gecko works (on Windows, either Gecko or IE will work, but using IE saves us from having to redistribute too much)
-                    //  so on Linux, prefer Gecko, but on Windows, prefer IE.
-                    if (WebBrowserGecko.ShouldUseBrowser)
-                    {
-                        try
-                        {
-                            webBrowserAdaptor = new WebBrowserGecko();
-                        }
-                        catch (Exception)
-                        {
-                            webBrowserAdaptor = new WebBrowserInstructions();
-                        }
-                    }
-                    else if (WebBrowserEdgeInfo.ShouldUseBrowser)
+                    // means for us to figure it out based on OS and reg settings; Edge is the
+                    //  shipped default (see the UseEdge registry value authored by the installer),
+                    //  falling back to IE on Windows if that key isn't set (e.g. an older install)
+                    if (WebBrowserEdgeInfo.ShouldUseBrowser)
                     {
                         try
                         {
@@ -89,7 +73,6 @@ namespace SilEncConverters40
                     }
                     else
                     {
-                        Util.DebugWriteLine("WebBrowserAdaptor.CreateBrowser", "Could not use GeckoFx");
                         webBrowserAdaptor = new WebBrowserInstructions();
                     }
                     break;

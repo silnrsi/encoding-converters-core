@@ -21,8 +21,7 @@
 
         <Component Id="RegisterECFolders" Guid="ba2789b1-93c9-4258-872e-85d91e975db1" Directory="TARGETDIR">
                 <RegistryValue Root="HKLM" Key="Software\SIL\SilEncConverters40" Name="RootDir" Type="string" Value="[AppDataSILConverters40]" />
-                <RegistryValue Root="HKLM" Key="Software\SIL\SilEncConverters40" Name="UseMozilla" Type="string" Value="False" />
-                <RegistryValue Root="HKLM" Key="Software\SIL\SilEncConverters40" Name="UseEdge" Type="string" Value="False" />
+                <RegistryValue Root="HKLM" Key="Software\SIL\SilEncConverters40" Name="UseEdge" Type="string" Value="True" />
             </Component>
 
             <Directory Id="MergeRedirectFolder">
@@ -542,12 +541,6 @@
                 </Component>
                 <Component Id="ECFileConverter.exe" Guid="85E920B5-3C96-4F07-9BAB-707CBA78F2B9">
                     <File Id="ECFileConverter.exe" Name="ECFileConverter.exe" ReadOnly="yes" KeyPath="yes" Source="..\..\output\Win32\release\ECFileConverter.exe" Assembly=".net" AssemblyApplication="ECFileConverter.exe" AssemblyManifest="ECFileConverter.exe" />
-                </Component>
-                <Component Id="Geckofx_Core.dll" Guid="{6D593BB5-F2DE-448A-A8A2-AD1F18B660F2}">
-                    <File Id="Geckofx_Core.dll" Name="GeckoFx-Core.dll" Vital="yes" KeyPath="yes" AssemblyManifest="Geckofx_Core.dll" AssemblyApplication="Geckofx_Core.dll" Assembly=".net" Source="..\..\output\Win32\release\GeckoFx-Core.dll" />
-                </Component>
-                <Component Id="Geckofx_Winforms.dll" Guid="{1C2D5110-4E5F-4DC3-9375-DA1D7C6643D0}">
-                    <File Id="Geckofx_Winforms.dll" Name="Geckofx-Winforms.dll" Vital="yes" KeyPath="yes" AssemblyManifest="Geckofx_Winforms.dll" AssemblyApplication="Geckofx_Winforms.dll" Assembly=".net" Source="..\..\output\Win32\release\Geckofx-Winforms.dll" />
                 </Component>
                 <Component Id="Microsoft_Web_WebView2_Core.dll" Guid="{C4BD4D08-EE06-47CC-806F-B93DE307C065}">
                     <File Id="Microsoft_Web_WebView2_Core.dll" Name="Microsoft.Web.WebView2.Core.dll" Vital="yes" KeyPath="yes" AssemblyManifest="Microsoft_Web_WebView2_Core.dll" AssemblyApplication="Microsoft_Web_WebView2_Core.dll" Assembly=".net" Source="..\..\output\Win32\release\Microsoft.Web.WebView2.Core.dll" />

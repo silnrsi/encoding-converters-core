@@ -11,7 +11,6 @@ using System.Diagnostics;
 
 namespace SilEncConverters40
 {
-    //[CLSCompliantAttribute(false)]  // because of GeckoWebBrowser
     public partial class AutoConfigDialog : Form
     {
         public string FriendlyName;
@@ -49,9 +48,7 @@ namespace SilEncConverters40
 		public AutoConfigDialog()
         {
             Util.DebugWriteLine(this, "AutoConfigDialog (1) BEGIN");
-			var webBrowser = WebBrowserAdaptor.CreateBrowser();
-			webBrowser.Initialize();
-			InitializeComponent(webBrowser);
+			InitializeComponent();
             Util.DebugWriteLine(this, "finished InitializeComponent");
 	        this.tabControl.Selecting += new System.Windows.Forms.TabControlCancelEventHandler(tabControl_Selecting);
 
