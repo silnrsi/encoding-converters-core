@@ -134,7 +134,17 @@ namespace SilEncConverters40
 				else
 					strXmlFilePath = Path.Combine(strXmlFilePath, Path.Combine(@"Help", strHtmlFileName));
                 System.Diagnostics.Debug.WriteLine(strXmlFilePath);
-                this.webBrowser.Navigate(strXmlFilePath);
+
+                // open the Help page in the user's default browser rather than embedding a browser
+                // control in the dialog (see Handover.md, "The three-browser-engine problem")
+                try
+                {
+                    Process.Start(new ProcessStartInfo(strXmlFilePath) { UseShellExecute = true });
+                }
+                catch (Exception ex)
+                {
+                    Util.DebugWriteLine(this, $"Couldn't open Help page '{strXmlFilePath}': {ex.Message}");
+                }
             }
 #if DEBUG
             else
@@ -169,7 +179,6 @@ namespace SilEncConverters40
             m_aECs = aECs;
             m_aEC = InitializeEncConverter;
 
-            tabControl.Controls.Remove(tabPageAbout);
             tabControl.Controls.Remove(tabPageSetup);
             tabControl.Controls.Remove(tabPageAdvanced);
 
@@ -609,7 +618,7 @@ namespace SilEncConverters40
 		private void tabControl_Selecting(object sender, TabControlCancelEventArgs e)
 		{
             System.Diagnostics.Debug.WriteLine("tabControl_Selecting()");
-			if (e.TabPage != tabPageAbout && e.TabPage != tabPageSetup)
+			if (e.TabPage != tabPageSetup)
             {
                 // Test or Advanced tab. 
                 // If the configuration was modified, then make the user go back
@@ -629,9 +638,9 @@ namespace SilEncConverters40
                 buttonSaveInRepository.Visible = SetupTabSelected_MakeSaveInRepositoryVisible;
                 SetupTabSelected(e);
             }
-            // if it was modified, then we need to apply it or switch back to 
-            //  the setup tab (unless it was the about tab that was selected)
-            else if (e.TabPage != tabPageAbout)
+            // if it was modified, then we need to apply it or switch back to
+            //  the setup tab
+            else
             {
                 // Test or Advanced tab. 
                 // If the configuration was modified, then make the user go back

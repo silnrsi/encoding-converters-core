@@ -34,7 +34,6 @@ namespace SilEncConverters40
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AutoConfigDialog));
             this.tabControl = new System.Windows.Forms.TabControl();
-            this.tabPageAbout = new System.Windows.Forms.TabPage();
             this.tabPageSetup = new System.Windows.Forms.TabPage();
             this.tabPageTestArea = new System.Windows.Forms.TabPage();
             this.tableLayoutPanelTestPage = new System.Windows.Forms.TableLayoutPanel();
@@ -96,7 +95,6 @@ namespace SilEncConverters40
             this.ecTextBoxInput = new SilEncConverters40.EcTextBox();
             this.ecTextBoxOutput = new SilEncConverters40.EcTextBox();
             this.tabControl.SuspendLayout();
-            this.tabPageAbout.SuspendLayout();
             this.tabPageTestArea.SuspendLayout();
             this.tableLayoutPanelTestPage.SuspendLayout();
             this.contextMenuStripTestBoxes.SuspendLayout();
@@ -111,7 +109,6 @@ namespace SilEncConverters40
             this.tabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tabControl.Controls.Add(this.tabPageAbout);
             this.tabControl.Controls.Add(this.tabPageSetup);
             this.tabControl.Controls.Add(this.tabPageTestArea);
             this.tabControl.Controls.Add(this.tabPageAdvanced);
@@ -121,18 +118,7 @@ namespace SilEncConverters40
             this.tabControl.Size = new System.Drawing.Size(610, 426);
             this.tabControl.TabIndex = 1;
             this.tabControl.Selected += new System.Windows.Forms.TabControlEventHandler(this.tabControl_Selected);
-            // 
-            // tabPageAbout
-            // 
-            this.tabPageAbout.Controls.Add(this.webBrowser);
-            this.tabPageAbout.Location = new System.Drawing.Point(4, 22);
-            this.tabPageAbout.Name = "tabPageAbout";
-            this.tabPageAbout.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageAbout.Size = new System.Drawing.Size(602, 400);
-            this.tabPageAbout.TabIndex = 0;
-            this.tabPageAbout.Text = "About";
-            this.tabPageAbout.UseVisualStyleBackColor = true;
-            // 
+            //
             // tabPageSetup
             // 
             this.tabPageSetup.Location = new System.Drawing.Point(4, 22);
@@ -750,7 +736,7 @@ namespace SilEncConverters40
             // 
             this.fontDialog.AllowScriptChange = false;
             this.fontDialog.ShowColor = true;
-            // 
+            //
             // ecTextBoxInput
             // 
             this.tableLayoutPanelTestPage.SetColumnSpan(this.ecTextBoxInput, 4);
@@ -793,7 +779,6 @@ namespace SilEncConverters40
             this.Name = "AutoConfigDialog";
             this.Text = "AutoConfigDialog";
             this.tabControl.ResumeLayout(false);
-            this.tabPageAbout.ResumeLayout(false);
             this.tabPageTestArea.ResumeLayout(false);
             this.tableLayoutPanelTestPage.ResumeLayout(false);
             this.tableLayoutPanelTestPage.PerformLayout();
@@ -811,7 +796,6 @@ namespace SilEncConverters40
         #endregion
 
         public System.Windows.Forms.TabControl tabControl;
-        public System.Windows.Forms.TabPage tabPageAbout;
         public System.Windows.Forms.TabPage tabPageSetup;
         public System.Windows.Forms.TabPage tabPageTestArea;
         public System.Windows.Forms.TableLayoutPanel tableLayoutPanelTestPage;
