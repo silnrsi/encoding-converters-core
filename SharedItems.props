@@ -60,6 +60,11 @@
 		<PackageReference Include="Grpc.Net.Common">
 			<Version>2.80.0</Version>
 		</PackageReference>
+		<!-- Used by IcuBreakIteratorEncConverter (src/IcuEC), resolved dynamically by ProgID at
+		     runtime just like the EcTranslators converters below - see ReadMe.md. -->
+		<PackageReference Include="icu.net">
+			<Version>3.0.2</Version>
+		</PackageReference>
 		<PackageReference Include="Microsoft.Bcl.AsyncInterfaces">
 			<Version>10.0.7</Version>
 		</PackageReference>

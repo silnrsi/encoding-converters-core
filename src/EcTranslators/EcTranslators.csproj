@@ -1,65 +1,103 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- $(SolutionDir) is only meaningfully set by MSBuild when building via the .sln (see ECInterfaces
+       2010.csproj for the full rationale) -->
+  <PropertyGroup Condition="'$(SolutionDir)'=='' or '$(SolutionDir)'=='*Undefined*' or '$(SolutionDir)'=='$(MSBuildProjectDirectory)\'">
+    <SolutionDir>$(MSBuildThisFileDirectory)..\..\</SolutionDir>
+  </PropertyGroup>
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <TargetFrameworks>net462;net48;net9.0-windows</TargetFrameworks>
+    <!-- required for VS's Configuration Manager to accept the .sln's x86/x64 entries for this
+         multi-targeted project - see ECInterfaces 2010.csproj for why -->
+    <Platforms>x86;x64</Platforms>
     <ProjectGuid>{C4D0AA5B-F319-4E06-A982-A52E79EB57DC}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SilEncConverters40.EcTranslators</RootNamespace>
     <AssemblyName>EcTranslators</AssemblyName>
-    <TargetFrameworkVersion Condition="('$(OS)'!='Windows_NT')">v4.7.1</TargetFrameworkVersion>
-    <TargetFrameworkVersion Condition="('$(OS)'=='Windows_NT')">v4.8</TargetFrameworkVersion>
-    <RegisterForComInterop Condition="('$(OS)'=='Windows_NT')">true</RegisterForComInterop>
-    <RegisterForComInterop Condition="('$(OS)'!='Windows_NT')">false</RegisterForComInterop>
-    <FileAlignment>512</FileAlignment>
-    <Deterministic>true</Deterministic>
     <SignAssembly>true</SignAssembly>
-    <LangVersion>8.0</LangVersion>
     <AssemblyOriginatorKeyFile>..\FieldWorks.snk</AssemblyOriginatorKeyFile>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <LangVersion>8.0</LangVersion>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <!-- see ECInterfaces 2010.csproj: AppendTargetFrameworkToOutputPath=false also unsuffixes obj\,
+         which collides across TFMs building in parallel - obj\ has no external consumers, so just
+         suffix it unconditionally. -->
+    <IntermediateOutputPath>obj\$(Platform)\$(Configuration)\$(TargetFramework)\</IntermediateOutputPath>
+    <!-- this folder also contains NllbTranslator\NllbLanguage.cs, which the original explicit-only
+         item list never included (excluded/dormant code); disable default globbing so it (and
+         anything else not explicitly listed below) stays excluded exactly as before -->
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
+    <EnableDefaultNoneItems>false</EnableDefaultNoneItems>
   </PropertyGroup>
+
+  <!-- Replaces RegisterForComInterop, which failed the ENTIRE build without admin rights (confirmed:
+       the original pre-SDK-style project had this exact same limitation - not a regression from the
+       SDK-style conversion). Its RegisterAssembly task does type-library export AND registry
+       registration as one atomic, admin-only operation, so a non-elevated build never produced a .tlb
+       at all - but the WiX merge modules (EcTranslatorsMM/_64bit) need EcTranslators.tlb for Release
+       packaging, and that doesn't actually require the registry write. Split into two explicit steps
+       instead (see ECInterfaces 2010.csproj for the same pattern): -->
+  <Target Name="ExportAndRegisterTypeLibrary" AfterTargets="Build" Condition="'$(TargetFramework)'=='net462' or '$(TargetFramework)'=='net48'">
+    <PropertyGroup>
+      <_TlbExpToolPath Condition="'$(Platform)'=='x64'">$(TargetFrameworkSDKToolsDirectory)x64\TlbExp.exe</_TlbExpToolPath>
+      <_TlbExpToolPath Condition="'$(Platform)'!='x64'">$(TargetFrameworkSDKToolsDirectory)TlbExp.exe</_TlbExpToolPath>
+      <_RegAsmToolPath Condition="'$(Platform)'=='x64'">$(SystemRoot)\Microsoft.NET\Framework64\v4.0.30319\RegAsm.exe</_RegAsmToolPath>
+      <_RegAsmToolPath Condition="'$(Platform)'!='x64'">$(SystemRoot)\Microsoft.NET\Framework\v4.0.30319\RegAsm.exe</_RegAsmToolPath>
+    </PropertyGroup>
+    <!-- required: TlbExp only exports, no registry access, so this always succeeds regardless of
+         elevation -->
+    <Exec Command="&quot;$(_TlbExpToolPath)&quot; &quot;$(TargetPath)&quot; /out:&quot;$(TargetDir)$(TargetName).tlb&quot;" />
+    <!-- optional, local-dev-only: registers this build in HKCR so e.g. a Word VBA macro can
+         CreateObject() against it without running the installer. Needs admin; failure here is
+         expected and harmless when not elevated (production registration is the WiX merge modules'
+         job either way), so it's best-effort (warns, doesn't fail the build) and Debug-only,
+         matching this project's prior RegisterForComInterop scoping. -->
+    <Exec Command="&quot;$(_RegAsmToolPath)&quot; &quot;$(TargetPath)&quot; /codebase /tlb:&quot;$(TargetDir)$(TargetName).tlb&quot;"
+          ContinueOnError="WarnAndContinue"
+          Condition="'$(Configuration)'=='Debug'" />
+  </Target>
+
+  <PropertyGroup Condition="'$(TargetFramework)'=='net9.0-windows'">
+    <UseWindowsForms>true</UseWindowsForms>
+    <NoWarn>$(NoWarn);WFO1000</NoWarn>
+  </PropertyGroup>
+
   <PropertyGroup>
     <ApplicationIcon>TRFFC17.ICO</ApplicationIcon>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>$(SolutionDir)output\$(Platform)\$(Configuration)\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;X64</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
+
+  <!-- every TFM gets its own sibling folder under output\ (including net48, via $(TargetFramework))
+       - see ECInterfaces 2010.csproj for why -->
+  <PropertyGroup Condition="'$(Platform)'=='x86'">
+    <OutputPath>$(SolutionDir)output\$(TargetFramework)\Win32\$(Configuration)\</OutputPath>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <OutputPath>$(SolutionDir)output\$(Platform)\$(Configuration)\</OutputPath>
-    <DefineConstants>TRACE;X64</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
+  <PropertyGroup Condition="'$(Platform)'=='x64'">
+    <OutputPath>$(SolutionDir)output\$(TargetFramework)\$(Platform)\$(Configuration)\</OutputPath>
     <PlatformTarget>x64</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+
+  <PropertyGroup Condition="'$(Configuration)'=='Debug'">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>$(SolutionDir)output\Win32\$(Configuration)\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DebugType>full</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
-    <OutputPath>..\..\output\Win32\Release\</OutputPath>
+  <PropertyGroup Condition="'$(Configuration)'=='Release'">
     <DefineConstants>TRACE</DefineConstants>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
-  <ItemGroup>
+  <PropertyGroup Condition="'$(Platform)'=='x64'">
+    <DefineConstants>$(DefineConstants);X64</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)'=='net462' or '$(TargetFramework)'=='net48'">
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
-    <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Numerics" />
     <Reference Include="System.Runtime.Serialization" />
@@ -71,6 +109,7 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
   </ItemGroup>
+
   <ItemGroup>
     <Compile Include="AzureOpenAi\AzureOpenAiEncConverter.cs" />
     <Compile Include="AzureOpenAi\AzureOpenAiEncConverterConfig.cs" />
@@ -196,16 +235,53 @@
     <Compile Include="VertexAi\VertexAiEncConverter.cs" />
     <Compile Include="VertexAi\VertexAiPromptExeTranslatorCommandLineArgs.cs" />
   </ItemGroup>
+
   <ItemGroup>
-    <ProjectReference Include="..\ECInterfaces\ECInterfaces 2010.csproj">
-      <Project>{2935e02f-43ed-4670-9a00-a91b0ad3d66c}</Project>
-      <Name>ECInterfaces 2010</Name>
+    <ProjectReference Include="..\ECInterfaces\ECInterfaces 2010.csproj" />
+    <ProjectReference Include="..\EncCnvtrs\EncCnvtrs 2010.csproj" />
+    <!-- Build-order-only references (no assembly reference/copy) to AzureOpenAiExe/VertexAiExe, so
+         the wildcard copy below always has something to copy from - see that ItemGroup's comment for
+         why these need to be built before this project regardless of invocation style (.sln-level
+         solution dependencies don't apply to a standalone "msbuild EcTranslators.csproj" build). -->
+    <ProjectReference Include="AzureOpenAi\AzureOpenAiExe\AzureOpenAiExe.csproj">
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
-    <ProjectReference Include="..\EncCnvtrs\EncCnvtrs 2010.csproj">
-      <Project>{3e4b908a-4f96-43c5-981b-1aa4b73ccc26}</Project>
-      <Name>EncCnvtrs 2010</Name>
+    <ProjectReference Include="VertexAi\VertexAiExe\VertexAiExe.csproj">
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
   </ItemGroup>
+
+  <!-- AzureOpenAiExe.exe/VertexAiExe.exe are launched as separate OS processes via Process.Start (see
+       AzureOpenAiEncConverter.cs/VertexAiEncConverter.cs's ExePath), which requires the exe to sit in
+       the SAME folder as this project's own output (Assembly.GetExecutingAssembly().Location). For
+       net462/net48 this already works "by accident": AzureOpenAiExe/VertexAiExe also target those
+       exact TFM strings, so they land in the identical output\<tfm>\... folder as this project. But
+       they're plain console tools with no WinForms dependency, so they only have a bare net9.0 build,
+       not net9.0-windows - net9.0-windows needs an explicit copy. A subprocess exe doesn't need to
+       match the caller's own TFM/runtime at all (Process.Start launches a fully separate, self-hosted
+       .NET process), so the closest available modern build works fine here. -->
+  <!-- AzureOpenAiExe/VertexAiExe hardcode "Win32" (not "x86") as their own x86-Platform folder name,
+       same as this project does (see the OutputPath PropertyGroups above) - $(Platform) itself is
+       "x86" here, so it can't be reused directly for the x86 case (confirmed via MSB3030 "could not
+       copy... not found" when this used $(Platform) unconditionally - see IcuEC 2010.csproj for the
+       same mistake made and fixed there first). -->
+  <ItemGroup Condition="'$(TargetFramework)'=='net9.0-windows' and '$(Platform)'=='x86'">
+    <_AzureOpenAiVertexAiExeFiles Include="$(SolutionDir)output\net9.0\Win32\$(Configuration)\AzureOpenAiExe.*" />
+    <_AzureOpenAiVertexAiExeFiles Include="$(SolutionDir)output\net9.0\Win32\$(Configuration)\VertexAiExe.*" />
+    <None Include="@(_AzureOpenAiVertexAiExeFiles)">
+      <Link>%(Filename)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)'=='net9.0-windows' and '$(Platform)'=='x64'">
+    <_AzureOpenAiVertexAiExeFiles Include="$(SolutionDir)output\net9.0\$(Platform)\$(Configuration)\AzureOpenAiExe.*" />
+    <_AzureOpenAiVertexAiExeFiles Include="$(SolutionDir)output\net9.0\$(Platform)\$(Configuration)\VertexAiExe.*" />
+    <None Include="@(_AzureOpenAiVertexAiExeFiles)">
+      <Link>%(Filename)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
   <ItemGroup>
     <EmbeddedResource Include="AzureOpenAi\AzureOpenAiAutoConfigDialog.resx">
       <DependentUpon>AzureOpenAiAutoConfigDialog.cs</DependentUpon>
@@ -247,6 +323,7 @@
       <DependentUpon>VertexAiAutoConfigDialog.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
+
   <ItemGroup>
     <None Include="..\..\redist\EC\Plugins\Translators 4.0.0.0 Plugin Details.xml">
       <Link>PlugIn\Translators 4.0.0.0 Plugin Details.xml</Link>
@@ -267,6 +344,7 @@
     <Content Include="Resources\LangCodeToNameMap.txt" />
     <Content Include="TRFFC17.ICO" />
   </ItemGroup>
+
   <ItemGroup>
     <None Include="..\FieldWorks.snk">
       <Link>FieldWorks.snk</Link>
@@ -279,6 +357,15 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
+
+  <!-- Kept as the single shared source of truth for this package list (not flattened into direct
+       PackageReferences): host EXE clients - both in this solution and, more importantly, the
+       dozens in the separate SilConverters solution - resolve EcTranslators-provided converters
+       dynamically by ProgID at runtime (see EncConverters.InstantiateIEncConverter), not only via a
+       compile-time reference to this project, so they need this same package set sitting in their own
+       output folder regardless of whether they reference EcTranslators.csproj directly. Duplicating
+       this list per host project would defeat the point. The only real issue with the Import was that
+       $(SolutionDir) isn't set for a standalone (non-.sln-context) restore of this project alone -
+       the fallback above fixes that without giving up the shared file. -->
   <Import Project="$(SolutionDir)SharedItems.props" />
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

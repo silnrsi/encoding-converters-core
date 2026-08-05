@@ -15,7 +15,7 @@
                     <ProgId Id="SilEncConverters40.AdaptItEncConverterConfig" Description="SilEncConverters40.AdaptItEncConverterConfig" />
                 </Class>
 
-                <File Id="AIGuesserEC.dll" Name="AIGuesserEC.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="AIGuesserEC.dll" AssemblyApplication="AIGuesserEC.dll" Source="..\..\output\x64\release\AIGuesserEC.dll" />
+                <File Id="AIGuesserEC.dll" Name="AIGuesserEC.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="AIGuesserEC.dll" AssemblyApplication="AIGuesserEC.dll" Source="..\..\output\net48\x64\release\AIGuesserEC.dll" />
 
                 <RegistryValue Root="HKCR" Key="CLSID\{2734A74B-6E88-40c4-8D0A-016A421D26CF}\Implemented Categories\{62C8FE65-4EBB-45e7-B440-6E39B2CDBF29}" Value="" Type="string" Action="write" />
                 <RegistryValue Root="HKCR" Key="CLSID\{2734A74B-6E88-40c4-8D0A-016A421D26CF}\InprocServer32\4.0.0.0" Name="Class" Value="SilEncConverters40.AdaptItEncConverter" Type="string" Action="write" />

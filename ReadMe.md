@@ -108,6 +108,14 @@ Converters are looked up two ways at runtime:
 
 Several transducer config dialogs embed an HTML help/setup page via `WebBrowserAdaptor` (`src/EncCnvtrs`), which can use Internet Explorer (WinForms `WebBrowser`), GeckoFX/XULRunner (bundled, Linux's only option), or WebView2/Edge (the modern default on Windows). See `Handover.md` for the plan to consolidate this.
 
+### A host app's compile-time references don't cover its runtime dependencies
+
+Because converters are resolved dynamically by ProgID/assembly name at runtime (see above), a host application typically only compiles against `SilEncConverters40.dll` (the `IEncConverter` contract and dispatcher) and never references the individual transducer assemblies at all. That's enough to get the app running, but it is **not** enough to make any given converter actually work — each transducer implementation still has to be loadable from the host's own output/bin folder at the moment `EncConverters.InstantiateIEncConverter` tries to instantiate it, compile-time reference or not.
+
+This matters most for `src/EcTranslators` (the AI/LLM translation engines), which pull in a large, fast-moving set of third-party packages (Newtonsoft.Json, the Google.Api.\*/Google.Cloud.\* family, the Grpc.\* family, Azure.AI.OpenAI, Azure.Core, OpenAI, various Microsoft.Extensions.\* and System.\* compatibility shims — see `SharedItems.props` at the repo root for the authoritative list). If a host app wants any EcTranslators-provided converter (Azure OpenAI, Vertex AI, Google Translate, Bing, DeepL, or NLLB) available at runtime, it needs that same package set sitting alongside its own binaries — regardless of whether it references `EcTranslators.csproj`/`EcTranslators.dll` directly.
+
+The projects in this repo that can end up hosting a dynamically-loaded converter (`EcTranslators` itself, `ECFileConverter`, `TestEncCnvtrs`, `RunTests`) all import `$(SolutionDir)SharedItems.props` directly rather than duplicating its `PackageReference` list — this is deliberate: it's the single source of truth for "what a host needs to use EcTranslators converters," shared not just by these few in-repo consumers but by dozens of host EXEs in the separate SILConverters solution. If you're building a new host application against this NuGet package and want to use any EcTranslators converter, import or replicate that same package list rather than guessing at a subset from compile-time references alone.
+
 ## Further reading
 
 - [`Handover.md`](Handover.md) — current-state assessment and modernization roadmap for anyone picking up maintenance of this repo.

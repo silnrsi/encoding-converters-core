@@ -5,13 +5,13 @@
 
         <Directory Id="MergeRedirectFolder">
             <Component Id="PyScriptEC.dll" Guid="{A9CDFCCF-A29F-49E5-A988-F49D907E0D5E}">
-                <File Id="PyScriptEC.dll" Name="PyScriptEC.dll" Vital="yes" KeyPath="yes" AssemblyManifest="PyScriptEC.dll" AssemblyApplication="PyScriptEC.dll" Assembly=".net" Source="..\..\output\x64\release\PyScriptEC.dll" />
+                <File Id="PyScriptEC.dll" Name="PyScriptEC.dll" Vital="yes" KeyPath="yes" AssemblyManifest="PyScriptEC.dll" AssemblyApplication="PyScriptEC.dll" Assembly=".net" Source="..\..\output\net48\x64\release\PyScriptEC.dll" />
             </Component>
             <Component Id="PyScriptEncConverter.dll" Guid="{2BA69E1E-47E8-4B32-A99C-65ED44175BCA}">
-                <File Id="PyScriptEncConverter.dll" KeyPath="yes" Source="..\..\output\x64\release\PyScriptEncConverter.dll" />
+                <File Id="PyScriptEncConverter.dll" KeyPath="yes" Source="..\..\output\net48\x64\release\PyScriptEncConverter.dll" />
             </Component>
             <Component Id="Python.Runtime.dll" Guid="{3B70DAC4-F7FD-45AC-B10D-10FC68040503}">
-                <File Id="Python.Runtime.dll" Name="Python.Runtime.dll" Vital="yes" KeyPath="yes" AssemblyManifest="Python.Runtime.dll" AssemblyApplication="Python.Runtime.dll" Assembly=".net" Source="..\..\output\x64\release\Python.Runtime.dll" />
+                <File Id="Python.Runtime.dll" Name="Python.Runtime.dll" Vital="yes" KeyPath="yes" AssemblyManifest="Python.Runtime.dll" AssemblyApplication="Python.Runtime.dll" Assembly=".net" Source="..\..\output\net48\x64\release\Python.Runtime.dll" />
             </Component>
             <Directory Id="PyScriptECFolder" Name="EC">
                 <Directory Id="PyScriptPluginsFolder" Name="Plugins">

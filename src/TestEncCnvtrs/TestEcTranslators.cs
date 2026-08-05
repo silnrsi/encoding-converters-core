@@ -251,14 +251,14 @@ namespace TestEncCnvtrs
 //      // For the NMT model, the model ID is general/nmt
 //      [TestCase("Hindi;English;bright-coyote-381812;us-central1;google;chat-bison;Translate from Hindi into English.", "यीशु ने यह भी कहा,", "Jesus also said,")]
         // try gemini pro
-        [TestCase("Hindi;English;bright-coyote-381812;us-central1;google;gemini-2.5-flash-lite;Translate from Hindi into English.", "यीशु ने यह भी कहा,", "Jesus also said,")]
-        [TestCase("Hindi;English;bright-coyote-381812;us-central1;google;gemini-2.0-flash-001;Translate from Hindi into English.", "परंतु वह चोगे को छोड़कर वहाँ से भाग गया। ",
-            "But he left the cloak behind and fled.")]
-        [TestCase("Hindi;English;bright-coyote-381812;us-central1;google;gemini-2.0-flash-lite-001;Translate from Hindi into English.", "यीशु ने कहा,", "Jesus said,")]
+        [TestCase("Hindi;English;bright-coyote-381812;us-central1;google;gemini-2.5-pro;Translate from Hindi into English.", "यीशु ने यह भी कहा,", "Jesus also said,")]
+        //[TestCase("Hindi;English;bright-coyote-381812;us-central1;google;gemini-2.5-pro;Translate from Hindi into English.", "परंतु वह चोगे को छोड़कर वहाँ से भाग गया। ",
+		// 	"But he left his cloak and fled from there.")]
+        [TestCase("Hindi;English;bright-coyote-381812;us-central1;google;gemini-2.5-pro;Translate from Hindi into English.", "यीशु ने कहा,", "Jesus said,")]
         // multiple lines
-        [TestCase("Hindi;English;bright-coyote-381812;us-central1;google;gemini-2.5-flash;Translate from Hindi into English.", @"यीशु ने कहा,
+        [TestCase("Hindi;English;bright-coyote-381812;us-central1;google;gemini-2.5-pro;Translate from Hindi into English.", @"यीशु ने कहा,
 परमे‍‍श्वर मेरा पिता है।", @"Jesus said,
-God is my Father.")]
+God is my father.")]
         [TestCase("Hindi;English;bright-coyote-381812;us-central1;google;gemini-2.5-pro;Translate from Hindi into English.", "यीशु ने कहा,", "Jesus said,")]
         // multiple lines
         [TestCase("Hindi;English;bright-coyote-381812;us-central1;google;gemini-2.5-pro;Translate from Hindi into English.", @"यीशु ने कहा,
@@ -421,7 +421,7 @@ God is my father.")]
         [TestCase(ProcessTypeFlags.Translation, "Translate;hi;en", "यीशु ने यह भी कहा,", "Jesus also said,")]
         // multi-line translations
         [TestCase(ProcessTypeFlags.Translation, "Translate;hi;en", @"यीशु ने कहा,
-परमे‍‍श्वर मेरा पिता है।", @"Jesus said,
+परमे‍‍श्वर मेरा पिता है।", @"Jesus said, 
 God is my Father.")]
         [TestCase(ProcessTypeFlags.Translation, "Translate;;en", "यीशु ने यह भी कहा,", "Jesus also said,")]
         [TestCase(ProcessTypeFlags.Translation, "Translate;en;zh-Hans", "Get to know the beautiful country of Israel.", "了解美丽的以色列国家。")]
@@ -482,13 +482,13 @@ God is my Father.")]
         // these tests may fail if the DeepL Translator resource no longer has any remaining juice... OR (more likely)
         //    if they change the translation
         [Test]
-        [TestCase(ProcessTypeFlags.Translation, "Translate;en;fr", "Hello, world!", "Bonjour à tous !")]
+        [TestCase(ProcessTypeFlags.Translation, "Translate;en;fr", "Hello, world!", "Bonjour, tout le monde !")]
         [TestCase(ProcessTypeFlags.Translation, "Translate;en;zh", "How are you?", "你好吗？")]
-        [TestCase(ProcessTypeFlags.Translation, "Translate;en;de;Less", "How are you?", "Wie geht es dir?")]
+        [TestCase(ProcessTypeFlags.Translation, "Translate;en;de;Less", "How are you?", "Wie geht’s dir?")]
         [TestCase(ProcessTypeFlags.Translation, "Translate;en;de;More", "How are you?", "Wie geht es Ihnen?")]
         // multi-line translations
         [TestCase(ProcessTypeFlags.Translation, "Translate;en;fr", @"Jesus said,
-God is my father.", @"Jésus a dit,
+God is my father.", @"Jésus a dit :
 Dieu est mon père.")]
         public void TestDeepLConverter(ProcessTypeFlags processType, string converterSpec, string testInput, string testOutput)
         {

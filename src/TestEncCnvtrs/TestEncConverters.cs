@@ -601,6 +601,8 @@ namespace TestEncCnvtrs
 					filepath = "/" + filepath;
 			}
 			var pathParts = Path.GetDirectoryName(filepath).Split(Path.DirectorySeparatorChar);
+			// every TFM lands in .../output/<tfm>/... (see ECInterfaces 2010.csproj), so splitting at
+			// "output" resolves the same repo-root base directory regardless of which TFM is running.
 			var outputFolderIndex = Array.IndexOf(pathParts, "output");
 			Assert.IsTrue(outputFolderIndex > 0, "output folder structure changed, tests will fail finding map files.");
 			var baseDirectory = string.Join(Path.DirectorySeparatorChar.ToString(), pathParts, 0, outputFolderIndex);

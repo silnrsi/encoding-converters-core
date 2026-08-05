@@ -107,16 +107,24 @@ jobs:
         name: logs-${{ matrix.build_platform }}-${{ matrix.build_configuration }}
         path: build-*.binlog
 
+    # Package.Release.nuspec ships net462/net48/net9.0/net9.0-windows/netstandard2.0 (see its own
+    # comments for what each TFM contributes) - upload every one of those TFM output folders so the
+    # build_nuget job (a separate machine, only sees what's uploaded here) can pack them all.
     - name: Upload build artifacts
       if: matrix.build_configuration == 'Release'
       uses: actions/upload-artifact@v6
       with:
         name: build-artifacts-${{ matrix.build_platform }}-${{ matrix.build_configuration }}
         path: |
-          output\${{ matrix.build_platform }}\${{ matrix.build_configuration }}\*.exe
-          output\${{ matrix.build_platform }}\${{ matrix.build_configuration }}\*.dll
-          output\${{ matrix.build_platform }}\${{ matrix.build_configuration }}\*.tlb
-          output\${{ matrix.build_platform }}\${{ matrix.build_configuration }}\*.config
+          output\net48\${{ matrix.build_platform }}\${{ matrix.build_configuration }}\*.exe
+          output\net48\${{ matrix.build_platform }}\${{ matrix.build_configuration }}\*.dll
+          output\net48\${{ matrix.build_platform }}\${{ matrix.build_configuration }}\*.tlb
+          output\net48\${{ matrix.build_platform }}\${{ matrix.build_configuration }}\*.config
+          output\net462\${{ matrix.build_platform }}\${{ matrix.build_configuration }}\ECInterfaces.dll
+          output\net462\${{ matrix.build_platform }}\${{ matrix.build_configuration }}\SilEncConverters40.dll
+          output\net9.0-windows\${{ matrix.build_platform }}\${{ matrix.build_configuration }}\SilEncConverters40.dll
+          output\net9.0\${{ matrix.build_platform }}\${{ matrix.build_configuration }}\ECInterfaces.dll
+          output\netstandard2.0\${{ matrix.build_platform }}\${{ matrix.build_configuration }}\ECInterfaces.dll
           output\MergeModules\**\*.*
         retention-days: 1
 
@@ -167,10 +175,15 @@ jobs:
 #    - name: Setup NuGet
 #      uses: NuGet/setup-nuget@v2
 
+    # Uses the same Package.proj target a local dev would run (msbuild Package.proj /t:Pack), so CI
+    # and local packaging never drift apart.
     - name: Create NuGet package
+      shell: cmd
       run: >
-        nuget pack ./Package.Release.nuspec
-        -OutputDirectory ./output/Release
+        "%MSBUILD_PATH%"
+        Package.proj
+        /t:Pack
+        /p:Configuration=Release
 
     - name: Upload NuGet package
       uses: actions/upload-artifact@v6

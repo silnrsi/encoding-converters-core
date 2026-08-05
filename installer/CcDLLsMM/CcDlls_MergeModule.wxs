@@ -1,11 +1,11 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
     <Module Id="CcDLLsMM" Language="1033" Version="5.0.0.0" Guid="4309d497-9b6f-408d-8ed6-a357ca62145e" InstallerVersion="200">
         <SummaryInformation Comments="Merge module containing the CC run-time engine DLL" Description="CC DLL" Keywords="Consistent Changes, CC, Encoding Conversion, SILConverters" Manufacturer="SIL International" />
 
         <Directory Id="MergeRedirectFolder">
                 <Component Id="CcEC.dll" Guid="{3CC6BA82-6E34-4CD1-BD2F-268F36FC1789}">
-                    <File Id="CcEC.dll" Name="CcEC.dll" KeyPath="yes" Source="..\..\output\Win32\release\CcEC.dll" />
+                    <File Id="CcEC.dll" Name="CcEC.dll" KeyPath="yes" Source="..\..\output\net48\Win32\release\CcEC.dll" />
                 </Component>
                 <Directory Id="ECFolder" Name="EC">
                     <Directory Id="PluginsFolder" Name="Plugins">

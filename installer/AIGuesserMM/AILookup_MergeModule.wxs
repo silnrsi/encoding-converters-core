@@ -12,7 +12,7 @@
                 <Class Id="{F15BC80C-57A2-4C32-90B6-3689D8B3F6F1}" Context="InprocServer32" Description="SilEncConverters40.AdaptItEncConverterConfig" ThreadingModel="both" ForeignServer="mscoree.dll">
                     <ProgId Id="SilEncConverters40.AdaptItEncConverterConfig" Description="SilEncConverters40.AdaptItEncConverterConfig" />
                 </Class>
-                <File Id="AIGuesserEC.dll" Name="AIGuesserEC.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="AIGuesserEC.dll" AssemblyApplication="AIGuesserEC.dll" Source="..\..\output\Win32\release\AIGuesserEC.dll" />
+                <File Id="AIGuesserEC.dll" Name="AIGuesserEC.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="AIGuesserEC.dll" AssemblyApplication="AIGuesserEC.dll" Source="..\..\output\net48\Win32\release\AIGuesserEC.dll" />
                 <RegistryValue Root="HKCR" Key="CLSID\{B421C839-D95E-40E4-86BF-A3B0E4510252}\Implemented Categories\{62C8FE65-4EBB-45e7-B440-6E39B2CDBF29}" Value="" Type="string" Action="write" />
                 <RegistryValue Root="HKCR" Key="CLSID\{B421C839-D95E-40E4-86BF-A3B0E4510252}\InprocServer32\4.0.0.0" Name="Class" Value="SilEncConverters40.AdaptItEncConverter" Type="string" Action="write" />
                 <RegistryValue Root="HKCR" Key="CLSID\{B421C839-D95E-40E4-86BF-A3B0E4510252}\InprocServer32\4.0.0.0" Name="Assembly" Value="SilEncConverters40, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" Type="string" Action="write" />

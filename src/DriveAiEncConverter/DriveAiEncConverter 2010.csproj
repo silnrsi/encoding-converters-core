@@ -1,139 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- $(SolutionDir) is only meaningfully set by MSBuild when building via the .sln (see ECInterfaces
+       2010.csproj for the full rationale) -->
+  <PropertyGroup Condition="'$(SolutionDir)'=='' or '$(SolutionDir)'=='*Undefined*' or '$(SolutionDir)'=='$(MSBuildProjectDirectory)\'">
+    <SolutionDir>$(MSBuildThisFileDirectory)..\..\</SolutionDir>
+  </PropertyGroup>
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
+    <!-- net9.0-windows, not bare net9.0: AIGuesserEC and EncCnvtrs only target net9.0-windows - see
+         RunTests 2010.csproj for why matching the TFM suffix (rather than relying on NuGet's
+         .NET-Framework compat-shim fallback) matters. -->
+    <TargetFrameworks>net462;net48;net9.0-windows</TargetFrameworks>
+    <!-- required for VS's Configuration Manager to accept the .sln's x86/x64 entries for this
+         multi-targeted project - see ECInterfaces 2010.csproj for why -->
+    <Platforms>x86;x64</Platforms>
     <ProjectGuid>{088E2974-9588-4EDA-AF7F-869A10DF402A}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>DriveAiEncConverter</RootNamespace>
     <AssemblyName>DriveAiEncConverter</AssemblyName>
-    <TargetFrameworkVersion Condition="('$(OS)'!='Windows_NT')">v4.7.1</TargetFrameworkVersion>
-    <TargetFrameworkVersion Condition="('$(OS)'=='Windows_NT')">v4.8</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <FileUpgradeFlags>
-    </FileUpgradeFlags>
-    <OldToolsVersion>3.5</OldToolsVersion>
-    <UpgradeBackupLocation />
-    <PublishUrl>publish\</PublishUrl>
-    <Install>true</Install>
-    <InstallFrom>Disk</InstallFrom>
-    <UpdateEnabled>false</UpdateEnabled>
-    <UpdateMode>Foreground</UpdateMode>
-    <UpdateInterval>7</UpdateInterval>
-    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
-    <UpdatePeriodically>false</UpdatePeriodically>
-    <UpdateRequired>false</UpdateRequired>
-    <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
-    <UseApplicationTrust>false</UseApplicationTrust>
-    <BootstrapperEnabled>true</BootstrapperEnabled>
-    <TargetFrameworkProfile />
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>$(SolutionDir)output\$(Platform)\$(Configuration)\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <LangVersion>latest</LangVersion>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <!-- see ECInterfaces 2010.csproj: AppendTargetFrameworkToOutputPath=false also unsuffixes obj\,
+         which collides across TFMs building in parallel - obj\ has no external consumers, so just
+         suffix it unconditionally. -->
+    <IntermediateOutputPath>obj\$(Platform)\$(Configuration)\$(TargetFramework)\</IntermediateOutputPath>
+  </PropertyGroup>
+
+  <!-- every TFM gets its own sibling folder under output\ (including net48, via $(TargetFramework))
+       - see ECInterfaces 2010.csproj for why -->
+  <PropertyGroup Condition="'$(Platform)'=='x86'">
+    <OutputPath>$(SolutionDir)output\$(TargetFramework)\Win32\$(Configuration)\</OutputPath>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Platform)'=='x64'">
+    <OutputPath>$(SolutionDir)output\$(TargetFramework)\$(Platform)\$(Configuration)\</OutputPath>
+    <PlatformTarget>x64</PlatformTarget>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <OutputPath>$(SolutionDir)output\$(Platform)\$(Configuration)\</OutputPath>
+
+  <PropertyGroup Condition="'$(Configuration)'=='Debug'">
+    <DebugSymbols>true</DebugSymbols>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)'=='Release'">
     <DefineConstants>TRACE</DefineConstants>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <LangVersion>latest</LangVersion>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>$(SolutionDir)output\Win32\$(Configuration)\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <LangVersion>latest</LangVersion>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
-    <OutputPath>$(SolutionDir)output\Win32\$(Configuration)\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <LangVersion>latest</LangVersion>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)'=='net462' or '$(TargetFramework)'=='net48'">
     <Reference Include="System" />
-    <Reference Include="System.Core">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="System.Xml.Linq">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="System.Data.DataSetExtensions">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
+
   <ItemGroup>
-    <Compile Include="Program.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
+    <ProjectReference Include="..\AIGuesserEC\AIGuesserEC 2010.csproj" />
+    <ProjectReference Include="..\ECInterfaces\ECInterfaces 2010.csproj" />
+    <ProjectReference Include="..\EncCnvtrs\EncCnvtrs 2010.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
-      <Visible>False</Visible>
-      <ProductName>Windows Installer 3.1</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="app.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\AIGuesserEC\AIGuesserEC 2010.csproj">
-      <Project>{b718b5f3-a49a-454c-84fd-6d6f59ec7410}</Project>
-      <Name>AIGuesserEC 2010</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ECInterfaces\ECInterfaces 2010.csproj">
-      <Project>{2935e02f-43ed-4670-9a00-a91b0ad3d66c}</Project>
-      <Name>ECInterfaces 2010</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\EncCnvtrs\EncCnvtrs 2010.csproj">
-      <Project>{3e4b908a-4f96-43c5-981b-1aa4b73ccc26}</Project>
-      <Name>EncCnvtrs 2010</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>

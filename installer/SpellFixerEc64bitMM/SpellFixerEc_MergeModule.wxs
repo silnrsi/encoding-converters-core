@@ -9,7 +9,7 @@
         <Class Id="{8DBB5209-9D0A-4859-87F1-B3DE41961A01}" Context="InprocServer32" Description="SpellingFixer30.SpellingFixer" ThreadingModel="both" ForeignServer="mscoree.dll">
           <ProgId Id="SpellingFixer30.SpellingFixer" Description="SpellingFixer30.SpellingFixer" />
         </Class>
-        <File Id="SpellingFixer30.dll" Name="SpellingFixer30.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="SpellingFixer30.dll" AssemblyApplication="SpellingFixer30.dll" Source="..\..\output\x64\release\SpellingFixer30.dll" />
+        <File Id="SpellingFixer30.dll" Name="SpellingFixer30.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="SpellingFixer30.dll" AssemblyApplication="SpellingFixer30.dll" Source="..\..\output\net48\x64\release\SpellingFixer30.dll" />
         <RegistryValue Root="HKCR" Key="CLSID\{8DBB5209-9D0A-4859-87F1-B3DE41961A01}\Implemented Categories\{62C8FE65-4EBB-45e7-B440-6E39B2CDBF29}" Value="" Type="string" Action="write" />
         <RegistryValue Root="HKCR" Key="CLSID\{8DBB5209-9D0A-4859-87F1-B3DE41961A01}\InprocServer32\5.0.0.0" Name="Class" Value="SpellingFixer30.SpellingFixer" Type="string" Action="write" />
         <RegistryValue Root="HKCR" Key="CLSID\{8DBB5209-9D0A-4859-87F1-B3DE41961A01}\InprocServer32\5.0.0.0" Name="Assembly" Value="SpellingFixer30, Version=5.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" Type="string" Action="write" />

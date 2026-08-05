@@ -1,152 +1,120 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="12.0">
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- $(SolutionDir) is only meaningfully set by MSBuild when building via the .sln. Standalone/
+       inner-ProjectReference builds get a default fallback of $(MSBuildProjectDirectory)\ from the
+       common targets (or the literal string "*Undefined*" for old-style callers) - override both
+       to the real repo root so the PreBuildEvent below (and OutputPath) resolve correctly regardless
+       of how this project gets built. Must come before anything below that reads $(SolutionDir). -->
+  <PropertyGroup Condition="'$(SolutionDir)'=='' or '$(SolutionDir)'=='*Undefined*' or '$(SolutionDir)'=='$(MSBuildProjectDirectory)\'">
+    <SolutionDir>$(MSBuildThisFileDirectory)..\..\</SolutionDir>
+  </PropertyGroup>
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
+    <TargetFrameworks>net462;net48;netstandard2.0;net9.0</TargetFrameworks>
+    <!-- Without this, Visual Studio's project system only knows this multi-targeted project as
+         "AnyCPU" and rejects the .sln's Debug|x86/Debug|x64 (etc.) entries for it with "specifies a
+         project configuration ... that does not exist for that project" - command-line msbuild builds
+         fine either way since /p:Platform is just passed through, but the IDE's Configuration Manager
+         validates against this list. -->
+    <Platforms>x86;x64</Platforms>
     <ProjectGuid>{2935E02F-43ED-4670-9A00-A91B0AD3D66C}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ECInterfaces</RootNamespace>
     <AssemblyName>ECInterfaces</AssemblyName>
-    <ApplicationIcon>TRFFC17.ICO</ApplicationIcon>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\FieldWorks.snk</AssemblyOriginatorKeyFile>
-    <FileUpgradeFlags>
-    </FileUpgradeFlags>
-    <OldToolsVersion>3.5</OldToolsVersion>
-    <UpgradeBackupLocation>
-    </UpgradeBackupLocation>
-    <TargetFrameworkVersion Condition="('$(OS)'!='Windows_NT')">v4.7.1</TargetFrameworkVersion>
-    <TargetFrameworkVersion Condition="('$(OS)'=='Windows_NT')">v4.8</TargetFrameworkVersion>
-    <PublishUrl>publish\</PublishUrl>
-    <Install>true</Install>
-    <InstallFrom>Disk</InstallFrom>
-    <UpdateEnabled>false</UpdateEnabled>
-    <UpdateMode>Foreground</UpdateMode>
-    <UpdateInterval>7</UpdateInterval>
-    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
-    <UpdatePeriodically>false</UpdatePeriodically>
-    <UpdateRequired>false</UpdateRequired>
-    <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
-    <UseApplicationTrust>false</UseApplicationTrust>
-    <BootstrapperEnabled>true</BootstrapperEnabled>
-    <TargetFrameworkProfile />
-    <RegisterForComInterop Condition="('$(OS)'=='Windows_NT')">true</RegisterForComInterop>
-    <RegisterForComInterop Condition="('$(OS)'!='Windows_NT')">false</RegisterForComInterop>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>$(SolutionDir)output\$(Platform)\$(Configuration)\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <LangVersion>latest</LangVersion>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <!-- the SDK appends $(TargetFramework) to the output path automatically for every TFM; disable
+         that so our own conditional logic below (net48 unsuffixed, everything else suffixed) is
+         the only thing controlling it -->
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <!-- AppendTargetFrameworkToOutputPath=false above suppresses the $(TargetFramework) suffix on
+         obj\ (IntermediateOutputPath) as well as bin\ (OutputPath) - we replace the bin\ suffix
+         ourselves via the Platform-conditioned OutputPath groups below, but obj\ was left on its
+         unsuffixed default (obj\$(Platform)\$(Configuration)\), which collides across TFMs building
+         in parallel (confirmed via CS2012 "file may be locked by VBCSCompiler" under /m). obj\ has no
+         external consumers, so just suffix it unconditionally. -->
+    <IntermediateOutputPath>obj\$(Platform)\$(Configuration)\$(TargetFramework)\</IntermediateOutputPath>
+  </PropertyGroup>
+
+  <!-- Every TFM gets its own sibling folder under output\ (net48 included, via the $(TargetFramework)
+       segment below) - nesting one TFM's output under another's was tried first (to keep net48's path
+       unsuffixed, matching pre-multi-targeting history), but a TFM's own build step wipes files it
+       doesn't recognize as its own from inside its OutputPath, which deleted other TFMs' already-built
+       output out from under them whenever they shared a folder. Giving every TFM a fully separate
+       directory avoids that entirely. WiX merge modules and other consumers of net48's output now read
+       from output\net48\... instead of output\... directly - see installer/*.wxs and Package.*.nuspec. -->
+  <PropertyGroup Condition="'$(Platform)'=='x86'">
+    <OutputPath>$(SolutionDir)output\$(TargetFramework)\Win32\$(Configuration)\</OutputPath>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Platform)'=='x64'">
+    <OutputPath>$(SolutionDir)output\$(TargetFramework)\$(Platform)\$(Configuration)\</OutputPath>
+    <PlatformTarget>x64</PlatformTarget>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <OutputPath>$(SolutionDir)output\$(Platform)\$(Configuration)\</OutputPath>
+
+  <PropertyGroup Condition="'$(Configuration)'=='Debug'">
+    <DebugSymbols>true</DebugSymbols>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)'=='Release'">
     <DefineConstants>TRACE</DefineConstants>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <LangVersion>latest</LangVersion>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>$(SolutionDir)output\Win32\$(Configuration)\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <LangVersion>latest</LangVersion>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
-    <OutputPath>$(SolutionDir)output\Win32\$(Configuration)\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <LangVersion>latest</LangVersion>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(FIELDWORKS)'!=''">
     <DefineConstants>$(DefineConstants);COMMON_DATA_FW</DefineConstants>
   </PropertyGroup>
-  <ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)'=='net462' or '$(TargetFramework)'=='net48'">
     <Reference Include="System" />
-    <Reference Include="System.Core">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="ECInterfaces.cs" />
-    <Compile Include="ECProperties.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SILMappingRegistry.cs">
-      <DependentUpon>SILMappingRegistry.xsd</DependentUpon>
-    </Compile>
-    <Compile Include="Util.cs" />
-  </ItemGroup>
+
   <ItemGroup>
     <None Include="..\FieldWorks.snk">
       <Link>FieldWorks.snk</Link>
     </None>
-    <None Include="SILMappingRegistry.xsd">
-      <SubType>Designer</SubType>
-    </None>
+    <None Include="SILMappingRegistry.xsd" />
   </ItemGroup>
-  <ItemGroup>
-    <Content Include="TRFFC17.ICO" />
-  </ItemGroup>
-  <ItemGroup>
-    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
-      <Visible>False</Visible>
-      <ProductName>Windows Installer 3.1</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-  </ItemGroup>
-  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup Condition="'$(OS)'=='Windows_NT'">
-    <PreBuildEvent>xcopy /s /y $(SolutionDir)redist\EC $(TargetDir)\EC\
-xcopy /s /y $(SolutionDir)redist\Help $(TargetDir)\Help\
-xcopy /s /y $(SolutionDir)redist\MapsTables $(TargetDir)\MapsTables\
-xcopy /y $(SolutionDir)redist $(TargetDir)
-if $(Platform) == x64 (
-xcopy /y $(SolutionDir)redist/64bit $(TargetDir)
-) ELSE (
-xcopy /y $(SolutionDir)redist/32bit $(TargetDir)
-)
-</PreBuildEvent>
-  </PropertyGroup>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
+
+  <!-- The redist copy (EC\Plugins etc.) moved to EncCnvtrs 2010.csproj - see that file for why: this
+       data needs to sit next to SilEncConverters40.dll specifically (that's what
+       EncConverters.GetRunningFolder actually resolves against at runtime, via
+       Assembly.GetExecutingAssembly()), not next to ECInterfaces.dll. They shared an output folder
+       for net462/net48 (same TFM string for both projects), which is why keeping it here appeared to
+       work - but ECInterfaces has no net9.0-windows TFM (only bare net9.0), so for that TFM the two
+       projects' outputs land in different folders and the data never reached EncCnvtrs' output. -->
+
+  <!-- Replaces RegisterForComInterop, which failed the ENTIRE build without admin rights (confirmed:
+       the original pre-SDK-style project had this exact same limitation - not a regression from the
+       SDK-style conversion). Its RegisterAssembly task does type-library export AND registry
+       registration as one atomic, admin-only operation, so a non-elevated build never produced a .tlb
+       at all - but ECDriver (native C++) needs this file at compile time via #import, and the WiX merge
+       modules need it for Release packaging, and neither actually requires the registry write. Split
+       into two explicit steps instead: -->
+  <Target Name="ExportAndRegisterTypeLibrary" AfterTargets="Build" Condition="'$(TargetFramework)'=='net462' or '$(TargetFramework)'=='net48'">
+    <PropertyGroup>
+      <_TlbExpToolPath Condition="'$(Platform)'=='x64'">$(TargetFrameworkSDKToolsDirectory)x64\TlbExp.exe</_TlbExpToolPath>
+      <_TlbExpToolPath Condition="'$(Platform)'!='x64'">$(TargetFrameworkSDKToolsDirectory)TlbExp.exe</_TlbExpToolPath>
+      <_RegAsmToolPath Condition="'$(Platform)'=='x64'">$(SystemRoot)\Microsoft.NET\Framework64\v4.0.30319\RegAsm.exe</_RegAsmToolPath>
+      <_RegAsmToolPath Condition="'$(Platform)'!='x64'">$(SystemRoot)\Microsoft.NET\Framework\v4.0.30319\RegAsm.exe</_RegAsmToolPath>
+    </PropertyGroup>
+    <!-- required: TlbExp only exports, no registry access, so this always succeeds regardless of
+         elevation -->
+    <Exec Command="&quot;$(_TlbExpToolPath)&quot; &quot;$(TargetPath)&quot; /out:&quot;$(TargetDir)$(TargetName).tlb&quot;" />
+    <!-- optional, local-dev-only: registers this build in HKCR so e.g. a Word VBA macro can
+         CreateObject() against it without running the installer. Needs admin; failure here is
+         expected and harmless when not elevated (production registration is the WiX merge modules'
+         job either way), so it's best-effort (warns, doesn't fail the build) and Debug-only,
+         matching this project's prior RegisterForComInterop scoping. -->
+    <Exec Command="&quot;$(_RegAsmToolPath)&quot; &quot;$(TargetPath)&quot; /codebase /tlb:&quot;$(TargetDir)$(TargetName).tlb&quot;"
+          ContinueOnError="WarnAndContinue"
+          Condition="'$(Configuration)'=='Debug'" />
   </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>

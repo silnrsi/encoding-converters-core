@@ -1,4 +1,4 @@
-﻿<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs" xmlns:util="http://wixtoolset.org/schemas/v4/wxs/util">
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs" xmlns:util="http://wixtoolset.org/schemas/v4/wxs/util">
     <Module Id="EC_40_MM" Language="1033" Version="5.0.0.0" Guid="ac1e0a8a-7a0d-45d8-8798-f9d9c9e4c776" InstallerVersion="200">
         <SummaryInformation Codepage="1252" Comments="Common installer module for SIL's version 4.0 of the EncConverter's core" Keywords="SIL; Encoding Conversion; Transliteration; EncConverters" Description="EncConverter core 4.0 Merge Module -- Include in any client application deployment project which uses the EncConverters objects" Manufacturer="SIL International" />
 
@@ -26,25 +26,30 @@
 
             <Directory Id="MergeRedirectFolder">
                 <Component Id="IcuEC.dll" Guid="{B4FD77A8-402F-421B-81F3-43A3B6295275}">
-                    <File Id="IcuEC.dll" Name="IcuEC.dll" Vital="yes" KeyPath="yes" AssemblyManifest="IcuEC.dll" AssemblyApplication="IcuEC.dll" Assembly=".net" Source="..\..\output\Win32\release\IcuEC.dll" />
+                    <File Id="IcuEC.dll" Name="IcuEC.dll" Vital="yes" KeyPath="yes" AssemblyManifest="IcuEC.dll" AssemblyApplication="IcuEC.dll" Assembly=".net" Source="..\..\output\net48\Win32\release\IcuEC.dll" />
                 </Component>
-                <Component Id="ICU4NET.dll" Guid="{69F74803-ED55-43E1-BD96-01AEF534DB2D}">
-                    <File Id="ICU4NET.dll" Name="ICU4NET.dll" Vital="yes" KeyPath="yes" AssemblyManifest="ICU4NET.dll" AssemblyApplication="ICU4NET.dll" Assembly=".net" Source="..\..\output\Win32\release\ICU4NET.dll" />
+                <!-- Replaces the ICU4NET.dll component: that C++/CLI wrapper project was deleted and
+                     replaced with SIL's icu.net NuGet package (see IcuEC 2010.csproj) - same native
+                     ICU BreakIterator functionality, now via a plain managed P/Invoke assembly instead
+                     of a mixed-mode one. New GUID since this is a different file, not an in-place
+                     update of the old component. -->
+                <Component Id="icu.net.dll" Guid="{1259BCDF-229E-4FDF-99DB-62C699BC797A}">
+                    <File Id="icu.net.dll" Name="icu.net.dll" Vital="yes" KeyPath="yes" AssemblyManifest="icu.net.dll" AssemblyApplication="icu.net.dll" Assembly=".net" Source="..\..\output\net48\Win32\release\icu.net.dll" />
                 </Component>
                 <Component Id="IcuConvEC.dll" Guid="{8432913F-51EF-417E-A095-F548633FD65E}">
-                    <File Id="IcuConvEC.dll" Name="IcuConvEC.dll" Vital="yes" KeyPath="yes" Source="..\..\output\Win32\release\IcuConvEC.dll" />
+                    <File Id="IcuConvEC.dll" Name="IcuConvEC.dll" Vital="yes" KeyPath="yes" Source="..\..\output\net48\Win32\release\IcuConvEC.dll" />
                 </Component>
                 <Component Id="IcuRegexEC.dll" Guid="{45CCC459-A266-4881-A768-B643DF6353D0}">
-                    <File Id="IcuRegexEC.dll" Name="IcuRegexEC.dll" Vital="yes" KeyPath="yes" Source="..\..\output\Win32\release\IcuRegexEC.dll" />
+                    <File Id="IcuRegexEC.dll" Name="IcuRegexEC.dll" Vital="yes" KeyPath="yes" Source="..\..\output\net48\Win32\release\IcuRegexEC.dll" />
                 </Component>
                 <Component Id="IcuTranslitEC.dll" Guid="{6DBD7549-A586-42F2-9411-13117F9C4D2C}">
-                    <File Id="IcuTranslitEC.dll" Name="IcuTranslitEC.dll" Vital="yes" KeyPath="yes" Source="..\..\output\Win32\release\IcuTranslitEC.dll" />
+                    <File Id="IcuTranslitEC.dll" Name="IcuTranslitEC.dll" Vital="yes" KeyPath="yes" Source="..\..\output\net48\Win32\release\IcuTranslitEC.dll" />
                 </Component>
                 <Component Id="ECInterfaces.dll" Guid="7B5EC0FA-BC63-4010-B0A0-927BD419B4A3">
                     <Class Id="{E8DE7761-7091-38B8-82CD-C67A76F62DC9}" Context="InprocServer32" Description="ECInterfaces.mappingRegistry" ThreadingModel="both" ForeignServer="mscoree.dll">
                         <ProgId Id="ECInterfaces.mappingRegistry" Description="ECInterfaces.mappingRegistry" />
                     </Class>
-                    <File Id="ECInterfaces.dll" Name="ECInterfaces.dll" Vital="yes" KeyPath="yes" AssemblyManifest="ECInterfaces.dll" AssemblyApplication="ECInterfaces.dll" Assembly=".net" Source="..\..\output\Win32\release\ECInterfaces.dll" />
+                    <File Id="ECInterfaces.dll" Name="ECInterfaces.dll" Vital="yes" KeyPath="yes" AssemblyManifest="ECInterfaces.dll" AssemblyApplication="ECInterfaces.dll" Assembly=".net" Source="..\..\output\net48\Win32\release\ECInterfaces.dll" />
                     <ProgId Id="Record" />
                     <RegistryValue Root="HKCR" Key="CLSID\{E8DE7761-7091-38B8-82CD-C67A76F62DC9}\Implemented Categories\{62C8FE65-4EBB-45e7-B440-6E39B2CDBF29}" Value="" Type="string" Action="write" />
                     <RegistryValue Root="HKCR" Key="CLSID\{E8DE7761-7091-38B8-82CD-C67A76F62DC9}\InprocServer32\4.0.0.0" Name="Class" Value="ECInterfaces.mappingRegistry" Type="string" Action="write" />
@@ -85,7 +90,7 @@
                     <RegistryValue Root="HKCR" Key="Record\{D90586C3-EA5E-3223-A5C5-6CFCA8548B0C}\4.0.0.0" Name="CodeBase" Value="file:///[#ECInterfaces.dll]" Type="string" Action="write" />
                 </Component>
                 <Component Id="ECInterfaces.tlb" Guid="51404655-DB11-4872-8B7F-718AA917ABBA">
-                    <File Id="ECInterfaces.tlb" Name="ECInterfaces.tlb" Vital="yes" KeyPath="yes" Source="..\..\output\Win32\release\ECInterfaces.tlb">
+                    <File Id="ECInterfaces.tlb" Name="ECInterfaces.tlb" Vital="yes" KeyPath="yes" Source="..\..\output\net48\Win32\release\ECInterfaces.tlb">
                         <TypeLib Id="{6A977123-92AF-43D2-83A7-B4E853EE42D1}" Description="Encoding Converters Interface definitions for the repository and converter engines" HelpDirectory="MergeRedirectFolder" Language="0" MajorVersion="4" MinorVersion="0">
                             <Interface Id="{0226D822-AFB1-3094-808A-C858AE429A49}" Name="_implementationsRowChangeEvent" ProxyStubClassId32="{00020424-0000-0000-C000-000000000046}" />
                             <Interface Id="{037AD6C6-CD31-3D48-86D4-7E88CE482DE4}" Name="_specPropertyRowChangeEvent" ProxyStubClassId32="{00020424-0000-0000-C000-000000000046}" />
@@ -292,7 +297,7 @@
                     <Class Id="{A4999E32-8291-4B58-AC5C-8100A39CE0FD}" Context="InprocServer32" Description="SilEncConverters40.NetRegexEncConverterConfig" ThreadingModel="both" ForeignServer="mscoree.dll">
                         <ProgId Id="SilEncConverters40.NetRegexEncConverterConfig" Description="SilEncConverters40.NetRegexEncConverterConfig" />
                     </Class>
-                    <File Id="SilEncConverters40.dll" KeyPath="yes" Source="..\..\output\Win32\release\SilEncConverters40.dll" />
+                    <File Id="SilEncConverters40.dll" KeyPath="yes" Source="..\..\output\net48\Win32\release\SilEncConverters40.dll" />
                     <RegistryValue Root="HKCR" Key="CLSID\{0162B174-E479-44CD-BEE8-CFA9BC06BF92}\Implemented Categories\{62C8FE65-4EBB-45e7-B440-6E39B2CDBF29}" Value="" Type="string" Action="write" />
                     <RegistryValue Root="HKCR" Key="CLSID\{0162B174-E479-44CD-BEE8-CFA9BC06BF92}\InprocServer32\4.0.0.0" Name="Class" Value="SilEncConverters40.EncConverters" Type="string" Action="write" />
                     <RegistryValue Root="HKCR" Key="CLSID\{0162B174-E479-44CD-BEE8-CFA9BC06BF92}\InprocServer32\4.0.0.0" Name="Assembly" Value="SilEncConverters40, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" Type="string" Action="write" />
@@ -490,7 +495,7 @@
                     <RegistryValue Root="HKCR" Key="CLSID\{DBE5F638-49E5-4D23-A7A5-EC83044C6A39}\InprocServer32" Name="CodeBase" Value="file:///[#SilEncConverters40.dll]" Type="string" Action="write" />
                 </Component>
                 <Component Id="SilEncConverters40.tlb" Guid="513E71DB-F4BA-4B15-B4BD-F2F3883218E6">
-                    <File Id="SilEncConverters40.tlb" Name="SilEncConverters40.tlb" Vital="yes" KeyPath="yes" Source="..\..\output\Win32\release\SilEncConverters40.tlb">
+                    <File Id="SilEncConverters40.tlb" Name="SilEncConverters40.tlb" Vital="yes" KeyPath="yes" Source="..\..\output\net48\Win32\release\SilEncConverters40.tlb">
                         <TypeLib Id="{06F10557-EE67-4DAD-B3F5-031568E4DB31}" Description="Encoding Converters Repository and basic converter engine wrappers" HelpDirectory="MergeRedirectFolder" Language="0" MajorVersion="4" MinorVersion="0">
                             <Interface Id="{0D196FF3-5C04-3795-B3B9-3E1344F6F3EC}" Name="_SpellFixerByReflection" ProxyStubClassId32="{00020424-0000-0000-C000-000000000046}" />
                             <Interface Id="{0D423AEA-3380-3DD6-85F3-0AE1D765AAA8}" Name="_EncConverterPlugins" ProxyStubClassId32="{00020424-0000-0000-C000-000000000046}" />
@@ -531,28 +536,28 @@
                     </File>
                 </Component>
 				<Component Id="SilEncConverters40.dll.config" Guid="{A41FAD7F-A8B6-4A82-9210-EE3BBCA3E8FB}">
-					<File Id="SilEncConverters40.dll.config" Name="SilEncConverters40.dll.config" Vital="yes" KeyPath="yes" Source="..\..\output\Win32\release\SilEncConverters40.dll.config" />
+					<File Id="SilEncConverters40.dll.config" Name="SilEncConverters40.dll.config" Vital="yes" KeyPath="yes" Source="..\..\output\net48\Win32\release\SilEncConverters40.dll.config" />
 				</Component>
 				<Component Id="LatestRedirects.config" Guid="{29834D39-3E70-4E2D-AAD3-85CA82BF979F}">
                     <File Id="LatestRedirects.config" Name="LatestRedirects.config" KeyPath="yes" Source="..\..\LatestRedirects.config" />
                 </Component>
                 <Component Id="EncConvertersAppDataMover40.exe" Guid="4F57740F-5033-42f2-A41A-ED8022731CE0">
-                    <File Id="EncConvertersAppDataMover40.exe" Name="EncConvertersAppDataMover40.exe" ReadOnly="yes" KeyPath="yes" Source="..\..\output\Win32\release\EncConvertersAppDataMover40.exe" Assembly=".net" AssemblyApplication="EncConvertersAppDataMover40.exe" AssemblyManifest="EncConvertersAppDataMover40.exe" />
+                    <File Id="EncConvertersAppDataMover40.exe" Name="EncConvertersAppDataMover40.exe" ReadOnly="yes" KeyPath="yes" Source="..\..\output\net48\Win32\release\EncConvertersAppDataMover40.exe" Assembly=".net" AssemblyApplication="EncConvertersAppDataMover40.exe" AssemblyManifest="EncConvertersAppDataMover40.exe" />
                 </Component>
                 <Component Id="ECFileConverter.exe" Guid="85E920B5-3C96-4F07-9BAB-707CBA78F2B9">
-                    <File Id="ECFileConverter.exe" Name="ECFileConverter.exe" ReadOnly="yes" KeyPath="yes" Source="..\..\output\Win32\release\ECFileConverter.exe" Assembly=".net" AssemblyApplication="ECFileConverter.exe" AssemblyManifest="ECFileConverter.exe" />
+                    <File Id="ECFileConverter.exe" Name="ECFileConverter.exe" ReadOnly="yes" KeyPath="yes" Source="..\..\output\net48\Win32\release\ECFileConverter.exe" Assembly=".net" AssemblyApplication="ECFileConverter.exe" AssemblyManifest="ECFileConverter.exe" />
                 </Component>
                 <Component Id="Microsoft_Web_WebView2_Core.dll" Guid="{C4BD4D08-EE06-47CC-806F-B93DE307C065}">
-                    <File Id="Microsoft_Web_WebView2_Core.dll" Name="Microsoft.Web.WebView2.Core.dll" Vital="yes" KeyPath="yes" AssemblyManifest="Microsoft_Web_WebView2_Core.dll" AssemblyApplication="Microsoft_Web_WebView2_Core.dll" Assembly=".net" Source="..\..\output\Win32\release\Microsoft.Web.WebView2.Core.dll" />
+                    <File Id="Microsoft_Web_WebView2_Core.dll" Name="Microsoft.Web.WebView2.Core.dll" Vital="yes" KeyPath="yes" AssemblyManifest="Microsoft_Web_WebView2_Core.dll" AssemblyApplication="Microsoft_Web_WebView2_Core.dll" Assembly=".net" Source="..\..\output\net48\Win32\release\Microsoft.Web.WebView2.Core.dll" />
                 </Component>
                 <Component Id="Microsoft_Web_WebView2_WinForms.dll" Guid="{F13D171D-379E-4EF2-80DF-1681FD0788AE}">
-                    <File Id="Microsoft_Web_WebView2_WinForms.dll" Name="Microsoft.Web.WebView2.WinForms.dll" Vital="yes" KeyPath="yes" AssemblyManifest="Microsoft_Web_WebView2_WinForms.dll" AssemblyApplication="Microsoft_Web_WebView2_WinForms.dll" Assembly=".net" Source="..\..\output\Win32\release\Microsoft.Web.WebView2.WinForms.dll" />
+                    <File Id="Microsoft_Web_WebView2_WinForms.dll" Name="Microsoft.Web.WebView2.WinForms.dll" Vital="yes" KeyPath="yes" AssemblyManifest="Microsoft_Web_WebView2_WinForms.dll" AssemblyApplication="Microsoft_Web_WebView2_WinForms.dll" Assembly=".net" Source="..\..\output\net48\Win32\release\Microsoft.Web.WebView2.WinForms.dll" />
                 </Component>
                 <Component Id="Microsoft_Web_WebView2_Wpf.dll" Guid="{E669014E-A7B3-4C44-9C6F-DB422690DB28}">
-                    <File Id="Microsoft_Web_WebView2_Wpf.dll" Name="Microsoft.Web.WebView2.Wpf.dll" Vital="yes" KeyPath="yes" AssemblyManifest="Microsoft_Web_WebView2_Wpf.dll" AssemblyApplication="Microsoft_Web_WebView2_Wpf.dll" Assembly=".net" Source="..\..\output\Win32\release\Microsoft.Web.WebView2.Wpf.dll" />
+                    <File Id="Microsoft_Web_WebView2_Wpf.dll" Name="Microsoft.Web.WebView2.Wpf.dll" Vital="yes" KeyPath="yes" AssemblyManifest="Microsoft_Web_WebView2_Wpf.dll" AssemblyApplication="Microsoft_Web_WebView2_Wpf.dll" Assembly=".net" Source="..\..\output\net48\Win32\release\Microsoft.Web.WebView2.Wpf.dll" />
                 </Component>
                 <Component Id="WebView2Loader.dll" Guid="{F2CF54F9-B009-4C79-90F4-CCCE9C899AF8}">
-                    <File Id="WebView2Loader.dll" Name="WebView2Loader.dll" KeyPath="yes" Source="..\..\output\Win32\release\runtimes\win-x86\native\WebView2Loader.dll" />
+                    <File Id="WebView2Loader.dll" Name="WebView2Loader.dll" KeyPath="yes" Source="..\..\output\net48\Win32\release\runtimes\win-x86\native\WebView2Loader.dll" />
                 </Component>
                 <Directory Id="ECFolder" Name="EC">
                     <Directory Id="PluginsFolder" Name="Plugins">
@@ -571,7 +576,7 @@
             <StandardDirectory Id="CommonFilesFolder">
                 <Directory Id="EcSIL" Name="SIL">
                     <Component Id="ECDriver.dll" Guid="4c632e67-b66b-4a7b-a6bb-f99d93abdcca">
-                        <File Id="ECDriver.dll" Name="ECDriver.dll" KeyPath="yes" Source="..\..\output\Win32\release\ECDriver.dll" />
+                        <File Id="ECDriver.dll" Name="ECDriver.dll" KeyPath="yes" Source="..\..\output\net48\Win32\release\ECDriver.dll" />
                     </Component>
                     <Component Id="RemoveFile_MoveEcData_Log" Guid="{F08A3C81-9FCD-4C96-840F-583C1BBB1AA9}">
                         <RemoveFile Id="RemoveFile3" Directory="EcSIL" Name="MoveEcData.log" On="uninstall" />

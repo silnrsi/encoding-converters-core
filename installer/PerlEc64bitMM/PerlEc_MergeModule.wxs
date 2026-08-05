@@ -5,7 +5,7 @@
 
         <Directory Id="MergeRedirectFolder">
             <Component Id="PerlExpressionEC.dll" Guid="{B8C8C9D0-0D18-475F-8BC2-2FA5717E1521}">
-                <File Id="PerlExpressionEC.dll" KeyPath="yes" Source="..\..\output\x64\Release\PerlExpressionEC.dll" />
+                <File Id="PerlExpressionEC.dll" KeyPath="yes" Source="..\..\output\net48\x64\Release\PerlExpressionEC.dll" />
             </Component>
             <Directory Id="PerlECFolder" Name="EC">
                 <Directory Id="PerlPluginsFolder" Name="Plugins">
