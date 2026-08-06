@@ -12,7 +12,7 @@
   - C++ (`.vcxproj`) projects must remain standard MSBuild C++ structures but configured to support target platforms cleanly.
 - **Target Framework Matrix:**
   - Support legacy boundaries: `.NET Framework 4.6.2` and `.NET Framework 4.8`
-  - Cross-platform & Modern boundaries: `.NET Standard 2.0` (where UI-free) and `.NET 8.0 / .NET 10.0` (using modern UI abstractions).
+  - Cross-platform & Modern boundaries: `.NET Standard 2.0` (where UI-free) and `.NET 9.0` / `.NET 9.0-windows` (using modern UI abstractions). All converted `.csproj` files, `build/Encoding-Converters-Core.props`, the nuspecs, and CI target `net9.0`/`net9.0-windows` — keep this matrix in sync with whatever TFM the projects actually build against.
 - **Target Namespace:** Transition legacy namespaces toward `SIL.Transduction`.
 
 ## UI Requirements

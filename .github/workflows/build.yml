@@ -110,6 +110,10 @@ jobs:
     # Package.Release.nuspec ships net462/net48/net9.0/net9.0-windows/netstandard2.0 (see its own
     # comments for what each TFM contributes) - upload every one of those TFM output folders so the
     # build_nuget job (a separate machine, only sees what's uploaded here) can pack them all.
+    # net9.0-windows needs the same wildcard treatment as net48: the nuspec's
+    # runtimes\EcDistFiles\net9.0-windows\win-*\native entries pull every *.dll/*.config/*.tlb/*.exe
+    # from this folder, plus *.json for the .deps.json/.runtimeconfig.json a .NET app needs to run -
+    # uploading only SilEncConverters40.dll (as before) silently dropped everything else.
     - name: Upload build artifacts
       if: matrix.build_configuration == 'Release'
       uses: actions/upload-artifact@v6
@@ -122,7 +126,11 @@ jobs:
           output\net48\${{ matrix.build_platform }}\${{ matrix.build_configuration }}\*.config
           output\net462\${{ matrix.build_platform }}\${{ matrix.build_configuration }}\ECInterfaces.dll
           output\net462\${{ matrix.build_platform }}\${{ matrix.build_configuration }}\SilEncConverters40.dll
-          output\net9.0-windows\${{ matrix.build_platform }}\${{ matrix.build_configuration }}\SilEncConverters40.dll
+          output\net9.0-windows\${{ matrix.build_platform }}\${{ matrix.build_configuration }}\*.exe
+          output\net9.0-windows\${{ matrix.build_platform }}\${{ matrix.build_configuration }}\*.dll
+          output\net9.0-windows\${{ matrix.build_platform }}\${{ matrix.build_configuration }}\*.tlb
+          output\net9.0-windows\${{ matrix.build_platform }}\${{ matrix.build_configuration }}\*.config
+          output\net9.0-windows\${{ matrix.build_platform }}\${{ matrix.build_configuration }}\*.json
           output\net9.0\${{ matrix.build_platform }}\${{ matrix.build_configuration }}\ECInterfaces.dll
           output\netstandard2.0\${{ matrix.build_platform }}\${{ matrix.build_configuration }}\ECInterfaces.dll
           output\MergeModules\**\*.*

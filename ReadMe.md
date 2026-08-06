@@ -29,7 +29,7 @@ Client applications include Paratext, FieldWorks, LibreOffice/MS Office plugins,
    (native C/C++ engines, P/Invoked)                    (src/EcTranslators, online + self-hosted)
    ├─ Consistent Changes  — src/CcEC                    ├─ Azure OpenAI     — AzureOpenAi
    ├─ TECkit              — built into EncCnvtrs         ├─ Google Vertex AI — VertexAi (Gemini)
-   ├─ ICU convert/regex/  — src/IcuEC (+ icu4net)        ├─ Google Translate — GoogleTranslator
+   ├─ ICU convert/regex/  — src/IcuEC                    ├─ Google Translate — GoogleTranslator
    │  transliterate                                      ├─ Bing/MS Translator — BingTranslator
    ├─ Python script       — src/PyScriptEC (Py2 native    ├─ DeepL            — DeepLTranslator
    │  or Py.NET for Py3)                                  └─ Meta NLLB        — NllbTranslator
@@ -48,9 +48,9 @@ Every transducer, native or managed, ultimately implements `IEncConverter` (or t
 | Path | What it is |
 |---|---|
 | `src/ECInterfaces` | The `IEncConverter` / `IEncConverterConfig` / `IEncConverters` contracts, the `mappingRegistry` XML schema, shared utilities. Changes here must be mirrored in `EncCnvtrs/lib/ECEncConverter.h`. |
-| `src/EncCnvtrs` | The dispatcher (`SilEncConverters40.dll`): converter discovery/instantiation, the mapping-registry repository logic, the built-in TECkit and compound/fallback converters, and the `WebBrowserAdaptor` UI layer (IE / GeckoFX / WebView2). |
+| `src/EncCnvtrs` | The dispatcher (`SilEncConverters40.dll`): converter discovery/instantiation, the mapping-registry repository logic, the built-in TECkit and compound/fallback converters, and the `WebBrowserAdaptor` UI layer (IE / WebView2 Edge; GeckoFX was removed). |
 | `src/CcEC` | Consistent Changes (CC) transducer — P/Invokes prebuilt `CC32.dll`/`CC64.dll`. |
-| `src/IcuEC`, `src/icu4net` | ICU-based conversion, regex, and transliteration (native `.vcxproj` DLLs + C# wrappers); `icu4net` is a separate C++/CLI binding of core ICU classes. |
+| `src/IcuEC` | ICU-based conversion, regex, and transliteration (native `.vcxproj` DLLs + C# wrappers). |
 | `src/PyScriptEC` | Python-script transducer — legacy embedded CPython 2.7 (native) and a newer Python.NET-based Python 3 path. |
 | `src/PerlExpressionEC` | Shells out to `perl.exe` to evaluate a Perl expression. |
 | `src/CodePageEC` | Thin wrapper over Win32 code-page conversion APIs. |

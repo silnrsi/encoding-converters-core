@@ -36,8 +36,13 @@
        whole solution, which is the actual problem being fixed here). -->
   <Target Name="ExportAndRegisterTypeLibrary" AfterTargets="Build" Condition="'$(TargetFramework)'=='net462' or '$(TargetFramework)'=='net48'">
     <PropertyGroup>
-      <_TlbExpToolPath Condition="'$(Platform)'=='x64'">$(TargetFrameworkSDKToolsDirectory)x64\TlbExp.exe</_TlbExpToolPath>
-      <_TlbExpToolPath Condition="'$(Platform)'!='x64'">$(TargetFrameworkSDKToolsDirectory)TlbExp.exe</_TlbExpToolPath>
+      <!-- $(TargetFrameworkSDKToolsDirectory) is only populated by the full MSBuild toolset (VS/MSBuild.exe);
+           `dotnet build` never sets it, which made TlbExp resolve to an empty path and fail with MSB3073.
+           Fall back to the well-known Windows SDK NETFX Tools folder so this works under both hosts. -->
+      <_NetFxToolsDir Condition="'$(TargetFrameworkSDKToolsDirectory)' != ''">$(TargetFrameworkSDKToolsDirectory)</_NetFxToolsDir>
+      <_NetFxToolsDir Condition="'$(TargetFrameworkSDKToolsDirectory)' == ''">$(MSBuildProgramFiles32)\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.8 Tools\</_NetFxToolsDir>
+      <_TlbExpToolPath Condition="'$(Platform)'=='x64'">$(_NetFxToolsDir)x64\TlbExp.exe</_TlbExpToolPath>
+      <_TlbExpToolPath Condition="'$(Platform)'!='x64'">$(_NetFxToolsDir)TlbExp.exe</_TlbExpToolPath>
       <_RegAsmToolPath Condition="'$(Platform)'=='x64'">$(SystemRoot)\Microsoft.NET\Framework64\v4.0.30319\RegAsm.exe</_RegAsmToolPath>
       <_RegAsmToolPath Condition="'$(Platform)'!='x64'">$(SystemRoot)\Microsoft.NET\Framework\v4.0.30319\RegAsm.exe</_RegAsmToolPath>
     </PropertyGroup>

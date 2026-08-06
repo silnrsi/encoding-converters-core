@@ -63,6 +63,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
 
+  <!-- PerlExpressionAutoConfigDialog.cs is declared "namespace SilEncConverters40", not this project's
+       RootNamespace ("PerlExpressionEC") - without this DependentUpon, the SDK's default-item globbing
+       names the embedded resx after RootNamespace instead (PerlExpressionEC.PerlExpressionAutoConfigDialog),
+       which wouldn't match a real lookup like `new ComponentResourceManager(typeof(PerlExpressionAutoConfigDialog))`. -->
+  <ItemGroup>
+    <EmbeddedResource Update="PerlExpressionAutoConfigDialog.resx">
+      <DependentUpon>PerlExpressionAutoConfigDialog.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\ECInterfaces\ECInterfaces 2010.csproj" />
     <ProjectReference Include="..\EncCnvtrs\EncCnvtrs 2010.csproj" />
