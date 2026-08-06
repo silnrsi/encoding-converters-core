@@ -90,6 +90,7 @@ namespace SilEncConverters40
             this.buttonOK = new System.Windows.Forms.Button();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.buttonSaveInRepository = new System.Windows.Forms.Button();
+            this.buttonHelp = new System.Windows.Forms.Button();
             this.helpProvider = new System.Windows.Forms.HelpProvider();
             this.fontDialog = new System.Windows.Forms.FontDialog();
             this.ecTextBoxInput = new SilEncConverters40.EcTextBox();
@@ -731,7 +732,20 @@ namespace SilEncConverters40
             this.buttonSaveInRepository.UseVisualStyleBackColor = true;
             this.buttonSaveInRepository.Visible = false;
             this.buttonSaveInRepository.Click += new System.EventHandler(this.buttonSaveInRepository_Click);
-            // 
+            //
+            // buttonHelp
+            //
+            this.buttonHelp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.helpProvider.SetHelpString(this.buttonHelp, "Click this button to open the help page for this converter in your web browser");
+            this.buttonHelp.Location = new System.Drawing.Point(147, 444);
+            this.buttonHelp.Name = "buttonHelp";
+            this.helpProvider.SetShowHelp(this.buttonHelp, true);
+            this.buttonHelp.Size = new System.Drawing.Size(75, 23);
+            this.buttonHelp.TabIndex = 6;
+            this.buttonHelp.Text = "&Help";
+            this.buttonHelp.UseVisualStyleBackColor = true;
+            this.buttonHelp.Click += new System.EventHandler(this.buttonHelp_Click);
+            //
             // fontDialog
             // 
             this.fontDialog.AllowScriptChange = false;
@@ -767,6 +781,7 @@ namespace SilEncConverters40
             this.CancelButton = this.buttonCancel;
             this.ClientSize = new System.Drawing.Size(634, 479);
             this.Controls.Add(this.buttonSaveInRepository);
+            this.Controls.Add(this.buttonHelp);
             this.Controls.Add(this.buttonOK);
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.buttonApply);
@@ -836,6 +851,7 @@ namespace SilEncConverters40
         private System.Windows.Forms.Label labelProperties;
         private System.Windows.Forms.DataGridView dataGridViewProperties;
         protected System.Windows.Forms.Button buttonSaveInRepository;
+        protected System.Windows.Forms.Button buttonHelp;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnKey;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnValue;
         private SilEncConverters40.EcTextBox ecTextBoxInput;

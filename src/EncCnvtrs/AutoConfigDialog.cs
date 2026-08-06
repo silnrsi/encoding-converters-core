@@ -32,6 +32,7 @@ namespace SilEncConverters40
         protected int m_nLhsExpects;
         protected int m_nRhsReturns;
         protected IEncConverter m_aEC = null;
+        private string _strHelpFilePath;
 
 		private string _testData = "Test Data";
 		public string InitialTestData
@@ -122,7 +123,8 @@ namespace SilEncConverters40
 
             this.Text = strDisplayName;
 
-            // get the help for the about tab
+            // resolve (but don't yet open) the help page for this dialog; it's launched on request,
+            // via the "Help" button next to "Save In Repository" - see buttonHelp_Click
             RegistryKey keyRoot = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\SIL\SilEncConverters40", false);
             if (keyRoot != null)
             {
@@ -135,21 +137,13 @@ namespace SilEncConverters40
 					strXmlFilePath = Path.Combine(strXmlFilePath, Path.Combine(@"Help", strHtmlFileName));
                 System.Diagnostics.Debug.WriteLine(strXmlFilePath);
 
-                // open the Help page in the user's default browser rather than embedding a browser
-                // control in the dialog (see Handover.md, "The three-browser-engine problem")
-                try
-                {
-                    Process.Start(new ProcessStartInfo(strXmlFilePath) { UseShellExecute = true });
-                }
-                catch (Exception ex)
-                {
-                    Util.DebugWriteLine(this, $"Couldn't open Help page '{strXmlFilePath}': {ex.Message}");
-                }
+                _strHelpFilePath = strXmlFilePath;
             }
 #if DEBUG
             else
                 throw new ApplicationException(@"Can't read the HLKM\SOFTWARE\SIL\SilEncConverters40\[RootDir] registry key, which should get created during installation.");
 #endif
+            buttonHelp.Enabled = !String.IsNullOrEmpty(_strHelpFilePath);
 
             ecTextBoxInput.Text = InitialTestData;
             //char[] chinese = {'\u6B22','\u8FCE','\u4F7F','\u7528','\u0020'};
@@ -160,6 +154,26 @@ namespace SilEncConverters40
         protected virtual void SetConvTypeControls()
         {
             // usually for giving sub-classes an opportunity to query for the ConvType
+        }
+
+        // opens the Help page in the user's default browser rather than embedding a browser control
+        // in the dialog (see Handover.md, "The browser-engine problem"). This is a plain button next
+        // to "Save In Repository" - the title bar's Help ("?") button is already used for something
+        // else (per-control context help via 'helpProvider'), so it can't double as a launcher here.
+        private void buttonHelp_Click(object sender, EventArgs e)
+        {
+            Util.DebugWriteLine(this, "BEGIN");
+            if (String.IsNullOrEmpty(_strHelpFilePath))
+                return;
+
+            try
+            {
+                Process.Start(new ProcessStartInfo(_strHelpFilePath) { UseShellExecute = true });
+            }
+            catch (Exception ex)
+            {
+                Util.DebugWriteLine(this, $"Couldn't open Help page '{_strHelpFilePath}': {ex.Message}");
+            }
         }
 
         public virtual void Initialize
