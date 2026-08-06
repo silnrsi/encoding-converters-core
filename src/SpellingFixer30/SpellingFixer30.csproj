@@ -274,18 +274,26 @@
     <ProjectReference Include="..\EncCnvtrs\EncCnvtrs 2010.csproj" />
   </ItemGroup>
 
-  <PropertyGroup>
-    <PostBuildEvent>@echo xcopy /y "$(TargetDir)*.*" $(SolutionDir)output\$(Platform)\$(Configuration)
+  <!-- was a classic <PostBuildEvent> property, which (per Microsoft.Common.CurrentVersion.targets)
+       also runs at the outer, TFM-unspecified level of a multi-targeted SDK-style build - not just
+       once per inner per-TFM build. $(TargetDir)/$(ProjectDir) are genuinely undefined there (this is
+       the exact "$(TargetDir) isn't reliably resolved... for a multi-targeted build" issue already
+       called out in EncCnvtrs 2010.csproj's CopyRedistFiles target), which is why CI failed on every
+       Configuration/Platform combination identically: the outer pass runs regardless of which one is
+       being built. Converted to an explicit Target with the same '$(TargetFramework)'!='' guard used
+       there, so this only runs in the real, per-TFM inner build. -->
+  <Target Name="CopySpellFixerBuildOutputs" AfterTargets="Build" Condition="'$(TargetFramework)' != ''">
+    <Exec Command="@echo xcopy /y &quot;$(TargetDir)*.*&quot; $(SolutionDir)output\$(Platform)\$(Configuration)
 
-IF EXIST "%25ProgramData%25\SIL\ConsistentSpellingFixer\ScriptSystems" goto checkCopyXmls
-md "%25ProgramData%25\SIL\ConsistentSpellingFixer\ScriptSystems"
+IF EXIST &quot;%25ProgramData%25\SIL\ConsistentSpellingFixer\ScriptSystems&quot; goto checkCopyXmls
+md &quot;%25ProgramData%25\SIL\ConsistentSpellingFixer\ScriptSystems&quot;
 
 :checkCopyXmls
-IF EXIST "%25ProgramData%25\SIL\ConsistentSpellingFixer\ScriptSystems\Indic.xml" goto nocopy
+IF EXIST &quot;%25ProgramData%25\SIL\ConsistentSpellingFixer\ScriptSystems\Indic.xml&quot; goto nocopy
 
-@echo Copying VSV files to '"%25ProgramData%25\SIL\ConsistentSpellingFixer\ScriptSystems' folder
-xcopy "$(ProjectDir)VSVs\*.xml" "%25ProgramData%25\SIL\ConsistentSpellingFixer\ScriptSystems" /y /i /c
+@echo Copying VSV files to '&quot;%25ProgramData%25\SIL\ConsistentSpellingFixer\ScriptSystems' folder
+xcopy &quot;$(ProjectDir)VSVs\*.xml&quot; &quot;%25ProgramData%25\SIL\ConsistentSpellingFixer\ScriptSystems&quot; /y /i /c
 
-:nocopy</PostBuildEvent>
-  </PropertyGroup>
+:nocopy" />
+  </Target>
 </Project>
