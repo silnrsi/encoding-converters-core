@@ -334,7 +334,7 @@ xcopy /y &quot;$(SolutionDir)redist/32bit&quot; &quot;$(TargetDir)&quot;
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Web.WebView2">
-      <Version>1.0.3912.50</Version>
+      <Version>1.0.4129.50</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
       <Version>13.0.4</Version>

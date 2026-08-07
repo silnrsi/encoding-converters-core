@@ -19,6 +19,11 @@ namespace SilEncConverters40
 
 		public ManualResetEvent waitForCoreWebView2Loaded;
 
+		// captured from whichever of the two channels below actually reports the failure - either
+		// can be the one that fires, depending on WebView2 SDK/runtime version (see Initialize() and
+		// WebView_CoreWebView2InitializationCompleted)
+		private Exception _coreWebView2InitializationException;
+
 		public WebBrowserEdge()
 			: base(WhichBrowser.Edge)
 		{
@@ -60,9 +65,30 @@ namespace SilEncConverters40
 
 			_webBrowser.CoreWebView2InitializationCompleted += WebView_CoreWebView2InitializationCompleted;
 			waitForCoreWebView2Loaded = new ManualResetEvent(false);
-			InitializeAsync(env);   // calling w/o await (and letting do events happen until CoreWebView2InitializationCompleted)
+			// calling w/o await (and letting DoEvents happen until CoreWebView2InitializationCompleted) -
+			// but EnsureCoreWebView2Async can fault directly instead of (or in addition to) raising that
+			// event with IsSuccess=false, depending on the failure and the installed WebView2 SDK/runtime
+			// version. Since nothing else awaits this task, capture a fault here too, or it's silently lost
+			// as an unobserved task exception and all NavigateAsync/callers get to see is "CoreWebView2 is
+			// null", with no idea why.
+			InitializeAsync(env).ContinueWith(t =>
+			{
+				if (t.IsFaulted)
+					_coreWebView2InitializationException = t.Exception?.Flatten().InnerException ?? t.Exception;
+				waitForCoreWebView2Loaded.Set();
+			}, TaskScheduler.Default);
 			while (!waitForCoreWebView2Loaded.WaitOne(200))
 				Application.DoEvents();
+
+			if (_webBrowser.CoreWebView2 == null)
+				throw new ApplicationException(BuildCoreWebView2FailureMessage(), _coreWebView2InitializationException);
+		}
+
+		private string BuildCoreWebView2FailureMessage()
+		{
+			var reason = _coreWebView2InitializationException?.Message;
+			return "the WebView2 runtime appears to not match the version of the Edge controller we're using"
+				+ (String.IsNullOrEmpty(reason) ? "" : $" - reason reported by WebView2: {reason}");
 		}
 
 		private async Task InitializeAsync(CoreWebView2Environment env)
@@ -75,6 +101,13 @@ namespace SilEncConverters40
 
 		private void WebView_CoreWebView2InitializationCompleted(object sender, CoreWebView2InitializationCompletedEventArgs e)
 		{
+			// e.IsSuccess/e.InitializationException are exactly how WebView2 reports *why* this failed
+			// (e.g. a genuine loader/runtime version mismatch) without needing to catch an exception -
+			// capture it here so the ApplicationException thrown below (or from NavigateAsync) can
+			// actually say why instead of just guessing.
+			if (!e.IsSuccess)
+				_coreWebView2InitializationException = e.InitializationException;
+
 			// this event, which should indicate that CoreWebView2 is non-null, seems to not work in some versions...
 			//  workaround: if it's still null, then keep waiting (but note, we won't get this event again, so wait in
 			//	the line above...
@@ -132,8 +165,11 @@ namespace SilEncConverters40
 			// if the test fails at this line (bkz CoreWebView2 is null), chances are you don't have
 			//	the webview2 runtime installed or up to date.
 			// To install or update the WebView2 Runtime: Go to page https://developer.microsoft.com/en-us/microsoft-edge/webview2/
+			// (this shouldn't normally be reachable - Initialize() already throws with the same,
+			// better-informed message if CoreWebView2 never came up - but kept as a defensive check
+			// in case CoreWebView2 becomes null some other way, e.g. disposal, after Initialize() ran)
 			if (_webBrowser.CoreWebView2 == null)
-				throw new ApplicationException("the WebView2 runtime appears to not match the version of the Edge controller we're using");
+				throw new ApplicationException(BuildCoreWebView2FailureMessage(), _coreWebView2InitializationException);
 
 			_webBrowser.CoreWebView2.Navigate(filePath);
 			return Task.Delay(0);
