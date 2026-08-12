@@ -304,7 +304,10 @@ namespace SilEncConverters40.EcTranslators.VertexAi
             {
                 GoogleCloudVertexAiSubscriptionKey = dlg.TranslatorKey;
                 Properties.Settings.Default.Save();
-            }
+
+				if (GoogleCloudVertexAiSubscriptionKey != vertexAiCredentialsOverride)
+					IsModified = true;
+			}
         }
 
         private void TextBoxVertexResourceParameters_TextChanged(object sender, EventArgs e)
