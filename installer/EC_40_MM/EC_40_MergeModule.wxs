@@ -21,7 +21,7 @@
 
         <Component Id="RegisterECFolders" Guid="ba2789b1-93c9-4258-872e-85d91e975db1" Directory="TARGETDIR">
                 <RegistryValue Root="HKLM" Key="Software\SIL\SilEncConverters40" Name="RootDir" Type="string" Value="[AppDataSILConverters40]" />
-                <RegistryValue Root="HKLM" Key="Software\SIL\SilEncConverters40" Name="UseEdge" Type="string" Value="True" />
+                <RegistryValue Root="HKLM" Key="Software\SIL\SilEncConverters40" Name="UseEdge" Type="string" Value="False" />
             </Component>
 
             <Directory Id="MergeRedirectFolder">
@@ -538,8 +538,8 @@
 				<Component Id="SilEncConverters40.dll.config" Guid="{A41FAD7F-A8B6-4A82-9210-EE3BBCA3E8FB}">
 					<File Id="SilEncConverters40.dll.config" Name="SilEncConverters40.dll.config" Vital="yes" KeyPath="yes" Source="..\..\output\net48\Win32\release\SilEncConverters40.dll.config" />
 				</Component>
-				<Component Id="LatestRedirects.config" Guid="{29834D39-3E70-4E2D-AAD3-85CA82BF979F}">
-                    <File Id="LatestRedirects.config" Name="LatestRedirects.config" KeyPath="yes" Source="..\..\LatestRedirects.config" />
+				<Component Id="SharedItems.props" Guid="{88F993BD-44BD-4A46-93BC-0DC65440E317}">
+                    <File Id="SharedItems.props" Name="SharedItems.props" KeyPath="yes" Source="..\..\SharedItems.props" />
                 </Component>
                 <Component Id="EncConvertersAppDataMover40.exe" Guid="4F57740F-5033-42f2-A41A-ED8022731CE0">
                     <File Id="EncConvertersAppDataMover40.exe" Name="EncConvertersAppDataMover40.exe" ReadOnly="yes" KeyPath="yes" Source="..\..\output\net48\Win32\release\EncConvertersAppDataMover40.exe" Assembly=".net" AssemblyApplication="EncConvertersAppDataMover40.exe" AssemblyManifest="EncConvertersAppDataMover40.exe" />
