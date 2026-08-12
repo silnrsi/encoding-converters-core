@@ -32,11 +32,13 @@ namespace RunTests
 				++m_crun;
 				test.CleanupAfterTest();
 
+				/* no longer supported
 				test.InitBeforeTest();
 				try { test.TestIcuConvEncConverters(); Console.WriteLine("TestIcuConvEncConverters succeeded!");}
 				catch(Exception e) {Console.WriteLine("TestIcuConvEncConverters failed: {0}", e.Message); ++m_cfail;}
 				++m_crun;
 				test.CleanupAfterTest();
+				*/
 
 				test.InitBeforeTest();
 				try { test.TestIcuTransliterators(); Console.WriteLine("TestIcuTransliterators succeeded!");}

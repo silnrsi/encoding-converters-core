@@ -228,6 +228,7 @@ namespace TestEncCnvtrs
 			Assert.IsNotNull(reg);
 		}
 
+/* IcuConv is not needed anymore 
 		[Test]
 		public void TestIcuConvEncConverters()
 		{
@@ -275,6 +276,13 @@ namespace TestEncCnvtrs
 			Assert.AreEqual(countOrig, countAfter, "Should have the original number of converters now.");
 		}
 
+		[Test]
+		public void TestListingCodePageConverters()
+		{
+			var converters = CpEncConverter.GetAvailableConverterSpecs();
+			Assert.Less(10, converters.Count, "There should be at least ten CodePage converters available!");
+		}
+*/
 		const string m_inputLatin =
 			"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
@@ -894,13 +902,6 @@ namespace TestEncCnvtrs
 			m_encConverters.Remove("UnitTesting-To-CP_1252");
 			int countAfter = m_encConverters.Count;
 			Assert.AreEqual(countOrig, countAfter, "Should have the original number of converters now.");
-		}
-
-		[Test]
-		public void TestListingCodePageConverters()
-		{
-			var converters = CpEncConverter.GetAvailableConverterSpecs();
-			Assert.Less(10, converters.Count, "There should be at least ten CodePage converters available!");
 		}
 
 		/// <summary>

@@ -48,10 +48,10 @@
   <PropertyGroup Condition="'$(Platform)'=='x64'">
     <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Platform)'=='x86' and '$(Configuration)'=='Debug'">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Platform)'=='x86' and '$(Configuration)'=='Release'">
+  <!-- must be x86, not AnyCPU (Debug used to say AnyCPU here, inconsistent with Release right below it):
+       this codebase's native transducer DLLs (e.g. TECkit_x86.dll, CC32.dll) only load if the process
+       itself is forced 32-bit - see CLAUDE.md's "Strict Bit-Width Separation" constraint. -->
+  <PropertyGroup Condition="'$(Platform)'=='x86'">
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
 
