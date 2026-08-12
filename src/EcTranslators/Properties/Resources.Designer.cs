@@ -74,14 +74,14 @@ namespace SilEncConverters40.EcTranslators.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to # Build command
-        ///docker build -t {0}-{1}-translator .
+        ///docker build {2}-t {0}-{1}-translator .
         ///
         ///# Run command with volume mount for local model
         ///# The model directory is mounted from the Windows host into the container
-        ///docker run {4}-v &quot;{3}:/app/model&quot; -p {2}:{2} {0}-{1}-translator
+        ///docker run {5}-v &quot;{4}:/app/model&quot; -p {3}:{3} {0}-{1}-translator
         ///
         ///# To view the translator in a web browser, in another powershell window run:
-        ///# Start-Process http://localhost:{2}/.
+        ///# Start-Process http://localhost:{3}/.
         /// </summary>
         internal static string builddockerLocalModel {
             get {
@@ -100,7 +100,7 @@ namespace SilEncConverters40.EcTranslators.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to FROM python:3.9
-        ///	
+        ///    
         ///# Install steps mostly taken from https://medium.com/mlearning-ai/text-translation-using-nllb-and-huggingface-tutorial-7e789e0f7816
         ///
         ///# Install main dependencies
@@ -109,7 +109,7 @@ namespace SilEncConverters40.EcTranslators.Properties {
         ///RUN pip install torch torchvision torchaudio {0}
         ///RUN pip install protobuf
         ///
-        ///# Copy settings first so import_m [rest of string was truncated]&quot;;.
+        ///# Copy settings first so impor [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string Dockerfile {
             get {
@@ -119,16 +119,16 @@ namespace SilEncConverters40.EcTranslators.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to FROM python:3.9
-        ///	
+        ///
+        ///# Accept optional HuggingFace token as a build argument (passed via --build-arg HF_TOKEN=&lt;your_token&gt;)
+        ///ARG HF_TOKEN
+        ///ENV HF_TOKEN=${HF_TOKEN}
+        ///
         ///# Install steps mostly taken from https://medium.com/mlearning-ai/text-translation-using-nllb-and-huggingface-tutorial-7e789e0f7816
         ///
         ///# Install main dependencies
         ///RUN pip install transformers sentencepiece fasttext-wheel
-        ///# Install PyTorch. This command varies depending on your OS and other factors; see https://pytorch.org/get-started/locally/ for instructions for your system
-        ///RUN pip install torch torchvision torchaudio {0}
-        ///RUN pip install protobuf
-        ///
-        ///# Copy settings first so import_m [rest of string was truncated]&quot;;.
+        ///# Install PyTorch. This command varies depending on your OS and other factors; see https://pytorch.org/get-started/locally/  [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string DockerfileLocalModel {
             get {
@@ -155,7 +155,7 @@ namespace SilEncConverters40.EcTranslators.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Click this button to enter your own Resource key and other information needed to use the Microsoft Azure Open AI Service. See https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/create-resource, for more information on how to get your own Azure Open AI Resource. Note: there is no default Resource for this converter; you must get your own to use it..
+        ///   Looks up a localized string similar to Click this button to enter your own Resource key and other information needed to use an OpenAI-compatible or Azure Open AI Service..
         /// </summary>
         internal static string HelpForAzureOpenAiAddYourOwnApiKey {
             get {
@@ -164,7 +164,7 @@ namespace SilEncConverters40.EcTranslators.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Enter the name of the language you want the Azure Open AI Resource to tranlate from (e.g. Hindi).
+        ///   Looks up a localized string similar to Enter the name of the language you want the Open AI Resource to translate from (e.g. Hindi).
         /// </summary>
         internal static string HelpForAzureOpenAiSourceLanguageTextBox {
             get {
@@ -182,7 +182,7 @@ namespace SilEncConverters40.EcTranslators.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This box shows the System Prompt that will be sent to the Azure Open AI Resource.
+        ///   Looks up a localized string similar to This box shows the System Prompt that will be sent to the Open AI Resource.
         /// </summary>
         internal static string HelpForAzureOpenAiSystemPromptTextBox {
             get {
@@ -191,7 +191,7 @@ namespace SilEncConverters40.EcTranslators.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Enter the name of the language you want the Azure Open AI Resource to tranlate into (e.g. English).
+        ///   Looks up a localized string similar to Enter the name of the language you want the Open AI Resource to translate into (e.g. English).
         /// </summary>
         internal static string HelpForAzureOpenAiTargetLanguageTextBox {
             get {
@@ -460,13 +460,16 @@ namespace SilEncConverters40.EcTranslators.Properties {
         ///# 1. Documentation for using transformers often shows how to download them in Python
         ///# 2. We want the download of the model to happen as part of the building of the image, not when it runs
         ///
+        ///import os
         ///from settings import MODEL_NAME
+        ///from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
         ///
         ///checkpoint = MODEL_NAME
-        ///from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, pipeline
-        ///model = AutoModelForSeq2SeqLM.from_pretrained(checkpoint)
-        ///tokenizer = AutoTokenizer.from_pretrained(checkpoint)
-        ///.
+        ///hf_token = os.environ.get(&quot;HF_TOKEN&quot;)
+        ///
+        ///model_kwargs = {&quot;token&quot;: hf_token} if hf_token else {}
+        ///
+        ///model = AutoModelForSeq2SeqLM.from_pretrained(checkpoint, [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string import_model {
             get {
@@ -629,19 +632,19 @@ namespace SilEncConverters40.EcTranslators.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to from flask import Flask, render_template, request, jsonify
-        ///from settings import LOCAL_MODEL_PATH, PORT, API_KEY, DEVICE
+        ///from settings import CONTAINER_MODEL_PATH, PORT, API_KEY, DEVICE
         ///from settings import SOURCE_LANGUAGE, TARGET_LANGUAGE, SOURCE_LANGUAGE_NAME, TARGET_LANGUAGE_NAME
         ///from gevent.pywsgi import WSGIServer
         ///import os
+        ///import glob
         ///
         ///app = Flask(__name__)
         ///
         ///# Validate model path exists
-        ///if not os.path.exists(LOCAL_MODEL_PATH):
-        ///    raise FileNotFoundError(f&quot;Local Model path not found: {LOCAL_MODEL_PATH}&quot;)
+        ///if not os.path.exists(CONTAINER_MODEL_PATH):
+        ///    raise FileNotFoundError(f&quot;Local Model path not found: {CONTAINER_MODEL_PATH}&quot;)
         ///
-        ///# Also validate that key files exist
-        ///required_files = [&apos;conf [rest of string was truncated]&quot;;.
+        ///# Also validate that key files exist [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string serverLocalModel {
             get {
