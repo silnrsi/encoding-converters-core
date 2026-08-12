@@ -47,9 +47,7 @@
       <_RegAsmToolPath Condition="'$(Platform)'!='x64'">$(SystemRoot)\Microsoft.NET\Framework\v4.0.30319\RegAsm.exe</_RegAsmToolPath>
     </PropertyGroup>
     <Exec Command="&quot;$(_TlbExpToolPath)&quot; &quot;$(TargetPath)&quot; /out:&quot;$(TargetDir)$(TargetName).tlb&quot;" />
-    <Exec Command="&quot;$(_RegAsmToolPath)&quot; &quot;$(TargetPath)&quot; /codebase /tlb:&quot;$(TargetDir)$(TargetName).tlb&quot;"
-          ContinueOnError="WarnAndContinue"
-          Condition="'$(Configuration)'=='Debug'" />
+    <Exec Command="&quot;$(_RegAsmToolPath)&quot; &quot;$(TargetPath)&quot; /codebase /tlb:&quot;$(TargetDir)$(TargetName).tlb&quot;" ContinueOnError="WarnAndContinue" Condition="'$(Configuration)'=='Debug'" />
   </Target>
 
   <PropertyGroup Condition="'$(TargetFramework)'=='net9.0-windows'">
@@ -61,7 +59,11 @@
        - see ECInterfaces 2010.csproj for why -->
   <PropertyGroup Condition="'$(Platform)'=='x86'">
     <OutputPath>$(SolutionDir)output\$(TargetFramework)\Win32\$(Configuration)\</OutputPath>
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <!-- must be x86, not AnyCPU: this codebase's native transducer DLLs (e.g. TECkit_x86.dll,
+         CC32.dll) only load if the process itself is forced 32-bit - see CLAUDE.md's "Strict
+         Bit-Width Separation" constraint - AnyCPU here let the process run as 64-bit on a 64-bit
+         OS, breaking every x86 native-interop test. -->
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Platform)'=='x64'">
     <OutputPath>$(SolutionDir)output\$(TargetFramework)\$(Platform)\$(Configuration)\</OutputPath>
@@ -106,18 +108,14 @@
     </Compile>
     <Compile Include="AdaptItEncConverter.cs" />
     <Compile Include="AdaptItEncConverterConfig.cs" />
-    <Compile Include="AdaptItGuesserAutoConfigDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="AdaptItGuesserAutoConfigDialog.cs" />
     <Compile Include="AdaptItGuesserAutoConfigDialog.Designer.cs">
       <DependentUpon>AdaptItGuesserAutoConfigDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="AdaptItGuesserEncConverter.cs" />
     <Compile Include="AdaptItGuesserEncConverterConfig.cs" />
     <Compile Include="AdaptItKBReader.cs" />
-    <Compile Include="AdaptItLookupAutoConfigDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="AdaptItLookupAutoConfigDialog.cs" />
     <Compile Include="AdaptItLookupAutoConfigDialog.Designer.cs">
       <DependentUpon>AdaptItLookupAutoConfigDialog.cs</DependentUpon>
     </Compile>
