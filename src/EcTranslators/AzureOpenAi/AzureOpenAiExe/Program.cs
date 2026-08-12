@@ -26,9 +26,9 @@ namespace SilEncConverters40.EcTranslators.AzureOpenAI.AzureOpenAiExe
 		public const string AzureOpenAiFailureDueToContentFilter = "Omitted content due to a content filter flag.";
 
 		private const string ResponsePrefix = "Free translation: ";
-        private const string EnvVarNameDeploymentName = "EncConverters_AzureOpenAiDeploymentName";
-        private const string EnvVarNameEndPoint = "EncConverters_AzureOpenAiEndpoint";
-        private const string EnvVarNameKey = "EncConverters_AzureOpenAiKey";
+        private const string EnvVarNameDeploymentName = "EncConverters_OpenAiModelName";
+        private const string EnvVarNameEndPoint = "EncConverters_OpenAiEndpoint";
+        private const string EnvVarNameKey = "EncConverters_OpenAiKey";
 		private static readonly char[] TrimmableChars = new char[] { '\r', '\n', ' ' };
 
         static async Task Main(string[] args)
@@ -152,7 +152,8 @@ namespace SilEncConverters40.EcTranslators.AzureOpenAI.AzureOpenAiExe
                 var strOutput = ((AssistantChatMessage)chatMessages[i++]).Content[0].Text;
 
 #if LogResults
-                File.AppendAllText(LogFilePath, string.Format("{1}=>{2}:{3}=>{4}{0}", Environment.NewLine, systemPrompt, i / 2, strInput, strOutput));
+				if (Directory.Exists(Path.GetDirectoryName(LogFilePath)))
+					File.AppendAllText(LogFilePath, string.Format("{1}=>{2}:{3}=>{4}{0}", Environment.NewLine, systemPrompt, i / 2, strInput, strOutput));
 #endif
                 // write the responses to the standard out to return it
                 Console.WriteLine(strOutput);
