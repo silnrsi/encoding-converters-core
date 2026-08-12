@@ -24,6 +24,18 @@ namespace SilEncConverters40
 		// WebView_CoreWebView2InitializationCompleted)
 		private Exception _coreWebView2InitializationException;
 
+		// generous enough for a legitimate (if slow) cold WebView2/Evergreen-runtime startup, but
+		// bounded so a genuinely stuck native COM call surfaces as a catchable failure instead of
+		// hanging Initialize() (and thus this converter's very first Convert() call - see
+		// TechHindiSiteEncConverter.PreConvert) forever. Confirmed necessary, not theoretical: a live
+		// dotnet-dump capture of an actual hang showed a thread permanently inside
+		// ICoreWebView2Environment.CreateCoreWebView2Controller, whose completion callback simply never
+		// fired - no fault, no event, nothing else to ever observe. Once either wait below times out
+		// and throws, EncConverter.Convert()'s own catch-and-retry (see Handover.md, "Generic
+		// subprocess fallback for host-process conflicts") takes over exactly as it would for any
+		// other exception from this same call path.
+		private const int WebView2InitializationTimeoutSeconds = 20;
+
 		public WebBrowserEdge()
 			: base(WhichBrowser.Edge)
 		{
@@ -61,7 +73,19 @@ namespace SilEncConverters40
 		{
 			base.Initialize();
 			var path = Path.Combine(Path.GetTempPath(), "EncConverters_WebView2Browser");
-			var env = CoreWebView2Environment.CreateAsync(userDataFolder: path).Result;
+
+			// bounded, not the bare ".Result" this used to be: that blocks forever on whatever thread
+			// calls Initialize() if CreateAsync's underlying native call never completes, exactly the
+			// same failure shape confirmed below for EnsureCoreWebView2Async - see the timeout constant's
+			// doc comment.
+			var createEnvTask = CoreWebView2Environment.CreateAsync(userDataFolder: path);
+			if (!createEnvTask.Wait(TimeSpan.FromSeconds(WebView2InitializationTimeoutSeconds)))
+			{
+				// nothing WebView2-specific pending yet at this point (no controller was ever
+				// requested), so there's nothing to Dispose() to cancel - just abandon this task.
+				throw new ApplicationException(BuildTimeoutMessage("creating the WebView2 environment"));
+			}
+			var env = createEnvTask.Result;
 
 			_webBrowser.CoreWebView2InitializationCompleted += WebView_CoreWebView2InitializationCompleted;
 			waitForCoreWebView2Loaded = new ManualResetEvent(false);
@@ -77,8 +101,28 @@ namespace SilEncConverters40
 					_coreWebView2InitializationException = t.Exception?.Flatten().InnerException ?? t.Exception;
 				waitForCoreWebView2Loaded.Set();
 			}, TaskScheduler.Default);
+
+			// bounded, not infinite: confirmed via a live dotnet-dump capture that the underlying native
+			// COM call (ICoreWebView2Environment.CreateCoreWebView2Controller) can simply never complete -
+			// no fault, no event, nothing to observe, ever - so this loop used to hang forever in that
+			// case. A deadline turns that into a catchable failure instead.
+			var deadline = DateTime.UtcNow.AddSeconds(WebView2InitializationTimeoutSeconds);
 			while (!waitForCoreWebView2Loaded.WaitOne(200))
+			{
+				if (DateTime.UtcNow >= deadline)
+				{
+					// per WebView2's own documented cancellation contract: Dispose() (not just walking
+					// away and letting GC/finalization deal with it later) is the supported way to
+					// abandon a pending CoreWebView2 initialization - it tears down the underlying
+					// controller and suppresses CoreWebView2InitializationCompleted from firing late.
+					// Confirmed necessary, not just tidy: without this, a live repro of this exact
+					// timeout crashed the whole process later during window cleanup ("Failed to
+					// unregister class Chrome_WidgetWin_0") instead of just failing this one call.
+					DisposeAbandonedWebBrowser();
+					throw new ApplicationException(BuildTimeoutMessage("waiting for CoreWebView2InitializationCompleted"));
+				}
 				Application.DoEvents();
+			}
 
 			if (_webBrowser.CoreWebView2 == null)
 				throw new ApplicationException(BuildCoreWebView2FailureMessage(), _coreWebView2InitializationException);
@@ -89,6 +133,37 @@ namespace SilEncConverters40
 			var reason = _coreWebView2InitializationException?.Message;
 			return "the WebView2 runtime appears to not match the version of the Edge controller we're using"
 				+ (String.IsNullOrEmpty(reason) ? "" : $" - reason reported by WebView2: {reason}");
+		}
+
+		private static string BuildTimeoutMessage(string whatTimedOut)
+		{
+			return $"Timed out after {WebView2InitializationTimeoutSeconds}s {whatTimedOut} - this can "
+				+ "happen when a native WebView2 COM call never completes (confirmed via a live process "
+				+ "dump: no fault, no event raised, nothing else to observe), e.g. a runtime/version "
+				+ "conflict or a stuck shared browser process this code has no way to detect on its own.";
+		}
+
+		/// <summary>
+		/// Per WebView2's own documented cancellation contract, Dispose() -- not just abandoning the
+		/// control and letting GC/finalization deal with it whenever that eventually happens -- is the
+		/// supported way to cancel a pending CoreWebView2 initialization: it tears down the underlying
+		/// controller and suppresses CoreWebView2InitializationCompleted from firing late against an
+		/// object nothing is listening to anymore. Confirmed necessary, not just tidy, by reproducing a
+		/// timeout without this call: the process later crashed during window cleanup ("Failed to
+		/// unregister class Chrome_WidgetWin_0") instead of just failing the one call that timed out.
+		/// Best-effort: this already runs while reporting one failure, so a second one here (e.g.
+		/// Dispose() itself throwing for some unrelated reason) must not mask the original.
+		/// </summary>
+		private void DisposeAbandonedWebBrowser()
+		{
+			try
+			{
+				_webBrowser.CoreWebView2InitializationCompleted -= WebView_CoreWebView2InitializationCompleted;
+				_webBrowser.Dispose();
+			}
+			catch
+			{
+			}
 		}
 
 		private async Task InitializeAsync(CoreWebView2Environment env)

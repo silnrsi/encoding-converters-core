@@ -19,6 +19,7 @@ using System.Windows.Forms;             // for MessageBox (for showing compiler 
 using System.Xml;                       // for XmlDocument
 using System.IO;                        // for FileNotFoundException
 using System.Diagnostics;               // for Debug.Assert
+using System.Linq;                      // for RiskyNativeDependencies.Any() (subprocess fallback)
 using System.Reflection;                // for Assembly
 using ECInterfaces;                     // for IEncConverters
 using System.Text;                      // for Encoding
@@ -62,6 +63,17 @@ namespace SilEncConverters40
         public const string strRegKeyForSelfRegistering = "RegisterSelf";
         internal const string strShowToolTipsStateKey   = "ShowToolTips";
         internal const string CstrUseEdgeRegKey = "UseEdge";
+
+        // generic subprocess fallback for host-process native-dependency conflicts (see Handover.md,
+        // "Generic subprocess fallback for host-process conflicts") -- deliberately a distinct registry
+        // root from SEC_ROOT_KEY/strInstallerLocationRegKey above: those are about SilEncConverters40's
+        // own install location (which could be a stale bundle inside e.g. Paratext), whereas this one is
+        // written only by the SILConverters product installer, the one guaranteed to actually contain
+        // EncConverterHostExe.exe.
+        internal const string SILConvertersRootKey = @"SOFTWARE\SIL\SILConverters";
+        internal const string strInstallDirValueKey = "InstallDir";
+        internal const string strEncConverterHostExeFileName = "EncConverterHostExe.exe";
+        internal const string strSubprocessFallbackSubKeyName = "SubprocessFallback";
 
         // implement types define in EncCnvtrs.dll (public so users can use them in .Net
         //  code rather than hard-coding the strings)
@@ -3380,11 +3392,53 @@ namespace SilEncConverters40
                 throw new ApplicationException(String.Format("Unable to create an object of type '{0}'", strProgID));
             Util.DebugWriteLine(this, "Successfully created converter.");
 
-            // initialize and add to collection
-            InitializeConverter(rConverter, mappingName, converterSpec,
-                ref rLhsEncoding, ref rRhsEncoding, ref eConversionType,
-                ref processTypeFlags, codePageInput, codePageOutput, bAddingPersist);
+            // Generic subprocess fallback for host-process native-dependency conflicts (see
+            // Handover.md, "Generic subprocess fallback for host-process conflicts"). 'rConverter' is
+            // cheap and side-effect-free to have constructed at this point -- native work happens in
+            // Initialize/PreConvert/DoConvert, not the constructor -- so it's always safe to inspect
+            // RiskyNativeDependencies before ever deciding whether to Initialize it in-process. This
+            // runs on every instantiation, in every process: the same converter running in a different
+            // host (nothing pre-loaded there) legitimately works fine in-process, so nothing here may
+            // be skipped just because some *other* host once needed the fallback.
+            //
+            // NOT made redundant by EncConverter.Convert()/ConvertEx()'s own catch-and-retry (which
+            // self-heals a converter whose risky resource is only touched lazily, e.g. inside
+            // PreConvert rather than here) -- the two cover different failure shapes. That later check
+            // can only ever catch a well-behaved, catchable .NET exception; a native ABI mismatch can
+            // in the worst case crash the host process outright with no exception to catch at all. The
+            // checks here are what let a *subsequent* instantiation -- of this same converter on a
+            // later launch (via the registry cache below), or of a *different* converter type sharing
+            // the same risky dependency, within the same process -- skip Initialize() in-process
+            // entirely once a conflict is already known or visibly present, rather than ever risking
+            // that crash again. If AddEx lets a real (non-proxy) instance through here, it's because
+            // neither check found anything yet -- that's the one case EncConverter's own per-call
+            // checks still have a job to do.
+            var riskyDependencies = (rConverter as EncConverter)?.RiskyNativeDependencies ?? Enumerable.Empty<string>();
+            if (riskyDependencies.Any())
+            {
+                var hostExePath = FindEncConverterHostExePath();
+                if (hostExePath != null)
+                {
+                    var hostProcessName = Process.GetCurrentProcess().ProcessName;
+                    var ownDirectory = Path.GetDirectoryName(rConverter.GetType().Assembly.Location);
+                    var conflictAlreadyKnownOrDetected =
+                        IsKnownToNeedSubprocessFallback(hostProcessName, strProgID) ||
+                        riskyDependencies.Any(dep => NativeModuleConflictDetector.IsLoadedFromElsewhere(dep, ownDirectory));
 
+                    if (conflictAlreadyKnownOrDetected)
+                    {
+                        Util.DebugWriteLine(this, $"'{strProgID}' has a known/detected native-dependency "
+                            + $"conflict in host '{hostProcessName}' -- using the subprocess fallback "
+                            + "instead of initializing in-process.");
+                        rConverter = new SubprocessEncConverter(hostExePath, rConverter.GetType().Assembly.FullName, strProgID);
+                    }
+                }
+                // else: no SILConverters product is installed on this machine, so there's no fallback
+                //  exe to route through -- degrade gracefully by proceeding with the risky in-process
+                //  attempt below (no worse than before this feature existed).
+            }
+
+            // initialize and add to collection
             // the 'bAddingPersist' flag is used to cause the Initialize routine to do some
             //  error checking (reading of maps, checking of parameters, etc), which only
             //  needs to be done the first time a converter is added to the collection.
@@ -3398,6 +3452,34 @@ namespace SilEncConverters40
             // So, when this method is called (currently during AddActualConverters and during
             //  AddConversionMap), we know that the converter *is* or is *about* to be in the
             //  persistent store, so from here we can make the IsInRepository flag true.
+            try
+            {
+                InitializeConverter(rConverter, mappingName, converterSpec,
+                    ref rLhsEncoding, ref rRhsEncoding, ref eConversionType,
+                    ref processTypeFlags, codePageInput, codePageOutput, bAddingPersist);
+            }
+            catch (Exception ex) when (!(rConverter is SubprocessEncConverter) && riskyDependencies.Any())
+            {
+                // the reactive net: the proactive scan/cache above found nothing, but Initialize()
+                //  still threw cleanly (rather than crashing the host outright) -- treat that as a live
+                //  conflict signature, remember it for next time, and retry once via the subprocess
+                //  fallback before giving up.
+                var hostExePath = FindEncConverterHostExePath();
+                if (hostExePath == null)
+                    throw;  // no fallback available -- surface the original failure, same as before this feature existed.
+
+                var hostProcessName = Process.GetCurrentProcess().ProcessName;
+                Util.DebugWriteLine(this, $"'{strProgID}' failed to Initialize in-process in host "
+                    + $"'{hostProcessName}' ({ex.Message}) -- retrying via the subprocess fallback and "
+                    + "remembering this for next time.");
+                RememberNeedsSubprocessFallback(hostProcessName, strProgID);
+
+                rConverter = new SubprocessEncConverter(hostExePath, rConverter.GetType().Assembly.FullName, strProgID);
+                InitializeConverter(rConverter, mappingName, converterSpec,
+                    ref rLhsEncoding, ref rRhsEncoding, ref eConversionType,
+                    ref processTypeFlags, codePageInput, codePageOutput, bAddingPersist);
+            }
+
             rConverter.IsInRepository = true;
             Util.DebugWriteLine(this, "END");     // FIXME: Not getting this far.
 
@@ -3979,6 +4061,119 @@ namespace SilEncConverters40
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// Locates the one canonical, installed copy of EncConverterHostExe.exe via the InstallDir
+        /// value written by the SILConverters product installer (see Handover.md, "Generic subprocess
+        /// fallback for host-process conflicts"). Every host that detects a conflict must defer to this
+        /// single copy rather than each carrying/discovering a private one, or different hosts on the
+        /// same machine could disagree about the fallback that's supposed to be authoritative.
+        /// Returns null if no SILConverters product is installed on this machine at all (bare
+        /// Paratext-only, say) or its InstallDir doesn't actually contain the exe -- callers should
+        /// treat that as "no fallback available" and degrade to proceeding with the risky in-process
+        /// attempt rather than failing outright (no worse than before this feature existed).
+        /// </summary>
+        internal static string FindEncConverterHostExePath()
+        {
+            var installDir = GetRegistryValue(SILConvertersRootKey, strInstallDirValueKey) as string;
+            if (String.IsNullOrEmpty(installDir))
+                return null;
+
+            var hostExePath = Path.Combine(installDir, strEncConverterHostExeFileName);
+            return File.Exists(hostExePath) ? hostExePath : null;
+        }
+
+        /// <summary>
+        /// True when this code is itself running inside EncConverterHostExe.exe -- the one place it's
+        /// actually safe to attempt a converter's risky operation for real, since a failure (or even an
+        /// unrecoverable native hang/crash - see WebBrowserEdge.Initialize()'s doc comments and
+        /// TechHindiSiteEncConverter.PreConvert) there only takes down a disposable, isolated child
+        /// process that the real host (Word, Paratext, a test runner, whatever) is watching over a
+        /// pipe/exit-code boundary, never the host's own process.
+        /// Public (not internal) so converter subclasses in other assemblies (e.g.
+        /// TechHindiSiteEncConverter, in SilIndicEncConverters40.dll) can consult it too, alongside
+        /// EncConverter.EngageSubprocessFallback's own use of it as a recursion guard: once we're
+        /// already the fallback, there's nowhere further to delegate to, so it must actually do the
+        /// risky thing for real instead of proactively refusing and re-delegating forever.
+        /// </summary>
+        public static bool IsRunningAsSubprocessHost { get; } =
+            String.Equals(Process.GetCurrentProcess().ProcessName,
+                Path.GetFileNameWithoutExtension(strEncConverterHostExeFileName),
+                StringComparison.OrdinalIgnoreCase);
+
+        /// <summary>
+        /// True when a canonical EncConverterHostExe.exe is actually locatable right now (see
+        /// FindEncConverterHostExePath) -- i.e. a converter that wants to proactively defer a known-
+        /// unrecoverably-risky operation to the subprocess (rather than only reactively, after a failed
+        /// in-process attempt - see TechHindiSiteEncConverter.PreConvert) has somewhere to defer to.
+        /// Public for the same cross-assembly reason as IsRunningAsSubprocessHost above.
+        /// </summary>
+        public static bool IsSubprocessFallbackAvailable => FindEncConverterHostExePath() != null;
+
+        /// <summary>
+        /// The reactive half of the fallback cache (see Handover.md): once a given (host process,
+        /// ProgID) combination has thrown a recognized conflict once, remember it so future
+        /// instantiations of that same converter in that same host skip straight to the subprocess
+        /// route rather than re-risking the crash-prone in-process path every single time. Scoped per
+        /// host process name specifically so a converter flagged bad inside WINWORD.EXE has zero effect
+        /// on the same converter running inside Paratext, a test harness, or anywhere else -- see
+        /// EncConverter.RiskyNativeDependencies. Best-effort, mirroring the existing UseEdge/
+        /// ShowToolTips registry convention -- a failure to read/write this cache just means the
+        /// proactive scan and/or reactive catch run again next time, not a hard failure.
+        /// </summary>
+        internal static bool IsKnownToNeedSubprocessFallback(string hostProcessName, string progId)
+        {
+            try
+            {
+                var value = GetRegistryValue($@"{SEC_ROOT_KEY}\{strSubprocessFallbackSubKeyName}\{hostProcessName}", progId);
+                return value is int dwordValue && dwordValue != 0;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        internal static void RememberNeedsSubprocessFallback(string hostProcessName, string progId)
+        {
+            var subKeyPath = $@"{SEC_ROOT_KEY}\{strSubprocessFallbackSubKeyName}\{hostProcessName}";
+
+            // HKLM is tried first because the cache is meant to be machine-wide (a converter known bad
+            // in WINWORD.EXE on this machine is bad for every user of it, not just the one who happened
+            // to trigger the reactive catch first) -- but a non-elevated host process (which is the
+            // common case: Word/Paratext don't run elevated) cannot write new keys/values under HKLM by
+            // default on any modern Windows install, and there's no virtualization fallback for a
+            // manifested app the way there is for old unmanifested 32-bit software. The intended fix for
+            // that is an ACL grant on this specific subtree from the installer (see Handover.md, "Generic
+            // subprocess fallback for host-process conflicts" -- still open, tracked alongside the other
+            // still-pending installer/packaging work), which would make the HKLM write below succeed for
+            // a normal user. Until/unless that's in place -- or on a dev machine, or any other install
+            // that predates it -- silently degrade to HKCU instead of losing the cache entirely: the
+            // existing GetRegistryValue read path already checks HKCU before HKLM, so a value written
+            // here under HKCU is picked straight back up with no change needed on the read side. Only
+            // the shared-across-users benefit is lost in that fallback case, not the caching itself.
+            try
+            {
+                var key = Registry.LocalMachine.CreateSubKey(subKeyPath);
+                key?.SetValue(progId, 1, RegistryValueKind.DWord);
+                return;
+            }
+            catch
+            {
+                // fall through to the HKCU attempt below.
+            }
+
+            try
+            {
+                var key = Registry.CurrentUser.CreateSubKey(subKeyPath);
+                key?.SetValue(progId, 1, RegistryValueKind.DWord);
+            }
+            catch
+            {
+                // best-effort only -- see class doc above; if even HKCU isn't writable, this reactive net
+                // just has to re-detect the failure next time rather than caching it -- not fatal.
+            }
         }
 
         #endregion Misc helpers

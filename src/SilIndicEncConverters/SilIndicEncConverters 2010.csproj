@@ -66,7 +66,11 @@
        - see ECInterfaces 2010.csproj for why -->
   <PropertyGroup Condition="'$(Platform)'=='x86'">
     <OutputPath>$(SolutionDir)output\$(TargetFramework)\Win32\$(Configuration)\</OutputPath>
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <!-- must be x86, not AnyCPU: this codebase's native transducer DLLs (e.g. TECkit_x86.dll,
+         CC32.dll) only load if the process itself is forced 32-bit - see CLAUDE.md's "Strict
+         Bit-Width Separation" constraint - AnyCPU here let the process run as 64-bit on a 64-bit
+         OS, breaking every x86 native-interop test. -->
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Platform)'=='x64'">
     <OutputPath>$(SolutionDir)output\$(TargetFramework)\$(Platform)\$(Configuration)\</OutputPath>

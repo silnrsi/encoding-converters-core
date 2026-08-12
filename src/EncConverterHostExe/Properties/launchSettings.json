@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "EncConverterHostExe": {
+      "commandName": "Project",
+      "commandLineArgs": "\"c:\\btmp\\trash\\asdg.json\""
+    }
+  }
+}

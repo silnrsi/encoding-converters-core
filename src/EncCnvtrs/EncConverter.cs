@@ -3,7 +3,10 @@
 using System;
 using System.Runtime.InteropServices;   // for the class attributes
 using System.Collections;               // for Hashtable
+using System.Collections.Generic;       // for IEnumerable<string> (RiskyNativeDependencies)
+using System.Diagnostics;               // for Process.GetCurrentProcess() (subprocess fallback)
 using System.IO;
+using System.Linq;                      // for Enumerable.Empty (RiskyNativeDependencies)
 using System.Text;
 using ECInterfaces;                     // for IEncConverter
 
@@ -209,6 +212,135 @@ namespace SilEncConverters40
             set { m_bIsInRepository = value; }
         }
 
+        /// <summary>
+        /// Names (e.g. "WebView2Loader.dll") of native DLLs this converter's Initialize/Convert path
+        /// depends on that are known to collide with a host process's own already-loaded copy of the
+        /// same-named module -- see Handover.md, "Generic subprocess fallback for host-process
+        /// conflicts", for the full rationale (the concrete motivating case: TechHindiSiteEncConverter's
+        /// WebView2Loader.dll losing to Word's own resident copy via Windows' same-name-already-loaded
+        /// DLL search order rule).
+        /// Deliberately declared here on the concrete <see cref="EncConverter"/> base class rather than
+        /// on the public <see cref="IEncConverter"/> COM interface -- every real transducer type derives
+        /// from EncConverter, and adding it here leaves the versioned 4.0 COM contract that external
+        /// consumers (e.g. Word VBA/VBScript macros doing CreateObject()) depend on untouched.
+        /// Checked by <see cref="EncConverters.AddEx"/> before Initialize() is called: if a name here is
+        /// found already loaded from a directory other than this converter's own, AddEx substitutes a
+        /// subprocess-backed proxy instead of initializing this instance in-process.
+        /// Default here (no subclass override): whatever is listed in the
+        /// <see cref="Properties.Settings.AdditionalRiskyNativeDependencies"/> application setting, empty
+        /// if none -- this lets a newly-discovered risky DLL (one not caught during testing, so no
+        /// subclass declares it in code) be flagged after deployment by editing the installed *.config
+        /// file, no rebuild required. A subclass that already knows about a specific risk in code (see
+        /// TechHindiSiteEncConverter) should override this to *merge* its own list with
+        /// base.RiskyNativeDependencies, not replace it, so the config-based escape hatch keeps working
+        /// for every converter type, including ones that already declare something in code.
+        /// </summary>
+        public virtual IEnumerable<string> RiskyNativeDependencies =>
+            Properties.Settings.Default.AdditionalRiskyNativeDependencies?.Cast<string>() ?? Enumerable.Empty<string>();
+
+        /// <summary>
+        /// True until the first PreConvert() call on this instance has finished running any subclass-
+        /// specific lazy load logic (e.g. TechHindiSiteEncConverter's WebView2 control, only created on
+        /// first PreConvert rather than during Initialize()) -- see RiskyNativeDependencies above and
+        /// Handover.md, "Generic subprocess fallback for host-process conflicts". EncConverters.AddEx's
+        /// own proactive/reactive nets only guard Initialize() -- for a converter whose risky resource
+        /// is acquired this late, that's provably too early to ever see the conflict (confirmed: the
+        /// module isn't loaded yet at Initialize() time, and Initialize() itself doesn't throw here --
+        /// only the first real conversion does). A converter with this kind of lazy load calls it FIRST
+        /// in its own PreConvert override, then calls base.PreConvert() (which does the check below,
+        /// and resets this) at the end -- see TechHindiSiteEncConverter.PreConvert for the exact
+        /// pattern. Deliberately checked only here, once, rather than during Initialize()/AddEx, so
+        /// this never runs at all for the vast majority of converters (empty RiskyNativeDependencies
+        /// short-circuits immediately) and never slows down bulk repository loading at startup.
+        /// </summary>
+        protected bool WasJustLoaded = true;
+
+        // once a native-dependency conflict is actually confirmed for THIS instance -- either the
+        // module-scan below catches it, or (the common case for a lazily-loaded resource like
+        // TechHindiSiteEncConverter's browser control) Convert()/ConvertEx() catch the exception the
+        // attempt itself threw -- every later call on this instance transparently delegates here
+        // instead of ever touching the risky in-process resource again. Re-attempting (and re-risking)
+        // the same doomed in-process path on every single conversion would defeat the entire point.
+        private SubprocessEncConverter _fallbackProxy;
+
+        /// <summary>
+        /// The reactive-with-retry half of the lazy-load case: called from Convert()/ConvertEx()'s
+        /// catch clause when this instance declared a risk and its conversion attempt just threw.
+        /// Unlike EncConverters.AddEx's own reactive net (which can only retry the *next* Initialize()
+        /// call, since by the time it catches anything the caller already has a reference to this
+        /// exact instance), this can retry the *same* failing call immediately, because it runs inside
+        /// Convert()/ConvertEx() itself -- self-healing on the very first failure, not just from the
+        /// next launch onward (though the registry cache write below still gets that benefit too, for
+        /// any other host process/instance that hits the same combination later).
+        /// Returns false (degrade gracefully, exactly like AddEx's own reactive net) if no InstallDir-
+        /// discovered host exe is available -- in that case the original exception the caller already
+        /// has keeps propagating, no worse than before this feature existed. Also returns false (see
+        /// EncConverters.IsRunningAsSubprocessHost) when already running inside EncConverterHostExe.exe
+        /// itself, so there's nowhere further to delegate to.
+        /// Protected (not private) so a subclass whose risky operation isn't just "might throw" but
+        /// "can hang/crash unrecoverably even after being caught" (see TechHindiSiteEncConverter's
+        /// WebView2/Edge usage and WebBrowserEdge.Initialize()'s doc comments) can also call this
+        /// proactively, before ever attempting the operation in-process, not only reactively from a
+        /// catch clause.
+        /// </summary>
+        protected bool EngageSubprocessFallback()
+        {
+            if (_fallbackProxy != null)
+                return true;
+
+            // already the fallback host itself -- nowhere further to delegate to. Without this guard,
+            // a converter that (like TechHindiSiteEncConverter) also proactively calls this same method
+            // before ever attempting its risky operation would recurse forever once running inside
+            // EncConverterHostExe.exe: return false so the caller falls through and actually performs
+            // the risky operation for real, in the one process where a failure (or even an
+            // unrecoverable native hang/crash) is safely contained.
+            if (EncConverters.IsRunningAsSubprocessHost)
+                return false;
+
+            var hostExePath = EncConverters.FindEncConverterHostExePath();
+            if (hostExePath == null)
+                return false;
+
+            var hostProcessName = Process.GetCurrentProcess().ProcessName;
+            EncConverters.RememberNeedsSubprocessFallback(hostProcessName, ProgramID);
+
+            var proxy = new SubprocessEncConverter(hostExePath, GetType().Assembly.FullName, ProgramID);
+            string lhsEncodingId = LeftEncodingID, rhsEncodingId = RightEncodingID;
+            var conversionType = ConversionType;
+            var processType = ProcessType;
+            // re-derives the exact tuple this instance's own Initialize() was originally given, from
+            // the properties it already stores -- no need to have captured the original call's
+            // parameters separately.
+            proxy.Initialize(Name, ConverterIdentifier, ref lhsEncodingId, ref rhsEncodingId,
+                ref conversionType, ref processType, CodePageInput, CodePageOutput, bAdding: true);
+            proxy.DirectionForward = DirectionForward;
+            proxy.NormalizeOutput = NormalizeOutput;
+
+            _fallbackProxy = proxy;
+            return true;
+        }
+
+        /// <summary>
+        /// The proactive half of the lazy-load case, run once (see WasJustLoaded) from the base
+        /// PreConvert() implementation, after a subclass's own lazy load logic has already run without
+        /// throwing. Doesn't help the call that just happened (nothing failed, so there's nothing to
+        /// retry), but does mean: (a) every later call on this instance uses the fallback if a conflict
+        /// is found even though the load itself "worked" (e.g. it happened to succeed against a
+        /// resident-but-untrusted foreign copy), and (b) the registry cache write means future launches
+        /// of this host skip straight to the fallback for this converter, via EncConverters.AddEx's own
+        /// existing proactive check.
+        /// </summary>
+        private void CheckForNativeDependencyConflictAfterLoad()
+        {
+            var riskyDependencies = RiskyNativeDependencies;
+            if (_fallbackProxy != null || !riskyDependencies.Any())
+                return;
+
+            var ownDirectory = Path.GetDirectoryName(GetType().Assembly.Location);
+            if (riskyDependencies.Any(dep => NativeModuleConflictDetector.IsLoadedFromElsewhere(dep, ownDirectory)))
+                EngageSubprocessFallback();
+        }
+
 		protected static ConvType MakeUniDirectional(ConvType conversionType)
 		{
 			switch (conversionType)
@@ -300,13 +432,38 @@ namespace SilEncConverters40
         // [DispId(17)]
         public virtual string Convert(string sInput)
         {
-            return InternalConvert(EncodingIn, sInput, EncodingOut, NormalizeOutput, DirectionForward);
+            if (_fallbackProxy != null)
+                return _fallbackProxy.Convert(sInput);
+
+            try
+            {
+                return InternalConvert(EncodingIn, sInput, EncodingOut, NormalizeOutput, DirectionForward);
+            }
+            // see EngageSubprocessFallback's doc comment: this is what lets a converter whose risky
+            // resource is only touched lazily (deep inside PreConvert/DoConvert, not Initialize()) self-
+            // heal on the very first failure, not just from the next launch onward. Deliberately not
+            // narrowed to a specific exception type -- matches EncConverters.AddEx's own reactive net,
+            // which treats "a converter that declared a risk just threw" as sufficient signal on its own.
+            catch (Exception) when (RiskyNativeDependencies.Any() && EngageSubprocessFallback())
+            {
+                return _fallbackProxy.Convert(sInput);
+            }
         }
 
         // [DispId(18)]
         public virtual string ConvertEx(string sInput, EncodingForm inEnc, int ciInput, EncodingForm outEnc, out int ciOutput, NormalizeFlags eNormalizeOutput, bool bForward)
         {
-            return InternalConvertEx(inEnc, sInput, ciInput, outEnc, eNormalizeOutput, out ciOutput, bForward);
+            if (_fallbackProxy != null)
+                return _fallbackProxy.ConvertEx(sInput, inEnc, ciInput, outEnc, out ciOutput, eNormalizeOutput, bForward);
+
+            try
+            {
+                return InternalConvertEx(inEnc, sInput, ciInput, outEnc, eNormalizeOutput, out ciOutput, bForward);
+            }
+            catch (Exception) when (RiskyNativeDependencies.Any() && EngageSubprocessFallback())
+            {
+                return _fallbackProxy.ConvertEx(sInput, inEnc, ciInput, outEnc, out ciOutput, eNormalizeOutput, bForward);
+            }
         }
 
         // [DispId(20)]
@@ -1030,6 +1187,16 @@ namespace SilEncConverters40
             //  you'd set the eInFormEngine to UTF8Bytes.
             eInFormEngine = eInEncodingForm;
             eOutFormEngine = eOutEncodingForm;
+
+            // see WasJustLoaded's doc comment: a subclass whose risky resource is only acquired lazily
+            // (not during Initialize()) calls its own load logic first, then reaches this base call --
+            // check (once) whether that load left a foreign copy of a declared-risky dependency
+            // resident, now that there's actually something to check.
+            if (WasJustLoaded)
+            {
+                WasJustLoaded = false;
+                CheckForNativeDependencyConflictAfterLoad();
+            }
         }
 
         // this is where the sub-classes do the actual work... i.e. override this one for sure.

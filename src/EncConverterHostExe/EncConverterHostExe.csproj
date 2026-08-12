@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- $(SolutionDir) is only meaningfully set by MSBuild when building via the .sln (see ECInterfaces
+       2010.csproj for the full rationale) - needed below both for OutputPath and for the
+       SharedItems.props Import to resolve on a standalone build of just this project. -->
+  <PropertyGroup Condition="'$(SolutionDir)'=='' or '$(SolutionDir)'=='*Undefined*' or '$(SolutionDir)'=='$(MSBuildProjectDirectory)\'">
+    <SolutionDir>$(MSBuildThisFileDirectory)..\..\</SolutionDir>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <TargetFrameworks>net462;net48;net9.0-windows</TargetFrameworks>
+    <!-- required for VS's Configuration Manager to accept the .sln's x86/x64 entries for this
+         multi-targeted project - see ECInterfaces 2010.csproj for why -->
+    <Platforms>x86;x64</Platforms>
+    <ProjectGuid>{4C284D43-D084-409A-9E00-403A79A5C2DE}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>SilEncConverters40.EncConverterHostExe</RootNamespace>
+    <AssemblyName>EncConverterHostExe</AssemblyName>
+    <!-- matches ECInterfaces/EncCnvtrs's signing (same key): TestEncCnvtrs (signed this session for
+         InternalsVisibleTo) references this project directly for its request/response DTOs, and a .NET
+         Framework assembly that is itself strongly named cannot reference a weakly-named one - doing so
+         throws FileLoadException ("A strongly-named assembly is required") at load time under
+         net462/net48. -->
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\FieldWorks.snk</AssemblyOriginatorKeyFile>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <LangVersion>8.0</LangVersion>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <!-- see ECInterfaces 2010.csproj: AppendTargetFrameworkToOutputPath=false also unsuffixes obj\,
+         which collides across TFMs building in parallel - obj\ has no external consumers, so just
+         suffix it unconditionally. -->
+    <IntermediateOutputPath>obj\$(Platform)\$(Configuration)\$(TargetFramework)\</IntermediateOutputPath>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+
+  <!-- a loaded converter type (e.g. TechHindiSiteEncConverter, via EncConverter/WebBrowserAdaptor)
+       may transitively need WinForms - only net9.0-windows needs this declared explicitly, net462/
+       net48 always have WinForms available via a plain Reference. -->
+  <PropertyGroup Condition="'$(TargetFramework)'=='net9.0-windows'">
+    <UseWindowsForms>true</UseWindowsForms>
+  </PropertyGroup>
+
+  <!-- every TFM gets its own sibling folder under output\ (including net48, via $(TargetFramework))
+       - see ECInterfaces 2010.csproj for why. -->
+  <PropertyGroup Condition="'$(Platform)'=='x86'">
+    <OutputPath>$(SolutionDir)output\$(TargetFramework)\Win32\$(Configuration)\</OutputPath>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Platform)'=='x64'">
+    <OutputPath>$(SolutionDir)output\$(TargetFramework)\$(Platform)\$(Configuration)\</OutputPath>
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='Debug'">
+    <DebugSymbols>true</DebugSymbols>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)'=='Release'">
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)'=='net462' or '$(TargetFramework)'=='net48'">
+    <Reference Include="System" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="EncConverterHostPipeMessage.cs" />
+    <Compile Include="EncConverterHostRequest.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+
+  <!-- deliberately no ProjectReference to EncCnvtrs/SilEncConverters40 or any transducer assembly -
+       those get loaded purely by reflection at runtime (Activator.CreateInstance(assemblyReference,
+       progId)), exactly like EncConverters.InstantiateIEncConverter does. Only ECInterfaces is
+       referenced, for the IEncConverter interface and the ConvType/ProcessTypeFlags/NormalizeFlags
+       enums needed to deserialize and drive it. This keeps the host genuinely generic and avoids
+       statically pulling in exactly the kind of dependency graph this program exists to isolate from. -->
+  <ItemGroup>
+    <ProjectReference Include="..\ECInterfaces\ECInterfaces 2010.csproj" />
+  </ItemGroup>
+
+  <!-- Kept as the shared source of truth for this package list (not flattened into direct
+       PackageReferences), same rationale as EcTranslators.csproj's own Import: this exe resolves
+       ANY converter type dynamically by ProgID at runtime (Activator.CreateInstance, not a
+       compile-time reference), so whichever transducer assembly it's asked to load - including any
+       EcTranslators-provided one, e.g. GoogleTranslatorEncConverter - needs its own transitive
+       package versions (Google.Apis.Auth, Grpc.*, etc.) sitting in this exe's own output folder,
+       with matching binding redirects generated for them (see AutoGenerateBindingRedirects above).
+       Without this, loading a converter built against a newer transitive package version than
+       whatever this exe happened to reference directly throws a FileLoadException at the version
+       mismatch - confirmed via GoogleTranslatorEncConverter needing Google.Apis.Auth 1.75.0 while
+       nothing here declared a version for it at all. Newtonsoft.Json is already in this list, so no
+       separate PackageReference for it is needed here. -->
+  <Import Project="$(SolutionDir)SharedItems.props" />
+</Project>

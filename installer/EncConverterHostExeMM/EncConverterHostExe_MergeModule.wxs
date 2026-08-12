@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs" xmlns:util="http://wixtoolset.org/schemas/v4/wxs/util">
+    <!-- See Handover.md, "Generic subprocess fallback for host-process conflicts": this packages the
+         standalone EncConverterHostExe.exe (src/EncConverterHostExe/) that EncConverters.AddEx falls
+         back to when a converter's declared RiskyNativeDependencies conflict with something already
+         loaded in the host process (e.g. TechHindiSiteEncConverter's WebView2Loader.dll colliding with
+         Word's own resident copy).
+
+         Deliberately its own merge module, separate from EC_40_MM/EC_40_64bit_MM (the core module every
+         consumer, Paratext, FieldWorks, etc., takes): this exe is SILConverters-specific infrastructure,
+         not something every core consumer should have installed just because they reference the core
+         EncConverters interface. Only silconverters's own top-level installer (Installer\SEC
+         Setup\EcMergeModules.wxs / Installer\SEC Setup 64bit\EcMergeModules.wxs) merges this module;
+         nothing else needs to change for any other consumer to keep not getting it.
+
+         Not a COM server (no Class/ProgId/TypeLib/registry entries needed, unlike EC_40_MM/
+         EcTranslatorsMM): EncConverterHostExe.exe is a plain console exe launched via Process.Start
+         from EncConverters.SubprocessEncConverter, never CreateObject()'d directly.
+
+         Deliberately does NOT re-package ECInterfaces.dll or Newtonsoft.Json.dll: both are already
+         installed by EC_40_MM (ECInterfaces.dll) and EcTranslatorsMM (Newtonsoft.Json.dll), which
+         silconverters's installer always merges alongside this one; re-packaging either here would risk
+         a duplicate-file/component-GUID collision when both land in the same product's INSTALLDIR.
+
+         Also writes the two registry facts that are only ever meaningful when this module is actually
+         installed (deliberately kept together with the exe itself, rather than left for the top-level
+         product installer to remember to author separately: putting them here makes both invariants
+         structurally impossible to violate, since neither component can exist in a product's MSI unless
+         this module was merged into it):
+           - HKLM\SOFTWARE\SIL\SILConverters\InstallDir (EncConverters.FindEncConverterHostExePath reads
+             this to locate the one canonical copy of the exe), written via the self-referential
+             [MergeRedirectFolder] formatted string, which resolves to wherever the consuming product
+             actually redirected this module's files, so the value is always correct regardless of which
+             product's INSTALLDIR the module ends up under.
+           - HKLM\SOFTWARE\SIL\SilEncConverters40\SubprocessFallback (the reactive-net registry cache
+             EncConverters.RememberNeedsSubprocessFallback writes to) gets an inheritable ACE granting
+             AuthenticatedUser create-subkey/set-value/read rights, since a non-elevated host process
+             (Word, Paratext) cannot otherwise create new values under HKLM. See Handover.md for the full
+             rationale and the EncConverters.cs HKCU fallback this ACL is meant to make unnecessary. -->
+    <Module Id="EncConverterHostExeMM" Language="1033" Version="5.0.0.0" Guid="{AD6E9C84-C034-4385-AE98-A21B0E275031}" InstallerVersion="200">
+        <SummaryInformation Comments="Merge module for EncConverterHostExe, the generic out-of-process fallback host for IEncConverter" Description="Include only in the SILConverters product installer -- not intended for bare EncConverters-core or EcTranslators consumers" Manufacturer="SIL International" Keywords="SIL; EncConverters; subprocess fallback" />
+
+        <Directory Id="MergeRedirectFolder">
+
+                <Component Id="EncConverterHostExe.exe" Guid="{8F2A4FFA-B8E5-4841-829D-B6F6BECBFD07}">
+                    <File Id="EncConverterHostExe.exe" Name="EncConverterHostExe.exe" Vital="yes" KeyPath="yes" Assembly=".net" AssemblyManifest="EncConverterHostExe.exe" AssemblyApplication="EncConverterHostExe.exe" Source="..\..\output\net48\Win32\release\EncConverterHostExe.exe" />
+                </Component>
+
+                <Component Id="EncConverterHostExe.exe.config" Guid="{B6C79E39-FC9C-4AB1-9DA0-9175C0266A71}">
+                    <File Id="EncConverterHostExe.exe.config" Name="EncConverterHostExe.exe.config" Vital="yes" KeyPath="yes" Source="..\..\output\net48\Win32\release\EncConverterHostExe.exe.config" />
+                </Component>
+
+                <Component Id="InstallDirRegistryValue" Guid="{27B51905-66C5-4C30-894B-9ADA95A348CD}">
+                    <RegistryValue Root="HKLM" Key="SOFTWARE\SIL\SILConverters" Name="InstallDir" Value="[MergeRedirectFolder]" Type="string" Action="write" KeyPath="yes" />
+                </Component>
+
+                <Component Id="SubprocessFallbackAclKey" Guid="{A8040A0B-53FE-40E3-BE0E-EBBE5690BBD0}">
+                    <RegistryKey Root="HKLM" Key="SOFTWARE\SIL\SilEncConverters40\SubprocessFallback" ForceCreateOnInstall="yes">
+                        <RegistryValue Type="string" Value="" KeyPath="yes" />
+                        <!-- GenericAll (full control), matching the existing EcFolderACLsMM precedent
+                             for granting non-elevated write access: narrowly scoped to just this one
+                             subtree, not all of SilEncConverters40's registry space. -->
+                        <util:PermissionEx User="AuthenticatedUser" GenericAll="yes" />
+                    </RegistryKey>
+                </Component>
+
+        </Directory>
+    </Module>
+</Wix>

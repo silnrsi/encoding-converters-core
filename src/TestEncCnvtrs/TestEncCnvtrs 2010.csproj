@@ -15,6 +15,12 @@
     <OutputType>Library</OutputType>
     <RootNamespace>TestEncCnvtrs</RootNamespace>
     <AssemblyName>TestEncCnvtrs</AssemblyName>
+    <!-- signed with the same key pair as EncCnvtrs/SilEncConverters40 solely so that assembly's
+         InternalsVisibleTo (see its AssemblyInfo.cs; needed to unit-test the subprocess fallback's
+         internal NativeModuleConflictDetector/PersistentEncConverterHostSession/SubprocessEncConverter
+         types) can name this assembly's public key; not otherwise required for a test project. -->
+    <AssemblyOriginatorKeyFile>..\FieldWorks.snk</AssemblyOriginatorKeyFile>
+    <SignAssembly>true</SignAssembly>
     <LangVersion>latest</LangVersion>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <!-- AutoGenerateBindingRedirects alone has no effect on a Library-output project (MSBuild only
@@ -80,6 +86,11 @@
     <ProjectReference Include="..\ECInterfaces\ECInterfaces 2010.csproj" />
     <ProjectReference Include="..\EcTranslators\EcTranslators.csproj" Condition="('$(OS)'=='Windows_NT')" />
     <ProjectReference Include="..\EncCnvtrs\EncCnvtrs 2010.csproj" />
+    <!-- for EncConverterHostRequest only (TestEncConverterHost.cs) - deliberately just this DTO type,
+         not the transducer assemblies themselves (AIGuesserEC, CcEC, etc.): those get loaded by the
+         EncConverterHostExe.exe *subprocess* via reflection off their own simple names, exactly like
+         production use - see Handover.md, "Generic subprocess fallback for host-process conflicts". -->
+    <ProjectReference Include="..\EncConverterHostExe\EncConverterHostExe.csproj" />
     <ProjectReference Include="..\IcuEC\IcuEC 2010.csproj">
       <Private>false</Private>
     </ProjectReference>

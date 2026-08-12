@@ -109,7 +109,11 @@ xcopy /y &quot;$(SolutionDir)redist/32bit&quot; &quot;$(TargetDir)&quot;
        2010.csproj for the full rationale. -->
   <PropertyGroup Condition="'$(Platform)'=='x86'">
     <OutputPath>$(SolutionDir)output\$(TargetFramework)\Win32\$(Configuration)\</OutputPath>
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <!-- must be x86, not AnyCPU: this codebase's native transducer DLLs (e.g. TECkit_x86.dll,
+         CC32.dll) only load if the process itself is forced 32-bit - see CLAUDE.md's "Strict
+         Bit-Width Separation" constraint - AnyCPU here let the process run as 64-bit on a 64-bit
+         OS, breaking every x86 native-interop test. -->
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Platform)'=='x64'">
     <OutputPath>$(SolutionDir)output\$(TargetFramework)\$(Platform)\$(Configuration)\</OutputPath>
@@ -202,6 +206,10 @@ xcopy /y &quot;$(SolutionDir)redist/32bit&quot; &quot;$(TargetDir)&quot;
     <Compile Include="NetRegexAutoConfigDialog.Designer.cs">
       <DependentUpon>NetRegexAutoConfigDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="HostProcessJobObject.cs" />
+    <Compile Include="NativeModuleConflictDetector.cs" />
+    <Compile Include="PersistentEncConverterHostSession.cs" />
+    <Compile Include="SubprocessEncConverter.cs" />
     <Compile Include="IEncConverterConfig.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -330,6 +338,12 @@ xcopy /y &quot;$(SolutionDir)redist/32bit&quot; &quot;$(TargetDir)&quot;
 
   <ItemGroup>
     <ProjectReference Include="..\ECInterfaces\ECInterfaces 2010.csproj" />
+    <!-- for the EncConverterHostRequest/EncConverterHostPipeMessage DTOs used by
+         PersistentEncConverterHostSession/SubprocessEncConverter (see Handover.md, "Generic subprocess
+         fallback for host-process conflicts"): reuses the exact request/response shape
+         EncConverterHostExe.exe itself already parses, rather than duplicating those POCOs here. No
+         circularity: EncConverterHostExe only references ECInterfaces, never this project. -->
+    <ProjectReference Include="..\EncConverterHostExe\EncConverterHostExe.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -44,6 +46,16 @@ namespace SilEncConverters40
 
         private bool _bForward;
         #endregion Member Variable Definitions
+
+        /// <summary>See EncConverter.RiskyNativeDependencies. This converter drives a live third-party
+        /// page in-process via WebBrowserAdaptor/WebView2, whose WebView2Loader.dll loses to a host
+        /// process's own already-loaded copy (confirmed root cause of the "Unable to cast to
+        /// ICoreWebView2Environment" failure seen running inside Word -- see Handover.md, "Generic
+        /// subprocess fallback for host-process conflicts"). Merged with (not replacing) the base
+        /// class's config-sourced list, so the installed *.config file can still flag additional risky
+        /// DLLs for this converter too, on top of the one already known in code.</summary>
+        public override IEnumerable<string> RiskyNativeDependencies =>
+            base.RiskyNativeDependencies.Concat(new[] { "WebView2Loader.dll" });
 
         #region Initialization
         public TechHindiSiteEncConverter()
@@ -109,14 +121,70 @@ namespace SilEncConverters40
             get { return typeof(TechHindiSiteConfig).AssemblyQualifiedName; }
         }
 
+        /// <summary>Mirrors WebBrowserAdaptor.CreateBrowser's own resolution of WhichBrowser.Undefined,
+        /// without actually creating anything -- used by PreConvert below to decide, before Load() ever
+        /// runs, whether this call would end up driving Edge/WebView2.</summary>
+        private bool WillUseEdgeBrowser =>
+            WebBrowserType == WhichBrowser.Edge ||
+            (WebBrowserType == WhichBrowser.Undefined
+                && WebBrowserEdgeInfo.ShouldUseBrowser
+                && WebBrowserEdgeInfo.IsWebView2RuntimeInstalled);
+
         protected override void PreConvert(EncodingForm eInEncodingForm, ref EncodingForm eInFormEngine, EncodingForm eOutEncodingForm, ref EncodingForm eOutFormEngine, ref NormalizeFlags eNormalizeOutput, bool bForward)
         {
-            base.PreConvert(eInEncodingForm, ref eInFormEngine, eOutEncodingForm, ref eOutFormEngine, ref eNormalizeOutput, bForward);
-
             _bForward = bForward;
 
             if (!IsLoaded)
+            {
+                // Edge/WebView2 specifically needs to be kept out of this (real host) process
+                // altogether, not just caught-and-retried after the fact: a live dotnet-dump capture
+                // proved ICoreWebView2Environment.CreateCoreWebView2Controller can hang with no way to
+                // ever observe completion (see WebBrowserEdge's WebView2InitializationTimeoutSeconds doc
+                // comment), and reproducing that timeout -- with or without an explicit Dispose() of the
+                // abandoned control -- crashed the *whole* process moments later during native
+                // window-class cleanup ("Failed to unregister class Chrome_WidgetWin_0"), even on a
+                // clean run with no other WebView2 activity, and even though the timeout itself was
+                // caught and a retried conversion via the subprocess fallback succeeded. In other words,
+                // catching the failure isn't enough to protect the host process -- so when a subprocess
+                // route actually exists, Edge is deferred there proactively, before ever touching
+                // WebView2 in-process, rather than only reactively after a failed attempt (which is what
+                // EncConverter.RiskyNativeDependencies/Convert()'s catch-and-retry still provide for
+                // every other, well-behaved risky dependency, and remain the fallback here too if no
+                // subprocess route is available -- see the IsSubprocessFallbackAvailable check below).
+                // EngageSubprocessFallback() itself refuses to re-engage (returns false) when this code
+                // is already running inside EncConverterHostExe.exe (see
+                // EncConverters.IsRunningAsSubprocessHost), which is both how recursion is avoided and
+                // why the check below skips straight to Load() in that one process -- the isolated place
+                // it's actually safe to attempt this for real.
+                if (WillUseEdgeBrowser
+                    && !EncConverters.IsRunningAsSubprocessHost
+                    && EncConverters.IsSubprocessFallbackAvailable
+                    && EngageSubprocessFallback())
+                {
+                    // deliberately thrown, not just returned from: EncConverter.Convert()/ConvertEx()'s
+                    // own catch clauses (see their doc comments) are what actually retry via
+                    // _fallbackProxy -- this just needs to unwind out of PreConvert/InternalConvertEx
+                    // before DoConvert ever runs against a _webBrowser that Load() never created.
+                    throw new ApplicationException(
+                        "Deferring WebView2 (Edge) initialization to the isolated EncConverterHostExe " +
+                        "subprocess rather than risking it in this process directly.");
+                }
+
+                // this is what actually loads (and, per the RiskyNativeDependencies override above,
+                // potentially collides on) WebView2Loader.dll -- deliberately called BEFORE
+                // base.PreConvert() rather than after (the more common ordering elsewhere in this
+                // codebase), specifically so that if this throws, the exception propagates out of THIS
+                // method before base.PreConvert() ever runs its WasJustLoaded-gated conflict check:
+                // there's nothing to usefully check yet at that point anyway, and
+                // EncConverter.Convert()/ConvertEx() already catch exactly this exception one level up
+                // (see their own doc comments) to engage the subprocess fallback and retry the very same
+                // call. base.PreConvert() only needs to run afterward for the case where this succeeds
+                // without throwing but still leaves a foreign copy of a declared-risky dependency
+                // resident (see CheckForNativeDependencyConflictAfterLoad).
                 Load();
+            }
+
+            base.PreConvert(eInEncodingForm, ref eInFormEngine, eOutEncodingForm, ref eOutFormEngine, ref eNormalizeOutput, bForward);
         }
 
         protected override unsafe void DoConvert(byte* lpInBuffer, int nInLen, byte* lpOutBuffer, ref int rnOutLen)
