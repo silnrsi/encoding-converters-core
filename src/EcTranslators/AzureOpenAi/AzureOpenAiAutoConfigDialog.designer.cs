@@ -70,6 +70,11 @@ namespace SilEncConverters40.EcTranslators.AzureOpenAI
             this.helpProvider.SetHelpString(this.buttonSaveInRepository, "\r\nClick to add this converter to the system repository permanently.\r\n    ");
             this.helpProvider.SetShowHelp(this.buttonSaveInRepository, true);
             // 
+            // buttonHelp
+            // 
+            this.helpProvider.SetHelpString(this.buttonHelp, "Click this button to open the help page for this converter in your web browser");
+            this.helpProvider.SetShowHelp(this.buttonHelp, true);
+            // 
             // tableLayoutPanel1
             // 
             this.tableLayoutPanel1.ColumnCount = 3;
@@ -145,7 +150,7 @@ namespace SilEncConverters40.EcTranslators.AzureOpenAI
             this.buttonSetAzureOpenAiApiKey.Name = "buttonSetAzureOpenAiApiKey";
             this.buttonSetAzureOpenAiApiKey.Size = new System.Drawing.Size(290, 23);
             this.buttonSetAzureOpenAiApiKey.TabIndex = 5;
-            this.buttonSetAzureOpenAiApiKey.Text = "Enter your Azure Open AI Resource Key";
+            this.buttonSetAzureOpenAiApiKey.Text = "Enter your Open AI API Info";
             this.buttonSetAzureOpenAiApiKey.UseVisualStyleBackColor = true;
             this.buttonSetAzureOpenAiApiKey.Click += new System.EventHandler(this.ButtonSetAzureOpenAiKey_Click);
             // 
@@ -191,6 +196,7 @@ namespace SilEncConverters40.EcTranslators.AzureOpenAI
             // 
             this.ClientSize = new System.Drawing.Size(634, 479);
             this.Name = "AzureOpenAiAutoConfigDialog";
+            this.Controls.SetChildIndex(this.buttonHelp, 0);
             this.Controls.SetChildIndex(this.tabControl, 0);
             this.Controls.SetChildIndex(this.buttonApply, 0);
             this.Controls.SetChildIndex(this.buttonCancel, 0);

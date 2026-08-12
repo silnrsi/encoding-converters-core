@@ -371,14 +371,6 @@
                     <File Id="Google.Api.Gax.dll" Name="Google.Api.Gax.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="Google.Api.Gax.dll" AssemblyApplication="Google.Api.Gax.dll" Source="..\..\output\net48\x64\release\Google.Api.Gax.dll" />
                 </Component>
 
-                <Component Id="Azure.Core.dll" Guid="{7C6E38C0-0AD1-4616-8370-1060C08C5AA1}">
-                    <File Id="Azure.Core.dll" Name="Azure.Core.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="Azure.Core.dll" AssemblyApplication="Azure.Core.dll" Source="..\..\output\net48\x64\release\Azure.Core.dll" />
-                </Component>
-
-                <Component Id="Azure.AI.OpenAI.dll" Guid="{9E03B399-85F0-46B1-BFED-5869232A60CD}">
-                    <File Id="Azure.AI.OpenAI.dll" Name="Azure.AI.OpenAI.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="Azure.AI.OpenAI.dll" AssemblyApplication="Azure.AI.OpenAI.dll" Source="..\..\output\net48\x64\release\Azure.AI.OpenAI.dll" />
-                </Component>
-
                 <Component Id="OpenAI.dll" Guid="{47EB52DC-3B20-4260-8A9A-186AA16FCCFD}">
                     <File Id="OpenAI.dll" Name="OpenAI.dll" KeyPath="yes" Assembly=".net" AssemblyManifest="OpenAI.dll" AssemblyApplication="OpenAI.dll" Source="..\..\output\net48\x64\release\OpenAI.dll" />
                 </Component>

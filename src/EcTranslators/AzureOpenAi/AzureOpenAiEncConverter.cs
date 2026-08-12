@@ -34,16 +34,16 @@ namespace SilEncConverters40.EcTranslators.AzureOpenAI
         #region Member Variable Definitions
         protected string AiSystemInstructions;
 
-        public const string strDisplayName = "Azure OpenAI Translator";
+        public const string strDisplayName = "OpenAI-Compatible Translator";
         const string SystemPromptFormat = "You will be given 1 or more lines of text in {0} which you are to translate into {1}{2} and return only the translated lines.";
         public static readonly string strHtmlFilename = "Azure_OpenAI_Translate_Plug-in_About_box.htm";
         public const string strExeDefPath = "AzureOpenAiExe";
         public const string ImplTypeSilAzureOpenAi = "SIL.AzureOpenAI";
         public const string ReplacementSystemPrompt = "UseSystemPrompt: ";
 
-        public const string EnvVarNameDeploymentName = "EncConverters_AzureOpenAiDeploymentName";
-        public const string EnvVarNameEndPoint = "EncConverters_AzureOpenAiEndpoint";
-        public const string EnvVarNameKey = "EncConverters_AzureOpenAiKey";
+        public const string EnvVarNameDeploymentName = "EncConverters_OpenAiModelName";
+        public const string EnvVarNameEndPoint = "EncConverters_OpenAiEndpoint";
+        public const string EnvVarNameKey = "EncConverters_OpenAiKey";
 
         #endregion Member Variable Definitions
 

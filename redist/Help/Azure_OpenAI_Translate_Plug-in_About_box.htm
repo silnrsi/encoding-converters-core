@@ -22,7 +22,7 @@ w\:* {behavior:url(#default#VML);}
 .shape {behavior:url(#default#VML);}
 </style>
 <![endif]-->
-<title>Azure Open AI Translate</title>
+<title>Open AI Translate</title>
 <!--[if gte mso 9]><xml>
  <o:DocumentProperties>
   <o:Author>Bob Eaton</o:Author>
@@ -1679,41 +1679,32 @@ break-word'>
 
 <div class=WordSection1>
 
-<h3><span style='mso-fareast-font-family:"Times New Roman"'>Azure Open AI </span>Transducer<span
+<h3><span style='mso-fareast-font-family:"Times New Roman"'>Open AI </span>Translator<span
 style='mso-fareast-font-family:"Times New Roman"'><o:p></o:p></span></h3>
 
 <p style='background:white'><span style='color:black;mso-color-alt:windowtext'>This
-converter allows you to use <a
+converter allows you to use any Open AI-compatible service (including <a
 href="https://azure.microsoft.com/en-us/products/ai-services/openai-service"
-target="_blank">Azure Open AI Service</a></span><span style='font-family:Roboto;
+target="_blank">Azure OpenAI</a></span><span style='font-family:Roboto;
 color:#202124;background:white'>&#8482;</span><span style='color:black;
-mso-color-alt:windowtext'> to do text processing within EncConverter-enabled
-applications. <i>Azure Open AI</i> is a cloud-based Artificial Intelligence
-service based on (currently) Chat GPT 3.5 and 4 and several other model as
-well. It can be used to perform language translation and other language-related
-operations between a growing number of languages (see <a
-href="https://botpress.com/blog/list-of-languages-supported-by-chatgpt"
-target="_blank">this</a> website for specific languages supported). Note that
-it requires a live internet connection to function.</span></p>
+mso-color-alt:windowtext'>) to do text processing within EncConverter-enabled
+applications. Depending on your Open AI-compatible service, this translator 
+can be a cloud-based converter or a locally run model that supports the OpenAI
+standard for chat-based completions. </span></p>
 
-<p style='background:white'><span style='color:black;mso-color-alt:windowtext'>The
-Azure Open AI Transducer uses an <i>Azure Open AI</i> Resource to do the
-translation, which is available from Microsoft&#8217;s Azure <a
-href="https://portal.azure.com/">portal</a>, and unlike other Translators
-supported by the EncConverters core (i.e. Google, Bing &amp; DeepL), the Azure
-Open AI Resource requires you to get your own Azure resource in order to use
-it. </span></p>
-
-<p style='background:white'><span style='color:black;mso-color-alt:windowtext'>See
-<a
-href="https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/create-resource"
-target="_blank">this</a> website for more information on getting your own Azure
-Open AI Resource.</span></p>
+<p style='background:white'><span style='color:black;mso-color-alt:windowtext'>Options
+include an Open AI API account (see <a href="https://platform.openai.com/"
+target="_blank">here</a>), a Locally-run Ollama model (see <a href="https://ollama.com/"
+target="_blank">here</a>), 
+or even Microsoft&#8217;s Azure <a
+href="https://portal.azure.com/">portal</a>. Note: some OpenAI-compatible resources
+like the Azure offering and OpenAI itself require a payment for tokens used. But others
+like Ollama can be used freely if you run certain models locally (e.g. gemma4).</span></p>
 
 <h3><span style='mso-fareast-font-family:"Times New Roman"'>Setup Tab<o:p></o:p></span></h3>
 
-<p class=MsoBodyText>Here is the configuration setup tab for the <i>Azure Open
-AI</i> EncConverter:</p>
+<p class=MsoBodyText>Here is the configuration setup tab for the <i>OpenAI/Azure OpenAI</i> 
+EncConverter:</p>
 
 <p class=imageright style='page-break-after:avoid'><span style='mso-no-proof:
 yes'><!--[if gte vml 1]><v:shapetype id="_x0000_t75" coordsize="21600,21600"
@@ -1779,7 +1770,7 @@ style='mso-bookmark:_Ref89954138'><span style='mso-list:Ignore'>3)<span
 style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span></span><![endif]><span
 style='mso-bookmark:_Ref89954138'>This combo box/text box is for choosing one
 of the pre-existing additions or entering your own addition to be added to the <i>System
-Prompt</i> to customize what is sent to the Azure Open AI service. </span></p>
+Prompt</i> to customize what is sent to the Open AI service. </span></p>
 
 <p class=MsoList style='margin-left:.25in;text-indent:0in;mso-list:none;
 tab-stops:.5in'><span style='mso-bookmark:_Ref89954138'>In the example shown
@@ -1845,52 +1836,32 @@ and Target language boxes will be ignored. </span></p>
 
 <p class=MsoList style='margin-left:.25in;text-indent:0in;mso-list:none;
 tab-stops:.5in'><span style='mso-bookmark:_Ref89954138'>Finally, you should
-note that the Azure Open AI Resource has </span><a
+note that some Open AI Resources have </span><a
 href="https://learn.microsoft.com/en-us/azure/ai-services/openai/concepts/content-filter"><span
 style='mso-bookmark:_Ref89954138'>Content Filtering</span><span
 style='mso-bookmark:_Ref89954138'></span></a><span style='mso-bookmark:_Ref89954138'>
-and it may refuse to translate some text if it runs afoul of any of these four
-areas: <i>Hate, Sexual, Self-harm, Violence</i>.</span></p>
+and it may refuse to translate some text if it runs afoul of any of their restricted
+categories (e.g. <i>Hate, Sexual, Self-harm, Violence</i>, etc).</span></p>
 
 <p class=MsoList style='margin-left:.25in;mso-list:l3 level1 lfo7;tab-stops:
 .5in'><span style='mso-bookmark:_Ref89954138'><![if !supportLists]><span
 style='mso-list:Ignore'>4)<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 </span></span><![endif]>This box shows the System Prompt that will be sent to
-the Azure Open AI service. </span></p>
+the Open AI service. </span></p>
 
 <p class=MsoList style='margin-left:.25in;mso-list:l3 level1 lfo7;tab-stops:
 .5in'><span style='mso-bookmark:_Ref89954138'><a name="_Ref148978054"><![if !supportLists]><span
 style='mso-list:Ignore'>5)<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 </span></span><![endif]>This button brings up a dialog box into which you can
-enter the information needed about your personal Azure Open AI resource (see
+enter the information needed about your personal Open AI resource (see
 below for information).</a></span></p>
-
-<p class=MsoList style='margin-left:.25in;text-indent:0in;mso-list:none;
-tab-stops:.5in'><span style='mso-bookmark:_Ref89954138'>Note that unlike the
-other Translators supported by EncConverters, the Azure Open AI (currently)
-does not have a free pricing tier, and so you&#8217;ll need to sign up for your
-own resource to use it, although for most human-guided translation work, the volume
-involved is small enough that it&#8217;s not very costly.</span></p>
-
-<p class=MsoList style='margin-left:.25in;text-indent:0in;mso-list:none;
-tab-stops:.5in'><span style='mso-bookmark:_Ref89954138'>See </span><a
-href="https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/create-resource"
-target="_blank"><span style='mso-bookmark:_Ref89954138'>this</span><span
-style='mso-bookmark:_Ref89954138'></span></a><span style='mso-bookmark:_Ref89954138'>
-webpage for how to get your own Azure Open AI resource to use for this
-transducer.</span></p>
 
 <p class=MsoList style='margin-left:.25in;mso-list:l3 level1 lfo7;tab-stops:
 .5in'><a name="_Ref133732367"></a><a name=SaveInRepository></a><![if !supportLists]><span
 style='mso-bookmark:_Ref133732367'><span style='mso-list:Ignore'>6)<span
 style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span></span><![endif]><span
-style='mso-bookmark:_Ref133732367'><span style='color:black'>If you want the
-converter to be permanently added to the System Repository, then you must click
-the&nbsp;</span><b><span style='font-variant-ligatures: normal;font-variant-caps: normal;
-orphans: 2;text-align:start;widows: 2;-webkit-text-stroke-width: 0px;
-text-decoration-thickness: initial;text-decoration-style: initial;text-decoration-color: initial;
-word-spacing:0px'>Save in System Repository</b><span style='color:black'>&nbsp;button
-(see below).</span></span></span></p>
+style='mso-bookmark:_Ref133732367'><span style='color:black'>Click this button to 
+launch the Help document for this converter in your default system Web browser.</span></p>
 
 <p class=MsoList style='margin-left:.25in;mso-list:l3 level1 lfo7;tab-stops:
 .5in'><span style='mso-bookmark:_Ref133732367'><a name=TestTab></a><![if !supportLists]><span
@@ -1903,21 +1874,41 @@ mso-border-alt:solid windowtext .5pt;padding:1.0pt 4.0pt 1.0pt 4.0pt;
 margin-left:1.0in;margin-right:63.0pt'>
 
 <p class=note style='margin-top:0in;margin-right:0in;margin-bottom:6.0pt;
-margin-left:0in'>You may not see script errors until you use the converter to
-convert some data. So, for this converter type, it is important to test it
+margin-left:0in'>You may not see configuration errors until you use the converter to
+convert some data. So, for this converter type, it is good to test it
 before trying it with real data. </p>
-
-<p class=note style='margin-top:0in;margin-right:0in;margin-bottom:6.0pt;
-margin-left:0in'>You can also test various System Prompts in the Azure Open AI
-Studio mentioned below to find the specific one you want to use.</p>
-
 </div>
 
 <h4><a name="_Saving_the_converter_in_the_System_"></a><span style='mso-fareast-font-family:
-"Times New Roman"'>Entering your own Azure Open AI Resource Information<o:p></o:p></span></h4>
+"Times New Roman"'>Entering your own Open AI Resource Information<o:p></o:p></span></h4>
 
-<p class=MsoBodyText>Once you acquire your own Azure Open AI resource on the
-Azure <a href="https://portal.azure.com/">portal</a>, you can enter the
+<p class=MsoList style='margin-left:.25in;text-indent:0in;mso-list:none;
+tab-stops:.5in'><span style='mso-bookmark:_Ref89954137'>Go to </span><a
+href="https://platform.openai.com/" target="_blank">
+<span style='mso-bookmark:_Ref89954137'>this</span><span
+style='mso-bookmark:_Ref89954138'></span></a><span style='mso-bookmark:_Ref89954138'>
+website to get your own Open AI resource to use for this transducer. Note: the Endpoint 
+you configure for an Open AI api call is fixed as: <a
+href="https://api.openai.com/v1/">https://api.openai.com/v1/</a></span></p>
+
+<p class=MsoList style='margin-left:.25in;text-indent:0in;mso-list:none;
+tab-stops:.5in'><span style='mso-bookmark:_Ref89954138'>Go to </span><a
+href="https://ollama.com/" target="_blank"><span style='mso-bookmark:_Ref89954138'>this</span>
+<span style='mso-bookmark:_Ref89954138'></span></a><span style='mso-bookmark:_Ref89954138'>
+website to download and install Ollama to run a model locally to do translation. Note: the Endpoint 
+you configure for Ollama is fixed as: <a
+href="http://localhost:11434/v1/">http://localhost:11434/v1/</a> and <span
+class=MsoIntenseEmphasis>gemma4</span> is a good model to try for translation.</span></p>
+
+<p class=MsoList style='margin-left:.25in;text-indent:0in;mso-list:none;
+tab-stops:.5in'><span style='mso-bookmark:_Ref89954139'>See </span><a
+href="https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/create-resource"
+target="_blank"><span style='mso-bookmark:_Ref89954139'>this</span><span
+style='mso-bookmark:_Ref89954138'></span></a><span style='mso-bookmark:_Ref89954138'>
+webpage for how to get your own Azure Open AI resource to use for this
+transducer.</span></p>
+
+<p class=MsoBodyText>Once you acquire your own Open AI resource, you can enter the
 information to use it in the dialog that appears by clicking the button on the
 Setup dialog (<!--[if supportFields]><span style='mso-element:field-begin'></span>
 REF _Ref148978054 \n \h <span style='mso-element:field-separator'></span><![endif]-->5)<!--[if gte mso 9]><xml>
@@ -1941,68 +1932,12 @@ style='mso-element:field-begin'></span><span
 style='mso-spacerun:yes'>&nbsp;</span>SEQ Figure \* ARABIC <span
 style='mso-element:field-separator'></span><![endif]--><span style='mso-no-proof:
 yes'>2</span><!--[if supportFields]><span style='mso-element:field-end'></span><![endif]-->:
-Entering Azure Open AI Configuration Data</p>
+Entering Open AI API Configuration</p>
 
 <p class=MsoBodyText><o:p>&nbsp;</o:p></p>
-
-<p class=MsoBodyText>The information you need for this dialog (by the number in
-red) is available from this page/blade of the Azure portal:</p>
-
-<p class=MsoBodyText>The value to use in the <span class=MsoIntenseReference>Enter
-Azure Open AI Key</span>&#8217; box (1) above comes from the <span
-class=MsoIntenseReference>KEY1</span> field in Figure 3 below and the value to
-use for the <span class=MsoIntenseReference>Enter Language API Endpoint</span>
-box (3) above comes from the <span class=MsoIntenseReference>Language API</span>
-(endpoint) field in Figure 3 below.</p>
-
-<p class=MsoBodyText align=right style='text-align:right'><span
-style='mso-no-proof:yes'><!--[if gte vml 1]><v:shape id="Picture_x0020_5"
- o:spid="_x0000_i1029" type="#_x0000_t75" style='width:393.75pt;height:295.5pt;
- visibility:visible;mso-wrap-style:square'>
- <v:imagedata src="Azure_OpenAI_Translate_Plug-in_About_box_files/image007.jpg"
-  o:title=""/>
-</v:shape><![endif]--><![if !vml]><img border=0 width=525 height=394
-src="Azure_OpenAI_Translate_Plug-in_About_box_files/image007.jpg" v:shapes="Picture_x0020_5"><![endif]></span></p>
-
-<p class=MsoCaption align=right style='text-align:right'>Figure <!--[if supportFields]><span
-style='mso-element:field-begin'></span><span
-style='mso-spacerun:yes'>&nbsp;</span>SEQ Figure \* ARABIC <span
-style='mso-element:field-separator'></span><![endif]--><span style='mso-no-proof:
-yes'>3</span><!--[if supportFields]><span style='mso-element:field-end'></span><![endif]-->:
-Azure Portal Settings for the Azure Open AI Resource</p>
-
-<p class=MsoBodyText><o:p>&nbsp;</o:p></p>
-
-<p class=MsoBodyText>The value to use in the <span class=MsoIntenseReference>Deployment
-Name</span> field (2) in Figure 2 above comes from the deployment you create on
-the <span class=MsoIntenseReference>Deployments</span> blade of the <span
-class=MsoIntenseReference>Azure Open AI Studio</span> tool as shown here:</p>
-
-<p class=MsoBodyText align=right style='text-align:right'><span
-style='mso-no-proof:yes'><!--[if gte vml 1]><v:shape id="Picture_x0020_7"
- o:spid="_x0000_i1028" type="#_x0000_t75" style='width:371.25pt;height:206.25pt;
- visibility:visible;mso-wrap-style:square'>
- <v:imagedata src="Azure_OpenAI_Translate_Plug-in_About_box_files/image008.jpg"
-  o:title=""/>
-</v:shape><![endif]--><![if !vml]><img border=0 width=495 height=275
-src="Azure_OpenAI_Translate_Plug-in_About_box_files/image008.jpg" v:shapes="Picture_x0020_7"><![endif]></span></p>
-
-<p class=MsoCaption align=right style='text-align:right'>Figure <!--[if supportFields]><span
-style='mso-element:field-begin'></span><span
-style='mso-spacerun:yes'>&nbsp;</span>SEQ Figure \* ARABIC <span
-style='mso-element:field-separator'></span><![endif]--><span style='mso-no-proof:
-yes'>4</span><!--[if supportFields]><span style='mso-element:field-end'></span><![endif]-->:
-Azure Portal Settings in the Azure OpenAI Studio</p>
-
-<p class=MsoBodyText><o:p>&nbsp;</o:p></p>
-
-<p class=MsoBodyText>The <span class=MsoIntenseReference>Azure Open AI Studio</span>
-tool can be opened from <span class=MsoIntenseReference>Model deployments</span>
-blade just below the <span class=MsoIntenseReference>Keys and Endpoint</span>
-blade in Figure 3 above.</p>
 
 <h4><span style='mso-fareast-font-family:"Times New Roman"'>Using Environment
-Variables to Store Azure Open AI Credentials<o:p></o:p></span></h4>
+Variables to Store Open AI Credentials<o:p></o:p></span></h4>
 
 <p class=MsoBodyText>When the translator is used in different client
 applications (e.g. <span class=MsoSubtleEmphasis>Paratext</span>, <span
@@ -2013,9 +1948,9 @@ using it. So you may be asked to enter the <span class=MsoSubtleEmphasis>key</sp
 <span class=MsoSubtleEmphasis>deployment name</span>, and <span
 class=MsoSubtleEmphasis>endpoint</span> in each application that you want to
 use it in. Alternately, you can set these values as three environment variables
-(<span class=MsoIntenseEmphasis>EncConverters_AzureOpenAiKey</span>, <span
-class=MsoIntenseEmphasis>EncConverters_AzureOpenAiDeploymentName</span>, <span
-class=MsoIntenseEmphasis>EncConverters_AzureOpenAiEndpoint</span>), and they
+(<span class=MsoIntenseEmphasis>EncConverters_OpenAiKey</span>, <span
+class=MsoIntenseEmphasis>EncConverters_OpenAiModelName</span>, <span
+class=MsoIntenseEmphasis>EncConverters_OpenAiEndpoint</span>), and they
 will be available to all applications:</p>
 
 <p class=MsoBodyText align=right style='text-align:right'><span
@@ -2032,7 +1967,7 @@ style='mso-element:field-begin'></span><span
 style='mso-spacerun:yes'>&nbsp;</span>SEQ Figure \* ARABIC <span
 style='mso-element:field-separator'></span><![endif]--><span style='mso-no-proof:
 yes'>5</span><!--[if supportFields]><span style='mso-element:field-end'></span><![endif]-->:
-Environment Variables for Azure OpenAI Settings</p>
+Environment Variables for OpenAI Settings</p>
 
 <p class=MsoBodyText><o:p>&nbsp;</o:p></p>
 

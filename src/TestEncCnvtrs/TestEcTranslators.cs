@@ -23,7 +23,7 @@ namespace TestEncCnvtrs
     {
         private const string AzureOpenAiKey = "16ZNuS...";
         private const string AzureOpenAiDeploymentName = "model-router-2";
-        private const string AzureOpenAiEndpoint = "https://ai-beaton9343ai639356232696.cognitiveservices.azure.com/";
+        private const string AzureOpenAiEndpoint = "https://ai-beaton9343ai639356232696.cognitiveservices.azure.com/openai/v1/";
 
         private const string VertexAiCredentials = @"H:\bright-coyote-381812-bc584cec007f.json";
 
@@ -412,7 +412,65 @@ God is my father.")]
             Assert.AreEqual(testOutput.ToUpper(), strOutput.ToUpper());
         }
 
-        private const string BingTranslatorConverterFriendlyName = "BingTranslator";
+        private const string OllamaEndpoint = "http://localhost:11434/v1";      // Ollama's OpenAI-compatible endpoint (default port 11434)
+        private const string OllamaModelName = "gemma4";						// change to whatever model you've pulled locally (e.g. `ollama pull llama3.2`)
+        private const string OllamaKey = "ollama";                              // Ollama doesn't validate the API key, but the OpenAI client library requires some non-empty value
+
+        /// <summary>
+        /// To run this test:
+        /// 1) install Ollama (https://ollama.com/download) and make sure `ollama serve` is running locally (it listens on
+        ///    port 11434 by default and exposes an OpenAI-compatible API at http://localhost:11434/v1).
+        /// 2) pull a model, e.g. `ollama pull llama3.1` (and update OllamaModelName above if you pull a different one).
+        /// This exercises the same AzureOpenAiEncConverter/AzureOpenAiExe code path as TestAzureOpenAiConverter above, but
+        ///    pointed at a generic OpenAI-compatible endpoint rather than a real Azure OpenAI resource -- unlike Azure,
+        ///    Ollama's endpoint is already in the form the OpenAI client library expects, so (unlike when setting this up
+        ///    via the "Azure OpenAI?" checkbox on QueryForAzureKeyDeploymentNameAndEndpoint) no "openai/v1/" ending is needed.
+        /// </summary>
+        [Test]
+        [TestCase("Hindi;English;Translate from Hindi into English.", "यीशु ने यह भी कहा,", "Jesus also said")]
+        public void TestAzureOpenAiConverterViaOllama(string converterSpec, string testInput, string testOutputContains)
+        {
+            Environment.SetEnvironmentVariable(AzureOpenAiEncConverter.EnvVarNameEndPoint, OllamaEndpoint);
+            Environment.SetEnvironmentVariable(AzureOpenAiEncConverter.EnvVarNameDeploymentName, OllamaModelName);
+            Environment.SetEnvironmentVariable(AzureOpenAiEncConverter.EnvVarNameKey, OllamaKey);
+
+            m_encConverters.AddConversionMap(AzureOpenAIConverterFriendlyName, converterSpec, ConvType.Unicode_to_Unicode,
+                                             AzureOpenAiEncConverter.ImplTypeSilAzureOpenAi, "UNICODE", "UNICODE", ProcessTypeFlags.Translation);
+
+            var theEc = m_encConverters[AzureOpenAIConverterFriendlyName];
+
+            // do a forward conversion (local models are less predictable than Azure/OpenAI's hosted ones, so just check
+            //    that the expected word/phrase shows up in the translation, rather than requiring an exact match)
+            var strOutput = theEc.Convert(testInput);
+            Assert.IsTrue(strOutput.ToUpper().Contains(testOutputContains.ToUpper()));
+        }
+
+		private const string OpenAiEndpoint = "https://api.openai.com/v1";
+		private const string OpenAiModelName = "gpt-5.4-mini";
+		private const string OpenAiKey = "sk-svcacct-...";
+
+		/// <summary>
+		/// To run this test you need an OpenAI API account and an API key (see https://platform.openai.com/account/api-keys).
+		/// </summary>
+		[Test]
+		[TestCase("Hindi;English;Translate from Hindi into English.", "यीशु ने यह भी कहा,", "Jesus also said")]
+		public void TestAzureOpenAiConverterViaOpenAi(string converterSpec, string testInput, string testOutputContains)
+		{
+			Environment.SetEnvironmentVariable(AzureOpenAiEncConverter.EnvVarNameEndPoint, OpenAiEndpoint);
+			Environment.SetEnvironmentVariable(AzureOpenAiEncConverter.EnvVarNameDeploymentName, OpenAiModelName);
+			Environment.SetEnvironmentVariable(AzureOpenAiEncConverter.EnvVarNameKey, OpenAiKey);
+			m_encConverters.AddConversionMap(AzureOpenAIConverterFriendlyName, converterSpec, ConvType.Unicode_to_Unicode,
+											 AzureOpenAiEncConverter.ImplTypeSilAzureOpenAi, "UNICODE", "UNICODE", ProcessTypeFlags.Translation);
+
+			var theEc = m_encConverters[AzureOpenAIConverterFriendlyName];
+
+			// do a forward conversion (local models are less predictable than Azure/OpenAI's hosted ones, so just check
+			//    that the expected word/phrase shows up in the translation, rather than requiring an exact match)
+			var strOutput = theEc.Convert(testInput);
+			Assert.IsTrue(strOutput.ToUpper().Contains(testOutputContains.ToUpper()));
+		}
+
+		private const string BingTranslatorConverterFriendlyName = "BingTranslator";
 
         // these tests may fail if the Bing Translator resource no longer has any remaining juice... OR (more likely)
         //    if they change the translation

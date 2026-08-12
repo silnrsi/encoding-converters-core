@@ -16,7 +16,7 @@ namespace SilEncConverters40.EcTranslators.AzureOpenAI
     {
         private const string SourceLanguageNameMustBeConfigured = "<Type in the language you want to translate from>";
         private const string TargetLanguageNameMustBeConfigured = "<Type in the language you want to translate to>";
-        private readonly string ResourceNeededWarning = $"The {AzureOpenAiEncConverter.strDisplayName} requires an Azure OpenAI resource.";
+        private readonly string ResourceNeededWarning = $"The {AzureOpenAiEncConverter.strDisplayName} requires an OpenAI-Compatible or Azure OpenAI resource.";
 
         public AzureOpenAiAutoConfigDialog
             (
@@ -140,7 +140,7 @@ namespace SilEncConverters40.EcTranslators.AzureOpenAI
 
             if (String.IsNullOrEmpty(azureOpenAiResourceKey) || String.IsNullOrEmpty(azureOpenAiEndpoint) || String.IsNullOrEmpty(azureOpenAiDeploymentName))
             {
-                MessageBox.Show(this, $"Click the '{buttonSetAzureOpenAiApiKey.Text}' button to enter your Azure Open AI Resource information", EncConverters.cstrCaption);
+                MessageBox.Show(this, $"Click the '{buttonSetAzureOpenAiApiKey.Text}' button to enter your Open AI Resource information", EncConverters.cstrCaption);
                 return false;
             }
 
@@ -213,7 +213,7 @@ namespace SilEncConverters40.EcTranslators.AzureOpenAI
             {
                 var additionToSystemPrompt = comboBoxSystemPromptAdditions.Text?.Trim().Replace(";", null);
                 if (additionToSystemPrompt.StartsWith(ReplacementSystemPrompt))
-                    return $"Azure Open AI {SubstituteSystemPrompt(additionToSystemPrompt)}";
+                    return $"Open AI {SubstituteSystemPrompt(additionToSystemPrompt)}";
 
                 var selectedFromLanguage = textBoxSourceLanguage.Text.Trim();
                 if (selectedFromLanguage == SourceLanguageNameMustBeConfigured)
@@ -221,7 +221,7 @@ namespace SilEncConverters40.EcTranslators.AzureOpenAI
                 var selectedToLanguage = textBoxTargetLanguage.Text.Trim();
                 if (selectedToLanguage == TargetLanguageNameMustBeConfigured)
                     selectedToLanguage = null;
-                return $"Azure Open AI Translate {selectedFromLanguage} to {selectedToLanguage}";
+                return $"Open AI Translate {selectedFromLanguage} to {selectedToLanguage}";
             }
         }
 
@@ -253,15 +253,20 @@ namespace SilEncConverters40.EcTranslators.AzureOpenAI
             var clientId = EncryptionClass.Encrypt(azureOpenAiKeyHide);
 #endif
 
-            using var dlg = new QueryForAzureKeyDeploymentNameAndEndpoint(AzureOpenAiKeyOverride, AzureOpenAiDeploymentName,
-                                                                          AzureOpenAiEndpoint);
+			var keyOverride = AzureOpenAiKeyOverride;
+			var modelName = AzureOpenAiDeploymentName;
+			var endpoint = AzureOpenAiEndpoint;
+			using var dlg = new QueryForAzureKeyDeploymentNameAndEndpoint(keyOverride, modelName, endpoint);
             if (dlg.ShowDialog() == DialogResult.OK)
             {
                 AzureOpenAiKeyOverride = dlg.AzureOpenAiKeyOverride;
                 AzureOpenAiDeploymentName = dlg.AzureOpenAiDeploymentName;
                 AzureOpenAiEndpoint = dlg.AzureOpenAiEndpoint;
                 Properties.Settings.Default.Save();
-            }
+
+				if (AzureOpenAiKeyOverride != keyOverride || AzureOpenAiDeploymentName != modelName || AzureOpenAiEndpoint != endpoint)
+					IsModified = true;
+			}
         }
     }
 }
