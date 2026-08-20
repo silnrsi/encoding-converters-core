@@ -10,7 +10,6 @@ using ECInterfaces;                     // for IEncConverter
 
 namespace SilEncConverters40
 {
-    //[CLSCompliantAttribute(false)]  // because of GeckoWebBrowser
     public partial class TecAutoConfigDialog : SilEncConverters40.AutoConfigDialog
     {
         public TecAutoConfigDialog

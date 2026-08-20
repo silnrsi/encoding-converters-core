@@ -48,5 +48,22 @@ namespace SilEncConverters40.Properties {
                 return ((string)(this["RegexNetLettersToUnescape"]));
             }
         }
+
+        // Application-scoped (read-only at runtime, editable only via the installed *.config file --
+        // see EncConverter.RiskyNativeDependencies and Handover.md, "Generic subprocess fallback for
+        // host-process conflicts"): lets a newly-discovered risky native DLL (one not caught during
+        // testing, so no EncConverter subclass declares it in code) be added after deployment without
+        // rebuilding -- add a <string> entry to this setting's <value> in the installed .config file.
+        // Merged with (not a replacement for) whatever each EncConverter subclass declares in code; see
+        // TechHindiSiteEncConverter.RiskyNativeDependencies for the merge pattern.
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute(@"<?xml version=""1.0"" encoding=""utf-16""?>
+<ArrayOfString xmlns:xsd=""http://www.w3.org/2001/XMLSchema"" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" />")]
+        public global::System.Collections.Specialized.StringCollection AdditionalRiskyNativeDependencies {
+            get {
+                return ((global::System.Collections.Specialized.StringCollection)(this["AdditionalRiskyNativeDependencies"]));
+            }
+        }
     }
 }

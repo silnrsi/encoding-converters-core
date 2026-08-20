@@ -10,9 +10,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using Newtonsoft.Json;
-using Azure.AI.OpenAI;
-using Azure;
+using OpenAI;
 using OpenAI.Chat;
+using System.ClientModel;
 
 namespace SilEncConverters40.EcTranslators.AzureOpenAI.AzureOpenAiExe
 {
@@ -26,9 +26,9 @@ namespace SilEncConverters40.EcTranslators.AzureOpenAI.AzureOpenAiExe
 		public const string AzureOpenAiFailureDueToContentFilter = "Omitted content due to a content filter flag.";
 
 		private const string ResponsePrefix = "Free translation: ";
-        private const string EnvVarNameDeploymentName = "EncConverters_AzureOpenAiDeploymentName";
-        private const string EnvVarNameEndPoint = "EncConverters_AzureOpenAiEndpoint";
-        private const string EnvVarNameKey = "EncConverters_AzureOpenAiKey";
+        private const string EnvVarNameDeploymentName = "EncConverters_OpenAiModelName";
+        private const string EnvVarNameEndPoint = "EncConverters_OpenAiEndpoint";
+        private const string EnvVarNameKey = "EncConverters_OpenAiKey";
 		private static readonly char[] TrimmableChars = new char[] { '\r', '\n', ' ' };
 
         static async Task Main(string[] args)
@@ -82,10 +82,19 @@ namespace SilEncConverters40.EcTranslators.AzureOpenAI.AzureOpenAiExe
 		private static async Task ProcessRequest(AzureOpenAiPromptExeTranslatorCommandLineArgs arguments, string deploymentName, string endpoint,
                                                  string key, string systemPrompt)
         {
-            // Pass the deployment name you chose when you created/deployed the model in Azure OpenAI Studio.
-            var azureClient = new AzureOpenAIClient(new Uri(endpoint), new AzureKeyCredential(key));
+			// the endpoint is used exactly as configured (see QueryForAzureKeyDeploymentNameAndEndpoint, which is responsible for
+			//  making sure it's in the form the OpenAI library expects -- e.g. for _Azure_ OpenAI, that means it must end in
+			//  "openai/v1/" rather than just the bare resource endpoint, whereas other OpenAI-compatible services generally
+			//  already expose their endpoint in that form).
+			var endpointUri = new Uri(endpoint);
 
-			var chatClient = azureClient.GetChatClient(deploymentName);
+			// Pass the deployment name you chose when you created/deployed the model in Azure OpenAI Studio.
+			var chatClient = new ChatClient(deploymentName,
+											new ApiKeyCredential(key),
+											new OpenAIClientOptions
+											{
+												Endpoint = endpointUri
+											});
 
 			// create the ChatMessages w/ the given systemPrompt
 			var chatMessages = new List<ChatMessage>
@@ -143,7 +152,8 @@ namespace SilEncConverters40.EcTranslators.AzureOpenAI.AzureOpenAiExe
                 var strOutput = ((AssistantChatMessage)chatMessages[i++]).Content[0].Text;
 
 #if LogResults
-                File.AppendAllText(LogFilePath, string.Format("{1}=>{2}:{3}=>{4}{0}", Environment.NewLine, systemPrompt, i / 2, strInput, strOutput));
+				if (Directory.Exists(Path.GetDirectoryName(LogFilePath)))
+					File.AppendAllText(LogFilePath, string.Format("{1}=>{2}:{3}=>{4}{0}", Environment.NewLine, systemPrompt, i / 2, strInput, strOutput));
 #endif
                 // write the responses to the standard out to return it
                 Console.WriteLine(strOutput);
@@ -212,6 +222,22 @@ namespace SilEncConverters40.EcTranslators.AzureOpenAI.AzureOpenAiExe
                     !string.IsNullOrEmpty((parameter = Environment.GetEnvironmentVariable(envVarName)));
         }
 
+		private static string CleanString(string input, string output)
+		{
+			if (!String.IsNullOrEmpty(input) && input.Length > 1)
+			{
+				if (input.First() != '"')
+					output = output.TrimStart('"');
+				if (input.Length > 2 && input.Last() != '"')
+					output = output.TrimEnd('"');
+			}
+
+			if (output.StartsWith(ResponsePrefix))
+				output = output.Substring(ResponsePrefix.Length);
+
+			return output;
+		}
+
 #if false
 		private static string HarvestResult(string strInput, ChatChoice chatChoice)
         {
@@ -239,21 +265,5 @@ namespace SilEncConverters40.EcTranslators.AzureOpenAI.AzureOpenAiExe
             return CleanString(strInput, content);
         }
 #endif
-
-        private static string CleanString(string input, string output)
-        {
-            if (!String.IsNullOrEmpty(input) && input.Length > 1)
-            {
-                if (input.First() != '"')
-                    output = output.TrimStart('"');
-                if (input.Length > 2 && input.Last() != '"')
-                    output = output.TrimEnd('"');
-            }
-
-            if (output.StartsWith(ResponsePrefix))
-                output = output.Substring(ResponsePrefix.Length);
-
-            return output;
-        }
-    }
+	}
 }

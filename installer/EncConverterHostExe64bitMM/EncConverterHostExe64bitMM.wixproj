@@ -1,0 +1,23 @@
+<Project Sdk="WixToolset.Sdk/6.0.2" ToolsVersion="4.0">
+  <PropertyGroup>
+    <OutputType>Module</OutputType>
+    <OutputName>EncConverterHostExe64bitMM</OutputName>
+    <InstallerPlatform>x64</InstallerPlatform>
+    <ProjectGuid>{38950F54-7AC5-4D27-BEF5-74C34E2D5193}</ProjectGuid>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
+    <OutputPath>..\..\output\MergeModules\$(Platform)\$(Configuration)\</OutputPath>
+    <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
+    <DefineConstants>Debug</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
+    <OutputPath>..\..\output\MergeModules\$(Platform)\$(Configuration)\</OutputPath>
+    <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- for util:PermissionEx, granting non-elevated write access to the SubprocessFallback registry
+         cache: see EncConverterHostExe_MergeModule.wxs. Same package/version EcFolderACLsMM already
+         uses elsewhere in this repo. -->
+    <PackageReference Include="WixToolset.Util.wixext" Version="6.0.2" />
+  </ItemGroup>
+</Project>

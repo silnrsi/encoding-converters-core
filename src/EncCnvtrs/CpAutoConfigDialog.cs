@@ -10,7 +10,6 @@ using System.Runtime.InteropServices;   // for DllImport
 
 namespace SilEncConverters40
 {
-    //[CLSCompliantAttribute(false)]  // because of GeckoWebBrowser
     public partial class CpAutoConfigDialog : SilEncConverters40.AutoConfigDialog
     {
         //const string cstrDefaultCodePageToSelect = "65001"; // make it UTF-8 by default (the most likely choice)

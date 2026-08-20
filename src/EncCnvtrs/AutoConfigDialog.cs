@@ -11,7 +11,6 @@ using System.Diagnostics;
 
 namespace SilEncConverters40
 {
-    //[CLSCompliantAttribute(false)]  // because of GeckoWebBrowser
     public partial class AutoConfigDialog : Form
     {
         public string FriendlyName;
@@ -33,6 +32,7 @@ namespace SilEncConverters40
         protected int m_nLhsExpects;
         protected int m_nRhsReturns;
         protected IEncConverter m_aEC = null;
+        private string _strHelpFilePath;
 
 		private string _testData = "Test Data";
 		public string InitialTestData
@@ -49,9 +49,7 @@ namespace SilEncConverters40
 		public AutoConfigDialog()
         {
             Util.DebugWriteLine(this, "AutoConfigDialog (1) BEGIN");
-			var webBrowser = WebBrowserAdaptor.CreateBrowser();
-			webBrowser.Initialize();
-			InitializeComponent(webBrowser);
+			InitializeComponent();
             Util.DebugWriteLine(this, "finished InitializeComponent");
 	        this.tabControl.Selecting += new System.Windows.Forms.TabControlCancelEventHandler(tabControl_Selecting);
 
@@ -125,7 +123,8 @@ namespace SilEncConverters40
 
             this.Text = strDisplayName;
 
-            // get the help for the about tab
+            // resolve (but don't yet open) the help page for this dialog; it's launched on request,
+            // via the "Help" button next to "Save In Repository" - see buttonHelp_Click
             RegistryKey keyRoot = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\SIL\SilEncConverters40", false);
             if (keyRoot != null)
             {
@@ -137,12 +136,14 @@ namespace SilEncConverters40
 				else
 					strXmlFilePath = Path.Combine(strXmlFilePath, Path.Combine(@"Help", strHtmlFileName));
                 System.Diagnostics.Debug.WriteLine(strXmlFilePath);
-                this.webBrowser.Navigate(strXmlFilePath);
+
+                _strHelpFilePath = strXmlFilePath;
             }
 #if DEBUG
             else
                 throw new ApplicationException(@"Can't read the HLKM\SOFTWARE\SIL\SilEncConverters40\[RootDir] registry key, which should get created during installation.");
 #endif
+            buttonHelp.Enabled = !String.IsNullOrEmpty(_strHelpFilePath);
 
             ecTextBoxInput.Text = InitialTestData;
             //char[] chinese = {'\u6B22','\u8FCE','\u4F7F','\u7528','\u0020'};
@@ -153,6 +154,26 @@ namespace SilEncConverters40
         protected virtual void SetConvTypeControls()
         {
             // usually for giving sub-classes an opportunity to query for the ConvType
+        }
+
+        // opens the Help page in the user's default browser rather than embedding a browser control
+        // in the dialog (see Handover.md, "The browser-engine problem"). This is a plain button next
+        // to "Save In Repository" - the title bar's Help ("?") button is already used for something
+        // else (per-control context help via 'helpProvider'), so it can't double as a launcher here.
+        private void buttonHelp_Click(object sender, EventArgs e)
+        {
+            Util.DebugWriteLine(this, "BEGIN");
+            if (String.IsNullOrEmpty(_strHelpFilePath))
+                return;
+
+            try
+            {
+                Process.Start(new ProcessStartInfo(_strHelpFilePath) { UseShellExecute = true });
+            }
+            catch (Exception ex)
+            {
+                Util.DebugWriteLine(this, $"Couldn't open Help page '{_strHelpFilePath}': {ex.Message}");
+            }
         }
 
         public virtual void Initialize
@@ -172,7 +193,6 @@ namespace SilEncConverters40
             m_aECs = aECs;
             m_aEC = InitializeEncConverter;
 
-            tabControl.Controls.Remove(tabPageAbout);
             tabControl.Controls.Remove(tabPageSetup);
             tabControl.Controls.Remove(tabPageAdvanced);
 
@@ -612,7 +632,7 @@ namespace SilEncConverters40
 		private void tabControl_Selecting(object sender, TabControlCancelEventArgs e)
 		{
             System.Diagnostics.Debug.WriteLine("tabControl_Selecting()");
-			if (e.TabPage != tabPageAbout && e.TabPage != tabPageSetup)
+			if (e.TabPage != tabPageSetup)
             {
                 // Test or Advanced tab. 
                 // If the configuration was modified, then make the user go back
@@ -632,9 +652,9 @@ namespace SilEncConverters40
                 buttonSaveInRepository.Visible = SetupTabSelected_MakeSaveInRepositoryVisible;
                 SetupTabSelected(e);
             }
-            // if it was modified, then we need to apply it or switch back to 
-            //  the setup tab (unless it was the about tab that was selected)
-            else if (e.TabPage != tabPageAbout)
+            // if it was modified, then we need to apply it or switch back to
+            //  the setup tab
+            else
             {
                 // Test or Advanced tab. 
                 // If the configuration was modified, then make the user go back

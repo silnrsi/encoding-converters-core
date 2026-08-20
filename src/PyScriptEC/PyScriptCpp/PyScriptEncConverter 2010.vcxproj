@@ -87,20 +87,20 @@
     <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)lib\windows\64bit;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>$(SolutionDir)\output\$(Platform)\$(Configuration)\</OutDir>
+    <OutDir>$(SolutionDir)\output\net48\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)build\Obj\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>$(SolutionDir)\output\$(Platform)\$(Configuration)\</OutDir>
+    <OutDir>$(SolutionDir)\output\net48\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)build\Obj\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>$(SolutionDir)\output\$(Platform)\$(Configuration)\</OutDir>
+    <OutDir>$(SolutionDir)\output\net48\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)build\Obj\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IntDir>$(SolutionDir)build\Obj\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
-    <OutDir>$(SolutionDir)\output\$(Platform)\$(Configuration)\</OutDir>
+    <OutDir>$(SolutionDir)\output\net48\$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -121,7 +121,7 @@
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>copy $(SolutionDir)lib\windows\32bit\python*.dll $(SolutionDir)output\$(Platform)\$(Configuration)\</Command>
+      <Command>copy $(SolutionDir)lib\windows\32bit\python*.dll $(SolutionDir)output\net48\$(Platform)\$(Configuration)\</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -140,7 +140,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>copy $(SolutionDir)lib\windows\64bit\python*.dll $(SolutionDir)output\$(Platform)\$(Configuration)\</Command>
+      <Command>copy $(SolutionDir)lib\windows\64bit\python*.dll $(SolutionDir)output\net48\$(Platform)\$(Configuration)\</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -161,7 +161,7 @@
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>copy $(SolutionDir)lib\windows\32bit\python*.dll $(SolutionDir)output\$(Platform)\$(Configuration)\</Command>
+      <Command>copy $(SolutionDir)lib\windows\32bit\python*.dll $(SolutionDir)output\net48\$(Platform)\$(Configuration)\</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -181,7 +181,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
     </Link>
     <PostBuildEvent>
-      <Command>copy $(SolutionDir)lib\windows\64bit\python*.dll $(SolutionDir)output\$(Platform)\$(Configuration)\</Command>
+      <Command>copy $(SolutionDir)lib\windows\64bit\python*.dll $(SolutionDir)output\net48\$(Platform)\$(Configuration)\</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

@@ -4,7 +4,7 @@ namespace SilEncConverters40.EcTranslators.AzureOpenAI
 {
     public class AzureOpenAiPromptExeTranslatorCommandLineArgs : PromptExeTranslatorCommandLineArgs
     {
-        public string DeploymentId { get; set; }
+		public string DeploymentId { get; set; }
         public string EndpointId { get; set; }
 
         /// <summary>

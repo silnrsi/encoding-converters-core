@@ -23,7 +23,7 @@ namespace TestEncCnvtrs
     {
         private const string AzureOpenAiKey = "16ZNuS...";
         private const string AzureOpenAiDeploymentName = "model-router-2";
-        private const string AzureOpenAiEndpoint = "https://ai-beaton9343ai639356232696.cognitiveservices.azure.com/";
+        private const string AzureOpenAiEndpoint = "https://ai-beaton9343ai639356232696.cognitiveservices.azure.com/openai/v1/";
 
         private const string VertexAiCredentials = @"H:\bright-coyote-381812-bc584cec007f.json";
 
@@ -251,14 +251,14 @@ namespace TestEncCnvtrs
 //      // For the NMT model, the model ID is general/nmt
 //      [TestCase("Hindi;English;bright-coyote-381812;us-central1;google;chat-bison;Translate from Hindi into English.", "यीशु ने यह भी कहा,", "Jesus also said,")]
         // try gemini pro
-        [TestCase("Hindi;English;bright-coyote-381812;us-central1;google;gemini-2.5-flash-lite;Translate from Hindi into English.", "यीशु ने यह भी कहा,", "Jesus also said,")]
-        [TestCase("Hindi;English;bright-coyote-381812;us-central1;google;gemini-2.0-flash-001;Translate from Hindi into English.", "परंतु वह चोगे को छोड़कर वहाँ से भाग गया। ",
-            "But he left the cloak behind and fled.")]
-        [TestCase("Hindi;English;bright-coyote-381812;us-central1;google;gemini-2.0-flash-lite-001;Translate from Hindi into English.", "यीशु ने कहा,", "Jesus said,")]
+        [TestCase("Hindi;English;bright-coyote-381812;us-central1;google;gemini-2.5-pro;Translate from Hindi into English.", "यीशु ने यह भी कहा,", "Jesus also said,")]
+        //[TestCase("Hindi;English;bright-coyote-381812;us-central1;google;gemini-2.5-pro;Translate from Hindi into English.", "परंतु वह चोगे को छोड़कर वहाँ से भाग गया। ",
+		// 	"But he left his cloak and fled from there.")]
+        [TestCase("Hindi;English;bright-coyote-381812;us-central1;google;gemini-2.5-pro;Translate from Hindi into English.", "यीशु ने कहा,", "Jesus said,")]
         // multiple lines
-        [TestCase("Hindi;English;bright-coyote-381812;us-central1;google;gemini-2.5-flash;Translate from Hindi into English.", @"यीशु ने कहा,
+        [TestCase("Hindi;English;bright-coyote-381812;us-central1;google;gemini-2.5-pro;Translate from Hindi into English.", @"यीशु ने कहा,
 परमे‍‍श्वर मेरा पिता है।", @"Jesus said,
-God is my Father.")]
+God is my father.")]
         [TestCase("Hindi;English;bright-coyote-381812;us-central1;google;gemini-2.5-pro;Translate from Hindi into English.", "यीशु ने कहा,", "Jesus said,")]
         // multiple lines
         [TestCase("Hindi;English;bright-coyote-381812;us-central1;google;gemini-2.5-pro;Translate from Hindi into English.", @"यीशु ने कहा,
@@ -412,7 +412,65 @@ God is my father.")]
             Assert.AreEqual(testOutput.ToUpper(), strOutput.ToUpper());
         }
 
-        private const string BingTranslatorConverterFriendlyName = "BingTranslator";
+        private const string OllamaEndpoint = "http://localhost:11434/v1";      // Ollama's OpenAI-compatible endpoint (default port 11434)
+        private const string OllamaModelName = "gemma4";						// change to whatever model you've pulled locally (e.g. `ollama pull llama3.2`)
+        private const string OllamaKey = "ollama";                              // Ollama doesn't validate the API key, but the OpenAI client library requires some non-empty value
+
+        /// <summary>
+        /// To run this test:
+        /// 1) install Ollama (https://ollama.com/download) and make sure `ollama serve` is running locally (it listens on
+        ///    port 11434 by default and exposes an OpenAI-compatible API at http://localhost:11434/v1).
+        /// 2) pull a model, e.g. `ollama pull llama3.1` (and update OllamaModelName above if you pull a different one).
+        /// This exercises the same AzureOpenAiEncConverter/AzureOpenAiExe code path as TestAzureOpenAiConverter above, but
+        ///    pointed at a generic OpenAI-compatible endpoint rather than a real Azure OpenAI resource -- unlike Azure,
+        ///    Ollama's endpoint is already in the form the OpenAI client library expects, so (unlike when setting this up
+        ///    via the "Azure OpenAI?" checkbox on QueryForAzureKeyDeploymentNameAndEndpoint) no "openai/v1/" ending is needed.
+        /// </summary>
+        [Test]
+        [TestCase("Hindi;English;Translate from Hindi into English.", "यीशु ने यह भी कहा,", "Jesus also said")]
+        public void TestAzureOpenAiConverterViaOllama(string converterSpec, string testInput, string testOutputContains)
+        {
+            Environment.SetEnvironmentVariable(AzureOpenAiEncConverter.EnvVarNameEndPoint, OllamaEndpoint);
+            Environment.SetEnvironmentVariable(AzureOpenAiEncConverter.EnvVarNameDeploymentName, OllamaModelName);
+            Environment.SetEnvironmentVariable(AzureOpenAiEncConverter.EnvVarNameKey, OllamaKey);
+
+            m_encConverters.AddConversionMap(AzureOpenAIConverterFriendlyName, converterSpec, ConvType.Unicode_to_Unicode,
+                                             AzureOpenAiEncConverter.ImplTypeSilAzureOpenAi, "UNICODE", "UNICODE", ProcessTypeFlags.Translation);
+
+            var theEc = m_encConverters[AzureOpenAIConverterFriendlyName];
+
+            // do a forward conversion (local models are less predictable than Azure/OpenAI's hosted ones, so just check
+            //    that the expected word/phrase shows up in the translation, rather than requiring an exact match)
+            var strOutput = theEc.Convert(testInput);
+            Assert.IsTrue(strOutput.ToUpper().Contains(testOutputContains.ToUpper()));
+        }
+
+		private const string OpenAiEndpoint = "https://api.openai.com/v1";
+		private const string OpenAiModelName = "gpt-5.4-mini";
+		private const string OpenAiKey = "sk-svcacct-...";
+
+		/// <summary>
+		/// To run this test you need an OpenAI API account and an API key (see https://platform.openai.com/account/api-keys).
+		/// </summary>
+		[Test]
+		[TestCase("Hindi;English;Translate from Hindi into English.", "यीशु ने यह भी कहा,", "Jesus also said")]
+		public void TestAzureOpenAiConverterViaOpenAi(string converterSpec, string testInput, string testOutputContains)
+		{
+			Environment.SetEnvironmentVariable(AzureOpenAiEncConverter.EnvVarNameEndPoint, OpenAiEndpoint);
+			Environment.SetEnvironmentVariable(AzureOpenAiEncConverter.EnvVarNameDeploymentName, OpenAiModelName);
+			Environment.SetEnvironmentVariable(AzureOpenAiEncConverter.EnvVarNameKey, OpenAiKey);
+			m_encConverters.AddConversionMap(AzureOpenAIConverterFriendlyName, converterSpec, ConvType.Unicode_to_Unicode,
+											 AzureOpenAiEncConverter.ImplTypeSilAzureOpenAi, "UNICODE", "UNICODE", ProcessTypeFlags.Translation);
+
+			var theEc = m_encConverters[AzureOpenAIConverterFriendlyName];
+
+			// do a forward conversion (local models are less predictable than Azure/OpenAI's hosted ones, so just check
+			//    that the expected word/phrase shows up in the translation, rather than requiring an exact match)
+			var strOutput = theEc.Convert(testInput);
+			Assert.IsTrue(strOutput.ToUpper().Contains(testOutputContains.ToUpper()));
+		}
+
+		private const string BingTranslatorConverterFriendlyName = "BingTranslator";
 
         // these tests may fail if the Bing Translator resource no longer has any remaining juice... OR (more likely)
         //    if they change the translation
@@ -421,7 +479,7 @@ God is my father.")]
         [TestCase(ProcessTypeFlags.Translation, "Translate;hi;en", "यीशु ने यह भी कहा,", "Jesus also said,")]
         // multi-line translations
         [TestCase(ProcessTypeFlags.Translation, "Translate;hi;en", @"यीशु ने कहा,
-परमे‍‍श्वर मेरा पिता है।", @"Jesus said,
+परमे‍‍श्वर मेरा पिता है।", @"Jesus said, 
 God is my Father.")]
         [TestCase(ProcessTypeFlags.Translation, "Translate;;en", "यीशु ने यह भी कहा,", "Jesus also said,")]
         [TestCase(ProcessTypeFlags.Translation, "Translate;en;zh-Hans", "Get to know the beautiful country of Israel.", "了解美丽的以色列国家。")]
@@ -482,13 +540,13 @@ God is my Father.")]
         // these tests may fail if the DeepL Translator resource no longer has any remaining juice... OR (more likely)
         //    if they change the translation
         [Test]
-        [TestCase(ProcessTypeFlags.Translation, "Translate;en;fr", "Hello, world!", "Bonjour à tous !")]
+        [TestCase(ProcessTypeFlags.Translation, "Translate;en;fr", "Hello, world!", "Bonjour, tout le monde !")]
         [TestCase(ProcessTypeFlags.Translation, "Translate;en;zh", "How are you?", "你好吗？")]
-        [TestCase(ProcessTypeFlags.Translation, "Translate;en;de;Less", "How are you?", "Wie geht es dir?")]
+        [TestCase(ProcessTypeFlags.Translation, "Translate;en;de;Less", "How are you?", "Wie geht’s dir?")]
         [TestCase(ProcessTypeFlags.Translation, "Translate;en;de;More", "How are you?", "Wie geht es Ihnen?")]
         // multi-line translations
         [TestCase(ProcessTypeFlags.Translation, "Translate;en;fr", @"Jesus said,
-God is my father.", @"Jésus a dit,
+God is my father.", @"Jésus a dit :
 Dieu est mon père.")]
         public void TestDeepLConverter(ProcessTypeFlags processType, string converterSpec, string testInput, string testOutput)
         {

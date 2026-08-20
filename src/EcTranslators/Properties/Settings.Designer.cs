@@ -230,7 +230,7 @@ namespace SilEncConverters40.EcTranslators.Properties {
                 this["AzureOpenAiKeyLocationDialogInstructionUrl"] = value;
             }
         }
-        
+
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute(@"<?xml version=""1.0"" encoding=""utf-16""?>

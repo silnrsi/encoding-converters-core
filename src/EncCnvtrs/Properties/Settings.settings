@@ -13,5 +13,9 @@
     <Setting Name="RegexNetLettersToUnescape" Type="System.String" Scope="Application">
       <Value Profile="(Default)">\\r|\\n|\\t|\\u[0-9a-fA-F]{4}</Value>
     </Setting>
+    <Setting Name="AdditionalRiskyNativeDependencies" Type="System.Collections.Specialized.StringCollection" Scope="Application">
+      <Value Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
+&lt;ArrayOfString xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" /&gt;</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

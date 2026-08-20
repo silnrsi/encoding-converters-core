@@ -3,24 +3,66 @@
 		<EcLibFilesPath>$(MSBuildThisFileDirectory)..\lib</EcLibFilesPath>
 		<EcDistFilesPath>$(MSBuildThisFileDirectory)..\runtimes\EcDistFiles</EcDistFilesPath>
 	</PropertyGroup>
+	<!--nuget doesn't add the references to the csproj files properly (probably because lib\<tfm>\<platform>\
+		isn't a layout NuGet's own asset selection understands - it only auto-references lib\<tfm>\ directly,
+		not a platform subfolder underneath). Here is what you might want to manually add to the csproj file
+		instead. Only net462/net48/net9.0-windows need this - netstandard2.0/net9.0 ship unnested under
+		lib\<tfm>\ (no platform split, since ECInterfaces alone has no native/bitness-specific dependency),
+		so NuGet already auto-references those without any help.
+
+		net48 is also the fallback when $(TargetFramework) is empty/undefined (old-style, non-SDK consumer
+		projects only have $(TargetFrameworkVersion), not $(TargetFramework) at all) - preserves this
+		package's original, net48-only behavior for anyone not on a TFM-aware SDK-style project.-->
 	<ItemGroup>
-		<!--nuget doesn't add the references to the csproj files properly; not sure why. Here is what
-			you might want to manually add to the csproj file instead-->
 		<Reference  Include="ECInterfaces, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86"
-					Condition="('$(Platform)' == 'x86' or '$(Platform)' == 'AnyCPU') and ('$(OS)'=='Windows_NT')">
+					Condition="('$(Platform)' == 'x86' or '$(Platform)' == 'AnyCPU') and ('$(OS)'=='Windows_NT') and ('$(TargetFramework)'=='net48' or '$(TargetFramework)'=='')">
 			<HintPath>$(EcLibFilesPath)\net48\x86\ECInterfaces.dll</HintPath>
 		</Reference>
 		<Reference	Include="ECInterfaces, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x64"
-					Condition="('$(Platform)' == 'x64') and ('$(OS)'=='Windows_NT')">
+					Condition="('$(Platform)' == 'x64') and ('$(OS)'=='Windows_NT') and ('$(TargetFramework)'=='net48' or '$(TargetFramework)'=='')">
 			<HintPath>$(EcLibFilesPath)\net48\x64\ECInterfaces.dll</HintPath>
 		</Reference>
 		<Reference  Include="SilEncConverters40, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86"
-					Condition="('$(Platform)' == 'x86' or '$(Platform)' == 'AnyCPU') and ('$(OS)'=='Windows_NT')">
+					Condition="('$(Platform)' == 'x86' or '$(Platform)' == 'AnyCPU') and ('$(OS)'=='Windows_NT') and ('$(TargetFramework)'=='net48' or '$(TargetFramework)'=='')">
 			<HintPath>$(EcLibFilesPath)\net48\x86\SilEncConverters40.dll</HintPath>
 		</Reference>
 		<Reference  Include="SilEncConverters40, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x64"
-					Condition="('$(Platform)' == 'x64') and ('$(OS)'=='Windows_NT')">
+					Condition="('$(Platform)' == 'x64') and ('$(OS)'=='Windows_NT') and ('$(TargetFramework)'=='net48' or '$(TargetFramework)'=='')">
 			<HintPath>$(EcLibFilesPath)\net48\x64\SilEncConverters40.dll</HintPath>
+		</Reference>
+
+		<Reference  Include="ECInterfaces, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86"
+					Condition="('$(Platform)' == 'x86' or '$(Platform)' == 'AnyCPU') and ('$(OS)'=='Windows_NT') and ('$(TargetFramework)'=='net462')">
+			<HintPath>$(EcLibFilesPath)\net462\x86\ECInterfaces.dll</HintPath>
+		</Reference>
+		<Reference	Include="ECInterfaces, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x64"
+					Condition="('$(Platform)' == 'x64') and ('$(OS)'=='Windows_NT') and ('$(TargetFramework)'=='net462')">
+			<HintPath>$(EcLibFilesPath)\net462\x64\ECInterfaces.dll</HintPath>
+		</Reference>
+		<Reference  Include="SilEncConverters40, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86"
+					Condition="('$(Platform)' == 'x86' or '$(Platform)' == 'AnyCPU') and ('$(OS)'=='Windows_NT') and ('$(TargetFramework)'=='net462')">
+			<HintPath>$(EcLibFilesPath)\net462\x86\SilEncConverters40.dll</HintPath>
+		</Reference>
+		<Reference  Include="SilEncConverters40, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x64"
+					Condition="('$(Platform)' == 'x64') and ('$(OS)'=='Windows_NT') and ('$(TargetFramework)'=='net462')">
+			<HintPath>$(EcLibFilesPath)\net462\x64\SilEncConverters40.dll</HintPath>
+		</Reference>
+
+		<Reference  Include="ECInterfaces, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86"
+					Condition="('$(Platform)' == 'x86' or '$(Platform)' == 'AnyCPU') and ('$(OS)'=='Windows_NT') and ('$(TargetFramework)'=='net9.0-windows')">
+			<HintPath>$(EcLibFilesPath)\net9.0-windows\x86\ECInterfaces.dll</HintPath>
+		</Reference>
+		<Reference	Include="ECInterfaces, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x64"
+					Condition="('$(Platform)' == 'x64') and ('$(OS)'=='Windows_NT') and ('$(TargetFramework)'=='net9.0-windows')">
+			<HintPath>$(EcLibFilesPath)\net9.0-windows\x64\ECInterfaces.dll</HintPath>
+		</Reference>
+		<Reference  Include="SilEncConverters40, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86"
+					Condition="('$(Platform)' == 'x86' or '$(Platform)' == 'AnyCPU') and ('$(OS)'=='Windows_NT') and ('$(TargetFramework)'=='net9.0-windows')">
+			<HintPath>$(EcLibFilesPath)\net9.0-windows\x86\SilEncConverters40.dll</HintPath>
+		</Reference>
+		<Reference  Include="SilEncConverters40, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x64"
+					Condition="('$(Platform)' == 'x64') and ('$(OS)'=='Windows_NT') and ('$(TargetFramework)'=='net9.0-windows')">
+			<HintPath>$(EcLibFilesPath)\net9.0-windows\x64\SilEncConverters40.dll</HintPath>
 		</Reference>
 	</ItemGroup>
 </Project>

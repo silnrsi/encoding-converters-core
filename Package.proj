@@ -1,0 +1,30 @@
+<Project>
+  <!-- Standalone packaging entry point - deliberately NOT part of "EncConverters 2019.sln", so an
+       ordinary "Build Solution" never triggers a pack (creating/publishing a package is a deliberate
+       release action, not a routine build step). Usage:
+
+         msbuild Package.proj /t:Pack /p:Configuration=Release
+         msbuild Package.proj /t:Pack /p:Configuration=Debug
+
+       Requires a full Release (or Debug) build of the whole solution, both Platforms, to already have
+       completed first - this only packs whatever's already sitting in output\<tfm>\{Win32,x64}\
+       $(Configuration)\, it doesn't build anything itself. See Package.Release.nuspec/
+       Package.Debug.nuspec for exactly what gets included and why. -->
+  <PropertyGroup>
+    <Configuration Condition="'$(Configuration)'==''">Release</Configuration>
+    <!-- assumes nuget.exe is on PATH (matches how build.yml's CI job sets it up via
+         NuGet/setup-nuget@v2) - override with /p:NuGetExePath=... to point at a specific copy -->
+    <NuGetExePath Condition="'$(NuGetExePath)'==''">nuget</NuGetExePath>
+    <!-- no trailing backslash: a quoted argument ending in \" is a classic cmd.exe/CommandLineToArgvW
+         trap - the backslash escapes the closing quote instead of being taken literally, corrupting
+         the argument (confirmed via nuget's own "Illegal characters in path" error otherwise). -->
+    <PackageOutputPath Condition="'$(PackageOutputPath)'==''">$(MSBuildThisFileDirectory)output\$(Configuration)</PackageOutputPath>
+  </PropertyGroup>
+
+  <Target Name="Pack">
+    <Error Condition="!Exists('$(MSBuildThisFileDirectory)Package.$(Configuration).nuspec')"
+           Text="No Package.$(Configuration).nuspec found - Configuration must be Debug or Release." />
+    <MakeDir Directories="$(PackageOutputPath)" Condition="!Exists('$(PackageOutputPath)')" />
+    <Exec Command="&quot;$(NuGetExePath)&quot; pack &quot;$(MSBuildThisFileDirectory)Package.$(Configuration).nuspec&quot; -OutputDirectory &quot;$(PackageOutputPath)&quot;" />
+  </Target>
+</Project>

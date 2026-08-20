@@ -6,7 +6,7 @@
                    DisplayName="Python Script"
                    ConfiguratorProgId="SilEncConverters40.PyScriptEncConverterConfig"
                    DefiningExtension=".py"
-                   AssemblyReference="PyScriptEC, Version=4.0.0.0, Culture=neutral, PublicKeyToken=null"
+                   AssemblyReference="PyScriptEC, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485"
 />
   <ECPluginDetails ImplementationName="SIL.Py3Script"
                    ImplementationProgId="SilEncConverters40.Py3ScriptEncConverter"
@@ -14,7 +14,7 @@
                    DisplayName="Python 3 Script"
                    ConfiguratorProgId="SilEncConverters40.Py3ScriptEncConverterConfig"
                    DefiningExtension=".py"
-                   AssemblyReference="PyScriptEC, Version=4.0.0.0, Culture=neutral, PublicKeyToken=null"
+                   AssemblyReference="PyScriptEC, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485"
 />
   <!--DefiningProcessType="256"-->
 </EncConverterPlugins>

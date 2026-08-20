@@ -2,14 +2,9 @@
 
 #pragma once
 
-#import "SilEncConverters22.tlb"  raw_interfaces_only
-using namespace SilEncConverters22;
-
 #import "ECInterfaces.tlb"  raw_interfaces_only
 using namespace ECInterfaces;
 
-typedef CComPtr<SilEncConverters22::IEncConverters> IEC22s;
-typedef CComPtr<SilEncConverters22::IEncConverter>  IEC22;
 typedef CComPtr<ECInterfaces::IEncConverters> IEC30s;
 typedef CComPtr<ECInterfaces::IEncConverter>  IEC30;
 
@@ -23,7 +18,7 @@ public:
 
     bool operator!() const throw()
     {
-        return (!m_aEC22 && !m_aEC30);
+        return (!m_aEC30);
     }
 
     bool IsInputLegacy() const;
@@ -57,15 +52,9 @@ protected:
         return !!m_aEC30;
     }
 
-    bool IsSEC22() const
-    {
-        return !!m_aEC22;
-    }
-
     void Detach();
 
 protected:
-    IEC22   m_aEC22;
     IEC30   m_aEC30;
 };
 

@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "ECFileConverter 2010": {
+      "commandName": "Project",
+      "commandLineArgs": "/n askMe /i8 \"C:\\btmp\\SpeecheloCleanInLinesNormalized.txt\" /o8 C:\\btmp\\SpeecheloCleanInLinesNormalized2.txt"
+    }
+  }
+}

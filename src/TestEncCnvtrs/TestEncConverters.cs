@@ -228,6 +228,7 @@ namespace TestEncCnvtrs
 			Assert.IsNotNull(reg);
 		}
 
+/* IcuConv is not needed anymore 
 		[Test]
 		public void TestIcuConvEncConverters()
 		{
@@ -275,6 +276,13 @@ namespace TestEncCnvtrs
 			Assert.AreEqual(countOrig, countAfter, "Should have the original number of converters now.");
 		}
 
+		[Test]
+		public void TestListingCodePageConverters()
+		{
+			var converters = CpEncConverter.GetAvailableConverterSpecs();
+			Assert.Less(10, converters.Count, "There should be at least ten CodePage converters available!");
+		}
+*/
 		const string m_inputLatin =
 			"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
@@ -601,6 +609,8 @@ namespace TestEncCnvtrs
 					filepath = "/" + filepath;
 			}
 			var pathParts = Path.GetDirectoryName(filepath).Split(Path.DirectorySeparatorChar);
+			// every TFM lands in .../output/<tfm>/... (see ECInterfaces 2010.csproj), so splitting at
+			// "output" resolves the same repo-root base directory regardless of which TFM is running.
 			var outputFolderIndex = Array.IndexOf(pathParts, "output");
 			Assert.IsTrue(outputFolderIndex > 0, "output folder structure changed, tests will fail finding map files.");
 			var baseDirectory = string.Join(Path.DirectorySeparatorChar.ToString(), pathParts, 0, outputFolderIndex);
@@ -894,13 +904,6 @@ namespace TestEncCnvtrs
 			Assert.AreEqual(countOrig, countAfter, "Should have the original number of converters now.");
 		}
 
-		[Test]
-		public void TestListingCodePageConverters()
-		{
-			var converters = CpEncConverter.GetAvailableConverterSpecs();
-			Assert.Less(10, converters.Count, "There should be at least ten CodePage converters available!");
-		}
-
 		/// <summary>
 		/// install the prerequisite for this test from:
 		/// https://go.microsoft.com/fwlink/p/?LinkId=2124703
@@ -911,12 +914,9 @@ namespace TestEncCnvtrs
 		[TestCase("legacy_text;unicode_text;convert_to_unicode;Convert_to_Krutidev_010;InternetExplorer")]
 		[TestCase("legacy_text;unicode_text;convert_to_unicode;InternetExplorer")]
 		// Edge fails due to an incompatibility between this usage of WebView2 and that of my Outlook.
-		//	But there's no overriding reason for to use Edge since we install Firefox and it works the best
 		//	so just removing these tests until a need arises
 		// [TestCase("legacy_text;unicode_text;convert_to_unicode;Convert_to_Krutidev_010;Edge")]
 		// [TestCase("legacy_text;unicode_text;convert_to_unicode;Edge")]
-		[TestCase("legacy_text;unicode_text;convert_to_unicode;Convert_to_Krutidev_010;GeckoFx")]
-		[TestCase("legacy_text;unicode_text;convert_to_unicode;GeckoFx")]
 		public void TestTechHindiSiteConverter(string converterSpecSuffix)
         {
             TechHindiSiteConverterCommon(converterSpecSuffix);

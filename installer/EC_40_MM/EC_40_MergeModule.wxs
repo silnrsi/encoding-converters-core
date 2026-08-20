@@ -1,42 +1,55 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
-    <Module Id="EC_40_MM" Language="1033" Version="5.0.0.0">
-        <Package Id="ac1e0a8a-7a0d-45d8-8798-f9d9c9e4c776" Keywords="SIL; Encoding Conversion; Transliteration; EncConverters"
-             Description="EncConverter core 4.0 Merge Module -- Include in any client application deployment project which uses the EncConverters objects"
-             Comments="Common installer module for SIL's version 4.0 of the EncConverter's core" Manufacturer="SIL International" InstallerVersion="200" Languages="1033"
-             SummaryCodepage="1252" />
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs" xmlns:util="http://wixtoolset.org/schemas/v4/wxs/util">
+    <Module Id="EC_40_MM" Language="1033" Version="5.0.0.0" Guid="ac1e0a8a-7a0d-45d8-8798-f9d9c9e4c776" InstallerVersion="200">
+        <SummaryInformation Codepage="1252" Comments="Common installer module for SIL's version 4.0 of the EncConverter's core" Keywords="SIL; Encoding Conversion; Transliteration; EncConverters" Description="EncConverter core 4.0 Merge Module -- Include in any client application deployment project which uses the EncConverters objects" Manufacturer="SIL International" />
 
-        <Directory Id="TARGETDIR" Name="SourceDir">
+        <!-- The following section launches the installed file EncConvertersAppDataMover40.exe but hides its DOS window.
+             Replaces a VBScript CustomAction (WiX v6's compiler cannot modularize VBScript Script/ScriptSourceFile
+             actions - see Handover.md) with WixQuietExec, using the same deferred + Impersonate="no" scheduling that
+             gives the original its elevated (LocalSystem) execution context. WixQuietExec calls CreateProcess
+             directly on the exe (no cmd.exe/start intermediary - "start" is unreliable in the non-interactive
+             Session 0 that deferred/Impersonate="no" actions run in) and waits for it to exit; since this exe's
+             job here is quick, blocking briefly is fine and guarantees the registry keys exist before the
+             install finishes. -->
+        <CustomAction Id="SetAppDataMoverData" Return="check" Property="RunAppDataMover" Value="&quot;[!EncConvertersAppDataMover40.exe]&quot;" />
+        <CustomAction Id="RunAppDataMover" BinaryRef="Wix4UtilCA_X86" DllEntry="WixQuietExec" Return="ignore" Impersonate="no" Execute="deferred" />
 
-            <Component Id="RegisterECFolders" Guid="ba2789b1-93c9-4258-872e-85d91e975db1">
-                <RegistryValue Root="HKLM" Key="Software\SIL\SilEncConverters40" Name="RootDir" Type="string" Value="[AppDataSILConverters40]"/>
-                <RegistryValue Root="HKLM" Key="Software\SIL\SilEncConverters40" Name="UseMozilla" Type="string" Value="False"/>
-                <RegistryValue Root="HKLM" Key="Software\SIL\SilEncConverters40" Name="UseEdge" Type="string" Value="False"/>
+        <InstallExecuteSequence>
+            <RemoveShortcuts Condition="Installed AND NOT UPGRADINGPRODUCTCODE AND REMOVE=&quot;ALL&quot;" />
+            <Custom Action="SetAppDataMoverData" Before="InstallInitialize" Condition="VersionNT &gt;= 501" />
+            <Custom Action="RunAppDataMover" After="PublishComponents" Condition="NOT Installed" />
+        </InstallExecuteSequence>
+
+        <Component Id="RegisterECFolders" Guid="ba2789b1-93c9-4258-872e-85d91e975db1" Directory="TARGETDIR">
+                <RegistryValue Root="HKLM" Key="Software\SIL\SilEncConverters40" Name="RootDir" Type="string" Value="[AppDataSILConverters40]" />
+                <RegistryValue Root="HKLM" Key="Software\SIL\SilEncConverters40" Name="UseEdge" Type="string" Value="False" />
             </Component>
 
             <Directory Id="MergeRedirectFolder">
                 <Component Id="IcuEC.dll" Guid="{B4FD77A8-402F-421B-81F3-43A3B6295275}">
-                    <File Id="IcuEC.dll" Name="IcuEC.dll" Vital="yes" KeyPath="yes" AssemblyManifest="IcuEC.dll" AssemblyApplication="IcuEC.dll" Assembly=".net"
-                          Source="..\..\output\Win32\release\IcuEC.dll"/>
+                    <File Id="IcuEC.dll" Name="IcuEC.dll" Vital="yes" KeyPath="yes" AssemblyManifest="IcuEC.dll" AssemblyApplication="IcuEC.dll" Assembly=".net" Source="..\..\output\net48\Win32\release\IcuEC.dll" />
                 </Component>
-                <Component Id="ICU4NET.dll" Guid="{69F74803-ED55-43E1-BD96-01AEF534DB2D}">
-                    <File Id="ICU4NET.dll" Name="ICU4NET.dll" Vital="yes" KeyPath="yes" AssemblyManifest="ICU4NET.dll" AssemblyApplication="ICU4NET.dll" Assembly=".net"
-                          Source="..\..\output\Win32\release\ICU4NET.dll"/>
+                <!-- Replaces the ICU4NET.dll component: that C++/CLI wrapper project was deleted and
+                     replaced with SIL's icu.net NuGet package (see IcuEC 2010.csproj) - same native
+                     ICU BreakIterator functionality, now via a plain managed P/Invoke assembly instead
+                     of a mixed-mode one. New GUID since this is a different file, not an in-place
+                     update of the old component. -->
+                <Component Id="icu.net.dll" Guid="{1259BCDF-229E-4FDF-99DB-62C699BC797A}">
+                    <File Id="icu.net.dll" Name="icu.net.dll" Vital="yes" KeyPath="yes" AssemblyManifest="icu.net.dll" AssemblyApplication="icu.net.dll" Assembly=".net" Source="..\..\output\net48\Win32\release\icu.net.dll" />
                 </Component>
                 <Component Id="IcuConvEC.dll" Guid="{8432913F-51EF-417E-A095-F548633FD65E}">
-                    <File Id="IcuConvEC.dll" Name="IcuConvEC.dll" Vital="yes" KeyPath="yes" Source="..\..\output\Win32\release\IcuConvEC.dll"/>
+                    <File Id="IcuConvEC.dll" Name="IcuConvEC.dll" Vital="yes" KeyPath="yes" Source="..\..\output\net48\Win32\release\IcuConvEC.dll" />
                 </Component>
                 <Component Id="IcuRegexEC.dll" Guid="{45CCC459-A266-4881-A768-B643DF6353D0}">
-                    <File Id="IcuRegexEC.dll" Name="IcuRegexEC.dll" Vital="yes" KeyPath="yes" Source="..\..\output\Win32\release\IcuRegexEC.dll"/>
+                    <File Id="IcuRegexEC.dll" Name="IcuRegexEC.dll" Vital="yes" KeyPath="yes" Source="..\..\output\net48\Win32\release\IcuRegexEC.dll" />
                 </Component>
                 <Component Id="IcuTranslitEC.dll" Guid="{6DBD7549-A586-42F2-9411-13117F9C4D2C}">
-                    <File Id="IcuTranslitEC.dll" Name="IcuTranslitEC.dll" Vital="yes" KeyPath="yes" Source="..\..\output\Win32\release\IcuTranslitEC.dll"/>
+                    <File Id="IcuTranslitEC.dll" Name="IcuTranslitEC.dll" Vital="yes" KeyPath="yes" Source="..\..\output\net48\Win32\release\IcuTranslitEC.dll" />
                 </Component>
                 <Component Id="ECInterfaces.dll" Guid="7B5EC0FA-BC63-4010-B0A0-927BD419B4A3">
                     <Class Id="{E8DE7761-7091-38B8-82CD-C67A76F62DC9}" Context="InprocServer32" Description="ECInterfaces.mappingRegistry" ThreadingModel="both" ForeignServer="mscoree.dll">
                         <ProgId Id="ECInterfaces.mappingRegistry" Description="ECInterfaces.mappingRegistry" />
                     </Class>
-                    <File Id="ECInterfaces.dll" Name="ECInterfaces.dll" Vital="yes" KeyPath="yes" AssemblyManifest="ECInterfaces.dll" AssemblyApplication="ECInterfaces.dll" Assembly=".net" Source="..\..\output\Win32\release\ECInterfaces.dll"/>
+                    <File Id="ECInterfaces.dll" Name="ECInterfaces.dll" Vital="yes" KeyPath="yes" AssemblyManifest="ECInterfaces.dll" AssemblyApplication="ECInterfaces.dll" Assembly=".net" Source="..\..\output\net48\Win32\release\ECInterfaces.dll" />
                     <ProgId Id="Record" />
                     <RegistryValue Root="HKCR" Key="CLSID\{E8DE7761-7091-38B8-82CD-C67A76F62DC9}\Implemented Categories\{62C8FE65-4EBB-45e7-B440-6E39B2CDBF29}" Value="" Type="string" Action="write" />
                     <RegistryValue Root="HKCR" Key="CLSID\{E8DE7761-7091-38B8-82CD-C67A76F62DC9}\InprocServer32\4.0.0.0" Name="Class" Value="ECInterfaces.mappingRegistry" Type="string" Action="write" />
@@ -77,7 +90,7 @@
                     <RegistryValue Root="HKCR" Key="Record\{D90586C3-EA5E-3223-A5C5-6CFCA8548B0C}\4.0.0.0" Name="CodeBase" Value="file:///[#ECInterfaces.dll]" Type="string" Action="write" />
                 </Component>
                 <Component Id="ECInterfaces.tlb" Guid="51404655-DB11-4872-8B7F-718AA917ABBA">
-                    <File Id="ECInterfaces.tlb" Name="ECInterfaces.tlb" Vital="yes" KeyPath="yes" Source="..\..\output\Win32\release\ECInterfaces.tlb">
+                    <File Id="ECInterfaces.tlb" Name="ECInterfaces.tlb" Vital="yes" KeyPath="yes" Source="..\..\output\net48\Win32\release\ECInterfaces.tlb">
                         <TypeLib Id="{6A977123-92AF-43D2-83A7-B4E853EE42D1}" Description="Encoding Converters Interface definitions for the repository and converter engines" HelpDirectory="MergeRedirectFolder" Language="0" MajorVersion="4" MinorVersion="0">
                             <Interface Id="{0226D822-AFB1-3094-808A-C858AE429A49}" Name="_implementationsRowChangeEvent" ProxyStubClassId32="{00020424-0000-0000-C000-000000000046}" />
                             <Interface Id="{037AD6C6-CD31-3D48-86D4-7E88CE482DE4}" Name="_specPropertyRowChangeEvent" ProxyStubClassId32="{00020424-0000-0000-C000-000000000046}" />
@@ -284,7 +297,7 @@
                     <Class Id="{A4999E32-8291-4B58-AC5C-8100A39CE0FD}" Context="InprocServer32" Description="SilEncConverters40.NetRegexEncConverterConfig" ThreadingModel="both" ForeignServer="mscoree.dll">
                         <ProgId Id="SilEncConverters40.NetRegexEncConverterConfig" Description="SilEncConverters40.NetRegexEncConverterConfig" />
                     </Class>
-                    <File Id="SilEncConverters40.dll" KeyPath="yes" Source="..\..\output\Win32\release\SilEncConverters40.dll"/>
+                    <File Id="SilEncConverters40.dll" KeyPath="yes" Source="..\..\output\net48\Win32\release\SilEncConverters40.dll" />
                     <RegistryValue Root="HKCR" Key="CLSID\{0162B174-E479-44CD-BEE8-CFA9BC06BF92}\Implemented Categories\{62C8FE65-4EBB-45e7-B440-6E39B2CDBF29}" Value="" Type="string" Action="write" />
                     <RegistryValue Root="HKCR" Key="CLSID\{0162B174-E479-44CD-BEE8-CFA9BC06BF92}\InprocServer32\4.0.0.0" Name="Class" Value="SilEncConverters40.EncConverters" Type="string" Action="write" />
                     <RegistryValue Root="HKCR" Key="CLSID\{0162B174-E479-44CD-BEE8-CFA9BC06BF92}\InprocServer32\4.0.0.0" Name="Assembly" Value="SilEncConverters40, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" Type="string" Action="write" />
@@ -482,7 +495,7 @@
                     <RegistryValue Root="HKCR" Key="CLSID\{DBE5F638-49E5-4D23-A7A5-EC83044C6A39}\InprocServer32" Name="CodeBase" Value="file:///[#SilEncConverters40.dll]" Type="string" Action="write" />
                 </Component>
                 <Component Id="SilEncConverters40.tlb" Guid="513E71DB-F4BA-4B15-B4BD-F2F3883218E6">
-                    <File Id="SilEncConverters40.tlb" Name="SilEncConverters40.tlb" Vital="yes" KeyPath="yes" Source="..\..\output\Win32\release\SilEncConverters40.tlb">
+                    <File Id="SilEncConverters40.tlb" Name="SilEncConverters40.tlb" Vital="yes" KeyPath="yes" Source="..\..\output\net48\Win32\release\SilEncConverters40.tlb">
                         <TypeLib Id="{06F10557-EE67-4DAD-B3F5-031568E4DB31}" Description="Encoding Converters Repository and basic converter engine wrappers" HelpDirectory="MergeRedirectFolder" Language="0" MajorVersion="4" MinorVersion="0">
                             <Interface Id="{0D196FF3-5C04-3795-B3B9-3E1344F6F3EC}" Name="_SpellFixerByReflection" ProxyStubClassId32="{00020424-0000-0000-C000-000000000046}" />
                             <Interface Id="{0D423AEA-3380-3DD6-85F3-0AE1D765AAA8}" Name="_EncConverterPlugins" ProxyStubClassId32="{00020424-0000-0000-C000-000000000046}" />
@@ -523,53 +536,47 @@
                     </File>
                 </Component>
 				<Component Id="SilEncConverters40.dll.config" Guid="{A41FAD7F-A8B6-4A82-9210-EE3BBCA3E8FB}">
-					<File Id="SilEncConverters40.dll.config" Name="SilEncConverters40.dll.config" Vital="yes" KeyPath="yes" Source="..\..\output\Win32\release\SilEncConverters40.dll.config" />
+					<File Id="SilEncConverters40.dll.config" Name="SilEncConverters40.dll.config" Vital="yes" KeyPath="yes" Source="..\..\output\net48\Win32\release\SilEncConverters40.dll.config" />
 				</Component>
-				<Component Id="LatestRedirects.config" Guid="{29834D39-3E70-4E2D-AAD3-85CA82BF979F}">
-                    <File Id="LatestRedirects.config" Name="LatestRedirects.config" KeyPath="yes" Source="..\..\LatestRedirects.config"/>
+				<Component Id="SharedItems.props" Guid="{88F993BD-44BD-4A46-93BC-0DC65440E317}">
+                    <File Id="SharedItems.props" Name="SharedItems.props" KeyPath="yes" Source="..\..\SharedItems.props" />
                 </Component>
                 <Component Id="EncConvertersAppDataMover40.exe" Guid="4F57740F-5033-42f2-A41A-ED8022731CE0">
-                    <File Id="EncConvertersAppDataMover40.exe" Name="EncConvertersAppDataMover40.exe" ReadOnly="yes" KeyPath="yes" Source="..\..\output\Win32\release\EncConvertersAppDataMover40.exe" Assembly=".net" AssemblyApplication="EncConvertersAppDataMover40.exe" AssemblyManifest="EncConvertersAppDataMover40.exe"/>
+                    <File Id="EncConvertersAppDataMover40.exe" Name="EncConvertersAppDataMover40.exe" ReadOnly="yes" KeyPath="yes" Source="..\..\output\net48\Win32\release\EncConvertersAppDataMover40.exe" Assembly=".net" AssemblyApplication="EncConvertersAppDataMover40.exe" AssemblyManifest="EncConvertersAppDataMover40.exe" />
                 </Component>
                 <Component Id="ECFileConverter.exe" Guid="85E920B5-3C96-4F07-9BAB-707CBA78F2B9">
-                    <File Id="ECFileConverter.exe" Name="ECFileConverter.exe" ReadOnly="yes" KeyPath="yes" Source="..\..\output\Win32\release\ECFileConverter.exe" Assembly=".net" AssemblyApplication="ECFileConverter.exe" AssemblyManifest="ECFileConverter.exe"/>
-                </Component>
-                <Component Id="Geckofx_Core.dll" Guid="{6D593BB5-F2DE-448A-A8A2-AD1F18B660F2}">
-                    <File Id="Geckofx_Core.dll" Name="GeckoFx-Core.dll" Vital="yes" KeyPath="yes" AssemblyManifest="Geckofx_Core.dll" AssemblyApplication="Geckofx_Core.dll" Assembly=".net" Source="..\..\output\Win32\release\GeckoFx-Core.dll"/>
-                </Component>
-                <Component Id="Geckofx_Winforms.dll" Guid="{1C2D5110-4E5F-4DC3-9375-DA1D7C6643D0}">
-                    <File Id="Geckofx_Winforms.dll" Name="Geckofx-Winforms.dll" Vital="yes" KeyPath="yes" AssemblyManifest="Geckofx_Winforms.dll" AssemblyApplication="Geckofx_Winforms.dll" Assembly=".net" Source="..\..\output\Win32\release\Geckofx-Winforms.dll"/>
+                    <File Id="ECFileConverter.exe" Name="ECFileConverter.exe" ReadOnly="yes" KeyPath="yes" Source="..\..\output\net48\Win32\release\ECFileConverter.exe" Assembly=".net" AssemblyApplication="ECFileConverter.exe" AssemblyManifest="ECFileConverter.exe" />
                 </Component>
                 <Component Id="Microsoft_Web_WebView2_Core.dll" Guid="{C4BD4D08-EE06-47CC-806F-B93DE307C065}">
-                    <File Id="Microsoft_Web_WebView2_Core.dll" Name="Microsoft.Web.WebView2.Core.dll" Vital="yes" KeyPath="yes" AssemblyManifest="Microsoft_Web_WebView2_Core.dll" AssemblyApplication="Microsoft_Web_WebView2_Core.dll" Assembly=".net" Source="..\..\output\Win32\release\Microsoft.Web.WebView2.Core.dll"/>
+                    <File Id="Microsoft_Web_WebView2_Core.dll" Name="Microsoft.Web.WebView2.Core.dll" Vital="yes" KeyPath="yes" AssemblyManifest="Microsoft_Web_WebView2_Core.dll" AssemblyApplication="Microsoft_Web_WebView2_Core.dll" Assembly=".net" Source="..\..\output\net48\Win32\release\Microsoft.Web.WebView2.Core.dll" />
                 </Component>
                 <Component Id="Microsoft_Web_WebView2_WinForms.dll" Guid="{F13D171D-379E-4EF2-80DF-1681FD0788AE}">
-                    <File Id="Microsoft_Web_WebView2_WinForms.dll" Name="Microsoft.Web.WebView2.WinForms.dll" Vital="yes" KeyPath="yes" AssemblyManifest="Microsoft_Web_WebView2_WinForms.dll" AssemblyApplication="Microsoft_Web_WebView2_WinForms.dll" Assembly=".net" Source="..\..\output\Win32\release\Microsoft.Web.WebView2.WinForms.dll"/>
+                    <File Id="Microsoft_Web_WebView2_WinForms.dll" Name="Microsoft.Web.WebView2.WinForms.dll" Vital="yes" KeyPath="yes" AssemblyManifest="Microsoft_Web_WebView2_WinForms.dll" AssemblyApplication="Microsoft_Web_WebView2_WinForms.dll" Assembly=".net" Source="..\..\output\net48\Win32\release\Microsoft.Web.WebView2.WinForms.dll" />
                 </Component>
                 <Component Id="Microsoft_Web_WebView2_Wpf.dll" Guid="{E669014E-A7B3-4C44-9C6F-DB422690DB28}">
-                    <File Id="Microsoft_Web_WebView2_Wpf.dll" Name="Microsoft.Web.WebView2.Wpf.dll" Vital="yes" KeyPath="yes" AssemblyManifest="Microsoft_Web_WebView2_Wpf.dll" AssemblyApplication="Microsoft_Web_WebView2_Wpf.dll" Assembly=".net" Source="..\..\output\Win32\release\Microsoft.Web.WebView2.Wpf.dll"/>
+                    <File Id="Microsoft_Web_WebView2_Wpf.dll" Name="Microsoft.Web.WebView2.Wpf.dll" Vital="yes" KeyPath="yes" AssemblyManifest="Microsoft_Web_WebView2_Wpf.dll" AssemblyApplication="Microsoft_Web_WebView2_Wpf.dll" Assembly=".net" Source="..\..\output\net48\Win32\release\Microsoft.Web.WebView2.Wpf.dll" />
                 </Component>
                 <Component Id="WebView2Loader.dll" Guid="{F2CF54F9-B009-4C79-90F4-CCCE9C899AF8}">
-                    <File Id="WebView2Loader.dll" Name="WebView2Loader.dll" KeyPath="yes" Source="..\..\output\Win32\release\runtimes\win-x86\native\WebView2Loader.dll"/>
+                    <File Id="WebView2Loader.dll" Name="WebView2Loader.dll" KeyPath="yes" Source="..\..\output\net48\Win32\release\runtimes\win-x86\native\WebView2Loader.dll" />
                 </Component>
                 <Directory Id="ECFolder" Name="EC">
                     <Directory Id="PluginsFolder" Name="Plugins">
                         <Component Id="EC4.0.0.0PluginDetails.xml" Guid="579194FE-37AA-47a3-A089-B0F1F17415FB">
-                            <File Id="EC4.0.0.0PluginDetails.xml" Name="EC 4.0.0.0 Plugin Details.xml" KeyPath="yes" Source="..\..\redist\EC\Plugins\EC 4.0.0.0 Plugin Details.xml"/>
+                            <File Id="EC4.0.0.0PluginDetails.xml" Name="EC 4.0.0.0 Plugin Details.xml" KeyPath="yes" Source="..\..\redist\EC\Plugins\EC 4.0.0.0 Plugin Details.xml" />
                         </Component>
                         <!-- this was missing, but it's necessary or the ICU DLLs above won't work 
                                 (read: if you're going to put the EC-related ICU DLLs in this MM, then this should go here -->
                         <Component Id="IcuEC_4.0.0.0_PluginDetails.xml" Guid="{7CA84960-2519-461C-8E11-764934F0DBA1}">
-                            <File Id="IcuEC_4.0.0.0_PluginDetails.xml" Name="IcuEC 4.0.0.0 Plugin Details.xml" KeyPath="yes" Source="..\..\redist\EC\Plugins\IcuEC 4.0.0.0 Plugin Details.xml"/>
+                            <File Id="IcuEC_4.0.0.0_PluginDetails.xml" Name="IcuEC 4.0.0.0 Plugin Details.xml" KeyPath="yes" Source="..\..\redist\EC\Plugins\IcuEC 4.0.0.0 Plugin Details.xml" />
                         </Component>
                     </Directory>
                 </Directory>
             </Directory>
 
-            <Directory Id="CommonFilesFolder" SourceName="Common Files Folder">
+            <StandardDirectory Id="CommonFilesFolder">
                 <Directory Id="EcSIL" Name="SIL">
                     <Component Id="ECDriver.dll" Guid="4c632e67-b66b-4a7b-a6bb-f99d93abdcca">
-                        <File Id="ECDriver.dll" Name="ECDriver.dll" KeyPath="yes" Source="..\..\output\Win32\release\ECDriver.dll"/>
+                        <File Id="ECDriver.dll" Name="ECDriver.dll" KeyPath="yes" Source="..\..\output\net48\Win32\release\ECDriver.dll" />
                     </Component>
                     <Component Id="RemoveFile_MoveEcData_Log" Guid="{F08A3C81-9FCD-4C96-840F-583C1BBB1AA9}">
                         <RemoveFile Id="RemoveFile3" Directory="EcSIL" Name="MoveEcData.log" On="uninstall" />
@@ -577,10 +584,10 @@
                         <RemoveFolder Id="DelSilFolder" On="uninstall" />
                     </Component>
                 </Directory>
-            </Directory>
+            </StandardDirectory>
 
             <!--This is still needed to open authentication for the repository file folder-->
-            <Directory Id="CommonAppDataFolder" SourceName="AppData">
+            <StandardDirectory Id="CommonAppDataFolder">
                 <Directory Id="AppDataSIL" Name="SIL">
                     <Directory Id="AppDataECFolder" Name="Repository">
                         <Component Id="CreateRepositoryFolder" Guid="4C784F73-E98B-440C-91D8-7D07ED0DB41B">
@@ -601,222 +608,200 @@
 
                             <!--License-->
                             <Component Id="License.htm" Guid="{961BEC04-A8B7-4C76-ACF4-185C1C899A48}">
-                                <File Id="License.htm" Name="License.htm" KeyPath="yes" Source="..\..\redist\Help\License.htm"/>
+                                <File Id="License.htm" Name="License.htm" KeyPath="yes" Source="..\..\redist\Help\License.htm" />
                             </Component>
                             <Directory Id="License" Name="License_files">
                                 <Component Id="LicenseComp" Guid="{ADFACEA6-97A0-4923-B95E-34C234FBA04E}">
-                                    <File Id="lic_filelist.xml" Name="filelist.xml" KeyPath="yes" Source="..\..\redist\Help\License_files\filelist.xml"/>
-                                    <File Id="lic_colorschememapping.xml" Name="colorschememapping.xml" Source="..\..\redist\Help\License_files\colorschememapping.xml"/>
-                                    <File Id="lic_themedata.thmx" Name="themedata.thmx" Source="..\..\redist\Help\License_files\themedata.thmx"/>
+                                    <File Id="lic_filelist.xml" Name="filelist.xml" KeyPath="yes" Source="..\..\redist\Help\License_files\filelist.xml" />
+                                    <File Id="lic_colorschememapping.xml" Name="colorschememapping.xml" Source="..\..\redist\Help\License_files\colorschememapping.xml" />
+                                    <File Id="lic_themedata.thmx" Name="themedata.thmx" Source="..\..\redist\Help\License_files\themedata.thmx" />
                                 </Component>
                             </Directory>
 
                             <!--Code Page Converter Help-->
                             <Component Id="CodePageHelp.htm" Guid="{E8B0105D-25FA-4DCD-9201-FE39A077DCC2}">
-                                <File Id="CodePageHelp.htm" Name="Code_Page_Converter_Plug-in_About_box.htm" KeyPath="yes" Source="..\..\redist\Help\Code_Page_Converter_Plug-in_About_box.htm"/>
+                                <File Id="CodePageHelp.htm" Name="Code_Page_Converter_Plug-in_About_box.htm" KeyPath="yes" Source="..\..\redist\Help\Code_Page_Converter_Plug-in_About_box.htm" />
                                 <Shortcut Id="CodePageHelpHtm" Directory="SILConvHelp" Name="Code Page Plug-in Help" Description="View help document for the Code Page Plug-in" IconIndex="0" Show="normal" Target="[#CodePageHelp.htm]" WorkingDirectory="Help" Advertise="no" />
                             </Component>
                             <Directory Id="Code_Page_Converter_Plugin_About_box" Name="Code_Page_Converter_Plug-in_About_box_files">
                                 <Component Id="Code_Page_Converter_Plugin_About_boxComp" Guid="{271527E5-91DD-42B3-86E4-ADB80FB77F81}">
-                                    <File Id="cp_filelist.xml" Name="filelist.xml" KeyPath="yes" Source="..\..\redist\Help\Code_Page_Converter_Plug-in_About_box_files\filelist.xml"/>
-                                    <File Id="cp_header.htm" Name="header.htm" Source="..\..\redist\Help\Code_Page_Converter_Plug-in_About_box_files\header.htm"/>
-                                    <File Id="cp_colorschememapping.xml" Name="colorschememapping.xml" Source="..\..\redist\Help\Code_Page_Converter_Plug-in_About_box_files\colorschememapping.xml"/>
-                                    <File Id="cp_themedata.thmx" Name="themedata.thmx" Source="..\..\redist\Help\Code_Page_Converter_Plug-in_About_box_files\themedata.thmx"/>
-                                    <File Id="cp_image001.png" Name="image001.png" Source="..\..\redist\Help\Code_Page_Converter_Plug-in_About_box_files\image001.png"/>
-                                    <File Id="cp_image002.jpg" Name="image002.jpg" Source="..\..\redist\Help\Code_Page_Converter_Plug-in_About_box_files\image002.jpg"/>
-                                    <File Id="cp_image003.png" Name="image003.png" Source="..\..\redist\Help\Code_Page_Converter_Plug-in_About_box_files\image003.png"/>
-                                    <File Id="cp_image004.jpg" Name="image004.jpg" Source="..\..\redist\Help\Code_Page_Converter_Plug-in_About_box_files\image004.jpg"/>
-                                    <File Id="cp_image005.png" Name="image005.png" Source="..\..\redist\Help\Code_Page_Converter_Plug-in_About_box_files\image005.png"/>
-                                    <File Id="cp_image006.jpg" Name="image006.jpg" Source="..\..\redist\Help\Code_Page_Converter_Plug-in_About_box_files\image006.jpg"/>
+                                    <File Id="cp_filelist.xml" Name="filelist.xml" KeyPath="yes" Source="..\..\redist\Help\Code_Page_Converter_Plug-in_About_box_files\filelist.xml" />
+                                    <File Id="cp_header.htm" Name="header.htm" Source="..\..\redist\Help\Code_Page_Converter_Plug-in_About_box_files\header.htm" />
+                                    <File Id="cp_colorschememapping.xml" Name="colorschememapping.xml" Source="..\..\redist\Help\Code_Page_Converter_Plug-in_About_box_files\colorschememapping.xml" />
+                                    <File Id="cp_themedata.thmx" Name="themedata.thmx" Source="..\..\redist\Help\Code_Page_Converter_Plug-in_About_box_files\themedata.thmx" />
+                                    <File Id="cp_image001.png" Name="image001.png" Source="..\..\redist\Help\Code_Page_Converter_Plug-in_About_box_files\image001.png" />
+                                    <File Id="cp_image002.jpg" Name="image002.jpg" Source="..\..\redist\Help\Code_Page_Converter_Plug-in_About_box_files\image002.jpg" />
+                                    <File Id="cp_image003.png" Name="image003.png" Source="..\..\redist\Help\Code_Page_Converter_Plug-in_About_box_files\image003.png" />
+                                    <File Id="cp_image004.jpg" Name="image004.jpg" Source="..\..\redist\Help\Code_Page_Converter_Plug-in_About_box_files\image004.jpg" />
+                                    <File Id="cp_image005.png" Name="image005.png" Source="..\..\redist\Help\Code_Page_Converter_Plug-in_About_box_files\image005.png" />
+                                    <File Id="cp_image006.jpg" Name="image006.jpg" Source="..\..\redist\Help\Code_Page_Converter_Plug-in_About_box_files\image006.jpg" />
                                 </Component>
                             </Directory>
 
                             <!--Compound Converter Help-->
                             <Component Id="CompoundHelp.htm" Guid="{DE6A1080-74AC-466E-8E2C-9E323E1A6011}">
-                                <File Id="CompoundHelp.htm" Name="Compound_Converter_Plug-in_About_box.htm" KeyPath="yes" Source="..\..\redist\Help\Compound_Converter_Plug-in_About_box.htm"/>
+                                <File Id="CompoundHelp.htm" Name="Compound_Converter_Plug-in_About_box.htm" KeyPath="yes" Source="..\..\redist\Help\Compound_Converter_Plug-in_About_box.htm" />
                                 <Shortcut Id="CompoundHelpHtm" Directory="SILConvHelp" Name="Compound Converter Plug-in Help" Description="View help document for the Compound (aka. Daisychain) Plug-in" IconIndex="0" Show="normal" Target="[#CompoundHelp.htm]" WorkingDirectory="Help" Advertise="no" />
                             </Component>
                             <Directory Id="Compound_Converter_Plugin_About_box" Name="Compound_Converter_Plug-in_About_box_files">
                                 <Component Id="Compound_Converter_Plugin_About_boxComp" Guid="{20A41665-A961-466B-A7C1-EFF1FDF052EC}">
-                                    <File Id="cmpd_filelist.xml" Name="filelist.xml" KeyPath="yes" Source="..\..\redist\Help\Compound_Converter_Plug-in_About_box_files\filelist.xml"/>
-                                    <File Id="cmpd_colorschememapping.xml" Name="colorschememapping.xml" Source="..\..\redist\Help\Compound_Converter_Plug-in_About_box_files\colorschememapping.xml"/>
-                                    <File Id="cmpd_themedata.thmx" Name="themedata.thmx" Source="..\..\redist\Help\Compound_Converter_Plug-in_About_box_files\themedata.thmx"/>
-                                    <File Id="cmpd_image001.png" Name="image001.png" Source="..\..\redist\Help\Compound_Converter_Plug-in_About_box_files\image001.png"/>
-                                    <File Id="cmpd_image002.jpg" Name="image002.jpg" Source="..\..\redist\Help\Compound_Converter_Plug-in_About_box_files\image002.jpg"/>
-                                    <File Id="cmpd_image003.png" Name="image003.png" Source="..\..\redist\Help\Compound_Converter_Plug-in_About_box_files\image003.png"/>
-                                    <File Id="cmpd_image004.jpg" Name="image004.jpg" Source="..\..\redist\Help\Compound_Converter_Plug-in_About_box_files\image004.jpg"/>
+                                    <File Id="cmpd_filelist.xml" Name="filelist.xml" KeyPath="yes" Source="..\..\redist\Help\Compound_Converter_Plug-in_About_box_files\filelist.xml" />
+                                    <File Id="cmpd_colorschememapping.xml" Name="colorschememapping.xml" Source="..\..\redist\Help\Compound_Converter_Plug-in_About_box_files\colorschememapping.xml" />
+                                    <File Id="cmpd_themedata.thmx" Name="themedata.thmx" Source="..\..\redist\Help\Compound_Converter_Plug-in_About_box_files\themedata.thmx" />
+                                    <File Id="cmpd_image001.png" Name="image001.png" Source="..\..\redist\Help\Compound_Converter_Plug-in_About_box_files\image001.png" />
+                                    <File Id="cmpd_image002.jpg" Name="image002.jpg" Source="..\..\redist\Help\Compound_Converter_Plug-in_About_box_files\image002.jpg" />
+                                    <File Id="cmpd_image003.png" Name="image003.png" Source="..\..\redist\Help\Compound_Converter_Plug-in_About_box_files\image003.png" />
+                                    <File Id="cmpd_image004.jpg" Name="image004.jpg" Source="..\..\redist\Help\Compound_Converter_Plug-in_About_box_files\image004.jpg" />
                                 </Component>
                             </Directory>
 
                             <!--Primary-Fallback Converter Help-->
                             <Component Id="PrimaryFallbackHelp.htm" Guid="{7F760356-7F4B-4B9F-B584-D6ECC237F5DC}">
-                                <File Id="PrimaryFallbackHelp.htm" Name="Fallback_Converter_Plug-in_About_box.htm" KeyPath="yes" Source="..\..\redist\Help\Fallback_Converter_Plug-in_About_box.htm"/>
+                                <File Id="PrimaryFallbackHelp.htm" Name="Fallback_Converter_Plug-in_About_box.htm" KeyPath="yes" Source="..\..\redist\Help\Fallback_Converter_Plug-in_About_box.htm" />
                                 <Shortcut Id="PrimaryFallbackHelpHtm" Directory="SILConvHelp" Name="Primary-Fallback Converter Plug-in Help" Description="View help document for the Primary-Fallback Converter Plug-in" IconIndex="0" Show="normal" Target="[#PrimaryFallbackHelp.htm]" WorkingDirectory="Help" Advertise="no" />
                             </Component>
                             <Directory Id="Fallback_Converter_Plugin_About_box" Name="Fallback_Converter_Plug-in_About_box_files">
                                 <Component Id="Fallback_Converter_Plugin_About_boxComp" Guid="{3C174051-F93F-4835-A021-BB3B690EC869}">
-                                    <File Id="pf_filelist.xml" Name="filelist.xml" KeyPath="yes" Source="..\..\redist\Help\Fallback_Converter_Plug-in_About_box_files\filelist.xml"/>
-                                    <File Id="pf_colorschememapping.xml" Name="colorschememapping.xml" Source="..\..\redist\Help\Fallback_Converter_Plug-in_About_box_files\colorschememapping.xml"/>
-                                    <File Id="pf_themedata.thmx" Name="themedata.thmx" Source="..\..\redist\Help\Fallback_Converter_Plug-in_About_box_files\themedata.thmx"/>
-                                    <File Id="pf_image001.png" Name="image001.png" Source="..\..\redist\Help\Fallback_Converter_Plug-in_About_box_files\image001.png"/>
-                                    <File Id="pf_image002.jpg" Name="image002.jpg" Source="..\..\redist\Help\Fallback_Converter_Plug-in_About_box_files\image002.jpg"/>
-                                    <File Id="pf_image003.png" Name="image003.png" Source="..\..\redist\Help\Fallback_Converter_Plug-in_About_box_files\image003.png"/>
-                                    <File Id="pf_image004.jpg" Name="image004.jpg" Source="..\..\redist\Help\Fallback_Converter_Plug-in_About_box_files\image004.jpg"/>
+                                    <File Id="pf_filelist.xml" Name="filelist.xml" KeyPath="yes" Source="..\..\redist\Help\Fallback_Converter_Plug-in_About_box_files\filelist.xml" />
+                                    <File Id="pf_colorschememapping.xml" Name="colorschememapping.xml" Source="..\..\redist\Help\Fallback_Converter_Plug-in_About_box_files\colorschememapping.xml" />
+                                    <File Id="pf_themedata.thmx" Name="themedata.thmx" Source="..\..\redist\Help\Fallback_Converter_Plug-in_About_box_files\themedata.thmx" />
+                                    <File Id="pf_image001.png" Name="image001.png" Source="..\..\redist\Help\Fallback_Converter_Plug-in_About_box_files\image001.png" />
+                                    <File Id="pf_image002.jpg" Name="image002.jpg" Source="..\..\redist\Help\Fallback_Converter_Plug-in_About_box_files\image002.jpg" />
+                                    <File Id="pf_image003.png" Name="image003.png" Source="..\..\redist\Help\Fallback_Converter_Plug-in_About_box_files\image003.png" />
+                                    <File Id="pf_image004.jpg" Name="image004.jpg" Source="..\..\redist\Help\Fallback_Converter_Plug-in_About_box_files\image004.jpg" />
                                 </Component>
                             </Directory>
 
                             <!--ICU boundary analysis break iterator Help-->
                             <Component Id="IcuBreakIteratorHelp.htm" Guid="{482F91C7-139B-4E80-B823-318C4D6881B2}">
-                                <File Id="IcuBreakIteratorHelp.htm" Name="ICU_Boundary_Analysis-Break_Iterator_Converter_About_box.htm" KeyPath="yes" Source="..\..\redist\Help\ICU_Boundary_Analysis-Break_Iterator_Converter_About_box.htm"/>
+                                <File Id="IcuBreakIteratorHelp.htm" Name="ICU_Boundary_Analysis-Break_Iterator_Converter_About_box.htm" KeyPath="yes" Source="..\..\redist\Help\ICU_Boundary_Analysis-Break_Iterator_Converter_About_box.htm" />
                                 <Shortcut Id="IcuBreakIteratorHelpHtm" Directory="SILConvHelp" Name="ICU Break Iterator Plug-in Help" Description="View help document for the ICU Boundary Analysis Break Iterator Plug-in" IconIndex="0" Show="normal" Target="[#IcuBreakIteratorHelp.htm]" WorkingDirectory="Help" Advertise="no" />
                             </Component>
                             <Directory Id="ICU_Boundary_AnalysisBreak_Iterator_Converter_About_box" Name="ICU_Boundary_Analysis-Break_Iterator_Converter_About_box_files">
                                 <Component Id="ICU_Boundary_AnalysisBreak_Iterator_Converter_About_boxComp" Guid="{28123B23-BEE6-4440-8D76-0E7E57F27F8A}">
-                                    <File Id="icubi_filelist.xml" Name="filelist.xml" KeyPath="yes" Source="..\..\redist\Help\ICU_Boundary_Analysis-Break_Iterator_Converter_About_box_files\filelist.xml"/>
-                                    <File Id="icubi_colorschememapping.xml" Name="colorschememapping.xml" Source="..\..\redist\Help\ICU_Boundary_Analysis-Break_Iterator_Converter_About_box_files\colorschememapping.xml"/>
-                                    <File Id="icubi_themedata.thmx" Name="themedata.thmx" Source="..\..\redist\Help\ICU_Boundary_Analysis-Break_Iterator_Converter_About_box_files\themedata.thmx"/>
-                                    <File Id="icubi_image001.png" Name="image001.png" Source="..\..\redist\Help\ICU_Boundary_Analysis-Break_Iterator_Converter_About_box_files\image001.png"/>
-                                    <File Id="icubi_image002.jpg" Name="image002.jpg" Source="..\..\redist\Help\ICU_Boundary_Analysis-Break_Iterator_Converter_About_box_files\image002.jpg"/>
-                                    <File Id="icubi_image003.png" Name="image003.png" Source="..\..\redist\Help\ICU_Boundary_Analysis-Break_Iterator_Converter_About_box_files\image003.png"/>
-                                    <File Id="icubi_image004.jpg" Name="image004.jpg" Source="..\..\redist\Help\ICU_Boundary_Analysis-Break_Iterator_Converter_About_box_files\image004.jpg"/>
-                                    <File Id="icubi_image005.png" Name="image005.png" Source="..\..\redist\Help\ICU_Boundary_Analysis-Break_Iterator_Converter_About_box_files\image005.png"/>
-                                    <File Id="icubi_image006.jpg" Name="image006.jpg" Source="..\..\redist\Help\ICU_Boundary_Analysis-Break_Iterator_Converter_About_box_files\image006.jpg"/>
-                                    <File Id="icubi_item0012.xml" Name="item0012.xml" Source="..\..\redist\Help\ICU_Boundary_Analysis-Break_Iterator_Converter_About_box_files\item0012.xml"/>
-                                    <File Id="icubi_props013.xml" Name="props013.xml" Source="..\..\redist\Help\ICU_Boundary_Analysis-Break_Iterator_Converter_About_box_files\props013.xml"/>
+                                    <File Id="icubi_filelist.xml" Name="filelist.xml" KeyPath="yes" Source="..\..\redist\Help\ICU_Boundary_Analysis-Break_Iterator_Converter_About_box_files\filelist.xml" />
+                                    <File Id="icubi_colorschememapping.xml" Name="colorschememapping.xml" Source="..\..\redist\Help\ICU_Boundary_Analysis-Break_Iterator_Converter_About_box_files\colorschememapping.xml" />
+                                    <File Id="icubi_themedata.thmx" Name="themedata.thmx" Source="..\..\redist\Help\ICU_Boundary_Analysis-Break_Iterator_Converter_About_box_files\themedata.thmx" />
+                                    <File Id="icubi_image001.png" Name="image001.png" Source="..\..\redist\Help\ICU_Boundary_Analysis-Break_Iterator_Converter_About_box_files\image001.png" />
+                                    <File Id="icubi_image002.jpg" Name="image002.jpg" Source="..\..\redist\Help\ICU_Boundary_Analysis-Break_Iterator_Converter_About_box_files\image002.jpg" />
+                                    <File Id="icubi_image003.png" Name="image003.png" Source="..\..\redist\Help\ICU_Boundary_Analysis-Break_Iterator_Converter_About_box_files\image003.png" />
+                                    <File Id="icubi_image004.jpg" Name="image004.jpg" Source="..\..\redist\Help\ICU_Boundary_Analysis-Break_Iterator_Converter_About_box_files\image004.jpg" />
+                                    <File Id="icubi_image005.png" Name="image005.png" Source="..\..\redist\Help\ICU_Boundary_Analysis-Break_Iterator_Converter_About_box_files\image005.png" />
+                                    <File Id="icubi_image006.jpg" Name="image006.jpg" Source="..\..\redist\Help\ICU_Boundary_Analysis-Break_Iterator_Converter_About_box_files\image006.jpg" />
+                                    <File Id="icubi_item0012.xml" Name="item0012.xml" Source="..\..\redist\Help\ICU_Boundary_Analysis-Break_Iterator_Converter_About_box_files\item0012.xml" />
+                                    <File Id="icubi_props013.xml" Name="props013.xml" Source="..\..\redist\Help\ICU_Boundary_Analysis-Break_Iterator_Converter_About_box_files\props013.xml" />
                                 </Component>
                             </Directory>
 
                             <!--ICU Converter Help-->
                             <Component Id="IcuConvertersHelp.htm" Guid="{DFB951D5-EA7D-41B3-A2C3-CC35B1121663}">
-                                <File Id="IcuConvertersHelp.htm" Name="ICU_Converters_Plug-in_About_box.htm" KeyPath="yes" Source="..\..\redist\Help\ICU_Converters_Plug-in_About_box.htm"/>
+                                <File Id="IcuConvertersHelp.htm" Name="ICU_Converters_Plug-in_About_box.htm" KeyPath="yes" Source="..\..\redist\Help\ICU_Converters_Plug-in_About_box.htm" />
                                 <Shortcut Id="IcuConvertersHelpHtm" Directory="SILConvHelp" Name="ICU Converters Help" Description="View help document for the ICU Converters Plug-in" IconIndex="0" Show="normal" Target="[#IcuConvertersHelp.htm]" WorkingDirectory="Help" Advertise="no" />
                             </Component>
                             <Directory Id="ICU_Converters_Plugin_About_box" Name="ICU_Converters_Plug-in_About_box_files">
                                 <Component Id="ICU_Converters_Plugin_About_boxComp" Guid="{C68AB76B-623C-4CC5-BFE5-BC2D0FF7598C}">
-                                    <File Id="icuc_filelist.xml" Name="filelist.xml" KeyPath="yes" Source="..\..\redist\Help\ICU_Converters_Plug-in_About_box_files\filelist.xml"/>
-                                    <File Id="icuc_image001.png" Name="image001.png" Source="..\..\redist\Help\ICU_Converters_Plug-in_About_box_files\image001.png"/>
-                                    <File Id="icuc_image002.jpg" Name="image002.jpg" Source="..\..\redist\Help\ICU_Converters_Plug-in_About_box_files\image002.jpg"/>
-                                    <File Id="icuc_image003.png" Name="image003.png" Source="..\..\redist\Help\ICU_Converters_Plug-in_About_box_files\image003.png"/>
-                                    <File Id="icuc_image004.jpg" Name="image004.jpg" Source="..\..\redist\Help\ICU_Converters_Plug-in_About_box_files\image004.jpg"/>
-                                    <File Id="icuc_image007.png" Name="image007.png" Source="..\..\redist\Help\ICU_Converters_Plug-in_About_box_files\image007.png"/>
-                                    <File Id="icuc_image008.jpg" Name="image008.jpg" Source="..\..\redist\Help\ICU_Converters_Plug-in_About_box_files\image008.jpg"/>
+                                    <File Id="icuc_filelist.xml" Name="filelist.xml" KeyPath="yes" Source="..\..\redist\Help\ICU_Converters_Plug-in_About_box_files\filelist.xml" />
+                                    <File Id="icuc_image001.png" Name="image001.png" Source="..\..\redist\Help\ICU_Converters_Plug-in_About_box_files\image001.png" />
+                                    <File Id="icuc_image002.jpg" Name="image002.jpg" Source="..\..\redist\Help\ICU_Converters_Plug-in_About_box_files\image002.jpg" />
+                                    <File Id="icuc_image003.png" Name="image003.png" Source="..\..\redist\Help\ICU_Converters_Plug-in_About_box_files\image003.png" />
+                                    <File Id="icuc_image004.jpg" Name="image004.jpg" Source="..\..\redist\Help\ICU_Converters_Plug-in_About_box_files\image004.jpg" />
+                                    <File Id="icuc_image007.png" Name="image007.png" Source="..\..\redist\Help\ICU_Converters_Plug-in_About_box_files\image007.png" />
+                                    <File Id="icuc_image008.jpg" Name="image008.jpg" Source="..\..\redist\Help\ICU_Converters_Plug-in_About_box_files\image008.jpg" />
                                 </Component>
                             </Directory>
 
                             <!--ICU Regex Converter Help-->
                             <Component Id="IcuRegexHelp.htm" Guid="{D5DE23D4-F902-4417-82ED-38855B18E601}">
-                                <File Id="IcuRegexHelp.htm" Name="ICU_Regular_Expression_Plug-in_About_box.htm" KeyPath="yes" Source="..\..\redist\Help\ICU_Regular_Expression_Plug-in_About_box.htm"/>
+                                <File Id="IcuRegexHelp.htm" Name="ICU_Regular_Expression_Plug-in_About_box.htm" KeyPath="yes" Source="..\..\redist\Help\ICU_Regular_Expression_Plug-in_About_box.htm" />
                                 <Shortcut Id="IcuRegexHelpHtm" Directory="SILConvHelp" Name="ICU Regular Expression Help" Description="View help document for the ICU Regular Expression Plug-in" IconIndex="0" Show="normal" Target="[#IcuRegexHelp.htm]" WorkingDirectory="Help" Advertise="no" />
                             </Component>
                             <Directory Id="ICU_Regular_Expression_Plugin_About_box" Name="ICU_Regular_Expression_Plug-in_About_box_files">
                                 <Component Id="ICU_Regular_Expression_Plugin_About_boxComp" Guid="{A5BBA809-2617-4240-A609-8DCDB21AD7D6}">
-                                    <File Id="icure_filelist.xml" Name="filelist.xml" KeyPath="yes" Source="..\..\redist\Help\ICU_Regular_Expression_Plug-in_About_box_files\filelist.xml"/>
-                                    <File Id="icure_colorschememapping.xml" Name="colorschememapping.xml" Source="..\..\redist\Help\ICU_Regular_Expression_Plug-in_About_box_files\colorschememapping.xml"/>
-                                    <File Id="icure_themedata.thmx" Name="themedata.thmx" Source="..\..\redist\Help\ICU_Regular_Expression_Plug-in_About_box_files\themedata.thmx"/>
-                                    <File Id="icure_image001.png" Name="image001.png" Source="..\..\redist\Help\ICU_Regular_Expression_Plug-in_About_box_files\image001.png"/>
-                                    <File Id="icure_image002.jpg" Name="image002.jpg" Source="..\..\redist\Help\ICU_Regular_Expression_Plug-in_About_box_files\image002.jpg"/>
-                                    <File Id="icure_image003.png" Name="image003.png" Source="..\..\redist\Help\ICU_Regular_Expression_Plug-in_About_box_files\image003.png"/>
-                                    <File Id="icure_image004.jpg" Name="image004.jpg" Source="..\..\redist\Help\ICU_Regular_Expression_Plug-in_About_box_files\image004.jpg"/>
-                                    <File Id="icure_image005.png" Name="image005.png" Source="..\..\redist\Help\ICU_Regular_Expression_Plug-in_About_box_files\image005.png"/>
-                                    <File Id="icure_image006.jpg" Name="image006.jpg" Source="..\..\redist\Help\ICU_Regular_Expression_Plug-in_About_box_files\image006.jpg"/>
-                                    <File Id="icure_image007.png" Name="image007.png" Source="..\..\redist\Help\ICU_Regular_Expression_Plug-in_About_box_files\image007.png"/>
-                                    <File Id="icure_image008.jpg" Name="image008.jpg" Source="..\..\redist\Help\ICU_Regular_Expression_Plug-in_About_box_files\image008.jpg"/>
-                                    <File Id="icure_item0014.xml" Name="item0014.xml" Source="..\..\redist\Help\ICU_Regular_Expression_Plug-in_About_box_files\item0014.xml"/>
-                                    <File Id="icure_props015.xml" Name="props015.xml" Source="..\..\redist\Help\ICU_Regular_Expression_Plug-in_About_box_files\props015.xml"/>
+                                    <File Id="icure_filelist.xml" Name="filelist.xml" KeyPath="yes" Source="..\..\redist\Help\ICU_Regular_Expression_Plug-in_About_box_files\filelist.xml" />
+                                    <File Id="icure_colorschememapping.xml" Name="colorschememapping.xml" Source="..\..\redist\Help\ICU_Regular_Expression_Plug-in_About_box_files\colorschememapping.xml" />
+                                    <File Id="icure_themedata.thmx" Name="themedata.thmx" Source="..\..\redist\Help\ICU_Regular_Expression_Plug-in_About_box_files\themedata.thmx" />
+                                    <File Id="icure_image001.png" Name="image001.png" Source="..\..\redist\Help\ICU_Regular_Expression_Plug-in_About_box_files\image001.png" />
+                                    <File Id="icure_image002.jpg" Name="image002.jpg" Source="..\..\redist\Help\ICU_Regular_Expression_Plug-in_About_box_files\image002.jpg" />
+                                    <File Id="icure_image003.png" Name="image003.png" Source="..\..\redist\Help\ICU_Regular_Expression_Plug-in_About_box_files\image003.png" />
+                                    <File Id="icure_image004.jpg" Name="image004.jpg" Source="..\..\redist\Help\ICU_Regular_Expression_Plug-in_About_box_files\image004.jpg" />
+                                    <File Id="icure_image005.png" Name="image005.png" Source="..\..\redist\Help\ICU_Regular_Expression_Plug-in_About_box_files\image005.png" />
+                                    <File Id="icure_image006.jpg" Name="image006.jpg" Source="..\..\redist\Help\ICU_Regular_Expression_Plug-in_About_box_files\image006.jpg" />
+                                    <File Id="icure_image007.png" Name="image007.png" Source="..\..\redist\Help\ICU_Regular_Expression_Plug-in_About_box_files\image007.png" />
+                                    <File Id="icure_image008.jpg" Name="image008.jpg" Source="..\..\redist\Help\ICU_Regular_Expression_Plug-in_About_box_files\image008.jpg" />
+                                    <File Id="icure_item0014.xml" Name="item0014.xml" Source="..\..\redist\Help\ICU_Regular_Expression_Plug-in_About_box_files\item0014.xml" />
+                                    <File Id="icure_props015.xml" Name="props015.xml" Source="..\..\redist\Help\ICU_Regular_Expression_Plug-in_About_box_files\props015.xml" />
                                 </Component>
                             </Directory>
 
                             <!--ICU transliterators Help-->
                             <Component Id="IcuTransliteratorsHelp.htm" Guid="{7E760EFF-D905-425D-851D-49F148628076}">
-                                <File Id="IcuTransliteratorsHelp.htm" Name="ICU_Transliterators_Plug-in_About_box.htm" KeyPath="yes" Source="..\..\redist\Help\ICU_Transliterators_Plug-in_About_box.htm"/>
+                                <File Id="IcuTransliteratorsHelp.htm" Name="ICU_Transliterators_Plug-in_About_box.htm" KeyPath="yes" Source="..\..\redist\Help\ICU_Transliterators_Plug-in_About_box.htm" />
                                 <Shortcut Id="IcuTransliteratorsHelpHtm" Directory="SILConvHelp" Name="ICU Transliterators Help" Description="View help document for the ICU Transliterators Plug-in" IconIndex="0" Show="normal" Target="[#IcuTransliteratorsHelp.htm]" WorkingDirectory="Help" Advertise="no" />
                             </Component>
                             <Directory Id="ICU_Transliterators_Plugin_About_box" Name="ICU_Transliterators_Plug-in_About_box_files">
                                 <Component Id="ICU_Transliterators_Plugin_About_boxComp" Guid="{175E5C18-D389-46F9-8357-22C13C0EDF6F}">
-                                    <File Id="icutr_filelist.xml" Name="filelist.xml" KeyPath="yes" Source="..\..\redist\Help\ICU_Transliterators_Plug-in_About_box_files\filelist.xml"/>
-                                    <File Id="icutr_colorschememapping.xml" Name="colorschememapping.xml" Source="..\..\redist\Help\ICU_Transliterators_Plug-in_About_box_files\colorschememapping.xml"/>
-                                    <File Id="icutr_themedata.thmx" Name="themedata.thmx" Source="..\..\redist\Help\ICU_Transliterators_Plug-in_About_box_files\themedata.thmx"/>
-                                    <File Id="icutr_image001.png" Name="image001.png" Source="..\..\redist\Help\ICU_Transliterators_Plug-in_About_box_files\image001.png"/>
-                                    <File Id="icutr_image002.jpg" Name="image002.jpg" Source="..\..\redist\Help\ICU_Transliterators_Plug-in_About_box_files\image002.jpg"/>
-                                    <File Id="icutr_image003.png" Name="image003.png" Source="..\..\redist\Help\ICU_Transliterators_Plug-in_About_box_files\image003.png"/>
-                                    <File Id="icutr_image004.jpg" Name="image004.jpg" Source="..\..\redist\Help\ICU_Transliterators_Plug-in_About_box_files\image004.jpg"/>
-                                    <File Id="icutr_image005.png" Name="image005.png" Source="..\..\redist\Help\ICU_Transliterators_Plug-in_About_box_files\image005.png"/>
-                                    <File Id="icutr_image006.jpg" Name="image006.jpg" Source="..\..\redist\Help\ICU_Transliterators_Plug-in_About_box_files\image006.jpg"/>
+                                    <File Id="icutr_filelist.xml" Name="filelist.xml" KeyPath="yes" Source="..\..\redist\Help\ICU_Transliterators_Plug-in_About_box_files\filelist.xml" />
+                                    <File Id="icutr_colorschememapping.xml" Name="colorschememapping.xml" Source="..\..\redist\Help\ICU_Transliterators_Plug-in_About_box_files\colorschememapping.xml" />
+                                    <File Id="icutr_themedata.thmx" Name="themedata.thmx" Source="..\..\redist\Help\ICU_Transliterators_Plug-in_About_box_files\themedata.thmx" />
+                                    <File Id="icutr_image001.png" Name="image001.png" Source="..\..\redist\Help\ICU_Transliterators_Plug-in_About_box_files\image001.png" />
+                                    <File Id="icutr_image002.jpg" Name="image002.jpg" Source="..\..\redist\Help\ICU_Transliterators_Plug-in_About_box_files\image002.jpg" />
+                                    <File Id="icutr_image003.png" Name="image003.png" Source="..\..\redist\Help\ICU_Transliterators_Plug-in_About_box_files\image003.png" />
+                                    <File Id="icutr_image004.jpg" Name="image004.jpg" Source="..\..\redist\Help\ICU_Transliterators_Plug-in_About_box_files\image004.jpg" />
+                                    <File Id="icutr_image005.png" Name="image005.png" Source="..\..\redist\Help\ICU_Transliterators_Plug-in_About_box_files\image005.png" />
+                                    <File Id="icutr_image006.jpg" Name="image006.jpg" Source="..\..\redist\Help\ICU_Transliterators_Plug-in_About_box_files\image006.jpg" />
                                 </Component>
                             </Directory>
 
                             <!--TECkit Help-->
                             <Component Id="TECkitHelp.htm" Guid="{5F54B6C7-6E71-438C-BA3B-1AB5D7DBC59E}">
-                                <File Id="TECkitHelp.htm" Name="TECkit_Map_Plug-in_About_box.htm" KeyPath="yes" Source="..\..\redist\Help\TECkit_Map_Plug-in_About_box.htm"/>
+                                <File Id="TECkitHelp.htm" Name="TECkit_Map_Plug-in_About_box.htm" KeyPath="yes" Source="..\..\redist\Help\TECkit_Map_Plug-in_About_box.htm" />
                                 <Shortcut Id="TECkitHelpHtm" Directory="SILConvHelp" Name="ICU Transliterators Help" Description="View help document for the TECkit Plug-in" IconIndex="0" Show="normal" Target="[#TECkitHelp.htm]" WorkingDirectory="Help" Advertise="no" />
                             </Component>
                             <Directory Id="TECkit_Map_Plugin_About_box" Name="TECkit_Map_Plug-in_About_box_files">
                                 <Component Id="TECkit_Map_Plugin_About_boxComp" Guid="{02A541BC-9B87-42B4-8387-75BCF0AD0B62}">
-                                    <File Id="tk_filelist.xml" Name="filelist.xml" KeyPath="yes" Source="..\..\redist\Help\TECkit_Map_Plug-in_About_box_files\filelist.xml"/>
-                                    <File Id="tk_colorschememapping.xml" Name="colorschememapping.xml" Source="..\..\redist\Help\TECkit_Map_Plug-in_About_box_files\colorschememapping.xml"/>
-                                    <File Id="tk_themedata.thmx" Name="themedata.thmx" Source="..\..\redist\Help\TECkit_Map_Plug-in_About_box_files\themedata.thmx"/>
-                                    <File Id="tk_image001.png" Name="image001.png" Source="..\..\redist\Help\TECkit_Map_Plug-in_About_box_files\image001.png"/>
-                                    <File Id="tk_image002.jpg" Name="image002.jpg" Source="..\..\redist\Help\TECkit_Map_Plug-in_About_box_files\image002.jpg"/>
-                                    <File Id="tk_image003.png" Name="image003.png" Source="..\..\redist\Help\TECkit_Map_Plug-in_About_box_files\image003.png"/>
-                                    <File Id="tk_image004.jpg" Name="image004.jpg" Source="..\..\redist\Help\TECkit_Map_Plug-in_About_box_files\image004.jpg"/>
-                                    <File Id="tk_image005.png" Name="image005.png" Source="..\..\redist\Help\TECkit_Map_Plug-in_About_box_files\image005.png"/>
-                                    <File Id="tk_image006.jpg" Name="image006.jpg" Source="..\..\redist\Help\TECkit_Map_Plug-in_About_box_files\image006.jpg"/>
+                                    <File Id="tk_filelist.xml" Name="filelist.xml" KeyPath="yes" Source="..\..\redist\Help\TECkit_Map_Plug-in_About_box_files\filelist.xml" />
+                                    <File Id="tk_colorschememapping.xml" Name="colorschememapping.xml" Source="..\..\redist\Help\TECkit_Map_Plug-in_About_box_files\colorschememapping.xml" />
+                                    <File Id="tk_themedata.thmx" Name="themedata.thmx" Source="..\..\redist\Help\TECkit_Map_Plug-in_About_box_files\themedata.thmx" />
+                                    <File Id="tk_image001.png" Name="image001.png" Source="..\..\redist\Help\TECkit_Map_Plug-in_About_box_files\image001.png" />
+                                    <File Id="tk_image002.jpg" Name="image002.jpg" Source="..\..\redist\Help\TECkit_Map_Plug-in_About_box_files\image002.jpg" />
+                                    <File Id="tk_image003.png" Name="image003.png" Source="..\..\redist\Help\TECkit_Map_Plug-in_About_box_files\image003.png" />
+                                    <File Id="tk_image004.jpg" Name="image004.jpg" Source="..\..\redist\Help\TECkit_Map_Plug-in_About_box_files\image004.jpg" />
+                                    <File Id="tk_image005.png" Name="image005.png" Source="..\..\redist\Help\TECkit_Map_Plug-in_About_box_files\image005.png" />
+                                    <File Id="tk_image006.jpg" Name="image006.jpg" Source="..\..\redist\Help\TECkit_Map_Plug-in_About_box_files\image006.jpg" />
                                 </Component>
                             </Directory>
 
                             <!--.Net Regex Converter Help-->
                             <Component Id="NetRegexHelp.htm" Guid="{71D37554-B6E6-4300-93AB-473DAA492542}">
-                                <File Id="NetRegexHelp.htm" Name="Net_Regular_Expression_Plug-in_About_box.htm" KeyPath="yes" Source="..\..\redist\Help\Net_Regular_Expression_Plug-in_About_box.htm"/>
+                                <File Id="NetRegexHelp.htm" Name="Net_Regular_Expression_Plug-in_About_box.htm" KeyPath="yes" Source="..\..\redist\Help\Net_Regular_Expression_Plug-in_About_box.htm" />
                                 <Shortcut Id="NetRegexHelpHtm" Directory="SILConvHelp" Name=".Net Regular Expression Help" Description="View help document for the .Net Regular Expression Plug-in" IconIndex="0" Show="normal" Target="[#NetRegexHelp.htm]" WorkingDirectory="Help" Advertise="no" />
                             </Component>
                             <Directory Id="Net_Regular_Expression_Plugin_About_box" Name="Net_Regular_Expression_Plug-in_About_box_files">
                                 <Component Id="Net_Regular_Expression_Plugin_About_boxComp" Guid="{9D5C5F78-AF34-4DC6-8C60-C61AEC153C6E}">
-                                    <File Id="netre_filelist.xml" Name="filelist.xml" KeyPath="yes" Source="..\..\redist\Help\Net_Regular_Expression_Plug-in_About_box_files\filelist.xml"/>
-                                    <File Id="netre_colorschememapping.xml" Name="colorschememapping.xml" Source="..\..\redist\Help\Net_Regular_Expression_Plug-in_About_box_files\colorschememapping.xml"/>
-                                    <File Id="netre_themedata.thmx" Name="themedata.thmx" Source="..\..\redist\Help\Net_Regular_Expression_Plug-in_About_box_files\themedata.thmx"/>
-                                    <File Id="netre_image001.jpg" Name="image001.jpg" Source="..\..\redist\Help\Net_Regular_Expression_Plug-in_About_box_files\image001.jpg"/>
-                                    <File Id="netre_image002.jpg" Name="image002.jpg" Source="..\..\redist\Help\Net_Regular_Expression_Plug-in_About_box_files\image002.jpg"/>
-                                    <File Id="netre_image003.jpg" Name="image003.jpg" Source="..\..\redist\Help\Net_Regular_Expression_Plug-in_About_box_files\image003.jpg"/>
-                                    <File Id="netre_image005.jpg" Name="image005.jpg" Source="..\..\redist\Help\Net_Regular_Expression_Plug-in_About_box_files\image005.jpg"/>
-                                    <File Id="netre_item0010.xml" Name="item0010.xml" Source="..\..\redist\Help\Net_Regular_Expression_Plug-in_About_box_files\item0010.xml"/>
-                                    <File Id="netre_props011.xml" Name="props011.xml" Source="..\..\redist\Help\Net_Regular_Expression_Plug-in_About_box_files\props011.xml"/>
+                                    <File Id="netre_filelist.xml" Name="filelist.xml" KeyPath="yes" Source="..\..\redist\Help\Net_Regular_Expression_Plug-in_About_box_files\filelist.xml" />
+                                    <File Id="netre_colorschememapping.xml" Name="colorschememapping.xml" Source="..\..\redist\Help\Net_Regular_Expression_Plug-in_About_box_files\colorschememapping.xml" />
+                                    <File Id="netre_themedata.thmx" Name="themedata.thmx" Source="..\..\redist\Help\Net_Regular_Expression_Plug-in_About_box_files\themedata.thmx" />
+                                    <File Id="netre_image001.jpg" Name="image001.jpg" Source="..\..\redist\Help\Net_Regular_Expression_Plug-in_About_box_files\image001.jpg" />
+                                    <File Id="netre_image002.jpg" Name="image002.jpg" Source="..\..\redist\Help\Net_Regular_Expression_Plug-in_About_box_files\image002.jpg" />
+                                    <File Id="netre_image003.jpg" Name="image003.jpg" Source="..\..\redist\Help\Net_Regular_Expression_Plug-in_About_box_files\image003.jpg" />
+                                    <File Id="netre_image005.jpg" Name="image005.jpg" Source="..\..\redist\Help\Net_Regular_Expression_Plug-in_About_box_files\image005.jpg" />
+                                    <File Id="netre_item0010.xml" Name="item0010.xml" Source="..\..\redist\Help\Net_Regular_Expression_Plug-in_About_box_files\item0010.xml" />
+                                    <File Id="netre_props011.xml" Name="props011.xml" Source="..\..\redist\Help\Net_Regular_Expression_Plug-in_About_box_files\props011.xml" />
                                 </Component>
                             </Directory>
 
                             <Component Id="CantReadMhtFiles.htm" Guid="{2EA57953-4B0C-4A5D-A887-E9E9D100D20B}">
-                                <File Id="CantReadMhtFiles.htm" Name="CantReadMhtFiles.htm" ReadOnly="yes" KeyPath="yes" Source="..\..\redist\Help\CantReadMhtFiles.htm"/>
+                                <File Id="CantReadMhtFiles.htm" Name="CantReadMhtFiles.htm" ReadOnly="yes" KeyPath="yes" Source="..\..\redist\Help\CantReadMhtFiles.htm" />
                             </Component>
                         </Directory>
                     </Directory>
                 </Directory>
-            </Directory>
+            </StandardDirectory>
 
-            <Directory Id="StartMenuFolder" SourceName="Start Menu">
-                <Directory Id="ProgramMenuFolder" SourceName="Programs">
-                    <Directory Id="SIL_Converters" Name="SIL Converters">
-                        <Directory Id="SILConvHelp" Name="Help" />
-                    </Directory>
+            <StandardDirectory Id="ProgramMenuFolder">
+                <Directory Id="SIL_Converters" Name="SIL Converters">
+                    <Directory Id="SILConvHelp" Name="Help" />
                 </Directory>
-            </Directory>
-        </Directory>
-
-        <!-- The following section launches the installed file EncConvertersAppDataMover40.exe but hides its DOS window -->
-        <CustomAction Id="SetAppDataMoverData" Return="check" Property="LaunchAppDataMover" Value="[!EncConvertersAppDataMover40.exe]" />
-        <CustomAction Id="LaunchAppDataMover" Return="ignore" Impersonate="no" Execute="deferred" Script="vbscript">
-            <![CDATA[
-dim EncConvertersAppDataMoverPath
-EncConvertersAppDataMoverPath = Session.Property("CustomActionData")
-const WindowStyleStealth  = &H20000000
-set WSO = createobject("WScript.Shell")
-WSO.run "%comspec% /c """ + EncConvertersAppDataMoverPath + """", WindowStyleStealth, false
-]]>
-        </CustomAction>
-
-        <InstallExecuteSequence>
-            <RemoveShortcuts>Installed AND NOT UPGRADINGPRODUCTCODE AND REMOVE="ALL"</RemoveShortcuts>
-            <Custom Action="SetAppDataMoverData" Before="InstallInitialize"><![CDATA[VersionNT >= 501]]></Custom>
-            <Custom Action="LaunchAppDataMover" After="PublishComponents"><![CDATA[NOT Installed]]></Custom>
-        </InstallExecuteSequence>
-
-    </Module>
+            </StandardDirectory>
+        </Module>
 </Wix>

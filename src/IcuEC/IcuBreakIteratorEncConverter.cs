@@ -1,18 +1,17 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using ECInterfaces;
-using ICU4NET;
+using Icu;
 
 namespace SilEncConverters40
 {
     /// <summary>
-    /// IcuBreakIteratorEncConverter implements the EncConverter interface to provide a 
-    /// wrapper for the break iterator project at: http://code.google.com/p/icu4net/
-    /// which itself is a wrapper around ICU break iterator code at:
+    /// IcuBreakIteratorEncConverter implements the EncConverter interface to provide a
+    /// wrapper for SIL's icu.net (https://github.com/sillsdev/icu-dotnet), a P/Invoke wrapper
+    /// around ICU break iterator code at:
     /// http://userguide.icu-project.org/boundaryanalysis#TOC-BreakIterator-Boundary-Analysis-Exa
     /// </summary>
     [GuidAttribute("5265D30D-7402-4D69-A620-D1D1611CAD4A")]
@@ -82,7 +81,7 @@ namespace SilEncConverters40
             {
                 var bySpace = strInput.Split(DefaultSeparator.ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
                 _breakIterator.SetText(strInput);
-                var words = _breakIterator.Enumerate().ToList();
+                var words = _breakIterator.ToList();
                 if (bySpace.Length == words.Count)
                 {
                     // it didn't do anything!
@@ -138,23 +137,8 @@ namespace SilEncConverters40
 
         private void Load()
         {
-            _breakIterator = BreakIterator.CreateWordInstance(Locale.GetUS());
+            _breakIterator = BreakIterator.CreateWordInstance(new Locale("en-US"));
         }
         #endregion Misc Helpers
     }
-
-	public static class Extension
-	{
-		public static IEnumerable<string> Enumerate(this BreakIterator bi)
-		{
-			var sb = new StringBuilder();
-			string text = bi.GetCLRText();
-			int start = bi.First(), end = bi.Next();
-			while (end != BreakIterator.DONE)
-			{
-				yield return text.Substring(start, end - start);
-				start = end; end = bi.Next();
-			}
-		}
-	}
 }

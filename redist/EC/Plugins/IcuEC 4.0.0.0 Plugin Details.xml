@@ -6,26 +6,26 @@
 		DefiningProcessType="8"
 		DisplayName="ICU Converter"
 		ConfiguratorProgId="SilEncConverters40.IcuConvEncConverterConfig"
-		AssemblyReference="IcuEC, Version=4.0.0.0, Culture=neutral, PublicKeyToken=null" />
+		AssemblyReference="IcuEC, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" />
 	<ECPluginDetails ImplementationName="ICU.trans"
 		ImplementationProgId="SilEncConverters40.IcuTranslitEncConverter"
 		Priority="1"
 		DefiningProcessType="4"
 		DisplayName="ICU Transliterator"
 		ConfiguratorProgId="SilEncConverters40.IcuTranslitConfig"
-		AssemblyReference="IcuEC, Version=4.0.0.0, Culture=neutral, PublicKeyToken=null" />
+		AssemblyReference="IcuEC, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" />
 	<ECPluginDetails ImplementationName="ICU.regex"
 		ImplementationProgId="SilEncConverters40.IcuRegexEncConverter"
 		Priority="1"
 		DefiningProcessType="128"
 		DisplayName="Regular Expression Find and Replace (ICU)"
 		ConfiguratorProgId="SilEncConverters40.IcuRegexEncConverterConfig"
-		AssemblyReference="IcuEC, Version=4.0.0.0, Culture=neutral, PublicKeyToken=null" />
+		AssemblyReference="IcuEC, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" />
 	<ECPluginDetails ImplementationName="ICU.BreakIterator"
 		ImplementationProgId="SilEncConverters40.IcuBreakIteratorEncConverter"
 		Priority="1"
 		DefiningProcessType="0"
 		DisplayName="ICU Boundary Analysis/Break Iterator"
 		ConfiguratorProgId="SilEncConverters40.IcuBreakIteratorConfig"
-		AssemblyReference="IcuEC, Version=4.0.0.0, Culture=neutral, PublicKeyToken=null" />
+		AssemblyReference="IcuEC, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" />
 </EncConverterPlugins>

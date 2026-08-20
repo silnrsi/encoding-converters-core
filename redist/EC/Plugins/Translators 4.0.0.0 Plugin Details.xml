@@ -27,7 +27,7 @@
   <ECPluginDetails ImplementationName="SIL.AzureOpenAI"
                    ImplementationProgId="SilEncConverters40.EcTranslators.AzureOpenAI.AzureOpenAiEncConverter"
                    Priority="0"
-                   DisplayName="Azure OpenAI Translator"
+                   DisplayName="OpenAI-Compatible Translator"
                    ConfiguratorProgId="SilEncConverters40.EcTranslators.AzureOpenAI.AzureOpenAiEncConverterConfig"
                    AssemblyReference="EcTranslators, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" />
   <ECPluginDetails ImplementationName="SIL.VertexAi"

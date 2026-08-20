@@ -6,7 +6,7 @@
                    DisplayName="Perl Expression"
                    ConfiguratorProgId="SilEncConverters40.PerlExpressionEncConverterConfig"
                    DefiningProcessType="512"
-                   AssemblyReference="PerlExpressionEC, Version=4.0.0.0, Culture=neutral, PublicKeyToken=null"
+                   AssemblyReference="PerlExpressionEC, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485"
 />
                    <!--DefiningExtension=".pl"-->
 </EncConverterPlugins>

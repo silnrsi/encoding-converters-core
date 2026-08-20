@@ -22,8 +22,6 @@ bool CSilEncConverter::IsInputLegacy() const
         ECInterfaces::ConvType eConvType;
         if (IsSEC30())
             ProcessHResult(m_aEC30->get_ConversionType(&eConvType), m_aEC30, __uuidof(ECInterfaces::IEncConverter));
-        else if (IsSEC22())
-            ProcessHResult(m_aEC22->get_ConversionType((SilEncConverters22::ConvType*)&eConvType), m_aEC22, __uuidof(SilEncConverters22::IEncConverter));
 
         if (DirectionForward)
             return ((eConvType == ECInterfaces::ConvType_Legacy_to_from_Legacy)
@@ -48,8 +46,6 @@ bool CSilEncConverter::IsOutputLegacy() const
         ECInterfaces::ConvType eConvType;
         if (IsSEC30())
             ProcessHResult(m_aEC30->get_ConversionType(&eConvType), m_aEC30, __uuidof(ECInterfaces::IEncConverter));
-        else if (IsSEC22())
-            ProcessHResult(m_aEC22->get_ConversionType((SilEncConverters22::ConvType*)&eConvType), m_aEC22, __uuidof(SilEncConverters22::IEncConverter));
 
         if (DirectionForward)
             return ((eConvType == ECInterfaces::ConvType_Unicode_to_from_Legacy)
@@ -74,8 +70,6 @@ int CSilEncConverter::CodePageInput() const
         // then we're all set: call Convert
         if (IsSEC30())
             ProcessHResult(m_aEC30->get_CodePageInput(&nCodePage), m_aEC30, __uuidof(ECInterfaces::IEncConverter));
-        else if (IsSEC22())
-            ProcessHResult(m_aEC22->get_CodePageInput(&nCodePage), m_aEC22, __uuidof(SilEncConverters22::IEncConverter));
     }
 
     return (int)nCodePage;
@@ -89,8 +83,6 @@ int CSilEncConverter::CodePageOutput() const
         // then we're all set: call Convert
         if (IsSEC30())
             ProcessHResult(m_aEC30->get_CodePageOutput(&nCodePage), m_aEC30, __uuidof(ECInterfaces::IEncConverter));
-        else if (IsSEC22())
-            ProcessHResult(m_aEC22->get_CodePageOutput(&nCodePage), m_aEC22, __uuidof(SilEncConverters22::IEncConverter));
     }
 
     return (int)nCodePage;
@@ -108,10 +100,6 @@ HRESULT CSilEncConverter::Convert(const CStringW& strInput, CStringW& strOutput)
         {
             hr = ProcessHResult(m_aEC30->Convert(CComBSTR(strInput), &bstrOutput), m_aEC30, __uuidof(ECInterfaces::IEncConverter));
         }
-        else if (IsSEC22())
-        {
-            hr = ProcessHResult(m_aEC22->Convert(CComBSTR(strInput), &bstrOutput), m_aEC22, __uuidof(SilEncConverters22::IEncConverter));
-        }
     }
 
     strOutput = CStringW(bstrOutput);
@@ -123,8 +111,6 @@ CStringW CSilEncConverter::Description()
     CComBSTR str;
     if (IsSEC30())
         m_aEC30->get_ToString(&str);
-    else if (IsSEC22())
-        m_aEC22->get_ToString(&str);
 
     return CStringW(str);
 }
@@ -133,8 +119,6 @@ void CSilEncConverter::Detach()
 {
     if (IsSEC30())
         m_aEC30.Detach();
-    if (IsSEC22())
-        m_aEC22.Detach();
 }
 
 HRESULT CSilEncConverter::Initialize(const CStringW& strFriendlyName, BOOL bDirectionForward, int eNormalizeFlag)
@@ -172,32 +156,6 @@ HRESULT CSilEncConverter::Initialize(const CStringW& strFriendlyName, BOOL bDire
         {
             // must no longer be in the repository!
             hrRet = /*NameNotFound*/ -7;
-        }
-    }
-    else
-    {
-        // otherwise, try the older 22 interface
-        IEC22s  pEC22s;
-        pEC22s.CoCreateInstance(L"SilEncConverters22.EncConverters");
-        if (!!pEC22s)
-        {
-            CComVariant varName(ConverterName);
-            pEC22s->get_Item(varName, &m_aEC22);
-            if( !!m_aEC22 )
-            {
-                // initialize the other run-time parameters needed for the Convert call
-                m_aEC22->put_DirectionForward((DirectionForward) ? VARIANT_TRUE : VARIANT_FALSE);
-                m_aEC22->put_NormalizeOutput((SilEncConverters22::NormalizeFlags)NormalizeOutput);
-            }
-            else
-            {
-                // must no longer be in the repository!
-                hrRet = /*NameNotFound*/ -7;
-            }
-        }
-        else
-        {
-            hrRet = /* RegistryCorrupt */ -18;
         }
     }
     return hrRet;
@@ -256,40 +214,6 @@ HRESULT CSilEncConverter::AutoSelect()
             return S_OK;
         }
     }
-    else
-    {
-        // otherwise, try the older 22 interface
-        IEC22s  pEC22s;
-        pEC22s.CoCreateInstance(L"SilEncConverters22.EncConverters");
-        if (!!pEC22s)
-        {
-            // now that we have the repository... now ask for the Configuration UI
-            // For the non-roman version, we're *probably* only looking for Unicode_to(_from)_Unicode converters, 
-            // however, just in case the user wants to do a Legacy->Unicode (e.g. encoding conversion) simultaneously, 
-            // leave the type ambiguous to allow for this possibility. For the Ansi version, though, Unicode is out, 
-            // so limit the display of converters to only those that make sense.
-            SilEncConverters22::ConvType eConvType22 = SilEncConverters22::ConvType_Unknown;   // this means show all converters
-
-            // call the self-selection UI (NOTE: only in SC 2.2 and newer!)
-            if(     (ProcessHResult(pEC22s->AutoSelect(eConvType22, &m_aEC22), pEC22s, __uuidof(SilEncConverters22::IEncConverters)) == S_OK)
-                &&  !!m_aEC22 )
-            {
-                // get the name of the configured converter
-                CComBSTR str;
-                m_aEC22->get_Name(&str);  
-                ConverterName = str;
-                
-                // get the direction
-                VARIANT_BOOL bVal = VARIANT_TRUE;
-                m_aEC22->get_DirectionForward(&bVal); 
-                DirectionForward = (bVal ==  VARIANT_FALSE) ? FALSE : TRUE;
-
-                // get the normalize output flag
-                m_aEC22->get_NormalizeOutput((SilEncConverters22::NormalizeFlags*)&NormalizeOutput);
-                return S_OK;
-            }
-        }
-    }
     return /* RegistryCorrupt */ -18;
 }
 
@@ -344,47 +268,6 @@ HRESULT CSilEncConverter::Add(
         {
             // must no longer be in the repository!
             return /*NameNotFound*/ -7;
-        }
-    }
-    else
-    {
-        // otherwise, try the older 22 interface
-        IEC22s  pEC22s;
-        pEC22s.CoCreateInstance(L"SilEncConverters22.EncConverters");
-        if (!!pEC22s)
-        {
-            if( !!m_aEC22 )
-            {
-                // converter has already been used
-                return S_OK;
-            }
-            CComVariant varName(converterName);
-            pEC22s->get_Item(varName, &m_aEC22);
-            if( !!m_aEC22 )
-            {
-                // converter already exists in the database
-                return S_OK;
-            }
-            CComBSTR varSpec(converterSpec);
-            CComBSTR varLeftEnc(leftEncoding);
-            CComBSTR varRightEnc(rightEncoding);
-            if(ProcessHResult(pEC22s->Add(
-                    CComBSTR(converterName), varSpec, (SilEncConverters22::ConvType)conversionType, varLeftEnc, varRightEnc, (SilEncConverters22::ProcessTypeFlags) processType),
-                    pEC22s, __uuidof(ECInterfaces::IEncConverters)) != S_OK)
-            {
-                // An exception occurred.
-                return /*ErrStatus.Exception*/ -6;
-            }
-            pEC22s->get_Item(varName, &m_aEC22);
-            if(!m_aEC22 )
-            {
-                // must no longer be in the repository!
-                return /*NameNotFound*/ -7;
-            }
-        }
-        else
-        {
-            return /* RegistryCorrupt */ -18;
         }
     }
     return S_OK;

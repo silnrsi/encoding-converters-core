@@ -142,7 +142,8 @@ namespace SilEncConverters40.EcTranslators.VertexAi.VertexAiExe
 			// Make the request.
 			var json = generateContentRequest.ToString();
 #if LogResults
-			File.AppendAllText(LogFilePath, json + Environment.NewLine);
+			if (Directory.Exists(Path.GetDirectoryName(LogFilePath)))
+				File.AppendAllText(LogFilePath, json + Environment.NewLine);
 #endif
 
             // in case there are multiple lines (e.g. what Paratext will do if the verse has multiple paragraphs),

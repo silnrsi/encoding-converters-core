@@ -29,12 +29,11 @@ namespace SilEncConverters40
         /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
-        private void InitializeComponent(SilEncConverters40.WebBrowserAdaptor webBrowser)
+        private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AutoConfigDialog));
             this.tabControl = new System.Windows.Forms.TabControl();
-            this.tabPageAbout = new System.Windows.Forms.TabPage();
             this.tabPageSetup = new System.Windows.Forms.TabPage();
             this.tabPageTestArea = new System.Windows.Forms.TabPage();
             this.tableLayoutPanelTestPage = new System.Windows.Forms.TableLayoutPanel();
@@ -91,13 +90,12 @@ namespace SilEncConverters40
             this.buttonOK = new System.Windows.Forms.Button();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.buttonSaveInRepository = new System.Windows.Forms.Button();
+            this.buttonHelp = new System.Windows.Forms.Button();
             this.helpProvider = new System.Windows.Forms.HelpProvider();
             this.fontDialog = new System.Windows.Forms.FontDialog();
-            this.webBrowser = webBrowser;
             this.ecTextBoxInput = new SilEncConverters40.EcTextBox();
             this.ecTextBoxOutput = new SilEncConverters40.EcTextBox();
             this.tabControl.SuspendLayout();
-            this.tabPageAbout.SuspendLayout();
             this.tabPageTestArea.SuspendLayout();
             this.tableLayoutPanelTestPage.SuspendLayout();
             this.contextMenuStripTestBoxes.SuspendLayout();
@@ -112,7 +110,6 @@ namespace SilEncConverters40
             this.tabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tabControl.Controls.Add(this.tabPageAbout);
             this.tabControl.Controls.Add(this.tabPageSetup);
             this.tabControl.Controls.Add(this.tabPageTestArea);
             this.tabControl.Controls.Add(this.tabPageAdvanced);
@@ -122,18 +119,7 @@ namespace SilEncConverters40
             this.tabControl.Size = new System.Drawing.Size(610, 426);
             this.tabControl.TabIndex = 1;
             this.tabControl.Selected += new System.Windows.Forms.TabControlEventHandler(this.tabControl_Selected);
-            // 
-            // tabPageAbout
-            // 
-            this.tabPageAbout.Controls.Add(this.webBrowser);
-            this.tabPageAbout.Location = new System.Drawing.Point(4, 22);
-            this.tabPageAbout.Name = "tabPageAbout";
-            this.tabPageAbout.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageAbout.Size = new System.Drawing.Size(602, 400);
-            this.tabPageAbout.TabIndex = 0;
-            this.tabPageAbout.Text = "About";
-            this.tabPageAbout.UseVisualStyleBackColor = true;
-            // 
+            //
             // tabPageSetup
             // 
             this.tabPageSetup.Location = new System.Drawing.Point(4, 22);
@@ -746,20 +732,25 @@ namespace SilEncConverters40
             this.buttonSaveInRepository.UseVisualStyleBackColor = true;
             this.buttonSaveInRepository.Visible = false;
             this.buttonSaveInRepository.Click += new System.EventHandler(this.buttonSaveInRepository_Click);
-            // 
+            //
+            // buttonHelp
+            //
+            this.buttonHelp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.helpProvider.SetHelpString(this.buttonHelp, "Click this button to open the help page for this converter in your web browser");
+            this.buttonHelp.Location = new System.Drawing.Point(147, 444);
+            this.buttonHelp.Name = "buttonHelp";
+            this.helpProvider.SetShowHelp(this.buttonHelp, true);
+            this.buttonHelp.Size = new System.Drawing.Size(75, 23);
+            this.buttonHelp.TabIndex = 6;
+            this.buttonHelp.Text = "&Help";
+            this.buttonHelp.UseVisualStyleBackColor = true;
+            this.buttonHelp.Click += new System.EventHandler(this.buttonHelp_Click);
+            //
             // fontDialog
             // 
             this.fontDialog.AllowScriptChange = false;
             this.fontDialog.ShowColor = true;
-            // 
-            // webBrowser
-            // 
-            this.webBrowser.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.webBrowser.Location = new System.Drawing.Point(3, 3);
-            this.webBrowser.Name = "webBrowser";
-            this.webBrowser.Size = new System.Drawing.Size(596, 394);
-            this.webBrowser.TabIndex = 0;
-            // 
+            //
             // ecTextBoxInput
             // 
             this.tableLayoutPanelTestPage.SetColumnSpan(this.ecTextBoxInput, 4);
@@ -790,6 +781,7 @@ namespace SilEncConverters40
             this.CancelButton = this.buttonCancel;
             this.ClientSize = new System.Drawing.Size(634, 479);
             this.Controls.Add(this.buttonSaveInRepository);
+            this.Controls.Add(this.buttonHelp);
             this.Controls.Add(this.buttonOK);
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.buttonApply);
@@ -802,7 +794,6 @@ namespace SilEncConverters40
             this.Name = "AutoConfigDialog";
             this.Text = "AutoConfigDialog";
             this.tabControl.ResumeLayout(false);
-            this.tabPageAbout.ResumeLayout(false);
             this.tabPageTestArea.ResumeLayout(false);
             this.tableLayoutPanelTestPage.ResumeLayout(false);
             this.tableLayoutPanelTestPage.PerformLayout();
@@ -820,8 +811,6 @@ namespace SilEncConverters40
         #endregion
 
         public System.Windows.Forms.TabControl tabControl;
-        public System.Windows.Forms.TabPage tabPageAbout;
-        public System.Windows.Forms.WebBrowser webBrowserHelp;
         public System.Windows.Forms.TabPage tabPageSetup;
         public System.Windows.Forms.TabPage tabPageTestArea;
         public System.Windows.Forms.TableLayoutPanel tableLayoutPanelTestPage;
@@ -862,6 +851,7 @@ namespace SilEncConverters40
         private System.Windows.Forms.Label labelProperties;
         private System.Windows.Forms.DataGridView dataGridViewProperties;
         protected System.Windows.Forms.Button buttonSaveInRepository;
+        protected System.Windows.Forms.Button buttonHelp;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnKey;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnValue;
         private SilEncConverters40.EcTextBox ecTextBoxInput;
@@ -882,6 +872,5 @@ namespace SilEncConverters40
         private System.Windows.Forms.ToolStripMenuItem right2LeftToolStripMenuItem;
         protected internal System.Windows.Forms.FontDialog fontDialog;
         private System.Windows.Forms.ComboBox comboBoxFont;
-        private WebBrowserAdaptor webBrowser;
     }
 }
