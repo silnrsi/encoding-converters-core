@@ -61,9 +61,7 @@
          expected and harmless when not elevated (production registration is the WiX merge modules'
          job either way), so it's best-effort (warns, doesn't fail the build) and Debug-only,
          matching this project's prior RegisterForComInterop scoping. -->
-    <Exec Command="&quot;$(_RegAsmToolPath)&quot; &quot;$(TargetPath)&quot; /codebase /tlb:&quot;$(TargetDir)$(TargetName).tlb&quot;"
-          ContinueOnError="WarnAndContinue"
-          Condition="'$(Configuration)'=='Debug'" />
+    <Exec Command="&quot;$(_RegAsmToolPath)&quot; &quot;$(TargetPath)&quot; /codebase /tlb:&quot;$(TargetDir)$(TargetName).tlb&quot;" ContinueOnError="WarnAndContinue" Condition="'$(Configuration)'=='Debug'" />
   </Target>
 
   <PropertyGroup Condition="'$(TargetFramework)'=='net9.0-windows'">
