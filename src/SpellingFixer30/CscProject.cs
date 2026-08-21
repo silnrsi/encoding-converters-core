@@ -1422,9 +1422,10 @@ namespace SpellingFixer30
         {
             if (collection.TryGetValue(strWord, out SpellFixerWord sfw))
             {
-                if ((context != null) && (context.Count > 0) && 
-                    (sfw.ContextStrings.Count < MaxContextStrings))
+                if ((context != null) && (context.Count > 0) &&
+                    ((sfw.ContextStrings == null) || (sfw.ContextStrings.Count < MaxContextStrings)))
                 {
+                    sfw.ContextStrings ??= new List<string>();
                     var newContexts = context.Except(sfw.ContextStrings).ToList();
                     if (newContexts.Count > 0)
                         sfw.ContextStrings.AddRange(newContexts);

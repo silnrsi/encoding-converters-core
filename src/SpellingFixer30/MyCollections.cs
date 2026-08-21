@@ -90,7 +90,7 @@ namespace SpellingFixer30
 		public List<string> ContextStrings
         {
             get { return m_lstContext; }
-            set { m_lstContext = value; }
+            set { m_lstContext = value ?? new List<string>(); }
         }
 
 		/// <summary>
