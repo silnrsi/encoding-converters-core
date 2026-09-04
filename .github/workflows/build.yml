@@ -107,6 +107,50 @@ jobs:
         name: logs-${{ matrix.build_platform }}-${{ matrix.build_configuration }}
         path: build-*.binlog
 
+    # SILConverters (and any other consumer) ships these DLLs/EXEs - and the installer\*.wixproj
+    # merge modules below, which embed copies of the very same files in their own file table -
+    # unsigned unless we sign them here. Sign the raw net48 output now, then force the merge
+    # modules to rebuild so they harvest the now-signed bytes instead of the unsigned copies the
+    # Build step above already baked into them.
+    - name: Sign build outputs
+      if: ${{ matrix.build_configuration == 'Release' && github.event_name != 'pull_request' }}
+      uses: sillsdev/codesign/trusted-signing-action@v3
+      with:
+        credentials: ${{ secrets.TRUSTED_SIGNING_CREDENTIALS }}
+        files-folder: output\net48\${{ matrix.build_platform }}\${{ matrix.build_configuration }}
+        files-folder-filter: "dll,exe"
+
+    # Clear the merge-module projects' own bind cache/output so the rebuild below can't decide
+    # they're already up to date - the safest guarantee is to force it, rather than trust that
+    # WiX's own bind-input tracking picks up the now-newer Source= binaries. Only descend into
+    # obj\<platform>\<configuration>\ (the wix bind intermediate/tracking output) and bin\ - never
+    # obj\ itself, which is also where these SDK-style wixprojs' NuGet restore assets
+    # (project.assets.json etc.) live; deleting those would reintroduce NETSDK1047-style restore
+    # failures. The app/library projects are left alone: their compiled output is untouched by
+    # signing except for its timestamp, which the normal incremental build already treats as up to
+    # date against their (unchanged) sources.
+    - name: Clear installer project outputs
+      if: ${{ matrix.build_configuration == 'Release' && github.event_name != 'pull_request' }}
+      shell: powershell
+      run: |
+        $objDirs = Get-ChildItem -Path installer -Directory -Recurse -Filter obj
+        foreach ($dir in $objDirs) {
+          Get-ChildItem $dir.FullName -Directory | Remove-Item -Recurse -Force
+        }
+        Get-ChildItem -Path installer -Directory -Recurse -Filter bin |
+          Remove-Item -Recurse -Force
+
+    - name: Rebuild installer projects with signed binaries
+      if: ${{ matrix.build_configuration == 'Release' && github.event_name != 'pull_request' }}
+      shell: cmd
+      run: >
+        "%MSBUILD_PATH%"
+        /m
+        /v:m
+        /p:Configuration=${{matrix.build_configuration}}
+        /p:Platform=${{matrix.build_platform}}
+        "${{env.SOLUTION_FILE_PATH}}"
+
     # Package.Release.nuspec ships net462/net48/net9.0/net9.0-windows/netstandard2.0 (see its own
     # comments for what each TFM contributes) - upload every one of those TFM output folders so the
     # build_nuget job (a separate machine, only sees what's uploaded here) can pack them all.

@@ -294,9 +294,16 @@ namespace SpellingFixer30
 
             if (aIEC == null)
             {
-                // must not exist; try to create it
-                DirectableEncConverter.EncConverters.Add(DefaultTransliteratorEncConverterName, "Any-Latin", ConvType.Unicode_to_from_Unicode,
-                    null, null, ProcessTypeFlags.ICUTransliteration);
+				try
+				{
+					// must not exist; try to create it
+					DirectableEncConverter.EncConverters.Add(DefaultTransliteratorEncConverterName, "Any-Latin", ConvType.Unicode_to_from_Unicode,
+						null, null, ProcessTypeFlags.ICUTransliteration);
+				}
+				catch (Exception ex)
+				{
+					MessageBox.Show(ex.Message, CscProject.ApplicationCaption);
+				}
             }
         }
 
