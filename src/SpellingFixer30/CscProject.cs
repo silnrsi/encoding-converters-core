@@ -297,8 +297,8 @@ namespace SpellingFixer30
 				try
 				{
 					// must not exist; try to create it
-					DirectableEncConverter.EncConverters.Add(DefaultTransliteratorEncConverterName, "Any-Latin", ConvType.Unicode_to_from_Unicode,
-						null, null, ProcessTypeFlags.ICUTransliteration);
+					DirectableEncConverter.EncConverters.AddConversionMap(DefaultTransliteratorEncConverterName, "Any-Latin", ConvType.Unicode_to_Unicode,
+						EncConverters.strTypeSILicuTrans, "UNICODE", "UNICODE", ProcessTypeFlags.ICUTransliteration);
 				}
 				catch (Exception ex)
 				{
