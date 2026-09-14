@@ -77,7 +77,6 @@ namespace BackTranslationHelper
             this.buttonWriteTextToTarget = new System.Windows.Forms.Button();
             this.buttonNextSection = new System.Windows.Forms.Button();
             this.buttonSkip = new System.Windows.Forms.Button();
-            this.buttonSubstitute = new System.Windows.Forms.Button();
             this.substitutionContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.addSubtitutionMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.findSubstitutionRuleMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -87,6 +86,7 @@ namespace BackTranslationHelper
             this.buttonPinToTop = new System.Windows.Forms.Button();
             this.buttonPauseUpdating = new System.Windows.Forms.Button();
             this.fontDialog = new System.Windows.Forms.FontDialog();
+            this.buttonSubstitute = new BackTranslationHelper.SplitButton();
             this.menuStrip.SuspendLayout();
             this.tableLayoutPanel.SuspendLayout();
             this.substitutionContextMenu.SuspendLayout();
@@ -121,12 +121,11 @@ namespace BackTranslationHelper
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
             this.settingsToolStripMenuItem.Size = new System.Drawing.Size(61, 23);
             this.settingsToolStripMenuItem.Text = "&Settings";
-			this.settingsToolStripMenuItem.DropDownOpening += SettingsToolStripMenuItem_DropDownOpening;
-			// 
-			// removeEncConverterToolStripMenuItem
-			// 
-			this.removeEncConverterToolStripMenuItem.Name = "removeEncConverterToolStripMenuItem";
-            this.removeEncConverterToolStripMenuItem.Size = new System.Drawing.Size(341, 22);
+            // 
+            // removeEncConverterToolStripMenuItem
+            // 
+            this.removeEncConverterToolStripMenuItem.Name = "removeEncConverterToolStripMenuItem";
+            this.removeEncConverterToolStripMenuItem.Size = new System.Drawing.Size(342, 22);
             this.removeEncConverterToolStripMenuItem.Text = "Edit, Remove or Reorder &Translators/EncConverters";
             this.removeEncConverterToolStripMenuItem.ToolTipText = "Click to bring up a dialog to edit, remove or reorder the Translators/EncConverte" +
     "rs.";
@@ -135,7 +134,7 @@ namespace BackTranslationHelper
             // addEncConverterToolStripMenuItem
             // 
             this.addEncConverterToolStripMenuItem.Name = "addEncConverterToolStripMenuItem";
-            this.addEncConverterToolStripMenuItem.Size = new System.Drawing.Size(341, 22);
+            this.addEncConverterToolStripMenuItem.Size = new System.Drawing.Size(342, 22);
             this.addEncConverterToolStripMenuItem.Text = "&Add Translator/EncConverter";
             this.addEncConverterToolStripMenuItem.ToolTipText = "Click to add an additional Translator/EncConverter to give multiple options for t" +
     "he translated draft of the source text (e.g. DeepL Translator)";
@@ -147,20 +146,20 @@ namespace BackTranslationHelper
             this.sourceTextToolStripMenuItem,
             this.targetTextToolStripMenuItem});
             this.fontsToolStripMenuItem.Name = "fontsToolStripMenuItem";
-            this.fontsToolStripMenuItem.Size = new System.Drawing.Size(341, 22);
+            this.fontsToolStripMenuItem.Size = new System.Drawing.Size(342, 22);
             this.fontsToolStripMenuItem.Text = "&Fonts";
             // 
             // sourceTextToolStripMenuItem
             // 
             this.sourceTextToolStripMenuItem.Name = "sourceTextToolStripMenuItem";
-            this.sourceTextToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
+            this.sourceTextToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
             this.sourceTextToolStripMenuItem.Text = "&Source text";
             this.sourceTextToolStripMenuItem.Click += new System.EventHandler(this.SourceTextToolStripMenuItem_Click);
             // 
             // targetTextToolStripMenuItem
             // 
             this.targetTextToolStripMenuItem.Name = "targetTextToolStripMenuItem";
-            this.targetTextToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
+            this.targetTextToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
             this.targetTextToolStripMenuItem.Text = "&Target text";
             this.targetTextToolStripMenuItem.Click += new System.EventHandler(this.TargetTextToolStripMenuItem_Click);
             // 
@@ -170,7 +169,7 @@ namespace BackTranslationHelper
             this.sourceRightToLeftToolStripMenuItem,
             this.targetRightToLeftToolStripMenuItem});
             this.displayRighttoleftToolStripMenuItem.Name = "displayRighttoleftToolStripMenuItem";
-            this.displayRighttoleftToolStripMenuItem.Size = new System.Drawing.Size(341, 22);
+            this.displayRighttoleftToolStripMenuItem.Size = new System.Drawing.Size(342, 22);
             this.displayRighttoleftToolStripMenuItem.Text = "&Display right-to-left";
             this.displayRighttoleftToolStripMenuItem.DropDownOpening += new System.EventHandler(this.DisplayRighttoleftToolStripMenuItem_DropDownOpening);
             // 
@@ -196,7 +195,7 @@ namespace BackTranslationHelper
             this.autoSaveToolStripMenuItem.CheckOnClick = true;
             this.autoSaveToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.autoSaveToolStripMenuItem.Name = "autoSaveToolStripMenuItem";
-            this.autoSaveToolStripMenuItem.Size = new System.Drawing.Size(341, 22);
+            this.autoSaveToolStripMenuItem.Size = new System.Drawing.Size(342, 22);
             this.autoSaveToolStripMenuItem.Text = "&Auto-Save";
             this.autoSaveToolStripMenuItem.ToolTipText = "If this is checked, then the translated text changes will be saved when clicking " +
     "the \'Next\' button";
@@ -205,7 +204,7 @@ namespace BackTranslationHelper
             // 
             this.hideColumn1LabelsToolStripMenuItem.CheckOnClick = true;
             this.hideColumn1LabelsToolStripMenuItem.Name = "hideColumn1LabelsToolStripMenuItem";
-            this.hideColumn1LabelsToolStripMenuItem.Size = new System.Drawing.Size(341, 22);
+            this.hideColumn1LabelsToolStripMenuItem.Size = new System.Drawing.Size(342, 22);
             this.hideColumn1LabelsToolStripMenuItem.Text = "&Hide column1 labels";
             this.hideColumn1LabelsToolStripMenuItem.ToolTipText = "Check this menu item to hide the column 1 labels to make more room for the transl" +
     "ated text options";
@@ -215,7 +214,7 @@ namespace BackTranslationHelper
             // 
             this.hideCurrentTargetTextToolStripMenuItem.CheckOnClick = true;
             this.hideCurrentTargetTextToolStripMenuItem.Name = "hideCurrentTargetTextToolStripMenuItem";
-            this.hideCurrentTargetTextToolStripMenuItem.Size = new System.Drawing.Size(341, 22);
+            this.hideCurrentTargetTextToolStripMenuItem.Size = new System.Drawing.Size(342, 22);
             this.hideCurrentTargetTextToolStripMenuItem.Text = "Hide &Current Target Text";
             this.hideCurrentTargetTextToolStripMenuItem.ToolTipText = "Check this menu item to hide the Current Target Text row (e.g. to get more screen" +
     " real estate)";
@@ -225,7 +224,7 @@ namespace BackTranslationHelper
             // 
             this.hideSourceTextToolStripMenuItem.CheckOnClick = true;
             this.hideSourceTextToolStripMenuItem.Name = "hideSourceTextToolStripMenuItem";
-            this.hideSourceTextToolStripMenuItem.Size = new System.Drawing.Size(341, 22);
+            this.hideSourceTextToolStripMenuItem.Size = new System.Drawing.Size(342, 22);
             this.hideSourceTextToolStripMenuItem.Text = "Hide &Source Text";
             this.hideSourceTextToolStripMenuItem.ToolTipText = "Check this menu item to hide the Source Text row (e.g. to get more screen real es" +
     "tate)";
@@ -237,7 +236,7 @@ namespace BackTranslationHelper
             this.SentenceSplittingMenuItem.CheckOnClick = true;
             this.SentenceSplittingMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.SentenceSplittingMenuItem.Name = "SentenceSplittingMenuItem";
-            this.SentenceSplittingMenuItem.Size = new System.Drawing.Size(341, 22);
+            this.SentenceSplittingMenuItem.Size = new System.Drawing.Size(342, 22);
             this.SentenceSplittingMenuItem.Text = "Sentence S&plitting";
             this.SentenceSplittingMenuItem.ToolTipText = resources.GetString("SentenceSplittingMenuItem.ToolTipText");
             this.SentenceSplittingMenuItem.CheckStateChanged += new System.EventHandler(this.SplitSentencesMenuItem_CheckStateChanged);
@@ -245,7 +244,7 @@ namespace BackTranslationHelper
             // AddExampleMenuItem
             // 
             this.AddExampleMenuItem.Name = "AddExampleMenuItem";
-            this.AddExampleMenuItem.Size = new System.Drawing.Size(341, 22);
+            this.AddExampleMenuItem.Size = new System.Drawing.Size(342, 22);
             this.AddExampleMenuItem.Text = "Add &Example";
             this.AddExampleMenuItem.ToolTipText = resources.GetString("AddExampleMenuItem.ToolTipText");
             this.AddExampleMenuItem.Click += new System.EventHandler(this.AddExampleMenuItem_Click);
@@ -253,7 +252,7 @@ namespace BackTranslationHelper
             // PurgeExamplesMenuItem
             // 
             this.PurgeExamplesMenuItem.Name = "PurgeExamplesMenuItem";
-            this.PurgeExamplesMenuItem.Size = new System.Drawing.Size(341, 22);
+            this.PurgeExamplesMenuItem.Size = new System.Drawing.Size(342, 22);
             this.PurgeExamplesMenuItem.Text = "&Purge Examples/Reset Prompt Based Translators";
             this.PurgeExamplesMenuItem.ToolTipText = "For Chat Prompt-based Translators (e.g. Vertex AI or Azure Open AI) click here to" +
     " purge any collected examples or to reset the converter";
@@ -275,14 +274,7 @@ namespace BackTranslationHelper
             this.tableLayoutPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			// It's possible that if this control is edited, the designer will remove these two lines.
-			//    if these two lines are re-added, then the tableLayoutPanel will lose 2 pixels of height
-			//    for every verse we process. Removing them caused that to stop (and it still allows resizing)
-			//    if the form it's in is resized.
-			// Restore and keep this note here too if it is removed, so the next person won't spend hours trying to figure this out too :-)
-			// this.tableLayoutPanel.AutoSize = true;
-			// this.tableLayoutPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.tableLayoutPanel.ColumnCount = 7;
+            this.tableLayoutPanel.ColumnCount = 7;
             this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 108F));
             this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
@@ -412,13 +404,10 @@ namespace BackTranslationHelper
             this.textBoxPossibleTargetTranslation1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.textBoxPossibleTargetTranslation1.Size = new System.Drawing.Size(548, 41);
             this.textBoxPossibleTargetTranslation1.TabIndex = 11;
-			this.textBoxPossibleTargetTranslation1.ContextMenu = contextMenuHideDefault;
-			this.textBoxPossibleTargetTranslation1.PreviewKeyDown += TextBoxPossibleTargetTranslation_PreviewKeyDown;
-			this.textBoxPossibleTargetTranslation1.MouseUp += TextBoxPossibleTargetTranslation_MouseUp;
-			// 
-			// buttonFillTargetTextOption1
-			// 
-			this.buttonFillTargetTextOption1.Image = global::BackTranslationHelper.Properties.Resources.FillDownHS;
+            // 
+            // buttonFillTargetTextOption1
+            // 
+            this.buttonFillTargetTextOption1.Image = global::BackTranslationHelper.Properties.Resources.FillDownHS;
             this.buttonFillTargetTextOption1.Location = new System.Drawing.Point(675, 107);
             this.buttonFillTargetTextOption1.Name = "buttonFillTargetTextOption1";
             this.buttonFillTargetTextOption1.Size = new System.Drawing.Size(23, 23);
@@ -453,13 +442,10 @@ namespace BackTranslationHelper
             this.textBoxPossibleTargetTranslation2.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.textBoxPossibleTargetTranslation2.Size = new System.Drawing.Size(548, 41);
             this.textBoxPossibleTargetTranslation2.TabIndex = 12;
-			this.textBoxPossibleTargetTranslation2.ContextMenu = contextMenuHideDefault;
-			this.textBoxPossibleTargetTranslation2.PreviewKeyDown += TextBoxPossibleTargetTranslation_PreviewKeyDown;
-			this.textBoxPossibleTargetTranslation2.MouseUp += TextBoxPossibleTargetTranslation_MouseUp;
-			// 
-			// buttonFillTargetTextOption2
-			// 
-			this.buttonFillTargetTextOption2.Image = global::BackTranslationHelper.Properties.Resources.FillDownHS;
+            // 
+            // buttonFillTargetTextOption2
+            // 
+            this.buttonFillTargetTextOption2.Image = global::BackTranslationHelper.Properties.Resources.FillDownHS;
             this.buttonFillTargetTextOption2.Location = new System.Drawing.Point(675, 154);
             this.buttonFillTargetTextOption2.Name = "buttonFillTargetTextOption2";
             this.buttonFillTargetTextOption2.Size = new System.Drawing.Size(23, 23);
@@ -493,13 +479,10 @@ namespace BackTranslationHelper
             this.textBoxPossibleTargetTranslation3.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.textBoxPossibleTargetTranslation3.Size = new System.Drawing.Size(548, 41);
             this.textBoxPossibleTargetTranslation3.TabIndex = 13;
-			this.textBoxPossibleTargetTranslation3.ContextMenu = contextMenuHideDefault;
-			this.textBoxPossibleTargetTranslation3.PreviewKeyDown += TextBoxPossibleTargetTranslation_PreviewKeyDown;
-			this.textBoxPossibleTargetTranslation3.MouseUp += TextBoxPossibleTargetTranslation_MouseUp;
-			// 
-			// buttonFillTargetTextOption3
-			// 
-			this.buttonFillTargetTextOption3.Image = global::BackTranslationHelper.Properties.Resources.FillDownHS;
+            // 
+            // buttonFillTargetTextOption3
+            // 
+            this.buttonFillTargetTextOption3.Image = global::BackTranslationHelper.Properties.Resources.FillDownHS;
             this.buttonFillTargetTextOption3.Location = new System.Drawing.Point(675, 201);
             this.buttonFillTargetTextOption3.Name = "buttonFillTargetTextOption3";
             this.buttonFillTargetTextOption3.Size = new System.Drawing.Size(23, 23);
@@ -533,13 +516,10 @@ namespace BackTranslationHelper
             this.textBoxPossibleTargetTranslation4.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.textBoxPossibleTargetTranslation4.Size = new System.Drawing.Size(548, 41);
             this.textBoxPossibleTargetTranslation4.TabIndex = 14;
-			this.textBoxPossibleTargetTranslation4.ContextMenu = contextMenuHideDefault;
-			this.textBoxPossibleTargetTranslation4.PreviewKeyDown += TextBoxPossibleTargetTranslation_PreviewKeyDown;
-			this.textBoxPossibleTargetTranslation4.MouseUp += TextBoxPossibleTargetTranslation_MouseUp;
-			// 
-			// buttonFillTargetTextOption4
-			// 
-			this.buttonFillTargetTextOption4.Image = global::BackTranslationHelper.Properties.Resources.FillDownHS;
+            // 
+            // buttonFillTargetTextOption4
+            // 
+            this.buttonFillTargetTextOption4.Image = global::BackTranslationHelper.Properties.Resources.FillDownHS;
             this.buttonFillTargetTextOption4.Location = new System.Drawing.Point(675, 248);
             this.buttonFillTargetTextOption4.Name = "buttonFillTargetTextOption4";
             this.buttonFillTargetTextOption4.Size = new System.Drawing.Size(23, 23);
@@ -572,11 +552,10 @@ namespace BackTranslationHelper
             this.textBoxTargetBackTranslation.TabIndex = 1;
             this.textBoxTargetBackTranslation.Enter += new System.EventHandler(this.TextBoxTargetBackTranslation_Enter);
             this.textBoxTargetBackTranslation.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.TextBoxTargetBackTranslation_PreviewKeyDown);
-			this.textBoxTargetBackTranslation.TextChanged += TextBoxTargetBackTranslation_TextChanged;
-			// 
-			// progressBar
-			// 
-			this.progressBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            // 
+            // progressBar
+            // 
+            this.progressBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.progressBar.Location = new System.Drawing.Point(13, 351);
             this.progressBar.Name = "progressBar";
@@ -636,20 +615,6 @@ namespace BackTranslationHelper
         "ting out the translated text.");
             this.buttonSkip.UseVisualStyleBackColor = true;
             this.buttonSkip.Click += new System.EventHandler(this.ButtonSkip_Click);
-            // 
-            // buttonSubstitute
-            // 
-            this.buttonSubstitute.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonSubstitute.ContextMenuStrip = this.substitutionContextMenu;
-            this.buttonSubstitute.Location = new System.Drawing.Point(474, 349);
-            this.buttonSubstitute.Name = "buttonSubstitute";
-            this.buttonSubstitute.Size = new System.Drawing.Size(119, 25);
-            this.buttonSubstitute.TabIndex = 11;
-            this.buttonSubstitute.Text = "&Add Substitution";
-            this.toolTip.SetToolTip(this.buttonSubstitute, "Select a word or phrase in the \'Target Translation\' box that you want to configur" +
-        "e a substitute for (think: Find and Replace) and click this button");
-            this.buttonSubstitute.UseVisualStyleBackColor = true;
-            this.buttonSubstitute.Click += new System.EventHandler(this.ButtonSubstitute_Click);
             // 
             // substitutionContextMenu
             // 
@@ -721,9 +686,11 @@ namespace BackTranslationHelper
             this.buttonPauseUpdating.Name = "buttonPauseUpdating";
             this.buttonPauseUpdating.Size = new System.Drawing.Size(30, 30);
             this.buttonPauseUpdating.TabIndex = 3;
-			this.buttonPauseUpdating.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
-			this.toolTip.SetToolTip(this.buttonPauseUpdating, "Toggle this button to pause/restart automatic translation when clicking in another verse in a Paratext Project (i.e. so the new verse doesn't automatically get translated)");
-			this.buttonPauseUpdating.UseVisualStyleBackColor = true;
+            this.buttonPauseUpdating.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.toolTip.SetToolTip(this.buttonPauseUpdating, "Toggle this button to pause/restart automatic translation when clicking in anothe" +
+        "r verse in a Paratext Project (i.e. so the new verse doesn\'t automatically get t" +
+        "ranslated)");
+            this.buttonPauseUpdating.UseVisualStyleBackColor = true;
             this.buttonPauseUpdating.Visible = false;
             this.buttonPauseUpdating.Click += new System.EventHandler(this.ButtonPauseUpdating_Click);
             // 
@@ -731,6 +698,20 @@ namespace BackTranslationHelper
             // 
             this.fontDialog.Font = new System.Drawing.Font("Arial Unicode MS", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.fontDialog.ShowColor = true;
+            // 
+            // buttonSubstitute
+            // 
+            this.buttonSubstitute.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.buttonSubstitute.ContextMenuStrip = this.substitutionContextMenu;
+            this.buttonSubstitute.Location = new System.Drawing.Point(474, 349);
+            this.buttonSubstitute.Name = "buttonSubstitute";
+            this.buttonSubstitute.Size = new System.Drawing.Size(142, 25);
+            this.buttonSubstitute.TabIndex = 11;
+            this.buttonSubstitute.Text = "&Add Substitution";
+            this.toolTip.SetToolTip(this.buttonSubstitute, "Select a word or phrase in the \'Target Translation\' box that you want to configur" +
+        "e a substitute for (think: Find and Replace) and click this button");
+            this.buttonSubstitute.UseVisualStyleBackColor = true;
+            this.buttonSubstitute.Click += new System.EventHandler(this.ButtonSubstitute_Click);
             // 
             // BackTranslationHelperCtrl
             // 
@@ -790,7 +771,7 @@ namespace BackTranslationHelper
         private System.Windows.Forms.TextBox textBoxPossibleTargetTranslation4;
         private System.Windows.Forms.ToolStripMenuItem displayRighttoleftToolStripMenuItem;
         private System.Windows.Forms.ToolStripTextBox toolStripTextBoxStatus;
-        private System.Windows.Forms.Button buttonSubstitute;
+        private SplitButton buttonSubstitute;
         private System.Windows.Forms.ContextMenuStrip substitutionContextMenu;
         private System.Windows.Forms.ToolStripMenuItem addSubtitutionMenuItem;
         private System.Windows.Forms.ToolStripMenuItem findSubstitutionRuleMenuItem;
