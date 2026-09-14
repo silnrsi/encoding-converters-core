@@ -138,9 +138,10 @@ namespace SpellingFixer30
 
         internal VernScriptSystem Init()
         {
-            m_dlgQueryFix = new CorrectSpellingPicker(this);
+			// not implemented yet (not sure what it was for)
+			// m_dlgQueryFix = new CorrectSpellingPicker(this);
 
-            VernScriptSystem sfssp = null;
+			VernScriptSystem sfssp = null;
             try
             {
                 var strVSSFileSpec = VernacularScriptSystemFileSpec;
@@ -1080,7 +1081,7 @@ namespace SpellingFixer30
                 strReplacement = m_mapS2SBad2GoodWords[strBadWord];
 
             var aQuery = new QueryGoodSpelling(Font);
-			if (aQuery.ShowDialog(strBadWord, strReplacement, strBadWord, false) == DialogResult.OK)
+			if (aQuery.ShowDialog(strBadWord, strReplacement, strBadWord, false, false) == DialogResult.OK)
 			{
 				// UPDATE: 2026-04-14: I was passing 'false' for bNoUI, but since this always shows a dialog, it should be yes, right?
 				AssignCorrectSpelling(aQuery.BadSpelling, aQuery.GoodSpelling, bNoUI: true, ContextForReplacement: null);
@@ -1175,16 +1176,17 @@ namespace SpellingFixer30
             bool bFound = false;
             string strWordKey = null;
 
-            // first see if it matches a good value (in which case, the user ought to change it
-            strWordKey = m_mapS2SBad2GoodWords.FirstOrDefault(kvp => kvp.Value == strBadWord).Key;
-            if (!String.IsNullOrEmpty(strWordKey))
+			// first see if it matches a bad value, so we can find the correct rule
+			strWordKey = m_mapS2SBad2GoodWords.FirstOrDefault(kvp => kvp.Value == strBadWord).Key;
+			if (m_mapS2SBad2GoodWords.ContainsKey(strBadWord))
+			{
+				bFound = true;
+				strWordKey = strBadWord;
+			}
+			// else check to see if there's a good value that matches (which means they should probably change that)
+			else if (!String.IsNullOrEmpty(strWordKey))
             {
                 bFound = true;
-            }
-            else if (m_mapS2SBad2GoodWords.ContainsKey(strBadWord))
-            {
-                bFound = true;
-                strWordKey = strBadWord;
             }
             // otherwise, go thru the words one-by-one and see if they're inside the given word (somewhere)
             //  e.g. suppose a rule exists for 'नास' => 'नाश', it will show a change for 'नास-बान' if a rule 
@@ -1212,7 +1214,7 @@ namespace SpellingFixer30
             {
                 var strReplacement = m_mapS2SBad2GoodWords[strWordKey];
                 QueryGoodSpelling aQuery = new QueryGoodSpelling(Font);
-                var res = aQuery.ShowDialog(strWordKey, strReplacement, strWordKey, true);
+                var res = aQuery.ShowDialog(strWordKey, strReplacement, strWordKey, true, true);
                 if ((res == DialogResult.OK) && (strReplacement != aQuery.GoodSpelling))
                 {
                     // means fixed the spelling of the replacement (or bad spelling?)
@@ -1239,7 +1241,7 @@ namespace SpellingFixer30
         /// <summary>
         /// Call this method to bring up a table with the full list of spelling fixes to edit
         /// </summary>
-        public void EditSpellingFixes()
+        public void EditSpellingFixes(bool validate)
         {
             if (m_mapS2SBad2GoodWords.Count == 0)
             {
@@ -1247,49 +1249,47 @@ namespace SpellingFixer30
             }
             else
             {
-                EditDictionaryOrBad2GoodList(false);
+                EditDictionaryOrBad2GoodList(false, validate);
             }
         }
 
-        protected void EditDictionaryOrBad2GoodList(bool bEditKnownGoodList)
+        protected void EditDictionaryOrBad2GoodList(bool bEditKnownGoodList, bool validateBad2GoodList)
         {
-            ViewBadGoodPairsDlg dlg = new ViewBadGoodPairsDlg(this, ref m_mapS2SfwKnownGoodWords, ref m_mapS2SBad2GoodWords, _projectFont, bEditKnownGoodList);
+            ViewBadGoodPairsDlg dlg = new ViewBadGoodPairsDlg(this, ref m_mapS2SfwKnownGoodWords, ref m_mapS2SBad2GoodWords, _projectFont, bEditKnownGoodList, validateBad2GoodList);
             if (dlg.ShowDialog() == DialogResult.OK)
             {
-                m_eSaveNeeded |= (SaveDbFlags.KnownGoodWords | SaveDbFlags.Bad2GoodWords);
+				if (bEditKnownGoodList)
+				{
+					m_eSaveNeeded |= SaveDbFlags.KnownGoodWords;
 
-                // in case the known good list changed, remove any words that were in the Words to Check
-                foreach (string strGoodWord in m_mapS2SfwKnownGoodWords.Keys)
-                    if (m_mapS2SfwWordsToCheck.ContainsKey(strGoodWord))
-                    {
-                        m_mapS2SfwWordsToCheck.Remove(strGoodWord);
-                        m_eSaveNeeded |= SaveDbFlags.CheckWords;
-                    }
+					// in case the known good list changed, remove any words that were in the Words to Check
+					foreach (string strGoodWord in m_mapS2SfwKnownGoodWords.Keys)
+						if (m_mapS2SfwWordsToCheck.ContainsKey(strGoodWord))
+						{
+							m_mapS2SfwWordsToCheck.Remove(strGoodWord);
+							m_eSaveNeeded |= SaveDbFlags.CheckWords;
+						}
+				}
+				else
+				{
+					m_eSaveNeeded |= SaveDbFlags.Bad2GoodWords;
 
-                // all good words in the bad-to-good list must be in the dictionary... (or something
-                //  internal isn't working correctly)
-                bool bDoItAgain = false;
-                do
-                {
-                    bDoItAgain = false;
-                    foreach (KeyValuePair<string, string> kvp in m_mapS2SBad2GoodWords)
-                        if (!m_mapS2SfwKnownGoodWords.ContainsKey((string)kvp.Value))
-                        {
-                            System.Diagnostics.Debug.Assert(false);
+					// all good words in the bad-to-good list should be in the dictionary... (or something
+					//  internal isn't working correctly)
+					foreach (KeyValuePair<string, string> kvp in m_mapS2SBad2GoodWords.Where(kvp => !m_mapS2SfwKnownGoodWords.ContainsKey((string)kvp.Value)))
+					{
+						// System.Diagnostics.Debug.Assert(false);
 
-                            // Nevertheless, something should be done about this situation.
-                            // The most likely scenerio is that it *was* in the dictionary and it was deleted.
-                            // Let's assume that the 'fix' rule is now obsolete and remove it also.
-                            // [can't remove an item from a collection that you're iterating over, so do it in
-                            //  stages--thus the outer do-while loop]
-                            bDoItAgain = true;
-                            m_mapS2SBad2GoodWords.Remove(kvp.Key);
-                            m_eSaveNeeded |= SaveDbFlags.Bad2GoodWords;
-                            break;
-                        }
-                } while (bDoItAgain);
+						// Nevertheless, something should be done about this situation.
+						// The most likely scenerio is that it *was* in the dictionary and it was deleted.
+						// Let's assume that the 'fix' rule is now obsolete and remove it also.
+						// BE: UPDATE (2025-11-08): don't remove it from the b2g list; rather add it to the dictionary
+						AddToDictionary(kvp.Value, null, dontSave: true);
+						m_eSaveNeeded |= SaveDbFlags.KnownGoodWords;
+					}
+				}
 
-                SaveProjectData();
+				SaveProjectData();
             }
         }
 
@@ -1304,7 +1304,7 @@ namespace SpellingFixer30
             }
             else
             {
-                EditDictionaryOrBad2GoodList(true);
+                EditDictionaryOrBad2GoodList(true, false);
             }
         }
 

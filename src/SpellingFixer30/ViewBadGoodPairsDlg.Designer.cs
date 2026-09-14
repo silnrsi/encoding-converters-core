@@ -35,6 +35,7 @@ namespace SpellingFixer30
             this.buttonOK = new System.Windows.Forms.Button();
             this.buttonCancel = new System.Windows.Forms.Button();
             this.helpProvider = new System.Windows.Forms.HelpProvider();
+            this.labelUniCodes = new System.Windows.Forms.Label();
             this.tableLayoutPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).BeginInit();
             this.SuspendLayout();
@@ -44,16 +45,18 @@ namespace SpellingFixer30
             this.tableLayoutPanel.ColumnCount = 2;
             this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel.Controls.Add(this.labelUniCodes, 0, 1);
             this.tableLayoutPanel.Controls.Add(this.dataGridView, 0, 0);
-            this.tableLayoutPanel.Controls.Add(this.buttonOK, 0, 1);
-            this.tableLayoutPanel.Controls.Add(this.buttonCancel, 1, 1);
+            this.tableLayoutPanel.Controls.Add(this.buttonOK, 0, 2);
+            this.tableLayoutPanel.Controls.Add(this.buttonCancel, 1, 2);
             this.tableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel.Name = "tableLayoutPanel";
-            this.tableLayoutPanel.RowCount = 2;
+            this.tableLayoutPanel.RowCount = 3;
             this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 100F));
             this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel.Size = new System.Drawing.Size(381, 328);
+            this.tableLayoutPanel.Size = new System.Drawing.Size(381, 470);
             this.tableLayoutPanel.TabIndex = 0;
             // 
             // dataGridView
@@ -69,14 +72,14 @@ namespace SpellingFixer30
             this.dataGridView.Location = new System.Drawing.Point(3, 3);
             this.dataGridView.Name = "dataGridView";
             this.dataGridView.RowHeadersWidth = 26;
-            this.dataGridView.Size = new System.Drawing.Size(375, 293);
+            this.dataGridView.Size = new System.Drawing.Size(375, 335);
             this.dataGridView.TabIndex = 0;
-            this.dataGridView.UserAddedRow += new System.Windows.Forms.DataGridViewRowEventHandler(this.dataGridView_UserAddedRow);
             this.dataGridView.CellBeginEdit += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.dataGridView_CellBeginEdit);
-            this.dataGridView.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.dataGridView_PreviewKeyDown);
-            this.dataGridView.CellMouseUp += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView_CellMouseUp);
-            this.dataGridView.UserDeletedRow += new System.Windows.Forms.DataGridViewRowEventHandler(this.dataGridView_UserDeletedRow);
             this.dataGridView.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView_CellEndEdit);
+            this.dataGridView.CellMouseUp += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView_CellMouseUp);
+            this.dataGridView.UserAddedRow += new System.Windows.Forms.DataGridViewRowEventHandler(this.dataGridView_UserAddedRow);
+            this.dataGridView.UserDeletedRow += new System.Windows.Forms.DataGridViewRowEventHandler(this.dataGridView_UserDeletedRow);
+            this.dataGridView.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.dataGridView_PreviewKeyDown);
             // 
             // ColumnBadSpelling
             // 
@@ -92,7 +95,7 @@ namespace SpellingFixer30
             // 
             this.buttonOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonOK.Enabled = false;
-            this.buttonOK.Location = new System.Drawing.Point(112, 302);
+            this.buttonOK.Location = new System.Drawing.Point(112, 444);
             this.buttonOK.Name = "buttonOK";
             this.buttonOK.Size = new System.Drawing.Size(75, 23);
             this.buttonOK.TabIndex = 1;
@@ -104,7 +107,7 @@ namespace SpellingFixer30
             // 
             this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonCancel.Location = new System.Drawing.Point(193, 302);
+            this.buttonCancel.Location = new System.Drawing.Point(193, 444);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(75, 23);
             this.buttonCancel.TabIndex = 2;
@@ -112,13 +115,27 @@ namespace SpellingFixer30
             this.buttonCancel.UseVisualStyleBackColor = true;
             this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
             // 
+            // labelUniCodes
+            // 
+            this.labelUniCodes.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.tableLayoutPanel.SetColumnSpan(this.labelUniCodes, 2);
+            this.labelUniCodes.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.labelUniCodes.Location = new System.Drawing.Point(3, 344);
+            this.labelUniCodes.Margin = new System.Windows.Forms.Padding(3);
+            this.labelUniCodes.Name = "labelUniCodes";
+            this.labelUniCodes.Padding = new System.Windows.Forms.Padding(3);
+            this.labelUniCodes.Size = new System.Drawing.Size(375, 94);
+            this.labelUniCodes.TabIndex = 6;
+            this.labelUniCodes.Text = "Left click on words above to see the character values of the last two words click" +
+    "ed here. Press the Ctrl key while clicking to keep all previous values";
+            // 
             // ViewBadGoodPairsDlg
             // 
             this.AcceptButton = this.buttonOK;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonCancel;
-            this.ClientSize = new System.Drawing.Size(381, 328);
+            this.ClientSize = new System.Drawing.Size(381, 470);
             this.Controls.Add(this.tableLayoutPanel);
             this.HelpButton = true;
             this.MaximizeBox = false;
@@ -140,5 +157,6 @@ namespace SpellingFixer30
         private System.Windows.Forms.Button buttonOK;
         private System.Windows.Forms.Button buttonCancel;
         private System.Windows.Forms.HelpProvider helpProvider;
-    }
+		private System.Windows.Forms.Label labelUniCodes;
+	}
 }

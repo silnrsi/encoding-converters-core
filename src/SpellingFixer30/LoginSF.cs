@@ -373,9 +373,14 @@ namespace SpellingFixer30
 
             if (bRewriteCCTable)    // we are going to continue using the old file... so we must re-write it.
             {
-                // if it was legacy encoded, then we need to convert the data to narrow using
-                //  the code page the user specified (or we got out of the repository)
-                var enc = new UTF8Encoding();
+				// but make sure the file exists first (otherwise StreamReader will throw an exception)
+				//	This can happen if the user edits a newly created project
+				if (!File.Exists(strCCTableSpec))
+					LoginSF.CreateCCTable(strCCTableSpec, strEncConverterName, m_strNonWordCharacters);
+
+				// if it was legacy encoded, then we need to convert the data to narrow using
+				//  the code page the user specified (or we got out of the repository)
+				var enc = new UTF8Encoding();
 
                 if (SpellingFixer.InitializeDataTableFromCCTable(strCCTableSpec, enc, m_strWordBoundaryDelimiter, out DataTable myTable))
                 {

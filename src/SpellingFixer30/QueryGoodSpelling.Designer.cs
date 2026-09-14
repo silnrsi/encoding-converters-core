@@ -95,7 +95,8 @@ namespace SpellingFixer30
             // 
             this.labelUniCodesLhs.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.tableLayoutPanel.SetColumnSpan(this.labelUniCodesLhs, 5);
-            this.helpProvider.SetHelpString(this.labelUniCodesLhs, "This area shows the Unicode code point values for the characters in the box above" +
+			this.labelUniCodesLhs.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.helpProvider.SetHelpString(this.labelUniCodesLhs, "This area shows the Unicode code point values for the characters in the box above" +
         " which has focus. You can use this to see hidden characters (e.g. zero width joi" +
         "ner).");
             this.labelUniCodesLhs.Location = new System.Drawing.Point(3, 55);
@@ -222,7 +223,8 @@ namespace SpellingFixer30
             // 
             this.labelUniCodesRhs.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.tableLayoutPanel.SetColumnSpan(this.labelUniCodesRhs, 5);
-            this.labelUniCodesRhs.Location = new System.Drawing.Point(3, 136);
+			this.labelUniCodesRhs.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.labelUniCodesRhs.Location = new System.Drawing.Point(3, 136);
             this.labelUniCodesRhs.Margin = new System.Windows.Forms.Padding(3);
             this.labelUniCodesRhs.Name = "labelUniCodesRhs";
             this.labelUniCodesRhs.Padding = new System.Windows.Forms.Padding(3);

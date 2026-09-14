@@ -1,8 +1,11 @@
 // #define UsingJump2Toolbox
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
@@ -188,6 +191,44 @@ namespace SpellingFixer30
 
         protected void SetSelectorCellG2B(DataGridViewRow theRow, bool bUpdateStats)
         {
+            // if the supposed good form is already a bad form or if the supposed bad form
+            //  is already a good form, then the user should be warned
+            var sfwGood = (SpellFixerWord)theRow.Cells[cstrVernLhs].Tag;
+            var sfwBad = (SpellFixerWord)theRow.Cells[cstrVernRhs].Tag;
+            var transitiveBadSpelling = string.Empty;
+
+            if (m_mapBad2GoodWords.ContainsKey(sfwGood.Value))
+            {
+                var transitiveGoodSpelling = m_mapBad2GoodWords[sfwGood.Value];
+                var res = MessageBox.Show(
+                    $"The 'good' word '{sfwGood.Value}' is already assigned as a bad spelling for the good spelling '{transitiveGoodSpelling}'.\n\nClick 'Yes' to copy it to the clipboard so you can edit the Good/Bad pair and paste it as the correct Good spelling.",
+                    "Warning: Good Spelling Already Assigned as Bad",
+                    MessageBoxButtons.YesNoCancel,
+                    MessageBoxIcon.Warning);
+                if (res == DialogResult.Yes)
+                {
+                    Clipboard.SetText(transitiveGoodSpelling);
+                    return;
+                }
+                else if (res == DialogResult.Cancel)
+                    return;
+            }
+            else if (!String.IsNullOrEmpty(transitiveBadSpelling = m_mapBad2GoodWords.FirstOrDefault(b2g => b2g.Value == sfwBad.Value).Key))
+            {
+                var res = MessageBox.Show(
+                    $"The 'bad' word '{sfwBad.Value}' is already assigned as the good spelling for another (badly spelled) word '{transitiveBadSpelling}'.\n\nClick 'Yes' to copy the good spelling word to the clipboard and edit the other spelling correction so you can correct its Good spelling.",
+                    "Warning: Bad Spelling Already Assigned as Good",
+                    MessageBoxButtons.YesNoCancel,
+                    MessageBoxIcon.Warning);
+                if (res == DialogResult.Yes)
+                {
+                    Clipboard.SetText(transitiveBadSpelling);
+                    return;
+                }
+                else if (res == DialogResult.Cancel)
+                    return;
+            }
+
             theRow.Cells[cstrSelector].Value = cstrG2BValue;
             theRow.Cells[cstrVernLhs].Style.ForeColor = colorGood;
             theRow.Cells[cstrVernRhs].Style.ForeColor = colorBad;
@@ -357,7 +398,7 @@ namespace SpellingFixer30
                         strGoodValue = sfwBad.Value;
 
                     QueryGoodSpelling aQuery = new QueryGoodSpelling(m_project.Font);
-                    if (aQuery.ShowDialog(sfwBad.Value, strGoodValue, sfwBad.Value, false) == DialogResult.OK)
+                    if (aQuery.ShowDialog(sfwBad.Value, strGoodValue, sfwBad.Value, false, false) == DialogResult.OK)
                     {
                         // check in case they changed the bad spelling as well...
                         if (aQuery.BadSpelling != sfwBad.Value)
@@ -1040,6 +1081,32 @@ namespace SpellingFixer30
                 Properties.Settings.Default.BadColor = colorBad;
                 Properties.Settings.Default.Save();
                 UpdateColors();
+            }
+        }
+
+        // opens the help document (PDF) in the user's default PDF viewer rather than
+        //  embedding a viewer in the dialog. Per the installer sources (silconverters repo:
+        //  Installer\SFM Converter MM[\64bit]\SFMConverterMM_MergeModule.wxs and
+        //  Installer\SpellFixerEcMM\SpellFixerEc_MergeModule.wxs), this PDF and
+        //  SpellingFixer30.dll both land under the same "MergeRedirectFolder" (i.e. the same
+        //  INSTALLDIR), in a sibling "Help" subfolder - regardless of whether this dll ends up
+        //  hosted by SFMConv.exe (Bulk SFM Converter) or loaded in-process as a COM component
+        //  (e.g. by Word via the SpellFixer.dot macro). So resolve it relative to this
+        //  assembly's own location rather than Application.StartupPath (which would instead give
+        //  the host process's exe folder, e.g. WINWORD.EXE's, in the COM-hosted case).
+        private const string cstrHelpFileName = "Help for ConsistentSpellFixer.pdf";
+
+        private void helpToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string strAssemblyDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            string strHelpFilePath = Path.Combine(strAssemblyDir ?? String.Empty, "Help", cstrHelpFileName);
+            try
+            {
+                Process.Start(new ProcessStartInfo(strHelpFilePath) { UseShellExecute = true });
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(String.Format("Couldn't open Help document '{0}'! Reason: {1}", strHelpFilePath, ex.Message));
             }
         }
     }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -103,50 +104,81 @@ namespace SpellingFixer30
             if (String.IsNullOrEmpty(strPunctuation))
                 return null;
 
-            else
-            {
-                // initialize it so that *we* take care of delimiting the punctuation
-                UserDefinedPunctuation = false;
+            // initialize it so that *we* take care of delimiting the punctuation
+            UserDefinedPunctuation = false;
 
-                // the first chunk of this should be the fixed punctuation
-                int nIndex = strPunctuation.IndexOf(SpellingFixer.GetDefaultPunctuation);
-                if ((nIndex == 0) && (strPunctuation.Length <= SpellingFixer.GetDefaultPunctuation.Length))
+            // rather than assuming the additional punctuation was appended after an intact copy
+            // of the default punctuation list, parse out every token (default and additional
+            // alike) and diff them against the default list, since the user's additions might
+            // have ended up interspersed in the middle of the default list rather than after it.
+            var defaultTokens = TokenizePunctuationList(SpellingFixer.GetDefaultPunctuation);
+            var givenTokens = TokenizePunctuationList(strPunctuation);
+
+            // consume one occurrence of each default token out of the given tokens; whatever's
+            // left over in givenTokens is the user's additional punctuation, and whatever's left
+            // over in defaultTokens means the default list wasn't fully present, i.e. this isn't
+            // the standard 'default tokens + additions' format at all -- it's free-form text that
+            // the user is responsible for delimiting him/herself.
+            var remainingDefaultTokens = new List<string>(defaultTokens);
+            var additionalTokens = new List<string>();
+            foreach (var token in givenTokens)
+            {
+                int nIndex = remainingDefaultTokens.IndexOf(token);
+                if (nIndex != -1)
+                    remainingDefaultTokens.RemoveAt(nIndex);
+                else
+                    additionalTokens.Add(token);
+            }
+
+            if (remainingDefaultTokens.Count > 0)
+            {
+                UserDefinedPunctuation = true;
+                return strPunctuation;  // in this case, the user is responsible for delimiting the string him/herself
+            }
+
+            // if this is all there is, then the 'decoded' string is nothing.
+            if (additionalTokens.Count == 0)
+                return null;
+
+            return DecodePunctuationForCCEx(String.Join(" ", additionalTokens));
+        }
+
+        /// <summary>
+        /// Splits a space-delimited punctuation list into its individual tokens, e.g.
+        /// "'.' tab nl '?'" -> [ "'.'", "tab", "nl", "'?'" ]. Unlike a plain String.Split(' '),
+        /// this keeps a quoted token intact even when it quotes a literal space character (e.g.
+        /// the "' '" token that represents the space character itself).
+        /// </summary>
+        private static List<string> TokenizePunctuationList(string strPunctuation)
+        {
+            var tokens = new List<string>();
+            int i = 0;
+            while (i < strPunctuation.Length)
+            {
+                // skip the space(s) delimiting tokens
+                while ((i < strPunctuation.Length) && (strPunctuation[i] == ' '))
+                    i++;
+                if (i >= strPunctuation.Length)
+                    break;
+
+                int nStart = i;
+                char ch = strPunctuation[i];
+                if ((ch == '\'') || (ch == '\"'))
                 {
-                    // if this is all there is, then the 'decoded' string is nothing.
-                    return null;
+                    // quoted token: consume through the matching closing quote, which may itself
+                    // enclose a literal delimiter space (e.g. ' ' for the space character)
+                    int nClose = strPunctuation.IndexOf(ch, i + 1);
+                    i = (nClose == -1) ? strPunctuation.Length : nClose + 1;
                 }
                 else
                 {
-                    // pre-v3
-                    nIndex = strPunctuation.IndexOf(SpellingFixer.cstrDefaultPunctuationAndWhitespace);
-                    if (nIndex == 0)
-                    {
-                        // if this is all there is, then the 'decoded' string is nothing.
-                        int nLength = SpellingFixer.cstrDefaultPunctuationAndWhitespace.Length;
-                        if (strPunctuation.Length <= nLength)
-                            return null;
-
-                        // otherwise, process only the extra
-                        strPunctuation = strPunctuation.Substring(nLength);
-                        if (strPunctuation.IndexOf(SpellingFixer.cstrV3DefaultPunctuationAndWhitespaceAdds) == 0)
-                        {
-                            nLength = SpellingFixer.cstrV3DefaultPunctuationAndWhitespaceAdds.Length;
-                            if (strPunctuation.Length <= nLength)
-                                return null;
-                            strPunctuation = strPunctuation.Substring(nLength + 1);
-                        }
-                        else
-                            strPunctuation = strPunctuation.Substring(1);
-                    }
-                    else
-                    {
-                        UserDefinedPunctuation = true;
-                        return strPunctuation;  // in this case, the user is responsible for delimiting the string him/herself
-                    }
+                    // bare word token (e.g. "tab" or "nl"): consume through the next delimiter
+                    while ((i < strPunctuation.Length) && (strPunctuation[i] != ' '))
+                        i++;
                 }
+                tokens.Add(strPunctuation.Substring(nStart, i - nStart));
             }
-
-            return DecodePunctuationForCCEx(strPunctuation);
+            return tokens;
         }
 
         private string DecodePunctuationForCCEx(string strPunctuation)

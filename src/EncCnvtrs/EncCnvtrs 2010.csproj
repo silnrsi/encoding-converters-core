@@ -63,9 +63,7 @@
          expected and harmless when not elevated (production registration is the WiX merge modules'
          job either way), so it's best-effort (warns, doesn't fail the build) and Debug-only,
          matching this project's prior RegisterForComInterop scoping. -->
-    <Exec Command="&quot;$(_RegAsmToolPath)&quot; &quot;$(TargetPath)&quot; /codebase /tlb:&quot;$(TargetDir)$(TargetName).tlb&quot;"
-          ContinueOnError="WarnAndContinue"
-          Condition="'$(Configuration)'=='Debug'" />
+    <Exec Command="&quot;$(_RegAsmToolPath)&quot; &quot;$(TargetPath)&quot; /codebase /tlb:&quot;$(TargetDir)$(TargetName).tlb&quot;" ContinueOnError="WarnAndContinue" Condition="'$(Configuration)'=='Debug'" />
   </Target>
 
   <!-- Runtime plugin-discovery data (EC\Plugins, Help, MapsTables, redist DLLs) - was on ECInterfaces
@@ -84,15 +82,7 @@
          MSB3073 with an empty-string TargetDir), so without this guard the outer pass runs this target
          too and fails. ExportAndRegisterTypeLibrary above is naturally immune since its own TFM
          equality check already evaluates false when $(TargetFramework) is empty. -->
-    <Exec Command="xcopy /s /y &quot;$(SolutionDir)redist\EC&quot; &quot;$(TargetDir)EC\&quot;
-xcopy /s /y &quot;$(SolutionDir)redist\Help&quot; &quot;$(TargetDir)Help\&quot;
-xcopy /s /y &quot;$(SolutionDir)redist\MapsTables&quot; &quot;$(TargetDir)MapsTables\&quot;
-xcopy /y &quot;$(SolutionDir)redist&quot; &quot;$(TargetDir)&quot;
-if $(Platform) == x64 (
-xcopy /y &quot;$(SolutionDir)redist/64bit&quot; &quot;$(TargetDir)&quot;
-) ELSE (
-xcopy /y &quot;$(SolutionDir)redist/32bit&quot; &quot;$(TargetDir)&quot;
-)" />
+    <Exec Command="xcopy /s /y &quot;$(SolutionDir)redist\EC&quot; &quot;$(TargetDir)EC\&quot;&#xD;&#xA;xcopy /s /y &quot;$(SolutionDir)redist\Help&quot; &quot;$(TargetDir)Help\&quot;&#xD;&#xA;xcopy /s /y &quot;$(SolutionDir)redist\MapsTables&quot; &quot;$(TargetDir)MapsTables\&quot;&#xD;&#xA;xcopy /y &quot;$(SolutionDir)redist&quot; &quot;$(TargetDir)&quot;&#xD;&#xA;if $(Platform) == x64 (&#xD;&#xA;xcopy /y &quot;$(SolutionDir)redist/64bit&quot; &quot;$(TargetDir)&quot;&#xD;&#xA;) ELSE (&#xD;&#xA;xcopy /y &quot;$(SolutionDir)redist/32bit&quot; &quot;$(TargetDir)&quot;&#xD;&#xA;)" />
   </Target>
 
   <PropertyGroup Condition="'$(TargetFramework)'=='net9.0-windows'">
@@ -153,9 +143,7 @@ xcopy /y &quot;$(SolutionDir)redist/32bit&quot; &quot;$(TargetDir)&quot;
     <Compile Include="AutoConfigDialog.Designer.cs">
       <DependentUpon>AutoConfigDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="CmpdAutoConfigDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="CmpdAutoConfigDialog.cs" />
     <Compile Include="CmpdAutoConfigDialog.Designer.cs">
       <DependentUpon>CmpdAutoConfigDialog.cs</DependentUpon>
     </Compile>
@@ -163,9 +151,7 @@ xcopy /y &quot;$(SolutionDir)redist/32bit&quot; &quot;$(TargetDir)&quot;
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="CmpdEncConverterConfig.cs" />
-    <Compile Include="CpAutoConfigDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="CpAutoConfigDialog.cs" />
     <Compile Include="CpAutoConfigDialog.Designer.cs">
       <DependentUpon>CpAutoConfigDialog.cs</DependentUpon>
     </Compile>
@@ -190,9 +176,7 @@ xcopy /y &quot;$(SolutionDir)redist/32bit&quot; &quot;$(TargetDir)&quot;
     <Compile Include="ExeEncConverter.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="FallbackAutoConfigDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="FallbackAutoConfigDialog.cs" />
     <Compile Include="FallbackAutoConfigDialog.Designer.cs">
       <DependentUpon>FallbackAutoConfigDialog.cs</DependentUpon>
     </Compile>
@@ -230,9 +214,7 @@ xcopy /y &quot;$(SolutionDir)redist/32bit&quot; &quot;$(TargetDir)&quot;
     <Compile Include="ImplTypeList.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="MetaCmpdAutoConfigDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="MetaCmpdAutoConfigDialog.cs" />
     <Compile Include="MetaCmpdAutoConfigDialog.Designer.cs">
       <DependentUpon>MetaCmpdAutoConfigDialog.cs</DependentUpon>
     </Compile>

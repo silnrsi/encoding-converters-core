@@ -26,7 +26,7 @@ namespace SpellingFixer30
             helpProvider.SetHelpString(this.textBoxReplacement, Properties.Resources.textBoxReplacementHelp);
         }
 
-        public DialogResult ShowDialog(string strBadWord, string strReplacement, string strOriginalWord, bool bShowDeleteAndSwapWordButtons)
+        public DialogResult ShowDialog(string strBadWord, string strReplacement, string strOriginalWord, bool bShowDelete, bool bShowSwapWords)
         {
             textBoxBadWord.Text = strBadWord;
             textBoxReplacement.Text = strReplacement;
@@ -34,12 +34,12 @@ namespace SpellingFixer30
             textBoxReplacement.Focus();
             textBoxReplacement.SelectAll();
 
-            this.buttonDelete.Visible = bShowDeleteAndSwapWordButtons;
-			this.buttonSwapWords.Visible = bShowDeleteAndSwapWordButtons;
+            this.buttonDelete.Visible = bShowDelete;
+			this.buttonSwapWords.Visible = bShowSwapWords;
 
             if (strBadWord != strReplacement)
             {
-                this.Text = bShowDeleteAndSwapWordButtons ? "Existing Replacement Rule" : "Add New Replacement Rule";
+                this.Text = bShowDelete ? "Existing Replacement Rule" : "Add New Replacement Rule";
                 if (!String.IsNullOrEmpty(strOriginalWord))
                 {
                     this.labelOrigReasonLabel.Visible = true;

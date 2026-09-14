@@ -650,8 +650,8 @@ namespace SpellingFixer30
 
         internal static StreamReader InitReaderPastHeader(string strConverterSpec, Encoding enc)
         {
-            // get a stream writer for these encoding and append
-            StreamReader sr = new StreamReader(strConverterSpec, enc);
+			// get a stream writer for these encoding and append
+			StreamReader sr = new StreamReader(strConverterSpec, enc);
 
             // skip past the header lines
             string line = null;

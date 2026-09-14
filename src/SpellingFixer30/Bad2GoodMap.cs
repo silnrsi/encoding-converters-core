@@ -122,10 +122,17 @@ namespace SpellingFixer30
                             if ((nRhsLeftIdx != -1) && (nRhsRightIdx != -1) && ((nRhsRightIdx - nRhsLeftIdx) < line.Length))
                             {
                                 string strRhs = line.Substring(nRhsLeftIdx, nRhsRightIdx - nRhsLeftIdx);
-                                base.Add(strLhs, strRhs);
-                            }
-                        }
-                    }
+								try
+								{
+									base.Add(strLhs, strRhs);
+							    }
+								catch (Exception ex)
+								{
+									System.Diagnostics.Debug.WriteLine("Error adding spelling substitution rule (already exists): " + ex.Message);
+								}
+							}
+						}
+					}
                     sr.Close();
                 }
             }

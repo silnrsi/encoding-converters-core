@@ -219,8 +219,11 @@ namespace SpellingFixer30
             int nIndex = checkedListBoxProjectNames.IndexFromPoint(m_ptRightClicked);
             if (nIndex >= 0)
             {
-                try
-                {
+				if (SelectedProject == null)
+					checkedListBoxProjectNames.SetItemCheckState(nIndex, CheckState.Checked);
+				System.Diagnostics.Debug.Assert(SelectedProject != null);
+				try
+				{
                     SelectedProject.ResetCheckList();
                 }
                 catch (Exception ex)
@@ -235,8 +238,11 @@ namespace SpellingFixer30
             int nIndex = checkedListBoxProjectNames.IndexFromPoint(m_ptRightClicked);
             if (nIndex >= 0)
             {
-                try
-                {
+				if (SelectedProject == null)
+					checkedListBoxProjectNames.SetItemCheckState(nIndex, CheckState.Checked);
+				System.Diagnostics.Debug.Assert(SelectedProject != null);
+				try
+				{
                     SelectedProject.EditDictionary();
                 }
                 catch (Exception ex)
@@ -248,12 +254,34 @@ namespace SpellingFixer30
 
         private void editListOfSpellingFixToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            int nIndex = checkedListBoxProjectNames.IndexFromPoint(m_ptRightClicked);
+			int nIndex = checkedListBoxProjectNames.IndexFromPoint(m_ptRightClicked);
+			if (nIndex >= 0)
+			{
+				if (SelectedProject == null)
+					checkedListBoxProjectNames.SetItemCheckState(nIndex, CheckState.Checked);
+				System.Diagnostics.Debug.Assert(SelectedProject != null);
+				try
+				{
+					SelectedProject.EditSpellingFixes(false);
+				}
+				catch (Exception ex)
+				{
+					MessageBox.Show(ex.Message, CscProject.ApplicationCaption);
+				}
+			}
+		}
+
+		private void validateSpellingFixesToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			int nIndex = checkedListBoxProjectNames.IndexFromPoint(m_ptRightClicked);
             if (nIndex >= 0)
             {
-                try
-                {
-                    SelectedProject.EditSpellingFixes();
+				if (SelectedProject == null)
+					checkedListBoxProjectNames.SetItemCheckState(nIndex, CheckState.Checked);
+				System.Diagnostics.Debug.Assert(SelectedProject != null);
+				try
+				{
+                    SelectedProject.EditSpellingFixes(true);
                 }
                 catch (Exception ex)
                 {

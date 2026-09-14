@@ -54,6 +54,7 @@ namespace SpellingFixer30
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.setCorrectSpellingColorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.setIncorrectSpellingColorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.colorDialog = new System.Windows.Forms.ColorDialog();
             this.tableLayoutPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewCorrectFormPicker)).BeginInit();
@@ -209,7 +210,8 @@ namespace SpellingFixer30
             // 
             this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
-            this.viewToolStripMenuItem});
+            this.viewToolStripMenuItem,
+            this.helpToolStripMenuItem});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
             this.menuStrip.Size = new System.Drawing.Size(567, 24);
@@ -308,7 +310,15 @@ namespace SpellingFixer30
             this.setIncorrectSpellingColorToolStripMenuItem.Size = new System.Drawing.Size(217, 22);
             this.setIncorrectSpellingColorToolStripMenuItem.Text = "Set &Incorrect Spelling Color";
             this.setIncorrectSpellingColorToolStripMenuItem.Click += new System.EventHandler(this.setIncorrectSpellingColorToolStripMenuItem_Click);
-            // 
+            //
+            // helpToolStripMenuItem
+            //
+            this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
+            this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
+            this.helpToolStripMenuItem.Text = "&Help";
+            this.helpToolStripMenuItem.ToolTipText = "Open the Consistent Spelling Fixer help document";
+            this.helpToolStripMenuItem.Click += new System.EventHandler(this.helpToolStripMenuItem_Click);
+            //
             // colorDialog
             // 
             this.colorDialog.SolidColorOnly = true;
@@ -357,6 +367,7 @@ namespace SpellingFixer30
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripMenuItem setCorrectSpellingColorToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem setIncorrectSpellingColorToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
         private System.Windows.Forms.ColorDialog colorDialog;
         private System.Windows.Forms.Label labelInconsistencies;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnVernacularLhs;

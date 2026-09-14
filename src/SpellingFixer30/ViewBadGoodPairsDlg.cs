@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
@@ -13,8 +14,9 @@ namespace SpellingFixer30
 		internal Bad2GoodMap m_mapBad2Good = null;
         internal KnownGoodWordList m_mapWhiteList = null;
         internal bool m_bEditingWhiteList = false;
+		internal bool m_bValidateBad2GoodList = false;
 
-        internal CscProject m_project;
+		internal CscProject m_project;
 
         const int cnBadSpelling = 0;
         const int cnGoodSpelling = 1;
@@ -33,7 +35,7 @@ namespace SpellingFixer30
         }
 
         internal ViewBadGoodPairsDlg(CscProject project, ref KnownGoodWordList mapWhiteList, 
-            ref Bad2GoodMap mapBad2Good, Font font, bool bEditingWhiteList)
+            ref Bad2GoodMap mapBad2Good, Font font, bool bEditingWhiteList, bool validateBad2GoodList)
         {
             InitializeComponent();
             
@@ -41,8 +43,9 @@ namespace SpellingFixer30
             m_mapWhiteList = mapWhiteList;
             m_mapBad2Good = mapBad2Good;
             m_bEditingWhiteList = bEditingWhiteList;
+			m_bValidateBad2GoodList = validateBad2GoodList;
 
-            this.dataGridView.RowsDefaultCellStyle.Font = font;
+			this.dataGridView.RowsDefaultCellStyle.Font = font;
             dataGridView.RowTemplate.Height = font.Height + 6;   // 6 for padding
 
             if (bEditingWhiteList)
@@ -66,14 +69,37 @@ namespace SpellingFixer30
 
                 mapBad2Good.CheckForOutOfDate();
                 object[] ao = new object[2];
-                foreach (KeyValuePair<string,string> kvp in mapBad2Good)
-                {
-                    ao[cnBadSpelling] = kvp.Key;
-                    ao[cnGoodSpelling] = kvp.Value;
-                    dataGridView.Rows.Add(ao);
-                }
-            }
-        }
+
+
+				if (validateBad2GoodList)
+				{
+					var badSpellings = new HashSet<string>(mapBad2Good.Keys, StringComparer.Ordinal);
+
+					foreach (KeyValuePair<string, string> kvp in mapBad2Good.Where(kvp => badSpellings.Contains(kvp.Value) && (kvp.Key != kvp.Value)))
+					{
+						// this row is for the case where the 'good' spelled word is a bad word in another rule
+						ao[cnBadSpelling] = kvp.Key;
+						ao[cnGoodSpelling] = kvp.Value;
+						dataGridView.Rows.Add(ao);
+
+						// this is that other rule where the good word here is the bad word
+						var kvpOther = mapBad2Good[kvp.Value];
+						ao[cnBadSpelling] = kvp.Value;
+						ao[cnGoodSpelling] = kvpOther;
+						dataGridView.Rows.Add(ao);
+					}
+				}
+				else
+				{
+					foreach (KeyValuePair<string, string> kvp in mapBad2Good)
+					{
+						ao[cnBadSpelling] = kvp.Key;
+						ao[cnGoodSpelling] = kvp.Value;
+						dataGridView.Rows.Add(ao);
+					}
+				}
+			}
+		}
 
         protected bool EditingDictionary
         {
@@ -298,12 +324,21 @@ namespace SpellingFixer30
 
         private void dataGridView_CellMouseUp(object sender, DataGridViewCellMouseEventArgs e)
         {
-            if ((e.RowIndex < 0) || (e.RowIndex >= dataGridView.Rows.Count)
-                || (e.ColumnIndex < 0) || (e.ColumnIndex >= dataGridView.Columns.Count)
-                || (EditingDictionary)
-                || (e.Button != MouseButtons.Right))
-                return;
+			bool ctrlPressed = (Control.ModifierKeys & Keys.Control) == Keys.Control;
 
+			if ((e.RowIndex < 0) || (e.RowIndex >= dataGridView.Rows.Count)
+				|| (e.ColumnIndex < 0) || (e.ColumnIndex >= dataGridView.Columns.Count))
+				return;
+
+			var value = (string)dataGridView.Rows[e.RowIndex].Cells[e.ColumnIndex].Value;
+			if (!String.IsNullOrEmpty(value))
+			{
+				AppendUniCodes(value, ctrlPressed);
+			}
+
+			if (EditingDictionary || (e.Button != MouseButtons.Right))
+				return;
+				
             try
             {
                 ProcessCellClick(e);
@@ -396,7 +431,7 @@ namespace SpellingFixer30
             string strGoodValue = (string)theGoodCell.Value;
 
             QueryGoodSpelling aQuery = new QueryGoodSpelling(dataGridView.RowsDefaultCellStyle.Font);
-            DialogResult res = aQuery.ShowDialog(strBadValue, strGoodValue, strBadValue, (strBadValue != null));
+            DialogResult res = aQuery.ShowDialog(strBadValue, strGoodValue, strBadValue, !String.IsNullOrEmpty(strBadValue), false);
             if (res == DialogResult.Abort)
             {
                 // this means delete
@@ -423,12 +458,14 @@ namespace SpellingFixer30
                     // if either of them are null...
                     throw new ApplicationException("The 'Bad' and 'Good' forms are not allowed to be null!");
                 }
+				/* this isn't true. we might need them to be the same to bleed another (shorter or w/o a '-') rule
                 else if (aQuery.BadSpelling == aQuery.GoodSpelling)
                 {
                     // if they're the same...
                     throw new ApplicationException("The new 'Bad' and 'Good' forms must be different from each other!");
                 }
-                else if (!EditingCscBad2GoodList)
+                */
+				else if (!EditingCscBad2GoodList)
                 {
                     // Legacy SpellFixer
                     theBadCell.Value = aQuery.BadSpelling;
@@ -474,7 +511,64 @@ namespace SpellingFixer30
             }
         }
 
-        private void dataGridView_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+		private void UpdateUniCodes(string strInputString)
+		{
+			int nLenString = strInputString.Length;
+
+			string strWhole = null, strPiece = null, strUPiece = null;
+			foreach (char ch in strInputString)
+			{
+				if (ch == 0)   // sometimes it's null (esp. for utf32)
+					strPiece = "nul (u0000)  ";
+				else
+				{
+					strUPiece = String.Format("{0:X}", (int)ch);
+
+					// left pad with 0's (there may be a better way to do this, but 
+					//  I don't know what it is)
+					while (strUPiece.Length < 4) strUPiece = "0" + strUPiece;
+
+					strPiece = String.Format("{0:#} (u{1,4})  ", ch, strUPiece);
+				}
+				strWhole += strPiece;
+			}
+
+			labelUniCodes.Text = strWhole;
+		}
+
+		private void AppendUniCodes(string strInputString, bool keepAll)
+		{
+			int nLenString = strInputString.Length;
+
+			string strWhole = null, strPiece = null, strUPiece = null;
+			foreach (char ch in strInputString)
+			{
+				if (ch == 0)   // sometimes it's null (esp. for utf32)
+					strPiece = "nul (u0000)  ";
+				else
+				{
+					strUPiece = String.Format("{0:X}", (int)ch);
+
+					// left pad with 0's (there may be a better way to do this, but 
+					//  I don't know what it is)
+					while (strUPiece.Length < 4) strUPiece = "0" + strUPiece;
+
+					strPiece = String.Format("{0:#} (u{1,4})  ", ch, strUPiece);
+				}
+				strWhole += strPiece;
+			}
+
+			var wasValue = labelUniCodes.Text;
+			if (!keepAll)
+			{
+				var theValues = wasValue.Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+				wasValue = theValues[0];
+			}
+
+			labelUniCodes.Text = $"{strWhole}\r\n{wasValue}";
+		}
+
+		private void dataGridView_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
         {
             System.Diagnostics.Trace.WriteLine(String.Format("PreviewKeyDown: sender: {3}, KeyValue: {0}, KeyCode: {1}, KeyData: {2}",
                 e.KeyValue, e.KeyCode, e.KeyData, sender.ToString()));
@@ -490,5 +584,34 @@ namespace SpellingFixer30
                     }
             }
         }
-    }
+
+		private void buttonSwapWords_Click(object sender, EventArgs e)
+		{
+		}
+
+		private void textBoxBadWord_TextChanged(object sender, EventArgs e)
+		{
+
+		}
+
+		private void textBoxReplacement_TextChanged(object sender, EventArgs e)
+		{
+
+		}
+
+		private void buttonDelete_Click(object sender, EventArgs e)
+		{
+
+		}
+
+		private void dataGridView_CellMouseEnter(object sender, DataGridViewCellEventArgs e)
+		{
+			if (e.RowIndex >= 0 && e.ColumnIndex >= 0)
+			{
+				var value = (string)dataGridView.Rows[e.RowIndex].Cells[e.ColumnIndex].Value;
+				if (!String.IsNullOrEmpty(value))
+					UpdateUniCodes(value);
+			}
+		}
+	}
 }

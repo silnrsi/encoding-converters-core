@@ -229,7 +229,7 @@ namespace SpellingFixer30
 		private void buttonAddSuggestion_Click(object sender, EventArgs e)
 		{
 			QueryGoodSpelling aQuery = new QueryGoodSpelling(this.richTextBoxContext.Font);
-            if (aQuery.ShowDialog(m_sfwWord.Value, m_sfwWord.Value, m_sfwWord.Value, false) == DialogResult.OK)
+            if (aQuery.ShowDialog(m_sfwWord.Value, m_sfwWord.Value, m_sfwWord.Value, false, false) == DialogResult.OK)
 			{
 				// if the user changed it...
 				if (m_sfwWord.Value != aQuery.BadSpelling)
