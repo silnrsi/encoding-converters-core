@@ -571,6 +571,60 @@
                         </Component>
                     </Directory>
                 </Directory>
+
+                <!-- See Handover.md, "Generic subprocess fallback for host-process conflicts": this packages the
+                     standalone EncConverterHostExe.exe (src/EncConverterHostExe/) that EncConverters.AddEx falls
+                     back to when a converter's declared RiskyNativeDependencies conflict with something already
+                     loaded in the host process (e.g. TechHindiSiteEncConverter's WebView2Loader.dll colliding with
+                     Word's own resident copy).
+
+                     Moved here (formerly its own EncConverterHostExe64bitMM merge module) so that every
+                     EC_40_64bit_MM consumer gets it automatically, since it's a dependency of
+                     SilEncConverters40.dll's fallback path, a consumer that didn't know to separately merge
+                     EncConverterHostExe64bitMM would otherwise silently miss it. Does not re-package
+                     ECInterfaces.dll: that's already provided just above by this same module.
+
+                     Not a COM server (no Class/ProgId/TypeLib/registry entries needed, unlike ECInterfaces.dll/
+                     SilEncConverters40.dll above): EncConverterHostExe.exe is a plain console exe launched via
+                     Process.Start from EncConverters.SubprocessEncConverter, never CreateObject()'d directly.
+
+                     Also writes the two registry facts that are only ever meaningful when this component is
+                     actually installed (kept together with the exe itself, rather than left for the top-level
+                     product installer to remember to author separately: putting them here makes both invariants
+                     structurally impossible to violate, since neither component can exist in a product's MSI
+                     unless this module was merged into it):
+                       - HKLM\SOFTWARE\SIL\SILConverters\InstallDir (EncConverters.FindEncConverterHostExePath reads
+                         this to locate the one canonical copy of the exe), written via the self-referential
+                         [MergeRedirectFolder] formatted string, which resolves to wherever the consuming product
+                         actually redirected this module's files, so the value is always correct regardless of
+                         which product's INSTALLDIR the module ends up under.
+                       - HKLM\SOFTWARE\SIL\SilEncConverters40\SubprocessFallback (the reactive-net registry cache
+                         EncConverters.RememberNeedsSubprocessFallback writes to) gets an inheritable ACE granting
+                         AuthenticatedUser create-subkey/set-value/read rights, since a non-elevated host process
+                         (Word, Paratext) cannot otherwise create new values under HKLM. See Handover.md for the
+                         full rationale and the EncConverters.cs HKCU fallback this ACL is meant to make
+                         unnecessary. -->
+                <Component Id="EncConverterHostExe.exe" Guid="{6DC1A4F1-FC0C-43C4-9EC6-C8C91B6FC860}">
+                    <File Id="EncConverterHostExe.exe" Name="EncConverterHostExe.exe" Vital="yes" KeyPath="yes" Assembly=".net" AssemblyManifest="EncConverterHostExe.exe" AssemblyApplication="EncConverterHostExe.exe" Source="..\..\output\net48\x64\release\EncConverterHostExe.exe" />
+                </Component>
+
+                <Component Id="EncConverterHostExe.exe.config" Guid="{88228173-132D-4F7C-AE48-C2A622903FA5}">
+                    <File Id="EncConverterHostExe.exe.config" Name="EncConverterHostExe.exe.config" Vital="yes" KeyPath="yes" Source="..\..\output\net48\x64\release\EncConverterHostExe.exe.config" />
+                </Component>
+
+                <Component Id="InstallDirRegistryValue" Guid="{59D301C3-BD6F-4A42-BE6B-FD060F7E24EE}">
+                    <RegistryValue Root="HKLM" Key="SOFTWARE\SIL\SILConverters" Name="InstallDir" Value="[MergeRedirectFolder]" Type="string" Action="write" KeyPath="yes" />
+                </Component>
+
+                <Component Id="SubprocessFallbackAclKey" Guid="{9D3CEC31-811A-4DF4-A450-18C7D57A6535}">
+                    <RegistryKey Root="HKLM" Key="SOFTWARE\SIL\SilEncConverters40\SubprocessFallback" ForceCreateOnInstall="yes">
+                        <RegistryValue Type="string" Value="" KeyPath="yes" />
+                        <!-- GenericAll (full control), matching the existing EcFolderACLsMM precedent
+                             for granting non-elevated write access: narrowly scoped to just this one
+                             subtree, not all of SilEncConverters40's registry space. -->
+                        <util:PermissionEx User="AuthenticatedUser" GenericAll="yes" />
+                    </RegistryKey>
+                </Component>
             </Directory>
 
             <StandardDirectory Id="CommonFiles64Folder">
