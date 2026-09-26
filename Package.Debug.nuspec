@@ -72,6 +72,20 @@
 			which NuGet already auto-references without help)-->
 		<file src=".\build\Encoding-Converters-Core.props" target="build" />
 
+		<!--the authoritative PackageReference list a host needs to make a dynamically-loaded EcTranslators
+			converter (Azure OpenAI, Vertex AI, Google Translate, Bing, DeepL, NLLB) actually work at runtime
+			(see ReadMe.md, "A host app's compile-time references don't cover its runtime dependencies").
+			Previously only reached a developer indirectly, bundled inside the MergeModules\ merge modules
+			below - not much use to someone who only takes this NuGet package and never runs an installer
+			built from those. Placed in build\ alongside Encoding-Converters-Core.props so it lands at
+			packages\encoding-converters-core\<version>\build\SharedItems.props (or the equivalent
+			~\.nuget\packages\ location for PackageReference-style restores) and is easy to find there, but
+			deliberately NOT named "Encoding-Converters-Core.props" - NuGet only auto-imports
+			build\<PackageId>.props, so this sits there inert until a consumer explicitly imports or copies
+			it. Importing it unconditionally would force every consumer to take the whole Google/Grpc/OpenAI
+			package set even if they never touch EcTranslators.-->
+		<file src=".\SharedItems.props" target="build\SharedItems.props" />
+
 		<!--these are extra bits that any given application might want to use, but aren't specifically referenced by an EncConverters (managed) client
 			for x86 and then for x64. For the managed ones, if you do want to include one of them specifically (most frequently, AIGuesserEc or CcEc),
 			you can add something like this to the csproj file (net48 client shown; a net9.0-windows client uses

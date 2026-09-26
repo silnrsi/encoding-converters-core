@@ -4,14 +4,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Reflection;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -67,10 +65,22 @@ namespace DeepL.Internal {
       }
 
       _headers = headers.ToArray();
-
-      // RedirectAssembly(_assemblyRedirects);
     }
-    // 'System.Runtime.CompilerServices.Unsafe, Version=4.0.4.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+
+    // Manual fallback for a strong-name version mismatch between what DeepL's original NuGet package
+    // manifest declared (e.g. 'System.Runtime.CompilerServices.Unsafe, Version=4.0.4.1') and whatever
+    // System.Memory/System.Runtime.CompilerServices.Unsafe was actually deployed - back when this was
+    // consumed as their released package. That edge doesn't exist anymore: their source was forked
+    // in-tree (see the rest of this folder) rather than referenced as a package, so EcTranslators.csproj
+    // now resolves both assemblies to a single version everywhere via SharedItems.props, with nothing
+    // left to redirect. The call site above was already commented out, and
+    // <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects> (EcTranslators.csproj and every
+    // EXE project) generates the correct <bindingRedirect> for every assembly actually referenced -
+    // confirmed present in the built *.exe.config outputs - so there's no hand-maintained version list
+    // to keep in sync with SharedItems.props anymore. Left here commented out rather than deleted in
+    // case a future host that dynamically loads this DLL without its own binding redirects needs a
+    // code-based fallback again.
+    /*
     private Dictionary<string, AssemblyRedirect> _assemblyRedirects = new Dictionary<string, AssemblyRedirect> {
       { "System.Memory", new AssemblyRedirect(new Version(4, 0, 5, 0), "cc7b13ffcd2ddd51") },
       { "System.Runtime.CompilerServices.Unsafe", new AssemblyRedirect(new Version(6, 0, 3, 0), "b03f5f7f11d50a3a") },
@@ -115,6 +125,7 @@ namespace DeepL.Internal {
       };
       AppDomain.CurrentDomain.AssemblyResolve += handler;
     }
+    */
 
     /// <summary>Releases the unmanaged resources and disposes of the managed resources used by the <see cref="DeepLClient" />.</summary>
     public void Dispose() {
