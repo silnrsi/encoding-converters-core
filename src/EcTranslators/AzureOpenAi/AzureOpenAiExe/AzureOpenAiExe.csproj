@@ -79,10 +79,24 @@
     <PackageReference Include="Microsoft.Bcl.AsyncInterfaces">
       <Version>10.0.12</Version>
     </PackageReference>
+    <!-- Microsoft.Extensions.Configuration.Abstractions/Options/Primitives are only transitive here (via
+         System.ClientModel/OpenAI, which only require >= 10.0.10), but other projects sharing this output
+         folder (via SharedItems.props' Microsoft.Extensions.Configuration) lift them to 10.0.12, and that's
+         the copy that gets packaged next to this exe. Pin them to match, so this exe's generated binding
+         redirects point at the version actually deployed rather than 10.0.10 (FileLoadException otherwise). -->
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions">
+      <Version>10.0.12</Version>
+    </PackageReference>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions">
       <Version>10.0.12</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions">
+      <Version>10.0.12</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Options">
+      <Version>10.0.12</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Primitives">
       <Version>10.0.12</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
