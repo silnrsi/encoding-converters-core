@@ -315,6 +315,39 @@ namespace SilEncConverters40.EcTranslators.Properties {
                 return ((bool)(this["NllbProcessSentenceBySentence"]));
             }
         }
+
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("[,;:،؛、，；：]+[\'\"’”»)\\]]*\\s+|\\s+[—–]\\s*|[—–]\\s+")]
+        public string NllbClausePunctuationRegex {
+            get {
+                return ((string)(this["NllbClausePunctuationRegex"]));
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("120")]
+        public int NllbRequestTimeoutSeconds {
+            get {
+                return ((int)(this["NllbRequestTimeoutSeconds"]));
+            }
+            set {
+                this["NllbRequestTimeoutSeconds"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool NllbRetryShorterOnFailure {
+            get {
+                return ((bool)(this["NllbRetryShorterOnFailure"]));
+            }
+            set {
+                this["NllbRetryShorterOnFailure"] = value;
+            }
+        }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]

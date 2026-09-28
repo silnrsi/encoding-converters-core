@@ -385,6 +385,114 @@ These are the true words of God.")]
             Assert.AreEqual(testOutput, strOutput);
         }
 
+        // a Kangri (xnr) sentence that the TranslateGemma xnr->dgo model (greedily decoded) gets stuck on, repeating
+        //  "बुरियें आत्‍में दी" until it hits its maximum output length
+        private const string XnrSentenceThatLoops = "परमेसर बड्डे बाल़े दे हके जो ग्रैह़ण नी करदे ह़न, अनिकि कुदरती जन्‍मैं दिआ बजुर्गाइआ जो ग्रैह़ण नी करदे, अपर नौंऐं जन्‍मैं दिआ बजुर्गाइआ जो ग्रैह़ण करदे ह़न।";
+
+        [Test]
+        [TestCase("One. Two! Three", new[] { "One. ", "Two! ", "Three" })]
+        [TestCase("No final punctuation\r\nNext line. Last one.", new[] { "No final punctuation\r\n", "Next line. ", "Last one." })]
+        [TestCase("Line one.\nLine two.\n", new[] { "Line one.\n", "Line two.\n" })]
+        [TestCase("वे जानते हैं। परंतु फिर भी", new[] { "वे जानते हैं। ", "परंतु फिर भी" })]
+        public void TestNllbSplitIntoSentences(string input, string[] expected)
+        {
+            var theEc = new NllbTranslatorEncConverter();
+            var sentences = theEc.SplitIntoSentences(input);
+            Assert.AreEqual(expected, sentences.ToArray());
+            Assert.AreEqual(input, String.Join(String.Empty, sentences), "the pieces should add up to the whole input");
+        }
+
+        [Test]
+        [TestCase(XnrSentenceThatLoops,
+            "परमेसर बड्डे बाल़े दे हके जो ग्रैह़ण नी करदे ह़न, अनिकि कुदरती जन्‍मैं दिआ बजुर्गाइआ जो ग्रैह़ण नी करदे,",
+            "अपर नौंऐं जन्‍मैं दिआ बजुर्गाइआ जो ग्रैह़ण करदे ह़न।")]
+        [TestCase("First sentence here. And a second, longer one.\r\n", "First sentence here.", "And a second, longer one.\r\n")]
+        [TestCase("one two three four five six seven", "one two three", "four five six seven")]
+        [TestCase("one two three four five", null, null)]  // too few words to split without punctuation
+        public void TestNllbTrySplitForRetry(string input, string expectedLeft, string expectedRight)
+        {
+            var theEc = new NllbTranslatorEncConverter();
+            var isSplit = theEc.TrySplitForRetry(input, out var left, out var right);
+            Assert.AreEqual(expectedLeft != null, isSplit);
+            Assert.AreEqual(expectedLeft, left);
+            Assert.AreEqual(expectedRight, right);
+        }
+
+        [Test]
+        [TestCase("परमेसर बड्डे आले दे ह़क्‍क गी ग्रैह़न नेई करदे ह़न, यानिकि कुदरती जन्‍म दी बुरियें आत्‍में दी बुरियें आत्‍में दी बुरियें आत्‍में दी बुरियें आत्‍में दी बुरियें आत्‍में दी बुरियें",
+            true, "परमेसर बड्डे आले दे ह़क्‍क गी ग्रैह़न नेई करदे ह़न, यानिकि कुदरती जन्‍म दी बुरियें आत्‍में")]
+        [TestCase("the the the the the the the the", true, "the the")]
+        [TestCase("पवित्र, पवित्र, पवित्र प्रभु परमेश्वर", false, null)]     // "holy, holy, holy" is legit
+        [TestCase("Then the angel said to me, Write: Blessed are those who are invited.", false, null)]
+        public void TestNllbHasRepetitionLoop(string translation, bool expected, string expectedPartial)
+        {
+            Assert.AreEqual(expected, NllbTranslatorEncConverter.HasRepetitionLoop(translation, out var partial));
+            if (expected)
+                Assert.AreEqual(expectedPartial, partial);
+        }
+
+        /// <summary>
+        /// Needs the TranslateGemma xnr<->dgo docker container (C:\vscode\FineTuneTranslateGemma\docker) running on port
+        /// 8010. With its degenerate-output guard, the server recovers by itself; with an older server that just returns
+        /// the looping output (or times out), the converter's own split-and-retry should recover.
+        /// </summary>
+        [Test]
+        [TestCase(@"C:\vscode\FineTuneTranslateGemma;xnr;dgo;http://localhost:8010", XnrSentenceThatLoops)]
+        public void TestNllbConverterRecoversFromModelLoop(string converterSpec, string testInput)
+        {
+            if (!NllbTranslatorEncConverter.IsHttpServerListeningAsync("http://localhost:8010").Result)
+                Assert.Ignore("TranslateGemma docker container isn't running on port 8010");
+
+            m_encConverters.AddConversionMap(NllbConverterFriendlyName, converterSpec, ConvType.Unicode_to_Unicode,
+                                             EncConverters.strTypeSILNllbTranslator, "UNICODE", "UNICODE", ProcessTypeFlags.Translation);
+
+            var theEc = m_encConverters[NllbConverterFriendlyName];
+            var strOutput = theEc.Convert(testInput);
+            Console.WriteLine(strOutput);
+            Assert.IsFalse(strOutput.Contains("Error occurred"), strOutput);
+            Assert.IsFalse(NllbTranslatorEncConverter.HasRepetitionLoop(strOutput, out _), strOutput);
+            Assert.IsTrue(strOutput.StartsWith("परमेसर"), strOutput);
+        }
+
+        /// <summary>
+        /// Simulates a server whose model takes longer than the (user) NllbRequestTimeoutSeconds setting: the converter
+        /// should wait for the server to finish with the request it gave up on, and then retry in shorter pieces. Slow
+        /// (~2 mins), and needs the TranslateGemma xnr<->dgo container running *without* its degenerate-output guard
+        /// (i.e. like a server that doesn't have one), e.g. with these added to its docker run command:
+        ///   -e LOOP_REPEATS=100000 -e OUTPUT_LENGTH_RATIO=1000 -e RETRY_REPETITION_PENALTY=1.0 -e MAX_SPLIT_DEPTH=0
+        /// </summary>
+        [Test]
+        [Explicit("slow, and needs a specially configured TranslateGemma container (see comments)")]
+        [TestCase(@"C:\vscode\FineTuneTranslateGemma;xnr;dgo;http://localhost:8010", XnrSentenceThatLoops)]
+        public void TestNllbConverterRecoversFromTimeout(string converterSpec, string testInput)
+        {
+            if (!NllbTranslatorEncConverter.IsHttpServerListeningAsync("http://localhost:8010").Result)
+                Assert.Ignore("TranslateGemma docker container isn't running on port 8010");
+
+            // the Settings class is internal to EcTranslators
+            var settings = (System.Configuration.ApplicationSettingsBase)typeof(NllbTranslatorEncConverter).Assembly
+                                .GetType("SilEncConverters40.EcTranslators.Properties.Settings")
+                                .GetProperty("Default").GetValue(null);
+            var originalTimeout = settings["NllbRequestTimeoutSeconds"];
+            settings["NllbRequestTimeoutSeconds"] = 15;
+            try
+            {
+                const string friendlyName = NllbConverterFriendlyName + "WithShortTimeout";
+                m_encConverters.AddConversionMap(friendlyName, converterSpec, ConvType.Unicode_to_Unicode,
+                                                 EncConverters.strTypeSILNllbTranslator, "UNICODE", "UNICODE", ProcessTypeFlags.Translation);
+
+                var theEc = m_encConverters[friendlyName];
+                var strOutput = theEc.Convert(testInput);
+                Console.WriteLine(strOutput);
+                Assert.IsFalse(strOutput.Contains("Error occurred"), strOutput);
+                Assert.IsFalse(NllbTranslatorEncConverter.HasRepetitionLoop(strOutput, out _), strOutput);
+            }
+            finally
+            {
+                settings["NllbRequestTimeoutSeconds"] = originalTimeout;
+            }
+        }
+
         private const string AzureOpenAIConverterFriendlyName = "ChatGptTranslator";
 
         [Test]

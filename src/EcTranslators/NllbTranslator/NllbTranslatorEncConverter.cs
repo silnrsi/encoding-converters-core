@@ -61,12 +61,30 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
         public string PathToLocalModel;
 
         public Regex SentenceSplitter = new Regex(Properties.Settings.Default.NllbSentenceFinalPunctuationRegex);
+        public Regex ClauseSplitter = new Regex(Properties.Settings.Default.NllbClausePunctuationRegex);
         public bool IsSplitSentences = Properties.Settings.Default.NllbProcessSentenceBySentence;
         private Regex _hasParagraphTerminators = new Regex(@"(\r\n|\r|\n)$");
+        private static readonly Regex _lineBreaks = new Regex(@"(?<=\n)|(?<=\r)(?!\n)");
+        private static readonly Regex _whitespace = new Regex(@"\s+");
 
         public int RepeatsOfLastInputString { get; set; } = 0;
         public string LastInputString { get; set; }
+
+        /// <summary>
+        /// When splitting sentences, consecutive sentences (within a paragraph) are sent together as long as their
+        /// combined word count doesn't exceed this. 0 (the default) means each sentence is sent separately.
+        /// </summary>
         public int MaxTokensPerSentence { get; set; }
+
+        /// <summary>
+        /// If a translation times out or the model gets stuck repeating itself, the text is retried in two halves
+        /// (split at sentence punctuation, then clause punctuation, then a word boundary), recursively to this depth.
+        /// </summary>
+        public const int MaxRetrySplitDepth = 3;
+        public const int MinWordsToSplitAtWordBoundary = 6;
+
+        public static TimeSpan RequestTimeout => TimeSpan.FromSeconds(Math.Max(5, Properties.Settings.Default.NllbRequestTimeoutSeconds));
+        public static bool RetryShorterOnFailure => Properties.Settings.Default.NllbRetryShorterOnFailure;
 
         private static bool HasValidEnvironmentVariable(string envVarName, out string parameter)
         {
@@ -81,18 +99,26 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
             {
                 if (_nllbTranslator == null)
                 {
-                    var handler = new DeepLTranslator.Http2CustomHandler();
+                    // Since we supply our own ClientFactory, DeepL's MaximumNetworkRetries, PerRetryConnectionTimeout,
+                    //  and OverallConnectionTimeout options are ignored (no retries happen), so these are the timeouts
+                    //  that apply. The server only sends the response headers once the model has finished generating,
+                    //  so ReceiveHeadersTimeout (WinHttpHandler's default is 30 secs) is effectively the translation
+                    //  time limit.
+                    var timeout = RequestTimeout;
+                    var handler = new DeepLTranslator.Http2CustomHandler
+                    {
+                        SendTimeout = timeout,
+                        ReceiveHeadersTimeout = timeout,
+                        ReceiveDataTimeout = timeout,
+                    };
                     var serverUrl = Endpoint ?? NllbTranslatorEndpoint;
 
                     var options = new DeepL.TranslatorOptions
                     {
                         ServerUrl = serverUrl,
-                        MaximumNetworkRetries = 2,
-                        PerRetryConnectionTimeout = TimeSpan.FromSeconds(5),
-                        OverallConnectionTimeout = TimeSpan.FromSeconds(10),
                         ClientFactory = () => new DeepL.HttpClientAndDisposeFlag
                         {
-                            HttpClient = new HttpClient(handler),
+                            HttpClient = new HttpClient(handler) { Timeout = timeout },
                             DisposeClient = true,
                         },
                     };
@@ -361,113 +387,145 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
 
         protected string DoConvert(string strInput)
         {
-            // if we're not already splitting sentences, see if we're getting the same string over and over again
-            if ((LastInputString == strInput) && (RepeatsOfLastInputString++ > 0))
+            if (strInput.StartsWith(SplitSentencesPrefix))
             {
-                // ... on the 3rd time of getting the same string, start the splitting of sentences and processing them separately
-                //    to see if that helps. Here's an example of one that the facebook-1.3G model seems to lose its way with:
-                //    (केवल ये शहीद और न्याय करने वाले लोग हजार वर्षों वाले उस युग के आरंभ में पुनर्जीवित हो जाएँगे। इस बार जीवित होने को “पहला जीवित होना” कहते हैं। बाकि जो मरे हुए हैं, परमेश्वर उन सबको तब तक पुनर्जीवित नहीं करेगा, जब तक उस हजार वर्षों वाले युग का अंत नहीं होगा।)
-                //  litBt: (Only these martyrs and judge-doing ones will become alive again in the beginning of that thousand year era. This time of becoming alive is called the “first resurrection.” The remaining (ones) who have died, God will not make them alive again until the end of that thousand years era happens.)
-                // 1.3G model (before splitting sentences):
-                //  (The first resurrection is the first.) The rest of the dead will not be raised until the thousand years are ended.
-                // 1.3G model (after splitting sentences):
-                //  (Only these martyrs and judges will be resurrected at the beginning of the millennial age. This resurrection is called the first resurrection.) (The rest of the dead will not be raised until the thousand years are over.)
-                IsSplitSentences = true;
+                SetSplitSentences(strInput.Substring(Math.Min(strInput.Length, SplitSentencesPrefix.Length)).StartsWith("ON"));
+                return strInput;
+            }
 
-                // start w/ 1 less than the current, so we'll likely do a split right away
-                MaxTokensPerSentence = WordCount(strInput) - RepeatsOfLastInputString;
-
-                // if the user keeps doing this until it goes negative, then just start over
-                if (MaxTokensPerSentence < 0)
-                {
-                    SetSplitSentences(false);   // start over
-                }
-                System.Diagnostics.Debug.WriteLine($"NllbEncConverter: RepeatsOfLastInputString: {RepeatsOfLastInputString}, convert the string, \"{SplitSentencesPrefix} ON\" (or OFF), to turn on (or off) splitting sentences");
+            // If we get the same string for the 3rd time in a row (e.g. because the user didn't like the translation and
+            //  is trying again), send it clause by clause (i.e. also split at commas, etc.) to see if that helps.
+            //  Splitting helps a model that has lost its way on a long input. E.g. here's one the facebook-1.3G model
+            //  lost its way with when it got the whole thing at once:
+            //    (केवल ये शहीद और न्याय करने वाले लोग हजार वर्षों वाले उस युग के आरंभ में पुनर्जीवित हो जाएँगे। इस बार जीवित होने को “पहला जीवित होना” कहते हैं। बाकि जो मरे हुए हैं, परमेश्वर उन सबको तब तक पुनर्जीवित नहीं करेगा, जब तक उस हजार वर्षों वाले युग का अंत नहीं होगा।)
+            //  litBt: (Only these martyrs and judge-doing ones will become alive again in the beginning of that thousand year era. This time of becoming alive is called the “first resurrection.” The remaining (ones) who have died, God will not make them alive again until the end of that thousand years era happens.)
+            //  1.3G model (whole thing at once):
+            //   (The first resurrection is the first.) The rest of the dead will not be raised until the thousand years are ended.
+            //  1.3G model (sentence by sentence):
+            //   (Only these martyrs and judges will be resurrected at the beginning of the millennial age. This resurrection is called the first resurrection.) (The rest of the dead will not be raised until the thousand years are over.)
+            if (LastInputString == strInput)
+            {
+                RepeatsOfLastInputString++;
             }
             else
             {
                 LastInputString = strInput;
-                if (strInput.StartsWith(SplitSentencesPrefix))
-                {
-                    SetSplitSentences(strInput.Substring(Math.Min(strInput.Length, SplitSentencesPrefix.Length))?.StartsWith("ON") ?? false);
-                    return strInput;
-                }
+                RepeatsOfLastInputString = 0;
             }
 
-            var toAdd = default((int, string));
-            var sentences = new List<(int WordCount, string Sentence)>();
-            if (IsSplitSentences)
-            {
-                SentenceSplitter.Replace(strInput, LimitSentenceLength);
-                if (sentences.Sum(s => s.Sentence.Length) < strInput.Length)
-                {
-                    var accumulatedSentences = String.Join(String.Empty, sentences.Select(s => s.Sentence));
-                    System.Diagnostics.Debug.Assert(strInput.Contains(accumulatedSentences));
-                    var leftOver = strInput.Substring(accumulatedSentences.Length); // add the remaining bit that didn't end in a sentence final puntuation
-                    var lastSentence = sentences.LastOrDefault();
-                    if (lastSentence != default)
-                    {
-                        var addlInput = lastSentence.Sentence + leftOver;
-                        if (WordCount(addlInput) <= MaxTokensPerSentence)
-                        {
-                            sentences.Remove(lastSentence);      // remove it here, so it can be added back combined later
-                            leftOver = addlInput;
-                        }
-                    }
-                    toAdd = (WordCount(leftOver), leftOver);
-                }
-            }
-            else
-                toAdd = (WordCount(strInput), strInput);
+            var isSplitClauses = RepeatsOfLastInputString >= 2;
+            System.Diagnostics.Debug.WriteLineIf(isSplitClauses, $"NllbEncConverter: same input {RepeatsOfLastInputString + 1} times in a row, so translating it clause by clause. Convert \"{SplitSentencesPrefix}ON\" (or OFF) to turn on (or off) splitting sentences");
 
-            if (toAdd != default)
-                sentences.Add(toAdd);
+            var segments = IsSplitSentences
+                            ? SplitIntoSentences(strInput)
+                            : new List<string> { strInput };
+            if (isSplitClauses)
+                segments = segments.SelectMany(s => SplitAfterEvery(ClauseSplitter, s)).ToList();
 
             var strOutput = String.Empty;
-            foreach (var sentence in sentences.Select(s => s.Sentence))
+            foreach (var segment in segments)
             {
-                var output = String.IsNullOrEmpty(sentence.Trim())
-                                    ? sentence
-                                    : CallNllbTranslator(sentence).Result;
+                var output = String.IsNullOrEmpty(segment.Trim())
+                                    ? segment
+                                    : TranslateWithFallback(segment);
 
                 // make sure the space isn't lost between the sentences
-                if ((strOutput.LastOrDefault() != default) && !_hasParagraphTerminators.IsMatch(strOutput) && (output?.First() != ' '))
+                if ((strOutput.LastOrDefault() != default) && !_hasParagraphTerminators.IsMatch(strOutput) && (output?.FirstOrDefault() != ' '))
                     strOutput += ' ';
 
                 strOutput += output;
             }
 
             return strOutput;
+        }
 
+        private void SetSplitSentences(bool isSplitSentences)    // from converting "\SplitSentences ON" (or OFF)
+        {
+            IsSplitSentences = isSplitSentences;
+            LastInputString = null;
+            RepeatsOfLastInputString = 0;
+            System.Diagnostics.Debug.WriteLine($"NllbEncConverter: Sentence Splitting is {isSplitSentences}. (Converting the same string 3 times in a row translates it clause by clause.)");
+        }
 
-            string LimitSentenceLength(Match match)
+        /// <summary>
+        /// Splits text into sentences, each keeping its trailing punctuation, whitespace, and line break, so the pieces
+        /// always add up to the whole input. Consecutive sentences in the same paragraph are combined as long as they
+        /// total no more than MaxTokensPerSentence words (by default, 0, so they aren't combined).
+        /// </summary>
+        public List<string> SplitIntoSentences(string text)
+        {
+            var sentences = new List<(int WordCount, string Sentence)>();
+
+            // do lines separately, so a line without sentence final punctuation doesn't get lost or run into the next one
+            foreach (var line in _lineBreaks.Split(text).Where(l => l.Length > 0))
             {
-                var sentence = match.ToString();
-                var wordCount = WordCount(sentence);
-                var lastSentence = sentences.LastOrDefault();
-
-                // if there is no last sentence or if it would go beyond the limit to add this one to its Sentence...
-                int combinedWordCount = wordCount;
-                if ((lastSentence == default((int, string))) || ((combinedWordCount = (wordCount + lastSentence.WordCount)) > MaxTokensPerSentence))
+                var firstSentenceOfLine = sentences.Count;
+                foreach (var sentence in SplitAfterEvery(SentenceSplitter, line))
                 {
-                    sentences.Add((wordCount, sentence));   // ... make this new one the new last sentence
+                    var wordCount = WordCount(sentence);
+                    var last = sentences.Count - 1;
+                    if ((last >= firstSentenceOfLine) && (sentences[last].WordCount + wordCount <= MaxTokensPerSentence))
+                        sentences[last] = (sentences[last].WordCount + wordCount, sentences[last].Sentence + sentence);
+                    else
+                        sentences.Add((wordCount, sentence));
                 }
-                else
-                {
-                    // otherwise, remove the current last sentence, and add this combined one back in
-                    sentences.Remove(lastSentence);
-                    var combinedSentence = lastSentence.Sentence + sentence;
-                    sentences.Add((combinedWordCount, combinedSentence));
-                }
-                return sentence;    // always return the matched item, so we can see if we got the whole thing
             }
 
-            void SetSplitSentences(bool isSplitSentences)    // expecting this to be either 'ON' or 'OFF'
+            return sentences.Select(s => s.Sentence).ToList();
+        }
+
+        /// <summary>Splits text after each match of the regex (the pieces always add up to the whole text).</summary>
+        private static IEnumerable<string> SplitAfterEvery(Regex boundary, string text)
+        {
+            var start = 0;
+            foreach (Match match in boundary.Matches(text))
             {
-                IsSplitSentences = isSplitSentences;
-                RepeatsOfLastInputString = isSplitSentences ? 1 : 0;
-                System.Diagnostics.Debug.WriteLine($"NllbEncConverter: Sentence Splitting is {isSplitSentences}. Convert the same string again and it'll start up again w/ 1 less than the number of tokens in the next string sent for conversion.");
+                var end = match.Index + match.Length;
+                if ((end <= start) || (end >= text.Length))
+                    continue;
+                yield return text.Substring(start, end - start);
+                start = end;
             }
+
+            if (start < text.Length)
+                yield return text.Substring(start);
+        }
+
+        /// <summary>
+        /// Splits text in two, as near the middle as possible, to retry a translation that failed: at sentence final
+        /// punctuation if there's any, otherwise at clause punctuation (e.g. commas), otherwise (if it has enough words)
+        /// at the space nearest the middle. That last one doesn't need to know anything about the language, but can
+        /// split a phrase, so it's the last resort.
+        /// </summary>
+        public bool TrySplitForRetry(string text, out string left, out string right)
+        {
+            return TrySplitNearMiddle(text, SentenceSplitter, out left, out right)
+                || TrySplitNearMiddle(text, ClauseSplitter, out left, out right)
+                || ((WordCount(text.Trim()) >= MinWordsToSplitAtWordBoundary)
+                    && TrySplitNearMiddle(text, _whitespace, out left, out right));
+        }
+
+        private static bool TrySplitNearMiddle(string text, Regex boundary, out string left, out string right)
+        {
+            left = right = null;
+            var length = text.TrimEnd().Length;   // ignoring any trailing paragraph terminator
+            var middle = length / 2.0;
+            var best = -1;
+            foreach (Match match in boundary.Matches(text.Substring(0, length)))
+            {
+                var end = match.Index + match.Length;
+                if ((end >= length) || String.IsNullOrWhiteSpace(text.Substring(0, end)))
+                    continue;
+                if ((best < 0) || (Math.Abs(end - middle) < Math.Abs(best - middle)))
+                    best = end;
+            }
+
+            if (best < 0)
+                return false;
+
+            left = text.Substring(0, best).TrimEnd();
+            right = text.Substring(best);  // keeps the trailing paragraph terminator (if any)
+            return true;
         }
 
         private static int WordCount(string sentence)
@@ -475,8 +533,58 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
             return sentence.Split(new[] { ' ' }).Length;
         }
 
-        private async Task<string> CallNllbTranslator(string strInput)
+        /// <summary>
+        /// Translates the text, and if that times out or the model gets stuck repeating itself, retries it in two
+        /// halves (each of which can be split again, up to MaxRetrySplitDepth times). Not every translation server
+        /// catches (or recovers from) its model getting stuck, so this works with any of them.
+        /// </summary>
+        private string TranslateWithFallback(string text, int depth = 0)
         {
+            var result = CallNllbTranslator(text).Result;
+            if (result.Failure == TranslationFailure.None)
+                return result.Output;
+
+            // no point retrying other failures (e.g. unauthorized or can't connect), nor splitting what the server
+            //  already tried splitting
+            if (RetryShorterOnFailure && (result.Failure != TranslationFailure.Other) && !result.ServerAlreadySplit
+                && (depth < MaxRetrySplitDepth) && TrySplitForRetry(text, out var left, out var right))
+            {
+                System.Diagnostics.Debug.WriteLine($"NllbEncConverter: {result.Failure} translating \"{text}\", so retrying it as \"{left}\" + \"{right}\"");
+
+                // if we gave up waiting, the server is probably still busy with it, and our retry would have to wait
+                //  for it to finish anyway (counting against its timeout)
+                if (result.Failure == TranslationFailure.Timeout)
+                    WaitForServerToFinish();
+
+                var leftOutput = TranslateWithFallback(left, depth + 1);
+                var rightOutput = TranslateWithFallback(right, depth + 1);
+                return leftOutput.TrimEnd(' ') + ' ' + rightOutput.TrimStart(' ');
+            }
+
+            return result.Output;
+        }
+
+        private enum TranslationFailure
+        {
+            None,
+            Timeout,
+            Degenerate,     // the model got stuck (e.g. repeating a phrase over and over)
+            Other,
+        }
+
+        private struct TranslationResult
+        {
+            public string Output;               // the translation, or if it failed, the error message
+            public TranslationFailure Failure;
+            public bool ServerAlreadySplit;     // the server already retried it in pieces (so we needn't)
+        }
+
+        private async Task<TranslationResult> CallNllbTranslator(string strInput)
+        {
+            // make sure the paragraph terminator (if any) isn't lost -- even if it's an error message
+            var match = _hasParagraphTerminators.Match(strInput);
+            var paragraphTerminator = match.Success ? match.Value : String.Empty;
+
             try
             {
                 var translatedText = await Task.Run(async delegate
@@ -486,19 +594,169 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
 
                 var result = HarvestResult(translatedText);
 
-                var match = _hasParagraphTerminators.Match(strInput);
-                if (match.Success)
+                // a server that doesn't watch for its model getting stuck in a loop just returns whatever it produced
+                //  by the time it hit its maximum output length, so check for that here
+                if (HasRepetitionLoop(result, out var partial))
                 {
-                    result += match.Value;
+                    var error = GetErrorMsg(new ApplicationException($"The translation model got stuck repeating itself on this text. Try translating a shorter piece of it. Partial translation: {partial}"));
+                    return new TranslationResult { Output = error + paragraphTerminator, Failure = TranslationFailure.Degenerate };
                 }
 
-                return result;
+                return new TranslationResult { Output = result + paragraphTerminator };
             }
             catch (Exception ex)
             {
-                var error = GetErrorMsg(ex);
-                return error;
+                if (TryParseDegenerateOutputError(ex, out var message, out var serverAlreadySplit))
+                {
+                    return new TranslationResult
+                    {
+                        Output = GetErrorMsg(new ApplicationException(message)) + paragraphTerminator,
+                        Failure = TranslationFailure.Degenerate,
+                        ServerAlreadySplit = serverAlreadySplit,
+                    };
+                }
+
+                return new TranslationResult
+                {
+                    Output = GetErrorMsg(ex) + paragraphTerminator,
+                    Failure = IsTimeout(ex) ? TranslationFailure.Timeout : TranslationFailure.Other,
+                };
             }
+        }
+
+        /// <summary>
+        /// Checks for the tell-tale sign of a model that has gotten stuck: some run of 2-10 words repeated 4 or more
+        /// times in a row (e.g. "बुरियें आत्‍में दी बुरियें आत्‍में दी बुरियें आत्‍में दी ..."). If found, 'partial' is the text
+        /// up to and including the first copy of the repeated words.
+        /// </summary>
+        public static bool HasRepetitionLoop(string text, out string partial, int maxUnitWords = 10, int minRepeats = 4)
+        {
+            partial = text;
+            var words = text.Split((char[])null, StringSplitOptions.RemoveEmptyEntries);
+            for (var start = 0; start < words.Length; start++)
+            {
+                // (a single word repeated 8+ times is also a 2-word unit repeated 4+ times)
+                for (var n = 2; (n <= maxUnitWords) && (start + n * minRepeats <= words.Length); n++)
+                {
+                    var repeats = 1;
+                    while ((start + (repeats + 1) * n <= words.Length) && IsSameWords(words, start, start + repeats * n, n))
+                        repeats++;
+
+                    if (repeats >= minRepeats)
+                    {
+                        partial = String.Join(" ", words.Take(start + n));
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        private static bool IsSameWords(string[] words, int first, int second, int count)
+        {
+            for (var i = 0; i < count; i++)
+            {
+                if (words[first + i] != words[second + i])
+                    return false;
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// The TranslateGemma docker server replies with a 422 {"code": "degenerate_output", ...} if its model gets
+        /// stuck on the text (and it couldn't recover by retrying it in pieces itself).
+        /// </summary>
+        private static bool TryParseDegenerateOutputError(Exception ex, out string message, out bool serverAlreadySplit)
+        {
+            message = null;
+            serverAlreadySplit = false;
+            for (; ex != null; ex = ex.InnerException)
+            {
+                if (!ex.Message.Contains("degenerate_output"))
+                    continue;
+
+                try
+                {
+                    var json = JObject.Parse(ex.Message);
+                    if ((string)json["code"] != "degenerate_output")
+                        continue;
+
+                    serverAlreadySplit = (bool?)json["splitAttempted"] ?? false;
+                    var partial = (string)json["partialTranslation"];
+                    message = (string)json["error"]
+                            + (String.IsNullOrEmpty(partial) ? String.Empty : $" Partial translation: {partial}");
+                    return true;
+                }
+                catch (JsonException)
+                {
+                }
+            }
+            return false;
+        }
+
+        private static bool IsTimeout(Exception ex)
+        {
+            for (; ex != null; ex = ex.InnerException)
+            {
+                if ((ex is TimeoutException) || (ex is TaskCanceledException)
+                    || ((ex is System.ComponentModel.Win32Exception win32Ex) && (win32Ex.NativeErrorCode == 12002))  // ERROR_WINHTTP_TIMEOUT
+                    || ex.Message.Contains("timed out"))
+                    return true;
+
+                if ((ex is AggregateException aggregateEx) && aggregateEx.InnerExceptions.Any(IsTimeout))
+                    return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// The longest we'll wait for the server to finish with a request we gave up on, before sending a retry anyway.
+        /// (With the TranslateGemma server, a runaway generation of 1024 tokens takes ~90 secs on an 8GB GPU)
+        /// </summary>
+        public static readonly TimeSpan MaxWaitForBusyServer = TimeSpan.FromMinutes(5);
+
+        /// <summary>
+        /// After we time out, the server is likely still busy with the request we gave up on, and a retry would just
+        /// wait behind it (and count that time against its own timeout -- so it'd likely time out too). The TranslateGemma
+        /// server's /healthz says "busy": true while it's generating, or (being single-threaded) doesn't answer at all
+        /// until it's done, so wait for it to answer "not busy". For other servers (i.e. with no such endpoint), a
+        /// 404 (etc.) that only comes back once they're free works too.
+        /// </summary>
+        private void WaitForServerToFinish()
+        {
+            var pollTimeout = RequestTimeout;
+            var deadline = DateTime.UtcNow + ((pollTimeout > MaxWaitForBusyServer) ? pollTimeout : MaxWaitForBusyServer);
+            var healthUrl = new Uri(new Uri(Endpoint ?? NllbTranslatorEndpoint), "/healthz");
+            Task.Run(async delegate
+            {
+                using var client = new HttpClient { Timeout = pollTimeout };
+                while (DateTime.UtcNow < deadline)
+                {
+                    try
+                    {
+                        using var response = await client.GetAsync(healthUrl).ConfigureAwait(false);
+                        if (!response.IsSuccessStatusCode)
+                            return;     // not a server that tells us, but at least it's answering again
+
+                        var json = JObject.Parse(await response.Content.ReadAsStringAsync().ConfigureAwait(false));
+                        if (!((bool?)json["busy"] ?? false))
+                            return;
+                    }
+                    catch (TaskCanceledException)
+                    {
+                        // timed out (i.e. it's still too busy to answer), so keep waiting
+                        System.Diagnostics.Debug.WriteLine($"NllbEncConverter: still waiting for the server to finish with the request that timed out");
+                        continue;
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"NllbEncConverter: couldn't check if the server is still busy: {ex.Message}");
+                        return;
+                    }
+
+                    await Task.Delay(TimeSpan.FromSeconds(1)).ConfigureAwait(false);
+                }
+            }).Wait();
         }
 
         private static string GetErrorMsg(Exception ex)
