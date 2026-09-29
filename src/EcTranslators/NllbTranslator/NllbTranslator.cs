@@ -123,9 +123,11 @@ namespace Nllb
 
             public class TranslateMsg
             {
-                [Newtonsoft.Json.JsonProperty("sourceLanguage")]
+                // left out of the request if not configured (e.g. for a model that only does one pair), so the server
+                //  can use its own defaults
+                [Newtonsoft.Json.JsonProperty("sourceLanguage", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
                 public string SourceLanguage { get; set; }
-                [Newtonsoft.Json.JsonProperty("targetLanguage")]
+                [Newtonsoft.Json.JsonProperty("targetLanguage", NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
                 public string TargetLanguage { get; set; }
                 [Newtonsoft.Json.JsonProperty("text")]
                 public string Text { get; set; }
@@ -173,15 +175,18 @@ namespace Nllb
                 return $"[{result}]";
             }
 
-            /// <summary>Internal function to retrieve available languages.</summary>
-            /// <param name="target"><c>true</c> to retrieve target languages, <c>false</c> to retrieve source languages.</param>
+            /// <summary>
+            ///   Retrieves the source and target languages the server supports. Depending on the model behind it, the
+            ///   server may return a list of codes usable in either direction (e.g. the full NLLB model), an object with
+            ///   'source' and 'target' entries (e.g. a fine-tuned model that only does one pair), or nothing at all.
+            /// </summary>
             /// <param name="cancellationToken">The cancellation token to cancel operation.</param>
-            /// <returns>Array of <see cref="Language" /> objects containing information about the available languages.</returns>
+            /// <returns>The source and target languages (either list may be empty).</returns>
             /// <exception cref="DeepLException">
-            ///   If any error occurs while communicating with the DeepL API, a
+            ///   If any error occurs while communicating with the server, a
             ///   <see cref="DeepLException" /> or a derived class will be thrown.
             /// </exception>
-            private async Task<TValue[]> GetLanguagesAsync<TValue>(
+            public async Task<(List<(string Code, string? Name)> Sources, List<(string Code, string? Name)> Targets)> GetSupportedLanguagesAsync(
                   CancellationToken cancellationToken = default)
             {
                 using var responseMessage =
@@ -189,12 +194,64 @@ namespace Nllb
                             .ConfigureAwait(false);
 
                 await DeepLClient.CheckStatusCodeAsync(responseMessage).ConfigureAwait(false);
-                return await JsonUtils.DeserializeAsync<TValue[]>(responseMessage).ConfigureAwait(false);
+                var json = await responseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
+                return ParseSupportedLanguages(json);
             }
 
-            /// <inheritdoc />
-            public async Task<string[]> GetSupportedLanguagesAsync(CancellationToken cancellationToken = default) =>
-                  await GetLanguagesAsync<string> (cancellationToken).ConfigureAwait(false);
+            /// <summary>
+            ///   Parses the response of the languages endpoint, which may be any of:
+            ///     ["hin_Deva", "eng_Latn", ...]                                   (same list for source and target)
+            ///     [{"code": "xnr", "name": "Kangri"}, ...]                        (ditto)
+            ///     {"source": {"code": "hi", "name": ...}, "target": {...}}        (one pair)
+            ///     {"source": [...], "target": [...]}                              (separate lists)
+            ///   or empty, in which case both lists are empty.
+            /// </summary>
+            public static (List<(string Code, string? Name)> Sources, List<(string Code, string? Name)> Targets) ParseSupportedLanguages(string json)
+            {
+                var sources = new List<(string Code, string? Name)>();
+                var targets = new List<(string Code, string? Name)>();
+                if (String.IsNullOrWhiteSpace(json))
+                    return (sources, targets);
+
+                var token = Newtonsoft.Json.Linq.JToken.Parse(json);
+                if (token is Newtonsoft.Json.Linq.JArray)
+                {
+                    AddLanguages(token, sources);
+                    targets.AddRange(sources);
+                }
+                else if (token is Newtonsoft.Json.Linq.JObject obj)
+                {
+                    AddLanguages(GetPropertyValue(obj, "source") ?? GetPropertyValue(obj, "sources"), sources);
+                    AddLanguages(GetPropertyValue(obj, "target") ?? GetPropertyValue(obj, "targets"), targets);
+                }
+                return (sources, targets);
+            }
+
+            private static Newtonsoft.Json.Linq.JToken? GetPropertyValue(Newtonsoft.Json.Linq.JObject obj, string propertyName) =>
+                  obj.GetValue(propertyName, StringComparison.OrdinalIgnoreCase);
+
+            private static void AddLanguages(Newtonsoft.Json.Linq.JToken? token, List<(string Code, string? Name)> languages)
+            {
+                switch (token)
+                {
+                    case Newtonsoft.Json.Linq.JArray array:
+                        foreach (var item in array)
+                            AddLanguages(item, languages);
+                        break;
+
+                    case Newtonsoft.Json.Linq.JObject obj:
+                        var code = GetPropertyValue(obj, "code")?.ToString();
+                        if (!String.IsNullOrEmpty(code))
+                            languages.Add((code,GetPropertyValue(obj, "name")?.ToString()));
+                        break;
+
+                    case Newtonsoft.Json.Linq.JValue value when value.Type == Newtonsoft.Json.Linq.JTokenType.String:
+                        var str = value.ToString();
+                        if (!String.IsNullOrEmpty(str))
+                            languages.Add((str, null));
+                        break;
+                }
+            }
 
             /// <summary>
             ///   Checks the specified languages and options are valid, and returns an enumerable of tuples containing the parameters

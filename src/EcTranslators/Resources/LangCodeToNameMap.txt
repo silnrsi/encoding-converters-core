@@ -1619,7 +1619,7 @@ dgk	Dagba	Dagba
 dgl	Andaandi	Andaandi
 dgl	Dongolawi	Dongolawi
 dgn	Dagoman	Dagoman
-dgo	Dogri (individual language)	Dogri (individual language)
+dgo	Dogri	Dogri
 dgr	Dogrib	Dogrib
 dgr	Tlicho	Tlicho
 dgs	Dogoso	Dogoso

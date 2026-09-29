@@ -247,7 +247,11 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
             apiKey = (astrs.Length >= 5) ? EncryptionClass.Decrypt(astrs[4]) : NllbTranslatorApiKey;
 
             // check if the settings.py file has a value for LOCAL_MODEL_PATH, and if so, then that's the path to the local model.
+            //  (there's no Docker project folder if the model is hosted on another machine)
             pathToLocalModel = null;
+            if (String.IsNullOrEmpty(pathToDockerProject))
+                return true;
+
             var pathToSettingsPy = Path.Combine(pathToDockerProject, "settings.py");
             if (File.Exists(pathToSettingsPy))
             {
@@ -261,11 +265,48 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
             return !String.IsNullOrEmpty(text) && Directory.Exists(text);
         }
 
+        private static readonly Lazy<Dictionary<string, string>> LangCodeToName =
+            new Lazy<Dictionary<string, string>>(() => LoadLanguageDictionary(Properties.Resources.LangCodeToNameMap));
+
+        private static readonly Lazy<Dictionary<string, string>> NllbLanguageNames = new Lazy<Dictionary<string, string>>(() =>
+        {
+            var json = LoadEmbeddedResourceFileAsStringExecutingAssembly("NllbHumanReadableLgNames.json");
+            var dict = new Dictionary<string, string>();
+            foreach (var language in JsonConvert.DeserializeObject<LanguageInfo[]>(json))
+            {
+                if (!dict.ContainsKey(language.Code))
+                    dict.Add(language.Code, language.Name);
+            }
+            return dict;
+        });
+
         public static void FindLanguageNames(string srcLgCode, string trgLgCode, out string srcLgName, out string trgLgName)
         {
-            var langCodeToName = LoadLanguageDictionary(Properties.Resources.LangCodeToNameMap);
+            var langCodeToName = LangCodeToName.Value;
             srcLgName = langCodeToName.ContainsKey(srcLgCode) ? langCodeToName[srcLgCode] : srcLgCode;
             trgLgName = langCodeToName.ContainsKey(trgLgCode) ? langCodeToName[trgLgCode] : trgLgCode;
+        }
+
+        /// <summary>
+        /// Get a human readable name for the given language code, trying (in order): the NLLB codes (e.g. hin_Deva), the
+        /// name the server gave us (if any), the ISO 639-3 map (e.g. xnr or the 'xnr' of xnr_Deva), and finally the code itself.
+        /// </summary>
+        public static string GetLanguageName(string code, string nameFromServer = null)
+        {
+            if (String.IsNullOrEmpty(code))
+                return code;
+
+            if (NllbLanguageNames.Value.TryGetValue(code, out string name))
+                return name;
+
+            if (!String.IsNullOrEmpty(nameFromServer))
+                return nameFromServer;
+
+            var isoCode = code.Split('_', '-')[0];
+            if (LangCodeToName.Value.TryGetValue(code, out name) || LangCodeToName.Value.TryGetValue(isoCode, out name))
+                return name;
+
+            return code;
         }
 
         private static Dictionary<string, string> LoadLanguageDictionary(string resourceText)
@@ -312,27 +353,40 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
             return isEndpointLive;
         }
 
-#pragma warning disable CS3002 // Return type is not CLS-compliant
-        public async Task<Dictionary<string, string>> GetCapabilities(bool showError)
-#pragma warning restore CS3002 // Return type is not CLS-compliant
+        /// <summary>
+        /// The languages supported by the server (sorted by name). Either list may be empty (e.g. for a model that only
+        /// translates one configured pair and so doesn't need to be told which languages to use).
+        /// </summary>
+        public class SupportedLanguages
+        {
+            public List<LanguageInfo> Sources { get; set; } = new List<LanguageInfo>();
+            public List<LanguageInfo> Targets { get; set; } = new List<LanguageInfo>();
+        }
+
+        /// <summary>
+        /// Query the server for the languages it supports
+        /// </summary>
+        /// <param name="showError">true to show a message box if the server can't be reached or returns an error</param>
+        /// <returns>the supported languages or null if the query failed</returns>
+        public async Task<SupportedLanguages> GetCapabilities(bool showError)
         {
             try
             {
-                var resultLanguagesSupported = await Task.Run(async delegate
+                var endpoint = Endpoint ?? NllbTranslatorEndpoint;
+                var isEndpointLive = await IsHttpServerListeningAsync(endpoint).ConfigureAwait(false);
+                if (!isEndpointLive)
+                    throw new ApplicationException($"Unable to connect to the NLLB server at: {endpoint}");
+
+                var (sources, targets) = await Task.Run(async delegate
                 {
-                    var isEndpointLive = await IsHttpServerListeningAsync(Endpoint);
-                    return (!isEndpointLive)
-                            ? new List<string> { "Unable to connect to the NLLB server." }
-                            : (await NllbTranslator.GetSupportedLanguagesAsync()).ToList();
+                    return await NllbTranslator.GetSupportedLanguagesAsync();
                 }).ConfigureAwait(false);
 
-                var json = LoadEmbeddedResourceFileAsStringExecutingAssembly("NllbHumanReadableLgNames.json");
-                var languageCodeMap = JsonConvert.DeserializeObject<LanguageInfo[]>(json).ToDictionary(l => l.Code, l => l.Name);
-
-                resultLanguagesSupported.Except(languageCodeMap.Select(l => l.Key))
-                                        .ToList()
-                                        .ForEach(s => languageCodeMap.Add(s, s));
-                return languageCodeMap;
+                return new SupportedLanguages
+                {
+                    Sources = ToLanguageInfos(sources),
+                    Targets = ToLanguageInfos(targets),
+                };
             }
             catch (Exception ex)
             {
@@ -343,6 +397,14 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
                     System.Diagnostics.Debug.WriteLine(error);
             }
             return null;
+        }
+
+        private static List<LanguageInfo> ToLanguageInfos(IEnumerable<(string Code, string Name)> languages)
+        {
+            return languages.GroupBy(l => l.Code)
+                            .Select(g => new LanguageInfo { Code = g.Key, Name = GetLanguageName(g.Key, g.First().Name) })
+                            .OrderBy(l => l.Name)
+                            .ToList();
         }
 
         public class LanguageInfo
@@ -579,6 +641,8 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
             public bool ServerAlreadySplit;     // the server already retried it in pieces (so we needn't)
         }
 
+        private static string NullIfEmpty(string value) => String.IsNullOrEmpty(value) ? null : value;
+
         private async Task<TranslationResult> CallNllbTranslator(string strInput)
         {
             // make sure the paragraph terminator (if any) isn't lost -- even if it's an error message
@@ -589,7 +653,8 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
             {
                 var translatedText = await Task.Run(async delegate
                 {
-                    return await NllbTranslator.TranslateTextAsync(strInput, FromLanguage, ToLanguage);
+                    // if the languages weren't configured (e.g. a model that only does one pair), then don't send them
+                    return await NllbTranslator.TranslateTextAsync(strInput, NullIfEmpty(FromLanguage), NullIfEmpty(ToLanguage));
                 }).ConfigureAwait(false);
 
                 var result = HarvestResult(translatedText);

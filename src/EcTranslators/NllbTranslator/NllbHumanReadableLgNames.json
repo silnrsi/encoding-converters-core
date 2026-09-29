@@ -802,5 +802,13 @@
 	{
 		"Code": "ace_Arab",
 		"Name": "Acehnese (Arabic script)"
+	},
+	{
+		"Code": "xnr_Deva",
+		"Name": "Kangri (Devanagari script)"
+	},
+	{
+		"Code": "dgo_Deva",
+		"Name": "Dogri (Devanagari script)"
 	}
 ]

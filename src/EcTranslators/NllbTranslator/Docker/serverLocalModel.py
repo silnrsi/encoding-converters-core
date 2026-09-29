@@ -69,8 +69,9 @@ def translate_text():
 
     try:
         data = request.get_json()
-        source_language = data.get('sourceLanguage', SOURCE_LANGUAGE)
-        target_language = data.get('targetLanguage', TARGET_LANGUAGE)
+        # use the configured languages if the client doesn't send any (or sends them empty)
+        source_language = data.get('sourceLanguage') or SOURCE_LANGUAGE
+        target_language = data.get('targetLanguage') or TARGET_LANGUAGE
         text_to_translate = data['text']
 
         # This model translates from source to target language pair only

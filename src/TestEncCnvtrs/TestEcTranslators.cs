@@ -431,6 +431,72 @@ These are the true words of God.")]
                 Assert.AreEqual(expectedPartial, partial);
         }
 
+        [Test]
+        [TestCase(@"[""dgo"",""xnr""]", "dgo,xnr", "dgo,xnr")]                                  // e.g. TranslateGemma or full NLLB
+        [TestCase(@"[{""code"":""xnr"",""name"":""Kangri""},""dgo""]", "xnr,dgo", "xnr,dgo")]
+        [TestCase(@"{""source"":{""code"":""hi"",""name"":""Hindi""},""target"":{""code"":""xnr"",""name"":""Kangri""}}", "hi", "xnr")]  // serverLocalModel.py
+        [TestCase(@"{""source"":[""hin_Deva"",""xnr""],""target"":""dgo""}", "hin_Deva,xnr", "dgo")]
+        [TestCase(@"{""sources"":[],""targets"":[]}", "", "")]
+        [TestCase("[]", "", "")]
+        [TestCase("{}", "", "")]
+        [TestCase("", "", "")]
+        public void TestNllbParseSupportedLanguages(string json, string expectedSources, string expectedTargets)
+        {
+            var (sources, targets) = Nllb.ITranslator.Translator.ParseSupportedLanguages(json);
+            Assert.AreEqual(expectedSources, String.Join(",", sources.Select(l => l.Code)));
+            Assert.AreEqual(expectedTargets, String.Join(",", targets.Select(l => l.Code)));
+        }
+
+        [Test]
+        [TestCase("hin_Deva", null, "Hindi (Devanagari script)")]
+        [TestCase("xnr_Deva", null, "Kangri (Devanagari script)")]
+        [TestCase("xnr", null, "Kangri")]
+        [TestCase("dgo", null, "Dogri")]
+        [TestCase("dgo_Arab", null, "Dogri")]           // falls back to the ISO 639-3 part
+        [TestCase("hi", "Hindi from server", "Hindi from server")]
+        [TestCase("zzz_Test", null, "zzz_Test")]        // unknown, so just the code
+        public void TestNllbGetLanguageName(string code, string nameFromServer, string expected)
+        {
+            Assert.AreEqual(expected, NllbTranslatorEncConverter.GetLanguageName(code, nameFromServer));
+        }
+
+        private const string RemoteTranslateGemmaEndpoint = "http://192.168.69.90:8010";
+
+        /// <summary>
+        /// Needs the TranslateGemma xnr<->dgo docker container running on another machine on the network (at
+        /// RemoteTranslateGemmaEndpoint), which is configured without a Docker project folder
+        /// </summary>
+        [Test]
+        public void TestNllbRemoteHostGetCapabilities()
+        {
+            if (!NllbTranslatorEncConverter.IsHttpServerListeningAsync(RemoteTranslateGemmaEndpoint, 2000).Result)
+                Assert.Ignore($"TranslateGemma docker container isn't reachable at {RemoteTranslateGemmaEndpoint}");
+
+            var theEc = new NllbTranslatorEncConverter { Endpoint = RemoteTranslateGemmaEndpoint, ApiKey = String.Empty };
+            var languages = theEc.GetCapabilities(false).Result;
+            Assert.IsNotNull(languages);
+            CollectionAssert.AreEquivalent(new[] { "dgo", "xnr" }, languages.Sources.Select(l => l.Code));
+            CollectionAssert.AreEquivalent(new[] { "dgo", "xnr" }, languages.Targets.Select(l => l.Code));
+            Assert.AreEqual("Kangri", languages.Sources.First(l => l.Code == "xnr").Name);
+        }
+
+        [Test]
+        [TestCase(";xnr;dgo;" + RemoteTranslateGemmaEndpoint + ";", "परमेसर बड्डे बाल़े दे हके जो ग्रैह़ण नी करदे ह़न।")]
+        public void TestNllbRemoteHostConverter(string converterSpec, string testInput)
+        {
+            if (!NllbTranslatorEncConverter.IsHttpServerListeningAsync(RemoteTranslateGemmaEndpoint, 2000).Result)
+                Assert.Ignore($"TranslateGemma docker container isn't reachable at {RemoteTranslateGemmaEndpoint}");
+
+            m_encConverters.AddConversionMap(NllbConverterFriendlyName, converterSpec, ConvType.Unicode_to_Unicode,
+                                             EncConverters.strTypeSILNllbTranslator, "UNICODE", "UNICODE", ProcessTypeFlags.Translation);
+
+            var theEc = m_encConverters[NllbConverterFriendlyName];
+            var strOutput = theEc.Convert(testInput);
+            Console.WriteLine(strOutput);
+            Assert.IsFalse(String.IsNullOrEmpty(strOutput));
+            Assert.IsFalse(strOutput.Contains("Error occurred"), strOutput);
+        }
+
         /// <summary>
         /// Needs the TranslateGemma xnr<->dgo docker container (C:\vscode\FineTuneTranslateGemma\docker) running on port
         /// 8010. With its degenerate-output guard, the server recovers by itself; with an older server that just returns

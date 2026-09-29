@@ -32,6 +32,9 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
         private void InitializeComponent()
         {
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.groupBoxHostingLocation = new System.Windows.Forms.GroupBox();
+            this.radioButtonHostLocally = new System.Windows.Forms.RadioButton();
+            this.radioButtonHostRemote = new System.Windows.Forms.RadioButton();
             this.labelFolderPath = new System.Windows.Forms.Label();
             this.textBoxDockerProjectFolder = new System.Windows.Forms.TextBox();
             this.buttonBrowse = new System.Windows.Forms.Button();
@@ -45,6 +48,7 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
             this.tabControl.SuspendLayout();
             this.tabPageSetup.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
+            this.groupBoxHostingLocation.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabPageSetup
@@ -77,19 +81,21 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel1.Controls.Add(this.labelFolderPath, 0, 0);
-            this.tableLayoutPanel1.Controls.Add(this.textBoxDockerProjectFolder, 1, 0);
-            this.tableLayoutPanel1.Controls.Add(this.buttonBrowse, 2, 0);
-            this.tableLayoutPanel1.Controls.Add(this.buttonConfigureNllbModel, 1, 1);
-            this.tableLayoutPanel1.Controls.Add(this.labelSourceLanguage, 0, 2);
-            this.tableLayoutPanel1.Controls.Add(this.comboBoxSourceLanguages, 1, 2);
-            this.tableLayoutPanel1.Controls.Add(this.labelTargetLanguage, 0, 3);
-            this.tableLayoutPanel1.Controls.Add(this.comboBoxTargetLanguages, 1, 3);
-            this.tableLayoutPanel1.Controls.Add(this.labelModelConfiguration, 1, 4);
+            this.tableLayoutPanel1.Controls.Add(this.groupBoxHostingLocation, 0, 0);
+            this.tableLayoutPanel1.Controls.Add(this.labelFolderPath, 0, 1);
+            this.tableLayoutPanel1.Controls.Add(this.textBoxDockerProjectFolder, 1, 1);
+            this.tableLayoutPanel1.Controls.Add(this.buttonBrowse, 2, 1);
+            this.tableLayoutPanel1.Controls.Add(this.buttonConfigureNllbModel, 1, 2);
+            this.tableLayoutPanel1.Controls.Add(this.labelSourceLanguage, 0, 3);
+            this.tableLayoutPanel1.Controls.Add(this.comboBoxSourceLanguages, 1, 3);
+            this.tableLayoutPanel1.Controls.Add(this.labelTargetLanguage, 0, 4);
+            this.tableLayoutPanel1.Controls.Add(this.comboBoxTargetLanguages, 1, 4);
+            this.tableLayoutPanel1.Controls.Add(this.labelModelConfiguration, 1, 5);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(3, 3);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 5;
+            this.tableLayoutPanel1.RowCount = 6;
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 50F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 50F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 50F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 50F));
@@ -97,12 +103,49 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(596, 394);
             this.tableLayoutPanel1.TabIndex = 2;
-            // 
+            //
+            // groupBoxHostingLocation
+            //
+            this.tableLayoutPanel1.SetColumnSpan(this.groupBoxHostingLocation, 3);
+            this.groupBoxHostingLocation.Controls.Add(this.radioButtonHostLocally);
+            this.groupBoxHostingLocation.Controls.Add(this.radioButtonHostRemote);
+            this.groupBoxHostingLocation.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.groupBoxHostingLocation.Location = new System.Drawing.Point(3, 3);
+            this.groupBoxHostingLocation.Name = "groupBoxHostingLocation";
+            this.groupBoxHostingLocation.Size = new System.Drawing.Size(590, 44);
+            this.groupBoxHostingLocation.TabIndex = 0;
+            this.groupBoxHostingLocation.TabStop = false;
+            this.groupBoxHostingLocation.Text = "Model Hosting";
+            //
+            // radioButtonHostLocally
+            //
+            this.radioButtonHostLocally.AutoSize = true;
+            this.radioButtonHostLocally.Checked = true;
+            this.radioButtonHostLocally.Location = new System.Drawing.Point(119, 19);
+            this.radioButtonHostLocally.Name = "radioButtonHostLocally";
+            this.radioButtonHostLocally.Size = new System.Drawing.Size(185, 17);
+            this.radioButtonHostLocally.TabIndex = 0;
+            this.radioButtonHostLocally.TabStop = true;
+            this.radioButtonHostLocally.Text = "&Build and host it on this machine";
+            this.radioButtonHostLocally.UseVisualStyleBackColor = true;
+            this.radioButtonHostLocally.CheckedChanged += new System.EventHandler(this.radioButtonHosting_CheckedChanged);
+            //
+            // radioButtonHostRemote
+            //
+            this.radioButtonHostRemote.AutoSize = true;
+            this.radioButtonHostRemote.Location = new System.Drawing.Point(330, 19);
+            this.radioButtonHostRemote.Name = "radioButtonHostRemote";
+            this.radioButtonHostRemote.Size = new System.Drawing.Size(196, 17);
+            this.radioButtonHostRemote.TabIndex = 1;
+            this.radioButtonHostRemote.Text = "On &another machine on the network";
+            this.radioButtonHostRemote.UseVisualStyleBackColor = true;
+            this.radioButtonHostRemote.CheckedChanged += new System.EventHandler(this.radioButtonHosting_CheckedChanged);
+            //
             // labelFolderPath
             // 
             this.labelFolderPath.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.labelFolderPath.AutoSize = true;
-            this.labelFolderPath.Location = new System.Drawing.Point(3, 18);
+            this.labelFolderPath.Location = new System.Drawing.Point(3, 68);
             this.labelFolderPath.Name = "labelFolderPath";
             this.labelFolderPath.Size = new System.Drawing.Size(113, 13);
             this.labelFolderPath.TabIndex = 1;
@@ -111,7 +154,7 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
             // textBoxDockerProjectFolder
             // 
             this.textBoxDockerProjectFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxDockerProjectFolder.Location = new System.Drawing.Point(122, 15);
+            this.textBoxDockerProjectFolder.Location = new System.Drawing.Point(122, 65);
             this.textBoxDockerProjectFolder.Name = "textBoxDockerProjectFolder";
             this.textBoxDockerProjectFolder.Size = new System.Drawing.Size(439, 20);
             this.textBoxDockerProjectFolder.TabIndex = 2;
@@ -120,7 +163,7 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
             // buttonBrowse
             // 
             this.buttonBrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonBrowse.Location = new System.Drawing.Point(567, 13);
+            this.buttonBrowse.Location = new System.Drawing.Point(567, 63);
             this.buttonBrowse.Name = "buttonBrowse";
             this.buttonBrowse.Size = new System.Drawing.Size(26, 23);
             this.buttonBrowse.TabIndex = 3;
@@ -129,7 +172,7 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
             // 
             // buttonConfigureNllbModel
             // 
-            this.buttonConfigureNllbModel.Location = new System.Drawing.Point(122, 53);
+            this.buttonConfigureNllbModel.Location = new System.Drawing.Point(122, 103);
             this.buttonConfigureNllbModel.Name = "buttonConfigureNllbModel";
             this.buttonConfigureNllbModel.Size = new System.Drawing.Size(224, 23);
             this.buttonConfigureNllbModel.TabIndex = 3;
@@ -141,7 +184,7 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
             // 
             this.labelSourceLanguage.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.labelSourceLanguage.AutoSize = true;
-            this.labelSourceLanguage.Location = new System.Drawing.Point(25, 118);
+            this.labelSourceLanguage.Location = new System.Drawing.Point(25, 168);
             this.labelSourceLanguage.Name = "labelSourceLanguage";
             this.labelSourceLanguage.Size = new System.Drawing.Size(91, 13);
             this.labelSourceLanguage.TabIndex = 4;
@@ -151,8 +194,9 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
             // 
             this.comboBoxSourceLanguages.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.comboBoxSourceLanguages.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxSourceLanguages.Enabled = false;
             this.comboBoxSourceLanguages.FormattingEnabled = true;
-            this.comboBoxSourceLanguages.Location = new System.Drawing.Point(122, 114);
+            this.comboBoxSourceLanguages.Location = new System.Drawing.Point(122, 164);
             this.comboBoxSourceLanguages.Name = "comboBoxSourceLanguages";
             this.comboBoxSourceLanguages.Size = new System.Drawing.Size(439, 21);
             this.comboBoxSourceLanguages.TabIndex = 5;
@@ -162,7 +206,7 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
             // 
             this.labelTargetLanguage.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.labelTargetLanguage.AutoSize = true;
-            this.labelTargetLanguage.Location = new System.Drawing.Point(28, 168);
+            this.labelTargetLanguage.Location = new System.Drawing.Point(28, 218);
             this.labelTargetLanguage.Name = "labelTargetLanguage";
             this.labelTargetLanguage.Size = new System.Drawing.Size(88, 13);
             this.labelTargetLanguage.TabIndex = 6;
@@ -172,8 +216,9 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
             // 
             this.comboBoxTargetLanguages.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.comboBoxTargetLanguages.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxTargetLanguages.Enabled = false;
             this.comboBoxTargetLanguages.FormattingEnabled = true;
-            this.comboBoxTargetLanguages.Location = new System.Drawing.Point(122, 164);
+            this.comboBoxTargetLanguages.Location = new System.Drawing.Point(122, 214);
             this.comboBoxTargetLanguages.Name = "comboBoxTargetLanguages";
             this.comboBoxTargetLanguages.Size = new System.Drawing.Size(439, 21);
             this.comboBoxTargetLanguages.TabIndex = 7;
@@ -183,9 +228,9 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
             // 
             this.labelModelConfiguration.AutoSize = true;
             this.labelModelConfiguration.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.labelModelConfiguration.Location = new System.Drawing.Point(122, 200);
+            this.labelModelConfiguration.Location = new System.Drawing.Point(122, 250);
             this.labelModelConfiguration.Name = "labelModelConfiguration";
-            this.labelModelConfiguration.Size = new System.Drawing.Size(439, 194);
+            this.labelModelConfiguration.Size = new System.Drawing.Size(439, 144);
             this.labelModelConfiguration.TabIndex = 8;
             // 
             // folderBrowserDialog
@@ -206,6 +251,8 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
             this.tabPageSetup.ResumeLayout(false);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
+            this.groupBoxHostingLocation.ResumeLayout(false);
+            this.groupBoxHostingLocation.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -222,5 +269,8 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
         private System.Windows.Forms.TextBox textBoxDockerProjectFolder;
         private System.Windows.Forms.Button buttonBrowse;
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog;
+        private System.Windows.Forms.GroupBox groupBoxHostingLocation;
+        private System.Windows.Forms.RadioButton radioButtonHostLocally;
+        private System.Windows.Forms.RadioButton radioButtonHostRemote;
     }
 }

@@ -1,0 +1,15 @@
+<Project>
+  <!-- WebView2's build\Common.targets (flowed transitively via buildTransitive to every project that
+       references EncCnvtrs 2010.csproj, directly or not) unconditionally adds
+       Microsoft.Web.WebView2.Wpf.dll for any net5.0+ TFM. That assembly references WPF's WindowsBase
+       5.0.0.0, but these projects are WinForms-only (no UseWPF), so WindowsBase resolves to the
+       4.0.0.0 facade instead -> MSB3277. Nothing here uses the WPF control, so drop the reference.
+       Done in a target (not an <ItemGroup Remove>) because the package's targets are imported after
+       the project body. -->
+  <Target Name="RemoveWebView2WpfReference" BeforeTargets="ResolveAssemblyReferences"
+          Condition="'$(UseWPF)'!='true' and '$(TargetFramework)'!='' and $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net5.0'))">
+    <ItemGroup>
+      <Reference Remove="@(Reference)" Condition="'%(Filename)'=='Microsoft.Web.WebView2.Wpf'" />
+    </ItemGroup>
+  </Target>
+</Project>

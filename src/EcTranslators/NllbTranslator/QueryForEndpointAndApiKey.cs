@@ -12,6 +12,7 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
     public partial class QueryForEndpointAndApiKey : Form
     {
         private const string ButtonLabelOverwriteProject = "&Overwrite Existing Project";
+        private const string ButtonLabelConnect = "&Connect";
 
         public const string DefaultPort = "8000";
         public const string DefaultModelName = "facebook/nllb-200-distilled-600M";
@@ -21,7 +22,10 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
         public const string AddDockerCpu = "--index-url https://download.pytorch.org/whl/cpu   # if you switch to using a gpu: comment out: --index-url https://download.pytorch.org/whl/cpu";
         public const string AddDockerGpu = "# --index-url https://download.pytorch.org/whl/cpu   # if you switch to using a cpu: uncomment out: --index-url https://download.pytorch.org/whl/cpu";
 
-        private const int RowStyleIndexUseGpu = 3;
+        private const int RowStyleIndexModelLocation = 0;
+        private const int RowStyleIndexModel = 1;
+        private const int RowStyleIndexUseGpu = 4;
+        private const int RowStyleIndexPrivateHuggingFaceModel = 5;
 
         // these are the files that we write out to build the Docker container from
         private const string FileNameIndexHtml = "index.html";
@@ -46,10 +50,26 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
         private readonly Regex _regexHfTokenBuildArg = new Regex("(" + Regex.Escape(AddHuggingFaceTokenToDockerBuildCommand) + ")");
 
         private string _pathToDockerProjectFolder;
+        private readonly bool _isRemoteHost;
 
-        public QueryForEndpointAndApiKey(string pathToDockerProjectFolder, string apiKey, string endpoint)
+        /// <summary>
+        /// Query for the model configuration
+        /// </summary>
+        /// <param name="pathToDockerProjectFolder">the folder into which to write the Docker project files (ignored if isRemoteHost)</param>
+        /// <param name="apiKey">the api key (if any) to use with the model</param>
+        /// <param name="endpoint">the endpoint the model is (to be) listening on</param>
+        /// <param name="isRemoteHost">true if the model is built and hosted on another machine, in which case, we only need
+        /// the endpoint and api key to connect to it (i.e. we don't write any Docker project files)</param>
+        public QueryForEndpointAndApiKey(string pathToDockerProjectFolder, string apiKey, string endpoint, bool isRemoteHost = false)
         {
             InitializeComponent();
+
+            _isRemoteHost = isRemoteHost;
+            if (isRemoteHost)
+            {
+                InitializeForRemoteHost(apiKey, endpoint);
+                return;
+            }
 
             _pathToDockerProjectFolder = pathToDockerProjectFolder;
 
@@ -139,6 +159,30 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
             Endpoint = endpoint;
         }
 
+        /// <summary>
+        /// For a model hosted on another machine, we only need the endpoint and api key, so hide everything else
+        /// </summary>
+        private void InitializeForRemoteHost(string apiKey, string endpoint)
+        {
+            foreach (var rowIndex in new[] { RowStyleIndexModelLocation, RowStyleIndexModel, RowStyleIndexUseGpu, RowStyleIndexPrivateHuggingFaceModel })
+                tableLayoutPanel.RowStyles[rowIndex].Height = 0;
+
+            groupBoxModelLocation.Visible = labelNllbModel.Visible = comboBoxNllbModel.Visible = false;
+            checkBoxUseGpu.Visible = checkBoxPrivateHuggingFaceModel.Visible = false;
+
+            Text = "NLLB Server Connection";
+            buttonOK.Text = ButtonLabelConnect;
+            labelNllbInstructions.Text = "Enter the address and port of the machine on your network that is hosting the NLLB model's " +
+                                         "Docker container (e.g. http://192.168.1.20:8000) and the API key, if one was configured on that machine. " +
+                                         "See the 'Sharing a model with other computers on a local network' section on the About tab for details.";
+            toolTip.SetToolTip(buttonOK, "Click this button to connect to the NLLB server at the above endpoint and query for the languages it supports");
+            toolTip.SetToolTip(textBoxNllbEndpoint, "Enter the address of the machine hosting the model, including the port (e.g. http://192.168.1.20:8000)");
+            toolTip.SetToolTip(textBoxNllbApiKey, "Enter the API key configured on the machine hosting the model (leave it blank if it doesn't use one)");
+
+            TranslatorApiKey = apiKey;
+            Endpoint = endpoint;
+        }
+
         public static bool HasGpu()
         {
             using (var searcher = new ManagementObjectSearcher("select * from Win32_VideoController"))
@@ -190,6 +234,9 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
         {
             get
             {
+                if (String.IsNullOrEmpty(ModelName))
+                    return null;
+
                 var index = ModelName.LastIndexOf("-");
                 if (index == -1)
                     return null;
@@ -218,6 +265,23 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
 
         private void buttonOK_Click(object sender, System.EventArgs e)
         {
+            if (_isRemoteHost)
+            {
+                // nothing to build; just make sure the endpoint looks like one
+                var endpoint = textBoxNllbEndpoint.Text?.Trim();
+                if (!Uri.TryCreate(endpoint, UriKind.Absolute, out Uri uri)
+                    || ((uri.Scheme != Uri.UriSchemeHttp) && (uri.Scheme != Uri.UriSchemeHttps)))
+                {
+                    MessageBox.Show(this, "Enter the endpoint of the machine hosting the model (e.g. http://192.168.1.20:8000)", EncConverters.cstrCaption);
+                    return;
+                }
+
+                Endpoint = endpoint;
+                DialogResult = DialogResult.OK;
+                Close();
+                return;
+            }
+
             if (buttonOK.Text == ButtonLabelOverwriteProject)
             {
                 if (DialogResult.No == MessageBox.Show($"Are you sure you want to overwrite the files in the {_pathToDockerProjectFolder} folder?",

@@ -41,6 +41,18 @@
     <UseWindowsForms>true</UseWindowsForms>
   </PropertyGroup>
 
+  <!-- the SDK advertises this exe's .runtimeconfig.json/.deps.json as copy items to every referencing
+       project (AddDepsJsonAndRuntimeConfigToCopyItemsForReferencingProjects), so each sibling that
+       shares this output\ folder (EncCnvtrs, EcTranslators, ...) records them in its own
+       FileListAbsolute and deletes them on its Clean/Rebuild. VS's fast up-to-date check doesn't
+       otherwise look at these two files, so it then skipped rebuilding this project and RunTests
+       (which copies them into its own bin\) failed with MSB3030. Listing them here makes VS rebuild
+       this project whenever either one is missing. -->
+  <ItemGroup Condition="'$(TargetFramework)'=='net9.0-windows'">
+    <UpToDateCheckBuilt Include="$(OutputPath)$(AssemblyName).runtimeconfig.json" />
+    <UpToDateCheckBuilt Include="$(OutputPath)$(AssemblyName).deps.json" />
+  </ItemGroup>
+
   <!-- every TFM gets its own sibling folder under output\ (including net48, via $(TargetFramework))
        - see ECInterfaces 2010.csproj for why. -->
   <PropertyGroup Condition="'$(Platform)'=='x86'">
