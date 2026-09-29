@@ -317,7 +317,7 @@ namespace SilEncConverters40.EcTranslators.NllbTranslator
                 cpuAddition = AddDockerGpu;
             }
 
-            var dockerFileContents = String.Format(isLocalModel ?  Properties.Resources.DockerfileLocalModel : Properties.Resources.Dockerfile, cpuAddition);
+			var dockerFileContents = String.Format(isLocalModel ? Properties.Resources.DockerfileLocalModel : Properties.Resources.Dockerfile, cpuAddition);
             File.WriteAllText(Path.Combine(_pathToDockerProjectFolder, FileNameDockerfile), dockerFileContents);
 
             // the import_model.py file (not needed for the local model)
