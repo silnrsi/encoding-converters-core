@@ -691,23 +691,34 @@ namespace SpellingFixer30
 
         public static void BackupFile(string fileSpec)
         {
+            if (!File.Exists(fileSpec))
+                return;
+
+            while (!CscProjectStore.CanWriteToFile(fileSpec))
+            {
+                if (MessageBox.Show($"Can't write to the file {fileSpec}. But you can (manually) delete it, so it'll be recreated.", CscProject.ApplicationCaption, MessageBoxButtons.OKCancel) == DialogResult.Cancel)
+                    return;
+            }
+
+#if DEBUG
+            // in debug mode, keep every backup (numbered uniquely)
             var i = 0;
-            var newFileSpec = fileSpec;
-            while (File.Exists(newFileSpec))
+            string newFileSpec;
+            do
             {
                 newFileSpec = Path.Combine(Path.GetDirectoryName(fileSpec), $"{Path.GetFileNameWithoutExtension(fileSpec)} ({i++}){Path.GetExtension(fileSpec)}.bak");
-            }
-
-            if (fileSpec != newFileSpec)
+            } while (File.Exists(newFileSpec));
+#else
+            // in release mode, only keep a single backup: <filename>.bak
+            var newFileSpec = fileSpec + ".bak";
+            if (File.Exists(newFileSpec))
             {
-                while (!CscProjectStore.CanWriteToFile(fileSpec))
-                {
-                    if (MessageBox.Show($"Can't write to the file {fileSpec}. But you can (manually) delete it, so it'll be recreated.", CscProject.ApplicationCaption, MessageBoxButtons.OKCancel) == DialogResult.Cancel)
-                        return;
-                }
-
-                File.Move(fileSpec, newFileSpec);
+                File.SetAttributes(newFileSpec, FileAttributes.Normal);
+                File.Delete(newFileSpec);
             }
+#endif
+
+            File.Move(fileSpec, newFileSpec);
         }
 
         /// <summary>
