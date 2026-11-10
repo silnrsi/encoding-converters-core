@@ -252,6 +252,14 @@
           <NormalizedForm>y</NormalizedForm>
         </NormalizeRule>
       </Distinction>
+        <Distinction name="Nasal Endings" description="ekar and aikar with nasal">
+            <NormalizeRule>
+                <CharactersToNormalize>
+                    <CharacterToNormalize>aiṁ</CharacterToNormalize>
+                </CharactersToNormalize>
+                <NormalizedForm>ē</NormalizedForm>
+            </NormalizeRule>
+        </Distinction>
       <Distinction name="Nasal" description="Compare nasal consonants when detecting ambiguities">
         <NormalizeRule>
           <CharactersToNormalize>
@@ -264,13 +272,5 @@
           <NormalizedForm>n</NormalizedForm>
         </NormalizeRule>
       </Distinction>
-        <Distinction name="Nasal Endings" description="ekar and aikar with nasal">
-            <NormalizeRule>
-                <CharactersToNormalize>
-                    <CharacterToNormalize>aiṁ</CharacterToNormalize>
-                </CharactersToNormalize>
-                <NormalizedForm>ē</NormalizedForm>
-            </NormalizeRule>
-        </Distinction>
     </Distinctions>
 </VernScriptSystem>

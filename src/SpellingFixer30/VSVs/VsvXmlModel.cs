@@ -196,11 +196,32 @@ public class Distinction
 
 public class NormalizeRule
 {
+    /// <summary>
+    /// value of the 'stage' attribute for a rule that's applied to the vernacular word before it's transliterated
+    /// (e.g. to remove the Dogri tonal 'ह़' before the 'Ignore Characters Before Transliteration' strip the nukta)
+    /// </summary>
+    public const string StageBeforeTransliteration = "BeforeTransliteration";
+
     [XmlElement("CharactersToNormalize")]
     public CharactersToNormalize CharactersToNormalize { get; set; }
 
+    /// <summary>
+    /// The form the 'CharactersToNormalize' are changed into. Can be empty, which means the characters are removed
+    /// (i.e. words with and without them are compared)
+    /// </summary>
     [XmlElement("NormalizedForm")]
     public string NormalizedForm { get; set; }
+
+    /// <summary>
+    /// null (the default) means the rule applies to the transliterated form of the word (after the 'Ignore
+    /// Characters After Transliteration' are removed). 'BeforeTransliteration' means it applies to the vernacular
+    /// form of the word (before the 'Ignore Characters Before Transliteration' are removed).
+    /// </summary>
+    [XmlAttribute("stage")]
+    public string Stage { get; set; }
+
+    [XmlIgnore]
+    public bool IsBeforeTransliteration => System.String.Equals(Stage, StageBeforeTransliteration, System.StringComparison.OrdinalIgnoreCase);
 }
 
 public class CharactersToNormalize

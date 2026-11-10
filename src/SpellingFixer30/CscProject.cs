@@ -113,7 +113,7 @@ namespace SpellingFixer30
         [NonSerializedAttribute()]
         internal WordsToCheck m_mapS2SfwWordsToCheck = null;
         [NonSerializedAttribute()]
-        internal AmbiguityListMaps m_mapAmbiguities = null;
+        internal AmbiguityRules m_ambiguityRules = new AmbiguityRules();
         [NonSerializedAttribute()]
         protected DirectableEncConverter m_aEcTrans = null;
         [NonSerializedAttribute()]
@@ -144,30 +144,86 @@ namespace SpellingFixer30
 			VernScriptSystem sfssp = null;
             try
             {
-                var strVSSFileSpec = VernacularScriptSystemFileSpec;
-                sfssp = VernScriptSystem.LoadVsvXml(strVSSFileSpec);
+                sfssp = VernScriptSystem.LoadVsvXml(VernacularScriptSystemFileSpec);
+                ApplyVernScriptSystem(sfssp);
+            }
+#if DEBUG
+            catch (Exception ex)
+            {
+                // don't think I want to do this in the release product or we'll never be able to edit the project.
+                throw ex;
+#else
+            catch
+            {
+#endif
+            }
 
-                if (_ruleNames.Count > 0)
+            // read in the bad 2 good mapping
+            m_mapS2SBad2GoodWords = Bad2GoodMap.LoadTable(SpellFixerEncConverterSpec);
+
+            // read in the known good list and regenerate all the simplified forms (in case
+            //  the rules changed)
+            string strProjectDirectory = ProjectDirectory;
+            m_mapS2SfwKnownGoodWords = KnownGoodWordList.LoadTable(strProjectDirectory, this);
+            foreach (SpellFixerWord aWord in m_mapS2SfwKnownGoodWords.Values)
+                aWord.InitializeNonStaticData(this);
+
+            // read in the running list of words to check (and regenerate their simplified
+            //  forms also)
+            m_mapS2SfwWordsToCheck = WordsToCheck.LoadTable(strProjectDirectory, this);
+            foreach (SpellFixerWord aWord in m_mapS2SfwWordsToCheck.Values)
+                aWord.InitializeNonStaticData(this);
+
+            // anything that was added to the ignore list in the last round, reload them so
+            //  we can reconsider them
+            m_mapS2SfwIgnoreWords = IgnoreList.LoadTable(strProjectDirectory, this);
+
+            // for the new session, add the ignore words to the words to check
+            foreach (SpellFixerWord aWord in m_mapS2SfwIgnoreWords.Values)
+                AddWordToCheckList(aWord.Value, false, aWord.ContextStrings);
+
+            m_mapS2SfwIgnoreWords.Clear();   // and then clear it out to start afresh
+
+            return sfssp;
+        }
+
+        /// <summary>
+        /// Re-reads the Vernacular Script System file and re-applies it (e.g. after the user has changed the
+        /// Inconsistency Settings) and recalculates the transliterated and simplified forms of the words in the
+        /// Known Good and Words to Check lists--without re-reading the word lists from disk (which would lose any
+        /// unsaved additions)
+        /// </summary>
+        internal void ReinitializeRules()
+        {
+            try
+            {
+                ApplyVernScriptSystem(VernScriptSystem.LoadVsvXml(VernacularScriptSystemFileSpec));
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Unable to reload the Vernacular Script System for the '{Name}' project: {ex.Message}", ApplicationCaption);
+                return;
+            }
+
+            foreach (var map in new HashtableStore[] { m_mapS2SfwKnownGoodWords, m_mapS2SfwWordsToCheck })
+                if (map != null)
+                    foreach (SpellFixerWord aWord in map.Values)
+                        aWord.InitializeNonStaticData(this);
+        }
+
+        /// <summary>
+        /// Sets up the ambiguity rules, transliterator, punctuation, preprocessing regexs and ignore characters
+        /// from the given Vernacular Script System
+        /// </summary>
+        protected void ApplyVernScriptSystem(VernScriptSystem sfssp)
+        {
+                RegexChanges.Clear();   // in case this is called again (e.g. after reloading the project)
+
+                m_ambiguityRules = AmbiguityRules.Build(sfssp, _ruleNames.Cast<string>(), out var missingRuleNames);
+                foreach (var strRuleName in missingRuleNames)
                 {
-                    m_mapAmbiguities = new AmbiguityListMaps();
-                    foreach (string strRuleName in _ruleNames)
-                    {
-                        System.Diagnostics.Trace.WriteLine(String.Format("strRuleName: {0}", strRuleName));
-                        var distinction = sfssp.Distinctions.DistinctionList.FirstOrDefault(d => d.Name == strRuleName);
-                        if (distinction != null)
-                        {
-                            foreach (var normalizeRule in distinction.NormalizeRules)
-                            {
-                                var characterToNormalize = normalizeRule.CharactersToNormalize.CharacterToNormalize.Select(c => c.Value).ToList();
-                                AddAmbiguityRule(distinction.Name, normalizeRule.NormalizedForm, characterToNormalize);
-                            }
-                        }
-                        else
-                        {
-                            MessageBox.Show(String.Format("The project is configured to use an ambiguity rule named '{0}', but it's not in the file '{1}'!? You should edit the project to fix this.",
-                                strRuleName, strVSSFileSpec));
-                        }
-                    }
+                    MessageBox.Show(String.Format("The project is configured to use an ambiguity rule named '{0}', but it's not in the file '{1}'!? You should edit the project to fix this.",
+                        strRuleName, VernacularScriptSystemFileSpec));
                 }
 
                 Transliterator = GetTransliterator(sfssp);
@@ -217,57 +273,14 @@ namespace SpellingFixer30
                 }
 
                 // get list of characters we're supposed to strip out of words
-                if (sfssp.IgnoreCharactersBeforeTransliteration != null)
-                {
-                    var ignoreCharactersBeforeTransliteration = sfssp.IgnoreCharactersBeforeTransliteration.Characters;
-                    m_astrIgnoreStrsBeforeTransliteration = ignoreCharactersBeforeTransliteration.Select(c => c.Value).ToArray();
-                }
+                m_astrIgnoreStrsBeforeTransliteration = GetIgnoreStrings(sfssp.IgnoreCharactersBeforeTransliteration?.Characters);
+                m_astrIgnoreStrsAfterTransliteration = GetIgnoreStrings(sfssp.IgnoreCharactersAfterTransliteration?.Characters);
+        }
 
-                // get list of characters we're supposed to strip out of words
-                if (sfssp.IgnoreCharactersAfterTransliteration != null)
-                {
-                    var ignoreCharactersAfterTransliteration = sfssp.IgnoreCharactersAfterTransliteration.Characters;
-                    m_astrIgnoreStrsAfterTransliteration = ignoreCharactersAfterTransliteration.Select(c => c.Value).ToArray();
-                }
-            }
-#if DEBUG
-            catch (Exception ex)
-            {
-                // don't think I want to do this in the release product or we'll never be able to edit the project.
-                throw ex;
-#else
-            catch
-            {
-#endif
-            }
-
-            // read in the bad 2 good mapping
-            m_mapS2SBad2GoodWords = Bad2GoodMap.LoadTable(SpellFixerEncConverterSpec);
-
-            // read in the known good list and regenerate all the simplified forms (in case
-            //  the rules changed)
-            string strProjectDirectory = ProjectDirectory;
-            m_mapS2SfwKnownGoodWords = KnownGoodWordList.LoadTable(strProjectDirectory, this);
-            foreach (SpellFixerWord aWord in m_mapS2SfwKnownGoodWords.Values)
-                aWord.InitializeNonStaticData(this);
-
-            // read in the running list of words to check (and regenerate their simplified
-            //  forms also)
-            m_mapS2SfwWordsToCheck = WordsToCheck.LoadTable(strProjectDirectory, this);
-            foreach (SpellFixerWord aWord in m_mapS2SfwWordsToCheck.Values)
-                aWord.InitializeNonStaticData(this);
-
-            // anything that was added to the ignore list in the last round, reload them so
-            //  we can reconsider them
-            m_mapS2SfwIgnoreWords = IgnoreList.LoadTable(strProjectDirectory, this);
-
-            // for the new session, add the ignore words to the words to check
-            foreach (SpellFixerWord aWord in m_mapS2SfwIgnoreWords.Values)
-                AddWordToCheckList(aWord.Value, false, aWord.ContextStrings);
-
-            m_mapS2SfwIgnoreWords.Clear();   // and then clear it out to start afresh
-
-            return sfssp;
+        internal static string[] GetIgnoreStrings(List<IgnoreCharacter> characters)
+        {
+            // (an empty one would throw in String.Replace)
+            return characters?.Select(c => c.Value).Where(v => !String.IsNullOrEmpty(v)).ToArray();
         }
 
         internal static DirectableEncConverter GetTransliterator(VernScriptSystem sfssp)
@@ -1057,7 +1070,7 @@ namespace SpellingFixer30
         internal void ResetAmbiguityRules()
         {
             _ruleNames.Clear();
-            m_mapAmbiguities = new AmbiguityListMaps();
+            m_ambiguityRules = new AmbiguityRules();
         }
 
         /// <summary>
@@ -1386,18 +1399,6 @@ namespace SpellingFixer30
             else
             {
                 EditDictionaryOrBad2GoodList(true, false);
-            }
-        }
-
-        internal void AddAmbiguityRule(string strRuleName, string strNormalizedForm, List<string> astrAmbiguousForms)
-        {
-            ArrayList aList = new ArrayList();
-            if (m_mapAmbiguities.ContainsKey(strNormalizedForm))
-                m_mapAmbiguities[strNormalizedForm].AddRange(astrAmbiguousForms);
-            else
-            {
-                aList.AddRange(astrAmbiguousForms);
-                m_mapAmbiguities.Add(strNormalizedForm, aList);
             }
         }
 
@@ -1752,34 +1753,44 @@ namespace SpellingFixer30
 
             // see if we're supposed to strip out consecutive double-characters
             if (CompareDoubleChars)
-            {
-                if (strSimplifiedWord.Length > 1)
-                {
-                    var sb = new StringBuilder();
-                    var chLast = strSimplifiedWord[0];
-                    sb.Append(chLast);
+                strSimplifiedWord = CollapseDoubleCharacters(strSimplifiedWord);
 
-                    for (int i = 1; i < strSimplifiedWord.Length; i++)
-                    {
-                        var chCurrent = strSimplifiedWord[i];
-                        if (chCurrent != chLast)
-                        {
-                            sb.Append(chCurrent);
-                        }
-                        chLast = chCurrent;
-                    }
-                    strSimplifiedWord = sb.ToString();
-                }
-            }
-
-            // go thru each of the ambiguity rules and reduce the word further.
-            if (m_mapAmbiguities != null)
-                foreach (string strKey in m_mapAmbiguities.Keys)
-                    foreach (string strValue in m_mapAmbiguities[strKey])
-                        strSimplifiedWord = strSimplifiedWord.Replace(strValue, strKey);
+            // go thru each of the ambiguity rules (in the order they're in the VSS file) and reduce the word further.
+            strSimplifiedWord = m_ambiguityRules?.ApplyAfterTransliteration(strSimplifiedWord) ?? strSimplifiedWord;
 
             // we now have a simplified word to check against our list
             return strSimplifiedWord;
+        }
+
+        /// <summary>
+        /// e.g. "akkhiyēṁ" -> "akhiyēṁ"
+        /// </summary>
+        internal static string CollapseDoubleCharacters(string str)
+        {
+            if ((str == null) || (str.Length < 2))
+                return str;
+
+            var sb = new StringBuilder(str.Length);
+            var chLast = str[0];
+            sb.Append(chLast);
+
+            for (int i = 1; i < str.Length; i++)
+            {
+                var chCurrent = str[i];
+                if (chCurrent != chLast)
+                    sb.Append(chCurrent);
+                chLast = chCurrent;
+            }
+            return sb.ToString();
+        }
+
+        internal static string RemoveStrings(string str, string[] astrToRemove)
+        {
+            if ((astrToRemove == null) || String.IsNullOrEmpty(str))
+                return str;
+            foreach (string strIgnoreString in astrToRemove)
+                str = str.Replace(strIgnoreString, null);
+            return str;
         }
 
         internal DirectableEncConverter Transliterator
@@ -1795,12 +1806,12 @@ namespace SpellingFixer30
 
         internal virtual string TransliteratedWord(string strWordVernacular)
         {
-            // First remove any "before transliteration" strings
-            if (m_astrIgnoreStrsBeforeTransliteration != null)
-            {
-                foreach (string strIgnoreString in m_astrIgnoreStrsBeforeTransliteration)
-                    strWordVernacular = strWordVernacular.Replace(strIgnoreString, null);
-            }
+            // First apply any ambiguity rules that apply to the vernacular form of the word (e.g. removing the
+            //  Dogri tonal 'ह़'; which has to happen before the "before transliteration" strings strip the nukta)
+            strWordVernacular = m_ambiguityRules?.ApplyBeforeTransliteration(strWordVernacular) ?? strWordVernacular;
+
+            // then remove any "before transliteration" strings
+            strWordVernacular = RemoveStrings(strWordVernacular, m_astrIgnoreStrsBeforeTransliteration);
 
             string strTransliterated = null;
             if ((Transliterator != null) && (!String.IsNullOrEmpty(strWordVernacular)))
@@ -1808,9 +1819,7 @@ namespace SpellingFixer30
                 strTransliterated = Transliterator.Convert(strWordVernacular);
 
                 // apply the "CharactersToIgnore" to strip out unexpected/desired results of the transliteration
-                if ((m_astrIgnoreStrsAfterTransliteration != null) && (strTransliterated != null))
-                    foreach (string strIgnoreString in m_astrIgnoreStrsAfterTransliteration)
-                        strTransliterated = strTransliterated.Replace(strIgnoreString, null);
+                strTransliterated = RemoveStrings(strTransliterated, m_astrIgnoreStrsAfterTransliteration);
             }
 
             return strTransliterated;

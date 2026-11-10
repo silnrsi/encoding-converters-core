@@ -649,14 +649,14 @@ namespace SpellingFixer30
 
         public override string ToString()
         {
+            // (this used to chop the last 2 characters off the list of forms, e.g. showing "[ ] -> k" for "[kh] -> k")
             string strTip = null;
-            foreach (NormalizeRule aNRRow in NormalizeRules)
+            foreach (NormalizeRule aNRRow in NormalizeRules ?? new List<NormalizeRule>())
             {
-                strTip += String.Format("{0}[", Environment.NewLine);
-                List<string> astrAmbiguousStrings = new List<string>();
-                strTip += String.Join(", ", aNRRow.CharactersToNormalize.CharacterToNormalize.Select(c => c.Value));
-                strTip = strTip.Substring(0, strTip.Length - 2);
-                strTip += String.Format(" ] -> {0}", aNRRow.NormalizedForm);
+                var forms = aNRRow.CharactersToNormalize?.CharacterToNormalize?.Select(c => c.Value) ?? Enumerable.Empty<string>();
+                strTip += String.Format("{0}[ {1} ] -> {2}{3}", Environment.NewLine, String.Join(", ", forms),
+                                        String.IsNullOrEmpty(aNRRow.NormalizedForm) ? "(removed)" : aNRRow.NormalizedForm,
+                                        aNRRow.IsBeforeTransliteration ? " (before transliteration)" : null);
             }
             return strTip;
         }
