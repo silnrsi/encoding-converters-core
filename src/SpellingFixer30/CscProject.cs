@@ -1331,37 +1331,23 @@ namespace SpellingFixer30
             WordsToCheckBulk mapWordsToCheckBulk = new WordsToCheckBulk();
             try
             {
-                // see if the store exists (i.e. if the user left off with some unselected.
+                // Always look for the inconsistencies from scratch: it's quick now, and the Words to Check list still has
+                //  every word that hasn't been decided yet (only words the user decides on are taken off it). This used to
+                //  offer to pick up with the words left over from the last session (saved in a separate file), but that could
+                //  be out of date (e.g. after new data is added or the Inconsistency Settings are changed), so just delete
+                //  that file if an earlier version left one.
                 if (mapWordsToCheckBulk.BulkFileExists(ProjectDirectory))
-                {
-                    DialogResult res = MessageBox.Show("You have some data left over from a previous session. Do you want to work with that data (Yes) or start over from scratch (No)?", ApplicationCaption, MessageBoxButtons.YesNoCancel);
-
-                    if (res == DialogResult.Yes)
-                        mapWordsToCheckBulk.LoadTable(this);
-                    else if (res == DialogResult.Cancel)
-                        return;
-
-                    // don't leave it lying around
                     mapWordsToCheckBulk.DeleteStore(ProjectDirectory);
-                }
 
-                // if it's empty at this point, then clone the WordsToCheck list
-                if (mapWordsToCheckBulk.Count == 0)
-                    mapWordsToCheckBulk.Copy(m_mapS2SfwWordsToCheck);
+                mapWordsToCheckBulk.Copy(m_mapS2SfwWordsToCheck);
 
                 // bring up the dialog to do the work
                 var dlg = new BulkAmbiguityPicker(this, m_mapS2SfwKnownGoodWords, m_mapS2SBad2GoodWords,
                                                   ref mapWordsToCheckBulk);
                 dlg.ShowDialog();
             }
-            catch (Exception)
-            {
-                throw;
-            }
             finally
             {
-                if (mapWordsToCheckBulk.Count > 0)
-                    WordsToCheckBulk.SaveTable(mapWordsToCheckBulk, this);
                 SaveProjectData();
             }
         }
@@ -1885,7 +1871,11 @@ namespace SpellingFixer30
         /// </summary>
         /// <param name="sfwWordToCheck">The word to represent the ambiguous words in a bundle. This object will be included in the returned results</param>
         /// <returns>A sorted array of SpellFixerWord objects with the highest count occuring as the lowest array index (i.e. [0] = highest count)</returns>
-        internal virtual SpellFixerWords GetAmbiguousBundle(SpellFixerWord sfwWordToCheck, WordsToCheckBulk mapWordsToCheck)
+        /// <param name="knownGoodIndex">(optional) an index of the Known Good list (see SimplifiedFormIndex), so
+        /// the whole list doesn't have to be searched for each word</param>
+        /// <param name="wordsToCheckIndex">(optional) an index of mapWordsToCheck</param>
+        internal virtual SpellFixerWords GetAmbiguousBundle(SpellFixerWord sfwWordToCheck, WordsToCheckBulk mapWordsToCheck,
+                                                            SimplifiedFormIndex knownGoodIndex = null, SimplifiedFormIndex wordsToCheckIndex = null)
         {
             string strWordToCheck = sfwWordToCheck.Value;
             if (!String.IsNullOrEmpty(strWordToCheck))
@@ -1894,10 +1884,10 @@ namespace SpellingFixer30
 
                 CountPlusNameSortList sl = new CountPlusNameSortList();
                 FindMatchingSimplifiedFormsInHashTableValue(strWordToCheck, strSimplifiedWord,
-                    m_mapS2SfwKnownGoodWords, true, ref sl);
+                    m_mapS2SfwKnownGoodWords, true, ref sl, knownGoodIndex);
 
                 FindMatchingSimplifiedFormsInHashTableValue(strWordToCheck, strSimplifiedWord,
-                    mapWordsToCheck, false, ref sl);
+                    mapWordsToCheck, false, ref sl, wordsToCheckIndex);
 
                 if (sl.Count > 0)
                 {
@@ -1982,10 +1972,18 @@ namespace SpellingFixer30
 
         internal void FindMatchingSimplifiedFormsInHashTableValue(string strWordToCheck,
             string strSimplifiedWord, HashtableStore ht, bool bMatchIndicatesKnownGoodWord,
-            ref CountPlusNameSortList sl)
+            ref CountPlusNameSortList sl, SimplifiedFormIndex index = null)
         {
+            // a word that simplifies to nothing (e.g. one made up only of ignored characters) isn't ambiguous with anything
+            //  (otherwise all such words would be bundled together)
+            if (String.IsNullOrEmpty(strSimplifiedWord))
+                return;
+
             var startingChar = strSimplifiedWord[0];
-            foreach (var kvp in ht.Where(kvp => kvp.Value.SimplifiedValue.FirstOrDefault() == startingChar))
+            var candidates = (index != null)
+                ? index.Matches(strSimplifiedWord)
+                : ht.Where(kvp => !String.IsNullOrEmpty(kvp.Value?.SimplifiedValue) && (kvp.Value.SimplifiedValue[0] == startingChar));
+            foreach (var kvp in candidates)
             {
                 SpellFixerWord aWord = kvp.Value;
                 if ((strSimplifiedWord == aWord.SimplifiedValue) && (strWordToCheck != kvp.Key))
@@ -2011,14 +2009,14 @@ namespace SpellingFixer30
 
             // see if we're supposed to ignore case
             if (CompareCase && (Locale != null))
-                strSimplifiedWord = strSimplifiedWord.ToLower(Locale);
+                strSimplifiedWord = strSimplifiedWord?.ToLower(Locale);
 
             // then transliterate the word for the rest of the simplifications
             strSimplifiedWord = (bTransliterate) ? TransliteratedWord(strSimplifiedWord) : strSimplifiedWord;
 
             // might do the ignore case *afterwards*
             if (CompareCase && (Locale == null))
-                strSimplifiedWord = strSimplifiedWord.ToLowerInvariant();
+                strSimplifiedWord = strSimplifiedWord?.ToLowerInvariant();
 
             // see if we're supposed to strip out consecutive double-characters
             if (CompareDoubleChars)
@@ -2027,8 +2025,100 @@ namespace SpellingFixer30
             // go thru each of the ambiguity rules (in the order they're in the VSS file) and reduce the word further.
             strSimplifiedWord = m_ambiguityRules?.ApplyAfterTransliteration(strSimplifiedWord) ?? strSimplifiedWord;
 
-            // we now have a simplified word to check against our list
-            return strSimplifiedWord;
+            // we now have a simplified word to check against our list. Never return null: TransliteratedWord returns null
+            //  when nothing is left of the word after removing the ignore characters (e.g. a word that's only a nukta or
+            //  a soft hyphen), and callers (e.g. FindMatchingSimplifiedFormsInHashTableValue) expect a string
+            return strSimplifiedWord ?? String.Empty;
+        }
+
+        /// <summary>
+        /// One of the steps in turning a word into the form that's compared to find inconsistencies (see TraceSimplification)
+        /// </summary>
+        internal class SimplificationStep
+        {
+            /// <summary>the Inconsistency Setting (Distinction) that made this change (null for the other steps, e.g. transliteration)</summary>
+            public string DistinctionName { get; set; }
+            public string Description { get; set; }
+            public string Before { get; set; }
+            public string After { get; set; }
+
+            public override string ToString() => $"{Before} → {After}   ({Description})";
+        }
+
+        /// <summary>
+        /// Goes thru the same steps as TransliteratedWord + SimplifiedWord (i.e. how SpellFixerWord.SimplifiedValue is
+        /// calculated), recording each one that changes the word, so the user can see which Inconsistency Settings made
+        /// two words look alike
+        /// </summary>
+        internal List<SimplificationStep> TraceSimplification(string word)
+        {
+            var steps = new List<SimplificationStep>();
+            string Step(string before, string after, string description, string distinctionName = null)
+            {
+                if (before != after)
+                    steps.Add(new SimplificationStep { Before = before, After = after, Description = description, DistinctionName = distinctionName });
+                return after;
+            }
+
+            string ApplyRules(string str, IEnumerable<AmbiguityRule> rules)
+            {
+                foreach (var rule in rules)
+                {
+                    // (which of the rule's forms matched, in the order they're replaced)
+                    var matched = new List<string>();
+                    var current = str;
+                    foreach (var form in rule.Forms)
+                        if (!String.IsNullOrEmpty(current) && current.Contains(form))
+                        {
+                            matched.Add(form);
+                            current = current.Replace(form, rule.NormalizedForm);
+                        }
+                    var what = String.Join(", ", matched.Select(f => $"'{f}'"));
+                    str = Step(str, current, String.IsNullOrEmpty(rule.NormalizedForm) ? $"{what} removed" : $"{what} → '{rule.NormalizedForm}'",
+                               rule.DistinctionName);
+                }
+                return str;
+            }
+
+            var rulesInUse = m_ambiguityRules ?? new AmbiguityRules();
+            var s = ApplyRules(word, rulesInUse.BeforeTransliteration);
+            s = Step(s, RemoveStrings(s, m_astrIgnoreStrsBeforeTransliteration), "ignored characters removed, before transliteration");
+            if ((Transliterator != null) && !String.IsNullOrEmpty(s))
+            {
+                s = Step(s, Transliterator.Convert(s), "transliterated");
+                s = Step(s, RemoveStrings(s, m_astrIgnoreStrsAfterTransliteration), "ignored characters removed, after transliteration");
+            }
+            else
+                s = Step(s, null, "nothing left to compare");
+
+            if (CompareCase)
+                s = Step(s, (Locale != null) ? s?.ToLower(Locale) : s?.ToLowerInvariant(), "upper/lower case ignored");
+            if (CompareDoubleChars)
+                s = Step(s, CollapseDoubleCharacters(s), "double letters treated as single");
+            ApplyRules(s, rulesInUse.AfterTransliteration);
+            return steps;
+        }
+
+        /// <summary>
+        /// Turns off the given Inconsistency Settings (i.e. the project stops using them; they stay in the Vernacular
+        /// Script System file), saves the project, and re-applies the rules to the words in memory
+        /// </summary>
+        internal void DisableAmbiguityRules(IEnumerable<string> distinctionNames)
+        {
+            foreach (var name in distinctionNames)
+                _ruleNames.Remove(name);
+            SaveProject(this);
+            ReinitializeRules();
+        }
+
+        /// <summary>
+        /// Refills the given (Bulk picker's) list with all of the project's Words to Check (e.g. to look for
+        /// inconsistencies again from scratch after the Inconsistency Settings have been changed)
+        /// </summary>
+        internal void RefillWordsToCheck(WordsToCheckBulk mapWordsToCheck)
+        {
+            mapWordsToCheck.Clear();
+            mapWordsToCheck.Copy(m_mapS2SfwWordsToCheck);
         }
 
         /// <summary>

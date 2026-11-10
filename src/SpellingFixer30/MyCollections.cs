@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
@@ -500,6 +500,65 @@ namespace SpellingFixer30
 #endif
             string strKey = String.Format("{0:00000000}{1}", sfw.Count, sfw.Value);
             return strKey;
+        }
+    }
+
+    /// <summary>
+    /// An index of a word list by the words' simplified forms, so finding the words in a bundle doesn't mean going thru
+    /// the whole list for every word (which made the Bulk picker's search O(n^2)). Words removed from the list after the
+    /// index is built are skipped; if the list grows (e.g. the user adds words to the Known Good list) the index is rebuilt.
+    /// </summary>
+    internal class SimplifiedFormIndex
+    {
+        private readonly HashtableStore _map;
+        private Dictionary<string, List<KeyValuePair<string, SpellFixerWord>>> _index;
+        private int _countWhenBuilt = -1;
+
+        public SimplifiedFormIndex(HashtableStore map)
+        {
+            _map = map;
+        }
+
+        public IEnumerable<KeyValuePair<string, SpellFixerWord>> Matches(string simplifiedForm)
+        {
+            if ((_index == null) || (_map.Count > _countWhenBuilt))
+                Rebuild();
+
+            if (!_index.TryGetValue(simplifiedForm, out var candidates))
+                return Enumerable.Empty<KeyValuePair<string, SpellFixerWord>>();
+
+            // (only the ones that are still in the list)
+            return candidates.Where(kvp => _map.TryGetValue(kvp.Key, out var current) && ReferenceEquals(current, kvp.Value))
+                             .ToList();
+        }
+
+        private void Rebuild()
+        {
+            // (the list may be changed on another thread, e.g. the UI thread adding a Known Good word; if so, try again)
+            for (int attempt = 0; ; attempt++)
+            {
+                try
+                {
+                    var index = new Dictionary<string, List<KeyValuePair<string, SpellFixerWord>>>(StringComparer.Ordinal);
+                    var count = _map.Count;
+                    foreach (var kvp in _map.ToList())
+                    {
+                        var key = kvp.Value?.SimplifiedValue;
+                        if (String.IsNullOrEmpty(key))
+                            continue;
+                        if (!index.TryGetValue(key, out var list))
+                            index[key] = list = new List<KeyValuePair<string, SpellFixerWord>>();
+                        list.Add(kvp);
+                    }
+                    _index = index;
+                    _countWhenBuilt = count;
+                    return;
+                }
+                catch (InvalidOperationException) when (attempt < 5)
+                {
+                    System.Threading.Thread.Sleep(20);
+                }
+            }
         }
     }
 }

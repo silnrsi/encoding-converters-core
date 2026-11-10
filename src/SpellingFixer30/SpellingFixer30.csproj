@@ -153,6 +153,12 @@
     <Compile Include="RuleAnalysisForm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="RuleTraceForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ExamplesPane.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="SelectProject.cs">
       <SubType>Form</SubType>
     </Compile>

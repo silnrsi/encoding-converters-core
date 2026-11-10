@@ -93,7 +93,31 @@ namespace SpellingFixer30.Properties {
                 this["ShowCountOnBulk"] = value;
             }
         }
-        
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool ShowExamplesPane {
+            get {
+                return ((bool)(this["ShowExamplesPane"]));
+            }
+            set {
+                this["ShowExamplesPane"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("300")]
+        public int ExamplesPaneWidth {
+            get {
+                return ((int)(this["ExamplesPaneWidth"]));
+            }
+            set {
+                this["ExamplesPaneWidth"] = value;
+            }
+        }
+
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("Green")]

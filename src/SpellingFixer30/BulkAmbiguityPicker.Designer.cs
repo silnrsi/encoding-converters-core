@@ -39,6 +39,7 @@ namespace SpellingFixer30
             this.ColumnRomanizedRhs = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ColumnCountRhs = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.progressBar = new System.Windows.Forms.ProgressBar();
+            this.buttonPause = new System.Windows.Forms.Button();
             this.labelInconsistencies = new System.Windows.Forms.Label();
             this.backgroundWorker = new System.ComponentModel.BackgroundWorker();
             this.helpProvider = new System.Windows.Forms.HelpProvider();
@@ -63,11 +64,13 @@ namespace SpellingFixer30
             // 
             // tableLayoutPanel
             // 
-            this.tableLayoutPanel.ColumnCount = 2;
+            this.tableLayoutPanel.ColumnCount = 3;
             this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20F));
             this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20F));
+            this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.AutoSize));
             this.tableLayoutPanel.Controls.Add(this.dataGridViewCorrectFormPicker, 0, 0);
             this.tableLayoutPanel.Controls.Add(this.progressBar, 1, 1);
+            this.tableLayoutPanel.Controls.Add(this.buttonPause, 2, 1);
             this.tableLayoutPanel.Controls.Add(this.labelInconsistencies, 0, 1);
             this.tableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel.Location = new System.Drawing.Point(0, 24);
@@ -94,7 +97,7 @@ namespace SpellingFixer30
             this.ColumnVernacularRhs,
             this.ColumnRomanizedRhs,
             this.ColumnCountRhs});
-            this.tableLayoutPanel.SetColumnSpan(this.dataGridViewCorrectFormPicker, 2);
+            this.tableLayoutPanel.SetColumnSpan(this.dataGridViewCorrectFormPicker, 3);
             this.dataGridViewCorrectFormPicker.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridViewCorrectFormPicker.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
             this.dataGridViewCorrectFormPicker.Location = new System.Drawing.Point(3, 3);
@@ -186,6 +189,16 @@ namespace SpellingFixer30
             this.progressBar.Name = "progressBar";
             this.progressBar.Size = new System.Drawing.Size(278, 23);
             this.progressBar.TabIndex = 4;
+            //
+            // buttonPause
+            //
+            this.buttonPause.AutoSize = true;
+            this.buttonPause.Name = "buttonPause";
+            this.buttonPause.TabIndex = 6;
+            this.buttonPause.Text = "&Pause";
+            this.buttonPause.UseVisualStyleBackColor = true;
+            this.buttonPause.Visible = false;
+            this.buttonPause.Click += new System.EventHandler(this.buttonPause_Click);
             // 
             // labelInconsistencies
             // 
@@ -370,6 +383,7 @@ namespace SpellingFixer30
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
         private System.Windows.Forms.ColorDialog colorDialog;
         private System.Windows.Forms.Label labelInconsistencies;
+        private System.Windows.Forms.Button buttonPause;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnVernacularLhs;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnRomanizedLhs;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnCountLhs;
