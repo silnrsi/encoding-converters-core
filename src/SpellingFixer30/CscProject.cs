@@ -1483,6 +1483,22 @@ namespace SpellingFixer30
         /// <returns>WordCheckResult enumeration indicating the result of adding the word (e.g. could have already been in the list, etc)</returns>
         public WordCheckResult AddWordToCheckList(string strWord, bool bTrim, List<string> context)
         {
+            return AddWordToCheckList(strWord, bTrim, context, bSplitOutMarkup: bTrim);
+        }
+
+        private WordCheckResult AddWordToCheckList(string strWord, bool bTrim, List<string> context, bool bSplitOutMarkup)
+        {
+            // if the client split the text on whitespace only, SFM markers (e.g. 'घ़र\f' or 'दे।”\qt2-e\*') can
+            //  still be attached to the word. Since a marker is never part of a word (and trimming only removes
+            //  punctuation from the ends of words), split them off first and add the pieces
+            if (bSplitOutMarkup && ContainsMarkup(strWord))
+            {
+                var result = WordCheckResult.Unknown;
+                foreach (var piece in SplitOutMarkup(strWord))
+                    result = AddWordToCheckList(piece, bTrim, context, bSplitOutMarkup: false);
+                return result;
+            }
+
             if (!String.IsNullOrEmpty(strWord))
             {
                 if (bTrim)
@@ -1543,7 +1559,45 @@ namespace SpellingFixer30
             return bRet;
         }
 
+        // an SFM marker, e.g. \f, \f*, \qt2-s, \+w, or a bare '\*' (the end of a milestone)
+        private static readonly Regex s_rxSfmMarker = new Regex(@"\\\+?[A-Za-z][A-Za-z0-9-]*\*?|\\\*", RegexOptions.Compiled);
+        // USFM attributes after a '|', e.g. जाना|src="LB00317B.JPG" or पुच्‍छ-ताश|alt="the
+        private static readonly Regex s_rxAttributeList = new Regex(@"\|\s*[A-Za-z][\w-]*\s*=.*$", RegexOptions.Compiled);
+        // a (whitespace-delimited) piece that's just an attribute, e.g. src="lb00321c.jpg or ref="9:6"
+        private static readonly Regex s_rxAttributeToken = new Regex(@"^[A-Za-z][\w-]*=""", RegexOptions.Compiled);
+
+        /// <summary>
+        /// Does the (whitespace-delimited) token have SFM markers or USFM attributes in it?
+        /// </summary>
+        internal static bool ContainsMarkup(string token)
+        {
+            return !String.IsNullOrEmpty(token) &&
+                   (s_rxSfmMarker.IsMatch(token) || s_rxAttributeList.IsMatch(token) || s_rxAttributeToken.IsMatch(token));
+        }
+
+        /// <summary>
+        /// Splits SFM markers and USFM attributes out of a (whitespace-delimited) token, returning the pieces that
+        /// are left (untrimmed), e.g. 'दे।”\qt2-e\*' -> [ 'दे।”' ], 'घ़र\f' -> [ 'घ़र' ], 'जाना|src="x.jpg"' -> [ 'जाना' ],
+        /// 'ref="9:6"\fig' -> []
+        /// </summary>
+        internal static List<string> SplitOutMarkup(string token)
+        {
+            if (String.IsNullOrEmpty(token))
+                return new List<string>();
+
+            token = s_rxSfmMarker.Replace(token, " ");
+            token = s_rxAttributeList.Replace(token, " ");
+            return token.Split(new[] { ' ', '\t', '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries)
+                        .Where(piece => !s_rxAttributeToken.IsMatch(piece))
+                        .ToList();
+        }
+
         internal string TrimWhiteSpaceAndPunctuation(string word)
+        {
+            return TrimWhiteSpaceAndPunctuation(word, m_achTrimPunctuation ?? new List<char>());
+        }
+
+        internal static string TrimWhiteSpaceAndPunctuation(string word, List<char> trimChars)
         {
             if (string.IsNullOrWhiteSpace(word))
                 return string.Empty;
@@ -1551,7 +1605,6 @@ namespace SpellingFixer30
             // Normalize Unicode text for consistent representation
             word = word.Normalize(NormalizationForm.FormKC);
 
-            List<char> trimChars = m_achTrimPunctuation;
             int start = 0, end = word.Length - 1;
 
             static bool ShouldTrim(char ch, List<char> trimChars)
