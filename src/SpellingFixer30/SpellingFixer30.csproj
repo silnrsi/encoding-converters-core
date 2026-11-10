@@ -96,6 +96,7 @@
       <DependentUpon>CorrectSpellingPicker.cs</DependentUpon>
     </Compile>
     <Compile Include="CscProjectStore.cs" />
+    <Compile Include="CscRuleAnalyzer.cs" />
     <Compile Include="CustomToolTipForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -147,6 +148,9 @@
     </Compile>
     <Compile Include="ParatextProjectLink.cs" />
     <Compile Include="ParatextProjectListForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="RuleAnalysisForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="SelectProject.cs">

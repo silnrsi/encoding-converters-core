@@ -40,6 +40,13 @@ namespace SpellingFixer30
 		/// <param name="strSimplifiedWord">The simplification of the word which is used for comparison to find potential misspellings (becomes SimplifiedValue)</param>
 		/// <param name="strTransliteratedValue">The transliteration of the word using the transliterator defined in the projects Vernacular Script System (becomes TransliteratedValue)</param>
 		/// <param name="strContext">An optional string showing the surrounding context--for Tooltips, etc. (becomes Context)</param>
+		/// <summary>
+		/// For when the transliterated and simplified forms aren't needed (e.g. analyzing a project's data without loading it)
+		/// </summary>
+		internal SpellFixerWord()
+		{
+		}
+
 		public SpellFixerWord(CscProject project, string strWord, List<string> context)
 		{
 			Value = strWord;

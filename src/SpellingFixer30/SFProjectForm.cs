@@ -45,6 +45,15 @@ namespace SpellingFixer30
 				}
 			}
 
+			// plus any project-specific VSS files in the project's own folder (which take precedence over a global one
+			//  by the same name; see CscProject.CreateVernacularScriptSystemFileSpec)
+			if (!String.IsNullOrEmpty(m_project?.Name))
+			{
+				foreach (var name in CscProject.GetProjectVernacularScriptSystemNames(m_project.Name))
+					if (!comboBoxVernScriptType.Items.Contains(name))
+						comboBoxVernScriptType.Items.Add(name);
+			}
+
 			CultureInfo[] cis = CultureInfo.GetCultures(CultureTypes.InstalledWin32Cultures);
 			foreach (var ci in cis)
 			{
@@ -304,6 +313,7 @@ namespace SpellingFixer30
         }
 
         bool m_bSaveVSS = false;
+        bool m_bSaveVssInProjectFolder = false; // set when the analysis makes changes, to suggest a project-specific copy
 
         private void buttonOK_Click(object sender, EventArgs e)
         {
@@ -362,9 +372,25 @@ namespace SpellingFixer30
 
             VernScriptSystem sfssp = DistinctionRuleCheckBox.VernScriptSystemFile;
             string strFolder = saveFileDialogVssFile.InitialDirectory;
+
+            // a project-specific VSS goes in the project's own folder (so it goes wherever the project's data goes, e.g. to
+            //  other users thru a Paratext project's 'shared' folder)
+            string projectFolder = ParatextProjectLink.GetLocalProjectFolder(textBoxProjectName.Text.Trim());
+            if (m_bSaveVssInProjectFolder)
+            {
+                if (!Directory.Exists(projectFolder))
+                    Directory.CreateDirectory(projectFolder);
+                saveFileDialogVssFile.InitialDirectory = projectFolder;
+            }
+
             if (saveFileDialogVssFile.ShowDialog() == DialogResult.OK)
             {
-                if (Path.GetDirectoryName(saveFileDialogVssFile.FileName) != strFolder)
+                var savedFolder = Path.GetDirectoryName(saveFileDialogVssFile.FileName);
+                if (String.Equals(Path.GetFullPath(savedFolder).TrimEnd('\\'), Path.GetFullPath(projectFolder).TrimEnd('\\'), StringComparison.OrdinalIgnoreCase))
+                {
+                    // (it's project-specific: found via the project folder, so no need to change the VSS folder)
+                }
+                else if (savedFolder != strFolder)
                 {
                     // this means that the user has saved it elsewhere!?
                     DialogResult res = MessageBox.Show("If you save this file in a different folder, you won't be able to see the other files as well (unless you move them into your new folder as well). Do you want to change the folder where the Vernacular Script System files reside?", CscProject.ApplicationCaption, MessageBoxButtons.YesNoCancel);
@@ -448,7 +474,8 @@ namespace SpellingFixer30
                 VernScriptSystem sfssp = null;
                 if (m_project != null)
                 {
-                    var strVernScriptFilename = CscProject.CreateVernacularScriptSystemFileSpec(comboBoxVernScriptType.SelectedItem?.ToString());
+                    var strVernScriptFilename = CscProject.CreateVernacularScriptSystemFileSpec(comboBoxVernScriptType.SelectedItem?.ToString(),
+                                                                                                m_bNewProject ? null : m_project.Name);
                     sfssp = VernScriptSystem.LoadVsvXml(strVernScriptFilename);
                 }
 
@@ -497,17 +524,23 @@ namespace SpellingFixer30
 
 		}
 
-        protected DistinctionRuleCheckBox AddCheckBoxToTab(Distinction aRow)
+        protected DistinctionRuleCheckBox AddCheckBoxToTab(Distinction aRow, int index = -1)
         {
             // add a new row to the table layout thing for this new distinction rule
             // int nIndex = m_panelForDistinctionRows.RowStyles.Add(new RowStyle());
-            DistinctionRuleCheckBox aDistinctionRule = new DistinctionRuleCheckBox(aRow, 
+            DistinctionRuleCheckBox aDistinctionRule = new DistinctionRuleCheckBox(aRow,
                 (m_bNewProject || m_project.ContainsAmbiguityRule(aRow.Name)));
             UpdateToolTip(toolTip, aRow, aDistinctionRule);
             helpProvider.SetHelpString(aDistinctionRule, Properties.Resources.DistinctionRuleCheckBoxHelp);
-            m_alstDistinctionRuleCheckBoxes.Add(aDistinctionRule);
             // m_panelForDistinctionRows.Controls.Add(aDistinctionRule, 0, nIndex);
             flowLayoutPanel.Controls.Add(aDistinctionRule);
+            if ((index >= 0) && (index < m_alstDistinctionRuleCheckBoxes.Count))
+            {
+                m_alstDistinctionRuleCheckBoxes.Insert(index, aDistinctionRule);
+                flowLayoutPanel.Controls.SetChildIndex(aDistinctionRule, index);
+            }
+            else
+                m_alstDistinctionRuleCheckBoxes.Add(aDistinctionRule);
             return aDistinctionRule;
         }
 
@@ -533,6 +566,190 @@ namespace SpellingFixer30
                 strToolTip = aDistRow.Description + strToolTip;
 
             toolTip.SetToolTip(aDistinctionRuleCB, strToolTip);
+        }
+
+        /// <summary>
+        /// Set to open the dialog on the Inconsistency Settings tab and start analyzing them right away
+        /// </summary>
+        public bool StartWithRuleAnalysis { get; set; }
+
+        protected override void OnShown(EventArgs e)
+        {
+            base.OnShown(e);
+            if (StartWithRuleAnalysis && !m_bNewProject)
+            {
+                tabControl.SelectedTab = tabPageDistinctionRules;
+                BeginInvoke(new Action(() => buttonAnalyze.PerformClick()));
+            }
+        }
+
+        private void buttonAnalyze_Click(object sender, EventArgs e)
+        {
+            if (m_bNewProject || (m_project.m_mapS2SBad2GoodWords == null))
+            {
+                MessageBox.Show("The analysis compares the Inconsistency Settings with the spelling corrections you've made, so it can only be done once the project has some data.",
+                                CscProject.ApplicationCaption);
+                return;
+            }
+
+            CscRuleAnalyzer analyzer;
+            try
+            {
+                // analyze the settings as they are in this dialog (which may have been changed, but not saved yet)
+                var enabled = m_alstDistinctionRuleCheckBoxes.Where(cb => cb.Checked).Select(cb => cb.Name).ToList();
+                analyzer = CscRuleAnalyzer.Create(m_project, DistinctionRuleCheckBox.VernScriptSystemFile, enabled,
+                                                  checkBoxCompareDoubleChars.Checked, checkBoxIgnoreCase.Checked,
+                                                  DistinctionRuleCheckBox.TransliteratorEncConverter);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Unable to analyze the Inconsistency Settings: {ex.Message}", CscProject.ApplicationCaption);
+                return;
+            }
+
+            using (var dlg = new RuleAnalysisForm(analyzer, m_project.Font ?? Font, canApply: true, dismissedKeys: m_project.DismissedRuleSuggestions))
+            {
+                var res = dlg.ShowDialog(this);
+                if (dlg.AnalysisCompleted)
+                {
+                    m_project.RecordRuleAnalysis();
+
+                    // (even if they cancel, remember the ones they asked not to be shown again)
+                    var dismissed = dlg.DismissedKeys;
+                    if (!dismissed.SetEquals(m_project.DismissedRuleSuggestions ?? new HashSet<string>()))
+                        m_project.RecordDismissedRuleSuggestions(dismissed);
+                }
+                if (res == DialogResult.OK)
+                    ApplyRuleAnalysisSuggestions(dlg.CheckedSuggestions);
+            }
+        }
+
+        /// <summary>
+        /// Applies the suggestions the user accepted: setting changes are made to the (in memory) Vernacular Script
+        /// System and the check boxes (so they're saved, or not, by OK/Cancel as usual); word list clean-ups are saved now.
+        /// </summary>
+        private void ApplyRuleAnalysisSuggestions(List<RuleSuggestion> suggestions)
+        {
+            var vss = DistinctionRuleCheckBox.VernScriptSystemFile;
+            var changes = new List<string>();
+            int numWordListChanges = 0;
+
+            foreach (var suggestion in suggestions)
+            {
+                switch (suggestion.Kind)
+                {
+                    case SuggestionKind.TurnOffRule:
+                    case SuggestionKind.TurnOnRule:
+                        var checkBox = m_alstDistinctionRuleCheckBoxes.FirstOrDefault(cb => cb.Name == suggestion.DistinctionName);
+                        if (checkBox != null)
+                        {
+                            checkBox.Checked = (suggestion.Kind == SuggestionKind.TurnOnRule);
+                            changes.Add(suggestion.Title);
+                        }
+                        break;
+
+                    case SuggestionKind.MoveRule:
+                        var toMove = vss.Distinctions.DistinctionList.FirstOrDefault(d => d.Name == suggestion.DistinctionName);
+                        var checkBoxToMove = m_alstDistinctionRuleCheckBoxes.FirstOrDefault(cb => cb.Name == suggestion.DistinctionName);
+                        if ((toMove != null) && (checkBoxToMove != null))
+                        {
+                            vss.Distinctions.DistinctionList.Remove(toMove);
+                            vss.Distinctions.DistinctionList.Insert(0, toMove);
+                            m_alstDistinctionRuleCheckBoxes.Remove(checkBoxToMove);
+                            m_alstDistinctionRuleCheckBoxes.Insert(0, checkBoxToMove);
+                            flowLayoutPanel.Controls.SetChildIndex(checkBoxToMove, 0);
+                            checkBoxToMove.Checked = true;
+                            m_bSaveVSS = true;
+                            changes.Add(suggestion.Title);
+                        }
+                        break;
+
+                    case SuggestionKind.AddRule:
+                        var distinction = suggestion.NewDistinction;
+                        var baseName = distinction.Name;
+                        for (int i = 2; vss.Distinctions.DistinctionList.Any(d => d.Name == distinction.Name); i++)
+                            distinction.Name = $"{baseName} ({i})";
+
+                        // new settings go first, since that's how they were evaluated (so they apply before the
+                        //  existing settings change the characters involved)
+                        vss.Distinctions.DistinctionList.Insert(0, distinction);
+                        var newCheckBox = AddCheckBoxToTab(distinction, 0);
+                        newCheckBox.Checked = true;
+                        m_bSaveVSS = true;
+                        changes.Add($"Add '{distinction.Name}'");
+                        break;
+
+                    case SuggestionKind.PunctuationCharacter:
+                        vss.ExtraPunctuation ??= new ExtraPunctuation { IgnorePunctuations = new List<IgnorePunctuation>() };
+                        vss.ExtraPunctuation.IgnorePunctuations ??= new List<IgnorePunctuation>();
+                        vss.ExtraPunctuation.IgnorePunctuations.Add(new IgnorePunctuation { Description = "added by the analysis", Value = suggestion.Character });
+                        textBoxAdditionalPunctuation.Text = String.Join(" ", new[] { textBoxAdditionalPunctuation.Text, $"'{suggestion.Character}'" }.Where(s => !String.IsNullOrEmpty(s)));
+                        m_bSaveVSS = true;
+                        changes.Add(suggestion.Title);
+                        break;
+
+                    case SuggestionKind.IgnoreCharacter:
+                        vss.IgnoreCharactersAfterTransliteration ??= new IgnoreCharactersAfter { Characters = new List<IgnoreCharacter>() };
+                        vss.IgnoreCharactersAfterTransliteration.Characters ??= new List<IgnoreCharacter>();
+                        vss.IgnoreCharactersAfterTransliteration.Characters.Add(new IgnoreCharacter { Description = $"U+{(int)suggestion.Character[0]:X4} (added by the analysis)", Value = suggestion.Character });
+                        m_bSaveVSS = true;
+                        changes.Add(suggestion.Title);
+                        break;
+
+                    case SuggestionKind.PreprocessRegex:
+                        vss.PreprocessDataViaRegex ??= new RegexChanges { RegexChangeList = new List<RegexChange>() };
+                        vss.PreprocessDataViaRegex.RegexChangeList ??= new List<RegexChange>();
+                        vss.PreprocessDataViaRegex.RegexChangeList.Add(suggestion.Regex);
+                        m_bSaveVSS = true;
+                        changes.Add(suggestion.Title);
+                        break;
+
+                    case SuggestionKind.CleanUpWordLists:
+                    case SuggestionKind.RemoveWords:
+                        try
+                        {
+                            numWordListChanges += m_project.ApplyWordListFixes(suggestion.WordListFixes);
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show($"Unable to clean up the word lists: {ex.Message}", CscProject.ApplicationCaption);
+                        }
+                        break;
+                }
+            }
+
+            if (!changes.Any() && (numWordListChanges == 0))
+                return;
+
+            var message = new System.Text.StringBuilder();
+            if (numWordListChanges > 0)
+                message.AppendLine($"{numWordListChanges} word list entries have been cleaned up (and saved).").AppendLine();
+
+            if (changes.Any())
+            {
+                message.AppendLine("These changes have been made to the Inconsistency Settings:");
+                foreach (var change in changes)
+                    message.AppendLine("    " + change);
+                message.AppendLine();
+                message.Append("They'll take effect when you click OK.");
+
+                if (m_bSaveVSS)
+                {
+                    // suggest saving a project-specific copy, so other projects using the same VSS aren't affected
+                    var vssName = (string)comboBoxVernScriptType.SelectedItem;
+                    var projectName = textBoxProjectName.Text.Trim();
+                    var suggestedName = ((vssName ?? String.Empty).IndexOf(projectName, StringComparison.OrdinalIgnoreCase) >= 0)
+                                            ? vssName
+                                            : $"{vssName} ({projectName})";
+                    saveFileDialogVssFile.FileName = $"{suggestedName}.{CscProject.VernacularScriptSystemFileExt}";
+                    m_bSaveVssInProjectFolder = true;
+                    message.Append($" You'll then be asked to save the Vernacular Script System file: we suggest calling it '{suggestedName}' " +
+                                   $"and saving it in the project's own folder, so that any other projects that use '{vssName}' aren't affected, " +
+                                   "and so it goes wherever the project's data goes (e.g. to other users, if the project is synchronized with a Paratext project).");
+                }
+            }
+
+            MessageBox.Show(message.ToString(), CscProject.ApplicationCaption);
         }
 
         private void buttonSetAll_Click(object sender, EventArgs e)

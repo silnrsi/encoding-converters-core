@@ -495,14 +495,75 @@ namespace SpellingFixer30
         {
             get
 			{
-				return CreateVernacularScriptSystemFileSpec(VernacularScriptSystemName);
+				return CreateVernacularScriptSystemFileSpec(VernacularScriptSystemName, Name);
 			}
 		}
 
 		public static string CreateVernacularScriptSystemFileSpec(string vernacularScriptSystemName)
 		{
-			return Path.Combine(VernacularScriptSystemsDirectory,
-								$"{vernacularScriptSystemName}.{VernacularScriptSystemFileExt}");
+			return CreateVernacularScriptSystemFileSpec(vernacularScriptSystemName, null);
+		}
+
+		/// <summary>
+		/// Returns the path to the VSS file with the given name. A project can have its own VSS file in its project folder
+		/// (e.g. one made by the Inconsistency Settings analysis), which then goes wherever the project's data goes (e.g. to
+		/// other users via a Paratext project's 'shared' folder, when the project folder is a junction to it). If there's
+		/// one by that name in the project's folder, it's used; otherwise, the one in the (global) Vernacular Script Systems folder.
+		/// </summary>
+		public static string CreateVernacularScriptSystemFileSpec(string vernacularScriptSystemName, string projectName)
+		{
+			var filename = $"{vernacularScriptSystemName}.{VernacularScriptSystemFileExt}";
+			if (!String.IsNullOrEmpty(projectName))
+			{
+				try
+				{
+					var projectSpecific = Path.Combine(GetProjectDirectory(projectName), filename);
+					if (IsVernScriptSystemFile(projectSpecific))
+						return projectSpecific;
+				}
+				catch { }
+			}
+			return Path.Combine(VernacularScriptSystemsDirectory, filename);
+		}
+
+		/// <summary>
+		/// The names of the VSS files in the project's folder (which also has other .xml files, e.g. the word lists)
+		/// </summary>
+		internal static List<string> GetProjectVernacularScriptSystemNames(string projectName)
+		{
+			var names = new List<string>();
+			try
+			{
+				var folder = GetProjectDirectory(projectName);
+				if (Directory.Exists(folder))
+					names.AddRange(Directory.GetFiles(folder, $"*.{VernacularScriptSystemFileExt}")
+											.Where(IsVernScriptSystemFile)
+											.Select(Path.GetFileNameWithoutExtension));
+			}
+			catch { }
+			return names;
+		}
+
+		/// <summary>
+		/// Is the file a Vernacular Script System file? (only reads as far as the root element, since the word list
+		/// files in a project folder can be large)
+		/// </summary>
+		internal static bool IsVernScriptSystemFile(string path)
+		{
+			if (!File.Exists(path))
+				return false;
+			try
+			{
+				using (var reader = XmlReader.Create(path, new XmlReaderSettings { DtdProcessing = DtdProcessing.Ignore }))
+				{
+					reader.MoveToContent();
+					return reader.LocalName == "VernScriptSystem";
+				}
+			}
+			catch
+			{
+				return false;
+			}
 		}
 
 		/// <summary>
@@ -751,8 +812,25 @@ namespace SpellingFixer30
         /// </summary>
         public void EditProject()
         {
-            SFProjectForm dlg = new SFProjectForm(this);
-            dlg.ShowDialog();
+            EditProject(startWithRuleAnalysis: false);
+        }
+
+        /// <summary>
+        /// Brings up the project editor (optionally, starting with an analysis of the Inconsistency Settings)
+        /// </summary>
+        /// <returns>true if the user clicked OK (in which case the rules have been re-applied to the data in memory)</returns>
+        internal bool EditProject(bool startWithRuleAnalysis)
+        {
+            var dlg = new SFProjectForm(this)
+            {
+                StartWithRuleAnalysis = startWithRuleAnalysis
+            };
+            if (dlg.ShowDialog() != DialogResult.OK)
+                return false;
+
+            // the dialog resets the rule names (and may have changed the VSS file), so re-apply them to what's in memory
+            ReinitializeRules();
+            return true;
         }
 
         /// <summary>
@@ -1006,6 +1084,89 @@ namespace SpellingFixer30
         internal string ParatextProjectName { get; set; }
 
         /// <summary>
+        /// When the Inconsistency Settings were last analyzed against the project's data (or the offer to do so
+        /// was declined); see OfferRuleAnalysis
+        /// </summary>
+        internal DateTime? LastRuleAnalysis { get; set; }
+
+        /// <summary>
+        /// The (keys of the) Inconsistency Settings analysis suggestions the user asked not to be shown again (see RuleSuggestion.Key)
+        /// </summary>
+        internal HashSet<string> DismissedRuleSuggestions { get; set; } = new HashSet<string>();
+
+        /// <summary>
+        /// Replaces the dismissed suggestions (in memory and in the project file)
+        /// </summary>
+        internal void RecordDismissedRuleSuggestions(IEnumerable<string> keys)
+        {
+            DismissedRuleSuggestions = new HashSet<string>(keys ?? Enumerable.Empty<string>());
+            try
+            {
+                CscProjectStore.UpdateDismissedRuleSuggestions(ProjectFilePath, DismissedRuleSuggestions);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Unable to record the suggestions not to show again: {ex.Message}", ApplicationCaption);
+            }
+        }
+
+        internal string ProjectFilePath => Path.Combine(ProjectDirectory, $"{Name}.{ProjectFileExt}");
+
+        internal const int MinCorrectionsForRuleAnalysisOffer = 100;
+        internal const int DaysBetweenRuleAnalysisOffers = 7;
+
+        /// <summary>
+        /// Records (in memory and in the project file) that the rules were analyzed (or the offer declined) now
+        /// </summary>
+        internal void RecordRuleAnalysis()
+        {
+            LastRuleAnalysis = DateTime.Today;
+            try
+            {
+                CscProjectStore.UpdateLastRuleAnalysis(ProjectFilePath, LastRuleAnalysis);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Unable to record the rule analysis date: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// About once a week (once there are enough corrections to learn from), offer to analyze the Inconsistency
+        /// Settings before the user goes thru the bundles of potential inconsistencies
+        /// </summary>
+        protected void OfferRuleAnalysis()
+        {
+            try
+            {
+                var numCorrections = m_mapS2SBad2GoodWords?.Count ?? 0;
+                if (numCorrections < MinCorrectionsForRuleAnalysisOffer)
+                    return;
+
+                if (LastRuleAnalysis.HasValue && ((DateTime.Today - LastRuleAnalysis.Value).TotalDays < DaysBetweenRuleAnalysisOffers))
+                    return;
+
+                var since = LastRuleAnalysis.HasValue
+                                ? $"It's been {(int)(DateTime.Today - LastRuleAnalysis.Value).TotalDays} days since the Inconsistency Settings of the '{Name}' project were analyzed."
+                                : $"The Inconsistency Settings of the '{Name}' project haven't been analyzed yet.";
+                var message = $"{since}{Environment.NewLine}{Environment.NewLine}" +
+                              $"Would you like to analyze them now? This compares them with the {numCorrections} spelling corrections you've made so far, " +
+                              "and suggests settings that could be turned off or added (to find more of the kinds of inconsistencies you've been fixing, " +
+                              $"and fewer that you haven't), as well as data that could be cleaned up. It can take a minute or two.{Environment.NewLine}{Environment.NewLine}" +
+                              "(If you click 'No', you'll be asked again in a week.)";
+
+                var res = MessageBox.Show(message, ApplicationCaption, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                RecordRuleAnalysis();
+                if (res == DialogResult.Yes)
+                    EditProject(startWithRuleAnalysis: true);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Unable to analyze the Inconsistency Settings: {ex.Message}", ApplicationCaption);
+            }
+        }
+
+        /// <summary>
 		/// The font to be used for the display of data in the project
 		/// If you call this from the client application, then be sure to call 'SaveProject' to make it retentive
 		/// </summary>
@@ -1101,6 +1262,58 @@ namespace SpellingFixer30
             }
         }
 
+        /// <summary>
+        /// Applies the word list clean ups suggested by the Inconsistency Settings analysis: each word is removed from
+        /// its list and replaced by its (trimmed) replacements (if any), keeping its count and contexts. Saved right away.
+        /// </summary>
+        /// <returns>the number of entries changed</returns>
+        internal int ApplyWordListFixes(IEnumerable<WordListFix> fixes)
+        {
+            int numChanged = 0;
+            foreach (var fix in fixes ?? Enumerable.Empty<WordListFix>())
+            {
+                HashtableStore map = fix.InKnownGoodList ? (HashtableStore)m_mapS2SfwKnownGoodWords : m_mapS2SfwWordsToCheck;
+                if ((map == null) || !map.TryGetValue(fix.Word, out var sfwOld))
+                    continue;
+
+                map.Remove(fix.Word);
+                m_eSaveNeeded |= fix.InKnownGoodList ? SaveDbFlags.KnownGoodWords : SaveDbFlags.CheckWords;
+                numChanged++;
+
+                foreach (var replacement in fix.Replacements ?? new List<string>())
+                {
+                    var word = TrimWhiteSpaceAndPunctuation(replacement);
+                    if (String.IsNullOrEmpty(word))
+                        continue;
+
+                    if (fix.InKnownGoodList || m_mapS2SfwKnownGoodWords.ContainsKey(word))
+                    {
+                        if (m_mapS2SfwKnownGoodWords.TryGetValue(word, out var sfwExisting))
+                            sfwExisting.Count += sfwOld.Count;
+                        else
+                            m_mapS2SfwKnownGoodWords.Add(new SpellFixerWord(this, word, sfwOld.ContextStrings.ToList()) { Count = sfwOld.Count });
+                        m_eSaveNeeded |= SaveDbFlags.KnownGoodWords;
+                    }
+                    else if (!m_mapS2SBad2GoodWords.ContainsKey(word))
+                    {
+                        if (m_mapS2SfwWordsToCheck.TryGetValue(word, out var sfwExisting))
+                        {
+                            sfwExisting.Count += sfwOld.Count;
+                            foreach (var context in sfwOld.ContextStrings.Where(c => !sfwExisting.ContextStrings.Contains(c)))
+                                if (sfwExisting.ContextStrings.Count < MaxContextStrings)
+                                    sfwExisting.ContextStrings.Add(context);
+                        }
+                        else
+                            m_mapS2SfwWordsToCheck.Add(new SpellFixerWord(this, word, sfwOld.ContextStrings.ToList()) { Count = sfwOld.Count });
+                        m_eSaveNeeded |= SaveDbFlags.CheckWords;
+                    }
+                }
+            }
+
+            SaveProjectData();
+            return numChanged;
+        }
+
         internal virtual SpellFixerWord GetNewSpellFixerWord(string strWord, string context)
         {
             return new SpellFixerWord(this, strWord, new List<string> { context });
@@ -1112,6 +1325,9 @@ namespace SpellingFixer30
         /// </summary>
         public void QueryForSpellingCorrectionsBulk()
         {
+            // (before the bulk list is made, since the analysis may change the rules or clean up the Words to Check)
+            OfferRuleAnalysis();
+
             WordsToCheckBulk mapWordsToCheckBulk = new WordsToCheckBulk();
             try
             {

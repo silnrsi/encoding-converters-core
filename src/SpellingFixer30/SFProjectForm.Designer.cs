@@ -56,6 +56,7 @@ namespace SpellingFixer30
             this.checkBoxCompareDoubleChars = new System.Windows.Forms.CheckBox();
             this.checkBoxIgnoreCase = new System.Windows.Forms.CheckBox();
             this.buttonAddNew = new System.Windows.Forms.Button();
+            this.buttonAnalyze = new System.Windows.Forms.Button();
             this.flowLayoutPanel = new System.Windows.Forms.FlowLayoutPanel();
             this.fontDialogDisplay = new System.Windows.Forms.FontDialog();
             this.tableLayoutPanelTabs = new System.Windows.Forms.TableLayoutPanel();
@@ -338,6 +339,7 @@ namespace SpellingFixer30
             this.tableLayoutPanelDistinctions.Controls.Add(this.checkBoxCompareDoubleChars, 0, 0);
             this.tableLayoutPanelDistinctions.Controls.Add(this.checkBoxIgnoreCase, 0, 1);
             this.tableLayoutPanelDistinctions.Controls.Add(this.buttonAddNew, 2, 2);
+            this.tableLayoutPanelDistinctions.Controls.Add(this.buttonAnalyze, 3, 2);
             this.tableLayoutPanelDistinctions.Controls.Add(this.flowLayoutPanel, 0, 3);
             this.tableLayoutPanelDistinctions.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanelDistinctions.Location = new System.Drawing.Point(3, 3);
@@ -420,6 +422,17 @@ namespace SpellingFixer30
             this.toolTip.SetToolTip(this.buttonAddNew, "Click to add a new box below");
             this.buttonAddNew.UseVisualStyleBackColor = true;
             this.buttonAddNew.Click += new System.EventHandler(this.buttonAddNew_Click);
+            //
+            // buttonAnalyze
+            //
+            this.buttonAnalyze.AutoSize = true;
+            this.buttonAnalyze.Name = "buttonAnalyze";
+            this.buttonAnalyze.Size = new System.Drawing.Size(75, 23);
+            this.buttonAnalyze.TabIndex = 8;
+            this.buttonAnalyze.Text = "Anal&yze...";
+            this.toolTip.SetToolTip(this.buttonAnalyze, "Click to compare these settings with the spelling corrections you\'ve made so far, to see which settings help, which could be turned off, and which could be added (and what data could be cleaned up)");
+            this.buttonAnalyze.UseVisualStyleBackColor = true;
+            this.buttonAnalyze.Click += new System.EventHandler(this.buttonAnalyze_Click);
             // 
             // flowLayoutPanel
             // 
@@ -585,6 +598,7 @@ namespace SpellingFixer30
         private System.Windows.Forms.Label labelTransliterationFont;
         private System.Windows.Forms.Label labelTransliterator;
         private System.Windows.Forms.Button buttonAddNew;
+        private System.Windows.Forms.Button buttonAnalyze;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel;
 		private System.Windows.Forms.Label labelAddlPunct;
 		private System.Windows.Forms.TextBox textBoxAdditionalPunctuation;
