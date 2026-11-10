@@ -66,6 +66,7 @@ namespace SpellingFixer30
             this.saveFileDialogVssFile = new System.Windows.Forms.SaveFileDialog();
             this.labelAddlPunct = new System.Windows.Forms.Label();
             this.textBoxAdditionalPunctuation = new System.Windows.Forms.TextBox();
+            this.checkBoxSyncWithParatext = new System.Windows.Forms.CheckBox();
             this.tabControl.SuspendLayout();
             this.tabPageLanguage.SuspendLayout();
             this.tableLayoutPanel.SuspendLayout();
@@ -121,6 +122,7 @@ namespace SpellingFixer30
             this.tableLayoutPanel.Controls.Add(this.labelTransliterationFont, 2, 5);
 			this.tableLayoutPanel.Controls.Add(this.labelAddlPunct, 0, 6);
 			this.tableLayoutPanel.Controls.Add(this.textBoxAdditionalPunctuation, 1, 6);
+			this.tableLayoutPanel.Controls.Add(this.checkBoxSyncWithParatext, 0, 7);
 			this.tableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel.Location = new System.Drawing.Point(3, 3);
             this.tableLayoutPanel.Name = "tableLayoutPanel";
@@ -506,7 +508,23 @@ namespace SpellingFixer30
             this.textBoxAdditionalPunctuation.TabIndex = 25;
             this.toolTip.SetToolTip(this.textBoxAdditionalPunctuation, "Enter any additional punctuation or whitespace characters needed for this languag" +
         "e, separated by spaces (these are used for boundary condition checking)");
-            // 
+            //
+            // checkBoxSyncWithParatext
+            //
+            this.checkBoxSyncWithParatext.AutoCheck = false;
+            this.checkBoxSyncWithParatext.AutoSize = true;
+            this.tableLayoutPanel.SetColumnSpan(this.checkBoxSyncWithParatext, 3);
+            this.helpProvider.SetHelpString(this.checkBoxSyncWithParatext, "Check this box to keep this project\'s data in the \'shared\' folder of a Paratext project, so that it gets synchronized (via Send/Receive) with the other users of that Paratext project");
+            this.checkBoxSyncWithParatext.Location = new System.Drawing.Point(3, 196);
+            this.checkBoxSyncWithParatext.Name = "checkBoxSyncWithParatext";
+            this.helpProvider.SetShowHelp(this.checkBoxSyncWithParatext, true);
+            this.checkBoxSyncWithParatext.Size = new System.Drawing.Size(287, 17);
+            this.checkBoxSyncWithParatext.TabIndex = 26;
+            this.checkBoxSyncWithParatext.Text = "&Synchronize Project data with a Paratext Project";
+            this.toolTip.SetToolTip(this.checkBoxSyncWithParatext, "Check this box to keep this project\'s data in the \'shared\' folder of a Paratext project, so that it gets synchronized (via Send/Receive) with the other users of that Paratext project");
+            this.checkBoxSyncWithParatext.UseVisualStyleBackColor = true;
+            this.checkBoxSyncWithParatext.Click += new System.EventHandler(this.checkBoxSyncWithParatext_Click);
+            //
             // SFProjectForm
             // 
             this.AcceptButton = this.buttonOK;
@@ -570,5 +588,6 @@ namespace SpellingFixer30
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel;
 		private System.Windows.Forms.Label labelAddlPunct;
 		private System.Windows.Forms.TextBox textBoxAdditionalPunctuation;
+		private System.Windows.Forms.CheckBox checkBoxSyncWithParatext;
 	}
 }

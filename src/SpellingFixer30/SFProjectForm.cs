@@ -84,38 +84,186 @@ namespace SpellingFixer30
             }
             else
             {
-                // Move values from object to controls
-                this.textBoxProjectName.Text = m_project.Name;
-                this.textBoxProjectName.ReadOnly = true;	// don't all this to be edited in edit mode
-                this.comboBoxVernScriptType.SelectedItem = m_project.VernacularScriptSystemName;
-
-                if (m_project.Locale != null)
-                    this.comboBoxLocale.SelectedItem = m_project.Locale.DisplayName;
-
-                if (m_project.Font != null)
-                {
-                    SetFontTooltip(this.buttonFont, m_project.Font);
-                    this.fontDialogDisplay.Font = m_project.Font;
-                    labelVFont.Text = m_project.Font.Name;
-                    this.buttonFont.Enabled = true;
-                }
-
-                if (m_project.Transliterator != null)
-                {
-                    IEncConverter aEC = m_project.Transliterator.GetEncConverter;
-                    System.Diagnostics.Debug.Assert(aEC != null);
-                    toolTip.SetToolTip(buttonChooseTransliterator, aEC.ToString());
-                    labelTransliterator.Text = aEC.Name;
-
-                    SetFontTooltip(buttonTransliteratorFont, m_project.TransliterationFont);
-                    labelTransliterationFont.Text = m_project.TransliterationFont.Name;
-                }
+                PopulateControlsFromProject();
             }
+
+            // the 'synchronize with Paratext' checkbox reflects whether the project folder is (already) a junction
+            //  to a Paratext project's 'shared' folder. For a new project, we need a name before we can do that.
+            string linkedParatextProjectName = null;
+            if (!m_bNewProject)
+            {
+                try
+                {
+                    linkedParatextProjectName = ParatextProjectLink.GetLinkedParatextProjectName(m_project.Name);
+                }
+                catch { }
+            }
+            SetSyncWithParatextCheckBox(linkedParatextProjectName);
+            checkBoxSyncWithParatext.Enabled = !m_bNewProject;
+            textBoxProjectName.TextChanged += (s, e) =>
+                checkBoxSyncWithParatext.Enabled = !String.IsNullOrEmpty(textBoxProjectName.Text.Trim());
 
             // help stuff
             helpProvider.SetHelpString(this.comboBoxVernScriptType, Properties.Resources.comboBoxVernScriptTypeHelp);
             helpProvider.SetHelpString(this.checkBoxCompareDoubleChars, Properties.Resources.checkBoxCompareDoubleCharsHelp);
             helpProvider.SetHelpString(this.checkBoxIgnoreCase, Properties.Resources.checkBoxIgnoreCaseHelp);
+        }
+
+        /// <summary>
+        /// Move values from the (existing) project object to the controls
+        /// </summary>
+        private void PopulateControlsFromProject()
+        {
+            this.textBoxProjectName.Text = m_project.Name;
+            this.textBoxProjectName.ReadOnly = true;	// don't all this to be edited in edit mode
+            this.comboBoxVernScriptType.SelectedItem = m_project.VernacularScriptSystemName;
+
+            if (m_project.Locale != null)
+                this.comboBoxLocale.SelectedItem = m_project.Locale.DisplayName;
+
+            if (m_project.Font != null)
+            {
+                SetFontTooltip(this.buttonFont, m_project.Font);
+                this.fontDialogDisplay.Font = m_project.Font;
+                labelVFont.Text = m_project.Font.Name;
+                this.buttonFont.Enabled = true;
+            }
+
+            if (m_project.Transliterator != null)
+            {
+                IEncConverter aEC = m_project.Transliterator.GetEncConverter;
+                System.Diagnostics.Debug.Assert(aEC != null);
+                toolTip.SetToolTip(buttonChooseTransliterator, aEC.ToString());
+                labelTransliterator.Text = aEC.Name;
+
+                SetFontTooltip(buttonTransliteratorFont, m_project.TransliterationFont);
+                labelTransliterationFont.Text = m_project.TransliterationFont.Name;
+            }
+        }
+
+        private const string SyncWithParatextLabel = "&Synchronize Project data with a Paratext Project";
+
+        private void SetSyncWithParatextCheckBox(string paratextProjectName)
+        {
+            var isLinked = !String.IsNullOrEmpty(paratextProjectName);
+            checkBoxSyncWithParatext.Checked = isLinked;
+            checkBoxSyncWithParatext.Text = isLinked
+                                                ? $"{SyncWithParatextLabel} (currently: '{paratextProjectName}')"
+                                                : SyncWithParatextLabel;
+        }
+
+        /// <summary>
+        /// The junction is created (or removed) as soon as the user (un)checks the box, so that by the time they
+        /// click OK, the project folder already points to wherever the data is supposed to go, and CscProject
+        /// doesn't have to know the difference. (AutoCheck is off, so the box only changes if this succeeds.)
+        /// </summary>
+        private void checkBoxSyncWithParatext_Click(object sender, EventArgs e)
+        {
+            var projectName = textBoxProjectName.Text.Trim();
+            if (String.IsNullOrEmpty(projectName))
+            {
+                MessageBox.Show("You must enter a Project/Language name first", CscProject.ApplicationCaption);
+                return;
+            }
+
+            if (!checkBoxSyncWithParatext.Checked)
+            {
+                var paratextProjectName = ParatextProjectLink.QueryParatextProjectName(projectName);
+                if (paratextProjectName == null)
+                    return;
+
+                Cursor = Cursors.WaitCursor;
+                ParatextLinkResult result;
+                try
+                {
+                    result = ParatextProjectLink.LinkToParatext(projectName, paratextProjectName);
+                }
+                finally
+                {
+                    Cursor = Cursors.Default;
+                }
+
+                if (result == ParatextLinkResult.NotLinked)
+                    return;
+
+                // the project folder now exists (as a junction), so the name can't be changed anymore
+                textBoxProjectName.Text = projectName;
+                textBoxProjectName.ReadOnly = true;
+                m_project.Name = projectName;
+                m_project.ParatextProjectName = paratextProjectName;
+
+                if (result == ParatextLinkResult.LinkedUsingSharedData)
+                    ReloadProjectFromSharedData(paratextProjectName);
+
+                UpdateParatextProjectNameInProjectFile(paratextProjectName);
+                SetSyncWithParatextCheckBox(paratextProjectName);
+            }
+            else
+            {
+                if (MessageBox.Show($"Do you want to stop synchronizing the '{projectName}' project with the Paratext project? " +
+                                    "A copy of the data will be kept on this computer (the data in the Paratext project will be left as is for any other users).",
+                                    CscProject.ApplicationCaption, MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
+                    return;
+
+                if (!ParatextProjectLink.UnlinkFromParatext(projectName))
+                    return;
+
+                m_project.ParatextProjectName = null;
+                UpdateParatextProjectNameInProjectFile(null);
+                SetSyncWithParatextCheckBox(null);
+            }
+        }
+
+        /// <summary>
+        /// The user chose to use the version of the project that was already in the Paratext project's 'shared'
+        /// folder, so load its settings into our project object (rather than overwriting them when OK is clicked)
+        /// </summary>
+        private void ReloadProjectFromSharedData(string paratextProjectName)
+        {
+            var projectFilePath = GetProjectFilePath();
+            if (!File.Exists(projectFilePath))
+                return; // only data files (no project file), so the settings in this dialog will be what's saved
+
+            try
+            {
+                CscProjectStore.TransferToCscProject(projectFilePath, m_project);
+                m_project.ParatextProjectName = paratextProjectName;
+                m_project.Init();
+                m_bNewProject = false;
+
+                PopulateControlsFromProject();
+                VernScriptTypeItemSelected();   // reloads the distinction rules for the (possibly different) project
+
+                MessageBox.Show($"The '{m_project.Name}' project's settings have been loaded from the Paratext project '{paratextProjectName}'.",
+                                CscProject.ApplicationCaption);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"The project is now synchronized with the Paratext project '{paratextProjectName}', but its settings couldn't be loaded: {ex.Message}",
+                                CscProject.ApplicationCaption);
+            }
+        }
+
+        /// <summary>
+        /// Records the link in the project file right away (if there is one), so it's there even if the user
+        /// cancels this dialog (since the junction has already been created/removed)
+        /// </summary>
+        private void UpdateParatextProjectNameInProjectFile(string paratextProjectName)
+        {
+            try
+            {
+                CscProjectStore.UpdateParatextProjectName(GetProjectFilePath(), paratextProjectName);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Unable to update the project file: {ex.Message}", CscProject.ApplicationCaption);
+            }
+        }
+
+        private string GetProjectFilePath()
+        {
+            return Path.Combine(ParatextProjectLink.GetLocalProjectFolder(m_project.Name),
+                                $"{m_project.Name}.{CscProject.ProjectFileExt}");
         }
 
         public CscProject CscProject
@@ -171,7 +319,9 @@ namespace SpellingFixer30
             {
                 System.Diagnostics.Debug.Assert(m_project != null);
                 m_project.Name = this.textBoxProjectName.Text;
-                string strProjectFolder = String.Format(@"{0}\{1}", CscProject.ProjectsDefaultDirectory, m_project.Name);
+                // (if the user chose to synchronize with Paratext, this folder is already a junction to the
+                //  Paratext project's 'shared' folder)
+                string strProjectFolder = ParatextProjectLink.GetLocalProjectFolder(m_project.Name);
                 CscProject.AddProjectKey(strProjectFolder, m_project.Name);
 
                 if (this.comboBoxLocale.SelectedIndex != -1)
@@ -245,6 +395,29 @@ namespace SpellingFixer30
         {
             DialogResult = DialogResult.Cancel;
             this.Close();
+        }
+
+        protected override void OnFormClosing(FormClosingEventArgs e)
+        {
+            base.OnFormClosing(e);
+
+            // if this was a new project that the user linked to a Paratext project, but then cancelled before a
+            //  project file was ever saved, don't leave an empty (junction) folder behind, or it'd look like a
+            //  (broken) project
+            if (!e.Cancel && (DialogResult != DialogResult.OK) && m_bNewProject &&
+                !String.IsNullOrEmpty(m_project?.Name) && ParatextProjectLink.IsLinked(m_project.Name) &&
+                !File.Exists(GetProjectFilePath()))
+            {
+                try
+                {
+                    var localFolder = ParatextProjectLink.GetLocalProjectFolder(m_project.Name);
+                    var sharedFolder = ParatextProjectLink.GetJunctionTarget(localFolder);
+                    ParatextProjectLink.RemoveJunction(localFolder);
+                    if ((sharedFolder != null) && Directory.Exists(sharedFolder) && !Directory.EnumerateFileSystemEntries(sharedFolder).Any())
+                        Directory.Delete(sharedFolder);
+                }
+                catch { }
+            }
         }
 
         private void tabControl_Enter(object sender, EventArgs e)

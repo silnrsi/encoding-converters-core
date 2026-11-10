@@ -145,6 +145,10 @@
     <Compile Include="QueryGoodSpelling.Designer.cs">
       <DependentUpon>QueryGoodSpelling.cs</DependentUpon>
     </Compile>
+    <Compile Include="ParatextProjectLink.cs" />
+    <Compile Include="ParatextProjectListForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="SelectProject.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -207,6 +211,9 @@
     <EmbeddedResource Include="QueryGoodSpelling.resx">
       <DependentUpon>QueryGoodSpelling.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ParatextProjectListForm.resx">
+      <DependentUpon>ParatextProjectListForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SelectProject.resx">
       <DependentUpon>SelectProject.cs</DependentUpon>

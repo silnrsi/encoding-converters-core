@@ -35,6 +35,12 @@ namespace SpellingFixer30
         [XmlAttribute("MaxContextStringsInToolTip")]
         public int MaxContextStrings { get; set; }
 
+        /// <summary>
+        /// The Paratext project (if any) whose 'shared' folder this project's data is synchronized through
+        /// </summary>
+        [XmlAttribute("ParatextProjectName")]
+        public string ParatextProjectName { get; set; }
+
         [XmlElement("ProjectFont")]
         public SerializableFont ProjectFontData;
 
@@ -117,6 +123,7 @@ namespace SpellingFixer30
             project.Locale = store.Locale;
             project.WordsInContext = store.WordsInContext;
             project.MaxContextStrings = store.MaxContextStrings;
+            project.ParatextProjectName = store.ParatextProjectName;
             project.MarkersToAvoidForSpellingCheck = store.MarkersToNotCheck?.MarkersToNotCheck ?? new MarkersToNotCheckData().MarkersToNotCheck;
 
             // Transfer RuleNames
@@ -145,6 +152,7 @@ namespace SpellingFixer30
                 CompareCase = project.CompareCase,
                 WordsInContext = project.WordsInContext,
                 MaxContextStrings = project.MaxContextStrings,
+                ParatextProjectName = String.IsNullOrEmpty(project.ParatextProjectName) ? null : project.ParatextProjectName,
 
                 ProjectFont = project.Font,
                 TransliteratorFont = project.TransliterationFont,
@@ -174,6 +182,28 @@ namespace SpellingFixer30
 
             store.SaveToXml(filePath);
             return store;
+        }
+
+        /// <summary>
+        /// Updates only the ParatextProjectName attribute of an existing project file (so the rest of the
+        /// project's settings, which the user may be in the middle of editing, aren't saved yet)
+        /// </summary>
+        public static void UpdateParatextProjectName(string filePath, string paratextProjectName)
+        {
+            UpdateProjectFile(filePath, store => store.ParatextProjectName = String.IsNullOrEmpty(paratextProjectName) ? null : paratextProjectName);
+        }
+
+        private static void UpdateProjectFile(string filePath, Action<CscProjectStore> update)
+        {
+            if (!File.Exists(filePath))
+                return;
+
+            var store = LoadFromXml(filePath);
+            if (store == null)
+                return;
+
+            update(store);
+            store.SaveToXml(filePath);
         }
 
         public static bool CanWriteToFile(string filePath)

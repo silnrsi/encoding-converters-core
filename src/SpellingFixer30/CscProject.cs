@@ -547,11 +547,7 @@ namespace SpellingFixer30
             get
             {
                 RegistryKey keyCscRoot = Registry.LocalMachine.OpenSubKey(RegistryCscRootKey);
-                if (keyCscRoot != null)
-                {
-                    return (string)keyCscRoot.GetValue(RegistryProjectsFolderRootKey);
-                }
-                return ProjectsDefaultDirectory;
+                return ((string)keyCscRoot?.GetValue(RegistryProjectsFolderRootKey)) ?? ProjectsDefaultDirectory;
             }
         }
 
@@ -760,6 +756,12 @@ namespace SpellingFixer30
             try
             {
                 CscProjectStore.TransferToCscProject(projectPath, project);
+
+                // if this project is (supposed to be) synchronized via a Paratext project, but isn't linked on
+                //  this computer, offer to link it (which may change which files we're using, so reload)
+                if (CheckParatextLink(project))
+                    CscProjectStore.TransferToCscProject(projectPath, project);
+
                 project.Init(); // need to call Init
 
 				// make sure the associated EncConverter for processing spelling changes is in the repo
@@ -773,6 +775,55 @@ namespace SpellingFixer30
             return project;
         }
 
+        /// <summary>
+        /// Checks whether this project should be synchronized via a Paratext project's 'shared' folder, but isn't
+        /// linked on this computer (e.g. another user linked it and the .csf file came to this computer via
+        /// Send/Receive, or a project by the same name exists in some Paratext project's 'shared' folder), and if
+        /// so, offers to link it.
+        /// </summary>
+        /// <returns>true if the project was linked and is now using the files from the Paratext project</returns>
+        internal static bool CheckParatextLink(CscProject project)
+        {
+            try
+            {
+                if (ParatextProjectLink.IsLinked(project.Name))
+                    return false;
+
+                string paratextProjectName = project.ParatextProjectName;
+                string message;
+                if (!String.IsNullOrEmpty(paratextProjectName))
+                {
+                    message = $"The '{project.Name}' project is configured to synchronize its data with the Paratext project '{paratextProjectName}', but on this computer it isn't. Do you want to synchronize it now?";
+                }
+                else
+                {
+                    var sharedProject = ParatextProjectLink.FindSharedCscProjects()
+                                                           .FirstOrDefault(p => String.Equals(p.CscProjectName, project.Name, StringComparison.OrdinalIgnoreCase));
+                    if (sharedProject == null)
+                        return false;
+
+                    paratextProjectName = sharedProject.ParatextProjectName;
+                    message = $"There's a '{project.Name}' project being shared in the Paratext project '{paratextProjectName}'. Do you want this computer's '{project.Name}' project to be synchronized with that one?";
+                }
+
+                if (MessageBox.Show(message, ApplicationCaption, MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
+                    return false;
+
+                if (ParatextProjectLink.LinkToParatext(project.Name, paratextProjectName) == ParatextLinkResult.NotLinked)
+                    return false;
+
+                // make sure the (possibly now shared) project file records which Paratext project it's synchronized with
+                var projectPath = Path.Combine(GetProjectDirectory(project.Name), $"{project.Name}.{ProjectFileExt}");
+                CscProjectStore.UpdateParatextProjectName(projectPath, paratextProjectName);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Unable to check whether the '{project.Name}' project should be synchronized with Paratext: {ex.Message}", ApplicationCaption);
+                return false;
+            }
+        }
+
 		internal bool EnsureEncConverterExists(string encConverterName, string encConverterSpec)
 		{
 			// get the EncConverter that should have been added above by 'AddNewProject' button
@@ -780,18 +831,12 @@ namespace SpellingFixer30
 			var aEC = aECs[encConverterName];
 			if (aEC == null)
 			{
-				// add it (put it in the normal 'MapsTables' folder in \pf\cf\sil\...)
-				if (File.Exists(encConverterSpec))
-				{
-					// the converter doesn't exist, but a file with the name we would have 
-					//  given it does... ask the user if they want to overwrite it.
-					// TODO: this doesn't allow for complete flexibility. It might be nicer to
-					//  allow for any arbitrary name, but not if noone complains.
-					if (MessageBox.Show(String.Format("A file exists by the name {0}. Click 'Yes' to overwrite", encConverterSpec), SpellingFixer.cstrCaption, MessageBoxButtons.YesNoCancel) == DialogResult.Yes)
-					{
-						File.Delete(encConverterSpec);
-					}
-				}
+				// the converter isn't in this computer's repository. If the table file already exists, it's this
+				//  project's own table (it lives in the project's folder), which got here some other way than by
+				//  this computer creating it -- e.g. the project's data is synchronized via a Paratext project's
+				//  'shared' folder (so another user created it) or the project folder was copied from another
+				//  computer. Either way, it holds the project's spelling fixes, so just keep it and register a
+				//  converter for it (if it doesn't exist, it's created from the (empty) map below).
 
 				// now add the EncConverter
 				// TODO: EncConverters needs a new interface to get the defining encodingID from 
@@ -828,7 +873,26 @@ namespace SpellingFixer30
             // see if they want to delete the data files also
             var projectPath = GetProjectDirectory(projectName);
             DialogResult res;
-            if ((res = MessageBox.Show($"Do you also want to delete all the data files in the {projectPath} folder?", 
+            if (ParatextProjectLink.IsJunction(projectPath))
+            {
+                // the data lives in a Paratext project's 'shared' folder, where other users may be using it, so
+                //  just remove the link to it (deleting the files would delete them for everyone after the next S/R)
+                if (MessageBox.Show($"The '{projectName}' project's data is synchronized via the Paratext project '{ParatextProjectLink.GetLinkedParatextProjectName(projectName)}'. " +
+                                    "Only the connection to it will be removed from this computer; the data will be left in the Paratext project for any other users. Continue?",
+                                    ApplicationCaption, MessageBoxButtons.OKCancel) != DialogResult.OK)
+                    return false;
+
+                try
+                {
+                    ParatextProjectLink.RemoveJunction(projectPath);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Unable to remove the connection to the Paratext project: {ex.Message}", ApplicationCaption);
+                    return false;
+                }
+            }
+            else if ((res = MessageBox.Show($"Do you also want to delete all the data files in the {projectPath} folder?", 
                                        ApplicationCaption, MessageBoxButtons.YesNoCancel)) == DialogResult.Yes)
             {
                 if (!String.IsNullOrEmpty(projectPath))
@@ -921,6 +985,12 @@ namespace SpellingFixer30
             get { return _scriptSystemName; }
             set { _scriptSystemName = value; }
         }
+
+        /// <summary>
+        /// The name of the Paratext project (if any) whose 'shared' folder this project's data is synchronized
+        /// through (the project folder is then a junction to that folder; see ParatextProjectLink)
+        /// </summary>
+        internal string ParatextProjectName { get; set; }
 
         /// <summary>
 		/// The font to be used for the display of data in the project
