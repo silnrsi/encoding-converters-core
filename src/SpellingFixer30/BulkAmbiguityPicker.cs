@@ -373,46 +373,91 @@ namespace SpellingFixer30
             }
         }
 
-        protected void SetSelectorCellG2B(DataGridViewRow theRow, bool bUpdateStats)
+        /// <summary>
+        /// The corrections (bad word -> good word) whose conflicts with the project's existing data (i.e. the bad word is
+        /// in the good word list, or already has a different correction) the user has already OK'd when making the
+        /// choice, so they aren't asked about them again when the choices are saved.
+        /// </summary>
+        private readonly System.Collections.Generic.Dictionary<string, string> m_mapConfirmedCorrections = new System.Collections.Generic.Dictionary<string, string>();
+
+        private bool IsCorrectionConfirmed(string strBad, string strGood)
         {
+            return m_mapConfirmedCorrections.TryGetValue(strBad, out var strConfirmedGood) && (strConfirmedGood == strGood);
+        }
+
+        /// <summary>
+        /// Called when the user chooses 'strBad is a misspelling of strGood' (by arrow or by editing), to warn them right
+        /// away about anything that conflicts with it (rather than only later, when the choices are saved)
+        /// </summary>
+        /// <returns>true if the choice should be made; false to leave the row as it was</returns>
+        private bool ConfirmCorrection(string strBad, string strGood)
+        {
+            if (String.IsNullOrEmpty(strBad) || String.IsNullOrEmpty(strGood) || IsCorrectionConfirmed(strBad, strGood))
+                return true;
+
             // if the supposed good form is already a bad form or if the supposed bad form
             //  is already a good form, then the user should be warned
-            var sfwGood = (SpellFixerWord)theRow.Cells[cstrVernLhs].Tag;
-            var sfwBad = (SpellFixerWord)theRow.Cells[cstrVernRhs].Tag;
-            var transitiveBadSpelling = string.Empty;
-
-            if (m_mapBad2GoodWords.ContainsKey(sfwGood.Value))
+            string transitiveBadSpelling;
+            if (m_mapBad2GoodWords.TryGetValue(strGood, out var transitiveGoodSpelling))
             {
-                var transitiveGoodSpelling = m_mapBad2GoodWords[sfwGood.Value];
-                var res = MessageBox.Show(
-                    $"The 'good' word '{sfwGood.Value}' is already assigned as a bad spelling for the good spelling '{transitiveGoodSpelling}'.\n\nClick 'Yes' to copy it to the clipboard so you can edit the Good/Bad pair and paste it as the correct Good spelling.",
+                var res = MessageBox.Show(this,
+                    $"The 'good' word '{strGood}' is already assigned as a bad spelling for the good spelling '{transitiveGoodSpelling}'.\n\nClick 'Yes' to copy it to the clipboard so you can edit the Good/Bad pair and paste it as the correct Good spelling.",
                     "Warning: Good Spelling Already Assigned as Bad",
                     MessageBoxButtons.YesNoCancel,
                     MessageBoxIcon.Warning);
                 if (res == DialogResult.Yes)
                 {
                     Clipboard.SetText(transitiveGoodSpelling);
-                    return;
+                    return false;
                 }
                 else if (res == DialogResult.Cancel)
-                    return;
+                    return false;
             }
-            else if (!String.IsNullOrEmpty(transitiveBadSpelling = m_mapBad2GoodWords.FirstOrDefault(b2g => b2g.Value == sfwBad.Value).Key))
+            else if (!String.IsNullOrEmpty(transitiveBadSpelling = m_mapBad2GoodWords.FirstOrDefault(b2g => b2g.Value == strBad).Key))
             {
-                var res = MessageBox.Show(
-                    $"The 'bad' word '{sfwBad.Value}' is already assigned as the good spelling for another (badly spelled) word '{transitiveBadSpelling}'.\n\nClick 'Yes' to copy the good spelling word to the clipboard and edit the other spelling correction so you can correct its Good spelling.",
+                var res = MessageBox.Show(this,
+                    $"The 'bad' word '{strBad}' is already assigned as the good spelling for another (badly spelled) word '{transitiveBadSpelling}'.\n\nClick 'Yes' to copy the good spelling word to the clipboard and edit the other spelling correction so you can correct its Good spelling.",
                     "Warning: Bad Spelling Already Assigned as Good",
                     MessageBoxButtons.YesNoCancel,
                     MessageBoxIcon.Warning);
                 if (res == DialogResult.Yes)
                 {
                     Clipboard.SetText(transitiveBadSpelling);
-                    return;
+                    return false;
                 }
                 else if (res == DialogResult.Cancel)
-                    return;
+                    return false;
             }
 
+            // these next two are the questions CscProject.AssignCorrectSpelling would otherwise ask when the choices are saved
+            var bAsked = false;
+            if (m_mapKnownGoodWords.ContainsKey(strBad))
+            {
+                if (MessageBox.Show(this,
+                        $"The word '{strBad}' is currently in the list of good words.{Environment.NewLine}{Environment.NewLine}" +
+                        $"Do you want to mark it as a misspelling of '{strGood}' instead? (It will be removed from the good word list when you save.)",
+                        CscProject.ApplicationCaption, MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
+                    return false;
+                bAsked = true;
+            }
+
+            if (m_mapBad2GoodWords.TryGetValue(strBad, out var strOldGood) && (strOldGood != strGood))
+            {
+                if (MessageBox.Show(this,
+                        $"The word '{strBad}' is already corrected to '{strOldGood}'.{Environment.NewLine}{Environment.NewLine}" +
+                        $"Do you want to change its correction to '{strGood}'? (The change is made when you save.)",
+                        CscProject.ApplicationCaption, MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
+                    return false;
+                bAsked = true;
+            }
+
+            if (bAsked)
+                m_mapConfirmedCorrections[strBad] = strGood;
+            return true;
+        }
+
+        protected void SetSelectorCellG2B(DataGridViewRow theRow, bool bUpdateStats)
+        {
             theRow.Cells[cstrSelector].Value = cstrG2BValue;
             theRow.Cells[cstrVernLhs].Style.ForeColor = colorGood;
             theRow.Cells[cstrVernRhs].Style.ForeColor = colorBad;
@@ -445,6 +490,15 @@ namespace SpellingFixer30
         {
             if (theRow == null)
                 return;
+
+            // warn about any conflicts now (rather than when the choices are saved); and if the user backs out, leave the row as it was
+            var strLhs = (string)theRow.Cells[cstrVernLhs].Value;
+            var strRhs = (string)theRow.Cells[cstrVernRhs].Value;
+            if ((strValue != (string)theRow.Cells[cstrSelector].Value)
+                && (((strValue == cstrB2GValue) && !ConfirmCorrection(strLhs, strRhs))
+                    || ((strValue == cstrG2BValue) && !ConfirmCorrection(strRhs, strLhs))))
+                return;
+
             var wasUndecided = (cstrSelectValue == (string)theRow.Cells[cstrSelector].Value);
             var isUndecided = (strValue == cstrSelectValue);
             var bUpdateStats = (wasUndecided != isUndecided);
@@ -581,6 +635,10 @@ namespace SpellingFixer30
             QueryGoodSpelling aQuery = new QueryGoodSpelling(m_project.Font);
             if (aQuery.ShowDialog(sfwBad.Value, strGoodValue, sfwBad.Value, false, false) == DialogResult.OK)
             {
+                // warn about any conflicts now (rather than when the choices are saved); and if the user backs out, leave the row as it was
+                if (!ConfirmCorrection(aQuery.BadSpelling, aQuery.GoodSpelling))
+                    return;
+
                 // check in case they changed the bad spelling as well...
                 if (aQuery.BadSpelling != sfwBad.Value)
                 {
@@ -896,7 +954,7 @@ namespace SpellingFixer30
                     string strBadSpelling = (string)aGridRow.Cells[cstrVernLhs].Value;
                     SpellFixerWord sfwReplacement = (SpellFixerWord)aGridRow.Cells[cstrVernRhs].Tag;
                     if( sfwReplacement != null )
-                        m_project.AssignCorrectSpelling(strBadSpelling, sfwReplacement.Value, false, sfwReplacement.ContextStrings, true);
+                        m_project.AssignCorrectSpelling(strBadSpelling, sfwReplacement.Value, IsCorrectionConfirmed(strBadSpelling, sfwReplacement.Value), sfwReplacement.ContextStrings, true);
                 }
                 else if (cstrG2BValue == (string)theSelectorCell.Value)
                 {
@@ -904,7 +962,7 @@ namespace SpellingFixer30
                     string strBadSpelling = (string)aGridRow.Cells[cstrVernRhs].Value;
                     SpellFixerWord sfwReplacement = (SpellFixerWord)aGridRow.Cells[cstrVernLhs].Tag;
                     if (sfwReplacement != null)
-                        m_project.AssignCorrectSpelling(strBadSpelling, sfwReplacement.Value, false, sfwReplacement.ContextStrings, true);
+                        m_project.AssignCorrectSpelling(strBadSpelling, sfwReplacement.Value, IsCorrectionConfirmed(strBadSpelling, sfwReplacement.Value), sfwReplacement.ContextStrings, true);
                 }
                 else if (cstrG2GValue == (string)theSelectorCell.Value)
                 {
