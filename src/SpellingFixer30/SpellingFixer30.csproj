@@ -147,9 +147,13 @@
       <DependentUpon>QueryGoodSpelling.cs</DependentUpon>
     </Compile>
     <Compile Include="ParatextProjectLink.cs" />
+    <Compile Include="ParatextConflictsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="ParatextProjectListForm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="ParatextSpellingStatusExport.cs" />
     <Compile Include="RuleAnalysisForm.cs">
       <SubType>Form</SubType>
     </Compile>
