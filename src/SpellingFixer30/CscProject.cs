@@ -1394,7 +1394,7 @@ namespace SpellingFixer30
             if (m_mapS2SBad2GoodWords.ContainsKey(strBadWord))
                 strReplacement = m_mapS2SBad2GoodWords[strBadWord];
 
-            var aQuery = new QueryGoodSpelling(Font);
+            var aQuery = new QueryGoodSpelling(Font, GetAmbiguousWords);
 			if (aQuery.ShowDialog(strBadWord, strReplacement, strBadWord, false, false) == DialogResult.OK)
 			{
 				// UPDATE: 2026-04-14: I was passing 'false' for bNoUI, but since this always shows a dialog, it should be yes, right?
@@ -1411,8 +1411,19 @@ namespace SpellingFixer30
         /// <param name="strBadWord">The misspelled word</param>
         /// <param name="strReplacement">The corrected spelling</param>
         /// <param name="bNoUI">'true' to suppress message boxes. Used for when the misspelled word is already in the dictionary (asking the user if they'd like to remove it from the dictionary)</param>
-        public void AssignCorrectSpelling(string strBadWord, string strReplacement, 
+        public void AssignCorrectSpelling(string strBadWord, string strReplacement,
                                           bool bNoUI, List<string> ContextForReplacement, bool dontSave = false)
+        {
+            TryAssignCorrectSpelling(strBadWord, strReplacement, bNoUI, ContextForReplacement, dontSave);
+        }
+
+        /// <summary>
+        /// Same as AssignCorrectSpelling(strBadWord, strReplacement, bNoUI, ContextForReplacement, dontSave), but
+        /// returns false if the user answered No or Cancel to one of its questions (i.e. the rule wasn't added), and
+        /// true if the rule strBadWord -> strReplacement is now (or already was) in place
+        /// </summary>
+        public bool TryAssignCorrectSpelling(string strBadWord, string strReplacement,
+                                             bool bNoUI, List<string> ContextForReplacement, bool dontSave = false)
         {
             // make sure the bad word isn't already in the known good list
             if (m_mapS2SfwKnownGoodWords.ContainsKey(strBadWord))
@@ -1421,7 +1432,7 @@ namespace SpellingFixer30
                 {
                     DialogResult res = MessageBox.Show(String.Format("The word '{0}' is already marked as a good word. Would you like to remove it from the good word list?", strBadWord), ApplicationCaption, MessageBoxButtons.YesNoCancel);
                     if (res != DialogResult.Yes)
-                        return;
+                        return false;
                 }
 
                 // otherwise
@@ -1445,14 +1456,14 @@ namespace SpellingFixer30
             {
                 // if this exact match is already there, then we're done.
                 if (m_mapS2SBad2GoodWords[strBadWord] == strReplacement)
-                    return;
+                    return true;
 
                 if (!bNoUI)
                 {
                     DialogResult res = MessageBox.Show(String.Format("The word '{0}' is already mapped to the corrected spelling '{1}'. Do you want to change this to the new corrected spelling '{2}'?",
                         strBadWord, m_mapS2SBad2GoodWords[strBadWord], strReplacement), ApplicationCaption, MessageBoxButtons.YesNoCancel);
                     if (res != DialogResult.Yes)
-                        return;
+                        return false;
                 }
 
                 // otherwise
@@ -1465,6 +1476,8 @@ namespace SpellingFixer30
 
             if (!dontSave)  // but some callers don't want to save right away (since they're doing a batch)
                 SaveBad2GoodMap();
+
+            return true;
         }
 
         /// <summary>
@@ -1527,7 +1540,7 @@ namespace SpellingFixer30
             if (bFound)
             {
                 var strReplacement = m_mapS2SBad2GoodWords[strWordKey];
-                QueryGoodSpelling aQuery = new QueryGoodSpelling(Font);
+                QueryGoodSpelling aQuery = new QueryGoodSpelling(Font, GetAmbiguousWords);
                 var res = aQuery.ShowDialog(strWordKey, strReplacement, strWordKey, true, true);
                 if ((res == DialogResult.OK) && (strReplacement != aQuery.GoodSpelling))
                 {
