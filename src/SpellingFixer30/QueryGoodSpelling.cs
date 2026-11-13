@@ -158,8 +158,28 @@ namespace SpellingFixer30
             var show = listBoxSimilarWords.Items.Count > 0;
             if (panelSimilarWords.Visible != show)
             {
-                tableLayoutPanel.ColumnStyles[SimilarWordsColumn] = new ColumnStyle(SizeType.Absolute, show ? SimilarWordsWidth : 0);
+                tableLayoutPanel.ColumnStyles[SimilarWordsColumn] = new ColumnStyle(SizeType.Absolute, show ? ScaledSimilarWordsWidth : 0);
                 panelSimilarWords.Visible = show;
+            }
+        }
+
+        private bool m_isLoaded;
+
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);     // (this is where the form's sizes, incl. the table's column widths, get auto-scaled)
+            m_isLoaded = true;
+        }
+
+        // the list's width: before the form is loaded, its auto-scaling will scale it; after that, scale it ourselves
+        private int ScaledSimilarWordsWidth
+        {
+            get
+            {
+                if (!m_isLoaded)
+                    return SimilarWordsWidth;
+                using (var g = CreateGraphics())
+                    return (int)Math.Round(SimilarWordsWidth * g.DpiX / 96f);
             }
         }
 

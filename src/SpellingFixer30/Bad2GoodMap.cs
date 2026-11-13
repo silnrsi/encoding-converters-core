@@ -147,7 +147,22 @@ namespace SpellingFixer30
             // the file is rewritten from scratch, so keep whatever the user put in its custom section (that's where
             //  they're told to put it). Read it before the backup moves the file away. Only if the file (or its markers)
             //  doesn't exist do we use the custom code we were given.
-            strCustomCode = ReadCustomSection(strFileSpec) ?? strCustomCode;
+            //  If it can't be read (e.g. it's locked), don't write it without that section: give the user a chance to
+            //  free it up, and otherwise fail (as the backup/write would anyway).
+            while (true)
+            {
+                try
+                {
+                    strCustomCode = ReadCustomSection(strFileSpec) ?? strCustomCode;
+                    break;
+                }
+                catch (Exception ex) when ((ex is IOException) || (ex is UnauthorizedAccessException))
+                {
+                    if (System.Windows.Forms.MessageBox.Show($"Can't read the file {strFileSpec}: {ex.Message}{Environment.NewLine}{Environment.NewLine}Close any program that has it open and click OK to try again.",
+                                                             CscProject.ApplicationCaption, System.Windows.Forms.MessageBoxButtons.OKCancel) == System.Windows.Forms.DialogResult.Cancel)
+                        throw;
+                }
+            }
 
             // always make a backup
             CscProject.BackupFile(strFileSpec);

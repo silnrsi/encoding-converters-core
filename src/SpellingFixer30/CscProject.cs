@@ -1420,7 +1420,9 @@ namespace SpellingFixer30
         /// <summary>
         /// Same as AssignCorrectSpelling(strBadWord, strReplacement, bNoUI, ContextForReplacement, dontSave), but
         /// returns false if the user answered No or Cancel to one of its questions (i.e. the rule wasn't added), and
-        /// true if the rule strBadWord -> strReplacement is now (or already was) in place
+        /// true if the rule strBadWord -> strReplacement is now (or already was) in place. (Note: if the user says Yes
+        /// to removing the bad word from the good words, but No to changing its existing rule, the first part is still
+        /// done, and the replacement is still added to the good words.)
         /// </summary>
         public bool TryAssignCorrectSpelling(string strBadWord, string strReplacement,
                                              bool bNoUI, List<string> ContextForReplacement, bool dontSave = false)
