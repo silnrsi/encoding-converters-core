@@ -144,9 +144,45 @@ namespace SpellingFixer30
 
         public static void SaveTable(Bad2GoodMap map, string strFileSpec, string strEncConverterName, string strPunctuationAndWhiteSpace, string strCustomCode)
         {
+            // the file is rewritten from scratch, so keep whatever the user put in its custom section (that's where
+            //  they're told to put it). Read it before the backup moves the file away. Only if the file (or its markers)
+            //  doesn't exist do we use the custom code we were given.
+            strCustomCode = ReadCustomSection(strFileSpec) ?? strCustomCode;
+
             // always make a backup
             CscProject.BackupFile(strFileSpec);
             map.SaveTable(strFileSpec, strEncConverterName, strPunctuationAndWhiteSpace, strCustomCode);
+        }
+
+        internal const string CustomRuleStartComment = "c +----------start custom changes----------+";
+
+        /// <summary>
+        /// Returns the lines between the 'start custom changes' and 'end custom changes' comments of the given CC table
+        /// ("" if there's nothing between them), or null if the file or either marker is missing
+        /// </summary>
+        internal static string ReadCustomSection(string strFileSpec)
+        {
+            if (String.IsNullOrEmpty(strFileSpec) || !File.Exists(strFileSpec))
+                return null;
+
+            List<string> customLines = null;
+            foreach (var line in File.ReadLines(strFileSpec, Encoding.UTF8))
+            {
+                if (customLines == null)
+                {
+                    if (line == CustomRuleStartComment)
+                        customLines = new List<string>();
+                    else if (line == CctableLastHeaderLine)
+                        return null;    // no start marker in the header
+                }
+                else if (line == CustomRuleEndComment)
+                    return String.Join(Environment.NewLine, customLines);
+                else if (line == CctableLastHeaderLine)
+                    return null;        // no end marker, so we can't tell where the custom code stops
+                else
+                    customLines.Add(line);
+            }
+            return null;
         }
 
         protected void SaveTable(string strFileSpec, string strEncConverterName, string strPunctuationAndWhiteSpace, string strCustomCode)
@@ -217,7 +253,7 @@ namespace SpellingFixer30
 			sw.WriteLine(strBeginStmt);
 			sw.WriteLine(String.Format("    store(ws) {0} endstore", strPunctuation));
 			sw.WriteLine("");
-			sw.WriteLine("c +----------start custom changes----------+");
+			sw.WriteLine(CustomRuleStartComment);
 			if (!String.IsNullOrEmpty(strCustomCode))
 			{
 				sw.WriteLine(strCustomCode);

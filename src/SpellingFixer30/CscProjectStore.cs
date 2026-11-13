@@ -177,7 +177,7 @@ namespace SpellingFixer30
             {
                 ProjectName = project.Name,
                 ScriptSystemName = project.VernacularScriptSystemName,
-                CustomCcCode = project.SpellFixerCustomCcCode,
+                CustomCcCode = null,    // the custom code lives in the .cct file itself (see Bad2GoodMap.SaveTable); it's only read from older project files
                 CompareDoubleChars = project.CompareDoubleChars,
                 CompareCase = project.CompareCase,
                 WordsInContext = project.WordsInContext,
