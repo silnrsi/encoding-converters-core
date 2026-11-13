@@ -1183,6 +1183,24 @@ namespace SpellingFixer30
         }
 
         /// <summary>
+        /// The project's known good words (read-only; use AddToDictionary/RemoveFromDictionary to change them)
+        /// </summary>
+        public IReadOnlyCollection<string> KnownGoodWords => m_mapS2SfwKnownGoodWords.Keys;
+
+        /// <summary>
+        /// The project's spelling corrections (bad spelling -> good spelling), re-read first if the file was changed outside
+        /// of this program (read-only; use AssignCorrectSpelling to change them)
+        /// </summary>
+        public IReadOnlyDictionary<string, string> SpellingCorrections
+        {
+            get
+            {
+                ReplacementRulesCheckForOutsideChange();
+                return new System.Collections.ObjectModel.ReadOnlyDictionary<string, string>(m_mapS2SBad2GoodWords);
+            }
+        }
+
+        /// <summary>
         /// get or set the value which indicates whether the project should also compare word which differ on
         /// the presence or absense of double consonants (e.g. "kk" and "k" will be treated identically).
         /// </summary>
@@ -1670,77 +1688,6 @@ namespace SpellingFixer30
             }
 
             SaveProjectData();
-            return true;
-        }
-
-        /// <summary>
-        /// The inverse of AddParatextSpellingStatusToCheckLists: puts this project's good words (as State="R") and spelling
-        /// corrections (as State="W" w/ a Correction) into a Paratext project's SpellingStatus.xml file. Words Paratext
-        /// doesn't have yet are just added; words Paratext has differently (e.g. a good word that Paratext has as wrong, or
-        /// a correction that Paratext corrects to something else) are listed for the user to decide which to replace.
-        /// Paratext must not be running (or it'd overwrite the changes), and a backup of the file is put in this project's
-        /// folder before it's changed.
-        /// </summary>
-        /// <param name="filespec">the Paratext project's SpellingStatus.xml file</param>
-        /// <param name="summary">a description of what was done (e.g. for a status bar)</param>
-        /// <returns>true if the file was updated (or was already up to date); false if the user cancelled</returns>
-        public bool ExportSpellingStatusToParatext(string filespec, out string summary)
-        {
-            if (!File.Exists(filespec))
-                throw new FileNotFoundException($"The Paratext spelling status file '{filespec}' doesn't exist", filespec);
-
-            summary = "Exporting spelling data to Paratext cancelled";
-            if (!CheckParatextIsClosed())
-                return false;
-
-            // (in case the corrections were edited outside of this program)
-            ReplacementRulesCheckForOutsideChange();
-            var export = ParatextSpellingStatusExport.Plan(filespec, m_mapS2SfwKnownGoodWords.Keys.ToList(),
-                                                          ((Dictionary<string, string>)m_mapS2SBad2GoodWords).ToList());
-
-            if (export.Conflicts.Any())
-            {
-                using (var dlg = new ParatextConflictsForm(export.Conflicts, filespec, Font))
-                {
-                    if (dlg.ShowDialog() != DialogResult.OK)
-                        return false;
-                    export.Apply(dlg.ConflictsToReplace);
-                }
-            }
-
-            var numLeftAlone = export.Conflicts.Count - export.NumConflictsReplaced;
-            var details = $"{export.NumApprovedWordsAdded} approved words added, {export.NumCorrectionsAdded} corrections added, " +
-                          $"{export.NumConflictsReplaced} differences replaced, {numLeftAlone} differences left as Paratext has them";
-            if (export.NumSkipped > 0)
-                details += $", {export.NumSkipped} phrases skipped";
-
-            if (!export.HasChanges)
-            {
-                summary = $"Paratext's spelling data ('{filespec}') already has all of SpellFixer's ({details})";
-                return true;
-            }
-
-            // (in case Paratext was started while the user was deciding)
-            if (!CheckParatextIsClosed())
-                return false;
-
-            var paratextProjectName = Path.GetFileName(Path.GetDirectoryName(filespec));
-            File.Copy(filespec, Path.Combine(ProjectDirectory, $"{paratextProjectName} {Path.GetFileName(filespec)}.bak"), true);
-            export.Save(filespec);
-
-            summary = $"Spelling data exported to Paratext ('{filespec}'): {details}";
-            return true;
-        }
-
-        private static bool CheckParatextIsClosed()
-        {
-            while (ParatextSpellingStatusExport.IsParatextRunning())
-            {
-                if (MessageBox.Show("Paratext is running. It has to be closed before its spelling data can be changed (otherwise it would overwrite the changes)." +
-                                    $"{Environment.NewLine}{Environment.NewLine}Close Paratext and then click 'Retry'.",
-                                    ApplicationCaption, MessageBoxButtons.RetryCancel, MessageBoxIcon.Warning) != DialogResult.Retry)
-                    return false;
-            }
             return true;
         }
 
