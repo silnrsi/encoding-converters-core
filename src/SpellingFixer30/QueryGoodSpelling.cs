@@ -95,7 +95,7 @@ namespace SpellingFixer30
         public DialogResult ShowDialog(string strBadWord, string strReplacement, string strOriginalWord, bool bShowDelete, bool bShowSwapWords)
         {
             LoadWord(strBadWord, strReplacement, strOriginalWord, bShowDelete, bShowSwapWords);
-            return base.ShowDialog();
+            return DialogOwner.ShowDialog(this);   // (on top, if what it was opened from is)
         }
 
         public string   GoodSpelling

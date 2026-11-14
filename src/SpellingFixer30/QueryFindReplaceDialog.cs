@@ -99,7 +99,7 @@ namespace SpellingFixer30
             }
 
             UpdateFindWhatDisplay();
-            var res = base.ShowDialog();
+            var res = DialogOwner.ShowDialog(this);   // (on top, if what it was opened from is)
             return res;
         }
 
