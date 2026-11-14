@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Schema;
@@ -34,6 +35,32 @@ namespace SpellingFixer30
 
         [XmlAttribute("MaxContextStringsInToolTip")]
         public int MaxContextStrings { get; set; }
+
+        /// <summary>
+        /// The Paratext project (if any) whose 'shared' folder this project's data is synchronized through
+        /// </summary>
+        [XmlAttribute("ParatextProjectName")]
+        public string ParatextProjectName { get; set; }
+
+        /// <summary>
+        /// When the Inconsistency Settings were last analyzed (or the offer to analyze them was declined), as yyyy-MM-dd
+        /// </summary>
+        [XmlAttribute("LastRuleAnalysis")]
+        public string LastRuleAnalysis { get; set; }
+
+        internal const string LastRuleAnalysisFormat = "yyyy-MM-dd";
+
+        internal static DateTime? ParseLastRuleAnalysis(string value)
+        {
+            return DateTime.TryParseExact(value, LastRuleAnalysisFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out var date)
+                    ? date
+                    : (DateTime?)null;
+        }
+
+        internal static string FormatLastRuleAnalysis(DateTime? value)
+        {
+            return value?.ToString(LastRuleAnalysisFormat, CultureInfo.InvariantCulture);
+        }
 
         [XmlElement("ProjectFont")]
         public SerializableFont ProjectFontData;
@@ -67,6 +94,13 @@ namespace SpellingFixer30
 
         [XmlElement("RuleNames")]
         public RuleNameData RuleNames { get; set; }
+
+        /// <summary>
+        /// The (keys of the) Inconsistency Settings analysis suggestions the user asked not to be shown again
+        /// </summary>
+        [XmlArray("DismissedRuleSuggestions")]
+        [XmlArrayItem("Suggestion")]
+        public List<string> DismissedRuleSuggestions { get; set; }
 
         [XmlElement("MarkersToNotCheck")]
         public MarkersToNotCheckData MarkersToNotCheck { get; set; }
@@ -117,6 +151,9 @@ namespace SpellingFixer30
             project.Locale = store.Locale;
             project.WordsInContext = store.WordsInContext;
             project.MaxContextStrings = store.MaxContextStrings;
+            project.ParatextProjectName = store.ParatextProjectName;
+            project.LastRuleAnalysis = ParseLastRuleAnalysis(store.LastRuleAnalysis);
+            project.DismissedRuleSuggestions = new HashSet<string>(store.DismissedRuleSuggestions ?? new List<string>());
             project.MarkersToAvoidForSpellingCheck = store.MarkersToNotCheck?.MarkersToNotCheck ?? new MarkersToNotCheckData().MarkersToNotCheck;
 
             // Transfer RuleNames
@@ -140,11 +177,14 @@ namespace SpellingFixer30
             {
                 ProjectName = project.Name,
                 ScriptSystemName = project.VernacularScriptSystemName,
-                CustomCcCode = project.SpellFixerCustomCcCode,
+                CustomCcCode = null,    // the custom code lives in the .cct file itself (see Bad2GoodMap.SaveTable); it's only read from older project files
                 CompareDoubleChars = project.CompareDoubleChars,
                 CompareCase = project.CompareCase,
                 WordsInContext = project.WordsInContext,
                 MaxContextStrings = project.MaxContextStrings,
+                ParatextProjectName = String.IsNullOrEmpty(project.ParatextProjectName) ? null : project.ParatextProjectName,
+                LastRuleAnalysis = FormatLastRuleAnalysis(project.LastRuleAnalysis),
+                DismissedRuleSuggestions = ((project.DismissedRuleSuggestions?.Count ?? 0) > 0) ? project.DismissedRuleSuggestions.OrderBy(k => k).ToList() : null,
 
                 ProjectFont = project.Font,
                 TransliteratorFont = project.TransliterationFont,
@@ -174,6 +214,45 @@ namespace SpellingFixer30
 
             store.SaveToXml(filePath);
             return store;
+        }
+
+        /// <summary>
+        /// Updates only the ParatextProjectName attribute of an existing project file (so the rest of the
+        /// project's settings, which the user may be in the middle of editing, aren't saved yet)
+        /// </summary>
+        public static void UpdateParatextProjectName(string filePath, string paratextProjectName)
+        {
+            UpdateProjectFile(filePath, store => store.ParatextProjectName = String.IsNullOrEmpty(paratextProjectName) ? null : paratextProjectName);
+        }
+
+        /// <summary>
+        /// Updates only the LastRuleAnalysis attribute of an existing project file
+        /// </summary>
+        public static void UpdateLastRuleAnalysis(string filePath, DateTime? lastRuleAnalysis)
+        {
+            UpdateProjectFile(filePath, store => store.LastRuleAnalysis = FormatLastRuleAnalysis(lastRuleAnalysis));
+        }
+
+        /// <summary>
+        /// Updates only the DismissedRuleSuggestions of an existing project file
+        /// </summary>
+        public static void UpdateDismissedRuleSuggestions(string filePath, IEnumerable<string> keys)
+        {
+            var list = keys?.OrderBy(k => k).ToList();
+            UpdateProjectFile(filePath, store => store.DismissedRuleSuggestions = ((list?.Count ?? 0) > 0) ? list : null);
+        }
+
+        private static void UpdateProjectFile(string filePath, Action<CscProjectStore> update)
+        {
+            if (!File.Exists(filePath))
+                return;
+
+            var store = LoadFromXml(filePath);
+            if (store == null)
+                return;
+
+            update(store);
+            store.SaveToXml(filePath);
         }
 
         public static bool CanWriteToFile(string filePath)

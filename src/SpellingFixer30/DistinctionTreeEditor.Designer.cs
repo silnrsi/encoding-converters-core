@@ -43,21 +43,21 @@ namespace SpellingFixer30
             this.treeViewDistinctions = new System.Windows.Forms.TreeView();
             this.contextMenuStripFrom = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.addFromValueToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ecTextBoxFrom = new SilEncConverters40.EcTextBox();
             this.labelChangeFrom = new System.Windows.Forms.Label();
+            this.ecTextBoxTo = new SilEncConverters40.EcTextBox();
             this.labelChangeInto = new System.Windows.Forms.Label();
             this.buttonTransliterate = new System.Windows.Forms.Button();
             this.helpProvider = new System.Windows.Forms.HelpProvider();
-            this.ecTextBoxFrom = new EcTextBox();
-            this.ecTextBoxTo = new EcTextBox();
             this.tableLayoutPanel.SuspendLayout();
             this.contextMenuStripFrom.SuspendLayout();
             this.SuspendLayout();
             // 
             // tableLayoutPanel
             // 
-            this.tableLayoutPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.tableLayoutPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tableLayoutPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.tableLayoutPanel.ColumnCount = 3;
             this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
@@ -112,9 +112,9 @@ namespace SpellingFixer30
             // 
             // textBoxRuleName
             // 
-            this.textBoxRuleName.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.textBoxRuleName.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tableLayoutPanel.SetColumnSpan(this.textBoxRuleName, 2);
             this.helpProvider.SetHelpString(this.textBoxRuleName, resources.GetString("textBoxRuleName.HelpString"));
             this.textBoxRuleName.Location = new System.Drawing.Point(93, 3);
@@ -181,7 +181,7 @@ namespace SpellingFixer30
             this.treeViewDistinctions.Dock = System.Windows.Forms.DockStyle.Fill;
             this.treeViewDistinctions.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
             this.helpProvider.SetHelpString(this.treeViewDistinctions, "This tree shows all of the simplification processes for the named rule. You can c" +
-                    "lick on the \'From:\' nodes in order to edit the string values. You can also ");
+        "lick on the \'From:\' nodes in order to edit the string values. You can also ");
             this.treeViewDistinctions.Location = new System.Drawing.Point(93, 55);
             this.treeViewDistinctions.Name = "treeViewDistinctions";
             this.tableLayoutPanel.SetRowSpan(this.treeViewDistinctions, 2);
@@ -196,14 +196,26 @@ namespace SpellingFixer30
             this.contextMenuStripFrom.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.addFromValueToolStripMenuItem});
             this.contextMenuStripFrom.Name = "contextMenuStripFrom";
-            this.contextMenuStripFrom.Size = new System.Drawing.Size(177, 26);
+            this.contextMenuStripFrom.Size = new System.Drawing.Size(190, 26);
             // 
             // addFromValueToolStripMenuItem
             // 
             this.addFromValueToolStripMenuItem.Name = "addFromValueToolStripMenuItem";
-            this.addFromValueToolStripMenuItem.Size = new System.Drawing.Size(176, 22);
+            this.addFromValueToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
             this.addFromValueToolStripMenuItem.Text = "&Add new \'From\' value";
             this.addFromValueToolStripMenuItem.Click += new System.EventHandler(this.addFromValueToolStripMenuItem_Click);
+            // 
+            // ecTextBoxFrom
+            // 
+            this.ecTextBoxFrom.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ecTextBoxFrom.Font = new System.Drawing.Font("Doulos SIL", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.helpProvider.SetHelpString(this.ecTextBoxFrom, resources.GetString("ecTextBoxFrom.HelpString"));
+            this.ecTextBoxFrom.Location = new System.Drawing.Point(93, 371);
+            this.ecTextBoxFrom.Name = "ecTextBoxFrom";
+            this.ecTextBoxFrom.ReadOnly = true;
+            this.helpProvider.SetShowHelp(this.ecTextBoxFrom, true);
+            this.ecTextBoxFrom.Size = new System.Drawing.Size(156, 37);
+            this.ecTextBoxFrom.TabIndex = 2;
             // 
             // labelChangeFrom
             // 
@@ -214,6 +226,20 @@ namespace SpellingFixer30
             this.labelChangeFrom.Size = new System.Drawing.Size(70, 13);
             this.labelChangeFrom.TabIndex = 11;
             this.labelChangeFrom.Text = "Change From";
+            // 
+            // ecTextBoxTo
+            // 
+            this.ecTextBoxTo.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ecTextBoxTo.Font = new System.Drawing.Font("Doulos SIL", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.helpProvider.SetHelpString(this.ecTextBoxTo, "This box shows the result of the simplifying rule: the value in the \'Change From\'" +
+        " field (if it occurs in a word) will be replaced by this value when comparing fo" +
+        "r potentially misspelled words.");
+            this.ecTextBoxTo.Location = new System.Drawing.Point(255, 371);
+            this.ecTextBoxTo.Name = "ecTextBoxTo";
+            this.ecTextBoxTo.ReadOnly = true;
+            this.helpProvider.SetShowHelp(this.ecTextBoxTo, true);
+            this.ecTextBoxTo.Size = new System.Drawing.Size(157, 37);
+            this.ecTextBoxTo.TabIndex = 3;
             // 
             // labelChangeInto
             // 
@@ -239,32 +265,6 @@ namespace SpellingFixer30
             this.buttonTransliterate.Text = "Transliterate";
             this.buttonTransliterate.UseVisualStyleBackColor = true;
             this.buttonTransliterate.Click += new System.EventHandler(this.buttonTransliterate_Click);
-            // 
-            // ecTextBoxFrom
-            // 
-            this.ecTextBoxFrom.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.ecTextBoxFrom.Font = new System.Drawing.Font("Doulos SIL", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.helpProvider.SetHelpString(this.ecTextBoxFrom, resources.GetString("ecTextBoxFrom.HelpString"));
-            this.ecTextBoxFrom.Location = new System.Drawing.Point(93, 371);
-            this.ecTextBoxFrom.Name = "ecTextBoxFrom";
-            this.ecTextBoxFrom.ReadOnly = true;
-            this.helpProvider.SetShowHelp(this.ecTextBoxFrom, true);
-            this.ecTextBoxFrom.Size = new System.Drawing.Size(156, 37);
-            this.ecTextBoxFrom.TabIndex = 2;
-            // 
-            // ecTextBoxTo
-            // 
-            this.ecTextBoxTo.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.ecTextBoxTo.Font = new System.Drawing.Font("Doulos SIL", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.helpProvider.SetHelpString(this.ecTextBoxTo, "This box shows the result of the simplifying rule: the value in the \'Change From\'" +
-                    " field (if it occurs in a word) will be replaced by this value when comparing fo" +
-                    "r potentially misspelled words.");
-            this.ecTextBoxTo.Location = new System.Drawing.Point(255, 371);
-            this.ecTextBoxTo.Name = "ecTextBoxTo";
-            this.ecTextBoxTo.ReadOnly = true;
-            this.helpProvider.SetShowHelp(this.ecTextBoxTo, true);
-            this.ecTextBoxTo.Size = new System.Drawing.Size(157, 37);
-            this.ecTextBoxTo.TabIndex = 3;
             // 
             // DistinctionTreeEditor
             // 

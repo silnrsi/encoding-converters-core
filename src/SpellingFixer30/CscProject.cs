@@ -113,7 +113,7 @@ namespace SpellingFixer30
         [NonSerializedAttribute()]
         internal WordsToCheck m_mapS2SfwWordsToCheck = null;
         [NonSerializedAttribute()]
-        internal AmbiguityListMaps m_mapAmbiguities = null;
+        internal AmbiguityRules m_ambiguityRules = new AmbiguityRules();
         [NonSerializedAttribute()]
         protected DirectableEncConverter m_aEcTrans = null;
         [NonSerializedAttribute()]
@@ -144,30 +144,86 @@ namespace SpellingFixer30
 			VernScriptSystem sfssp = null;
             try
             {
-                var strVSSFileSpec = VernacularScriptSystemFileSpec;
-                sfssp = VernScriptSystem.LoadVsvXml(strVSSFileSpec);
+                sfssp = VernScriptSystem.LoadVsvXml(VernacularScriptSystemFileSpec);
+                ApplyVernScriptSystem(sfssp);
+            }
+#if DEBUG
+            catch (Exception ex)
+            {
+                // don't think I want to do this in the release product or we'll never be able to edit the project.
+                throw ex;
+#else
+            catch
+            {
+#endif
+            }
 
-                if (_ruleNames.Count > 0)
+            // read in the bad 2 good mapping
+            m_mapS2SBad2GoodWords = Bad2GoodMap.LoadTable(SpellFixerEncConverterSpec);
+
+            // read in the known good list and regenerate all the simplified forms (in case
+            //  the rules changed)
+            string strProjectDirectory = ProjectDirectory;
+            m_mapS2SfwKnownGoodWords = KnownGoodWordList.LoadTable(strProjectDirectory, this);
+            foreach (SpellFixerWord aWord in m_mapS2SfwKnownGoodWords.Values)
+                aWord.InitializeNonStaticData(this);
+
+            // read in the running list of words to check (and regenerate their simplified
+            //  forms also)
+            m_mapS2SfwWordsToCheck = WordsToCheck.LoadTable(strProjectDirectory, this);
+            foreach (SpellFixerWord aWord in m_mapS2SfwWordsToCheck.Values)
+                aWord.InitializeNonStaticData(this);
+
+            // anything that was added to the ignore list in the last round, reload them so
+            //  we can reconsider them
+            m_mapS2SfwIgnoreWords = IgnoreList.LoadTable(strProjectDirectory, this);
+
+            // for the new session, add the ignore words to the words to check
+            foreach (SpellFixerWord aWord in m_mapS2SfwIgnoreWords.Values)
+                AddWordToCheckList(aWord.Value, false, aWord.ContextStrings);
+
+            m_mapS2SfwIgnoreWords.Clear();   // and then clear it out to start afresh
+
+            return sfssp;
+        }
+
+        /// <summary>
+        /// Re-reads the Vernacular Script System file and re-applies it (e.g. after the user has changed the
+        /// Inconsistency Settings) and recalculates the transliterated and simplified forms of the words in the
+        /// Known Good and Words to Check lists--without re-reading the word lists from disk (which would lose any
+        /// unsaved additions)
+        /// </summary>
+        internal void ReinitializeRules()
+        {
+            try
+            {
+                ApplyVernScriptSystem(VernScriptSystem.LoadVsvXml(VernacularScriptSystemFileSpec));
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Unable to reload the Vernacular Script System for the '{Name}' project: {ex.Message}", ApplicationCaption);
+                return;
+            }
+
+            foreach (var map in new HashtableStore[] { m_mapS2SfwKnownGoodWords, m_mapS2SfwWordsToCheck })
+                if (map != null)
+                    foreach (SpellFixerWord aWord in map.Values)
+                        aWord.InitializeNonStaticData(this);
+        }
+
+        /// <summary>
+        /// Sets up the ambiguity rules, transliterator, punctuation, preprocessing regexs and ignore characters
+        /// from the given Vernacular Script System
+        /// </summary>
+        protected void ApplyVernScriptSystem(VernScriptSystem sfssp)
+        {
+                RegexChanges.Clear();   // in case this is called again (e.g. after reloading the project)
+
+                m_ambiguityRules = AmbiguityRules.Build(sfssp, _ruleNames.Cast<string>(), out var missingRuleNames);
+                foreach (var strRuleName in missingRuleNames)
                 {
-                    m_mapAmbiguities = new AmbiguityListMaps();
-                    foreach (string strRuleName in _ruleNames)
-                    {
-                        System.Diagnostics.Trace.WriteLine(String.Format("strRuleName: {0}", strRuleName));
-                        var distinction = sfssp.Distinctions.DistinctionList.FirstOrDefault(d => d.Name == strRuleName);
-                        if (distinction != null)
-                        {
-                            foreach (var normalizeRule in distinction.NormalizeRules)
-                            {
-                                var characterToNormalize = normalizeRule.CharactersToNormalize.CharacterToNormalize.Select(c => c.Value).ToList();
-                                AddAmbiguityRule(distinction.Name, normalizeRule.NormalizedForm, characterToNormalize);
-                            }
-                        }
-                        else
-                        {
-                            MessageBox.Show(String.Format("The project is configured to use an ambiguity rule named '{0}', but it's not in the file '{1}'!? You should edit the project to fix this.",
-                                strRuleName, strVSSFileSpec));
-                        }
-                    }
+                    MessageBox.Show(String.Format("The project is configured to use an ambiguity rule named '{0}', but it's not in the file '{1}'!? You should edit the project to fix this.",
+                        strRuleName, VernacularScriptSystemFileSpec));
                 }
 
                 Transliterator = GetTransliterator(sfssp);
@@ -217,57 +273,14 @@ namespace SpellingFixer30
                 }
 
                 // get list of characters we're supposed to strip out of words
-                if (sfssp.IgnoreCharactersBeforeTransliteration != null)
-                {
-                    var ignoreCharactersBeforeTransliteration = sfssp.IgnoreCharactersBeforeTransliteration.Characters;
-                    m_astrIgnoreStrsBeforeTransliteration = ignoreCharactersBeforeTransliteration.Select(c => c.Value).ToArray();
-                }
+                m_astrIgnoreStrsBeforeTransliteration = GetIgnoreStrings(sfssp.IgnoreCharactersBeforeTransliteration?.Characters);
+                m_astrIgnoreStrsAfterTransliteration = GetIgnoreStrings(sfssp.IgnoreCharactersAfterTransliteration?.Characters);
+        }
 
-                // get list of characters we're supposed to strip out of words
-                if (sfssp.IgnoreCharactersAfterTransliteration != null)
-                {
-                    var ignoreCharactersAfterTransliteration = sfssp.IgnoreCharactersAfterTransliteration.Characters;
-                    m_astrIgnoreStrsAfterTransliteration = ignoreCharactersAfterTransliteration.Select(c => c.Value).ToArray();
-                }
-            }
-#if DEBUG
-            catch (Exception ex)
-            {
-                // don't think I want to do this in the release product or we'll never be able to edit the project.
-                throw ex;
-#else
-            catch
-            {
-#endif
-            }
-
-            // read in the bad 2 good mapping
-            m_mapS2SBad2GoodWords = Bad2GoodMap.LoadTable(SpellFixerEncConverterSpec);
-
-            // read in the known good list and regenerate all the simplified forms (in case
-            //  the rules changed)
-            string strProjectDirectory = ProjectDirectory;
-            m_mapS2SfwKnownGoodWords = KnownGoodWordList.LoadTable(strProjectDirectory, this);
-            foreach (SpellFixerWord aWord in m_mapS2SfwKnownGoodWords.Values)
-                aWord.InitializeNonStaticData(this);
-
-            // read in the running list of words to check (and regenerate their simplified
-            //  forms also)
-            m_mapS2SfwWordsToCheck = WordsToCheck.LoadTable(strProjectDirectory, this);
-            foreach (SpellFixerWord aWord in m_mapS2SfwWordsToCheck.Values)
-                aWord.InitializeNonStaticData(this);
-
-            // anything that was added to the ignore list in the last round, reload them so
-            //  we can reconsider them
-            m_mapS2SfwIgnoreWords = IgnoreList.LoadTable(strProjectDirectory, this);
-
-            // for the new session, add the ignore words to the words to check
-            foreach (SpellFixerWord aWord in m_mapS2SfwIgnoreWords.Values)
-                AddWordToCheckList(aWord.Value, false, aWord.ContextStrings);
-
-            m_mapS2SfwIgnoreWords.Clear();   // and then clear it out to start afresh
-
-            return sfssp;
+        internal static string[] GetIgnoreStrings(List<IgnoreCharacter> characters)
+        {
+            // (an empty one would throw in String.Replace)
+            return characters?.Select(c => c.Value).Where(v => !String.IsNullOrEmpty(v)).ToArray();
         }
 
         internal static DirectableEncConverter GetTransliterator(VernScriptSystem sfssp)
@@ -482,14 +495,75 @@ namespace SpellingFixer30
         {
             get
 			{
-				return CreateVernacularScriptSystemFileSpec(VernacularScriptSystemName);
+				return CreateVernacularScriptSystemFileSpec(VernacularScriptSystemName, Name);
 			}
 		}
 
 		public static string CreateVernacularScriptSystemFileSpec(string vernacularScriptSystemName)
 		{
-			return Path.Combine(VernacularScriptSystemsDirectory,
-								$"{vernacularScriptSystemName}.{VernacularScriptSystemFileExt}");
+			return CreateVernacularScriptSystemFileSpec(vernacularScriptSystemName, null);
+		}
+
+		/// <summary>
+		/// Returns the path to the VSS file with the given name. A project can have its own VSS file in its project folder
+		/// (e.g. one made by the Inconsistency Settings analysis), which then goes wherever the project's data goes (e.g. to
+		/// other users via a Paratext project's 'shared' folder, when the project folder is a junction to it). If there's
+		/// one by that name in the project's folder, it's used; otherwise, the one in the (global) Vernacular Script Systems folder.
+		/// </summary>
+		public static string CreateVernacularScriptSystemFileSpec(string vernacularScriptSystemName, string projectName)
+		{
+			var filename = $"{vernacularScriptSystemName}.{VernacularScriptSystemFileExt}";
+			if (!String.IsNullOrEmpty(projectName))
+			{
+				try
+				{
+					var projectSpecific = Path.Combine(GetProjectDirectory(projectName), filename);
+					if (IsVernScriptSystemFile(projectSpecific))
+						return projectSpecific;
+				}
+				catch { }
+			}
+			return Path.Combine(VernacularScriptSystemsDirectory, filename);
+		}
+
+		/// <summary>
+		/// The names of the VSS files in the project's folder (which also has other .xml files, e.g. the word lists)
+		/// </summary>
+		internal static List<string> GetProjectVernacularScriptSystemNames(string projectName)
+		{
+			var names = new List<string>();
+			try
+			{
+				var folder = GetProjectDirectory(projectName);
+				if (Directory.Exists(folder))
+					names.AddRange(Directory.GetFiles(folder, $"*.{VernacularScriptSystemFileExt}")
+											.Where(IsVernScriptSystemFile)
+											.Select(Path.GetFileNameWithoutExtension));
+			}
+			catch { }
+			return names;
+		}
+
+		/// <summary>
+		/// Is the file a Vernacular Script System file? (only reads as far as the root element, since the word list
+		/// files in a project folder can be large)
+		/// </summary>
+		internal static bool IsVernScriptSystemFile(string path)
+		{
+			if (!File.Exists(path))
+				return false;
+			try
+			{
+				using (var reader = XmlReader.Create(path, new XmlReaderSettings { DtdProcessing = DtdProcessing.Ignore }))
+				{
+					reader.MoveToContent();
+					return reader.LocalName == "VernScriptSystem";
+				}
+			}
+			catch
+			{
+				return false;
+			}
 		}
 
 		/// <summary>
@@ -547,11 +621,7 @@ namespace SpellingFixer30
             get
             {
                 RegistryKey keyCscRoot = Registry.LocalMachine.OpenSubKey(RegistryCscRootKey);
-                if (keyCscRoot != null)
-                {
-                    return (string)keyCscRoot.GetValue(RegistryProjectsFolderRootKey);
-                }
-                return ProjectsDefaultDirectory;
+                return ((string)keyCscRoot?.GetValue(RegistryProjectsFolderRootKey)) ?? ProjectsDefaultDirectory;
             }
         }
 
@@ -691,23 +761,34 @@ namespace SpellingFixer30
 
         public static void BackupFile(string fileSpec)
         {
+            if (!File.Exists(fileSpec))
+                return;
+
+            while (!CscProjectStore.CanWriteToFile(fileSpec))
+            {
+                if (MessageBox.Show($"Can't write to the file {fileSpec}. But you can (manually) delete it, so it'll be recreated.", CscProject.ApplicationCaption, MessageBoxButtons.OKCancel) == DialogResult.Cancel)
+                    return;
+            }
+
+#if DEBUG
+            // in debug mode, keep every backup (numbered uniquely)
             var i = 0;
-            var newFileSpec = fileSpec;
-            while (File.Exists(newFileSpec))
+            string newFileSpec;
+            do
             {
                 newFileSpec = Path.Combine(Path.GetDirectoryName(fileSpec), $"{Path.GetFileNameWithoutExtension(fileSpec)} ({i++}){Path.GetExtension(fileSpec)}.bak");
-            }
-
-            if (fileSpec != newFileSpec)
+            } while (File.Exists(newFileSpec));
+#else
+            // in release mode, only keep a single backup: <filename>.bak
+            var newFileSpec = fileSpec + ".bak";
+            if (File.Exists(newFileSpec))
             {
-                while (!CscProjectStore.CanWriteToFile(fileSpec))
-                {
-                    if (MessageBox.Show($"Can't write to the file {fileSpec}. But you can (manually) delete it, so it'll be recreated.", CscProject.ApplicationCaption, MessageBoxButtons.OKCancel) == DialogResult.Cancel)
-                        return;
-                }
-
-                File.Move(fileSpec, newFileSpec);
+                File.SetAttributes(newFileSpec, FileAttributes.Normal);
+                File.Delete(newFileSpec);
             }
+#endif
+
+            File.Move(fileSpec, newFileSpec);
         }
 
         /// <summary>
@@ -731,8 +812,25 @@ namespace SpellingFixer30
         /// </summary>
         public void EditProject()
         {
-            SFProjectForm dlg = new SFProjectForm(this);
-            dlg.ShowDialog();
+            EditProject(startWithRuleAnalysis: false);
+        }
+
+        /// <summary>
+        /// Brings up the project editor (optionally, starting with an analysis of the Inconsistency Settings)
+        /// </summary>
+        /// <returns>true if the user clicked OK (in which case the rules have been re-applied to the data in memory)</returns>
+        internal bool EditProject(bool startWithRuleAnalysis)
+        {
+            var dlg = new SFProjectForm(this)
+            {
+                StartWithRuleAnalysis = startWithRuleAnalysis
+            };
+            if (dlg.ShowDialog() != DialogResult.OK)
+                return false;
+
+            // the dialog resets the rule names (and may have changed the VSS file), so re-apply them to what's in memory
+            ReinitializeRules();
+            return true;
         }
 
         /// <summary>
@@ -749,6 +847,12 @@ namespace SpellingFixer30
             try
             {
                 CscProjectStore.TransferToCscProject(projectPath, project);
+
+                // if this project is (supposed to be) synchronized via a Paratext project, but isn't linked on
+                //  this computer, offer to link it (which may change which files we're using, so reload)
+                if (CheckParatextLink(project))
+                    CscProjectStore.TransferToCscProject(projectPath, project);
+
                 project.Init(); // need to call Init
 
 				// make sure the associated EncConverter for processing spelling changes is in the repo
@@ -762,6 +866,55 @@ namespace SpellingFixer30
             return project;
         }
 
+        /// <summary>
+        /// Checks whether this project should be synchronized via a Paratext project's 'shared' folder, but isn't
+        /// linked on this computer (e.g. another user linked it and the .csf file came to this computer via
+        /// Send/Receive, or a project by the same name exists in some Paratext project's 'shared' folder), and if
+        /// so, offers to link it.
+        /// </summary>
+        /// <returns>true if the project was linked and is now using the files from the Paratext project</returns>
+        internal static bool CheckParatextLink(CscProject project)
+        {
+            try
+            {
+                if (ParatextProjectLink.IsLinked(project.Name))
+                    return false;
+
+                string paratextProjectName = project.ParatextProjectName;
+                string message;
+                if (!String.IsNullOrEmpty(paratextProjectName))
+                {
+                    message = $"The '{project.Name}' project is configured to synchronize its data with the Paratext project '{paratextProjectName}', but on this computer it isn't. Do you want to synchronize it now?";
+                }
+                else
+                {
+                    var sharedProject = ParatextProjectLink.FindSharedCscProjects()
+                                                           .FirstOrDefault(p => String.Equals(p.CscProjectName, project.Name, StringComparison.OrdinalIgnoreCase));
+                    if (sharedProject == null)
+                        return false;
+
+                    paratextProjectName = sharedProject.ParatextProjectName;
+                    message = $"There's a '{project.Name}' project being shared in the Paratext project '{paratextProjectName}'. Do you want this computer's '{project.Name}' project to be synchronized with that one?";
+                }
+
+                if (MessageBox.Show(message, ApplicationCaption, MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
+                    return false;
+
+                if (ParatextProjectLink.LinkToParatext(project.Name, paratextProjectName) == ParatextLinkResult.NotLinked)
+                    return false;
+
+                // make sure the (possibly now shared) project file records which Paratext project it's synchronized with
+                var projectPath = Path.Combine(GetProjectDirectory(project.Name), $"{project.Name}.{ProjectFileExt}");
+                CscProjectStore.UpdateParatextProjectName(projectPath, paratextProjectName);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Unable to check whether the '{project.Name}' project should be synchronized with Paratext: {ex.Message}", ApplicationCaption);
+                return false;
+            }
+        }
+
 		internal bool EnsureEncConverterExists(string encConverterName, string encConverterSpec)
 		{
 			// get the EncConverter that should have been added above by 'AddNewProject' button
@@ -769,18 +922,12 @@ namespace SpellingFixer30
 			var aEC = aECs[encConverterName];
 			if (aEC == null)
 			{
-				// add it (put it in the normal 'MapsTables' folder in \pf\cf\sil\...)
-				if (File.Exists(encConverterSpec))
-				{
-					// the converter doesn't exist, but a file with the name we would have 
-					//  given it does... ask the user if they want to overwrite it.
-					// TODO: this doesn't allow for complete flexibility. It might be nicer to
-					//  allow for any arbitrary name, but not if noone complains.
-					if (MessageBox.Show(String.Format("A file exists by the name {0}. Click 'Yes' to overwrite", encConverterSpec), SpellingFixer.cstrCaption, MessageBoxButtons.YesNoCancel) == DialogResult.Yes)
-					{
-						File.Delete(encConverterSpec);
-					}
-				}
+				// the converter isn't in this computer's repository. If the table file already exists, it's this
+				//  project's own table (it lives in the project's folder), which got here some other way than by
+				//  this computer creating it -- e.g. the project's data is synchronized via a Paratext project's
+				//  'shared' folder (so another user created it) or the project folder was copied from another
+				//  computer. Either way, it holds the project's spelling fixes, so just keep it and register a
+				//  converter for it (if it doesn't exist, it's created from the (empty) map below).
 
 				// now add the EncConverter
 				// TODO: EncConverters needs a new interface to get the defining encodingID from 
@@ -817,7 +964,26 @@ namespace SpellingFixer30
             // see if they want to delete the data files also
             var projectPath = GetProjectDirectory(projectName);
             DialogResult res;
-            if ((res = MessageBox.Show($"Do you also want to delete all the data files in the {projectPath} folder?", 
+            if (ParatextProjectLink.IsJunction(projectPath))
+            {
+                // the data lives in a Paratext project's 'shared' folder, where other users may be using it, so
+                //  just remove the link to it (deleting the files would delete them for everyone after the next S/R)
+                if (MessageBox.Show($"The '{projectName}' project's data is synchronized via the Paratext project '{ParatextProjectLink.GetLinkedParatextProjectName(projectName)}'. " +
+                                    "Only the connection to it will be removed from this computer; the data will be left in the Paratext project for any other users. Continue?",
+                                    ApplicationCaption, MessageBoxButtons.OKCancel) != DialogResult.OK)
+                    return false;
+
+                try
+                {
+                    ParatextProjectLink.RemoveJunction(projectPath);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Unable to remove the connection to the Paratext project: {ex.Message}", ApplicationCaption);
+                    return false;
+                }
+            }
+            else if ((res = MessageBox.Show($"Do you also want to delete all the data files in the {projectPath} folder?", 
                                        ApplicationCaption, MessageBoxButtons.YesNoCancel)) == DialogResult.Yes)
             {
                 if (!String.IsNullOrEmpty(projectPath))
@@ -912,6 +1078,95 @@ namespace SpellingFixer30
         }
 
         /// <summary>
+        /// The name of the Paratext project (if any) whose 'shared' folder this project's data is synchronized
+        /// through (the project folder is then a junction to that folder; see ParatextProjectLink)
+        /// </summary>
+        internal string ParatextProjectName { get; set; }
+
+        /// <summary>
+        /// When the Inconsistency Settings were last analyzed against the project's data (or the offer to do so
+        /// was declined); see OfferRuleAnalysis
+        /// </summary>
+        internal DateTime? LastRuleAnalysis { get; set; }
+
+        /// <summary>
+        /// The (keys of the) Inconsistency Settings analysis suggestions the user asked not to be shown again (see RuleSuggestion.Key)
+        /// </summary>
+        internal HashSet<string> DismissedRuleSuggestions { get; set; } = new HashSet<string>();
+
+        /// <summary>
+        /// Replaces the dismissed suggestions (in memory and in the project file)
+        /// </summary>
+        internal void RecordDismissedRuleSuggestions(IEnumerable<string> keys)
+        {
+            DismissedRuleSuggestions = new HashSet<string>(keys ?? Enumerable.Empty<string>());
+            try
+            {
+                CscProjectStore.UpdateDismissedRuleSuggestions(ProjectFilePath, DismissedRuleSuggestions);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Unable to record the suggestions not to show again: {ex.Message}", ApplicationCaption);
+            }
+        }
+
+        internal string ProjectFilePath => Path.Combine(ProjectDirectory, $"{Name}.{ProjectFileExt}");
+
+        internal const int MinCorrectionsForRuleAnalysisOffer = 100;
+        internal const int DaysBetweenRuleAnalysisOffers = 7;
+
+        /// <summary>
+        /// Records (in memory and in the project file) that the rules were analyzed (or the offer declined) now
+        /// </summary>
+        internal void RecordRuleAnalysis()
+        {
+            LastRuleAnalysis = DateTime.Today;
+            try
+            {
+                CscProjectStore.UpdateLastRuleAnalysis(ProjectFilePath, LastRuleAnalysis);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Unable to record the rule analysis date: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// About once a week (once there are enough corrections to learn from), offer to analyze the Inconsistency
+        /// Settings before the user goes thru the bundles of potential inconsistencies
+        /// </summary>
+        protected void OfferRuleAnalysis()
+        {
+            try
+            {
+                var numCorrections = m_mapS2SBad2GoodWords?.Count ?? 0;
+                if (numCorrections < MinCorrectionsForRuleAnalysisOffer)
+                    return;
+
+                if (LastRuleAnalysis.HasValue && ((DateTime.Today - LastRuleAnalysis.Value).TotalDays < DaysBetweenRuleAnalysisOffers))
+                    return;
+
+                var since = LastRuleAnalysis.HasValue
+                                ? $"It's been {(int)(DateTime.Today - LastRuleAnalysis.Value).TotalDays} days since the Inconsistency Settings of the '{Name}' project were analyzed."
+                                : $"The Inconsistency Settings of the '{Name}' project haven't been analyzed yet.";
+                var message = $"{since}{Environment.NewLine}{Environment.NewLine}" +
+                              $"Would you like to analyze them now? This compares them with the {numCorrections} spelling corrections you've made so far, " +
+                              "and suggests settings that could be turned off or added (to find more of the kinds of inconsistencies you've been fixing, " +
+                              $"and fewer that you haven't), as well as data that could be cleaned up. It can take a minute or two.{Environment.NewLine}{Environment.NewLine}" +
+                              "(If you click 'No', you'll be asked again in a week.)";
+
+                var res = MessageBox.Show(message, ApplicationCaption, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                RecordRuleAnalysis();
+                if (res == DialogResult.Yes)
+                    EditProject(startWithRuleAnalysis: true);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Unable to analyze the Inconsistency Settings: {ex.Message}", ApplicationCaption);
+            }
+        }
+
+        /// <summary>
 		/// The font to be used for the display of data in the project
 		/// If you call this from the client application, then be sure to call 'SaveProject' to make it retentive
 		/// </summary>
@@ -925,6 +1180,24 @@ namespace SpellingFixer30
         {
             get { return _transliteratorFont; }
             set { _transliteratorFont = value; }
+        }
+
+        /// <summary>
+        /// The project's known good words (read-only; use AddToDictionary/RemoveFromDictionary to change them)
+        /// </summary>
+        public IReadOnlyCollection<string> KnownGoodWords => m_mapS2SfwKnownGoodWords.Keys;
+
+        /// <summary>
+        /// The project's spelling corrections (bad spelling -> good spelling), re-read first if the file was changed outside
+        /// of this program (read-only; use AssignCorrectSpelling to change them)
+        /// </summary>
+        public IReadOnlyDictionary<string, string> SpellingCorrections
+        {
+            get
+            {
+                ReplacementRulesCheckForOutsideChange();
+                return new System.Collections.ObjectModel.ReadOnlyDictionary<string, string>(m_mapS2SBad2GoodWords);
+            }
         }
 
         /// <summary>
@@ -976,7 +1249,7 @@ namespace SpellingFixer30
         internal void ResetAmbiguityRules()
         {
             _ruleNames.Clear();
-            m_mapAmbiguities = new AmbiguityListMaps();
+            m_ambiguityRules = new AmbiguityRules();
         }
 
         /// <summary>
@@ -1007,6 +1280,58 @@ namespace SpellingFixer30
             }
         }
 
+        /// <summary>
+        /// Applies the word list clean ups suggested by the Inconsistency Settings analysis: each word is removed from
+        /// its list and replaced by its (trimmed) replacements (if any), keeping its count and contexts. Saved right away.
+        /// </summary>
+        /// <returns>the number of entries changed</returns>
+        internal int ApplyWordListFixes(IEnumerable<WordListFix> fixes)
+        {
+            int numChanged = 0;
+            foreach (var fix in fixes ?? Enumerable.Empty<WordListFix>())
+            {
+                HashtableStore map = fix.InKnownGoodList ? (HashtableStore)m_mapS2SfwKnownGoodWords : m_mapS2SfwWordsToCheck;
+                if ((map == null) || !map.TryGetValue(fix.Word, out var sfwOld))
+                    continue;
+
+                map.Remove(fix.Word);
+                m_eSaveNeeded |= fix.InKnownGoodList ? SaveDbFlags.KnownGoodWords : SaveDbFlags.CheckWords;
+                numChanged++;
+
+                foreach (var replacement in fix.Replacements ?? new List<string>())
+                {
+                    var word = TrimWhiteSpaceAndPunctuation(replacement);
+                    if (String.IsNullOrEmpty(word))
+                        continue;
+
+                    if (fix.InKnownGoodList || m_mapS2SfwKnownGoodWords.ContainsKey(word))
+                    {
+                        if (m_mapS2SfwKnownGoodWords.TryGetValue(word, out var sfwExisting))
+                            sfwExisting.Count += sfwOld.Count;
+                        else
+                            m_mapS2SfwKnownGoodWords.Add(new SpellFixerWord(this, word, sfwOld.ContextStrings.ToList()) { Count = sfwOld.Count });
+                        m_eSaveNeeded |= SaveDbFlags.KnownGoodWords;
+                    }
+                    else if (!m_mapS2SBad2GoodWords.ContainsKey(word))
+                    {
+                        if (m_mapS2SfwWordsToCheck.TryGetValue(word, out var sfwExisting))
+                        {
+                            sfwExisting.Count += sfwOld.Count;
+                            foreach (var context in sfwOld.ContextStrings.Where(c => !sfwExisting.ContextStrings.Contains(c)))
+                                if (sfwExisting.ContextStrings.Count < MaxContextStrings)
+                                    sfwExisting.ContextStrings.Add(context);
+                        }
+                        else
+                            m_mapS2SfwWordsToCheck.Add(new SpellFixerWord(this, word, sfwOld.ContextStrings.ToList()) { Count = sfwOld.Count });
+                        m_eSaveNeeded |= SaveDbFlags.CheckWords;
+                    }
+                }
+            }
+
+            SaveProjectData();
+            return numChanged;
+        }
+
         internal virtual SpellFixerWord GetNewSpellFixerWord(string strWord, string context)
         {
             return new SpellFixerWord(this, strWord, new List<string> { context });
@@ -1018,40 +1343,29 @@ namespace SpellingFixer30
         /// </summary>
         public void QueryForSpellingCorrectionsBulk()
         {
+            // (before the bulk list is made, since the analysis may change the rules or clean up the Words to Check)
+            OfferRuleAnalysis();
+
             WordsToCheckBulk mapWordsToCheckBulk = new WordsToCheckBulk();
             try
             {
-                // see if the store exists (i.e. if the user left off with some unselected.
+                // Always look for the inconsistencies from scratch: it's quick now, and the Words to Check list still has
+                //  every word that hasn't been decided yet (only words the user decides on are taken off it). This used to
+                //  offer to pick up with the words left over from the last session (saved in a separate file), but that could
+                //  be out of date (e.g. after new data is added or the Inconsistency Settings are changed), so just delete
+                //  that file if an earlier version left one.
                 if (mapWordsToCheckBulk.BulkFileExists(ProjectDirectory))
-                {
-                    DialogResult res = MessageBox.Show("You have some data left over from a previous session. Do you want to work with that data (Yes) or start over from scratch (No)?", ApplicationCaption, MessageBoxButtons.YesNoCancel);
-
-                    if (res == DialogResult.Yes)
-                        mapWordsToCheckBulk.LoadTable(this);
-                    else if (res == DialogResult.Cancel)
-                        return;
-
-                    // don't leave it lying around
                     mapWordsToCheckBulk.DeleteStore(ProjectDirectory);
-                }
 
-                // if it's empty at this point, then clone the WordsToCheck list
-                if (mapWordsToCheckBulk.Count == 0)
-                    mapWordsToCheckBulk.Copy(m_mapS2SfwWordsToCheck);
+                mapWordsToCheckBulk.Copy(m_mapS2SfwWordsToCheck);
 
                 // bring up the dialog to do the work
                 var dlg = new BulkAmbiguityPicker(this, m_mapS2SfwKnownGoodWords, m_mapS2SBad2GoodWords,
                                                   ref mapWordsToCheckBulk);
                 dlg.ShowDialog();
             }
-            catch (Exception)
-            {
-                throw;
-            }
             finally
             {
-                if (mapWordsToCheckBulk.Count > 0)
-                    WordsToCheckBulk.SaveTable(mapWordsToCheckBulk, this);
                 SaveProjectData();
             }
         }
@@ -1080,7 +1394,7 @@ namespace SpellingFixer30
             if (m_mapS2SBad2GoodWords.ContainsKey(strBadWord))
                 strReplacement = m_mapS2SBad2GoodWords[strBadWord];
 
-            var aQuery = new QueryGoodSpelling(Font);
+            var aQuery = new QueryGoodSpelling(Font, GetAmbiguousWords);
 			if (aQuery.ShowDialog(strBadWord, strReplacement, strBadWord, false, false) == DialogResult.OK)
 			{
 				// UPDATE: 2026-04-14: I was passing 'false' for bNoUI, but since this always shows a dialog, it should be yes, right?
@@ -1097,8 +1411,21 @@ namespace SpellingFixer30
         /// <param name="strBadWord">The misspelled word</param>
         /// <param name="strReplacement">The corrected spelling</param>
         /// <param name="bNoUI">'true' to suppress message boxes. Used for when the misspelled word is already in the dictionary (asking the user if they'd like to remove it from the dictionary)</param>
-        public void AssignCorrectSpelling(string strBadWord, string strReplacement, 
+        public void AssignCorrectSpelling(string strBadWord, string strReplacement,
                                           bool bNoUI, List<string> ContextForReplacement, bool dontSave = false)
+        {
+            TryAssignCorrectSpelling(strBadWord, strReplacement, bNoUI, ContextForReplacement, dontSave);
+        }
+
+        /// <summary>
+        /// Same as AssignCorrectSpelling(strBadWord, strReplacement, bNoUI, ContextForReplacement, dontSave), but
+        /// returns false if the user answered No or Cancel to one of its questions (i.e. the rule wasn't added), and
+        /// true if the rule strBadWord -> strReplacement is now (or already was) in place. (Note: if the user says Yes
+        /// to removing the bad word from the good words, but No to changing its existing rule, the first part is still
+        /// done, and the replacement is still added to the good words.)
+        /// </summary>
+        public bool TryAssignCorrectSpelling(string strBadWord, string strReplacement,
+                                             bool bNoUI, List<string> ContextForReplacement, bool dontSave = false)
         {
             // make sure the bad word isn't already in the known good list
             if (m_mapS2SfwKnownGoodWords.ContainsKey(strBadWord))
@@ -1107,7 +1434,7 @@ namespace SpellingFixer30
                 {
                     DialogResult res = MessageBox.Show(String.Format("The word '{0}' is already marked as a good word. Would you like to remove it from the good word list?", strBadWord), ApplicationCaption, MessageBoxButtons.YesNoCancel);
                     if (res != DialogResult.Yes)
-                        return;
+                        return false;
                 }
 
                 // otherwise
@@ -1131,14 +1458,14 @@ namespace SpellingFixer30
             {
                 // if this exact match is already there, then we're done.
                 if (m_mapS2SBad2GoodWords[strBadWord] == strReplacement)
-                    return;
+                    return true;
 
                 if (!bNoUI)
                 {
                     DialogResult res = MessageBox.Show(String.Format("The word '{0}' is already mapped to the corrected spelling '{1}'. Do you want to change this to the new corrected spelling '{2}'?",
                         strBadWord, m_mapS2SBad2GoodWords[strBadWord], strReplacement), ApplicationCaption, MessageBoxButtons.YesNoCancel);
                     if (res != DialogResult.Yes)
-                        return;
+                        return false;
                 }
 
                 // otherwise
@@ -1151,6 +1478,8 @@ namespace SpellingFixer30
 
             if (!dontSave)  // but some callers don't want to save right away (since they're doing a batch)
                 SaveBad2GoodMap();
+
+            return true;
         }
 
         /// <summary>
@@ -1213,7 +1542,7 @@ namespace SpellingFixer30
             if (bFound)
             {
                 var strReplacement = m_mapS2SBad2GoodWords[strWordKey];
-                QueryGoodSpelling aQuery = new QueryGoodSpelling(Font);
+                QueryGoodSpelling aQuery = new QueryGoodSpelling(Font, GetAmbiguousWords);
                 var res = aQuery.ShowDialog(strWordKey, strReplacement, strWordKey, true, true);
                 if ((res == DialogResult.OK) && (strReplacement != aQuery.GoodSpelling))
                 {
@@ -1308,18 +1637,6 @@ namespace SpellingFixer30
             }
         }
 
-        internal void AddAmbiguityRule(string strRuleName, string strNormalizedForm, List<string> astrAmbiguousForms)
-        {
-            ArrayList aList = new ArrayList();
-            if (m_mapAmbiguities.ContainsKey(strNormalizedForm))
-                m_mapAmbiguities[strNormalizedForm].AddRange(astrAmbiguousForms);
-            else
-            {
-                aList.AddRange(astrAmbiguousForms);
-                m_mapAmbiguities.Add(strNormalizedForm, aList);
-            }
-        }
-
         internal bool ContainsAmbiguityRule(string strRuleName)
         {
             return _ruleNames.Contains(strRuleName);
@@ -1401,6 +1718,22 @@ namespace SpellingFixer30
         /// <returns>WordCheckResult enumeration indicating the result of adding the word (e.g. could have already been in the list, etc)</returns>
         public WordCheckResult AddWordToCheckList(string strWord, bool bTrim, List<string> context)
         {
+            return AddWordToCheckList(strWord, bTrim, context, bSplitOutMarkup: bTrim);
+        }
+
+        private WordCheckResult AddWordToCheckList(string strWord, bool bTrim, List<string> context, bool bSplitOutMarkup)
+        {
+            // if the client split the text on whitespace only, SFM markers (e.g. 'घ़र\f' or 'दे।”\qt2-e\*') can
+            //  still be attached to the word. Since a marker is never part of a word (and trimming only removes
+            //  punctuation from the ends of words), split them off first and add the pieces
+            if (bSplitOutMarkup && ContainsMarkup(strWord))
+            {
+                var result = WordCheckResult.Unknown;
+                foreach (var piece in SplitOutMarkup(strWord))
+                    result = AddWordToCheckList(piece, bTrim, context, bSplitOutMarkup: false);
+                return result;
+            }
+
             if (!String.IsNullOrEmpty(strWord))
             {
                 if (bTrim)
@@ -1461,7 +1794,45 @@ namespace SpellingFixer30
             return bRet;
         }
 
+        // an SFM marker, e.g. \f, \f*, \qt2-s, \+w, or a bare '\*' (the end of a milestone)
+        private static readonly Regex s_rxSfmMarker = new Regex(@"\\\+?[A-Za-z][A-Za-z0-9-]*\*?|\\\*", RegexOptions.Compiled);
+        // USFM attributes after a '|', e.g. जाना|src="LB00317B.JPG" or पुच्‍छ-ताश|alt="the
+        private static readonly Regex s_rxAttributeList = new Regex(@"\|\s*[A-Za-z][\w-]*\s*=.*$", RegexOptions.Compiled);
+        // a (whitespace-delimited) piece that's just an attribute, e.g. src="lb00321c.jpg or ref="9:6"
+        private static readonly Regex s_rxAttributeToken = new Regex(@"^[A-Za-z][\w-]*=""", RegexOptions.Compiled);
+
+        /// <summary>
+        /// Does the (whitespace-delimited) token have SFM markers or USFM attributes in it?
+        /// </summary>
+        internal static bool ContainsMarkup(string token)
+        {
+            return !String.IsNullOrEmpty(token) &&
+                   (s_rxSfmMarker.IsMatch(token) || s_rxAttributeList.IsMatch(token) || s_rxAttributeToken.IsMatch(token));
+        }
+
+        /// <summary>
+        /// Splits SFM markers and USFM attributes out of a (whitespace-delimited) token, returning the pieces that
+        /// are left (untrimmed), e.g. 'दे।”\qt2-e\*' -> [ 'दे।”' ], 'घ़र\f' -> [ 'घ़र' ], 'जाना|src="x.jpg"' -> [ 'जाना' ],
+        /// 'ref="9:6"\fig' -> []
+        /// </summary>
+        internal static List<string> SplitOutMarkup(string token)
+        {
+            if (String.IsNullOrEmpty(token))
+                return new List<string>();
+
+            token = s_rxSfmMarker.Replace(token, " ");
+            token = s_rxAttributeList.Replace(token, " ");
+            return token.Split(new[] { ' ', '\t', '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries)
+                        .Where(piece => !s_rxAttributeToken.IsMatch(piece))
+                        .ToList();
+        }
+
         internal string TrimWhiteSpaceAndPunctuation(string word)
+        {
+            return TrimWhiteSpaceAndPunctuation(word, m_achTrimPunctuation ?? new List<char>());
+        }
+
+        internal static string TrimWhiteSpaceAndPunctuation(string word, List<char> trimChars)
         {
             if (string.IsNullOrWhiteSpace(word))
                 return string.Empty;
@@ -1469,7 +1840,6 @@ namespace SpellingFixer30
             // Normalize Unicode text for consistent representation
             word = word.Normalize(NormalizationForm.FormKC);
 
-            List<char> trimChars = m_achTrimPunctuation;
             int start = 0, end = word.Length - 1;
 
             static bool ShouldTrim(char ch, List<char> trimChars)
@@ -1534,7 +1904,11 @@ namespace SpellingFixer30
         /// </summary>
         /// <param name="sfwWordToCheck">The word to represent the ambiguous words in a bundle. This object will be included in the returned results</param>
         /// <returns>A sorted array of SpellFixerWord objects with the highest count occuring as the lowest array index (i.e. [0] = highest count)</returns>
-        internal virtual SpellFixerWords GetAmbiguousBundle(SpellFixerWord sfwWordToCheck, WordsToCheckBulk mapWordsToCheck)
+        /// <param name="knownGoodIndex">(optional) an index of the Known Good list (see SimplifiedFormIndex), so
+        /// the whole list doesn't have to be searched for each word</param>
+        /// <param name="wordsToCheckIndex">(optional) an index of mapWordsToCheck</param>
+        internal virtual SpellFixerWords GetAmbiguousBundle(SpellFixerWord sfwWordToCheck, WordsToCheckBulk mapWordsToCheck,
+                                                            SimplifiedFormIndex knownGoodIndex = null, SimplifiedFormIndex wordsToCheckIndex = null)
         {
             string strWordToCheck = sfwWordToCheck.Value;
             if (!String.IsNullOrEmpty(strWordToCheck))
@@ -1543,10 +1917,10 @@ namespace SpellingFixer30
 
                 CountPlusNameSortList sl = new CountPlusNameSortList();
                 FindMatchingSimplifiedFormsInHashTableValue(strWordToCheck, strSimplifiedWord,
-                    m_mapS2SfwKnownGoodWords, true, ref sl);
+                    m_mapS2SfwKnownGoodWords, true, ref sl, knownGoodIndex);
 
                 FindMatchingSimplifiedFormsInHashTableValue(strWordToCheck, strSimplifiedWord,
-                    mapWordsToCheck, false, ref sl);
+                    mapWordsToCheck, false, ref sl, wordsToCheckIndex);
 
                 if (sl.Count > 0)
                 {
@@ -1631,10 +2005,18 @@ namespace SpellingFixer30
 
         internal void FindMatchingSimplifiedFormsInHashTableValue(string strWordToCheck,
             string strSimplifiedWord, HashtableStore ht, bool bMatchIndicatesKnownGoodWord,
-            ref CountPlusNameSortList sl)
+            ref CountPlusNameSortList sl, SimplifiedFormIndex index = null)
         {
+            // a word that simplifies to nothing (e.g. one made up only of ignored characters) isn't ambiguous with anything
+            //  (otherwise all such words would be bundled together)
+            if (String.IsNullOrEmpty(strSimplifiedWord))
+                return;
+
             var startingChar = strSimplifiedWord[0];
-            foreach (var kvp in ht.Where(kvp => kvp.Value.SimplifiedValue.FirstOrDefault() == startingChar))
+            var candidates = (index != null)
+                ? index.Matches(strSimplifiedWord)
+                : ht.Where(kvp => !String.IsNullOrEmpty(kvp.Value?.SimplifiedValue) && (kvp.Value.SimplifiedValue[0] == startingChar));
+            foreach (var kvp in candidates)
             {
                 SpellFixerWord aWord = kvp.Value;
                 if ((strSimplifiedWord == aWord.SimplifiedValue) && (strWordToCheck != kvp.Key))
@@ -1660,45 +2042,147 @@ namespace SpellingFixer30
 
             // see if we're supposed to ignore case
             if (CompareCase && (Locale != null))
-                strSimplifiedWord = strSimplifiedWord.ToLower(Locale);
+                strSimplifiedWord = strSimplifiedWord?.ToLower(Locale);
 
             // then transliterate the word for the rest of the simplifications
             strSimplifiedWord = (bTransliterate) ? TransliteratedWord(strSimplifiedWord) : strSimplifiedWord;
 
             // might do the ignore case *afterwards*
             if (CompareCase && (Locale == null))
-                strSimplifiedWord = strSimplifiedWord.ToLowerInvariant();
+                strSimplifiedWord = strSimplifiedWord?.ToLowerInvariant();
 
             // see if we're supposed to strip out consecutive double-characters
             if (CompareDoubleChars)
-            {
-                if (strSimplifiedWord.Length > 1)
-                {
-                    var sb = new StringBuilder();
-                    var chLast = strSimplifiedWord[0];
-                    sb.Append(chLast);
+                strSimplifiedWord = CollapseDoubleCharacters(strSimplifiedWord);
 
-                    for (int i = 1; i < strSimplifiedWord.Length; i++)
-                    {
-                        var chCurrent = strSimplifiedWord[i];
-                        if (chCurrent != chLast)
-                        {
-                            sb.Append(chCurrent);
-                        }
-                        chLast = chCurrent;
-                    }
-                    strSimplifiedWord = sb.ToString();
-                }
+            // go thru each of the ambiguity rules (in the order they're in the VSS file) and reduce the word further.
+            strSimplifiedWord = m_ambiguityRules?.ApplyAfterTransliteration(strSimplifiedWord) ?? strSimplifiedWord;
+
+            // we now have a simplified word to check against our list. Never return null: TransliteratedWord returns null
+            //  when nothing is left of the word after removing the ignore characters (e.g. a word that's only a nukta or
+            //  a soft hyphen), and callers (e.g. FindMatchingSimplifiedFormsInHashTableValue) expect a string
+            return strSimplifiedWord ?? String.Empty;
+        }
+
+        /// <summary>
+        /// One of the steps in turning a word into the form that's compared to find inconsistencies (see TraceSimplification)
+        /// </summary>
+        internal class SimplificationStep
+        {
+            /// <summary>the Inconsistency Setting (Distinction) that made this change (null for the other steps, e.g. transliteration)</summary>
+            public string DistinctionName { get; set; }
+            public string Description { get; set; }
+            public string Before { get; set; }
+            public string After { get; set; }
+
+            public override string ToString() => $"{Before} → {After}   ({Description})";
+        }
+
+        /// <summary>
+        /// Goes thru the same steps as TransliteratedWord + SimplifiedWord (i.e. how SpellFixerWord.SimplifiedValue is
+        /// calculated), recording each one that changes the word, so the user can see which Inconsistency Settings made
+        /// two words look alike
+        /// </summary>
+        internal List<SimplificationStep> TraceSimplification(string word)
+        {
+            var steps = new List<SimplificationStep>();
+            string Step(string before, string after, string description, string distinctionName = null)
+            {
+                if (before != after)
+                    steps.Add(new SimplificationStep { Before = before, After = after, Description = description, DistinctionName = distinctionName });
+                return after;
             }
 
-            // go thru each of the ambiguity rules and reduce the word further.
-            if (m_mapAmbiguities != null)
-                foreach (string strKey in m_mapAmbiguities.Keys)
-                    foreach (string strValue in m_mapAmbiguities[strKey])
-                        strSimplifiedWord = strSimplifiedWord.Replace(strValue, strKey);
+            string ApplyRules(string str, IEnumerable<AmbiguityRule> rules)
+            {
+                foreach (var rule in rules)
+                {
+                    // (which of the rule's forms matched, in the order they're replaced)
+                    var matched = new List<string>();
+                    var current = str;
+                    foreach (var form in rule.Forms)
+                        if (!String.IsNullOrEmpty(current) && current.Contains(form))
+                        {
+                            matched.Add(form);
+                            current = current.Replace(form, rule.NormalizedForm);
+                        }
+                    var what = String.Join(", ", matched.Select(f => $"'{f}'"));
+                    str = Step(str, current, String.IsNullOrEmpty(rule.NormalizedForm) ? $"{what} removed" : $"{what} → '{rule.NormalizedForm}'",
+                               rule.DistinctionName);
+                }
+                return str;
+            }
 
-            // we now have a simplified word to check against our list
-            return strSimplifiedWord;
+            var rulesInUse = m_ambiguityRules ?? new AmbiguityRules();
+            var s = ApplyRules(word, rulesInUse.BeforeTransliteration);
+            s = Step(s, RemoveStrings(s, m_astrIgnoreStrsBeforeTransliteration), "ignored characters removed, before transliteration");
+            if ((Transliterator != null) && !String.IsNullOrEmpty(s))
+            {
+                s = Step(s, Transliterator.Convert(s), "transliterated");
+                s = Step(s, RemoveStrings(s, m_astrIgnoreStrsAfterTransliteration), "ignored characters removed, after transliteration");
+            }
+            else
+                s = Step(s, null, "nothing left to compare");
+
+            if (CompareCase)
+                s = Step(s, (Locale != null) ? s?.ToLower(Locale) : s?.ToLowerInvariant(), "upper/lower case ignored");
+            if (CompareDoubleChars)
+                s = Step(s, CollapseDoubleCharacters(s), "double letters treated as single");
+            ApplyRules(s, rulesInUse.AfterTransliteration);
+            return steps;
+        }
+
+        /// <summary>
+        /// Turns off the given Inconsistency Settings (i.e. the project stops using them; they stay in the Vernacular
+        /// Script System file), saves the project, and re-applies the rules to the words in memory
+        /// </summary>
+        internal void DisableAmbiguityRules(IEnumerable<string> distinctionNames)
+        {
+            foreach (var name in distinctionNames)
+                _ruleNames.Remove(name);
+            SaveProject(this);
+            ReinitializeRules();
+        }
+
+        /// <summary>
+        /// Refills the given (Bulk picker's) list with all of the project's Words to Check (e.g. to look for
+        /// inconsistencies again from scratch after the Inconsistency Settings have been changed)
+        /// </summary>
+        internal void RefillWordsToCheck(WordsToCheckBulk mapWordsToCheck)
+        {
+            mapWordsToCheck.Clear();
+            mapWordsToCheck.Copy(m_mapS2SfwWordsToCheck);
+        }
+
+        /// <summary>
+        /// e.g. "akkhiyēṁ" -> "akhiyēṁ"
+        /// </summary>
+        internal static string CollapseDoubleCharacters(string str)
+        {
+            if ((str == null) || (str.Length < 2))
+                return str;
+
+            var sb = new StringBuilder(str.Length);
+            var chLast = str[0];
+            sb.Append(chLast);
+
+            for (int i = 1; i < str.Length; i++)
+            {
+                var chCurrent = str[i];
+                if (chCurrent != chLast)
+                    sb.Append(chCurrent);
+                chLast = chCurrent;
+            }
+            return sb.ToString();
+        }
+
+        internal static string RemoveStrings(string str, string[] astrToRemove)
+        {
+            if ((astrToRemove == null) || String.IsNullOrEmpty(str))
+                return str;
+            foreach (string strIgnoreString in astrToRemove)
+                str = str.Replace(strIgnoreString, null);
+            return str;
         }
 
         internal DirectableEncConverter Transliterator
@@ -1714,12 +2198,12 @@ namespace SpellingFixer30
 
         internal virtual string TransliteratedWord(string strWordVernacular)
         {
-            // First remove any "before transliteration" strings
-            if (m_astrIgnoreStrsBeforeTransliteration != null)
-            {
-                foreach (string strIgnoreString in m_astrIgnoreStrsBeforeTransliteration)
-                    strWordVernacular = strWordVernacular.Replace(strIgnoreString, null);
-            }
+            // First apply any ambiguity rules that apply to the vernacular form of the word (e.g. removing the
+            //  Dogri tonal 'ह़'; which has to happen before the "before transliteration" strings strip the nukta)
+            strWordVernacular = m_ambiguityRules?.ApplyBeforeTransliteration(strWordVernacular) ?? strWordVernacular;
+
+            // then remove any "before transliteration" strings
+            strWordVernacular = RemoveStrings(strWordVernacular, m_astrIgnoreStrsBeforeTransliteration);
 
             string strTransliterated = null;
             if ((Transliterator != null) && (!String.IsNullOrEmpty(strWordVernacular)))
@@ -1727,9 +2211,7 @@ namespace SpellingFixer30
                 strTransliterated = Transliterator.Convert(strWordVernacular);
 
                 // apply the "CharactersToIgnore" to strip out unexpected/desired results of the transliteration
-                if ((m_astrIgnoreStrsAfterTransliteration != null) && (strTransliterated != null))
-                    foreach (string strIgnoreString in m_astrIgnoreStrsAfterTransliteration)
-                        strTransliterated = strTransliterated.Replace(strIgnoreString, null);
+                strTransliterated = RemoveStrings(strTransliterated, m_astrIgnoreStrsAfterTransliteration);
             }
 
             return strTransliterated;

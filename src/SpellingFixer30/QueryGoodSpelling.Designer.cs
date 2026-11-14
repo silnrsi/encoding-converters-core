@@ -48,7 +48,11 @@ namespace SpellingFixer30
             this.helpProvider = new System.Windows.Forms.HelpProvider();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.labelUniCodesRhs = new System.Windows.Forms.Label();
+            this.panelSimilarWords = new System.Windows.Forms.Panel();
+            this.listBoxSimilarWords = new System.Windows.Forms.ListBox();
+            this.labelSimilarWords = new System.Windows.Forms.Label();
             this.tableLayoutPanel.SuspendLayout();
+            this.panelSimilarWords.SuspendLayout();
             this.SuspendLayout();
             // 
             // label1
@@ -148,12 +152,13 @@ namespace SpellingFixer30
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tableLayoutPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.tableLayoutPanel.ColumnCount = 5;
+            this.tableLayoutPanel.ColumnCount = 6;
             this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 0F));
             this.tableLayoutPanel.Controls.Add(this.label1, 0, 0);
             this.tableLayoutPanel.Controls.Add(this.label2, 0, 1);
             this.tableLayoutPanel.Controls.Add(this.labelUniCodesLhs, 0, 2);
@@ -166,6 +171,7 @@ namespace SpellingFixer30
             this.tableLayoutPanel.Controls.Add(this.buttonOK, 3, 5);
             this.tableLayoutPanel.Controls.Add(this.buttonCancel, 4, 5);
             this.tableLayoutPanel.Controls.Add(this.labelUniCodesRhs, 0, 3);
+            this.tableLayoutPanel.Controls.Add(this.panelSimilarWords, 5, 0);
             this.tableLayoutPanel.Location = new System.Drawing.Point(12, 12);
             this.tableLayoutPanel.Name = "tableLayoutPanel";
             this.tableLayoutPanel.RowCount = 6;
@@ -232,9 +238,40 @@ namespace SpellingFixer30
             this.labelUniCodesRhs.TabIndex = 5;
             this.labelUniCodesRhs.Text = "labelUniCodesRhs";
             // 
+            // panelSimilarWords
+            // 
+            this.panelSimilarWords.Controls.Add(this.listBoxSimilarWords);
+            this.panelSimilarWords.Controls.Add(this.labelSimilarWords);
+            this.panelSimilarWords.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panelSimilarWords.Margin = new System.Windows.Forms.Padding(6, 3, 3, 3);
+            this.panelSimilarWords.Name = "panelSimilarWords";
+            this.tableLayoutPanel.SetRowSpan(this.panelSimilarWords, 4);
+            this.panelSimilarWords.TabIndex = 11;
+            this.panelSimilarWords.Visible = false;
+            // 
+            // labelSimilarWords
+            // 
+            this.labelSimilarWords.AutoSize = true;
+            this.labelSimilarWords.Dock = System.Windows.Forms.DockStyle.Top;
+            this.labelSimilarWords.Name = "labelSimilarWords";
+            this.labelSimilarWords.Padding = new System.Windows.Forms.Padding(0, 0, 0, 3);
+            this.labelSimilarWords.TabIndex = 0;
+            this.labelSimilarWords.Text = "Si&milar words:";
+            // 
+            // listBoxSimilarWords
+            // 
+            this.listBoxSimilarWords.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.listBoxSimilarWords.IntegralHeight = false;
+            this.listBoxSimilarWords.Name = "listBoxSimilarWords";
+            this.listBoxSimilarWords.TabIndex = 1;
+            this.toolTip.SetToolTip(this.listBoxSimilarWords, "Words in the project that look like the bad spelling (most frequent first). Click one to use it as the replacement; double-click to use it and click OK.");
+            this.listBoxSimilarWords.SelectedIndexChanged += new System.EventHandler(this.listBoxSimilarWords_SelectedIndexChanged);
+            this.listBoxSimilarWords.DoubleClick += new System.EventHandler(this.listBoxSimilarWords_DoubleClick);
+            // 
             // QueryGoodSpelling
             // 
             this.AcceptButton = this.buttonOK;
+            this.CancelButton = this.buttonCancel;
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
             this.ClientSize = new System.Drawing.Size(531, 294);
             this.Controls.Add(this.tableLayoutPanel);
@@ -244,6 +281,8 @@ namespace SpellingFixer30
             this.MinimizeBox = false;
             this.Name = "QueryGoodSpelling";
             this.Text = "Fix Spelling";
+            this.panelSimilarWords.ResumeLayout(false);
+            this.panelSimilarWords.PerformLayout();
             this.tableLayoutPanel.ResumeLayout(false);
             this.tableLayoutPanel.PerformLayout();
             this.ResumeLayout(false);
@@ -267,5 +306,8 @@ namespace SpellingFixer30
         private ToolTip toolTip;
         private Button buttonSwapWords;
         private Label labelUniCodesRhs;
+        private Panel panelSimilarWords;
+        private ListBox listBoxSimilarWords;
+        private Label labelSimilarWords;
     }
 }

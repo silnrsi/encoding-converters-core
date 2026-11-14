@@ -40,6 +40,7 @@ namespace SpellingFixer30
             this.resetWordsToCheckListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editDictionaryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editListOfSpellingFixToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.validateSpellingFixesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
             this.buttonOK = new System.Windows.Forms.Button();
             this.buttonCancel = new System.Windows.Forms.Button();
@@ -47,8 +48,7 @@ namespace SpellingFixer30
             this.buttonBrowseForProject = new System.Windows.Forms.Button();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.helpProvider = new System.Windows.Forms.HelpProvider();
-			this.validateSpellingFixesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.contextMenuStrip.SuspendLayout();
+            this.contextMenuStrip.SuspendLayout();
             this.tableLayoutPanel.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -67,11 +67,11 @@ namespace SpellingFixer30
             this.checkedListBoxProjectNames.TabIndex = 0;
             this.checkedListBoxProjectNames.SelectedIndexChanged += new System.EventHandler(this.checkedListBoxProjectNames_SelectedIndexChanged);
             this.checkedListBoxProjectNames.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.checkedListBoxProjectNames_KeyPress);
-			this.checkedListBoxProjectNames.MouseUp += new System.Windows.Forms.MouseEventHandler(this.checkedListBoxProjectNames_MouseUp);
-			// 
-			// contextMenuStrip
-			// 
-			this.contextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.checkedListBoxProjectNames.MouseUp += new System.Windows.Forms.MouseEventHandler(this.checkedListBoxProjectNames_MouseUp);
+            // 
+            // contextMenuStrip
+            // 
+            this.contextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.editToolStripMenuItem,
             this.deleteToolStripMenuItem,
             this.toolStripSeparator1,
@@ -80,9 +80,9 @@ namespace SpellingFixer30
             this.resetWordsToCheckListToolStripMenuItem,
             this.editDictionaryToolStripMenuItem,
             this.editListOfSpellingFixToolStripMenuItem,
-			this.validateSpellingFixesToolStripMenuItem});
+            this.validateSpellingFixesToolStripMenuItem});
             this.contextMenuStrip.Name = "contextMenuStrip";
-            this.contextMenuStrip.Size = new System.Drawing.Size(222, 192);
+            this.contextMenuStrip.Size = new System.Drawing.Size(222, 170);
             // 
             // editToolStripMenuItem
             // 
@@ -124,7 +124,7 @@ namespace SpellingFixer30
             this.resetWordsToCheckListToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
             this.resetWordsToCheckListToolStripMenuItem.Text = "&Reset list of Words to Check";
             this.resetWordsToCheckListToolStripMenuItem.ToolTipText = "Each project maintains a list of words to check for inconsistencies. This command" +
-                " resets the list";
+    " resets the list";
             this.resetWordsToCheckListToolStripMenuItem.Click += new System.EventHandler(this.resetWordsToCheckListToolStripMenuItem_Click);
             // 
             // editDictionaryToolStripMenuItem
@@ -143,11 +143,20 @@ namespace SpellingFixer30
             this.editListOfSpellingFixToolStripMenuItem.ToolTipText = "Edit the database of spelling fixes";
             this.editListOfSpellingFixToolStripMenuItem.Click += new System.EventHandler(this.editListOfSpellingFixToolStripMenuItem_Click);
             // 
+            // validateSpellingFixesToolStripMenuItem
+            // 
+            this.validateSpellingFixesToolStripMenuItem.Name = "validateSpellingFixesToolStripMenuItem";
+            this.validateSpellingFixesToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
+            this.validateSpellingFixesToolStripMenuItem.Text = "&Validate Spelling Fixes";
+            this.validateSpellingFixesToolStripMenuItem.ToolTipText = "Click to list the spelling fix rules where a bad spelling is used as the replacem" +
+    "ent (good) spelling (likely an error)";
+            this.validateSpellingFixesToolStripMenuItem.Click += new System.EventHandler(this.validateSpellingFixesToolStripMenuItem_Click);
+            // 
             // tableLayoutPanel
             // 
-            this.tableLayoutPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.tableLayoutPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tableLayoutPanel.ColumnCount = 5;
             this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
@@ -211,7 +220,7 @@ namespace SpellingFixer30
             // buttonBrowseForProject
             // 
             this.helpProvider.SetHelpString(this.buttonBrowseForProject, "Click this button to browse for an existing project to add to this machine (e.g. " +
-                    "from a network location)");
+        "from a network location)");
             this.buttonBrowseForProject.Location = new System.Drawing.Point(106, 207);
             this.buttonBrowseForProject.Name = "buttonBrowseForProject";
             this.helpProvider.SetShowHelp(this.buttonBrowseForProject, true);
@@ -226,19 +235,10 @@ namespace SpellingFixer30
             this.openFileDialog.DefaultExt = "csf";
             this.openFileDialog.Filter = "Consistent Spelling Fixer project files (*.csf)|*.csf";
             this.openFileDialog.Title = "Browse for Consistent Spell Fixer project file";
-			// 
-			// validateSpellingFixesToolStripMenuItem
-			// 
-			this.validateSpellingFixesToolStripMenuItem.Name = "validateSpellingFixesToolStripMenuItem";
-			this.validateSpellingFixesToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
-			this.validateSpellingFixesToolStripMenuItem.Text = "&Validate Spelling Fixes";
-			this.validateSpellingFixesToolStripMenuItem.ToolTipText = "Click to list the spelling fix rules where a bad spelling is used as the replacem" +
-	"ent (good) spelling (likely an error)";
-			this.validateSpellingFixesToolStripMenuItem.Click += new System.EventHandler(this.validateSpellingFixesToolStripMenuItem_Click);
-			// 
-			// SelectProject
-			// 
-			this.AcceptButton = this.buttonOK;
+            // 
+            // SelectProject
+            // 
+            this.AcceptButton = this.buttonOK;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonCancel;

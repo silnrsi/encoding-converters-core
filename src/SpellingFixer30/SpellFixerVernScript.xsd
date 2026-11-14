@@ -84,6 +84,7 @@
 														</xs:complexType>
 													</xs:element>
 												</xs:all>
+												<xs:attribute name="stage" form="unqualified" type="xs:string" use="optional" />
 											</xs:complexType>
 										</xs:element>
 									</xs:sequence>

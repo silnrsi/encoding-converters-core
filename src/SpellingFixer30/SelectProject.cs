@@ -16,6 +16,37 @@ namespace SpellingFixer30
     {
         Dictionary<string, CscProject> m_mapProjects = new Dictionary<string, CscProject>();
 
+        // list box display name -> project that's in a Paratext project's 'shared' folder, but not yet on this computer
+        Dictionary<string, SharedCscProject> m_mapSharedProjects = new Dictionary<string, SharedCscProject>();
+
+        /// <summary>
+        /// Connects this computer to a project that's being shared in a Paratext project (by creating the
+        /// junction to it) and replaces its list box entry with the plain project name.
+        /// </summary>
+        /// <returns>the project name, or null if it wasn't connected</returns>
+        private string ConnectToSharedProject(string displayName)
+        {
+            var sharedProject = m_mapSharedProjects[displayName];
+            if (ParatextProjectLink.LinkToParatext(sharedProject.CscProjectName, sharedProject.ParatextProjectName) == ParatextLinkResult.NotLinked)
+                return null;
+
+            var projectName = sharedProject.CscProjectName;
+            CscProject.AddProjectKey(ParatextProjectLink.GetLocalProjectFolder(projectName), projectName);
+            CscProjectStore.UpdateParatextProjectName(Path.Combine(ParatextProjectLink.GetLocalProjectFolder(projectName),
+                                                                   $"{projectName}.{CscProject.ProjectFileExt}"),
+                                                      sharedProject.ParatextProjectName);
+
+            m_mapSharedProjects.Remove(displayName);
+            var nIndex = checkedListBoxProjectNames.Items.IndexOf(displayName);
+            if (nIndex >= 0)
+            {
+                var wasChecked = checkedListBoxProjectNames.GetItemChecked(nIndex);
+                checkedListBoxProjectNames.Items[nIndex] = projectName;
+                checkedListBoxProjectNames.SetItemChecked(nIndex, wasChecked);
+            }
+            return projectName;
+        }
+
         public SelectProject()
         {
             InitializeComponent();
@@ -23,13 +54,25 @@ namespace SpellingFixer30
             openFileDialog.InitialDirectory = CscProject.ProjectsDefaultDirectory;
 
             var projectNames = CscProject.GetProjectNames;
-            if (!projectNames.Any())
-                buttonOK.Enabled = false;
-            else
+            foreach (var projectName in projectNames)
+                checkedListBoxProjectNames.Items.Add(projectName);
+
+            // also list any projects being shared in a Paratext project that this computer doesn't have yet
+            //  (e.g. another user of the Paratext project set it up). Choosing one connects to it.
+            try
             {
-                foreach (var projectName in projectNames)
-                    checkedListBoxProjectNames.Items.Add(projectName);
+                foreach (var sharedProject in ParatextProjectLink.FindSharedCscProjects())
+                {
+                    if (projectNames.Contains(sharedProject.CscProjectName, StringComparer.OrdinalIgnoreCase))
+                        continue;
+                    m_mapSharedProjects[sharedProject.DisplayName] = sharedProject;
+                    checkedListBoxProjectNames.Items.Add(sharedProject.DisplayName);
+                }
             }
+            catch { }
+
+            if (checkedListBoxProjectNames.Items.Count == 0)
+                buttonOK.Enabled = false;
 
             Properties.Settings.Default.Reload();
             if (checkedListBoxProjectNames.Items.Contains(Properties.Settings.Default.LastProjectSelected))
@@ -55,6 +98,13 @@ namespace SpellingFixer30
                         Cursor = Cursors.WaitCursor;
                         System.Diagnostics.Debug.Assert(checkedListBoxProjectNames.CheckedItems.Count == 1);
                         string strProjectName = (string)checkedListBoxProjectNames.CheckedItems[0];
+                        if (m_mapSharedProjects.ContainsKey(strProjectName))
+                        {
+                            strProjectName = ConnectToSharedProject(strProjectName);
+                            if (strProjectName == null)
+                                return null;
+                        }
+
                         Properties.Settings.Default.LastProjectSelected = strProjectName;
                         Properties.Settings.Default.Save();
 
@@ -114,6 +164,12 @@ namespace SpellingFixer30
             if( nIndex >= 0 )
             {
                 string strProjectName = checkedListBoxProjectNames.Items[nIndex].ToString();
+                if (m_mapSharedProjects.ContainsKey(strProjectName))
+                {
+                    MessageBox.Show("That project is only in a Paratext project's 'shared' folder (it isn't on this computer yet), so there's nothing to delete here.", SpellingFixer.cstrCaption);
+                    return;
+                }
+
                 if( MessageBox.Show(String.Format("Are you sure you want to delete the '{0}' project?", strProjectName), SpellingFixer.cstrCaption, MessageBoxButtons.YesNoCancel) == DialogResult.Yes)
                 {
                     try
@@ -137,7 +193,10 @@ namespace SpellingFixer30
             if (MessageBox.Show("Are you sure you want to delete all the existing projects?", SpellingFixer.cstrCaption, MessageBoxButtons.YesNoCancel) == DialogResult.Yes)
             {
                 foreach (string strProjectName in checkedListBoxProjectNames.Items)
-                    CscProject.DeleteProject(strProjectName);
+                {
+                    if (!m_mapSharedProjects.ContainsKey(strProjectName))   // those aren't on this computer
+                        CscProject.DeleteProject(strProjectName);
+                }
 
                 // now remove them from the checkbox list
                 while (checkedListBoxProjectNames.Items.Count > 0)

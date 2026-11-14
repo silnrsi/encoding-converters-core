@@ -20,6 +20,12 @@
     <Setting Name="ShowCountOnBulk" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
+    <Setting Name="ShowExamplesPane" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="ExamplesPaneWidth" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">300</Value>
+    </Setting>
     <Setting Name="GoodColor" Type="System.Drawing.Color" Scope="User">
       <Value Profile="(Default)">Green</Value>
     </Setting>
