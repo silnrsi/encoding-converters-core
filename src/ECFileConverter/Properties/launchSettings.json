@@ -3,6 +3,14 @@
     "ECFileConverter 2010": {
       "commandName": "Project",
       "commandLineArgs": "/n askMe /i8 \"C:\\btmp\\SpeecheloCleanInLinesNormalized.txt\" /o8 C:\\btmp\\SpeecheloCleanInLinesNormalized2.txt"
+    },
+    "Profile 1": {
+      "commandName": "Project",
+      "commandLineArgs": "/n askMe /i8 \"C:\\vscode\\buildCombinedDataset\\sampleData\\DOG-01-GEN-001.txt\" /o8 \"C:\\vscode\\buildCombinedDataset\\sampleData\\DOG-01-GEN-001-B.txt\""
+    },
+    "Profile 2": {
+      "commandName": "Project",
+      "commandLineArgs": "/n askMe /i8 \"C:\\btmp\\SpeecheloCleanInLines.txt\" /o8 \"C:\\btmp\\SpeecheloCleanInLines-B.txt\""
     }
   }
 }
