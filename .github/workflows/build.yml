@@ -107,18 +107,45 @@ jobs:
         name: logs-${{ matrix.build_platform }}-${{ matrix.build_configuration }}
         path: build-*.binlog
 
-    # SILConverters (and any other consumer) ships these DLLs/EXEs - and the installer\*.wixproj
-    # merge modules below, which embed copies of the very same files in their own file table -
-    # unsigned unless we sign them here. Sign the raw net48 output now, then force the merge
-    # modules to rebuild so they harvest the now-signed bytes instead of the unsigned copies the
-    # Build step above already baked into them.
-    - name: Sign build outputs
+    # Every DLL/EXE the NuGet package ships comes from these per-TFM output folders: lib\<tfm>\ gets
+    # SilEncConverters40/ECInterfaces from net462/net48/net9.0/net9.0-windows/netstandard2.0, and
+    # runtimes\EcDistFiles\ gets everything in net48 and net9.0-windows (see Package.Release.nuspec).
+    # Consumers (SILConverters, OneStoryEditor, ...) install these files as-is, and Windows
+    # Smart App Control / WDAC refuses to load unsigned ones ("An Application Control policy has
+    # blocked this file", 0x800711C7). So sign every one of them that isn't already validly signed.
+    # Files that already carry a vendor signature (Microsoft, Google, ...) are left alone rather
+    # than having it replaced with ours. net48 also has to be signed before the merge modules are
+    # rebuilt below, since they embed copies of those same files.
+    - name: Collect unsigned build outputs
+      id: unsigned
       if: ${{ matrix.build_configuration == 'Release' && github.event_name != 'pull_request' }}
+      # pwsh, not powershell: Windows PowerShell 5's utf8 Out-File writes a BOM into GITHUB_OUTPUT
+      shell: pwsh
+      run: |
+        $tfms = 'net462','net48','net9.0','net9.0-windows','netstandard2.0'
+        $files = foreach ($tfm in $tfms) {
+          $dir = "output\$tfm\${{ matrix.build_platform }}\${{ matrix.build_configuration }}"
+          if (Test-Path $dir) {
+            Get-ChildItem $dir -File | Where-Object { $_.Extension -in '.dll','.exe' } |
+              Where-Object { (Get-AuthenticodeSignature $_.FullName).Status -ne 'Valid' } |
+              ForEach-Object { $_.FullName }
+          } else {
+            Write-Host "::warning::$dir does not exist - nothing from it will be signed"
+          }
+        }
+        Write-Host "Unsigned files to sign: $(@($files).Count)"
+        $files | ForEach-Object { Write-Host "  $_" }
+        "count=$(@($files).Count)" | Out-File $env:GITHUB_OUTPUT -Append -Encoding utf8
+        "files<<EOF_FILE_LIST" | Out-File $env:GITHUB_OUTPUT -Append -Encoding utf8
+        $files | Out-File $env:GITHUB_OUTPUT -Append -Encoding utf8
+        "EOF_FILE_LIST" | Out-File $env:GITHUB_OUTPUT -Append -Encoding utf8
+
+    - name: Sign build outputs
+      if: ${{ matrix.build_configuration == 'Release' && github.event_name != 'pull_request' && steps.unsigned.outputs.count != '0' }}
       uses: sillsdev/codesign/trusted-signing-action@v3
       with:
         credentials: ${{ secrets.TRUSTED_SIGNING_CREDENTIALS }}
-        files-folder: output\net48\${{ matrix.build_platform }}\${{ matrix.build_configuration }}
-        files-folder-filter: "dll,exe"
+        files: ${{ steps.unsigned.outputs.files }}
 
     # Clear the merge-module projects' own bind cache/output so the rebuild below can't decide
     # they're already up to date - the safest guarantee is to force it, rather than trust that
@@ -126,9 +153,7 @@ jobs:
     # obj\<platform>\<configuration>\ (the wix bind intermediate/tracking output) and bin\ - never
     # obj\ itself, which is also where these SDK-style wixprojs' NuGet restore assets
     # (project.assets.json etc.) live; deleting those would reintroduce NETSDK1047-style restore
-    # failures. The app/library projects are left alone: their compiled output is untouched by
-    # signing except for its timestamp, which the normal incremental build already treats as up to
-    # date against their (unchanged) sources.
+    # failures.
     - name: Clear installer project outputs
       if: ${{ matrix.build_configuration == 'Release' && github.event_name != 'pull_request' }}
       shell: powershell
@@ -140,16 +165,56 @@ jobs:
         Get-ChildItem -Path installer -Directory -Recurse -Filter bin |
           Remove-Item -Recurse -Force
 
+    # Rebuild ONLY the merge-module (.wixproj) projects - never the whole solution. Rebuilding the
+    # solution re-runs every C# project's copy-to-output step, which sees that the signed DLL in
+    # output\ no longer matches obj\ (different size/timestamp) and copies the unsigned obj\ build
+    # back over it, silently undoing the signing above (this is how 1.0.4 shipped unsigned). The
+    # wixprojs have no ProjectReferences, so they build fine on their own. Which of them build for
+    # this solution platform, and with what project platform, is read from the .sln itself (the
+    # "{guid}.Release|Win32.Build.0 = Release|x86" lines) so this can't drift from the solution.
     - name: Rebuild installer projects with signed binaries
       if: ${{ matrix.build_configuration == 'Release' && github.event_name != 'pull_request' }}
-      shell: cmd
-      run: >
-        "%MSBUILD_PATH%"
-        /m
-        /v:m
-        /p:Configuration=${{matrix.build_configuration}}
-        /p:Platform=${{matrix.build_platform}}
-        "${{env.SOLUTION_FILE_PATH}}"
+      shell: powershell
+      run: |
+        $sln = Get-Content "${{ env.SOLUTION_FILE_PATH }}"
+        $solutionCfg = "${{ matrix.build_configuration }}|${{ matrix.build_platform }}"
+        $projects = $sln | Select-String '^Project\(.*\) = "[^"]+", "([^"]+\.wixproj)", "\{([0-9A-Fa-f-]+)\}"' |
+          ForEach-Object { [pscustomobject]@{ Path = $_.Matches[0].Groups[1].Value; Guid = $_.Matches[0].Groups[2].Value } }
+        if (-not $projects) { throw "No .wixproj projects found in ${{ env.SOLUTION_FILE_PATH }}" }
+        $built = 0
+        foreach ($p in $projects) {
+          $pattern = '^\s*\{' + [regex]::Escape($p.Guid) + '\}\.' + [regex]::Escape($solutionCfg) + '\.Build\.0 = ([^|]+)\|(\S+)\s*$'
+          $m = $sln | Select-String $pattern | Select-Object -First 1
+          if (-not $m) { Write-Host "Skipping $($p.Path) (not built for $solutionCfg)"; continue }
+          $cfg = $m.Matches[0].Groups[1].Value; $plat = $m.Matches[0].Groups[2].Value
+          Write-Host "Building $($p.Path) ($cfg|$plat)"
+          & $env:MSBUILD_PATH $p.Path /v:m /p:Configuration=$cfg /p:Platform=$plat
+          if ($LASTEXITCODE -ne 0) { throw "Building $($p.Path) failed" }
+          $built++
+        }
+        if ($built -eq 0) { throw "No .wixproj was built for $solutionCfg - check the .sln parsing above" }
+
+    # Fail here, on the machine that did the signing, rather than shipping an unsigned package:
+    # every DLL/EXE in the folders the package is made from must now carry a valid signature.
+    - name: Verify build outputs are signed
+      if: ${{ matrix.build_configuration == 'Release' && github.event_name != 'pull_request' }}
+      shell: powershell
+      run: |
+        $tfms = 'net462','net48','net9.0','net9.0-windows','netstandard2.0'
+        $bad = foreach ($tfm in $tfms) {
+          $dir = "output\$tfm\${{ matrix.build_platform }}\${{ matrix.build_configuration }}"
+          if (Test-Path $dir) {
+            Get-ChildItem $dir -File | Where-Object { $_.Extension -in '.dll','.exe' } | ForEach-Object {
+              $status = (Get-AuthenticodeSignature $_.FullName).Status
+              if ($status -ne 'Valid') { "{0,-14} {1}" -f $status, $_.FullName }
+            }
+          }
+        }
+        if ($bad) {
+          $bad | ForEach-Object { Write-Host "::error::$_" }
+          throw "$(@($bad).Count) build output file(s) are not validly signed"
+        }
+        Write-Host "All build outputs are validly signed."
 
     # Package.Release.nuspec ships net462/net48/net9.0/net9.0-windows/netstandard2.0 (see its own
     # comments for what each TFM contributes) - upload every one of those TFM output folders so the
@@ -236,6 +301,35 @@ jobs:
         Package.proj
         /t:Pack
         /p:Configuration=Release
+
+    # Last line of defence: open the .nupkg that was just packed and require every DLL/EXE in it to
+    # carry a valid Authenticode signature, so an unsigned package can never be uploaded again.
+    # (PR builds skip signing - the secret isn't available to them - so they skip this check too.)
+    - name: Verify every DLL/EXE in the package is signed
+      if: ${{ github.event_name != 'pull_request' }}
+      shell: powershell
+      run: |
+        $pkgs = @(Get-ChildItem output\Release\*.nupkg)
+        if ($pkgs.Count -eq 0) { throw "No .nupkg found in output\Release" }
+        $bad = @()
+        $checked = 0
+        foreach ($pkg in $pkgs) {
+          $dir = Join-Path $env:RUNNER_TEMP ("nupkg-check-" + $pkg.BaseName)
+          if (Test-Path $dir) { Remove-Item $dir -Recurse -Force }
+          Add-Type -AssemblyName System.IO.Compression.FileSystem
+          [IO.Compression.ZipFile]::ExtractToDirectory($pkg.FullName, $dir)
+          Get-ChildItem $dir -Recurse -File | Where-Object { $_.Extension -in '.dll','.exe' } | ForEach-Object {
+            $checked++
+            $status = (Get-AuthenticodeSignature $_.FullName).Status
+            if ($status -ne 'Valid') { $bad += "{0,-14} {1}!{2}" -f $status, $pkg.Name, $_.FullName.Substring($dir.Length + 1) }
+          }
+        }
+        if ($checked -eq 0) { throw "No DLL/EXE files found inside the package - the check would be meaningless" }
+        if ($bad) {
+          $bad | ForEach-Object { Write-Host "::error::$_" }
+          throw "$($bad.Count) of $checked DLL/EXE file(s) in the NuGet package are not validly signed"
+        }
+        Write-Host "All $checked DLL/EXE files in the NuGet package are validly signed."
 
     - name: Upload NuGet package
       uses: actions/upload-artifact@v6
